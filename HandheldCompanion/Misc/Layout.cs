@@ -52,16 +52,16 @@ public partial class Layout : ICloneable, IDisposable
             if (!controller.GetTargetAxis().Contains(axis))
                 continue;
 
-            switch (axis)
-            {
-                case AxisLayoutFlags.L2:
-                case AxisLayoutFlags.R2:
-                    AxisLayout[axis] = new TriggerActions { Axis = axis };
-                    break;
-                default:
-                    AxisLayout[axis] = new AxisActions { Axis = axis };
-                    break;
-            }
+            AxisLayout[axis] = new AxisActions { Axis = axis };
+        }
+
+        // generic axis mapping
+        foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
+        {
+            if (!controller.GetTargetTriggers().Contains(axis))
+                continue;
+
+            AxisLayout[axis] = new TriggerActions { Axis = axis };
         }
     }
 
