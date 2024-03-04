@@ -184,8 +184,13 @@ namespace HandheldCompanion.Managers
         public static void SetControllerMode(HIDmode mode)
         {
             // do not disconnect if similar to previous mode and connected
-            if (HIDmode == mode && vTarget is not null && vTarget.IsConnected)
-                return;
+            if (HIDmode == mode)
+            {
+                if (HIDstatus == HIDstatus.Disconnected)
+                    return;
+                else if (vTarget is not null && vTarget.IsConnected)
+                    return;
+            }
 
             // disconnect current virtual controller
             if (vTarget is not null)
