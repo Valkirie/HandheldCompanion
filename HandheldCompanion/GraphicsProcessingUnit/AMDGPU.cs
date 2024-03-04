@@ -277,12 +277,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (Monitor.TryEnter(telemetryLock))
+            if (telemetryLock.TryEnter())
             {
-                TelemetryData = ADLXBackend.GetTelemetryData();
-                //Debug.WriteLine("W:{0}", TelemetryData.gpuPowerValue);
-
-                Monitor.Exit(telemetryLock);
+                TelemetryData = GetTelemetryData();
+                telemetryLock.Exit();
             }
         }
 
@@ -297,15 +295,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override async void Stop()
         {
             base.Stop();
-
-            // wait until the current ADLX tasks are completed
-            while (!Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock))
-                await Task.Delay(100);
         }
 
         private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (Monitor.TryEnter(updateLock))
+            if (updateLock.TryEnter())
             {
                 bool GPUScaling = false;
 
@@ -404,7 +398,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 }
                 catch { }
 
-                Monitor.Exit(updateLock);
+                updateLock.Exit();
             }
         }
     }

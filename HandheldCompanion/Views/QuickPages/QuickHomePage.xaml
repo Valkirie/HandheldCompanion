@@ -71,6 +71,15 @@
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
+                    <TextBlock
+                        Name="t_CurrentDeviceName"
+                        Grid.Column="1"
+                        Margin="0,0,32,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+
                     <ui:FontIcon
                         Margin="0,0,7,0"
                         HorizontalAlignment="Right"

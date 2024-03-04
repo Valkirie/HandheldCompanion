@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.IGCL;
 using SharpDX.Direct3D9;
-using System.Threading;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
@@ -106,11 +105,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
         }
 
-        public int GetDeviceIdx()
-        {
-            return Execute(() => IGCLBackend.GetDeviceIdx(adapterInformation.Details.Description), -1);
-        }
-
         public override float GetClock()
         {
             return (float)TelemetryData.GpuCurrentClockFrequencyValue;
@@ -140,7 +134,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public IntelGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
-            deviceIdx = IGCLBackend.GetDeviceIdx(adapterInformation.Details.Description);
+            deviceIdx = GetDeviceIdx(adapterInformation.Details.Description).Result;
             if (deviceIdx == -1)
                 return;
 
@@ -153,11 +147,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (Monitor.TryEnter(telemetryLock))
+            if (telemetryLock.TryEnter())
             {
-                TelemetryData = IGCLBackend.GetTelemetryData(deviceIdx);
-
-                Monitor.Exit(telemetryLock);
+                TelemetryData = GetTelemetryData(deviceIdx);
+                telemetryLock.Exit();
             }
         }
 

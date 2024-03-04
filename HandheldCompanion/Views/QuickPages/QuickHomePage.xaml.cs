@@ -29,6 +29,17 @@ public partial class QuickHomePage : Page
 
         ProfileManager.Applied += ProfileManager_Applied;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        GPUManager.Hooked += GPUManager_Hooked;
+    }
+
+    private void GPUManager_Hooked(GraphicsProcessingUnit.GPU GPU)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            t_CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
+        });
     }
 
     public QuickHomePage()
