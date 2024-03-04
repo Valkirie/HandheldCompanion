@@ -12,7 +12,6 @@ namespace HandheldCompanion.Utils
     public class CrossThreadLock : IDisposable
     {
         private readonly SemaphoreSlim _semaphore;
-        private bool _isEntered;
 
         /// <summary>
         /// Initializes a new instance of the CrossThreadLock class.
@@ -21,7 +20,6 @@ namespace HandheldCompanion.Utils
         {
             // Initialize the semaphore with a capacity of 1, allowing only one thread to enter at a time.
             _semaphore = new SemaphoreSlim(1, 1);
-            _isEntered = false;
         }
 
         /// <summary>
@@ -31,8 +29,7 @@ namespace HandheldCompanion.Utils
         public bool TryEnter(int millisecondsTimeout = 0)
         {
             // Attempt to enter the semaphore without blocking. If successful, set _isEntered to true.
-            _isEntered = _semaphore.Wait(millisecondsTimeout);
-            return _isEntered;
+            return _semaphore.Wait(millisecondsTimeout);
         }
 
         /// <summary>
@@ -42,7 +39,6 @@ namespace HandheldCompanion.Utils
         {
             // Block until the semaphore can be entered, then set _isEntered to true.
             _semaphore.Wait();
-            _isEntered = true;
         }
 
         /// <summary>
@@ -51,7 +47,7 @@ namespace HandheldCompanion.Utils
         /// <returns>True if the lock is set; otherwise, false.</returns>
         public bool IsLocked()
         {
-            return _isEntered;
+            return _semaphore.CurrentCount == 1;
         }
 
         /// <summary>
@@ -60,11 +56,7 @@ namespace HandheldCompanion.Utils
         public void Exit()
         {
             // If the lock has been entered, release the semaphore and reset _isEntered to false.
-            if (_isEntered)
-            {
-                _semaphore.Release();
-                _isEntered = false;
-            }
+            _semaphore.Release();
         }
 
         /// <summary>
