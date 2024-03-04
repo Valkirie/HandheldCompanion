@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
 using System.Threading;
@@ -51,6 +52,8 @@ namespace HandheldCompanion.Managers
             catch (Exception)
             {
                 LogManager.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
+
+                MainWindow.SplashScreen.Close();
                 MessageBox.Show("Please get it from: https://github.com/ViGEm/ViGEmBus/releases", "ViGEm is missing");
                 throw new InvalidOperationException();
             }
