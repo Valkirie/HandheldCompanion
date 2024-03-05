@@ -89,7 +89,7 @@ public partial class MainWindow : GamepadWindow
         // initialize splash screen
         SplashScreen = new SplashScreen();
 #if !DEBUG
-        splashScreen.Show();
+        SplashScreen.Show();
 #endif
         SplashScreen.LoadingSequence.Text = "Preparing UI...";
 
