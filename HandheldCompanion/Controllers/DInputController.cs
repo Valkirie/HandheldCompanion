@@ -8,8 +8,7 @@ public class DInputController : IController
     protected JoystickState State = new();
 
     public DInputController()
-    {
-    }
+    { }
 
     public DInputController(Joystick joystick, PnPDetails details)
     {

@@ -22,8 +22,7 @@ public class JSController : IController
     protected Timer calibrateTimer = new Timer(5000) { AutoReset = false };
 
     public JSController()
-    {
-    }
+    { }
 
     public JSController(JOY_SETTINGS settings, PnPDetails details)
     {

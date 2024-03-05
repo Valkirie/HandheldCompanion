@@ -10,6 +10,9 @@ namespace HandheldCompanion.Controllers;
 public class DS4Controller : JSController
 {
     public DS4Controller()
+    { }
+
+    public DS4Controller(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.LeftPadClick);
@@ -27,10 +30,7 @@ public class DS4Controller : JSController
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
-    }
 
-    public DS4Controller(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
-    {
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
         ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));

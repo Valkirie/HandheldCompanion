@@ -29,6 +29,9 @@ public class NeptuneController : SteamController
     private bool rumbleThreadRunning;
 
     public NeptuneController()
+    { }
+
+    public NeptuneController(PnPDetails details) : base()
     {
         // Additional controller specific source buttons/axes
         SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
@@ -47,10 +50,7 @@ public class NeptuneController : SteamController
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
-    }
 
-    public NeptuneController(PnPDetails details) : base()
-    {
         AttachDetails(details);
 
         // UI

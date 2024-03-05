@@ -9,6 +9,9 @@ namespace HandheldCompanion.Controllers;
 public class DualSenseController : JSController
 {
     public DualSenseController()
+    { }
+
+    public DualSenseController(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.LeftPadClick);
@@ -27,9 +30,6 @@ public class DualSenseController : JSController
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
     }
-
-    public DualSenseController(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
-    { }
 
     public override void UpdateInputs(long ticks)
     {

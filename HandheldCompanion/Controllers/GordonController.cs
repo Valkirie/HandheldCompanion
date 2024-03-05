@@ -21,6 +21,9 @@ namespace HandheldCompanion.Controllers
         public const ushort MaxRumbleIntensity = 2048;
 
         public GordonController()
+        { }
+
+        public GordonController(PnPDetails details) : base()
         {
             // Additional controller specific source buttons/axes
             SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4 });
@@ -47,10 +50,7 @@ namespace HandheldCompanion.Controllers
             SourceButtons.Remove(ButtonFlags.RightStickRight);
 
             SourceAxis.Remove(AxisLayoutFlags.RightStick);
-        }
 
-        public GordonController(PnPDetails details) : base()
-        {
             AttachDetails(details);
 
             // UI

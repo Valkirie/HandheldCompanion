@@ -95,7 +95,10 @@ namespace HandheldCompanion.Controllers
         private long lastTap = 0;
         private Vector2 lastTapPosition = Vector2.Zero; // The current position of the touchpad
 
-        public LegionController()
+        public LegionController() : base()
+        { }
+
+        public LegionController(PnPDetails details) : base(details)
         {
             // Additional controller specific source buttons
             SourceButtons.Add(ButtonFlags.RightPadTouch);
@@ -117,10 +120,7 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
-        }
 
-        public LegionController(PnPDetails details) : base(details)
-        {
             // get long press time from system settings
             SystemParametersInfo(0x006A, 0, ref LongPressTime, 0);
 
