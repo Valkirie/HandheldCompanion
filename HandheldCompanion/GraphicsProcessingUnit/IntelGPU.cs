@@ -129,7 +129,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public IntelGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
-            deviceIdx = GetDeviceIdx(adapterInformation.Details.Description).Result;
+            deviceIdx = GetDeviceIdx(adapterInformation.Details.Description);
             if (deviceIdx == -1)
                 return;
 
