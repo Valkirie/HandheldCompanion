@@ -41,7 +41,7 @@ public static class MotherboardInfo
                 manufacturer = videoController["AdapterCompatibility"].ToString();
                 if (manufacturer.Contains("Intel"))
                     break;
-                else if (manufacturer.Contains("AMD"))
+                else if (manufacturer.Contains("Advanced Micro Devices"))
                     break;
             }
 
