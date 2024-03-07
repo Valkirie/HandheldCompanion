@@ -711,9 +711,12 @@ public static class DeviceManager
                 }
             }
 
+            // clear dictionary
             displayAdapters.Clear();
+
+            // use TryAdd because "extended" screen will report the same identifier and might cause a duplicated entry error
             foreach (AdapterInformation adapterInformation in adapters)
-                displayAdapters.Add(adapterInformation.Details.DeviceIdentifier, adapterInformation);
+                displayAdapters.TryAdd(adapterInformation.Details.DeviceIdentifier, adapterInformation);
         }
         else
         {
