@@ -994,7 +994,7 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
 
-                                    <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
+                                    <Grid>
                                         <Button
                                             Name="MotionControlAdditional"
                                             HorizontalAlignment="Stretch"
