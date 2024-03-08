@@ -161,6 +161,9 @@ public static class ProcessUtils
         // Get window name
         string windowName = GetWindowTitle(hWnd);
 
+        if (string.IsNullOrEmpty(windowName))
+            return null;
+
         // Remove non ASCII characters and set ToLower
         windowName = Regex.Replace(windowName, "[^A-Za-z0-9 -]", "").ToLower();
 

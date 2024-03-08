@@ -220,8 +220,13 @@ public class RTSS : IPlatform
             if (GetTargetFPS() != RequestedFramerate)
                 SetTargetFPS(RequestedFramerate);
 
-            // force "Show On-Screen Display" to On
-            SetFlags(~RTSSHOOKSFLAG_OSD_VISIBLE, RTSSHOOKSFLAG_OSD_VISIBLE);
+            try
+            {
+                // force "Show On-Screen Display" to On
+                SetFlags(~RTSSHOOKSFLAG_OSD_VISIBLE, RTSSHOOKSFLAG_OSD_VISIBLE);
+            }
+            catch(DllNotFoundException)
+            { }
 
             // force "On-Screen Display Support" to On
             if (GetEnableOSD() != true)
@@ -249,11 +254,9 @@ public class RTSS : IPlatform
             return (double)appE.StatFrameTimeBufFramerate / 10;
         }
         catch (InvalidDataException)
-        {
-        }
+        { }
         catch (FileNotFoundException)
-        {
-        }
+        { }
 
         return 0.0d;
     }
