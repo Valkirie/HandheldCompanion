@@ -152,11 +152,14 @@ public static class KeyboardSimulator
 
     public static void KeyPress(OutputKey[] keys)
     {
-        foreach (var key in keys)
+        foreach (OutputKey key in keys)
+        {
+            VirtualKeyCode virtualKeyCode = (VirtualKeyCode)key.KeyValue;
             if (key.IsKeyDown)
-                KeyDown((VirtualKeyCode)key.KeyValue);
+                KeyDown(virtualKeyCode);
             else
-                KeyUp((VirtualKeyCode)key.KeyValue);
+                KeyUp(virtualKeyCode);
+        }
     }
 
     public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)

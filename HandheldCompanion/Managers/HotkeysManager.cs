@@ -208,7 +208,7 @@ public static class HotkeysManager
         {
             hotkey.Listening += StartListening;
             hotkey.Pinning += PinOrUnpinHotkey;
-            hotkey.Summoned += hotkey => InvokeTrigger(hotkey, false, true);
+            hotkey.Summoned += hotkey => InvokeTrigger(hotkey, true, true);
             hotkey.Updated += hotkey => SerializeHotkey(hotkey, true);
 
             if (!string.IsNullOrEmpty(hotkey.inputsHotkey.Settings))
@@ -520,7 +520,10 @@ public static class HotkeysManager
                     }
 
                 default:
-                    KeyboardSimulator.KeyPress(input.OutputKeys.ToArray());
+                    {
+                        List<OutputKey> ouput = new(input.OutputKeys.Where(k => k.IsKeyDown == IsKeyDown && k.IsKeyUp == IsKeyUp));
+                        KeyboardSimulator.KeyPress(ouput.ToArray());
+                    }
                     break;
             }
 

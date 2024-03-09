@@ -55,6 +55,7 @@ public static class InputsManager
     // InputsChord variables
     private static InputsChord currentChord = new();
     private static InputsChord prevChord = new();
+    private static InputsChord successChord = new();
     private static readonly InputsChord storedChord = new();
     private static string SpecialKey;
 
@@ -570,7 +571,18 @@ public static class InputsManager
         // IsKeyDown
         if (!buttonState.IsEmpty())
         {
-            currentChord.State = buttonState.Clone() as ButtonState;
+            if (!successChord.State.IsEmpty())
+            {
+                if(!successChord.State.Equals(buttonState))
+                {
+                    IsKeyDown = false;
+                    IsKeyUp = true;
+                    currentChord.InputsType = successChord.InputsType;
+
+                    goto Done;
+                }
+            }
+
             storedChord.State.AddRange(buttonState);
 
             currentChord.InputsType = InputsChordType.Click;
@@ -581,18 +593,28 @@ public static class InputsManager
         // IsKeyUp
         else if (IsKeyDown && !currentChord.State.Equals(buttonState))
         {
-            IsKeyUp = true;
             IsKeyDown = false;
+            IsKeyUp = true;
 
-            currentChord.State = storedChord.State.Clone() as ButtonState;
+            if (!successChord.State.IsEmpty())
+                currentChord.InputsType = successChord.InputsType;
         }
 
-        var success = CheckForSequence(IsKeyDown, IsKeyUp);
+    Done:
+        currentChord.State = storedChord.State.Clone() as ButtonState;
 
-        if (buttonState.IsEmpty() && IsKeyUp)
+        if (CheckForSequence(IsKeyDown, IsKeyUp))
+        {
+            successChord = new();
+            successChord.State = currentChord.State.Clone() as ButtonState;
+            successChord.InputsType = currentChord.InputsType;
+        }
+
+        if ((buttonState.IsEmpty() || !successChord.State.IsEmpty()) && IsKeyUp)
         {
             currentChord.State.Clear();
             storedChord.State.Clear();
+            successChord.State.Clear();
         }
 
         prevState = buttonState.Clone() as ButtonState;
@@ -643,6 +665,30 @@ public static class InputsManager
 
         if (inputsChord is null)
             inputsChord = new InputsChord();
+
+        // the below logic is here to make sure every KeyDown has an equivalent KeyUp
+        List<OutputKey> missingOutputs = new List<OutputKey>();
+        foreach(OutputKey key in inputsChord.OutputKeys.Where(k => k.IsKeyDown))
+        {
+            bool hasUp = inputsChord.OutputKeys.Any(k => k.KeyValue == key.KeyValue && k.IsKeyUp);
+            if (!hasUp)
+            {
+                missingOutputs.Add(new()
+                {
+                    KeyValue = key.KeyValue,
+                    ScanCode = key.ScanCode,
+                    IsExtendedKey = key.IsExtendedKey,
+                    IsKeyDown = false,
+                    IsKeyUp = true,
+                    Timestamp = key.Timestamp,
+                });
+            }
+        }
+
+        // invert order to make sure key are released in right order
+        missingOutputs.Reverse();
+        foreach (OutputKey key in missingOutputs)
+            inputsChord.OutputKeys.Add(key);
 
         switch (currentType)
         {
