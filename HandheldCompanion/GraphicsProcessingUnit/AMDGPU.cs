@@ -336,7 +336,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     while (DateTime.Now < timeout && !RSRSupport)
                     {
                         RSRSupport = HasRSRSupport();
-                        Thread.Sleep(250);
+                        await Task.Delay(250);
                     }
                     RSR = GetRSR();
 
@@ -362,7 +362,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     while (DateTime.Now < timeout && !IntegerScalingSupport)
                     {
                         IntegerScalingSupport = HasIntegerScalingSupport();
-                        Thread.Sleep(250);
+                        await Task.Delay(250);
                     }
                     IntegerScaling = GetIntegerScaling();
 
