@@ -33,6 +33,15 @@ public class NeptuneController : SteamController
 
     public NeptuneController(PnPDetails details) : base()
     {
+        AttachDetails(details);
+
+        // UI
+        DrawUI();
+        UpdateUI();
+    }
+
+    protected override void InitializeInputOutput()
+    {
         // Additional controller specific source buttons/axes
         SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
         SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftStickTouch, ButtonFlags.RightStickTouch });
@@ -50,12 +59,6 @@ public class NeptuneController : SteamController
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
-
-        AttachDetails(details);
-
-        // UI
-        DrawUI();
-        UpdateUI();
     }
 
     public override void AttachDetails(PnPDetails details)

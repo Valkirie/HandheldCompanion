@@ -207,12 +207,15 @@ namespace HandheldCompanion.Controllers
         public IController()
         {
             InitializeComponent();
+            InitializeInputOutput();
             MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
         protected virtual void UpdateSettings()
-        { 
-        }
+        { }
+
+        protected virtual void InitializeInputOutput()
+        { }
 
         public virtual void AttachDetails(PnPDetails details)
         {
