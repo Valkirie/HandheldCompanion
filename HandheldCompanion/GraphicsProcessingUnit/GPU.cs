@@ -61,17 +61,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     return func();
                 });
 
-                if (task.Wait(TimeSpan.FromSeconds(5)))
+                if (task.Wait(TimeSpan.FromSeconds(3)))
                     return task.Result;
             }
-            catch (AccessViolationException ex)
-            {
-                // Handle or log the exception as needed
-            }
-            catch (Exception ex)
-            {
-                // Handle other exceptions
-            }
+            catch (AccessViolationException)
+            { }
+            catch (Exception)
+            { }
 
             return defaultValue;
         }
@@ -234,11 +230,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public void Dispose()
         {
-            if (UpdateTimer != null)
-                UpdateTimer.Dispose();
-
-            if (TelemetryTimer != null)
-                TelemetryTimer.Dispose();
+            UpdateTimer?.Dispose();
+            TelemetryTimer?.Dispose();
+            updateLock?.Dispose();
+            telemetryLock?.Dispose();
 
             GC.SuppressFinalize(this);
         }
