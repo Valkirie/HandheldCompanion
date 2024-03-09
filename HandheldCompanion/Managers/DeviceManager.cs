@@ -681,10 +681,11 @@ public static class DeviceManager
             // get the current list of adapters with Direct3D capabilities
             AdapterCollection adapters = new Direct3D().Adapters;
             List<Guid> adaptersGuids = adapters.Select(a => a.Details.DeviceIdentifier).ToList();
+            List<Guid> adaptersProcessed = new List<Guid>(); // keep track of processed adapter entries
 
             foreach (AdapterInformation adapterInformation in adapters)
             {
-                if (displayAdapters.Keys.Contains(adapterInformation.Details.DeviceIdentifier))
+                if (displayAdapters.Keys.Contains(adapterInformation.Details.DeviceIdentifier) || adaptersProcessed.Contains(adapterInformation.Details.DeviceIdentifier))
                 {
                     // known device
                 }
@@ -693,12 +694,13 @@ public static class DeviceManager
                     // added device
                     Debug.WriteLine("Adapter {0} was added", adapterInformation.Details.Description);
                     DisplayAdapterArrived?.Invoke(adapterInformation);
+                    adaptersProcessed.Add(adapterInformation.Details.DeviceIdentifier);
                 }
             }
 
             foreach (Guid deviceIdentifier in displayAdapters.Keys)
             {
-                if (adaptersGuids.Contains(deviceIdentifier))
+                if (adaptersGuids.Contains(deviceIdentifier) || adaptersProcessed.Contains(deviceIdentifier))
                 {
                     // known device
                 }
@@ -708,6 +710,7 @@ public static class DeviceManager
                     AdapterInformation adapterInformation = displayAdapters[deviceIdentifier];
                     Debug.WriteLine("Adapter {0} was removed", adapterInformation.Details.Description);
                     DisplayAdapterRemoved?.Invoke(adapterInformation);
+                    adaptersProcessed.Add(deviceIdentifier);
                 }
             }
 
