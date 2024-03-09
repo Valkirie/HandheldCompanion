@@ -256,8 +256,6 @@ namespace HandheldCompanion.Controllers
             bool touched = (TouchpadX != 0 || TouchpadY != 0);
 
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = touched;
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
-            Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
             // handle touchpad if passthrough is off
             if (!IsPassthrough)
@@ -382,6 +380,7 @@ namespace HandheldCompanion.Controllers
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = 0;
                 Inputs.AxisState[AxisFlags.RightPadY] = 0;
+                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
                 // If the touchpad was touched before
                 if (touchpadTouched)
@@ -406,6 +405,10 @@ namespace HandheldCompanion.Controllers
                         // Store tap time
                         lastTap = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                         lastTapPosition = touchpadPosition;
+                    }
+                    else
+                    {
+                        Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
                     }
 
                     // Set the touchpad long tapped flag to false

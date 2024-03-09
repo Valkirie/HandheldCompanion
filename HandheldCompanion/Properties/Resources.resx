@@ -2928,4 +2928,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
+  <data name="Enum.LegionController.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Double tap</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.RightPadClickDown" xml:space="preserve">
+    <value>Hold</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Touch</value>
+  </data>
 </root>
