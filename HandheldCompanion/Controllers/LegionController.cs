@@ -100,6 +100,15 @@ namespace HandheldCompanion.Controllers
 
         public LegionController(PnPDetails details) : base(details)
         {
+            // get long press time from system settings
+            SystemParametersInfo(0x006A, 0, ref LongPressTime, 0);
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            UpdateSettings();
+        }
+
+        protected override void InitializeInputOutput()
+        {
             // Additional controller specific source buttons
             SourceButtons.Add(ButtonFlags.RightPadTouch);
             SourceButtons.Add(ButtonFlags.RightPadClick);
@@ -120,12 +129,6 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
-
-            // get long press time from system settings
-            SystemParametersInfo(0x006A, 0, ref LongPressTime, 0);
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            UpdateSettings();
         }
 
         protected override void UpdateSettings()
