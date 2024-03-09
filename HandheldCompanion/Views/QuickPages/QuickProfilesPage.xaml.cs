@@ -249,7 +249,10 @@ public partial class QuickProfilesPage : Page
     }
 
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
-    {        
+    {
+        if (selectedProfile is null)
+            return;
+
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread (async)
