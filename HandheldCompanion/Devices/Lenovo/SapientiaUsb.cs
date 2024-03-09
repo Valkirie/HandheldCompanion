@@ -130,6 +130,9 @@ namespace HandheldCompanion.Devices.Lenovo
         //获取触摸板状态 tatus：0:关，1:开
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern int GetTouchPadStatus();
+        //获取触摸板状态    status：0:关，1:开
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern int GetTrackpadStatus(int device);
         //设置触摸板状态 status：0:关，1:开
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern bool SetTouchPadStatus(int iSwitch);

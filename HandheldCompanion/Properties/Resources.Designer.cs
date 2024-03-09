@@ -2538,6 +2538,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Double tap.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_RightPadClick {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.RightPadClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hold.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_RightPadClickDown {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.RightPadClickDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Touch.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_RightPadTouch {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.RightPadTouch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LegionR.
         /// </summary>
         public static string Enum_LegionGo_ButtonFlags_OEM1 {
