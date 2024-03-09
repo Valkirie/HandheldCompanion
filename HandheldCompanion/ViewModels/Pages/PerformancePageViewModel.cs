@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
@@ -11,6 +11,7 @@ using LiveCharts.Helpers;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
@@ -393,16 +394,18 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private int _selectedPresetIndex; 
+        private int _selectedPresetIndex;
         public int SelectedPresetIndex
         {
             get => _selectedPresetIndex;
             set
             {
-                if (value != _selectedPresetIndex)
+                // Ensure the index is within the bounds of the collection
+                if (value != _selectedPresetIndex && value >= 0 && value < ProfilePickerItems.Count)
                 {
-                    _selectedPresetIndex = value;
-                    _selectedPreset = PowerProfileManager.GetProfile(ProfilePickerItems.ElementAt(_selectedPresetIndex).LinkedPresetId.Value);
+                    _selectedPresetIndex = value;                    
+                    _selectedPreset = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndex].LinkedPresetId.Value);
+
                     OnPropertyChanged(string.Empty);
                 }
             }
@@ -436,8 +439,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public List<ProfilesPickerViewModel> ProfilePickerItems { get; } = [];
-
+        public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems { get; } = new ObservableCollection<ProfilesPickerViewModel>();
         public ICommand OpenModifyDialogCommand { get; private set; }
         public ICommand ConfirmModifyCommand { get; private set; }
         public ICommand CreatePresetCommand { get; private set; }
@@ -470,6 +472,8 @@ namespace HandheldCompanion.ViewModels
         public PerformancePageViewModel(bool isQuickTools)
         {
             _selectedPreset = PowerProfileManager.GetProfile(Guid.Empty);
+            _selectedPresetIndex = 1;
+
             IsQuickTools = isQuickTools;
 
             Formatter = x => x.ToString("N2");
@@ -514,11 +518,24 @@ namespace HandheldCompanion.ViewModels
 
             CreatePresetCommand = new DelegateCommand(() =>
             {
-                int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
+                // Get the count of profiles that are not default, then start with +1 of that
+                int count = PowerProfileManager.profiles.Values.Count(p => !p.IsDefault());
+                int idx = count + 1;
 
-                string Name = string.Format(Resources.PowerProfileManualName, idx);
-                PowerProfile powerProfile = new PowerProfile(Name, Resources.PowerProfileManualDescription);
+                // Create a base name for the new profile
+                string baseName = Resources.PowerProfileManualName;
 
+                // Check for duplicates and increment the index
+                while (PowerProfileManager.profiles.Values.Any(p => p.Name == string.Format(baseName, idx)))
+                    idx++;
+
+                // Format the name with the updated index
+                string name = string.Format(baseName, idx);
+
+                // Create the new power profile
+                PowerProfile powerProfile = new PowerProfile(name, Resources.PowerProfileManualDescription);
+
+                // Update or create the profile
                 PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
             });
 
@@ -567,8 +584,18 @@ namespace HandheldCompanion.ViewModels
 
                 ConfirmModifyCommand = new DelegateCommand(() =>
                 {
-                    PresetName = ModifyPresetName;
-                    PresetDescription = ModifyPresetDescription;
+                    // Update the name of the selected preset
+                    SelectedPreset.Name = ModifyPresetName;
+
+                    // Update the corresponding item in ProfilePickerItems
+                    var selectedItem = ProfilePickerItems.FirstOrDefault(item => item.LinkedPresetId == SelectedPreset.Guid);
+                    if (selectedItem != null)
+                    {                
+                        PresetName = ModifyPresetName;
+                        PresetDescription = ModifyPresetDescription;
+
+                        selectedItem.Text = ModifyPresetName;
+                    }
                 });
 
                 FanPresetSilentCommand = new DelegateCommand(() =>
