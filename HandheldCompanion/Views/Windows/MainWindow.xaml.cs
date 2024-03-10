@@ -88,9 +88,17 @@ public partial class MainWindow : GamepadWindow
     {
         // initialize splash screen
         SplashScreen = new SplashScreen();
+
+        // get first start
+        bool FirstStart = SettingsManager.GetBoolean("FirstStart");
+
+        if (FirstStart)
+        {
 #if !DEBUG
-        SplashScreen.Show();
+            SplashScreen.Show();
 #endif
+        }
+
         SplashScreen.LoadingSequence.Text = "Preparing UI...";
 
         InitializeComponent();
@@ -104,9 +112,6 @@ public partial class MainWindow : GamepadWindow
 
         // fix touch support
         TabletDeviceCollection tabletDevices = Tablet.TabletDevices;
-
-        // get first start
-        bool FirstStart = SettingsManager.GetBoolean("FirstStart");
 
         // define current directory
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;
