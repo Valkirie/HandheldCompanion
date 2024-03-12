@@ -30,7 +30,7 @@ namespace HandheldCompanion.ViewModels
 
         private void ProcessStopped(ProcessEx processEx)
         {
-            var foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+            ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is not null)
             {
                 Processes.SafeRemove(foundProcess);
@@ -40,7 +40,7 @@ namespace HandheldCompanion.ViewModels
 
         private void ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
-            var foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+            ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {
                 Processes.SafeAdd(new ProcessExViewModel(processEx));
