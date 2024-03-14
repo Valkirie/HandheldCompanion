@@ -177,7 +177,7 @@ namespace HandheldCompanion.Devices.Lenovo
         public static extern bool SetStickCustomDeadzone(int device, int deadzone);
 
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool GetGyroSensorDataOnorOff(int device);
+        public static extern bool SetGyroSensorDataOnorOff(int device, int status);
 
         // Range is 0-99 on Deadzone and Margin
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]

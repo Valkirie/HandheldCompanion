@@ -590,6 +590,86 @@
                 Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_Lenovo_Settings}" />
 
+                <Border
+                    Name="TouchpadPassthrough"
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xe772;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_TouchpadPassthrough"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_TouchpadPassthrough_Toggled" />
+                    </Grid>
+                </Border>
+
+                <Border
+                    Name="GyroController"
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE950;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="ComboBox_GyroController"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            SelectionChanged="ComboBox_GyroController_SelectionChanged">
+                            <ComboBoxItem Content="Left controller" />
+                            <ComboBoxItem Content="Right controller" />
+                        </ComboBox>
+                    </Grid>
+                </Border>
+
                 <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
                     <Expander.Header>
                         <Grid>

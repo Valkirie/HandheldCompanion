@@ -35,43 +35,45 @@ namespace HandheldCompanion.Managers
         private static void ControllerManager_ControllerSelected(IController Controller)
         {
             // select controller as current sensor if current sensor selection is none
-            if (sensorFamily == SensorFamily.None && Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
+            if (Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+            else
+                PickNextSensor();
         }
 
-        private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling)
+        private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
             if (sensorFamily != SensorFamily.Controller)
                 return;
 
             // skip if controller isn't current or doesn't have motion sensor anyway
-            if (!Controller.HasMotionSensor() || Controller != ControllerManager.GetTargetController())
+            if (!Controller.HasMotionSensor() || !WasTarget)
                 return;
-            
-            if (sensorFamily == SensorFamily.Controller)
-                PickNextSensor();
+
+            // pick next available sensor
+            PickNextSensor();
         }
 
         private static void DeviceManager_UsbDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
         {
-            if (USBSensor is null)
+            if (USBSensor is null || sensorFamily != SensorFamily.SerialUSBIMU)
                 return;
 
             // If the USB Gyro is unplugged, close serial connection
             USBSensor.Close();
 
-            if (sensorFamily == SensorFamily.SerialUSBIMU)
-                PickNextSensor();
+            // pick next available sensor
+            PickNextSensor();
         }
         
         private static void PickNextSensor()
         {
-            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
+            if (ControllerManager.GetTargetController() is not null && ControllerManager.GetTargetController().HasMotionSensor())
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
             else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
-            else if (ControllerManager.GetTargetController() is not null && ControllerManager.GetTargetController().HasMotionSensor())
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
             else
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
         }
