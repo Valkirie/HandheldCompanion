@@ -87,7 +87,7 @@ public static class HotkeysManager
         }
     }
 
-    private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling)
+    private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
         // when the target emulated controller is Xbox Controller
         // only enable HIDmode switch hotkey when controller is unplugged (last stage of HIDmode change in this case)

@@ -190,15 +190,13 @@ public static class ControllerManager
     private static void CurrentDevice_KeyReleased(ButtonFlags button)
     {
         // calls current controller (if connected)
-        var controller = GetTargetController();
-        controller?.InjectButton(button, false, true);
+        targetController?.InjectButton(button, false, true);
     }
 
     private static void CurrentDevice_KeyPressed(ButtonFlags button)
     {
         // calls current controller (if connected)
-        var controller = GetTargetController();
-        controller?.InjectButton(button, true, false);
+        targetController?.InjectButton(button, true, false);
     }
 
     private static void CheckControllerScenario()
@@ -580,13 +578,16 @@ public static class ControllerManager
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
+        // is controller current target ?
+        bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
+
         // unhide on remove 
         if (!IsPowerCycling)
         {
             controller.Unhide(false);
 
             // unplug controller, if needed
-            if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+            if (WasTarget)
                 ClearTargetController();
             else
                 controller.Unplug();
@@ -598,7 +599,7 @@ public static class ControllerManager
         LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
 
         // raise event
-        ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
     private static void watchdogThreadLoop(object? obj)
@@ -846,6 +847,9 @@ public static class ControllerManager
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
+        // is controller current target ?
+        bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
+
         // controller was unplugged
         if (!IsPowerCycling)
         {
@@ -853,7 +857,7 @@ public static class ControllerManager
             Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
 
             // controller is current target
-            if (targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+            if (WasTarget)
                 ClearTargetController();
             else
                 controller.Unplug();
@@ -862,7 +866,7 @@ public static class ControllerManager
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
-        ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
     private static object targetLock = new object();
@@ -1087,6 +1091,8 @@ public static class ControllerManager
             case SensorFamily.SerialUSBIMU:
                 SensorsManager.UpdateReport(controllerState);
                 break;
+            default:
+                break;
         }
 
         // pass to MotionManager for calculations
@@ -1141,7 +1147,7 @@ public static class ControllerManager
     public delegate void ControllerPluggedEventHandler(IController Controller, bool IsPowerCycling);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
-    public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling);
+    public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling, bool WasTarget);
 
     public static event ControllerSelectedEventHandler ControllerSelected;
     public delegate void ControllerSelectedEventHandler(IController Controller);

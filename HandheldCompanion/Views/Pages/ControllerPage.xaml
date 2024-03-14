@@ -544,45 +544,6 @@
                     </Grid>
                 </Border>
 
-                <!--  Touchpad passthrough (Legion Go)  -->
-                <Border
-                    Name="TouchpadPassthrough"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe772;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_TouchpadPassthrough"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_TouchpadPassthrough_Toggled" />
-                    </Grid>
-                </Border>
-
                 <!--  Clock on connect  -->
                 <Border
                     Padding="15,12,12,12"

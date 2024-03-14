@@ -137,6 +137,12 @@ namespace HandheldCompanion.Views.Pages
                     case "LEDUseSecondColor":
                         Toggle_UseSecondColor.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "LegionControllerPassthrough":
+                        Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LegionControllerGyroIndex":
+                        ComboBox_GyroController.SelectedIndex = Convert.ToInt32(value);
+                        break;
                 }
             });
         }
@@ -354,6 +360,22 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region Legion Go Device Settings
+
+        private void Toggle_TouchpadPassthrough_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
+        }
+
+        private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LegionControllerGyroIndex", ComboBox_GyroController.SelectedIndex);
+        }
 
         private void SliderLeftJoystickDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

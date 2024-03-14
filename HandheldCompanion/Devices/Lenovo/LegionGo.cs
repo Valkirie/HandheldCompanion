@@ -100,8 +100,8 @@ public class LegionGo : IDevice
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
 
-    public static int LeftJoyconIndex = 3;
-    public static int RightJoyconIndex = 4;
+    public const int LeftJoyconIndex = 3;
+    public const int RightJoyconIndex = 4;
 
     public LegionGo()
     {
@@ -208,6 +208,18 @@ public class LegionGo : IDevice
 
         Init();
 
+        // make sure both left and right gyros are enabled
+        SetLeftGyroStatus(1);
+        SetRightGyroStatus(1);
+
+        // make sure both left and right gyros are reporting values
+        SetGyroModeStatus(2, 1, 1);
+        SetGyroModeStatus(2, 2, 2);
+
+        // make sure both left and right gyros are reporting raw values
+        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
+        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+
         Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
         bool FanFullSpeed = task.Result;
     }
@@ -253,6 +265,7 @@ public class LegionGo : IDevice
         SetQuickLightingEffect(0, 1);
         SetQuickLightingEffect(3, 1);
         SetQuickLightingEffect(4, 1);
+
         SetQuickLightingEffectEnable(0, false);
         SetQuickLightingEffectEnable(3, false);
         SetQuickLightingEffectEnable(4, false);
