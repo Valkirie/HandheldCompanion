@@ -122,7 +122,8 @@ public static class InputsManager
     {
         // triggered when key is pressed for a long time
         currentChord.InputsType = InputsChordType.Long;
-        CheckForSequence(true, false);
+        if (CheckForSequence(true, false))
+            successChord.InputsType = InputsChordType.Long;
     }
 
     private static void InputsChordInput_Elapsed()
@@ -146,16 +147,15 @@ public static class InputsManager
 
         if (!IsListening)
         {
-            var keys = GetTriggersFromChord(currentChord);
-
+            List<string> keys = GetTriggersFromChord(currentChord);
             if (keys.Count != 0)
             {
                 LogManager.LogDebug("Captured: Buttons: {0}, Type: {1}, IsKeyDown: {2}", string.Join(',', currentChord.State.Buttons),
                     currentChord.InputsType, IsKeyDown);
 
-                foreach (var key in keys)
+                foreach (string key in keys)
                 {
-                    var hotkey = InputsHotkeys.Values.FirstOrDefault(item => item.Listener == key);
+                    InputsHotkey? hotkey = InputsHotkeys.Values.FirstOrDefault(item => item.Listener == key);
                     if (hotkey is null)
                         continue;
 
@@ -164,7 +164,7 @@ public static class InputsManager
                     // this takes care of repeated keybinds actions
                     if (hotkey.Listener == "shortcutChangeHIDMode")
                     {
-                        var inputType = currentChord.InputsType;
+                        InputsChordType inputType = currentChord.InputsType;
                         if ((inputType == InputsChordType.Click && IsKeyUp) || (inputType == InputsChordType.Long && IsKeyDown))
                         {
                             var hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
@@ -177,7 +177,7 @@ public static class InputsManager
                         }
                     }
 
-                    var chord = Triggers[key];
+                    InputsChord chord = Triggers[key];
                     switch (chord.InputsType)
                     {
                         case InputsChordType.Click:
@@ -574,7 +574,7 @@ public static class InputsManager
         {
             if (!successChord.State.IsEmpty())
             {
-                if(!successChord.State.Equals(buttonState))
+                if(!buttonState.Contains(successChord.State))
                 {
                     IsKeyDown = false;
                     IsKeyUp = true;
