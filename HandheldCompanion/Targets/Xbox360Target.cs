@@ -68,7 +68,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateReport(long ticks)
+        public override unsafe void UpdateReport(long ticks, float delta)
         {
             if (!IsConnected)
                 return;

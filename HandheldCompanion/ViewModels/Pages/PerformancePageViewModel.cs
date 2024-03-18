@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Resources = HandheldCompanion.Properties.Resources;
@@ -66,15 +68,15 @@ namespace HandheldCompanion.ViewModels
 
         #region Binding Properties
 
-        public double GPUFreqMinimum => MainWindow.CurrentDevice.GfxClock[0];
-        public double GPUFreqMaximum => MainWindow.CurrentDevice.GfxClock[1];
+        public double GPUFreqMinimum => IDevice.GetCurrent().GfxClock[0];
+        public double GPUFreqMaximum => IDevice.GetCurrent().GfxClock[1];
 
         public double CPUFreqMinimum => MotherboardInfo.ProcessorMaxTurboSpeed / 4.0d;
         public double CPUFreqMaximum => MotherboardInfo.ProcessorMaxTurboSpeed;
 
         public double CPUCoreMaximum => MotherboardInfo.NumberOfCores;
 
-        public bool SupportsSoftwareFanMode => MainWindow.CurrentDevice.Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
+        public bool SupportsSoftwareFanMode => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
 
         public bool SupportsAutoTDP
         {
@@ -176,7 +178,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                var tdpValues = SelectedPreset?.TDPOverrideValues ?? MainWindow.CurrentDevice.nTDP;
+                var tdpValues = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
                 return tdpValues[(int)PowerType.Slow];
             }
             set
@@ -541,14 +543,17 @@ namespace HandheldCompanion.ViewModels
 
             DeletePresetCommand = new DelegateCommand(async () => 
             {
-                var result = await Dialog.ShowAsync(
-                $"{Resources.ProfilesPage_AreYouSureDelete1} \"{SelectedPreset.Name}\"?",
-                $"{Resources.ProfilesPage_AreYouSureDelete2}",
-                ContentDialogButton.Primary,
-                $"{Resources.ProfilesPage_Cancel}",
-                $"{Resources.ProfilesPage_Delete}", string.Empty, isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent());
+                Task<ContentDialogResult> dialogTask = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
+                {
+                    Title = $"{Resources.ProfilesPage_AreYouSureDelete1} \"{SelectedPreset.Name}\"?",
+                    Content = Resources.ProfilesPage_AreYouSureDelete2,
+                    CloseButtonText = Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Resources.ProfilesPage_Delete
+                }.ShowAsync();
 
-                switch (result)
+                await dialogTask; // sync call
+
+                switch (dialogTask.Result)
                 {
                     case ContentDialogResult.Primary:
                         PowerProfileManager.DeleteProfile(SelectedPreset);
@@ -604,7 +609,7 @@ namespace HandheldCompanion.ViewModels
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
-                            _fanGraphLineSeries.ActualValues[idx] = MainWindow.CurrentDevice.fanPresets[0][idx];
+                            _fanGraphLineSeries.ActualValues[idx] = IDevice.GetCurrent().fanPresets[0][idx];
 
                         // Temporary until view dependencies could be removed
                         OnPropertyChanged("FanGraph");
@@ -617,7 +622,7 @@ namespace HandheldCompanion.ViewModels
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
-                            _fanGraphLineSeries.ActualValues[idx] = MainWindow.CurrentDevice.fanPresets[1][idx];
+                            _fanGraphLineSeries.ActualValues[idx] = IDevice.GetCurrent().fanPresets[1][idx];
 
                         // Temporary until view dependencies could be removed
                         OnPropertyChanged("FanGraph");
@@ -630,7 +635,7 @@ namespace HandheldCompanion.ViewModels
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
-                            _fanGraphLineSeries.ActualValues[idx] = MainWindow.CurrentDevice.fanPresets[2][idx];
+                            _fanGraphLineSeries.ActualValues[idx] = IDevice.GetCurrent().fanPresets[2][idx];
 
                         // Temporary until view dependencies could be removed
                         OnPropertyChanged("FanGraph");

@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
@@ -275,10 +276,10 @@ public static class PerformanceManager
         {
             default:
             case FanMode.Hardware:
-                MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
+                IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
                 break;
             case FanMode.Software:
-                MainWindow.CurrentDevice.SetFanControl(true);
+                IDevice.GetCurrent().SetFanControl(true);
                 break;
         }
     }
@@ -333,13 +334,13 @@ public static class PerformanceManager
         RequestPowerMode(OSPowerMode.BetterPerformance);
 
         // restore default Fan mode
-        MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
+        IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
     }
 
     private static void RestoreTDP(bool immediate)
     {
         for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
-            RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
+            RequestTDP(pType, IDevice.GetCurrent().cTDP[1], immediate);
     }
 
     private static void RestoreCPUClock(bool immediate)

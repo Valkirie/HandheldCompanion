@@ -1836,15 +1836,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Joystick camera.
-        /// </summary>
-        public static string Enum_Input_JoystickCamera {
-            get {
-                return ResourceManager.GetString("Enum.Input.JoystickCamera", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Joystick steering.
         /// </summary>
         public static string Enum_Input_JoystickSteering {
@@ -1854,11 +1845,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Local space.
+        /// </summary>
+        public static string Enum_Input_LocalSpace {
+            get {
+                return ResourceManager.GetString("Enum.Input.LocalSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Player space.
         /// </summary>
         public static string Enum_Input_PlayerSpace {
             get {
                 return ResourceManager.GetString("Enum.Input.PlayerSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World space.
+        /// </summary>
+        public static string Enum_Input_WorldSpace {
+            get {
+                return ResourceManager.GetString("Enum.Input.WorldSpace", resourceCulture);
             }
         }
         
@@ -2601,24 +2610,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Joystick Camera.
-        /// </summary>
-        public static string Enum_MotionInput_JoystickCamera {
-            get {
-                return ResourceManager.GetString("Enum.MotionInput.JoystickCamera", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
-        /// </summary>
-        public static string Enum_MotionInput_JoystickCamera_Desc {
-            get {
-                return ResourceManager.GetString("Enum.MotionInput.JoystickCamera.Desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Joystick Steering.
         /// </summary>
         public static string Enum_MotionInput_JoystickSteering {
@@ -2637,7 +2628,25 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Player Space.
+        ///   Looks up a localized string similar to Local space.
+        /// </summary>
+        public static string Enum_MotionInput_LocalSpace {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.LocalSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input is based on the controller’s orientation, independent of the game world or character..
+        /// </summary>
+        public static string Enum_MotionInput_LocalSpace_Desc {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.LocalSpace.Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player space.
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace {
             get {
@@ -2646,11 +2655,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
+        ///   Looks up a localized string similar to Input is aligned with the player character’s orientation in the game, allowing for intuitive aiming and movement..
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace_Desc {
             get {
                 return ResourceManager.GetString("Enum.MotionInput.PlayerSpace.Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World space.
+        /// </summary>
+        public static string Enum_MotionInput_WorldSpace {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.WorldSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input is mapped to the game world’s axes, providing consistent directional input regardless of the player character’s orientation..
+        /// </summary>
+        public static string Enum_MotionInput_WorldSpace_Desc {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.WorldSpace.Desc", resourceCulture);
             }
         }
         
@@ -8045,6 +8072,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_RivaTunerStatisticsServerDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_RivaTunerStatisticsServerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor calibration.
+        /// </summary>
+        public static string SettingsPage_SensorCalibration {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorCalibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Will calibrate your device IMU sensor.
+        /// </summary>
+        public static string SettingsPage_SensorCalibrationDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorCalibrationDesc", resourceCulture);
             }
         }
         

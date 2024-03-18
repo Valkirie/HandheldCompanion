@@ -1537,8 +1537,8 @@
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
-    <value>Joystick camera</value>
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
     <value>Joystick steering</value>
@@ -1750,14 +1750,14 @@
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
-    <value>Joystick Camera</value>
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
     <value>Joystick Steering</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
-    <value>Player Space</value>
+    <value>Player space</value>
   </data>
   <data name="Enum.MotionOuput.LeftStick" xml:space="preserve">
     <value>LeftStick</value>
@@ -2086,7 +2086,7 @@
   <data name="LayoutPage_Triggers" xml:space="preserve">
     <value>Triggers</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
   </data>
   <data name="MainWindow_Back" xml:space="preserve">

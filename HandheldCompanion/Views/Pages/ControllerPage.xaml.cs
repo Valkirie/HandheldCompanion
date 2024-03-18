@@ -3,8 +3,10 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -189,16 +191,18 @@ public partial class ControllerPage : Page
             if (status == 2)
             {
                 // todo: translate me
-                var result = Dialog.ShowAsync(
-                    Properties.Resources.SettingsPage_UpdateWarning,
-                    $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
-                    ContentDialogButton.Close,
-                    Properties.Resources.ControllerPage_TryAgain,
-                    Properties.Resources.ControllerPage_Close, string.Empty, MainWindow.GetCurrent());
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = Properties.Resources.SettingsPage_UpdateWarning,
+                    Content = $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
+                    DefaultButton = ContentDialogButton.Close,
+                    CloseButtonText = Properties.Resources.ControllerPage_Close,
+                    PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain
+                }.ShowAsync();
 
-                await result; // sync call
+                await dialogTask; // sync call
 
-                switch (result.Result)
+                switch (dialogTask.Result)
                 {
                     default:
                     case ContentDialogResult.Primary:

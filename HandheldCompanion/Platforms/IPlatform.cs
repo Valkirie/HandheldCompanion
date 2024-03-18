@@ -149,7 +149,11 @@ public abstract class IPlatform : IDisposable
     public virtual void Dispose()
     {
         if (PlatformWatchdog is not null)
+        {
+            PlatformWatchdog.Stop();
             PlatformWatchdog.Dispose();
+            PlatformWatchdog = null;
+        }
 
         GC.SuppressFinalize(this);
     }

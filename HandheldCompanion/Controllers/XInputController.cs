@@ -54,7 +54,7 @@ public class XInputController : IController
         return $"XInput Controller {(UserIndex)UserIndex}";
     }
 
-    public virtual void UpdateInputs(long ticks, bool commit)
+    public virtual void UpdateInputs(long ticks, float delta, bool commit)
     {
         // skip if controller isn't connected
         if (!IsConnected())
@@ -121,7 +121,7 @@ public class XInputController : IController
         catch { }
 
         if (commit)
-            base.UpdateInputs(ticks);
+            base.UpdateInputs(ticks, delta);
     }
 
     public override bool IsConnected()
@@ -149,13 +149,13 @@ public class XInputController : IController
 
     public override void Plug()
     {
-        TimerManager.Tick += (ticks) => UpdateInputs(ticks, true);
+        TimerManager.Tick += (ticks, delta) => UpdateInputs(ticks, delta, true);
         base.Plug();
     }
 
     public override void Unplug()
     {
-        TimerManager.Tick -= (ticks) => UpdateInputs(ticks, true);
+        TimerManager.Tick -= (ticks, delta) => UpdateInputs(ticks, delta, true);
         base.Unplug();
     }
 

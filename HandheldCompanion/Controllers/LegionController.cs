@@ -1,8 +1,9 @@
-﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HidLibrary;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -10,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
+using static JSL;
 
 namespace HandheldCompanion.Controllers
 {
@@ -100,6 +102,7 @@ namespace HandheldCompanion.Controllers
 
         public LegionController(PnPDetails details) : base(details)
         {
+            // Capabilities
             Capabilities |= ControllerCapabilities.MotionSensor;
 
             // get long press time from system settings
@@ -107,6 +110,11 @@ namespace HandheldCompanion.Controllers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             UpdateSettings();
+        }
+
+        public override string ToString()
+        {
+            return $"Legion Controller for Windows";
         }
 
         protected override void InitializeInputOutput()
@@ -233,13 +241,13 @@ namespace HandheldCompanion.Controllers
             base.Unplug();
         }
 
-        public override void UpdateInputs(long ticks, bool commit)
+        public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
             if (!IsConnected())
                 return;
 
-            base.UpdateInputs(ticks, false);
+            base.UpdateInputs(ticks, delta, false);
 
             FrontEnum frontButton = (FrontEnum)Data[FRONT_IDX];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
@@ -275,54 +283,46 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.RightStickY] -= (short)InputUtils.MapRange(Data[32], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
             */
 
-            short aX, aZ, aY = 0;
-            short gX, gZ, gY = 0;
+            float aX, aZ, aY = 0;
+            float gX, gZ, gY = 0;
 
             switch (GyroIndex)
             {
                 default:
                 case LegionGo.LeftJoyconIndex:
                     {
-                        aX = (short)(Data[34] << 8 | Data[35]);
-                        aZ = (short)(Data[36] << 8 | Data[37]);
-                        aY = (short)(Data[38] << 8 | Data[39]);
+                        aX = (short)(Data[34] << 8 | Data[35]) * -(2.0f / short.MaxValue);
+                        aZ = (short)(Data[36] << 8 | Data[37]) * -(2.0f / short.MaxValue);
+                        aY = (short)(Data[38] << 8 | Data[39]) * -(2.0f / short.MaxValue);
 
-                        Inputs.GyroState.Accelerometer.X = aX * (2.0f / short.MaxValue);
-                        Inputs.GyroState.Accelerometer.Y = aY * (2.0f / short.MaxValue);
-                        Inputs.GyroState.Accelerometer.Z = aZ * -(2.0f / short.MaxValue);
-
-                        gX = (short)(Data[40] << 8 | Data[41]);
-                        gZ = (short)(Data[42] << 8 | Data[43]);
-                        gY = (short)(Data[44] << 8 | Data[45]);
-
-                        Inputs.GyroState.Gyroscope.X = gX * -(2048.0f / short.MaxValue);
-                        Inputs.GyroState.Gyroscope.Y = gY * (2048.0f / short.MaxValue);
-                        Inputs.GyroState.Gyroscope.Z = gZ * -(2048.0f / short.MaxValue);
+                        gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
+                        gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
+                        gY = (short)(Data[44] << 8 | Data[45]) * -(2000.0f / short.MaxValue);
                     }
                     break;
 
                 case LegionGo.RightJoyconIndex:
                     {
-                        aX = (short)(Data[49] << 8 | Data[50]);
-                        aZ = (short)(Data[47] << 8 | Data[48]);
-                        aY = (short)(Data[51] << 8 | Data[52]);
+                        aX = (short)(Data[49] << 8 | Data[50]) * -(2.0f / short.MaxValue);
+                        aZ = (short)(Data[47] << 8 | Data[48]) * (2.0f / short.MaxValue);
+                        aY = (short)(Data[51] << 8 | Data[52]) * -(2.0f / short.MaxValue);
 
-                        Inputs.GyroState.Accelerometer.X = aX * (2.0f / short.MaxValue);
-                        Inputs.GyroState.Accelerometer.Y = aY * (2.0f / short.MaxValue);
-                        Inputs.GyroState.Accelerometer.Z = aZ * (2.0f / short.MaxValue);
-
-                        gX = (short)(Data[55] << 8 | Data[56]);
-                        gZ = (short)(Data[53] << 8 | Data[54]);
-                        gY = (short)(Data[57] << 8 | Data[58]);
-
-                        Inputs.GyroState.Gyroscope.X = gX * -(2048.0f / short.MaxValue);
-                        Inputs.GyroState.Gyroscope.Y = gY * (2048.0f / short.MaxValue);
-                        Inputs.GyroState.Gyroscope.Z = gZ * (2048.0f / short.MaxValue);
+                        gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
+                        gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
+                        gY = (short)(Data[57] << 8 | Data[58]) * -(2000.0f / short.MaxValue);
                     }
                     break;
             }
 
-            base.UpdateInputs(ticks);
+            // Store motion
+            Inputs.GyroState.Gyroscope.X = gX;
+            Inputs.GyroState.Gyroscope.Y = gY;
+            Inputs.GyroState.Gyroscope.Z = gZ;
+            Inputs.GyroState.Accelerometer.X = aX;
+            Inputs.GyroState.Accelerometer.Y = aY;
+            Inputs.GyroState.Accelerometer.Z = aZ;
+
+            base.UpdateInputs(ticks, delta);
         }
 
         private async void dataThreadLoop(object? obj)

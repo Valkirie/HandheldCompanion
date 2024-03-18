@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Windows.Devices.Sensors;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Sensors;
@@ -30,7 +31,6 @@ public abstract class IMUSensor : IDisposable
     protected static SensorSpec sensorSpec;
 
     protected bool disposed;
-    public OneEuroFilter3D filter = new();
     protected Vector3 reading = new();
 
     protected Dictionary<char, double> reading_axis = new()
@@ -48,8 +48,7 @@ public abstract class IMUSensor : IDisposable
     public delegate void ReadingUpdatedEventHandler();
 
     protected IMUSensor()
-    {
-    }
+    { }
 
     public virtual void Dispose()
     {
@@ -75,6 +74,22 @@ public abstract class IMUSensor : IDisposable
     public override string ToString()
     {
         return GetType().Name;
+    }
+
+    public string GetInstanceId()
+    {
+        if (sensor is not null)
+        {
+            switch (sensorFamily)
+            {
+                case SensorFamily.Windows:
+                    return ((Gyrometer)sensor).DeviceId;
+                case SensorFamily.SerialUSBIMU:
+                    return ((SerialUSBIMU)sensor).USBDevice.DeviceId;
+            }
+        }
+
+        return string.Empty;
     }
 
     protected virtual void Dispose(bool disposing)

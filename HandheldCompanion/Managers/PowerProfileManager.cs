@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
@@ -39,7 +40,7 @@ namespace HandheldCompanion.Managers
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
-            foreach (var devicePowerProfile in MainWindow.CurrentDevice.DevicePowerProfiles)
+            foreach (PowerProfile devicePowerProfile in IDevice.GetCurrent().DevicePowerProfiles)
             {
                 if(!profiles.ContainsKey(devicePowerProfile.Guid))
                     UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
@@ -76,7 +77,7 @@ namespace HandheldCompanion.Managers
                     return;
                 case FanMode.Software:
                     double fanSpeed = currentProfile.FanProfile.GetFanSpeed();
-                    MainWindow.CurrentDevice.SetFanDuty(fanSpeed);
+                    IDevice.GetCurrent().SetFanDuty(fanSpeed);
                     return;
             }
         }

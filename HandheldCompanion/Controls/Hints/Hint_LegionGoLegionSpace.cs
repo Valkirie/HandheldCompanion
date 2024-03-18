@@ -31,7 +31,7 @@ namespace HandheldCompanion.Controls.Hints
 
         public Hint_LegionGoLegionSpace() : base()
         {
-            if (MainWindow.CurrentDevice is not LegionGo)
+            if (IDevice.GetCurrent() is not LegionGo)
                 return;
 
             // Get all the services installed on the local computer

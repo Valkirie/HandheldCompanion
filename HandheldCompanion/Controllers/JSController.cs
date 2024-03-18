@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -19,8 +20,6 @@ public class JSController : IController
     protected float LeftThumbDeadZone = 0.24f;
     protected float RightThumbDeadZone = 0.265f;
 
-    protected Timer calibrateTimer = new Timer(5000) { AutoReset = false };
-
     public JSController()
     { }
 
@@ -29,12 +28,8 @@ public class JSController : IController
         AttachJoySettings(settings);
         AttachDetails(details);
 
-        // timer(s)
-        calibrateTimer.Elapsed += CalibrateTimer_Elapsed;
-
         // Capabilities
         Capabilities |= ControllerCapabilities.MotionSensor;
-        Capabilities |= ControllerCapabilities.Calibration;
 
         // UI
         DrawUI();
@@ -56,12 +51,12 @@ public class JSController : IController
         return $"JoyShock Controller {UserIndex}";
     }
 
-    public override void UpdateInputs(long ticks)
+    public override void UpdateInputs(long ticks, float delta)
     {
-        base.UpdateInputs(ticks);
+        base.UpdateInputs(ticks, delta);
     }
 
-    public virtual void UpdateState()
+    public virtual void UpdateState(float delta)
     {
         // skip if controller isn't connected
         if (!IsConnected())
@@ -122,13 +117,14 @@ public class JSController : IController
 
         // IMU
         iMU_STATE = JslGetIMUState(UserIndex);
-        Inputs.GyroState.Accelerometer.X = -iMU_STATE.accelX;
-        Inputs.GyroState.Accelerometer.Y = -iMU_STATE.accelY;
-        Inputs.GyroState.Accelerometer.Z = iMU_STATE.accelZ;
 
+        // Store motion
         Inputs.GyroState.Gyroscope.X = iMU_STATE.gyroX;
-        Inputs.GyroState.Gyroscope.Y = -iMU_STATE.gyroY;
+        Inputs.GyroState.Gyroscope.Y = iMU_STATE.gyroY;
         Inputs.GyroState.Gyroscope.Z = iMU_STATE.gyroZ;
+        Inputs.GyroState.Accelerometer.X = iMU_STATE.accelX;
+        Inputs.GyroState.Accelerometer.Y = iMU_STATE.accelY;
+        Inputs.GyroState.Accelerometer.Z = iMU_STATE.accelZ;
     }
 
     public override bool IsConnected()
@@ -149,22 +145,6 @@ public class JSController : IController
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
         JslSetRumble(UserIndex, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength));
-    }
-
-    protected override void Calibrate()
-    {
-        // start calibration
-        JslResetContinuousCalibration(UserIndex);
-        JslStartContinuousCalibration(UserIndex);
-
-        calibrateTimer.Start();
-
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            ui_button_calibrate.Content = "Calibrating";
-            ui_button_calibrate.IsEnabled = false;
-        });
     }
 
     public override void CyclePort()
@@ -191,32 +171,9 @@ public class JSController : IController
         }
     }
 
-    protected override void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
-    {
-        // start calibration
-        Calibrate();
-
-        base.ui_button_calibrate_Click(sender, e);
-    }
-
-    private void CalibrateTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        // stop calibration
-        JslPauseContinuousCalibration(UserIndex);
-
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            ui_button_calibrate.Content = "Calibrate";
-            ui_button_calibrate.IsEnabled = true;
-        });
-    }
-
     public void AttachJoySettings(JOY_SETTINGS settings)
     {
         this.sSETTINGS = settings;
         this.UserIndex = (byte)settings.playerNumber;
-
-        JslSetAutomaticCalibration(UserIndex, true);
     }
 }

@@ -35,12 +35,12 @@ public class USBDeviceInfo
             PID = mPID.Groups[1].Value;
     }
 
-    public string DeviceId { get; set; } = "0";
-    public string Name { get; set; } = "N/A";
-    public string Description { get; set; } = "N/A";
-    public string Caption { get; set; } = "N/A";
-    public string PID { get; set; } = "0x00";
-    public string VID { get; set; } = "0x00";
+    public string DeviceId { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Caption { get; set; } = string.Empty;
+    public string PID { get; set; } = string.Empty;
+    public string VID { get; set; } = string.Empty;
 
     public override string ToString()
     {

@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Views;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool IsOEMEnabled => MainWindow.CurrentDevice.OEMButtons.Any();
+        public bool IsOEMEnabled => IDevice.GetCurrent().OEMButtons.Any();
 
         public List<ButtonStackViewModel> ABXYStacks { get; private set; } = [];
         public List<ButtonStackViewModel> BUMPERSStacks { get; private set; } = [];
@@ -99,7 +100,7 @@ namespace HandheldCompanion.ViewModels
                 BACKGRIPSStacks.Add(new ButtonStackViewModel(flag));
             }
 
-            foreach (var flag in MainWindow.CurrentDevice.OEMButtons)
+            foreach (var flag in IDevice.GetCurrent().OEMButtons)
             {
                 OEMStacks.Add(new ButtonStackViewModel(flag));
             }

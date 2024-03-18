@@ -1606,7 +1606,7 @@
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
         <value>Scambio automatico beccheggio-rollio</value>
     </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
         <value>Joystick telecamera</value>
     </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
@@ -1714,7 +1714,7 @@
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
         <value>Menu</value>
     </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
         <value>Questo input funzionerà come un semplice joystick. È destinato alle applicazioni joystick tradizionali</value>
     </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
@@ -1759,7 +1759,7 @@
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
         <value>Scambio automatico beccheggio-rollio</value>
     </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
         <value>Joystick telecamera</value>
     </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">

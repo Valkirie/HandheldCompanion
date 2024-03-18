@@ -1,6 +1,7 @@
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
@@ -204,7 +205,7 @@ public static class InputsManager
             }
 
             // get the associated keys
-            foreach (var chord in MainWindow.CurrentDevice.OEMChords.Where(a => currentChord.State.Contains(a.state)))
+            foreach (DeviceChord? chord in IDevice.GetCurrent().OEMChords.Where(a => currentChord.State.Contains(a.state)))
             {
                 // it could be the currentChord isn't mapped but a InputsChordType.Long is
                 currentChord.InputsType = InputsChordType.Long;
@@ -308,7 +309,7 @@ public static class InputsManager
             return;
         }
 
-        foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
+        foreach (DeviceChord? pair in IDevice.GetCurrent().OEMChords.Where(a => !a.silenced))
         {
             List<KeyCode> chord = pair.chords[args.IsKeyDown];
             if (KeyIndex >= chord.Count)
@@ -353,7 +354,7 @@ public static class InputsManager
             // search for matching triggers
             List<KeyCode> buffer_keys = GetChord(BufferKeys);
 
-            foreach (DeviceChord? chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
+            foreach (DeviceChord? chord in IDevice.GetCurrent().OEMChords.Where(a =>
                          a.chords[args.IsKeyDown].Count == BufferKeys.Count))
             {
                 // compare ordered enumerable
@@ -474,7 +475,7 @@ public static class InputsManager
 
     public static void Start()
     {
-        if (MainWindow.CurrentDevice.HasKey())
+        if (IDevice.GetCurrent().HasKey())
             InitGlobalHook();
 
         IsInitialized = true;
@@ -626,7 +627,7 @@ public static class InputsManager
 
     public static void StartListening(Hotkey hotkey, ListenerType type)
     {
-        if (!MainWindow.CurrentDevice.HasKey())
+        if (!IDevice.GetCurrent().HasKey())
             InitGlobalHook();
 
         // force expiration on previous listener, if any
@@ -660,7 +661,7 @@ public static class InputsManager
 
     private static void StopListening(InputsChord inputsChord = null)
     {
-        if (!MainWindow.CurrentDevice.HasKey())
+        if (!IDevice.GetCurrent().HasKey())
             DisposeGlobalHook();
 
         if (inputsChord is null)

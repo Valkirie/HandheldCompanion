@@ -34,8 +34,8 @@ public partial class QuickDevicePage : Page
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
 
-        LegionGoPanel.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Collapsed;
-        DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+        LegionGoPanel.Visibility = IDevice.GetCurrent() is LegionGo ? Visibility.Visible : Visibility.Collapsed;
+        DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
 
         NightLightToggle.IsEnabled = NightLight.Supported;
         NightLightToggle.IsOn = NightLight.Enabled;
@@ -267,7 +267,7 @@ public partial class QuickDevicePage : Page
 
     private void Toggle_cFFanSpeed_Toggled(object sender, RoutedEventArgs e)
     {
-        if (MainWindow.CurrentDevice is LegionGo device)
+        if (IDevice.GetCurrent() is LegionGo device)
         {
             ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
             device.SetFanFullSpeedAsync(toggleSwitch.IsOn);

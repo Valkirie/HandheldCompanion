@@ -1567,7 +1567,7 @@
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>重力軸向切換</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
     <value>體感視角</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
@@ -1630,7 +1630,7 @@
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手動</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
     <value>這個模式將反轉X軸，適用於將陀螺儀模擬滑鼠。</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
@@ -1732,7 +1732,7 @@
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>重力切換模式</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
     <value>X軸反轉模式</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">

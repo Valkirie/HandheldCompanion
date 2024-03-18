@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -65,7 +66,7 @@ public static class ProfileManager
         // check for default profile
         if (!HasDefault())
         {
-            Layout deviceLayout = MainWindow.CurrentDevice.DefaultLayout.Clone() as Layout;
+            Layout deviceLayout = IDevice.GetCurrent().DefaultLayout.Clone() as Layout;
             Profile defaultProfile = new()
             {
                 Name = DefaultName,

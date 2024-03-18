@@ -120,7 +120,7 @@ public class LegionGo : IDevice
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
-        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -128,7 +128,7 @@ public class LegionGo : IDevice
             { 'Z', 'Y' }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

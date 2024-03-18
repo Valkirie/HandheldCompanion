@@ -20,6 +20,7 @@ public class AOKZOEA1 : IDevice
         GfxClock = new double[] { 100, 2200 };
         CpuClock = 4700;
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -27,7 +28,7 @@ public class AOKZOEA1 : IDevice
             { 'Z', 'Y' }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

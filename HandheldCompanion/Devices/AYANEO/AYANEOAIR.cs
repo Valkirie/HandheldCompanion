@@ -19,6 +19,7 @@ public class AYANEOAIR : AYANEO.AYANEODevice
         GfxClock = new double[] { 100, 1600 };
         CpuClock = 4000;
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -26,7 +27,7 @@ public class AYANEOAIR : AYANEO.AYANEODevice
             { 'Z', 'Y' }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

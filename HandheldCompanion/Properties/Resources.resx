@@ -1713,8 +1713,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
-    <value>Joystick camera</value>
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
     <value>Joystick steering</value>
@@ -1821,14 +1821,14 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
-    <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
+    <value>Input is mapped to the game world’s axes, providing consistent directional input regardless of the player character’s orientation.</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
-    <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
+    <value>Input is aligned with the player character’s orientation in the game, allowing for intuitive aiming and movement.</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
     <value>Handheld Companion</value>
@@ -1866,14 +1866,14 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
-    <value>Joystick Camera</value>
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
     <value>Joystick Steering</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
-    <value>Player Space</value>
+    <value>Player space</value>
   </data>
   <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
     <value>Left Stick</value>
@@ -2936,5 +2936,20 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="Enum.LegionController.ButtonFlags.RightPadTouch" xml:space="preserve">
     <value>Touch</value>
+  </data>
+  <data name="Enum.Input.LocalSpace" xml:space="preserve">
+    <value>Local space</value>
+  </data>
+  <data name="Enum.MotionInput.LocalSpace" xml:space="preserve">
+    <value>Local space</value>
+  </data>
+  <data name="Enum.MotionInput.LocalSpace.Desc" xml:space="preserve">
+    <value>Input is based on the controller’s orientation, independent of the game world or character.</value>
+  </data>
+  <data name="SettingsPage_SensorCalibration" xml:space="preserve">
+    <value>Sensor calibration</value>
+  </data>
+  <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
+    <value>Will calibrate your device IMU sensor</value>
   </data>
 </root>

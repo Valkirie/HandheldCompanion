@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Views;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace HandheldCompanion.ViewModels
 
         protected override void UpdateController(IController controller)
         {
-            IsEnabled = controller.HasSourceAxis(_pageLayoutFlags) || MainWindow.CurrentDevice.HasMotionSensor();
+            IsEnabled = controller.HasSourceAxis(_pageLayoutFlags) || IDevice.GetCurrent().HasMotionSensor();
         }
     }
 }

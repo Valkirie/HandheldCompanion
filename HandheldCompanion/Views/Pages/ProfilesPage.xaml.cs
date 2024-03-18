@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -313,16 +314,17 @@ public partial class ProfilesPage : Page
                 // check on path rather than profile
                 if (ProfileManager.Contains(path))
                 {
-                    var result = Dialog.ShowAsync(
-                        string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
-                        string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
-                        ContentDialogButton.Primary,
-                        $"{Properties.Resources.ProfilesPage_Cancel}",
-                        $"{Properties.Resources.ProfilesPage_Yes}", string.Empty, MainWindow.GetCurrent());
+                    Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                    {
+                        Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
+                        Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
+                        CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                        PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+                    }.ShowAsync();
 
-                    await result; // sync call
+                    await dialogTask; // sync call
 
-                    switch (result.Result)
+                    switch (dialogTask.Result)
                     {
                         case ContentDialogResult.Primary:
                             exists = false;
@@ -354,8 +356,6 @@ public partial class ProfilesPage : Page
         switch (((GyroActions)currentAction).MotionInput)
         {
             default:
-            case MotionInput.JoystickCamera:
-            case MotionInput.PlayerSpace:
                 page0.SetProfile();
                 MainWindow.NavView_Navigate(page0);
                 break;
@@ -700,15 +700,17 @@ public partial class ProfilesPage : Page
         if (selectedProfile is null)
             return;
 
-        var result = Dialog.ShowAsync(
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedMainProfile.Name}\"?",
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
-            ContentDialogButton.Primary,
-            $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, MainWindow.GetCurrent());
-        await result; // sync call
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedMainProfile.Name}\"?",
+            Content = Properties.Resources.ProfilesPage_AreYouSureDelete2,
+            CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+            PrimaryButtonText = Properties.Resources.ProfilesPage_Delete
+        }.ShowAsync();
 
-        switch (result.Result)
+        await dialogTask; // sync call
+
+        switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
                 ProfileManager.DeleteProfile(selectedMainProfile);
@@ -1212,16 +1214,17 @@ public partial class ProfilesPage : Page
         Profile subProfile = (Profile)cb_SubProfilePicker.SelectedItem;
 
         // user confirmation
-        var result = Dialog.ShowAsync(
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{subProfile.Name}\"?",
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
-            ContentDialogButton.Primary,
-            $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, MainWindow.GetCurrent());
-        await result; // sync call
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{subProfile.Name}\"?",
+            Content = Properties.Resources.ProfilesPage_AreYouSureDelete2,
+            CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+            PrimaryButtonText = Properties.Resources.ProfilesPage_Delete
+        }.ShowAsync();
 
-        // delete sub profile if confirmed
-        switch (result.Result)
+        await dialogTask; // sync call
+
+        switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
                 ProfileManager.DeleteSubProfile(subProfile);

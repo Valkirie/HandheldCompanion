@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Processors;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
@@ -148,7 +149,7 @@ public static class SettingsManager
                     var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideDown"]);
                     return TDPoverride
                         ? Properties.Settings.Default["ConfigurableTDPOverrideDown"]
-                        : MainWindow.CurrentDevice.cTDP[0];
+                        : IDevice.GetCurrent().cTDP[0];
                 }
 
             case "ConfigurableTDPOverrideUp":
@@ -158,7 +159,7 @@ public static class SettingsManager
                     var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideUp"]);
                     return TDPoverride
                         ? Properties.Settings.Default["ConfigurableTDPOverrideUp"]
-                        : MainWindow.CurrentDevice.cTDP[1];
+                        : IDevice.GetCurrent().cTDP[1];
                 }
 
             case "QuickToolsPerformanceTDPValue":
@@ -168,7 +169,7 @@ public static class SettingsManager
                     var TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPValue"]);
                     return TDPvalue != 0
                         ? Properties.Settings.Default["QuickToolsPerformanceTDPValue"]
-                        : MainWindow.CurrentDevice.nTDP[(int)PowerType.Slow];
+                        : IDevice.GetCurrent().nTDP[(int)PowerType.Slow];
                 }
 
             case "QuickToolsPerformanceTDPBoostValue":
@@ -178,7 +179,7 @@ public static class SettingsManager
                     var TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]);
                     return TDPvalue != 0
                         ? Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]
-                        : MainWindow.CurrentDevice.nTDP[(int)PowerType.Fast];
+                        : IDevice.GetCurrent().nTDP[(int)PowerType.Fast];
                 }
 
             case "QuickToolsPerformanceGPUValue":

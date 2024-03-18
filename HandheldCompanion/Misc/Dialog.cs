@@ -1,37 +1,55 @@
 ﻿using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
-
 namespace HandheldCompanion.Misc;
 
-internal class Dialog
+public class Dialog
 {
-    public static async Task<ContentDialogResult> ShowAsync(string Title, string Content, ContentDialogButton DefaultButton = ContentDialogButton.Primary,
-        string CloseButtonText = null, string PrimaryButtonText = null, string SecondaryButtonText = null, Window owner = null)
+    private Window owner;
+    private ContentDialog dialog;
+
+    public string Title;
+    public string Content;    
+    public ContentDialogButton DefaultButton = ContentDialogButton.Primary;
+    public string PrimaryButtonText = string.Empty;
+    public string SecondaryButtonText = string.Empty;
+    public string CloseButtonText = string.Empty;
+
+    public bool CanClose = true;
+
+    public Dialog(Window owner)
+    {
+        this.owner = owner;
+
+        // not my proudest code
+        switch (owner.Tag)
+        {
+            default:
+            case "MainWindow":
+                dialog = MainWindow.GetCurrent().ContentDialog;
+                break;
+            case "QuickTools":
+                dialog = OverlayQuickTools.GetCurrent().ContentDialog;
+                break;
+        }
+
+        if (dialog is not null)
+            dialog.Closing += Dialog_Closing;
+    }
+
+    public async Task<ContentDialogResult> ShowAsync()
     {
         try
         {
-            // I hate my life... Improve me!
-            ContentDialog dialog = null;
-            switch (owner.Tag)
-            {
-                default:
-                case "MainWindow":
-                    dialog = MainWindow.GetCurrent().ContentDialog;
-                    break;
-                case "QuickTools":
-                    dialog = OverlayQuickTools.GetCurrent().ContentDialog;
-                    break;
-            }
-
-            dialog.Title = Title;
-            dialog.Content = Content;
-            dialog.CloseButtonText = CloseButtonText;
-            dialog.PrimaryButtonText = PrimaryButtonText;
-            dialog.SecondaryButtonText = SecondaryButtonText;
-            dialog.DefaultButton = DefaultButton;
+            dialog.Title = this.Title;
+            dialog.Content = this.Content;
+            dialog.CloseButtonText = this.CloseButtonText;
+            dialog.PrimaryButtonText = this.PrimaryButtonText;
+            dialog.SecondaryButtonText = this.SecondaryButtonText;
+            dialog.DefaultButton = this.DefaultButton;
 
             ContentDialogResult result = await dialog.ShowAsync(owner);
             return result;
@@ -39,5 +57,37 @@ internal class Dialog
         catch { }
 
         return ContentDialogResult.None;
+    }
+
+    public void Show()
+    {
+        try
+        {
+            dialog.Title = this.Title;
+            dialog.Content = this.Content;
+            dialog.CloseButtonText = this.CloseButtonText;
+            dialog.PrimaryButtonText = this.PrimaryButtonText;
+            dialog.SecondaryButtonText = this.SecondaryButtonText;
+            dialog.DefaultButton = this.DefaultButton;
+
+            dialog.ShowAsync(owner);
+        }
+        catch { }
+    }
+
+    public void Hide()
+    {
+        CanClose = true;
+        dialog.Hide();
+    }
+
+    private void Dialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+    {
+        args.Cancel = !CanClose;
+    }
+
+    public void UpdateContent(string Content)
+    {
+        dialog.Content = this.Content = Content;
     }
 }

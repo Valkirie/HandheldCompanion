@@ -274,9 +274,13 @@ public static class HotkeysManager
 
                     if (count >= PIN_LIMIT)
                     {
-                        _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
-                            $"You can't pin more than {PIN_LIMIT} hotkeys",
-                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+                        // todo: translate me
+                        _ = new Dialog(MainWindow.GetCurrent())
+                        {
+                            Title = Resources.SettingsPage_UpdateWarning,
+                            Content = $"You can't pin more than {PIN_LIMIT} hotkeys",
+                            PrimaryButtonText = Resources.ProfilesPage_OK
+                        }.ShowAsync();
 
                         return;
                     }

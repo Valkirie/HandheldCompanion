@@ -1,4 +1,6 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
@@ -54,7 +56,6 @@ public partial class OverlayModel : OverlayWindow
         this._hotkeyId = 1;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MotionManager.OverlayModelUpdate += MotionManager_OverlayModelUpdate;
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
         // initialize timers
@@ -129,7 +130,7 @@ public partial class OverlayModel : OverlayWindow
             default:
             case OverlayModelMode.OEM:
                 {
-                    switch (MainWindow.CurrentDevice.ProductModel)
+                    switch (IDevice.GetCurrent().ProductModel)
                     {
                         case "AYANEO2021":
                             newModel = new ModelAYANEO2021();
@@ -242,15 +243,20 @@ public partial class OverlayModel : OverlayWindow
     private RotateTransform3D LeftJoystickRotateTransform;
     private RotateTransform3D RightJoystickRotateTransform;
 
-    private void MotionManager_OverlayModelUpdate(NumVector3 euler, NumQuaternion quaternion)
+    public void UpdateReport(ControllerState Inputs, GamepadMotion gamepadMotion)
     {
+        this.Inputs = Inputs;
+
         // Add return here if motion is not wanted for 3D model
         if (!MotionActivated)
             return;
 
         // TODO: why is the quaternion order shifted?
-        DevicePose = new Quaternion(quaternion.W, quaternion.X, quaternion.Y, quaternion.Z);
-        DevicePoseRad = new Vector3D(euler.X, euler.Y, euler.Z);
+        gamepadMotion.GetOrientation(out float w, out float x, out float y, out float z);
+        DevicePose = new Quaternion(y, -x, w, -z);
+
+        NumVector3 euler = InputUtils.ToEulerAngles(DevicePose);
+        DevicePoseRad = new Vector3D(-euler.X, -euler.Y, -euler.Z);
     }
 
     private void DrawModel(object? sender, EventArgs e)
@@ -561,11 +567,6 @@ public partial class OverlayModel : OverlayWindow
                     CurrentModel.RightThumb.Transform = RightJoystickRotateTransform;
             }
         });
-    }
-
-    public void UpdateReport(ControllerState Inputs)
-    {
-        this.Inputs = Inputs;
     }
 
     private Material GradientHighlight(Material DefaultMaterial, Material HighlightMaterial, float Factor)

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -43,13 +44,9 @@ public partial class SettingsPage : Page
         cB_Language.Items.Add(new CultureInfo("zh-Hant"));
         cB_Language.Items.Add(new CultureInfo("ru-RU"));
 
-        // call function
-        UpdateDevice();
-
         // initialize manager(s)
         UpdateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
@@ -61,15 +58,6 @@ public partial class SettingsPage : Page
     public SettingsPage(string? Tag) : this()
     {
         this.Tag = Tag;
-    }
-
-    private void ControllerManager_ControllerSelected(IController Controller)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
-        });
     }
 
     private void RTSS_Updated(PlatformStatus status)
@@ -123,36 +111,6 @@ public partial class SettingsPage : Page
                             cB_QuickToolsBackdrop_SelectionChanged(this, null);
                     }
                     break;
-                case "SensorSelection":
-                    {
-                        var idx = Convert.ToInt32(value);
-
-                        // default value
-                        if (idx == -1)
-                        {
-                            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
-                            {
-                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
-                            }
-                            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
-                            {
-                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorExternal));
-                            }
-                            else
-                            {
-                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
-                            }
-
-                            return;
-                        }
-
-                        cB_SensorSelection.SelectedIndex = idx;
-
-                        // bug: SelectionChanged not triggered when control isn't loaded
-                        if (!IsLoaded)
-                            cB_SensorSelection_SelectionChanged(this, null);
-                    }
-                    break;
                 case "RunAtStartup":
                     Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
                     break;
@@ -191,9 +149,6 @@ public partial class SettingsPage : Page
                 case "ToastEnable":
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
                     break;
-                case "SensorPlacementUpsideDown":
-                    Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
-                    break;
                 case "CurrentCulture":
                     cB_Language.SelectedItem = new CultureInfo((string)value);
 
@@ -201,10 +156,6 @@ public partial class SettingsPage : Page
                     if (!IsLoaded)
                         cB_Language_SelectionChanged(this, null);
                     break;
-                case "SensorPlacement":
-                    UpdateUI_SensorPlacement(Convert.ToInt32(value));
-                    break;
-
                 case "PlatformRTSSEnabled":
                     Toggle_RTSS.IsOn = Convert.ToBoolean(value);
                     break;
@@ -218,16 +169,6 @@ public partial class SettingsPage : Page
                     Toggle_UISounds.IsOn = Convert.ToBoolean(value);
                     break;
             }
-        });
-    }
-
-    public void UpdateDevice(PnPDevice device = null)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
-            SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
         });
     }
 
@@ -408,9 +349,12 @@ public partial class SettingsPage : Page
         if (culture.Name == CultureInfo.CurrentCulture.Name)
             return;
 
-        _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
-            Properties.Resources.SettingsPage_AppLanguageWarningDesc,
-            ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+        _= new Dialog(MainWindow.GetCurrent())
+        {
+            Title = Properties.Resources.SettingsPage_AppLanguageWarning,
+            Content = Properties.Resources.SettingsPage_AppLanguageWarningDesc,
+            PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+        }.ShowAsync();
     }
 
     private void Toggle_Notification_Toggled(object? sender, RoutedEventArgs? e)
@@ -503,51 +447,6 @@ public partial class SettingsPage : Page
         catch
         {
         }
-    }
-
-    private void cB_SensorSelection_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
-    {
-        if (cB_SensorSelection.SelectedIndex == -1)
-            return;
-
-        // update dependencies
-        Toggle_SensorPlacementUpsideDown.IsEnabled =
-            cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
-        Grid_SensorPlacementVisualisation.IsEnabled =
-            cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
-
-        // TODO: Implement me
-
-        if (IsLoaded)
-            SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
-    }
-
-    private void SensorPlacement_Click(object sender, RoutedEventArgs? e)
-    {
-        var Tag = int.Parse((string)((Button)sender).Tag);
-
-        UpdateUI_SensorPlacement(Tag);
-
-        if (IsLoaded)
-            SettingsManager.SetProperty("SensorPlacement", Tag);
-    }
-
-    private void UpdateUI_SensorPlacement(int? SensorPlacement)
-    {
-        foreach (SimpleStackPanel panel in Grid_SensorPlacementVisualisation.Children)
-            foreach (Button button in panel.Children)
-                if (int.Parse((string)button.Tag) == SensorPlacement)
-                    button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
-                else
-                    button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
-    }
-
-    private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        var isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
-
-        if (IsLoaded)
-            SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
     }
 
     private void Toggle_RTSS_Toggled(object sender, RoutedEventArgs e)

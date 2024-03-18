@@ -15,10 +15,33 @@ public struct SensorSpec
 
 public enum MotionInput
 {
-    PlayerSpace = 0,
-    JoystickCamera = 1,
-    AutoRollYawSwap = 2,
-    JoystickSteering = 3
+    /// <summary>
+    /// Local space: A gyro control method commonly used in games on devices like the Nintendo Switch and PS4.
+    /// In local space, the game disregards the controller’s real-world orientation and focuses solely on its angular velocity around its local axes.
+    /// This approach is simple to implement, highly accurate, and works consistently regardless of player posture or environment.
+    /// However, some players may find it less intuitive, especially when pitching the controller up or down.
+    /// Despite this, local gyro controls are ideal for handheld devices like phones and tablets.
+    /// </summary>
+    LocalSpace = 0,
+    /// <summary>
+    /// Player space: A gyro control method that trusts the player's inputs in all 3 axes are intentional and meaningful.
+    /// It allows players to play in local space, world space, or anything in between.
+    /// It calculates a moment-to-moment yaw axis by combining the angular velocities in the local yaw and roll axes.
+    /// The magnitude of the player's rotation is always respected and expressed in-game.
+    /// It offers more freedom of movement than world space without any of its algorithmic error.
+    /// However, it is not ideal for handheld/mobile due to its reliance on gravity.
+    /// </summary>
+    PlayerSpace = 1,
+    /// <summary>
+    /// World Space: Gyro controls calculate the direction of gravity to determine the player’s “up” orientation.
+    /// The yaw axis remains aligned with this “up” direction, regardless of the controller’s physical orientation.
+    /// By using the accelerometer, local space inputs are converted to world space.
+    /// Players can consistently turn the camera left and right by rotating the controller relative to themselves.
+    /// While more intuitive, world space controls are challenging to implement and less suitable for handheld devices.
+    /// </summary>
+    WorldSpace = 2,
+    AutoRollYawSwap = 3,
+    JoystickSteering = 4
 }
 
 public enum MotionOuput
@@ -367,5 +390,44 @@ public static class InputUtils
                 buttons[0] = true;
                 break;
         }
+    }
+
+    public static Vector3 ToEulerAngles(System.Windows.Media.Media3D.Quaternion q)
+    {
+        // Store the Euler angles in radians
+        var pitchYawRoll = new Vector3();
+
+        double sqw = q.W * q.W;
+        double sqx = q.X * q.X;
+        double sqy = q.Y * q.Y;
+        double sqz = q.Z * q.Z;
+
+        // If quaternion is normalised the unit is one, otherwise it is the correction factor
+        var unit = sqx + sqy + sqz + sqw;
+        double test = q.X * q.Y + q.Z * q.W;
+
+        if (test > 0.4999f * unit) // 0.4999f OR 0.5f - EPSILON
+        {
+            // Singularity at north pole
+            pitchYawRoll.Y = 2f * (float)Math.Atan2(q.X, q.W); // Yaw
+            pitchYawRoll.X = (float)Math.PI * 0.5f; // Pitch
+            pitchYawRoll.Z = 0f; // Roll
+            return pitchYawRoll;
+        }
+
+        if (test < -0.4999f * unit) // -0.4999f OR -0.5f + EPSILON
+        {
+            // Singularity at south pole
+            pitchYawRoll.Y = -2f * (float)Math.Atan2(q.X, q.W); // Yaw
+            pitchYawRoll.X = -(float)Math.PI * 0.5f; // Pitch
+            pitchYawRoll.Z = 0f; // Roll
+            return pitchYawRoll;
+        }
+
+        pitchYawRoll.Y = (float)Math.Atan2(2f * q.Y * q.W - 2f * q.X * q.Z, sqx - sqy - sqz + sqw); // Yaw
+        pitchYawRoll.X = (float)Math.Asin(2f * test / unit); // Pitch
+        pitchYawRoll.Z = (float)Math.Atan2(2f * q.X * q.W - 2f * q.Y * q.Z, -sqx + sqy - sqz + sqw); // Roll
+
+        return pitchYawRoll;
     }
 }
