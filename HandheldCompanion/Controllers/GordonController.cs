@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using static JSL;
 
 namespace HandheldCompanion.Controllers
 {
@@ -85,7 +86,7 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Gordon";
         }
 
-        public override void UpdateInputs(long ticks)
+        public override void UpdateInputs(long ticks, float delta)
         {
             if (input is null)
                 return;
@@ -204,18 +205,25 @@ namespace HandheldCompanion.Controllers
             }
 
             // TODO: why Z/Y swapped?
-            Inputs.GyroState.Accelerometer.X = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-            Inputs.GyroState.Accelerometer.Y = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-            Inputs.GyroState.Accelerometer.Z = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            float aX = (float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+            float aY = (float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+            float aZ = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
             // TODO: why Roll/Pitch swapped?
-            Inputs.GyroState.Gyroscope.X = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2048.0f;  // Roll
-            Inputs.GyroState.Gyroscope.Y = -(float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2048.0f;   // Pitch
-            Inputs.GyroState.Gyroscope.Z = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2048.0f;    // Yaw
+            float gX = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
+            float gY = (float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
+            float gZ = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
-            base.UpdateInputs(ticks);
+            // Store motion
+            Inputs.GyroState.Gyroscope.X = gX;
+            Inputs.GyroState.Gyroscope.Y = gY;
+            Inputs.GyroState.Gyroscope.Z = gZ;
+            Inputs.GyroState.Accelerometer.X = aX;
+            Inputs.GyroState.Accelerometer.Y = aY;
+            Inputs.GyroState.Accelerometer.Z = aZ;
+
+            base.UpdateInputs(ticks, delta);
         }
-
         private void OnControllerInputReceived(GordonControllerInputEventArgs input)
         {
             this.input = input;

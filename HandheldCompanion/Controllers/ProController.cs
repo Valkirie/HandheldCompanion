@@ -21,17 +21,17 @@ public class ProController : JSController
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
     }
 
-    public override void UpdateInputs(long ticks)
+    public override void UpdateInputs(long ticks, float delta)
     {
         // skip if controller isn't connected
         if (!IsConnected())
             return;
 
-        base.UpdateState();
+        base.UpdateState(delta);
 
         Inputs.ButtonState[ButtonFlags.Special2] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
 
-        base.UpdateInputs(ticks);
+        base.UpdateInputs(ticks, delta);
     }
 
     public override string ToString()

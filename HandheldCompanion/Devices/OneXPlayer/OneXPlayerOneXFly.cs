@@ -4,6 +4,7 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
@@ -27,6 +28,7 @@ public class OneXPlayerOneXFly : IDevice
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -34,6 +36,7 @@ public class OneXPlayerOneXFly : IDevice
             { 'Z', 'Y' }
         };
 
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

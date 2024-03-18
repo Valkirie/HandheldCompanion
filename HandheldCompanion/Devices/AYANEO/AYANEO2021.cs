@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using System.Collections.Generic;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -18,6 +19,7 @@ public class AYANEO2021 : IDevice
         GfxClock = new double[] { 100, 1500 };
         CpuClock = 4000;
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -25,6 +27,7 @@ public class AYANEO2021 : IDevice
             { 'Z', 'Y' }
         };
 
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

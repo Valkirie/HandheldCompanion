@@ -20,7 +20,7 @@ namespace HandheldCompanion.Devices
             this.GfxClock = new double[] { 100, 2200 };
             this.CpuClock = 4700;
 
-            GyrometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            GyrometerAxis = new Vector3(-1.0f, -1.0f, -1.0f);
             this.GyrometerAxisSwap = new()
             {
                 { 'X', 'X' },
@@ -28,7 +28,7 @@ namespace HandheldCompanion.Devices
                 { 'Z', 'Y' },
             };
 
-            AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
             this.AccelerometerAxisSwap = new()
             {
                 { 'X', 'X' },

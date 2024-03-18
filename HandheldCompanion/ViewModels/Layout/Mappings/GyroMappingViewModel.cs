@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -282,7 +283,7 @@ namespace HandheldCompanion.ViewModels
         {
             var flag = (AxisLayoutFlags)Value;
 
-            IsSupported = controller.HasSourceAxis(flag) || MainWindow.CurrentDevice.HasMotionSensor();
+            IsSupported = controller.HasSourceAxis(flag) || IDevice.GetCurrent().HasMotionSensor();
 
             if (IsSupported)
             {

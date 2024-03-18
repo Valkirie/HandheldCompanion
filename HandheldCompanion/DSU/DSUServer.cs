@@ -570,7 +570,7 @@ public class DSUServer
             Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer.Y), 0, outputData, outIdx, 4);
             outIdx += 4;
             // accelZG
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer.Z), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer.Z), 0, outputData, outIdx, 4);
             outIdx += 4;
 
             // Gyroscope
@@ -578,7 +578,7 @@ public class DSUServer
             Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Gyroscope.X), 0, outputData, outIdx, 4);
             outIdx += 4;
             // angVelYaw
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Gyroscope.Y), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope.Y), 0, outputData, outIdx, 4);
             outIdx += 4;
             // angVelRoll
             Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope.Z), 0, outputData, outIdx, 4);
@@ -588,7 +588,7 @@ public class DSUServer
         return true;
     }
 
-    public void Tick(long ticks)
+    public void Tick(long ticks, float delta)
     {
         if (!running)
             return;

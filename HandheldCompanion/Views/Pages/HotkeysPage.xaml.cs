@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.Windows;
@@ -63,7 +64,7 @@ public partial class HotkeysPage : Page
             return;
 
         var DeviceType = hotkey.inputsHotkey.DeviceType;
-        if (DeviceType is not null && DeviceType != MainWindow.CurrentDevice.GetType())
+        if (DeviceType is not null && DeviceType != IDevice.GetCurrent().GetType())
             return;
 
         // UI thread

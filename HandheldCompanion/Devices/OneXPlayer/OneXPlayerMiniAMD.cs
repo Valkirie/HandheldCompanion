@@ -12,6 +12,6 @@ public class OneXPlayerMiniAMD : OneXPlayerMini
         GfxClock = new double[] { 100, 2000 };
         CpuClock = 4400;
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
     }
 }

@@ -77,7 +77,7 @@ public class NeptuneController : SteamController
         return "Valve Software Steam Controller";
     }
 
-    public override void UpdateInputs(long ticks)
+    public override void UpdateInputs(long ticks, float delta)
     {
         if (input is null)
             return;
@@ -232,16 +232,24 @@ public class NeptuneController : SteamController
         }
 
         // TODO: why Z/Y swapped?
-        Inputs.GyroState.Accelerometer.X = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-        Inputs.GyroState.Accelerometer.Y = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-        Inputs.GyroState.Accelerometer.Z = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
         // TODO: why Roll/Pitch swapped?
-        Inputs.GyroState.Gyroscope.X = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2048.0f;  // Roll
-        Inputs.GyroState.Gyroscope.Y = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2048.0f;   // Pitch
-        Inputs.GyroState.Gyroscope.Z = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2048.0f;    // Yaw
+        float gX = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
+        float gY = (float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
+        float gZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
-        base.UpdateInputs(ticks);
+        // Store motion
+        Inputs.GyroState.Gyroscope.X = gX;
+        Inputs.GyroState.Gyroscope.Y = gY;
+        Inputs.GyroState.Gyroscope.Z = gZ;
+        Inputs.GyroState.Accelerometer.X = aX;
+        Inputs.GyroState.Accelerometer.Y = aY;
+        Inputs.GyroState.Accelerometer.Z = aZ;
+
+        base.UpdateInputs(ticks, delta);
     }
 
     private void Open()

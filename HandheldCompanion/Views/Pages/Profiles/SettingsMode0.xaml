@@ -15,7 +15,7 @@
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="12">
 
-            <!--  Joystick camera options  -->
+            <!--  World space options  -->
             <ui:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_CameraOptions}" />
 

@@ -137,7 +137,7 @@ public abstract class IDevice
     public List<DeviceChord> OEMChords = new();
 
     // filter settings
-    public OneEuroSettings oneEuroSettings = new(0.002d, 0.008d);
+    private OneEuroSettings oneEuroSettings = new(0.002d, 0.008d);
 
     // UI
     protected FontFamily GlyphFontFamily = new("PromptFont");
@@ -157,13 +157,21 @@ public abstract class IDevice
     // key press delay to use for certain scenarios
     public short KeyPressDelay = 20;
 
-    protected USBDeviceInfo sensor = new();
-
     public IDevice()
     {
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+    }
+
+    public double GetFilterCutoff()
+    {
+        return oneEuroSettings.minCutoff;
+    }
+
+    public double GetFilterBeta()
+    {
+        return oneEuroSettings.beta;
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
@@ -196,7 +204,7 @@ public abstract class IDevice
     public string Processor = string.Empty;
     public int NumberOfCores = 0;
 
-    public static IDevice GetDefault()
+    public static IDevice GetCurrent()
     {
         if (device is not null)
             return device;
@@ -558,8 +566,8 @@ public abstract class IDevice
         if (gyrometer is not null && accelerometer is not null)
         {
             // check sensor
-            var DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
-            sensor = DeviceUtils.GetUSBDevice(DeviceId);
+            string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
+            USBDeviceInfo sensor = GetUSBDevice(DeviceId);
             if (sensor is not null)
                 InternalSensorName = sensor.Name;
 
@@ -570,7 +578,7 @@ public abstract class IDevice
             Capabilities &= ~DeviceCapabilities.InternalSensor;
         }
 
-        SerialUSBIMU? USB = SerialUSBIMU.GetDefault();
+        SerialUSBIMU? USB = SerialUSBIMU.GetCurrent();
         if (USB is not null)
         {
             ExternalSensorName = USB.GetName();
@@ -581,14 +589,6 @@ public abstract class IDevice
         {
             Capabilities &= ~DeviceCapabilities.ExternalSensor;
         }
-    }
-
-    public bool RestartSensor()
-    {
-        if (sensor is null)
-            return false;
-
-        return PnPUtil.RestartDevice(sensor.DeviceId);
     }
 
     public virtual void SetFanDuty(double percent)

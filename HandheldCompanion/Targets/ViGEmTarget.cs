@@ -58,9 +58,8 @@ namespace HandheldCompanion.Targets
             Inputs = inputs;
         }
 
-        public virtual unsafe void UpdateReport(long ticks)
-        {
-        }
+        public virtual unsafe void UpdateReport(long ticks, float delta)
+        { }
 
         public virtual void Dispose()
         {

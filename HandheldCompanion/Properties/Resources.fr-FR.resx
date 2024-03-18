@@ -1617,8 +1617,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
-    <value>Caméra joystick</value>
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
+    <value>World space</value>
+    <comment>A traduire...</comment>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
     <value>Conduite par joystick</value>
@@ -1660,7 +1661,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>Manuel</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un simple joystick. Elle est destinée aux applications traditionnelles de joystick</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
@@ -1783,14 +1784,14 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
-    <value>Joystick Camera</value>
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
     <value>Joystick Steering</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
-    <value>Player Space</value>
+    <value>Player space</value>
   </data>
   <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
     <value>Left Stick</value>

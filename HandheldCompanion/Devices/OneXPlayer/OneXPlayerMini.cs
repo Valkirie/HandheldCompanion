@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System.Collections.Generic;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -13,6 +14,7 @@ public class OneXPlayerMini : IDevice
         ProductIllustration = "device_onexplayer_mini";
         ProductModel = "ONEXPLAYERMini";
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -20,6 +22,7 @@ public class OneXPlayerMini : IDevice
             { 'Z', 'Y' }
         };
 
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

@@ -10,6 +10,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -318,24 +319,26 @@ public partial class LayoutPage : Page
         if (parent.Content is not LayoutTemplate)
             return;
 
-        // get template
-        var layoutTemplate = (LayoutTemplate)parent.Content;
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
+            Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
+            DefaultButton = ContentDialogButton.Close,
+            CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+            PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+        }.ShowAsync();
 
-        var result = Dialog.ShowAsync(
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
-            ContentDialogButton.Primary,
-            $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Yes}", string.Empty, MainWindow.GetCurrent());
+        await dialogTask; // sync call
 
-        await result; // sync call
-
-        switch (result.Result)
+        switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
                 {
                     // do not overwrite currentTemplate and currentTemplate.Layout as a whole
                     // because they both have important Update notifitications set
+
+                    // get template
+                    LayoutTemplate layoutTemplate = (LayoutTemplate)parent.Content;
                     var newLayout = layoutTemplate.Layout.Clone() as Layout;
                     currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
                     currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
@@ -383,9 +386,15 @@ public partial class LayoutPage : Page
         if (newLayout.Name == string.Empty)
         {
             LayoutFlyout.Hide();
-            _ = Dialog.ShowAsync("Layout template name cannot be empty",
-                "Layout was not exported.",
-                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+
+            // todo: translate me
+            _ = new Dialog(MainWindow.GetCurrent())
+            {
+                Title = "Layout template name cannot be empty",
+                Content = "Layout was not exported.",
+                PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+            }.ShowAsync();
+
             return;
         }
 
@@ -394,10 +403,13 @@ public partial class LayoutPage : Page
 
         LayoutManager.SerializeLayoutTemplate(newLayout);
 
-        LayoutFlyout.Hide();
-        _ = Dialog.ShowAsync("Layout template exported",
-            $"{newLayout.Name} was exported.",
-            ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+        // todo: translate me
+        _ = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = "Layout template exported",
+            Content = $"{newLayout.Name} was exported.",
+            PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+        }.ShowAsync();
     }
 
     private void Flyout_Opening(object sender, object e)

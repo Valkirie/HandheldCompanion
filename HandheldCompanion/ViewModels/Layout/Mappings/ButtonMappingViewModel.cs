@@ -1,6 +1,7 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -206,7 +207,7 @@ namespace HandheldCompanion.ViewModels
 
             if (OEM.Contains(button))
             {
-                UpdateIcon(MainWindow.CurrentDevice.GetGlyphIconInfo(button));
+                UpdateIcon(IDevice.GetCurrent().GetGlyphIconInfo(button));
             }
         }
 

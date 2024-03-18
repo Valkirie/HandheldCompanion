@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -13,8 +14,8 @@ public class IMUGyrometer : IMUSensor
     {
         minIn = -128.0f,
         maxIn = 128.0f,
-        minOut = -2048.0f,
-        maxOut = 2048.0f
+        minOut = -2000.0f,
+        maxOut = 2000.0f
     };
 
     public IMUGyrometer(SensorFamily sensorFamily, int updateInterval)
@@ -33,7 +34,7 @@ public class IMUGyrometer : IMUSensor
                 sensor = Gyrometer.GetDefault();
                 break;
             case SensorFamily.SerialUSBIMU:
-                sensor = SerialUSBIMU.GetDefault();
+                sensor = SerialUSBIMU.GetCurrent();
                 break;
             case SensorFamily.Controller:
                 sensor = new object();
@@ -101,20 +102,11 @@ public class IMUGyrometer : IMUSensor
         base.StopListening();
     }
 
-    private void ReadingChanged(float GyroRoll, float GyroPitch, float GyroYaw)
+    public void ReadingChanged(float GyroRoll, float GyroPitch, float GyroYaw)
     {
-        switch (sensorFamily)
-        {
-            case SensorFamily.Controller:
-                {
-                    reading.X = GyroRoll;
-                    reading.Y = GyroPitch;
-                    reading.Z = GyroYaw;
-
-                    base.ReadingChanged();
-                }
-                break;
-        }
+        reading.X = GyroRoll;
+        reading.Y = GyroPitch;
+        reading.Z = GyroYaw;
     }
 
     private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
@@ -128,11 +120,9 @@ public class IMUGyrometer : IMUSensor
 
     private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
     {
-        if (sensor is null)
-            return;
-
-        foreach (var axis in reading_axis.Keys)
-            switch (MainWindow.CurrentDevice.GyrometerAxisSwap[axis])
+        foreach (char axis in reading_axis.Keys)
+        {
+            switch (IDevice.GetCurrent().GyrometerAxisSwap[axis])
             {
                 default:
                 case 'X':
@@ -145,10 +135,11 @@ public class IMUGyrometer : IMUSensor
                     reading_axis[axis] = args.Reading.AngularVelocityZ;
                     break;
             }
+        }
 
-        reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.GyrometerAxis.X;
-        reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.GyrometerAxis.Y;
-        reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.GyrometerAxis.Z;
+        reading.X = (float)reading_axis['X'] * IDevice.GetCurrent().GyrometerAxis.X;
+        reading.Y = (float)reading_axis['Y'] * IDevice.GetCurrent().GyrometerAxis.Y;
+        reading.Z = (float)reading_axis['Z'] * IDevice.GetCurrent().GyrometerAxis.Z;
 
         base.ReadingChanged();
     }

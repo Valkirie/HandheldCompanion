@@ -40,7 +40,7 @@ namespace HandheldCompanion.Views;
 public partial class MainWindow : GamepadWindow
 {
     // devices vars
-    public static IDevice CurrentDevice;
+    private static IDevice CurrentDevice;
 
     // page vars
     private static readonly Dictionary<string, Page> _pages = new();
@@ -158,7 +158,7 @@ public partial class MainWindow : GamepadWindow
 
         // initialize device
         SplashScreen.LoadingSequence.Text = "Initializing device...";
-        CurrentDevice = IDevice.GetDefault();
+        CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
         
         string currentDeviceType = CurrentDevice.GetType().Name;
@@ -470,8 +470,6 @@ public partial class MainWindow : GamepadWindow
     {
         // todo: improve me
         CurrentDevice.PullSensors();
-
-        settingsPage.UpdateDevice(device);
     }
 
     private void InputsManager_TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown,

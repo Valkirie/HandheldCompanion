@@ -9,20 +9,20 @@ namespace HandheldCompanion.ViewModels
 {
     public class AboutPageViewModel : BaseViewModel
     {
-        public string Manufacturer => MainWindow.CurrentDevice.ManufacturerName;
-        public string ProductName => MainWindow.CurrentDevice.ProductName;
+        public string Manufacturer => IDevice.GetCurrent().ManufacturerName;
+        public string ProductName => IDevice.GetCurrent().ProductName;
         public string Version => MainWindow.fileVersionInfo.FileVersion!;
 
-        public string InternalSensor => MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor)
-                ? MainWindow.CurrentDevice.InternalSensorName
+        public string InternalSensor => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor)
+                ? IDevice.GetCurrent().InternalSensorName
                 : "N/A";
-        public string ExternalSensor => MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor)
-                ? MainWindow.CurrentDevice.ExternalSensorName
+        public string ExternalSensor => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor)
+                ? IDevice.GetCurrent().ExternalSensorName
                 : "N/A";
 
-        public bool IsUnsupportedDevice => MainWindow.CurrentDevice is DefaultDevice;
+        public bool IsUnsupportedDevice => IDevice.GetCurrent() is DefaultDevice;
 
-        public BitmapImage DeviceImage => new(new Uri($"pack://application:,,,/Resources/{MainWindow.CurrentDevice.ProductIllustration}.png"));
+        public BitmapImage DeviceImage => new(new Uri($"pack://application:,,,/Resources/{IDevice.GetCurrent().ProductIllustration}.png"));
 
         public AboutPageViewModel()
         {

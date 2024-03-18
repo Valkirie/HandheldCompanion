@@ -1648,7 +1648,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Alternar Rolagem de Guinada Auto</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
     <value>Câmera de Joystick</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
@@ -1756,7 +1756,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
     <value>Esta entrada irá operar como um joystick simples. Isto é voltado para aplicações que utilizam joystick tradicional</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
@@ -1801,7 +1801,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>Troca automática Rolamento e Leme</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
     <value>Câmera de Joystick</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">

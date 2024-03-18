@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
@@ -48,6 +50,7 @@ public static class ControllerManager
     private static FocusedWindow focusedWindows = FocusedWindow.None;
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
+    private static SensorFamily sensorSelection = SensorFamily.None;
 
     public static bool IsInitialized;
 
@@ -79,8 +82,8 @@ public static class ControllerManager
 
         VirtualManager.Vibrated += VirtualManager_Vibrated;
 
-        MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
-        MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
+        IDevice.GetCurrent().KeyPressed += CurrentDevice_KeyPressed;
+        IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
@@ -223,51 +226,51 @@ public static class ControllerManager
 
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        switch (name)
         {
-            switch (name)
-            {
-                case "VibrationStrength":
-                    uint VibrationStrength = Convert.ToUInt32(value);
-                    targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
-                    break;
+            case "VibrationStrength":
+                uint VibrationStrength = Convert.ToUInt32(value);
+                targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
+                break;
 
-                case "ControllerManagement":
+            case "ControllerManagement":
+                {
+                    ControllerManagement = Convert.ToBoolean(value);
+                    switch (ControllerManagement)
                     {
-                        ControllerManagement = Convert.ToBoolean(value);
-                        switch(ControllerManagement)
-                        {
-                            case true:
+                        case true:
+                            {
+                                if (!watchdogThreadRunning)
                                 {
-                                    if (!watchdogThreadRunning)
-                                    {
-                                        watchdogThreadRunning = true;
+                                    watchdogThreadRunning = true;
 
-                                        watchdogThread = new Thread(watchdogThreadLoop);
-                                        watchdogThread.IsBackground = true;
-                                        watchdogThread.Start();
-                                    }
+                                    watchdogThread = new Thread(watchdogThreadLoop);
+                                    watchdogThread.IsBackground = true;
+                                    watchdogThread.Start();
                                 }
-                                break;
-                            case false:
+                            }
+                            break;
+                        case false:
+                            {
+                                // suspend watchdog
+                                if (watchdogThread is not null)
                                 {
-                                    // suspend watchdog
-                                    if (watchdogThread is not null)
-                                    {
-                                        watchdogThreadRunning = false;
-                                        // Ensure the thread has finished execution
-                                        if (watchdogThread.IsAlive)
-                                            watchdogThread.Join();
-                                        watchdogThread = null;
-                                    }
+                                    watchdogThreadRunning = false;
+                                    // Ensure the thread has finished execution
+                                    if (watchdogThread.IsAlive)
+                                        watchdogThread.Join();
+                                    watchdogThread = null;
                                 }
-                                break;
-                        }
+                            }
+                            break;
                     }
-                    break;
-            }
-        });
+                }
+                break;
+
+            case "SensorSelection":
+                sensorSelection = (SensorFamily)Convert.ToInt32(value);
+                break;
+        }
     }
 
     private static void DeviceManager_Initialized()
@@ -1073,33 +1076,34 @@ public static class ControllerManager
         return Controllers.Values.ToList();
     }
 
-    private static void UpdateInputs(ControllerState controllerState)
+    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
     {
-        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
-
         // raise event
         InputsUpdated?.Invoke(controllerState);
 
-        // pass inputs to Inputs manager
+        // send raw state to inputs manager
+        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
         InputsManager.UpdateReport(buttonState);
 
-        // pass to SensorsManager for sensors value reading
-        SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
         switch (sensorSelection)
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
-                SensorsManager.UpdateReport(controllerState);
+                // swap gamemotion
+                // todo: improve this logic
+                gamepadMotion = SensorsManager.GamepadMotion;
+                if (gamepadMotion is not null)
+                    SensorsManager.UpdateReport(controllerState, gamepadMotion);
                 break;
             default:
                 break;
         }
 
-        // pass to MotionManager for calculations
-        MotionManager.UpdateReport(controllerState);
-
-        // pass inputs to Overlay Model
-        MainWindow.overlayModel.UpdateReport(controllerState);
+        if (gamepadMotion is not null)
+        {
+            MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
+            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion);
+        }
 
         // pass inputs to Layout manager
         controllerState = LayoutManager.MapController(controllerState);
@@ -1109,7 +1113,6 @@ public static class ControllerManager
         {
             ControllerState emptyState = new ControllerState();
             emptyState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
-
             controllerState = emptyState;
         }
 

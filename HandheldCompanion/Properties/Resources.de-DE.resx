@@ -1581,7 +1581,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Auto-Roll-Gier-Swap</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
     <value>Joystick-Kamera</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
@@ -1641,7 +1641,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>Manuell</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
     <value>Dieser Eingang funktioniert wie ein einfacher Joystick. Er ist für traditionelle Joystick-Anwendungen gedacht</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
@@ -1746,14 +1746,14 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>Auto-Roll-Gier-Swap</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
-    <value>Joystick Camera</value>
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
     <value>Joystick Steering</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
-    <value>Player Space</value>
+    <value>Player space</value>
   </data>
   <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
     <value>Linker Stick</value>

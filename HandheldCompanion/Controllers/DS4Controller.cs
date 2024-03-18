@@ -41,13 +41,13 @@ public class DS4Controller : JSController
         TargetAxis.Add(AxisLayoutFlags.RightPad);
     }
 
-    public override void UpdateInputs(long ticks)
+    public override void UpdateInputs(long ticks, float delta)
     {
         // skip if controller isn't connected
         if (!IsConnected())
             return;
 
-        base.UpdateState();
+        base.UpdateState(delta);
 
         // Left Pad
         Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(UserIndex);
@@ -85,7 +85,7 @@ public class DS4Controller : JSController
             Inputs.AxisState[AxisFlags.RightPadY] = 0;
         }
 
-        base.UpdateInputs(ticks);
+        base.UpdateInputs(ticks, delta);
     }
 
     public override string ToString()

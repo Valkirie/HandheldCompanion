@@ -1,7 +1,9 @@
 ﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -20,7 +22,6 @@ namespace HandheldCompanion.Controllers
     {
         None = 0,
         MotionSensor = 1,
-        Calibration = 2,
     }
 
     /// <summary>
@@ -79,6 +80,8 @@ namespace HandheldCompanion.Controllers
 
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
+
+        protected GamepadMotion gamepadMotion;
 
         protected double VibrationStrength = 1.0d;
         private byte _UserIndex = 255;
@@ -208,6 +211,7 @@ namespace HandheldCompanion.Controllers
         {
             InitializeComponent();
             InitializeInputOutput();
+
             MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
@@ -225,6 +229,13 @@ namespace HandheldCompanion.Controllers
             this.Details = details;
             Details.isHooked = true;
 
+            if (details.isVirtual)
+                return;
+
+            // manage gamepad motion
+            gamepadMotion = new(details.deviceInstanceId);
+            gamepadMotion.SetCalibrationMode(CalibrationMode.Manual | CalibrationMode.SensorFusion);
+
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -239,9 +250,9 @@ namespace HandheldCompanion.Controllers
             */
         }
 
-        public virtual void UpdateInputs(long ticks)
+        public virtual void UpdateInputs(long ticks, float delta)
         {
-            InputsUpdated?.Invoke(Inputs);
+            InputsUpdated?.Invoke(Inputs, gamepadMotion, delta);
         }
 
         public bool HasMotionSensor()
@@ -319,7 +330,7 @@ namespace HandheldCompanion.Controllers
             {
                 // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
-                ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
+                ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.MotionSensor) ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
@@ -368,8 +379,7 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void SetVibration(byte LargeMotor, byte SmallMotor)
-        {
-        }
+        { }
 
         // let the controller decide itself what motor to use for a specific button
         public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
@@ -534,21 +544,16 @@ namespace HandheldCompanion.Controllers
             return true;
         }
 
-        protected virtual void Calibrate()
+        protected async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
+            SensorsManager.Calibrate(gamepadMotion);
         }
 
-        protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        protected void ui_button_hide_Click(object sender, RoutedEventArgs e)
+        { }
 
-        protected virtual void ui_button_hide_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        protected virtual void ui_button_hook_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        protected void ui_button_hook_Click(object sender, RoutedEventArgs e)
+        { }
 
         public virtual string GetGlyph(ButtonFlags button)
         {
@@ -766,7 +771,7 @@ namespace HandheldCompanion.Controllers
         public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
         public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, GamepadMotion gamepadMotion, float delta);
 
         #endregion
     }

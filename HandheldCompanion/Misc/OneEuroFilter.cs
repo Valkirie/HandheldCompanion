@@ -48,6 +48,14 @@ public class OneEuroFilter3D
     public OneEuroFilter axis2Filter = new(DEFAULT_WHEEL_CUTOFF, DEFAULT_WHEEL_BETA);
     public OneEuroFilter axis3Filter = new(DEFAULT_WHEEL_CUTOFF, DEFAULT_WHEEL_BETA);
 
+    public OneEuroFilter3D()
+    { }
+
+    public OneEuroFilter3D(double cutoff, double beta)
+    {
+        SetFilterCutoff(cutoff);
+        SetFilterBeta(beta);
+    }
 
     public void SetFilterCutoff(double cutoff)
     {

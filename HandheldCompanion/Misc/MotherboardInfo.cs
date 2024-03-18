@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Views;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Views;
 using SharpDX.Direct3D9;
 using System.Collections.Generic;
 using System.Management;
@@ -279,7 +280,7 @@ public static class MotherboardInfo
             if (_ProcessorMaxTurboSpeed != 0)
                 return _ProcessorMaxTurboSpeed;
 
-            _ProcessorMaxTurboSpeed = MainWindow.CurrentDevice.CpuClock;
+            _ProcessorMaxTurboSpeed = IDevice.GetCurrent().CpuClock;
 
             return _ProcessorMaxTurboSpeed;
         }

@@ -9,9 +9,11 @@ namespace HandheldCompanion.Extensions
             switch (motionInput)
             {
                 default:
+                case MotionInput.LocalSpace:
+                    return "\uF272";
                 case MotionInput.PlayerSpace:
                     return "\uF119";
-                case MotionInput.JoystickCamera:
+                case MotionInput.WorldSpace:
                     return "\uE714";
                 case MotionInput.AutoRollYawSwap:
                     return "\uE7F8";

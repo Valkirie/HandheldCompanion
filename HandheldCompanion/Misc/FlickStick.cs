@@ -14,7 +14,7 @@ namespace HandheldCompanion.Misc
         private float FlickProgress;
         private float FlickAngle;
 
-        private float FlickTimePartial = 0.01f;
+        private float FlickTimePartial = 0.01f; // TimerManager.GetInterval() => 10ms
 
         private readonly float[] InputBuffer = new float[16];
         private readonly OneEuroFilterPair JoystickFilter = new();

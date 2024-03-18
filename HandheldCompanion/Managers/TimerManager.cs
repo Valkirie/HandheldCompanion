@@ -6,13 +6,18 @@ namespace HandheldCompanion.Managers;
 
 public static class TimerManager
 {
+    public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
 
-    public delegate void TickEventHandler(long ticks);
+    public static event TickEventHandler Tick;
+    public delegate void TickEventHandler(long ticks, float delta);
 
     private const int MasterInterval = 10; // 100Hz
     private static readonly PrecisionTimer MasterTimer;
     public static Stopwatch Stopwatch;
+
+    private static float PreviousTotalMilliseconds;
+    private static float DeltaSeconds;
 
     public static bool IsInitialized;
 
@@ -26,13 +31,13 @@ public static class TimerManager
 
     private static void DoWork()
     {
-        // if (Stopwatch.ElapsedTicks % MasterInterval == 0)
-        Tick?.Invoke(Stopwatch.ElapsedTicks);
+        // update timestamp
+        float TotalMilliseconds = (float)Stopwatch.Elapsed.TotalMilliseconds;
+        DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000.0f;
+        PreviousTotalMilliseconds = TotalMilliseconds;
+
+        Tick?.Invoke(Stopwatch.ElapsedTicks, DeltaSeconds);
     }
-
-    public static event TickEventHandler Tick;
-
-    public static event InitializedEventHandler Initialized;
 
     public static int GetPeriod()
     {
