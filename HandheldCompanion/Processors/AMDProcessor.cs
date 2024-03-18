@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Helpers;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Processors.AMD;
 using HandheldCompanion.Views;
 using System;
@@ -187,8 +188,8 @@ public class AMDProcessor : Processor
 
                             if (clock == 12750)
                             {
-                                sd.HardMinGfxClock = (uint)MainWindow.CurrentDevice.GfxClock[0]; //hardMin
-                                sd.SoftMaxGfxClock = (uint)MainWindow.CurrentDevice.GfxClock[1]; //softMax
+                                sd.HardMinGfxClock = (uint)IDevice.GetCurrent().GfxClock[0]; //hardMin
+                                sd.SoftMaxGfxClock = (uint)IDevice.GetCurrent().GfxClock[1]; //softMax
                             }
                             else
                             {
@@ -212,8 +213,8 @@ public class AMDProcessor : Processor
                         /*
                         if (clock == 12750)
                         {
-                            error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)MainWindow.CurrentDevice.GfxClock[0]);
-                            error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)MainWindow.CurrentDevice.GfxClock[1]);
+                            error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)IDevice.GetCurrent().GfxClock[0]);
+                            error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)IDevice.GetCurrent().GfxClock[1]);
                         }
                         else
                         {
