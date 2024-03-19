@@ -241,13 +241,16 @@ public class NeptuneController : SteamController
         float gY = (float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
         float gZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
-        // Store motion
+        // store motion
         Inputs.GyroState.Gyroscope.X = gX;
         Inputs.GyroState.Gyroscope.Y = gY;
         Inputs.GyroState.Gyroscope.Z = gZ;
         Inputs.GyroState.Accelerometer.X = aX;
         Inputs.GyroState.Accelerometer.Y = aY;
         Inputs.GyroState.Accelerometer.Z = aZ;
+
+        // process motion
+        gamepadMotion.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
 
         base.UpdateInputs(ticks, delta);
     }

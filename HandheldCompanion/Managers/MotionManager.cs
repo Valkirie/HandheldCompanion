@@ -21,11 +21,10 @@ namespace HandheldCompanion.Managers
 {
     public static class MotionManager
     {
-        public const byte SENSOR_RAW = 0;
-        public const byte SENSOR_DEFAULT = 1;
-        public const byte SENSOR_GMH = 2;
-        public const byte SENSOR_DSU = 3;
-        public const byte SENSOR_MAX = 4;
+        public const byte SENSOR_DEFAULT = 0;
+        public const byte SENSOR_GMH = 1;
+        public const byte SENSOR_DSU = 2;
+        public const byte SENSOR_MAX = 3;
 
         private static Vector3[] accelerometer = new Vector3[SENSOR_MAX];
         private static Vector3[] gyroscope = new Vector3[SENSOR_MAX];
@@ -77,12 +76,7 @@ namespace HandheldCompanion.Managers
         {
             Profile current = ProfileManager.GetCurrent();
 
-            // store sensors values
-            accelerometer[SENSOR_RAW] = new() { X = controllerState.GyroState.Accelerometer.X, Y = controllerState.GyroState.Accelerometer.Y, Z = controllerState.GyroState.Accelerometer.Z };
-            gyroscope[SENSOR_RAW] = new() { X = controllerState.GyroState.Gyroscope.X, Y = controllerState.GyroState.Gyroscope.Y, Z = controllerState.GyroState.Gyroscope.Z };
-
-            // process motion
-            gamepadMotion.ProcessMotion(gyroscope[SENSOR_RAW].X, gyroscope[SENSOR_RAW].Y, gyroscope[SENSOR_RAW].Z, accelerometer[SENSOR_RAW].X, accelerometer[SENSOR_RAW].Y, accelerometer[SENSOR_RAW].Z, delta);
+            // get motion values
             gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
             gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
             
