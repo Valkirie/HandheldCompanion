@@ -255,6 +255,12 @@ public partial class OverlayModel : OverlayWindow
         gamepadMotion.GetOrientation(out float w, out float x, out float y, out float z);
         DevicePose = new Quaternion(y, -x, w, -z);
 
+        // Define a rotation of 180 degrees around the Y-axis
+        Quaternion rotation = new Quaternion(new Vector3D(1, 0, 0), -25);
+
+        // Multiply the original quaternion 'DevicePose' by the rotation
+        DevicePose = Quaternion.Multiply(DevicePose, rotation);
+
         NumVector3 euler = InputUtils.ToEulerAngles(DevicePose);
         DevicePoseRad = new Vector3D(-euler.X, -euler.Y, -euler.Z);
     }
