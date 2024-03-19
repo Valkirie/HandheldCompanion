@@ -175,5 +175,9 @@ public class JSController : IController
     {
         this.sSETTINGS = settings;
         this.UserIndex = (byte)settings.playerNumber;
+
+        // manage elsewhere
+        JslResetContinuousCalibration(UserIndex);
+        JslPauseContinuousCalibration(UserIndex);
     }
 }
