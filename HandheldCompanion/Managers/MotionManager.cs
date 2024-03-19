@@ -24,7 +24,8 @@ namespace HandheldCompanion.Managers
         public const byte SENSOR_RAW = 0;
         public const byte SENSOR_DEFAULT = 1;
         public const byte SENSOR_GMH = 2;
-        public const byte SENSOR_MAX = 3;
+        public const byte SENSOR_DSU = 3;
+        public const byte SENSOR_MAX = 4;
 
         private static Vector3[] accelerometer = new Vector3[SENSOR_MAX];
         private static Vector3[] gyroscope = new Vector3[SENSOR_MAX];
@@ -79,13 +80,9 @@ namespace HandheldCompanion.Managers
             // store sensors values
             accelerometer[SENSOR_RAW] = new() { X = controllerState.GyroState.Accelerometer.X, Y = controllerState.GyroState.Accelerometer.Y, Z = controllerState.GyroState.Accelerometer.Z };
             gyroscope[SENSOR_RAW] = new() { X = controllerState.GyroState.Gyroscope.X, Y = controllerState.GyroState.Gyroscope.Y, Z = controllerState.GyroState.Gyroscope.Z };
-            
-            // manage multiplier
-            accelerometer[SENSOR_DEFAULT] = accelerometer[SENSOR_RAW] * current.AccelerometerMultiplier; 
-            gyroscope[SENSOR_DEFAULT] = gyroscope[SENSOR_RAW] * current.GyrometerMultiplier;
 
             // process motion
-            gamepadMotion.ProcessMotion(gyroscope[SENSOR_DEFAULT].X, gyroscope[SENSOR_DEFAULT].Y, gyroscope[SENSOR_DEFAULT].Z, accelerometer[SENSOR_DEFAULT].X, accelerometer[SENSOR_DEFAULT].Y, accelerometer[SENSOR_DEFAULT].Z, delta);
+            gamepadMotion.ProcessMotion(gyroscope[SENSOR_RAW].X, gyroscope[SENSOR_RAW].Y, gyroscope[SENSOR_RAW].Z, accelerometer[SENSOR_RAW].X, accelerometer[SENSOR_RAW].Y, accelerometer[SENSOR_RAW].Z, delta);
             gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
             gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
             
@@ -93,18 +90,47 @@ namespace HandheldCompanion.Managers
             accelerometer[SENSOR_GMH] = new() { X = accelX, Y = accelY, Z = accelZ };
             gyroscope[SENSOR_GMH] = new() { X = gyroX, Y = gyroY, Z = gyroZ };
 
-            // manage steering axis (only relevant for LocalSpace and AutoRollYawSwap)
-            // those values should be based on GMH output
-            accelerometer[SENSOR_DEFAULT].X = accelerometer[SENSOR_GMH].X;
-            accelerometer[SENSOR_DEFAULT].Y = current.SteeringAxis == 0 ? accelerometer[SENSOR_GMH].Y : -accelerometer[SENSOR_GMH].Z;
-            accelerometer[SENSOR_DEFAULT].Z = current.SteeringAxis == 0 ? accelerometer[SENSOR_GMH].Z : accelerometer[SENSOR_GMH].Y;
-            gyroscope[SENSOR_DEFAULT].X = gyroscope[SENSOR_GMH].X;
-            gyroscope[SENSOR_DEFAULT].Y = current.SteeringAxis == 0 ? gyroscope[SENSOR_GMH].Y : gyroscope[SENSOR_GMH].Z;
-            gyroscope[SENSOR_DEFAULT].Z = current.SteeringAxis == 0 ? gyroscope[SENSOR_GMH].Z : gyroscope[SENSOR_GMH].Y;
+            // manage multiplier
+            accelerometer[SENSOR_DEFAULT] = accelerometer[SENSOR_GMH] * current.AccelerometerMultiplier;
+            gyroscope[SENSOR_DEFAULT] = gyroscope[SENSOR_GMH] * current.GyrometerMultiplier;
+
+            // Assuming accelerometerData and gyroscopeData are Vector3 objects representing your sensor data
+            if (current.SteeringAxis == 1)
+            {
+                float temp = accelerometer[SENSOR_DEFAULT].Z;
+                accelerometer[SENSOR_DEFAULT].Z = accelerometer[SENSOR_DEFAULT].Y;
+                accelerometer[SENSOR_DEFAULT].Y = temp;
+                accelerometer[SENSOR_DEFAULT].X = -accelerometer[SENSOR_DEFAULT].X;
+
+                temp = gyroscope[SENSOR_DEFAULT].Z;
+                gyroscope[SENSOR_DEFAULT].Z = gyroscope[SENSOR_DEFAULT].Y;
+                gyroscope[SENSOR_DEFAULT].Y = temp;
+                gyroscope[SENSOR_DEFAULT].X = -gyroscope[SENSOR_DEFAULT].X;
+            }
+
+            // prepare DSU
+            accelerometer[SENSOR_DSU] = new() { X = accelerometer[SENSOR_DEFAULT].X, Y = accelerometer[SENSOR_DEFAULT].Y, Z = accelerometer[SENSOR_DEFAULT].Z };
+            gyroscope[SENSOR_DSU] = new() { X = gyroscope[SENSOR_DEFAULT].X, Y = gyroscope[SENSOR_DEFAULT].Y, Z = gyroscope[SENSOR_DEFAULT].Z };
+
+            if (current.MotionInvertHorizontal)
+            {
+                accelerometer[SENSOR_DSU].Y *= -1.0f;
+                accelerometer[SENSOR_DSU].Z *= -1.0f;
+                gyroscope[SENSOR_DSU].Y *= -1.0f;
+                gyroscope[SENSOR_DSU].Z *= -1.0f;
+            }
+
+            if (current.MotionInvertVertical)
+            {
+                accelerometer[SENSOR_DSU].Y *= -1.0f;
+                accelerometer[SENSOR_DSU].X *= -1.0f;
+                gyroscope[SENSOR_DSU].Y *= -1.0f;
+                gyroscope[SENSOR_DSU].X *= -1.0f;
+            }
 
             // store current values, they are used by DS4 and DSU
-            controllerState.GyroState.Accelerometer = accelerometer[SENSOR_GMH];
-            controllerState.GyroState.Gyroscope = gyroscope[SENSOR_GMH];
+            controllerState.GyroState.Accelerometer = accelerometer[SENSOR_DSU];
+            controllerState.GyroState.Gyroscope = gyroscope[SENSOR_DSU];
         }
 
         // this function is used for advanced motion calculations used by
