@@ -1091,9 +1091,11 @@ public static class ControllerManager
             case SensorFamily.SerialUSBIMU:
                 // swap gamemotion
                 // todo: improve this logic
-                gamepadMotion = SensorsManager.GamepadMotion;
-                if (gamepadMotion is not null)
-                    SensorsManager.UpdateReport(controllerState, gamepadMotion);
+                if (SensorsManager.GamepadMotion is not null)
+                {
+                    gamepadMotion = SensorsManager.GamepadMotion;
+                    SensorsManager.UpdateReport(controllerState, gamepadMotion, delta);
+                }
                 break;
             default:
                 break;

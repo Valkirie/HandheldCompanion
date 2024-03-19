@@ -244,7 +244,7 @@ namespace HandheldCompanion.Managers
             Accelerometer?.StopListening();
         }
 
-        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion)
+        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
         {
             Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading() : Vector3.Zero;
             Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading() : Vector3.Zero;
@@ -256,6 +256,9 @@ namespace HandheldCompanion.Managers
             controllerState.GyroState.Accelerometer.X = accel.X;
             controllerState.GyroState.Accelerometer.Y = accel.Y;
             controllerState.GyroState.Accelerometer.Z = accel.Z;
+
+            // process motion
+            gamepadMotion.ProcessMotion(controllerState.GyroState.Gyroscope.X, controllerState.GyroState.Gyroscope.Y, controllerState.GyroState.Gyroscope.Z, controllerState.GyroState.Accelerometer.X, controllerState.GyroState.Accelerometer.Y, controllerState.GyroState.Accelerometer.Z, delta);
         }
 
         public static void SetSensorFamily(SensorFamily sensorFamily)
