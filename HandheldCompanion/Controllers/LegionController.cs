@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -9,9 +10,11 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static JSL;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace HandheldCompanion.Controllers
 {
@@ -95,7 +98,7 @@ namespace HandheldCompanion.Controllers
         private long lastTap = 0;
         private Vector2 lastTapPosition = Vector2.Zero;         // The current position of the touchpad
 
-
+        private GamepadMotion gamepadMotionR;
 
         public LegionController() : base()
         { }
@@ -163,6 +166,10 @@ namespace HandheldCompanion.Controllers
         public override void AttachDetails(PnPDetails details)
         {
             base.AttachDetails(details);
+
+            // manage gamepad motion
+            gamepadMotionR = new($"{details.deviceInstanceId}\\{LegionGo.RightJoyconIndex}");
+            gamepadMotionR.SetCalibrationMode(CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             hidDevice = GetHidDevice();
             if (hidDevice is not null)
@@ -323,9 +330,32 @@ namespace HandheldCompanion.Controllers
             Inputs.GyroState.Accelerometer.Z = aZ;
 
             // process motion
-            gamepadMotion.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
+            switch (GyroIndex)
+            {
+                default:
+                case LegionGo.LeftJoyconIndex:
+                    gamepadMotion.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
+                    base.UpdateInputs(ticks, delta);
+                    break;
+                case LegionGo.RightJoyconIndex:
+                    gamepadMotionR.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
+                    base.UpdateInputs(ticks, delta, gamepadMotionR);
+                    break;
+            }
+        }
 
-            base.UpdateInputs(ticks, delta);
+        protected override async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        {
+            switch (GyroIndex)
+            {
+                default:
+                case LegionGo.LeftJoyconIndex:
+                    SensorsManager.Calibrate(gamepadMotion);
+                    break;
+                case LegionGo.RightJoyconIndex:
+                    SensorsManager.Calibrate(gamepadMotionR);
+                    break;
+            }
         }
 
         private async void dataThreadLoop(object? obj)
