@@ -15,8 +15,8 @@ namespace HandheldCompanion.Targets
         // Various sources state either +/- 2 or 4 ranges are in use 
         private static readonly SensorSpec DS4AccelerometerSensorSpec = new SensorSpec()
         {
-            minIn = -4.0f,
-            maxIn = 4.0f,
+            minIn = -2.0f,
+            maxIn = 2.0f,
             minOut = short.MinValue,
             maxOut = short.MaxValue,
         };
