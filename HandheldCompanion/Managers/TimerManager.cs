@@ -64,6 +64,11 @@ public static class TimerManager
         return GetElapsedMilliseconds() * 1000L;
     }
 
+    public static long GetElapsedDeciseconds()
+    {
+        return GetElapsedMilliseconds() * 100L;
+    }
+
     public static long GetElapsedMilliseconds()
     {
         return Stopwatch.ElapsedMilliseconds;
