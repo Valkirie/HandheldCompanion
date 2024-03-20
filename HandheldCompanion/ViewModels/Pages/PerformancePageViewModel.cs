@@ -673,7 +673,14 @@ namespace HandheldCompanion.ViewModels
 
         private void SettingsManager_SettingsValueChanged(string name, object value)
         {
-            OnPropertyChanged(name);
+            switch(name)
+            {
+                case "ConfigurableTDPOverride":
+                case "ConfigurableTDPOverrideDown":
+                case "ConfigurableTDPOverrideUp":
+                    OnPropertyChanged(name);
+                    break;
+            }
         }
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
