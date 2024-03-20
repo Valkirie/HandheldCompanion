@@ -255,6 +255,11 @@ namespace HandheldCompanion.Controllers
             InputsUpdated?.Invoke(Inputs, gamepadMotion, delta);
         }
 
+        public virtual void UpdateInputs(long ticks, float delta, GamepadMotion gamepadOverwrite)
+        {
+            InputsUpdated?.Invoke(Inputs, gamepadOverwrite, delta);
+        }
+
         public bool HasMotionSensor()
         {
             return Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
@@ -544,7 +549,7 @@ namespace HandheldCompanion.Controllers
             return true;
         }
 
-        protected async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        protected virtual async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
             SensorsManager.Calibrate(gamepadMotion);
         }
