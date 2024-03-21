@@ -29,7 +29,7 @@ public partial class Layout : ICloneable, IDisposable
         Dispose();
 
         // get current controller
-        var controller = ControllerManager.GetEmulatedController();
+        IController controller = ControllerManager.GetEmulatedController();
 
         // generic button mapping
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
@@ -46,6 +46,12 @@ public partial class Layout : ICloneable, IDisposable
         ButtonLayout[ButtonFlags.LeftPadClickLeft] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadLeft } };
         ButtonLayout[ButtonFlags.LeftPadClickRight] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadRight } };
 
+        // DualShock4
+        ButtonLayout[ButtonFlags.LeftPadTouch] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.LeftPadTouch } };
+        ButtonLayout[ButtonFlags.LeftPadClick] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.LeftPadClick } };
+        ButtonLayout[ButtonFlags.RightPadTouch] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.RightPadTouch } };
+        ButtonLayout[ButtonFlags.RightPadClick] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.RightPadClick } };
+
         // generic axis mapping
         foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
         {
@@ -54,6 +60,9 @@ public partial class Layout : ICloneable, IDisposable
 
             AxisLayout[axis] = new AxisActions { Axis = axis };
         }
+
+        AxisLayout[AxisLayoutFlags.LeftPad] = new AxisActions { Axis = AxisLayoutFlags.LeftPad };
+        AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightPad };
 
         // generic axis mapping
         foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
