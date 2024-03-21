@@ -261,7 +261,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 Targets.ReplaceWith(targets);
-                SelectedTarget = matchingTargetVm ?? Targets.First();
+                if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
             }
             else if (actionType == ActionType.Keyboard)
             {
@@ -297,7 +297,7 @@ namespace HandheldCompanion.ViewModels
 
                 // Update list and selected target
                 Targets.ReplaceWith(targets);
-                SelectedTarget = matchingTargetVm ?? Targets.First();
+                if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
             }
 
             // Refresh mapping

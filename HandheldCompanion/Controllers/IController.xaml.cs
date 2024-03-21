@@ -33,7 +33,7 @@ namespace HandheldCompanion.Controllers
         // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
         protected readonly List<ButtonFlags> TargetButtons = new()
         {
-            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+            ButtonFlags.None, ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
             ButtonFlags.L1, ButtonFlags.R1,
