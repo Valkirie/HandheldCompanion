@@ -91,15 +91,13 @@ namespace HandheldCompanion.Managers
             // Assuming accelerometerData and gyroscopeData are Vector3 objects representing your sensor data
             if (current.SteeringAxis == 1)
             {
-                float temp = accelerometer[SENSOR_DEFAULT].Z;
-                accelerometer[SENSOR_DEFAULT].Z = accelerometer[SENSOR_DEFAULT].Y;
+                float temp = -accelerometer[SENSOR_DEFAULT].Z;
+                accelerometer[SENSOR_DEFAULT].Z = -accelerometer[SENSOR_DEFAULT].Y;
                 accelerometer[SENSOR_DEFAULT].Y = temp;
-                accelerometer[SENSOR_DEFAULT].X = -accelerometer[SENSOR_DEFAULT].X;
 
-                temp = gyroscope[SENSOR_DEFAULT].Z;
-                gyroscope[SENSOR_DEFAULT].Z = gyroscope[SENSOR_DEFAULT].Y;
+                temp = -gyroscope[SENSOR_DEFAULT].Z;
+                gyroscope[SENSOR_DEFAULT].Z = -gyroscope[SENSOR_DEFAULT].Y;
                 gyroscope[SENSOR_DEFAULT].Y = temp;
-                gyroscope[SENSOR_DEFAULT].X = -gyroscope[SENSOR_DEFAULT].X;
             }
 
             // prepare DSU
