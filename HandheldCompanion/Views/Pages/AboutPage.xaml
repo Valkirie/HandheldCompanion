@@ -211,7 +211,7 @@
                                     Margin="0,0,0,5"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Nefarius, CasperH2O, B-Core, Frank东, Toomy, Havner, CoryManson, MSeys, ShadowFlare, trippyone, MiguelLedesmaC, Cheng77777, thororen1234, fighterguard, micdah, Geckon01, Bagboii, MeikoMenmaHonma, cerahmed, indiesaudi, Radther, Staubgeborener, twjmy, m33ts4k0z, howanghk, Creaous, xerootg, quangmach, MrCivsteR, 0skillallluck, DevL0rd" />
+                                    Text="Nefarius, CasperH2O, B-Core, Frank东, Toomy, Havner, CoryManson, MSeys, ShadowFlare, trippyone, MiguelLedesmaC, Cheng77777, thororen1234, fighterguard, micdah, Geckon01, Bagboii, MeikoMenmaHonma, cerahmed, indiesaudi, Radther, Staubgeborener, twjmy, m33ts4k0z, howanghk, Creaous, xerootg, quangmach, MrCivsteR, 0skillallluck, DevL0rd, romracer" />
 
                                 <!--  Description  -->
                                 <TextBlock
