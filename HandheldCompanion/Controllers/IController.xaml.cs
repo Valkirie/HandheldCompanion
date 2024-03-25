@@ -559,7 +559,7 @@ namespace HandheldCompanion.Controllers
             SensorsManager.Calibrate(gamepadMotion);
         }
 
-        protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        protected void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
             Calibrate();
         }
