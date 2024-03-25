@@ -576,7 +576,7 @@ public partial class ProfilesPage : Page
                 tb_ProfileGyroValue.Value = selectedProfile.GyrometerMultiplier;
                 tb_ProfileAcceleroValue.Value = selectedProfile.AccelerometerMultiplier;
 
-                cB_GyroSteering.SelectedIndex = selectedProfile.SteeringAxis;
+                cB_GyroSteering.SelectedIndex = (byte)selectedProfile.SteeringAxis;
                 cB_InvertHorizontal.IsChecked = selectedProfile.MotionInvertHorizontal;
                 cB_InvertVertical.IsChecked = selectedProfile.MotionInvertVertical;
 
@@ -954,7 +954,7 @@ public partial class ProfilesPage : Page
         if (updateLock)
             return;
 
-        selectedProfile.SteeringAxis = cB_GyroSteering.SelectedIndex;
+        selectedProfile.SteeringAxis = (SteeringAxis)cB_GyroSteering.SelectedIndex;
         UpdateProfile();
     }
 

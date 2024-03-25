@@ -89,15 +89,19 @@ namespace HandheldCompanion.Managers
             gyroscope[SENSOR_DEFAULT] = gyroscope[SENSOR_GMH] * current.GyrometerMultiplier;
 
             // Assuming accelerometerData and gyroscopeData are Vector3 objects representing your sensor data
-            if (current.SteeringAxis == 1)
+            switch(current.SteeringAxis)
             {
-                float temp = -accelerometer[SENSOR_DEFAULT].Z;
-                accelerometer[SENSOR_DEFAULT].Z = -accelerometer[SENSOR_DEFAULT].Y;
-                accelerometer[SENSOR_DEFAULT].Y = temp;
+                case SteeringAxis.Yaw:
+                    {
+                        float tempZ = -accelerometer[SENSOR_DEFAULT].Z;
+                        accelerometer[SENSOR_DEFAULT].Z = -accelerometer[SENSOR_DEFAULT].Y;
+                        accelerometer[SENSOR_DEFAULT].Y = tempZ;
 
-                temp = -gyroscope[SENSOR_DEFAULT].Z;
-                gyroscope[SENSOR_DEFAULT].Z = -gyroscope[SENSOR_DEFAULT].Y;
-                gyroscope[SENSOR_DEFAULT].Y = temp;
+                        tempZ = -gyroscope[SENSOR_DEFAULT].Z;
+                        gyroscope[SENSOR_DEFAULT].Z = -gyroscope[SENSOR_DEFAULT].Y;
+                        gyroscope[SENSOR_DEFAULT].Y = tempZ;
+                    }
+                    break;
             }
 
             // prepare DSU
@@ -192,7 +196,7 @@ namespace HandheldCompanion.Managers
             switch (gyroAction.MotionInput)
             {
                 case MotionInput.LocalSpace:
-                    output = new Vector2(gyroscope[SENSOR_DEFAULT].Z, gyroscope[SENSOR_DEFAULT].X);
+                    output = new Vector2(gyroscope[SENSOR_DEFAULT].Z - gyroscope[SENSOR_DEFAULT].Y, gyroscope[SENSOR_DEFAULT].X);
                     break;
                 case MotionInput.PlayerSpace:
                     gamepadMotion.GetPlayerSpaceGyro(out float playerX, out float playerY, 1.41f);
