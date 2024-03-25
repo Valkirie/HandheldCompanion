@@ -31,6 +31,13 @@ public enum UpdateSource
     ProfilesPageUpdateOnly = 6
 }
 
+public enum SteeringAxis
+{
+    Roll = 0,
+    Yaw = 1,
+    Combined = 2, // unused
+}
+
 [Serializable]
 public partial class Profile : ICloneable, IComparable
 {
@@ -62,7 +69,7 @@ public partial class Profile : ICloneable, IComparable
     public float GyrometerMultiplier { get; set; } = 1.0f; // gyroscope multiplicator (remove me)
     public float AccelerometerMultiplier { get; set; } = 1.0f; // accelerometer multiplicator (remove me)
 
-    public int SteeringAxis { get; set; } = 0; // 0 = Roll, 1 = Yaw
+    public SteeringAxis SteeringAxis { get; set; } = SteeringAxis.Roll;
 
     public bool MotionInvertHorizontal { get; set; } // if true, invert horizontal axis
     public bool MotionInvertVertical { get; set; } // if false, invert vertical axis
