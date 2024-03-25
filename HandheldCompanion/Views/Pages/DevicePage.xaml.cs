@@ -441,7 +441,7 @@ namespace HandheldCompanion.Views.Pages
 
             Toggle_SensorPlacementUpsideDown.IsEnabled = sensorFamily == SensorFamily.SerialUSBIMU;
             Grid_SensorPlacementVisualisation.IsEnabled = sensorFamily == SensorFamily.SerialUSBIMU;
-            ui_button_calibrate.IsEnabled = (sensorFamily == SensorFamily.SerialUSBIMU || sensorFamily == SensorFamily.Windows);
+            ui_button_calibrate.IsEnabled = sensorFamily != SensorFamily.None;
 
             if (IsLoaded)
                 SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
@@ -449,7 +449,21 @@ namespace HandheldCompanion.Views.Pages
 
         private async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
-            SensorsManager.Calibrate(SensorsManager.GamepadMotion);
+            // update dependencies
+            SensorFamily sensorFamily = (SensorFamily)cB_SensorSelection.SelectedIndex;
+
+            switch(sensorFamily)
+            {
+                case SensorFamily.Windows:
+                case SensorFamily.SerialUSBIMU:
+                    SensorsManager.Calibrate(SensorsManager.GamepadMotion);
+                    break;
+
+                case SensorFamily.Controller:
+                    IController controller = ControllerManager.GetTargetController();
+                    controller?.Calibrate();
+                    break;
+            }
         }
 
         private void SensorPlacement_Click(object sender, RoutedEventArgs? e)

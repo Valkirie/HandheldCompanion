@@ -265,6 +265,11 @@ namespace HandheldCompanion.Controllers
             return Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
         }
 
+        public GamepadMotion GetMotionSensor()
+        {
+            return gamepadMotion;
+        }
+
         public bool IsPhysical()
         {
             return !IsVirtual();
@@ -549,9 +554,14 @@ namespace HandheldCompanion.Controllers
             return true;
         }
 
-        protected virtual async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        public async void Calibrate()
         {
             SensorsManager.Calibrate(gamepadMotion);
+        }
+
+        protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        {
+            Calibrate();
         }
 
         protected void ui_button_hide_Click(object sender, RoutedEventArgs e)
