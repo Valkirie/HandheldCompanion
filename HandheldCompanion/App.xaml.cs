@@ -45,20 +45,25 @@ public partial class App : Application
             // force high priority
             SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
 
-            var processes = Process.GetProcessesByName(process.ProcessName);
+            Process[] processes = Process.GetProcessesByName(process.ProcessName);
             if (processes.Length > 1)
-                using (var prevProcess = processes[0])
+            {
+                using (Process prevProcess = processes[0])
                 {
-                    var handle = prevProcess.MainWindowHandle;
+                    nint handle = prevProcess.MainWindowHandle;
                     if (ProcessUtils.IsIconic(handle))
                         ProcessUtils.ShowWindow(handle, (int)ProcessUtils.ShowWindowCommands.Restored);
 
-                    ProcessUtils.SetForegroundWindow(handle);
+                    // force close this process if we were able to bring previous process to foreground
+                    // kill previous process otherwise (means it's stalled)
+                    if (ProcessUtils.SetForegroundWindow(handle))
+                        process.Kill();
+                    else
+                        prevProcess.Kill();
 
-                    // force close this iteration
-                    process.Kill();
                     return;
                 }
+            }
         }
 
         // define culture settings
