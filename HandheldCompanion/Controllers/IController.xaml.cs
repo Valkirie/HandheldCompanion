@@ -559,15 +559,15 @@ namespace HandheldCompanion.Controllers
             SensorsManager.Calibrate(gamepadMotion);
         }
 
-        protected void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
             Calibrate();
         }
 
-        protected void ui_button_hide_Click(object sender, RoutedEventArgs e)
+        protected virtual void ui_button_hide_Click(object sender, RoutedEventArgs e)
         { }
 
-        protected void ui_button_hook_Click(object sender, RoutedEventArgs e)
+        protected virtual void ui_button_hook_Click(object sender, RoutedEventArgs e)
         { }
 
         public virtual string GetGlyph(ButtonFlags button)
