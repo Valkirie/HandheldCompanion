@@ -447,7 +447,7 @@ namespace HandheldCompanion.Views.Pages
                 SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
-        private async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        private void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
             // update dependencies
             SensorFamily sensorFamily = (SensorFamily)cB_SensorSelection.SelectedIndex;
