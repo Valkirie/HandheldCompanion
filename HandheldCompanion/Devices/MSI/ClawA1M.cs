@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput.Events;
 
@@ -26,8 +25,7 @@ public class ClawA1M : IDevice
         { WMIEventCode.LaunchMcxOSD, ButtonFlags.OEM2 },
     };
 
-    private ManagementEventWatcher specialKeyWatcher;
-    private ManagementScope scope;
+    private ManagementEventWatcher? specialKeyWatcher;
 
     public ClawA1M()
     {
@@ -78,57 +76,42 @@ public class ClawA1M : IDevice
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM4
         ));
+    }
 
-        // start thread to monitor WMI events
-        new Thread(() =>
+    private void StartWatching()
+    {
+        try
         {
-            try
-            {
-                scope = new ManagementScope("\\\\.\\root\\WMI");
-                scope.Connect();
-                if (!scope.IsConnected)
-                    return;
-                specialKeyWatcher = new ManagementEventWatcher(scope, (EventQuery)(new WqlEventQuery("SELECT * FROM MSI_Event")));
-                specialKeyWatcher.EventArrived += onWMIEvent;
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogInformation("Exception configuring MSI_Event monitor: {0}", ex.Message);
-            }
-        }).Start();
-    }
-
-    public override bool Open()
-    {
-        var success = base.Open();
-        if (!success)
-            return false;
-
-        // start WMI event monitor
-        specialKeyWatcher.Start();
-
-        return true;
-    }
-
-    public override void Close()
-    {
-        // stop WMI event monitor
-        specialKeyWatcher.Stop();
-
-        base.Close();
-    }
-
-    public override void SetKeyPressDelay(HIDmode controllerMode)
-    {
-        switch (controllerMode)
-        {
-            case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
-                break;
-            default:
-                KeyPressDelay = 20;
-                break;
+            var scope = new ManagementScope("\\\\.\\root\\WMI");
+            specialKeyWatcher = new ManagementEventWatcher(scope, (EventQuery)(new WqlEventQuery("SELECT * FROM MSI_Event")));
+            specialKeyWatcher.EventArrived += onWMIEvent;
+            specialKeyWatcher.Start();
         }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Exception configuring MSI_Event monitor: {0}", ex.Message);
+        }
+    }
+
+    private void StopWatching()
+    {
+        if (specialKeyWatcher == null)
+        {
+            return;
+        }
+
+        try
+        {
+            specialKeyWatcher.EventArrived -= onWMIEvent;
+            specialKeyWatcher.Stop();
+            specialKeyWatcher.Dispose();
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Exception unconfiguring MSI_Event monitor: {0}", ex.Message);
+        }
+
+        specialKeyWatcher = null;
     }
 
     private void onWMIEvent(object sender, EventArrivedEventArgs e)
@@ -156,6 +139,39 @@ public class ClawA1M : IDevice
                         KeyRelease(button);
                     });
                 }
+                break;
+        }
+    }
+
+    public override bool Open()
+    {
+        var success = base.Open();
+        if (!success)
+            return false;
+
+        // start WMI event monitor
+        StartWatching();
+
+        return true;
+    }
+
+    public override void Close()
+    {
+        // stop WMI event monitor
+        StopWatching();
+
+        base.Close();
+    }
+
+    public override void SetKeyPressDelay(HIDmode controllerMode)
+    {
+        switch (controllerMode)
+        {
+            case HIDmode.DualShock4Controller:
+                KeyPressDelay = 180;
+                break;
+            default:
+                KeyPressDelay = 20;
                 break;
         }
     }
