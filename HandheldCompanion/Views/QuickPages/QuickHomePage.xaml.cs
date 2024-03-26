@@ -159,20 +159,19 @@ public partial class QuickHomePage : Page
             Properties.Resources.OverlayPage_OverlayDisplayLevel_External,
         };
 
-        switch (name)
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            case "OnScreenDisplayLevel":
+            switch (name)
+            {
+                case "OnScreenDisplayLevel":
                 {
                     var overlayLevel = Convert.ToInt16(value);
-
-                    // UI thread (async)
-                    Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
-                    });
+                    t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
                 }
                 break;
-        }
+            }
+        });
     }
 
     private void UpdateVolumeIcon(float volume)
