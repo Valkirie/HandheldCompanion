@@ -158,27 +158,23 @@ namespace HandheldCompanion.Managers
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            switch (name)
             {
-                switch (name)
-                {
-                    case "DesktopLayoutEnabled":
+                case "DesktopLayoutEnabled":
+                    {
+                        bool enabled = SettingsManager.GetBoolean(name, true);
+                        switch (enabled)
                         {
-                            var value = SettingsManager.GetBoolean(name, true);
-                            switch (value)
-                            {
-                                case true:
-                                    ControllerManager.InputsUpdated -= InputsUpdated;
-                                    break;
-                                case false:
-                                    ControllerManager.InputsUpdated += InputsUpdated;
-                                    break;
-                            }
+                            case true:
+                                ControllerManager.InputsUpdated -= InputsUpdated;
+                                break;
+                            case false:
+                                ControllerManager.InputsUpdated += InputsUpdated;
+                                break;
                         }
-                        break;
-                }
-            });
+                    }
+                    break;
+            }
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)

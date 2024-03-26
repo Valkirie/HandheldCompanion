@@ -370,7 +370,7 @@ public static class ControllerManager
             }
             else
             {
-                // UI thread (sync)
+                // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     switch (joyShockType)
@@ -446,7 +446,7 @@ public static class ControllerManager
             }
             else
             {
-                // UI thread (sync)
+                // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     // search for a supported controller
