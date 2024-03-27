@@ -40,11 +40,6 @@ namespace HandheldCompanion.Targets
             // initialize controller
             HID = HIDmode.DualShock4Controller;
 
-            // create new ViGEm client
-            // this shouldn't happen, caused by profile HIDmode logic, fixme!
-            if (VirtualManager.vClient is null)
-                VirtualManager.vClient = new ViGEmClient();
-
             virtualController = VirtualManager.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
@@ -210,11 +205,11 @@ namespace HandheldCompanion.Targets
             }
             catch (VigemBusNotFoundException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
             catch (VigemInvalidTargetException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
         }
 

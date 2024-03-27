@@ -146,11 +146,14 @@ namespace HandheldCompanion.Managers
             try
             {
                 // SetControllerMode takes care of ignoring identical mode switching
-                if (HIDmode == profile.HID)
+                if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
                     return;
 
-                // todo: monitor ControllerManager and check if automatic controller management is running
-                
+                // monitor ControllerManager and check if automatic controller management is running
+                // todo: improve me
+                if (ControllerManager.ControllerManagerIsBusy)
+                    return;
+
                 switch (profile.HID)
                 {
                     case HIDmode.Xbox360Controller:

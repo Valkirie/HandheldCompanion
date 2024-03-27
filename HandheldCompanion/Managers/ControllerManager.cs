@@ -42,6 +42,7 @@ public static class ControllerManager
     private static bool ControllerManagementSuccess = false;
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 3;
+    public static bool ControllerManagerIsBusy = false;
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -656,6 +657,7 @@ public static class ControllerManager
 
                             ControllerManagementSuccess = false;
                             ControllerManagementAttempts = 0;
+                            ControllerManagerIsBusy = false;
 
                             Working?.Invoke(2);
 
@@ -673,6 +675,8 @@ public static class ControllerManager
                         {
                             Working?.Invoke(0);
                             ControllerManagementSuccess = false;
+                            ControllerManagerIsBusy = true;
+
                             bool HasBusyWireless = false;
                             bool HasCyclingController = false;
 
