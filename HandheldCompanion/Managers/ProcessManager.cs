@@ -305,7 +305,8 @@ public static class ProcessManager
 
             processEx.MainWindowHandle = hWnd;
             processEx.MainThread = GetMainThread(proc);
-            processEx.MainThread.Disposed += (sender, e) => processEx.MainThreadDisposed();
+            if (processEx.MainThread is not null)
+                processEx.MainThread.Disposed += (sender, e) => processEx.MainThreadDisposed();
             processEx.Platform = PlatformManager.GetPlatform(proc);
 
             Processes.TryAdd(ProcessID, processEx);
