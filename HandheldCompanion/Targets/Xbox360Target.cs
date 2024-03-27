@@ -18,11 +18,6 @@ namespace HandheldCompanion.Targets
             // initialize controller
             HID = HIDmode.Xbox360Controller;
 
-            // create new ViGEm client
-            // this shouldn't happen, caused by profile HIDmode logic, fixme!
-            if (VirtualManager.vClient is null)
-                VirtualManager.vClient = new ViGEmClient();
-
             virtualController = VirtualManager.vClient.CreateXbox360Controller(vendorId, productId);
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
@@ -108,11 +103,11 @@ namespace HandheldCompanion.Targets
             }
             catch (VigemBusNotFoundException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
             catch (VigemInvalidTargetException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
         }
 
