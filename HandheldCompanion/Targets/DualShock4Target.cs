@@ -61,7 +61,7 @@ namespace HandheldCompanion.Targets
             }
             catch (Exception ex)
             {
-                virtualController.Disconnect();
+                virtualController?.Disconnect();
                 LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
             }
         }
