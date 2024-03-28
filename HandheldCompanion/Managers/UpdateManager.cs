@@ -11,6 +11,7 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
+using System.Windows;
 
 namespace HandheldCompanion.Managers;
 
@@ -144,21 +145,29 @@ public static class UpdateManager
                 if (updateFiles.TryGetValue(filename, out var file))
                     update = file;
 
-                _ = new Dialog(MainWindow.GetCurrent())
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Title = Resources.SettingsPage_UpdateWarning,
-                    Content = Resources.SettingsPage_UpdateFailedDownload,
-                    PrimaryButtonText = Resources.ProfilesPage_OK
-                }.ShowAsync();
+                    _ = new Dialog(MainWindow.GetCurrent())
+                    {
+                        Title = Resources.SettingsPage_UpdateWarning,
+                        Content = Resources.SettingsPage_UpdateFailedDownload,
+                        PrimaryButtonText = Resources.ProfilesPage_OK
+                    }.ShowAsync();
+                });
             }
             else
             {
-                _ = new Dialog(MainWindow.GetCurrent())
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Title = Resources.SettingsPage_UpdateWarning,
-                    Content = Resources.SettingsPage_UpdateFailedGithub,
-                    PrimaryButtonText = Resources.ProfilesPage_OK
-                }.ShowAsync();
+                    _ = new Dialog(MainWindow.GetCurrent())
+                    {
+                        Title = Resources.SettingsPage_UpdateWarning,
+                        Content = Resources.SettingsPage_UpdateFailedGithub,
+                        PrimaryButtonText = Resources.ProfilesPage_OK
+                    }.ShowAsync();
+                });
             }
 
             status = UpdateStatus.Failed;
@@ -309,12 +318,16 @@ public static class UpdateManager
 
         if (!File.Exists(filename))
         {
-            _ = new Dialog(MainWindow.GetCurrent())
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Title = Resources.SettingsPage_UpdateWarning,
-                Content = Resources.SettingsPage_UpdateFailedInstall,
-                PrimaryButtonText = Resources.ProfilesPage_OK
-            }.ShowAsync();
+                _ = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = Resources.SettingsPage_UpdateWarning,
+                    Content = Resources.SettingsPage_UpdateFailedInstall,
+                    PrimaryButtonText = Resources.ProfilesPage_OK
+                }.ShowAsync();
+            });
             return;
         }
 
