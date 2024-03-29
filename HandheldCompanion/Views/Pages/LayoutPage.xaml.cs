@@ -101,17 +101,18 @@ public partial class LayoutPage : Page
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
 
-        // update layout page if layout was updated elsewhere
-        // good enough
-        switch (source)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            case UpdateSource.QuickProfilesPage:
-                {
-                    if (currentTemplate.Name.Equals(profile.LayoutTitle))
-                        UpdateLayout(profile.Layout);
-                }
-                break;
-        }
+            switch (source)
+            {
+                case UpdateSource.QuickProfilesPage:
+                    {
+                        if (currentTemplate.Name.Equals(profile.LayoutTitle))
+                            UpdateLayout(profile.Layout);
+                    }
+                    break;
+            }
+        });
     }
 
     private void ControllerManager_ControllerSelected(IController controller)
