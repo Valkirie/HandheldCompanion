@@ -193,7 +193,16 @@ public static class InputsManager
                         case InputsChordType.Long:
                             {
                                 if (IsKeyUp)
-                                    continue;
+                                {
+                                    switch(hotkey.hotkeyType)
+                                    {
+                                        // we should always allow custom hotkeys (keyboard keys) to be released
+                                        case InputsHotkeyType.Custom:
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                }
                             }
                             break;
                     }
