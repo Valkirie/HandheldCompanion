@@ -103,11 +103,11 @@ public partial class LayoutPage : Page
 
         // update layout page if layout was updated elsewhere
         // good enough
-        switch(source)
+        switch (source)
         {
             case UpdateSource.QuickProfilesPage:
                 {
-                    if (currentTemplate.Executable.Equals(profile.Executable))
+                    if (currentTemplate.Name.Equals(profile.LayoutTitle))
                         UpdateLayout(profile.Layout);
                 }
                 break;
