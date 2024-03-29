@@ -87,8 +87,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-
-
         private void UpdateMapping(Layout layout)
         {
             if (layout.ButtonLayout.TryGetValue(_flag, out var actions))
@@ -107,7 +105,7 @@ namespace HandheldCompanion.ViewModels
                     // Model update should not go through as on update the entire stack is being recreated
                     // If updateToModel is true, ButtonMappings will end up empty 
                     //      => UpdateFromMapping() => UpdateMapping(layout) => UpdateFromMapping()
-                    newMapping.SetAction(action, updateToModel: false); 
+                    newMapping.SetAction(action, false); 
                 }
 
                 ButtonMappings.ReplaceWith(newMappings);
