@@ -27,10 +27,7 @@ public partial class LayoutPage : Page
 
     // Getter to update layout in ViewModels
     public Layout CurrentLayout => currentTemplate.Layout;
-
-
-
-    private LayoutTemplate currentTemplate = new();
+    public LayoutTemplate currentTemplate = new();
     protected LockObject updateLock = new();
 
     // page vars

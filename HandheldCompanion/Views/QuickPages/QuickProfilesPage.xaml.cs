@@ -769,10 +769,8 @@ public partial class QuickProfilesPage : Page
         if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
             return;
 
-        // no Monitor on threaded calls ?
         switch (listener)
         {
-            case "shortcutProfilesPage@":
             case "shortcutProfilesPage@@":
                 ((GyroActions)currentAction).MotionTrigger = inputs.State.Clone() as ButtonState;
                 UpdateProfile();

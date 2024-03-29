@@ -49,12 +49,14 @@ public partial class QuickHomePage : Page
 
     private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
     {
-        UpdatePins();
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() => { UpdatePins(); });
     }
 
     private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
     {
-        UpdatePins();
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() => { UpdatePins(); });
     }
 
     private void UpdatePins()
