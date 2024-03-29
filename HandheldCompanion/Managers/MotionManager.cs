@@ -133,9 +133,8 @@ namespace HandheldCompanion.Managers
         // gyro to joy/mouse mappings, by UI that configures them and by 3D overlay
         private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
         {
-            Profile current = ProfileManager.GetCurrent();
-
-            if (current.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
+            Layout currentLayout = LayoutManager.GetCurrent();
+            if (currentLayout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
                 if (action is not null)
                     gyroAction = action as GyroActions;
 
@@ -190,9 +189,8 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            // set vector2
+            Profile currentProfile = ProfileManager.GetCurrent();
             Vector2 output = Vector2.Zero;
-
             switch (gyroAction.MotionInput)
             {
                 case MotionInput.LocalSpace:
@@ -211,31 +209,31 @@ namespace HandheldCompanion.Managers
                     output = InputUtils.AutoRollYawSwap(new Vector3(gravityX, gravityY, gravityZ), gyroscope[SENSOR_DEFAULT]);
                     break;
                 case MotionInput.JoystickSteering:
-                    output.X = InputUtils.Steering(inclination.Angles.Y, current.SteeringMaxAngle, current.SteeringPower, current.SteeringDeadzone);
+                    output.X = InputUtils.Steering(inclination.Angles.Y, currentProfile.SteeringMaxAngle, currentProfile.SteeringPower, currentProfile.SteeringDeadzone);
                     output.Y = 0.0f;
                     break;
             }
 
             // manage horizontal axis inversion
-            if (current.MotionInvertHorizontal)
+            if (currentProfile.MotionInvertHorizontal)
                 output.X *= -1.0f;
 
             // manage vertical axis inversion
-            if (current.MotionInvertVertical)
+            if (currentProfile.MotionInvertVertical)
                 output.Y *= -1.0f;
 
             // apply sensivity curve
             // todo: use per-controller sensorSpec ?
-            output.X *= InputUtils.ApplyCustomSensitivity(output.X, IMUGyrometer.sensorSpec.maxIn, current.MotionSensivityArray);
-            output.Y *= InputUtils.ApplyCustomSensitivity(output.Y, IMUGyrometer.sensorSpec.maxIn, current.MotionSensivityArray);
+            output.X *= InputUtils.ApplyCustomSensitivity(output.X, IMUGyrometer.sensorSpec.maxIn, currentProfile.MotionSensivityArray);
+            output.Y *= InputUtils.ApplyCustomSensitivity(output.Y, IMUGyrometer.sensorSpec.maxIn, currentProfile.MotionSensivityArray);
 
             // apply aiming down scopes multiplier if activated
-            if (controllerState.ButtonState.Contains(current.AimingSightsTrigger))
-                output *= current.AimingSightsMultiplier;
+            if (controllerState.ButtonState.Contains(currentProfile.AimingSightsTrigger))
+                output *= currentProfile.AimingSightsMultiplier;
 
             // apply sensivity
             if (gyroAction.MotionInput != MotionInput.JoystickSteering)
-                output = new Vector2(output.X * current.GetSensitivityX(), output.Y * current.GetSensitivityY());
+                output = new Vector2(output.X * currentProfile.GetSensitivityX(), output.Y * currentProfile.GetSensitivityY());
 
             // fill the final calculated state for further use in the remapper
             controllerState.AxisState[AxisFlags.GyroX] = (short)Math.Clamp(output.X, short.MinValue, short.MaxValue);

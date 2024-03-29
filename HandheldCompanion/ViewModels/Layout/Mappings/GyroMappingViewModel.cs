@@ -265,11 +265,10 @@ namespace HandheldCompanion.ViewModels
             switch (listener)
             {
                 case "shortcutProfilesPage@":
-                case "shortcutProfilesPage@@":
                     {
                         gyroAction.MotionTrigger = inputs.State.Clone() as ButtonState;
 
-                        // recover previous motion trigger, if any
+                        // update hotkey UI
                         _gyroHotkey.inputsChord.State = gyroAction.MotionTrigger.Clone() as ButtonState;
                         _gyroHotkey.DrawInput();
                     }                  

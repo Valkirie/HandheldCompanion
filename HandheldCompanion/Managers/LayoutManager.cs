@@ -29,7 +29,7 @@ internal static class LayoutManager
     };
 
     private static bool updateLock;
-    private static Layout currentLayout;
+    private static Layout currentLayout = new();
     private static ScreenRotation currentOrientation = new();
     private static Layout profileLayout;
     private static Layout desktopLayout;

@@ -10,6 +10,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -308,21 +309,18 @@ public static class HotkeysManager
 
     private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener));
+        foreach (Hotkey hotkey in hotkeys)
         {
-            // we use @ as a special character to link two ore more listeners together
-            listener = listener.TrimEnd('@');
-
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
-            foreach (var hotkey in hotkeys)
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
+                // stop recording and update UI
                 hotkey.StopListening(inputs, type);
+            });
 
-                // overwrite current file
-                SerializeHotkey(hotkey, true);
-            }
-        });
+            SerializeHotkey(hotkey, true);
+        }
     }
 
     private static Hotkey ProcessHotkey(string fileName)
@@ -357,16 +355,14 @@ public static class HotkeysManager
         HotkeyUpdated?.Invoke(hotkey);
     }
 
-    public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown,
-        bool IsKeyUp)
+    public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp)
     {
+        IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsChord.State.Equals(input.State) && (item.inputsHotkey.OnKeyDown == IsKeyDown || item.inputsHotkey.OnKeyUp == IsKeyUp));
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // we use @ as a special character to link two ore more listeners together
-            var trimmed = listener.TrimEnd('@');
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(trimmed));
-            foreach (var hotkey in hotkeys)
+            foreach (Hotkey hotkey in hotkeys)
                 hotkey.Highlight();
         });
 
@@ -377,7 +373,8 @@ public static class HotkeysManager
                 return;
         }
 
-        var fProcess = ProcessManager.GetForegroundProcess();
+        // get current foreground process
+        ProcessEx? fProcess = ProcessManager.GetForegroundProcess();
 
         try
         {
