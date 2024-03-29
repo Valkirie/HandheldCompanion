@@ -156,7 +156,7 @@ namespace HandheldCompanion.ViewModels
         ];
 
         // Property to block off updating to model in certain cases
-        private bool _updateToModel = true;
+        protected bool _updateToModel = true;
 
         public MappingViewModel(object value)
         {

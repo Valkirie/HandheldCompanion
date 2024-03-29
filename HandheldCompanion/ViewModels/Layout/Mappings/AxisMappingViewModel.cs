@@ -343,13 +343,9 @@ namespace HandheldCompanion.ViewModels
         protected override void UpdateMapping(Layout layout)
         {
             if (layout.AxisLayout.TryGetValue((AxisLayoutFlags)Value, out var newAction))
-            {
-                SetAction(newAction);
-            }
+                SetAction(newAction, false);
             else
-            {
                 Reset();
-            }
         }
     }
 }

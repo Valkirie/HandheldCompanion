@@ -415,7 +415,7 @@ namespace HandheldCompanion.ViewModels
             {
                 _gyroHotkey.inputsChord.State = ((GyroActions)newAction).MotionTrigger.Clone() as ButtonState;
                 _gyroHotkey.DrawInput();
-                SetAction(newAction);
+                SetAction(newAction, false);
             }
             else
             {
