@@ -2,14 +2,19 @@
 using HandheldCompanion.Controls;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion.Managers;
@@ -56,12 +61,13 @@ public static class ProfileManager
             Filter = "*.json",
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
         };
+        profileWatcher.Created += ProfileCreated;
         profileWatcher.Deleted += ProfileDeleted;
 
         // process existing profiles
-        var fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
-        foreach (var fileName in fileEntries)
-            ProcessProfile(fileName);
+        string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
+        foreach (string fileName in fileEntries)
+            ProcessProfile(fileName, false);
 
         // check for default profile
         if (!HasDefault())
@@ -380,6 +386,15 @@ public static class ProfileManager
         }
     }
 
+    private static void ProfileCreated(object sender, FileSystemEventArgs e)
+    {
+        // todo: improve me
+        // display a message asking for import
+        // check if a profile with same path exists
+        // check if path exists, if not clean the field and only keep the executable
+        ProcessProfile(e.FullPath, true);
+    }
+
     private static void ProfileDeleted(object sender, FileSystemEventArgs e)
     {
         // not ideal
@@ -420,7 +435,7 @@ public static class ProfileManager
         return GetDefault();
     }
 
-    private static void ProcessProfile(string fileName)
+    private static void ProcessProfile(string fileName, bool imported = false)
     {
         Profile profile = null;
         try
@@ -468,6 +483,72 @@ public static class ProfileManager
         {
             LogManager.LogError("Failed to parse profile {0}", fileName);
             return;
+        }
+
+        if (imported)
+        {
+            bool skipImported = true;
+            ManualResetEventSlim waitHandle = new ManualResetEventSlim(false);
+
+            // UI thread
+            Application.Current.Dispatcher.Invoke(async () =>
+            {
+                // todo: localize me
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = $"Importing profile for {profile.Name}",
+                    Content = $"Would you like to import this profile to your database ?",
+                    PrimaryButtonText = Resources.ProfilesPage_OK,
+                    CloseButtonText = Resources.ProfilesPage_Cancel
+                }.ShowAsync();
+
+                ContentDialogResult result = await dialogTask; // await the task
+
+                switch (result)
+                {
+                    case ContentDialogResult.Primary:
+                        skipImported = false;
+                        break;
+                    default:
+                        skipImported = true;
+                        break;
+                }
+
+                // Signal the waiting thread that the dialog has been closed
+                waitHandle.Set();
+            });
+
+            // Wait until the dialog has been closed
+            waitHandle.Wait();
+
+            // delete file and exit if user decided to skip this profile
+            if (skipImported)
+            {
+                File.Delete(fileName);
+                return;
+            }
+
+            // if a profile for this path exists, make this one a subprofile
+            bool alreadyExist = Contains(profile.Path);
+            if (alreadyExist)
+            {
+                // give the profile a new guid
+                profile.Guid = Guid.NewGuid();
+
+                // set as sub-profile
+                profile.IsSubProfile = true;
+                profile.IsFavoriteSubProfile = false;
+
+                // delete current file, profile manager will take care of creating a proper subprofile
+                File.Delete(fileName);
+            }
+            else
+            {
+                // if imported profile targeted file doesn't exist, use executable as path
+                bool pathExist = File.Exists(profile.Path);
+                if (!pathExist)
+                    profile.Path = profile.Executable;
+            }
         }
 
         UpdateOrCreateProfile(profile, UpdateSource.Serializer);
