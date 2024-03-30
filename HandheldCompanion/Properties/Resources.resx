@@ -2494,19 +2494,19 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformance" xml:space="preserve">
-    <value>ROG Ally - Performance</value>
+    <value>Performance</value>
   </data>
   <data name="PowerProfileROGAllyBetterBatteryDesc" xml:space="preserve">
     <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
   </data>
   <data name="PowerProfileROGAllyBetterBattery" xml:space="preserve">
-    <value>ROG Ally - Silent</value>
+    <value>Silent</value>
   </data>
   <data name="PowerProfileROGAllyBestPerformanceDesc" xml:space="preserve">
     <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
   </data>
   <data name="PowerProfileROGAllyBestPerformance" xml:space="preserve">
-    <value>ROG Ally - Turbo</value>
+    <value>Turbo</value>
   </data>
   <data name="QuickDevicePage_Desc" xml:space="preserve">
     <value>Settings, display profile</value>
@@ -2737,19 +2737,19 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quiet</value>
+    <value>Efficiency</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
-    <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
+    <value>Preset similar to Efficiency Mode in LS. TDP Limit: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanced</value>
+    <value>Balanced</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Performance</value>
+    <value>Performance</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
