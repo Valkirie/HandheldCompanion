@@ -468,6 +468,16 @@ public abstract class IDevice
                     }
                 }
                 break;
+            case "MICRO-STAR INTERNATIONAL CO., LTD.":
+                {
+                    switch (ProductName)
+                    {
+                        case "MS-1T41":
+                            device = new ClawA1M();
+                            break;
+                    }
+                }
+                break;
         }
 
         LogManager.LogInformation("{0} from {1}", ProductName, ManufacturerName);

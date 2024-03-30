@@ -34,6 +34,15 @@ public static class OSPowerMode
     public static Guid BestPerformance = new("ded574b5-45a0-4f42-8737-46345c09c238");
 }
 
+public enum CPUBoostLevel
+{
+    Disabled = 0,
+    Enabled = 1,
+    Agressive = 2,
+    EfficientEnabled = 3,
+    EfficientAgressive = 4,
+}
+
 public static class PerformanceManager
 {
     private const short INTERVAL_DEFAULT = 3000; // default interval between value scans

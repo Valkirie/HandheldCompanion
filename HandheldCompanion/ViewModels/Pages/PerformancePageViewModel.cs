@@ -323,12 +323,12 @@ namespace HandheldCompanion.ViewModels
 
         public int CPUBoostLevel
         {
-            get => SelectedPreset.CPUBoostLevel;
+            get => (int)SelectedPreset.CPUBoostLevel;
             set
             {
                 if (value != CPUBoostLevel)
                 {
-                    SelectedPreset.CPUBoostLevel = value;
+                    SelectedPreset.CPUBoostLevel = (CPUBoostLevel)value;
                     OnPropertyChanged(nameof(CPUBoostLevel));
                 }
             }
@@ -734,7 +734,7 @@ namespace HandheldCompanion.ViewModels
         {
             if (IsQuickTools)
             {
-                if (SelectedPreset?.Guid == preset.Guid)
+                if (SelectedPreset?.Guid == preset.Guid && MainWindow.overlayquickTools.ContentFrame.CanGoBack)
                     MainWindow.overlayquickTools.ContentFrame.GoBack();
             }
             else

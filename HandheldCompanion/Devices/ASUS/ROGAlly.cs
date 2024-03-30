@@ -122,16 +122,17 @@ public class ROGAlly : IDevice
         DynamicLightingCapabilities |= LEDLevel.Wheel;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllySilentName, Properties.Resources.PowerProfileROGAllySilentDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyBetterBattery, Properties.Resources.PowerProfileROGAllyBetterBatteryDesc)
         {
             Default = true,
             DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Silent,
             OSPowerMode = OSPowerMode.BetterBattery,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
             Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a")
         });
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyPerformanceName, Properties.Resources.PowerProfileROGAllyPerformanceDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyBetterPerformance, Properties.Resources.PowerProfileROGAllyBetterPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
@@ -140,7 +141,7 @@ public class ROGAlly : IDevice
             Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f")
         });
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyTurboName, Properties.Resources.PowerProfileROGAllyTurboDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyBestPerformance, Properties.Resources.PowerProfileROGAllyBestPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,

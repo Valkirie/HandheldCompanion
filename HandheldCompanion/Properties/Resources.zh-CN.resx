@@ -2536,25 +2536,25 @@
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
     <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
   </data>
-  <data name="PowerProfileLegionGoQuietName" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
     <value>Legion Go - Quiet</value>
   </data>
-  <data name="PowerProfileLegionGoQuietDescription" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
   </data>
-  <data name="PowerProfileLegionGoBalancedName" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
     <value>Legion Go - Balanced</value>
   </data>
-  <data name="PowerProfileLegionGoBalancedDescription" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
   </data>
-  <data name="PowerProfileLegionGoPerformanceName" xml:space="preserve">
+  <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
     <value>Legion Go - Performance</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
     <value>Deploy integer scaling</value>
   </data>
-  <data name="PowerProfileLegionGoPerformanceDescription" xml:space="preserve">
+  <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
   </data>
   <data name="Hint_LegionGoServices" xml:space="preserve">
@@ -2803,7 +2803,7 @@
   <data name="QuickDevicePage_Desc" xml:space="preserve">
     <value>Settings, display profile</value>
   </data>
-  <data name="PowerProfileROGAllyTurboName" xml:space="preserve">
+  <data name="PowerProfileROGAllyBestPerformance" xml:space="preserve">
     <value>ROG Ally - Turbo</value>
   </data>
   <data name="DevicePage_DynamicLighting_Wheel" xml:space="preserve">
@@ -2851,19 +2851,19 @@
   <data name="PowerProfileManualName" xml:space="preserve">
     <value>Manual mode: {0}</value>
   </data>
-  <data name="PowerProfileROGAllyPerformanceDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
-  <data name="PowerProfileROGAllyPerformanceName" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterPerformance" xml:space="preserve">
     <value>ROG Ally - Performance</value>
   </data>
-  <data name="PowerProfileROGAllySilentDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterBatteryDesc" xml:space="preserve">
     <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
   </data>
-  <data name="PowerProfileROGAllySilentName" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterBattery" xml:space="preserve">
     <value>ROG Ally - Silent</value>
   </data>
-  <data name="PowerProfileROGAllyTurboDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyBestPerformanceDesc" xml:space="preserve">
     <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
   </data>
   <data name="QuickPerformancePage_CPUUnit" xml:space="preserve">

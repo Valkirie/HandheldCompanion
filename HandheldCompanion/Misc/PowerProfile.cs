@@ -1,4 +1,5 @@
-﻿using iNKORE.UI.WPF.Modern.Controls;
+﻿using HandheldCompanion.Managers;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -78,7 +79,7 @@ namespace HandheldCompanion.Misc
         public bool CPUCoreEnabled { get; set; }
         public int CPUCoreCount { get; set; } = MotherboardInfo.NumberOfCores;
 
-        public int CPUBoostLevel { get; set; } = 0;
+        public CPUBoostLevel CPUBoostLevel { get; set; } = CPUBoostLevel.Enabled;
 
         public FanProfile FanProfile { get; set; } = new();
 
