@@ -76,6 +76,7 @@
     <None Remove="Resources\device_gpd_winmax2.png" />
     <None Remove="Resources\device_gpd_winmini.png" />
     <None Remove="Resources\device_legion_go.png" />
+    <None Remove="Resources\device_msi_claw.png" />
     <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_onexplayer_onexfly.png" />
@@ -108,8 +109,8 @@
 
   <ItemGroup>
     <Resource Include="Resources\device_aya_kun.png" />
-    <Resource Include="Resources\device_cncdan_nucdeck.png" />
     <Resource Include="Resources\device_aya_slide.png" />
+    <Resource Include="Resources\device_cncdan_nucdeck.png" />
     <Resource Include="Resources\device_gpd_winmini.png" />
     <Resource Include="Resources\device_legion_go.png" />
   </ItemGroup>
@@ -124,16 +125,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\device_aya_2021.png" />
     <Resource Include="Resources\controller_0_1.png" />
     <Resource Include="Resources\controller_0_0.png" />
     <Resource Include="Resources\controller_1_1.png" />
     <Resource Include="Resources\controller_1_0.png" />
+    <Resource Include="Resources\device_aya_2021.png" />
     <Resource Include="Resources\device_aya_next.png" />
     <Resource Include="Resources\device_gpd3.png" />
     <Resource Include="Resources\device_gpd4.png" />
     <Resource Include="Resources\device_gpd_win2.png" />
     <Resource Include="Resources\device_gpd_winmax2.png" />
+    <Resource Include="Resources\device_msi_claw.png" />
     <Resource Include="Resources\device_onexplayer_2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\device_onexplayer_onexfly.png" />
@@ -149,9 +151,9 @@
     <PackageReference Include="dotnetCampus.WPF.Dependencies" Version="6.0.4-alpha07-test07" />
     <PackageReference Include="dotnetCampus.WPF.Resource" Version="6.0.4-alpha07-test07" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
-    <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.24.0" />
     <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.25.1" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.3" />
+    <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.25.0" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4-pre274" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
@@ -161,7 +163,7 @@
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
     <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.12.2" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.17.406" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.18.1" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
