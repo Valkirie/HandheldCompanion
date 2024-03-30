@@ -149,11 +149,12 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.Wheel;
 
         // Legion Go - Quiet
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoQuietName, Properties.Resources.PowerProfileLegionGoQuietDescription) 
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc) 
         {
             Default = true,
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterBattery,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
             OEMPowerMode = (int) LegionMode.Quiet,
             Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
             TDPOverrideEnabled = true,
@@ -161,7 +162,7 @@ public class LegionGo : IDevice
         });
 
         // Legion Go - Balanced
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBalancedName, Properties.Resources.PowerProfileLegionGoBalancedDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterPerformance, Properties.Resources.PowerProfileLegionGoBetterPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
@@ -173,7 +174,7 @@ public class LegionGo : IDevice
         });
 
         // Legion Go - Performance
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoPerformanceName, Properties.Resources.PowerProfileLegionGoPerformanceDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBestPerformance, Properties.Resources.PowerProfileLegionGoBestPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
