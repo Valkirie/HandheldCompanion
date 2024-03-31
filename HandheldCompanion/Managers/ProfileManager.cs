@@ -388,18 +388,26 @@ public static class ProfileManager
 
     private static void ProfileCreated(object sender, FileSystemEventArgs e)
     {
-        // todo: improve me
-        // display a message asking for import
-        // check if a profile with same path exists
-        // check if path exists, if not clean the field and only keep the executable
+        if (pendingCreation.Contains(e.FullPath))
+        {
+            pendingCreation.Remove(e.FullPath);
+            return;
+        }
+
         ProcessProfile(e.FullPath, true);
     }
 
     private static void ProfileDeleted(object sender, FileSystemEventArgs e)
     {
+        if (pendingDeletion.Contains(e.FullPath))
+        {
+            pendingDeletion.Remove(e.FullPath);
+            return;
+        }
+
         // not ideal
-        var ProfileName = e.Name.Replace(".json", "");
-        var profile = profiles.Values.FirstOrDefault(p => p.Name.Equals(ProfileName, StringComparison.InvariantCultureIgnoreCase));
+        string ProfileName = e.Name.Replace(".json", "");
+        Profile? profile = profiles.Values.FirstOrDefault(p => p.Name.Equals(ProfileName, StringComparison.InvariantCultureIgnoreCase));
 
         // couldn't find a matching profile
         if (profile is null)
@@ -527,28 +535,28 @@ public static class ProfileManager
                 File.Delete(fileName);
                 return;
             }
+        }
 
-            // if a profile for this path exists, make this one a subprofile
-            bool alreadyExist = Contains(profile.Path);
-            if (alreadyExist)
-            {
-                // give the profile a new guid
-                profile.Guid = Guid.NewGuid();
+        // if a profile for this path exists, make this one a subprofile
+        bool alreadyExist = Contains(profile.Path);
+        if (alreadyExist)
+        {
+            // give the profile a new guid
+            profile.Guid = Guid.NewGuid();
 
-                // set as sub-profile
-                profile.IsSubProfile = true;
-                profile.IsFavoriteSubProfile = false;
+            // set as sub-profile
+            profile.IsSubProfile = true;
+            profile.IsFavoriteSubProfile = false;
 
-                // delete current file, profile manager will take care of creating a proper subprofile
-                File.Delete(fileName);
-            }
-            else
-            {
-                // if imported profile targeted file doesn't exist, use executable as path
-                bool pathExist = File.Exists(profile.Path);
-                if (!pathExist)
-                    profile.Path = profile.Executable;
-            }
+            // delete current file, profile manager will take care of creating a proper subprofile
+            File.Delete(fileName);
+        }
+        else
+        {
+            // if imported profile targeted file doesn't exist, use executable as path
+            bool pathExist = File.Exists(profile.Path);
+            if (!pathExist)
+                profile.Path = profile.Executable;
         }
 
         UpdateOrCreateProfile(profile, UpdateSource.Serializer);
@@ -558,17 +566,20 @@ public static class ProfileManager
             ApplyProfile(profile, UpdateSource.Serializer);
     }
 
+    private static List<string> pendingCreation = new();
+    private static List<string> pendingDeletion = new();
+
     public static void DeleteProfile(Profile profile)
     {
-        var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+        string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+        pendingDeletion.Add(profilePath);
 
         if (profiles.ContainsKey(profile.Path))
         {
             // delete associated subprofiles
             foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path, false))
-            {
                 DeleteSubProfile(subprofile);
-            }
+
             LogManager.LogInformation("Deleted subprofiles for profile {0}", profile);
 
             // Unregister application from HidHide
@@ -580,7 +591,7 @@ public static class ProfileManager
             profiles.Remove(profile.Path);
 
             // warn owner
-            var isCurrent = false;
+            bool isCurrent = false;
 
             if (currentProfile != null)
                 isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
@@ -607,7 +618,8 @@ public static class ProfileManager
 
     public static void DeleteSubProfile(Profile subProfile)
     {
-        var profilePath = Path.Combine(ProfilesPath, subProfile.GetFileName());
+        string profilePath = Path.Combine(ProfilesPath, subProfile.GetFileName());
+        pendingDeletion.Add(profilePath);
 
         if (subProfiles.Contains(subProfile))
         {
@@ -615,7 +627,7 @@ public static class ProfileManager
             subProfiles.Remove(subProfile);
 
             // warn owner
-            var isCurrent = subProfile.Guid == currentProfile.Guid;
+            bool isCurrent = subProfile.Guid == currentProfile.Guid;
 
             // raise event
             Discarded?.Invoke(subProfile);
@@ -643,16 +655,17 @@ public static class ProfileManager
 
     public static void SerializeProfile(Profile profile)
     {
+        // prepare for writing
+        string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+        pendingCreation.Add(profilePath);
+
         // update profile version to current build
         profile.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
 
-        var jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+        string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All
         });
-
-        // prepare for writing
-        var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
 
         try
         {

@@ -48,6 +48,7 @@ public partial class QuickProfilesPage : Page
         // manage events
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProfileManager.Applied += ProfileManager_Applied;
+        ProfileManager.Deleted += ProfileManager_Deleted;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
@@ -519,6 +520,13 @@ public partial class QuickProfilesPage : Page
                 RISSlider.Value = selectedProfile.RISSharpness;
             }
         });
+    }
+
+    private void ProfileManager_Deleted(Profile profile)
+    {
+        // this shouldn't happen, someone removed the currently applied profile
+        if (selectedProfile == profile)
+            ProcessManager_ForegroundChanged(currentProcess, null);
     }
 
     private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
