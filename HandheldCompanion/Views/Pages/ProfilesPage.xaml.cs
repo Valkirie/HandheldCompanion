@@ -886,7 +886,11 @@ public partial class ProfilesPage : Page
                     }
                 }
 
+                int prevIdx = cB_Profiles.SelectedIndex;
                 cB_Profiles.Items.RemoveAt(idx);
+
+                if (prevIdx == idx)
+                    cB_Profiles.SelectedIndex = 0;
             }
             else
             {
