@@ -9,7 +9,6 @@ using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,7 +23,7 @@ public static class ProfileManager
 {
     public const string DefaultName = "Default";
 
-    public static ConcurrentDictionary<string, Profile> profiles = new(StringComparer.InvariantCultureIgnoreCase);
+    public static Dictionary<string, Profile> profiles = new(StringComparer.InvariantCultureIgnoreCase);
     public static List<Profile> subProfiles = new();
 
     private static Profile currentProfile;
@@ -218,7 +217,7 @@ public static class ProfileManager
             return;
 
         // get index of currently applied profile
-        int currentIndex = subProfilesList.IndexOf(currentProfile);
+        int currentIndex = subProfilesList.IndexOf(currentProfile);        
         int newIndex = currentIndex;
 
         // previous? decrement, next? increment
@@ -589,7 +588,7 @@ public static class ProfileManager
             // Remove XInputPlus (extended compatibility)
             XInputPlus.UnregisterApplication(profile);
 
-            _ = profiles.TryRemove(profile.Path, out Profile removedValue);
+            profiles.Remove(profile.Path);
 
             // warn owner
             bool isCurrent = false;
@@ -628,10 +627,7 @@ public static class ProfileManager
             subProfiles.Remove(subProfile);
 
             // warn owner
-            bool isCurrent = false;
-
-            if (currentProfile != null)
-                isCurrent = subProfile.Guid == currentProfile.Guid;
+            bool isCurrent = subProfile.Guid == currentProfile.Guid;
 
             // raise event
             Discarded?.Invoke(subProfile);
