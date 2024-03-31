@@ -829,7 +829,7 @@ public partial class ProfilesPage : Page
         }
 
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var idx = -1;
             if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
@@ -870,8 +870,10 @@ public partial class ProfilesPage : Page
     public void ProfileDeleted(Profile profile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
+            int prevIdx = cB_Profiles.SelectedIndex;
+
             if (!profile.IsSubProfile)
             {
                 // Profiles
@@ -886,7 +888,9 @@ public partial class ProfilesPage : Page
                     }
                 }
 
-                int prevIdx = cB_Profiles.SelectedIndex;
+                if (idx == -1)
+                    return;
+
                 cB_Profiles.Items.RemoveAt(idx);
 
                 if (prevIdx == idx)
