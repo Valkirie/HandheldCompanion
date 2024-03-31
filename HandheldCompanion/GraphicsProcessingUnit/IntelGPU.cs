@@ -149,7 +149,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             if (telemetryLock.TryEnter())
             {
-                TelemetryData = GetTelemetryData(deviceIdx);
+                TelemetryData = GetTelemetry(deviceIdx);
                 telemetryLock.Exit();
             }
         }
