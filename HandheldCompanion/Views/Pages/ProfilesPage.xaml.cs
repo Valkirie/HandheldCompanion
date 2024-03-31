@@ -829,7 +829,7 @@ public partial class ProfilesPage : Page
         }
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             var idx = -1;
             if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
@@ -870,7 +870,7 @@ public partial class ProfilesPage : Page
     public void ProfileDeleted(Profile profile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             if (!profile.IsSubProfile)
             {
