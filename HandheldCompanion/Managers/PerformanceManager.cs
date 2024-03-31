@@ -542,7 +542,9 @@ public static class PerformanceManager
                 if (idx >= StoredTDP.Length)
                     break;
 
-                var TDP = StoredTDP[idx];
+                double TDP = StoredTDP[idx];
+                if (TDP == 0.0d)
+                    continue;
 
                 if (processor is AMDProcessor)
                 {
@@ -568,7 +570,7 @@ public static class PerformanceManager
                 if (ReadTDP != TDP)
                     processor.SetTDPLimit(type, TDP);
 
-                await Task.Delay(12);
+                await Task.Delay(20);
             }
 
             // are we done ?
