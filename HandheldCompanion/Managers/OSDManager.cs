@@ -164,7 +164,7 @@ public static class OSDManager
             case 2: // Extended
                 {
                     OverlayRow row1 = new();
-                    OverlayEntry FPSentry = new("FPS", "FF0000");
+                    OverlayEntry FPSentry = new("<APP>", "FF0000");
                     FPSentry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
                     FPSentry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
                     row1.entries.Add(FPSentry);
@@ -231,7 +231,7 @@ public static class OSDManager
                     AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.BatteryTimeSpan, "min");
                     row5.entries.Add(BATTentry);
 
-                    OverlayEntry FPSentry = new("FPS", "FF0000", true);
+                    OverlayEntry FPSentry = new("<APP>", "FF0000", true);
                     FPSentry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
                     FPSentry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
                     row6.entries.Add(FPSentry);
