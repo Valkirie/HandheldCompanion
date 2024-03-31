@@ -531,6 +531,13 @@ public partial class QuickProfilesPage : Page
             ProcessManager_ForegroundChanged(currentProcess, null);
     }
 
+    private void ProfileManager_Deleted(Profile profile)
+    {
+        // this shouldn't happen, someone removed the currently applied profile
+        if (selectedProfile == profile)
+            ProcessManager_ForegroundChanged(currentProcess, null);
+    }
+
     private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
     {
         // update current process
