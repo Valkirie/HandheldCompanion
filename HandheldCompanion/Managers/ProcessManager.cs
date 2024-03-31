@@ -30,6 +30,23 @@ public static class ProcessManager
     [DllImport("user32.dll")]
     public static extern bool IsWindowVisible(int h);
 
+    // Import the necessary user32.dll functions
+    [DllImport("user32.dll")]
+    static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax,
+        IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc,
+        uint idProcess, uint idThread, uint dwFlags);
+
+    // Declare the WinEventDelegate
+    private static WinEventDelegate winDelegate = null;
+
+    // Define the WinEventDelegate
+    delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
+        int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
+    // Constants for WinEvent hook
+    private const uint WINEVENT_OUTOFCONTEXT = 0;
+    private const uint EVENT_SYSTEM_FOREGROUND = 3;
+
     // process vars
     private static readonly Timer ForegroundTimer;
     private static readonly Timer ProcessWatcher;
@@ -57,11 +74,21 @@ public static class ProcessManager
             TreeScope.Children,
             OnWindowOpened);
 
+        // Set up the WinEvent hook
+        winDelegate = new WinEventDelegate(WinEventProc);
+        IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
+            IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
+
         ForegroundTimer = new Timer(2000);
-        ForegroundTimer.Elapsed += ForegroundCallback;
+        ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback();
 
         ProcessWatcher = new Timer(2000);
-        ProcessWatcher.Elapsed += ProcessWatcher_Elapsed;
+        ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
+    }
+
+    private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+    {
+        ForegroundCallback();
     }
 
     private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
@@ -139,6 +166,7 @@ public static class ProcessManager
     {
         if (Processes.TryGetValue(processId, out var process))
             return process;
+
         return null;
     }
 
@@ -154,11 +182,10 @@ public static class ProcessManager
 
     public static List<ProcessEx> GetProcesses(string executable)
     {
-        return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase))
-            .ToList();
+        return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
-    private static void ForegroundCallback(object? sender, EventArgs e)
+    private static void ForegroundCallback()
     {
         IntPtr hWnd = GetforegroundWindow();
         if (foregroundWindow == hWnd)
@@ -443,7 +470,7 @@ public static class ProcessManager
         return mainThread;
     }
 
-    private static void ProcessWatcher_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    private static void ProcessWatcher_Elapsed()
     {
         Parallel.ForEach(Processes,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
