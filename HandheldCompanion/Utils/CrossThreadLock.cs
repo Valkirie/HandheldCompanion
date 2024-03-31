@@ -58,11 +58,8 @@ namespace HandheldCompanion.Utils
         public void Exit()
         {
             // If the lock has been entered, release the semaphore and reset _isEntered to false.
-            if (_isEntered)
-            {
-                _semaphore.Release();
-                _isEntered = false;
-            }
+            _semaphore.Release();
+            _isEntered = false;
         }
 
         /// <summary>
