@@ -23,7 +23,7 @@ public static class MotherboardInfo
     private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
     private static ManagementObjectCollection videoControllerCollection;
 
-    public static void UpdateMotherboard()
+    static MotherboardInfo()
     {
         // slow task, don't call me more than once
         baseboardCollection = baseboardSearcher.Get();
