@@ -2960,6 +2960,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
     <value>Xbox 360</value>
+  </data>
   <data name="ProfilesPage_Combined" xml:space="preserve">
     <value>Roll/Yaw</value>
   </data>
