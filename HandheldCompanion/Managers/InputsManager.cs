@@ -487,6 +487,8 @@ public static class InputsManager
         if (IDevice.GetCurrent().HasKey())
             InitGlobalHook();
 
+        ControllerManager.InputsUpdated += UpdateInputs;
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -497,6 +499,8 @@ public static class InputsManager
     {
         if (!IsInitialized)
             return;
+
+        ControllerManager.InputsUpdated -= UpdateInputs;
 
         IsInitialized = false;
 
@@ -526,8 +530,11 @@ public static class InputsManager
         m_GlobalHook = null;
     }
 
-    public static void UpdateReport(ButtonState buttonState)
+    private static void UpdateInputs(ControllerState controllerState)
     {
+        // prepare button state
+        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
+
         // half-press should be removed if full-press is also present
         if (currentChord.State[ButtonFlags.L2Full])
         {
@@ -583,7 +590,7 @@ public static class InputsManager
         {
             if (!successChord.State.IsEmpty())
             {
-                if(!buttonState.Contains(successChord.State))
+                if (!buttonState.Contains(successChord.State))
                 {
                     IsKeyDown = false;
                     IsKeyUp = true;

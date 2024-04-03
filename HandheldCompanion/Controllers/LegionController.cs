@@ -322,23 +322,19 @@ namespace HandheldCompanion.Controllers
             }
 
             // store motion
-            Inputs.GyroState.Gyroscope.X = gX;
-            Inputs.GyroState.Gyroscope.Y = gY;
-            Inputs.GyroState.Gyroscope.Z = gZ;
-            Inputs.GyroState.Accelerometer.X = aX;
-            Inputs.GyroState.Accelerometer.Y = aY;
-            Inputs.GyroState.Accelerometer.Z = aZ;
+            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
 
             // process motion
             switch (GyroIndex)
             {
                 default:
                 case LegionGo.LeftJoyconIndex:
-                    gamepadMotion.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
+                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
                     base.UpdateInputs(ticks, delta);
                     break;
                 case LegionGo.RightJoyconIndex:
-                    gamepadMotionR.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
+                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
                     base.UpdateInputs(ticks, delta, gamepadMotionR);
                     break;
             }

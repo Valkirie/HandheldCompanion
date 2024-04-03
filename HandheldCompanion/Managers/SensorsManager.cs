@@ -249,16 +249,12 @@ namespace HandheldCompanion.Managers
             Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading() : Vector3.Zero;
             Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading() : Vector3.Zero;
 
-            // Store motion
-            controllerState.GyroState.Gyroscope.X = gyro.X;
-            controllerState.GyroState.Gyroscope.Y = gyro.Y;
-            controllerState.GyroState.Gyroscope.Z = gyro.Z;
-            controllerState.GyroState.Accelerometer.X = accel.X;
-            controllerState.GyroState.Accelerometer.Y = accel.Y;
-            controllerState.GyroState.Accelerometer.Z = accel.Z;
+            // store motion
+            controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
+            controllerState.GyroState.SetAccelerometer(accel.X, accel.Y, accel.Z);
 
             // process motion
-            gamepadMotion.ProcessMotion(controllerState.GyroState.Gyroscope.X, controllerState.GyroState.Gyroscope.Y, controllerState.GyroState.Gyroscope.Z, controllerState.GyroState.Accelerometer.X, controllerState.GyroState.Accelerometer.Y, controllerState.GyroState.Accelerometer.Z, delta);
+            gamepadMotion.ProcessMotion(gyro.X, gyro.Y, gyro.Z, accel.X, accel.Y, accel.Z, delta);
         }
 
         public static void SetSensorFamily(SensorFamily sensorFamily)

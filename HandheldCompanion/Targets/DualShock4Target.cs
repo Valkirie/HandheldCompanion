@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
@@ -55,7 +56,6 @@ namespace HandheldCompanion.Targets
             try
             {
                 virtualController.Connect();
-                TimerManager.Tick += UpdateReport;
 
                 base.Connect();
             }
@@ -73,8 +73,6 @@ namespace HandheldCompanion.Targets
                 if (virtualController != null)
                     virtualController.Disconnect();
 
-                TimerManager.Tick -= UpdateReport;
-
                 base.Disconnect();
             }
             catch { }
@@ -85,7 +83,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateReport(long ticks, float delta)
+        public override unsafe void UpdateInputs(ControllerState Inputs)
         {
             if (!IsConnected)
                 return;
@@ -183,14 +181,15 @@ namespace HandheldCompanion.Targets
             }
 
             // Use gyro sensor data, map to proper range, invert where needed
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope.X, DS4GyroscopeSensorSpec);    // gyroPitchFull
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope.Y, DS4GyroscopeSensorSpec);   // gyroYawFull
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope.Z, DS4GyroscopeSensorSpec);    // gyroRollFull
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].X, DS4GyroscopeSensorSpec);  // gyroPitchFull
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Y, DS4GyroscopeSensorSpec);  // gyroYawFull
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Z, DS4GyroscopeSensorSpec);  // gyroRollFull
 
-            outDS4Report.wAccelX = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer.X, DS4AccelerometerSensorSpec); // accelXFull
-            outDS4Report.wAccelY = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer.Y, DS4AccelerometerSensorSpec); // accelYFull
-            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer.Z, DS4AccelerometerSensorSpec);  // accelZFull
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].X, DS4AccelerometerSensorSpec); // accelXFull
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Y, DS4AccelerometerSensorSpec); // accelYFull
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Z, DS4AccelerometerSensorSpec); // accelZFull
 
+            // todo: implement battery value based on device
             outDS4Report.bBatteryLvlSpecial = 11;
 
             // A common increment value between two reports is 188 (at full rate the report period is 1.25ms)
