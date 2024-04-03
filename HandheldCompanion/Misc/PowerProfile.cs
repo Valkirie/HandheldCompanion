@@ -239,22 +239,30 @@ namespace HandheldCompanion.Misc
 
         public Button GetButton(Page page)
         {
-            return uIElements[page].button;
+            if (uIElements.TryGetValue(page, out UIElement UI))
+                return UI.button;
+
+            return null;
         }
 
         public RadioButton GetRadioButton(Page page)
         {
-            return uIElements[page].radioButton;
+            if (uIElements.TryGetValue(page, out UIElement UI))
+                return UI.radioButton;
+
+            return null;
         }
 
         public void Check(Page page)
         {
-            uIElements[page].radioButton.IsChecked = true;
+            if (uIElements.TryGetValue(page, out UIElement UI))
+                UI.radioButton.IsChecked = true;
         }
 
         public void Uncheck(Page page)
         {
-            uIElements[page].radioButton.IsChecked = false;
+            if (uIElements.TryGetValue(page, out UIElement UI))
+                UI.radioButton.IsChecked = false;
         }
 
         public override string ToString()

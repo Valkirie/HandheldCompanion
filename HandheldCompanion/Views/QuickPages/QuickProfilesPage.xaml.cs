@@ -363,10 +363,12 @@ public partial class QuickProfilesPage : Page
                 }
 
                 Button button = powerProfile.GetButton(this);
-                button.Click += (sender, e) => PowerProfile_Clicked(powerProfile);
+                if (button is not null)
+                    button.Click += (sender, e) => PowerProfile_Clicked(powerProfile);
 
                 RadioButton radioButton = powerProfile.GetRadioButton(this);
-                radioButton.Checked += (sender, e) => PowerProfile_Selected(powerProfile);
+                if (radioButton is not null)
+                    radioButton.Checked += (sender, e) => PowerProfile_Selected(powerProfile);
 
                 // add new entry
                 ProfileStack.Children.Add(button);
