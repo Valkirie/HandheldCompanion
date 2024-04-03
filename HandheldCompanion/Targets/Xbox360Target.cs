@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
@@ -33,7 +34,6 @@ namespace HandheldCompanion.Targets
             try
             {
                 virtualController.Connect();
-                TimerManager.Tick += UpdateReport;
 
                 base.Connect();
             }
@@ -51,8 +51,6 @@ namespace HandheldCompanion.Targets
                 if (virtualController != null)
                     virtualController.Disconnect();
 
-                TimerManager.Tick -= UpdateReport;
-
                 base.Disconnect();
             }
             catch { }
@@ -63,7 +61,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateReport(long ticks, float delta)
+        public override unsafe void UpdateInputs(ControllerState Inputs)
         {
             if (!IsConnected)
                 return;

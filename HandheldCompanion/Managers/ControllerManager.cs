@@ -1079,15 +1079,12 @@ public static class ControllerManager
     {
         return Controllers.Values.ToList();
     }
-
+    
+    private static ControllerState mutedState = new ControllerState();
     private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
     {
         // raise event
         InputsUpdated?.Invoke(controllerState);
-
-        // send raw state to inputs manager
-        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
-        InputsManager.UpdateReport(buttonState);
 
         switch (sensorSelection)
         {
@@ -1101,25 +1098,27 @@ public static class ControllerManager
                     SensorsManager.UpdateReport(controllerState, gamepadMotion, delta);
                 }
                 break;
-            default:
-                break;
         }
 
+        // compute motion
         if (gamepadMotion is not null)
         {
             MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
             MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion);
         }
 
-        // pass inputs to Layout manager
-        controllerState = LayoutManager.MapController(controllerState);
-
         // controller is muted
         if (ControllerMuted)
         {
-            ControllerState emptyState = new ControllerState();
-            emptyState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
-            controllerState = emptyState;
+            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
+
+            // swap states
+            controllerState = mutedState;
+        }
+        else
+        {
+            // compute layout
+            controllerState = LayoutManager.MapController(controllerState);
         }
 
         VirtualManager.UpdateInputs(controllerState);

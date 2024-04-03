@@ -559,29 +559,28 @@ public class DSUServer
 
             //motion timestamp
             Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetElapsedSeconds()), 0, outputData, outIdx, 8);
-
             outIdx += 8;
 
             // Accelerometer
             // accelXG
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer.X), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].X), 0, outputData, outIdx, 4);
             outIdx += 4;
             // accelYG
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer.Y), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Y), 0, outputData, outIdx, 4);
             outIdx += 4;
             // accelZG
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer.Z), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Z), 0, outputData, outIdx, 4);
             outIdx += 4;
 
             // Gyroscope
             // angVelPitch
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Gyroscope.X), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].X), 0, outputData, outIdx, 4);
             outIdx += 4;
             // angVelYaw
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope.Y), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Y), 0, outputData, outIdx, 4);
             outIdx += 4;
             // angVelRoll
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope.Z), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Z), 0, outputData, outIdx, 4);
             outIdx += 4;
         }
 

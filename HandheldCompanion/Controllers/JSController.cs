@@ -119,15 +119,11 @@ public class JSController : IController
         iMU_STATE = JslGetIMUState(UserIndex);
 
         // store motion
-        Inputs.GyroState.Gyroscope.X = iMU_STATE.gyroX;
-        Inputs.GyroState.Gyroscope.Y = iMU_STATE.gyroY;
-        Inputs.GyroState.Gyroscope.Z = iMU_STATE.gyroZ;
-        Inputs.GyroState.Accelerometer.X = iMU_STATE.accelX;
-        Inputs.GyroState.Accelerometer.Y = iMU_STATE.accelY;
-        Inputs.GyroState.Accelerometer.Z = iMU_STATE.accelZ;
+        Inputs.GyroState.SetGyroscope(iMU_STATE.gyroX, iMU_STATE.gyroY, iMU_STATE.gyroZ);
+        Inputs.GyroState.SetAccelerometer(iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ);
         
         // process motion
-        gamepadMotion.ProcessMotion(Inputs.GyroState.Gyroscope.X, Inputs.GyroState.Gyroscope.Y, Inputs.GyroState.Gyroscope.Z, Inputs.GyroState.Accelerometer.X, Inputs.GyroState.Accelerometer.Y, Inputs.GyroState.Accelerometer.Z, delta);
+        gamepadMotion.ProcessMotion(iMU_STATE.gyroX, iMU_STATE.gyroY, iMU_STATE.gyroZ, iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ, delta);
     }
 
     public override bool IsConnected()
