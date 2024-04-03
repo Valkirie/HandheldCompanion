@@ -9,29 +9,19 @@ namespace HandheldCompanion;
 public static class MotherboardInfo
 {
     private static readonly ManagementObjectSearcher baseboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
-    private static ManagementObjectCollection baseboardCollection;
+    private static ManagementObjectCollection baseboardCollection = baseboardSearcher.Get();
 
     private static readonly ManagementObjectSearcher motherboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
-    private static ManagementObjectCollection motherboardCollection;
+    private static ManagementObjectCollection motherboardCollection = motherboardSearcher.Get();
 
     private static readonly ManagementObjectSearcher processorSearcher = new("root\\CIMV2", "SELECT * FROM Win32_Processor");
-    private static ManagementObjectCollection processorCollection;
+    private static ManagementObjectCollection processorCollection = processorSearcher.Get();
 
     private static readonly ManagementObjectSearcher displaySearcher = new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
-    private static ManagementObjectCollection displayCollection;
+    private static ManagementObjectCollection displayCollection = displaySearcher.Get();
 
     private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
-    private static ManagementObjectCollection videoControllerCollection;
-
-    static MotherboardInfo()
-    {
-        // slow task, don't call me more than once
-        baseboardCollection = baseboardSearcher.Get();
-        motherboardCollection = motherboardSearcher.Get();
-        processorCollection = processorSearcher.Get();
-        displayCollection = displaySearcher.Get();
-        videoControllerCollection = videoControllerSearcher.Get();
-    }
+    private static ManagementObjectCollection videoControllerCollection = videoControllerSearcher.Get();
 
     public static string Availability
     {
