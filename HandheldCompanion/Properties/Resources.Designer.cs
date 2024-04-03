@@ -4906,6 +4906,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DualShock 4.
+        /// </summary>
+        public static string OverlayPage_DualShock4Controller {
+            get {
+                return ResourceManager.GetString("OverlayPage_DualShock4Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated controller.
         /// </summary>
         public static string OverlayPage_EmulatedController {
@@ -5338,6 +5347,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Steam Deck.
+        /// </summary>
+        public static string OverlayPage_SteamDeck {
+            get {
+                return ResourceManager.GetString("OverlayPage_SteamDeck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time Level.
         /// </summary>
         public static string OverlayPage_TimeLevel {
@@ -5388,6 +5406,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_VRAMLevelDesc {
             get {
                 return ResourceManager.GetString("OverlayPage_VRAMLevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox 360.
+        /// </summary>
+        public static string OverlayPage_Xbox360Controller {
+            get {
+                return ResourceManager.GetString("OverlayPage_Xbox360Controller", resourceCulture);
             }
         }
         

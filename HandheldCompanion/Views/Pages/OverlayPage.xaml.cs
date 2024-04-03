@@ -1,4 +1,4 @@
-﻿using ColorPicker;
+using ColorPicker;
 using ColorPicker.Models;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
@@ -270,6 +270,7 @@ public partial class OverlayPage : Page
     private void Toggle_MotionActivated_Toggled(object sender, RoutedEventArgs e)
     {
         MainWindow.overlayModel.MotionActivated = Toggle_MotionActivated.IsOn;
+        //Toggle_FaceCamera.IsEnabled = Toggle_MotionActivated.IsOn ? true : false;
 
         if (!IsLoaded)
             return;
@@ -280,7 +281,6 @@ public partial class OverlayPage : Page
     private void Toggle_FaceCamera_Toggled(object sender, RoutedEventArgs e)
     {
         MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;
-        Slider_RestingPitch.IsEnabled = Toggle_FaceCamera.IsOn ? true : false;
 
         if (!IsLoaded)
             return;
@@ -290,7 +290,7 @@ public partial class OverlayPage : Page
 
     private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        MainWindow.overlayModel.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
+        MainWindow.overlayModel.DesiredAngleDeg.X = -1* Slider_RestingPitch.Value;
 
         if (!IsLoaded)
             return;
