@@ -62,15 +62,14 @@ public enum MotionMode
 
 public enum OverlayModelMode
 {
-    OEM = 0,
-    Virtual = 1,
-    XboxOne = 2,
-    ZDOPlus = 3,
-    EightBitDoLite2 = 4,
-    MachenikeHG510 = 5,
-    Toy = 6,
-    N64 = 7,
-    DualSense = 8
+    DualSense = 0,
+    DualShock4 = 1,
+    EightBitDoLite2 = 2,
+    N64 = 3,
+    SteamDeck = 4,
+    Toy = 5,
+    Xbox360 = 6,
+    XboxOne = 7
 }
 
 public static class InputUtils

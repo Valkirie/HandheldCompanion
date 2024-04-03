@@ -21,12 +21,13 @@
         IsRotationEnabled="False"
         RenderOptions.EdgeMode="Aliased"
         ShowViewCube="False"
-        ZoomExtentsWhenLoaded="True">
+        ZoomExtentsWhenLoaded="True"
+        ShowCameraInfo="False">
 
         <!--  Lighting  -->
         <HelixToolkit:SunLight />
-        <HelixToolkit:DirectionalHeadLight />
-
+        <HelixToolkit:DirectionalHeadLight Position="-90,0,0" Brightness="0.35"/>
+        
         <!--  3D Content  -->
         <ModelVisual3D x:Name="ModelVisual3D" />
 
@@ -34,8 +35,8 @@
         <HelixToolkit:HelixViewport3D.Camera>
             <PerspectiveCamera
                 FieldOfView="35"
-                LookDirection="0,-1,0"
-                Position="0,1,0"
+                LookDirection="-1,0,0"
+                Position="1,0,0"
                 UpDirection="0,0,1" />
         </HelixToolkit:HelixViewport3D.Camera>
 
