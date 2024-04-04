@@ -1,4 +1,5 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
@@ -51,7 +52,7 @@ namespace HandheldCompanion.Targets
             LogManager.LogInformation("{0} disconnected", ToString());
         }
 
-        public virtual void UpdateInputs(ControllerState inputs)
+        public virtual void UpdateInputs(ControllerState inputs, GamepadMotion gamepadMotion)
         { }
 
         public virtual unsafe void UpdateReport(long ticks, float delta)

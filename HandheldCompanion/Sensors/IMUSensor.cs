@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.Devices.Sensors;
@@ -26,12 +25,16 @@ public enum XInputSensorStatus
     Busy = 2
 }
 
+public class SensorReading
+{
+    public Vector3 reading = new();
+    public double timestamp;
+}
+
 public abstract class IMUSensor : IDisposable
 {
-    protected static SensorSpec sensorSpec;
-
     protected bool disposed;
-    protected Vector3 reading = new();
+    protected SensorReading reading = new();
 
     protected Dictionary<char, double> reading_axis = new()
     {
@@ -43,6 +46,7 @@ public abstract class IMUSensor : IDisposable
     public object sensor;
     protected SensorFamily sensorFamily;
     protected int updateInterval;
+    protected float threshold;
 
     public event ReadingUpdatedEventHandler ReadingUpdated;
     public delegate void ReadingUpdatedEventHandler();

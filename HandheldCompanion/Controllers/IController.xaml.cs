@@ -233,8 +233,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // manage gamepad motion
-            gamepadMotion = new(details.deviceInstanceId);
-            gamepadMotion.SetCalibrationMode(CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotion = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>

@@ -112,6 +112,9 @@ public class LegionGo : IDevice
         _vid = 0x17EF;
         _pid = 0x6182;
 
+        // fix for threshold overflow
+        GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);
+
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
         // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u

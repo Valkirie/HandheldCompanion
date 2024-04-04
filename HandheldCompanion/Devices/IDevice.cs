@@ -1,4 +1,5 @@
 using HandheldCompanion.Controls;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -73,7 +74,6 @@ public abstract class IDevice
     public Dictionary<byte, HidDevice> hidDevices = new();
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
-
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()
     {
         { 'X', 'X' },
@@ -82,13 +82,14 @@ public abstract class IDevice
     };
 
     public Vector3 GyrometerAxis = new(1.0f, 1.0f, 1.0f);
-
     public SortedDictionary<char, char> GyrometerAxisSwap = new()
     {
         { 'X', 'X' },
         { 'Y', 'Y' },
         { 'Z', 'Z' }
     };
+
+    public GamepadMotion GamepadMotion;
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
     public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
@@ -136,9 +137,6 @@ public abstract class IDevice
     // trigger specific settings
     public List<DeviceChord> OEMChords = new();
 
-    // filter settings
-    private OneEuroSettings oneEuroSettings = new(0.002d, 0.008d);
-
     // UI
     protected FontFamily GlyphFontFamily = new("PromptFont");
     protected const string defaultGlyph = "\u2753";
@@ -159,19 +157,11 @@ public abstract class IDevice
 
     public IDevice()
     {
+        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
-    }
-
-    public double GetFilterCutoff()
-    {
-        return oneEuroSettings.minCutoff;
-    }
-
-    public double GetFilterBeta()
-    {
-        return oneEuroSettings.beta;
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)

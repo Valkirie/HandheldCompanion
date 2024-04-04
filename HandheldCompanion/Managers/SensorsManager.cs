@@ -5,10 +5,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -20,12 +17,8 @@ namespace HandheldCompanion.Managers
         private static IMUGyrometer Gyrometer;
         private static IMUAccelerometer Accelerometer;
         private static SerialUSBIMU USBSensor;
-        public static GamepadMotion GamepadMotion;
 
         private static SensorFamily sensorFamily;
-
-        private static Dictionary<string, IMUCalibration> Calibrations = new();
-        public static string CalibrationPath;
 
         public static bool IsInitialized;
 
@@ -34,10 +27,6 @@ namespace HandheldCompanion.Managers
 
         static SensorsManager()
         {
-            // initialiaze path
-            CalibrationPath = Path.Combine(MainWindow.SettingsPath, "calibration.json");
-            Calibrations = DeserializeCollection();
-
             DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceArrived;
             DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
 
@@ -172,46 +161,6 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public static void SerializeCollection(Dictionary<string, IMUCalibration> collection)
-        {
-            string json = JsonConvert.SerializeObject(collection, Formatting.Indented);
-            File.WriteAllText(CalibrationPath, json);
-        }
-
-        public static Dictionary<string, IMUCalibration> DeserializeCollection()
-        {
-            if (!File.Exists(CalibrationPath))
-                return new();
-
-            string json = File.ReadAllText(CalibrationPath);
-            return JsonConvert.DeserializeObject<Dictionary<string, IMUCalibration>>(json);
-        }
-
-        public static IMUCalibration GetCalibration(string path)
-        {
-            if (Calibrations.TryGetValue(path, out IMUCalibration calibration))
-            {
-                LogManager.LogDebug("Restored calibration offsets for device: {0}", path);
-                return calibration;
-            }
-
-            LogManager.LogDebug("No calibration offsets available for device: {0}", path);
-            return new();
-        }
-
-        public static void StoreCalibration(string path, IMUCalibration calibration)
-        {
-            // upcase
-            path = path.ToUpper();
-
-            // update array
-            Calibrations[path] = calibration;
-            LogManager.LogDebug("Updated calibration offsets for device: {0}", path);
-
-            // serialize to calibration.json
-            SerializeCollection(Calibrations);
-        }
-
         public static void Start()
         {
             IsInitialized = true;
@@ -244,10 +193,19 @@ namespace HandheldCompanion.Managers
             Accelerometer?.StopListening();
         }
 
-        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
+        private static double prevTimestamp = 0.0d;
+        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, ref float delta)
         {
-            Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading() : Vector3.Zero;
-            Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading() : Vector3.Zero;
+            Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
+            Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
+
+            // todo: create an IMU class
+            double TotalMilliseconds = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
+            double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
+            prevTimestamp = TotalMilliseconds;
+
+            // replace delta with delta from sensor
+            delta = (float)DeltaSeconds;
 
             // store motion
             controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
@@ -262,17 +220,8 @@ namespace HandheldCompanion.Managers
             // initialize sensors
             int UpdateInterval = TimerManager.GetPeriod();
 
-            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
+            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval, IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold());
             Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
-
-            switch(sensorFamily)
-            {
-                case SensorFamily.Windows:
-                case SensorFamily.SerialUSBIMU:
-                    GamepadMotion = new(Gyrometer.GetInstanceId());
-                    GamepadMotion.SetCalibrationMode(CalibrationMode.Manual | CalibrationMode.SensorFusion);
-                    break;
-            }
         }
 
         public static async void Calibrate(GamepadMotion gamepadMotion)
@@ -280,46 +229,92 @@ namespace HandheldCompanion.Managers
             Dialog dialog = new Dialog(MainWindow.GetCurrent())
             {
                 Title = "Please place the controller on a stable and level surface.",
-                Content = "Calibrating stationary sensor noise and drift correction...",
+                Content = string.Empty,
                 CanClose = false
             };
+
+            // display calibration dialog
             dialog.Show();
 
             // skip if null
             if (gamepadMotion is null)
-                goto Failed;
+                goto Close;
+
+            for (int i = 4; i > 0; i--)
+            {
+                dialog.UpdateContent($"Calibration will start in {i} seconds.");
+                await Task.Delay(1000);
+            }
+
+            dialog.UpdateContent("Calibrating stationary sensor noise and drift correction...");
 
             // reset motion values
             gamepadMotion.ResetMotion();
 
             // wait until device is steady
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(5));
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
             while (DateTime.Now < timeout && !gamepadMotion.GetAutoCalibrationIsSteady())
                 await Task.Delay(100);
 
+            // device is either too shaky or stalled
             bool IsSteady = gamepadMotion.GetAutoCalibrationIsSteady();
             if (!IsSteady)
-                goto Failed;
+            {
+                gamepadMotion.GetCalibratedGyro(out float x, out float y, out float z);
 
-            // force manual calibration
+                // display message
+                if (x == 0 && y == 0 && z == 0)
+                    dialog.UpdateContent("Calibration failed: gyroscope is silent.");
+                else
+                    dialog.UpdateContent("Calibration failed: device is too shaky.");
+
+                goto Close;
+            }
+
+            // start continuous calibration
             gamepadMotion.StartContinuousCalibration();
+
+            // give gamepad motion 3 seconds to get values
             timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
             while (DateTime.Now < timeout)
                 await Task.Delay(100);
 
+            // halt continuous calibration
             gamepadMotion.PauseContinuousCalibration();
-            goto Success;
 
-        Failed:
-            // display message
-            dialog.UpdateContent("Calibration failed: device is too shaky.");
-            goto Close;
-
-        Success:
+            // get continuous calibration confidence
             float confidence = gamepadMotion.GetAutoCalibrationConfidence();
+
+            // get/set calibration offsets
             gamepadMotion.GetCalibrationOffset(out float xOffset, out float yOffset, out float zOffset);
-            IMUCalibration calibration = new(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
-            StoreCalibration(gamepadMotion.deviceInstanceId, calibration);
+            gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
+
+            dialog.UpdateTitle("Please take back the controller in hands and get ready to shake it.");
+
+            for (int i = 4; i > 0; i--)
+            {
+                dialog.UpdateContent($"Threshold calibration will start in {i} seconds.");
+                await Task.Delay(1000);
+            }
+
+            dialog.UpdateContent("Shake the device in all direction...");
+
+            // reset motion values
+            gamepadMotion.ResetThresholdCalibration();
+            gamepadMotion.StartThresholdCalibration();
+
+            // wait until device is steady
+            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout)
+                await Task.Delay(100);
+
+            gamepadMotion.PauseThresholdCalibration();
+
+            // get calibration offsets
+            gamepadMotion.SetCalibrationThreshold(gamepadMotion.maxGyro, gamepadMotion.maxAccel);
+
+            // store calibration offsets
+            IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
 
             // display message
             dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");

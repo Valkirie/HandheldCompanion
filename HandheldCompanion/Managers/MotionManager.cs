@@ -71,8 +71,9 @@ namespace HandheldCompanion.Managers
 
             // GMH: based on GamepadMotionHelpers values
             gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
-            controllerState.GyroState.Gyroscope[SensorState.GMH] = new() { X = gyroX, Y = gyroY, Z = gyroZ };
             gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
+
+            controllerState.GyroState.Gyroscope[SensorState.GMH] = new() { X = gyroX, Y = gyroY, Z = gyroZ };
             controllerState.GyroState.Accelerometer[SensorState.GMH] = new() { X = accelX, Y = accelY, Z = accelZ };
 
             // Default: based on GamepadMotionHelpers values with multipliers applied
@@ -80,28 +81,35 @@ namespace HandheldCompanion.Managers
             controllerState.GyroState.Accelerometer[SensorState.Default] = controllerState.GyroState.Accelerometer[SensorState.GMH] * current.AccelerometerMultiplier;
 
             // Default: swap roll/yaw
-            switch(current.SteeringAxis)
+            if (current.SteeringAxis == SteeringAxis.Yaw)
             {
-                case SteeringAxis.Yaw:
-                    {
-                        controllerState.GyroState.Gyroscope[SensorState.Default] = new(controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Z, -controllerState.GyroState.Gyroscope[SensorState.Default].Y);
-                        controllerState.GyroState.Accelerometer[SensorState.Default] = new(controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Z, -controllerState.GyroState.Accelerometer[SensorState.Default].Y);
-                    }
-                    break;
+                controllerState.GyroState.Gyroscope[SensorState.Default] = new(controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Z, -controllerState.GyroState.Gyroscope[SensorState.Default].Y);
+                controllerState.GyroState.Accelerometer[SensorState.Default] = new(controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Z, -controllerState.GyroState.Accelerometer[SensorState.Default].Y);
             }
 
-            // DSU: invert horizontal axis
-            if (current.MotionInvertHorizontal)
+            // update all states (except Default, GMH)
+            foreach (SensorState state in Enum.GetValues(typeof(SensorState)))
             {
-                controllerState.GyroState.Gyroscope[SensorState.DSU] = new(controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Y, -controllerState.GyroState.Gyroscope[SensorState.Default].Z);
-                controllerState.GyroState.Accelerometer[SensorState.DSU] = new(controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Y, -controllerState.GyroState.Accelerometer[SensorState.Default].Z);
-            }
+                if (state == SensorState.Default || state == SensorState.GMH)
+                    continue;
 
-            // DSU: invert vertical axis
-            if (current.MotionInvertVertical)
-            {
-                controllerState.GyroState.Gyroscope[SensorState.DSU] = new(-controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Y, controllerState.GyroState.Gyroscope[SensorState.Default].Z);
-                controllerState.GyroState.Accelerometer[SensorState.DSU] = new(-controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Y, controllerState.GyroState.Accelerometer[SensorState.Default].Z);
+                // set to default
+                controllerState.GyroState.Gyroscope[state] = controllerState.GyroState.Gyroscope[SensorState.Default];
+                controllerState.GyroState.Accelerometer[state] = controllerState.GyroState.Accelerometer[SensorState.Default];
+
+                // DSU: invert horizontal axis
+                if (current.MotionInvertHorizontal)
+                {
+                    controllerState.GyroState.Gyroscope[state] = new(controllerState.GyroState.Gyroscope[state].X, -controllerState.GyroState.Gyroscope[state].Y, -controllerState.GyroState.Gyroscope[state].Z);
+                    controllerState.GyroState.Accelerometer[state] = new(controllerState.GyroState.Accelerometer[state].X, -controllerState.GyroState.Accelerometer[state].Y, -controllerState.GyroState.Accelerometer[state].Z);
+                }
+
+                // DSU: invert vertical axis
+                if (current.MotionInvertVertical)
+                {
+                    controllerState.GyroState.Gyroscope[state] = new(-controllerState.GyroState.Gyroscope[state].X, -controllerState.GyroState.Gyroscope[state].Y, controllerState.GyroState.Gyroscope[state].Z);
+                    controllerState.GyroState.Accelerometer[state] = new(-controllerState.GyroState.Accelerometer[state].X, -controllerState.GyroState.Accelerometer[state].Y, controllerState.GyroState.Accelerometer[state].Z);
+                }
             }
         }
 
@@ -203,9 +211,9 @@ namespace HandheldCompanion.Managers
                 output.Y *= -1.0f;
 
             // apply sensivity curve
-            // todo: use per-controller sensorSpec ?
-            output.X *= InputUtils.ApplyCustomSensitivity(output.X, IMUGyrometer.sensorSpec.maxIn, currentProfile.MotionSensivityArray);
-            output.Y *= InputUtils.ApplyCustomSensitivity(output.Y, IMUGyrometer.sensorSpec.maxIn, currentProfile.MotionSensivityArray);
+            // todo: we should only apply this to gyro based output, maybe only to local space ?
+            output.X *= InputUtils.ApplyCustomSensitivity(output.X, gamepadMotion.GetCalibration().GetGyroThreshold(), currentProfile.MotionSensivityArray);
+            output.Y *= InputUtils.ApplyCustomSensitivity(output.Y, gamepadMotion.GetCalibration().GetGyroThreshold(), currentProfile.MotionSensivityArray);
 
             // apply aiming down scopes multiplier if activated
             if (controllerState.ButtonState.Contains(currentProfile.AimingSightsTrigger))

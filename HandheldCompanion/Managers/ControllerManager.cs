@@ -1090,13 +1090,8 @@ public static class ControllerManager
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
-                // swap gamemotion
-                // todo: improve this logic
-                if (SensorsManager.GamepadMotion is not null)
-                {
-                    gamepadMotion = SensorsManager.GamepadMotion;
-                    SensorsManager.UpdateReport(controllerState, gamepadMotion, delta);
-                }
+                gamepadMotion = IDevice.GetCurrent().GamepadMotion;
+                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
                 break;
         }
 
@@ -1121,7 +1116,7 @@ public static class ControllerManager
             controllerState = LayoutManager.MapController(controllerState);
         }
 
-        VirtualManager.UpdateInputs(controllerState);
+        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
     internal static IController GetEmulatedController()

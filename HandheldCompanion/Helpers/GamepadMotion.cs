@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Sensors;
+﻿using HandheldCompanion.Sensors;
 using System;
 using System.Runtime.InteropServices;
 
@@ -24,11 +23,28 @@ namespace HandheldCompanion.Helpers
     public class GamepadMotion : IDisposable
     {
         private IntPtr handle;
+        private IMUCalibration calibration;
+        private bool thresholdCalibration;
+
+        public float gyroX;
+        public float gyroY;
+        public float gyroZ;
+        public float accelX;
+        public float accelY;
+        public float accelZ;
+        public float deltaTime;
+
+        public const float minGyro = 124.0f;  // known minimum
+        public const float minAccel = 2.0f;   // known minimum
+
+        public float maxGyro = minGyro;
+        public float maxAccel = minAccel;
+
         public string deviceInstanceId;
 
         private const string DllName = "GamepadMotion.dll";
 
-        public GamepadMotion(string deviceInstanceId)
+        public GamepadMotion(string deviceInstanceId, CalibrationMode calibrationMode)
         {
             handle = CreateGamepadMotion();
 
@@ -36,8 +52,9 @@ namespace HandheldCompanion.Helpers
             this.deviceInstanceId = deviceInstanceId;
 
             // get previous calibration
-            IMUCalibration calibration = SensorsManager.GetCalibration(deviceInstanceId.ToUpper());
+            calibration = IMUCalibration.GetCalibration(deviceInstanceId.ToUpper());
             SetCalibrationOffset(calibration.xOffset, calibration.yOffset, calibration.zOffset, calibration.weight);
+            SetCalibrationMode(calibrationMode);
         }
 
         ~GamepadMotion()
@@ -50,10 +67,54 @@ namespace HandheldCompanion.Helpers
             ResetGamepadMotion(handle);
         }
 
+        public IMUCalibration GetCalibration()
+        {
+            return calibration;
+        }
+
         // Implement the ProcessMotion function
         public void ProcessMotion(float gyroX, float gyroY, float gyroZ, float accelX, float accelY, float accelZ, float deltaTime)
         {
+            this.gyroX = gyroX;
+            this.gyroY = gyroY;
+            this.gyroZ = gyroZ;
+            this.accelX = accelX;
+            this.accelY = accelY;
+            this.accelZ = accelZ;
+            this.deltaTime = deltaTime;
+
+            if (thresholdCalibration)
+            {
+                if (gyroX > maxGyro)
+                    maxGyro = gyroX;
+                if (gyroY > maxGyro)
+                    maxGyro = gyroY;
+                if (gyroZ > maxGyro)
+                    maxGyro = gyroZ;
+
+                if (accelX > maxAccel)
+                    maxAccel = accelX;
+                if (accelY > maxAccel)
+                    maxAccel = accelY;
+                if (accelZ > maxAccel)
+                    maxAccel = accelZ;
+            }
+
             ProcessMotion(handle, gyroX, gyroY, gyroZ, accelX, accelY, accelZ, deltaTime);
+        }
+
+        public void GetRawGyro(out float x, out float y, out float z)
+        {
+            x = gyroX;
+            y = gyroY;
+            z = gyroZ;
+        }
+
+        public void GetRawAcceleration(out float x, out float y, out float z)
+        {
+            x = accelX;
+            y = accelY;
+            z = accelZ;
         }
 
         // Implement the GetCalibratedGyro function
@@ -119,6 +180,11 @@ namespace HandheldCompanion.Helpers
         // Implement the SetCalibrationOffset function
         public void SetCalibrationOffset(float xOffset, float yOffset, float zOffset, int weight)
         {
+            calibration.xOffset = xOffset;
+            calibration.yOffset = yOffset;
+            calibration.zOffset = zOffset;
+            calibration.weight = weight;
+
             SetCalibrationOffset(handle, xOffset, yOffset, zOffset, weight);
         }
 
@@ -150,6 +216,28 @@ namespace HandheldCompanion.Helpers
         public void SetCalibrationMode(CalibrationMode calibrationMode)
         {
             SetCalibrationMode(handle, calibrationMode);
+        }
+
+        public void StartThresholdCalibration()
+        {
+            thresholdCalibration = true;
+        }
+
+        public void PauseThresholdCalibration()
+        {
+            thresholdCalibration = false;
+        }
+
+        public void ResetThresholdCalibration()
+        {
+            maxGyro = minGyro;
+            maxAccel = minAccel;
+        }
+
+        public void SetCalibrationThreshold(float gyroTreshold, float accelThreshold)
+        {
+            calibration.SetGyroThreshold(Math.Max(minGyro, gyroTreshold));
+            calibration.SetAcceleroThreshold(Math.Max(minAccel, accelThreshold));
         }
 
         // Implement the ResetMotion function
