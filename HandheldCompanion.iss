@@ -49,7 +49,7 @@
 #define NewDirectXVersion "9.29.1974"
 #define NewViGemVersion "1.22.0.0"
 #define NewHidHideVersion "1.5.212"
-#define NewRtssVersion "7.3.5"
+#define NewRtssVersion "7.3.6"
 
 //#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/b280d97f-25a9-4ab7-8a12-8291aa3af117/a37ed0e68f51fcd973e9f6cb4f40b1a7/windowsdesktop-runtime-8.0.0-win-x64.exe"
 //#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f9e3b581-059d-429f-9f0d-1d1167ff7e32/bd7661030cd5d66cd3eee0fd20b24540/windowsdesktop-runtime-8.0.0-win-x86.exe"   
@@ -60,7 +60,7 @@
 #define DirectXDownloadLink "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
 #define HidHideDownloadLink "https://github.com/nefarius/HidHide/releases/download/v1.5.212.0/HidHide_1.5.212_x64.exe"
 #define ViGemDownloadLink "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
-#define RtssDownloadLink "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup735.exe"
+#define RtssDownloadLink "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup736.exe"
 
 //Registry  
 #define RegAppsPath "SOFTWARE\" +MyAppSetupName+ "\" 
