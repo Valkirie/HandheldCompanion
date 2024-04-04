@@ -9,6 +9,7 @@ using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -36,7 +37,7 @@ public static class HotkeysManager
     private const short PIN_LIMIT = 18;
     private static readonly string InstallPath;
     private static bool hasProfileHID = false;
-    public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
+    public static ConcurrentDictionary<ushort, Hotkey> Hotkeys = new();
 
     private static bool IsInitialized;
 
@@ -69,7 +70,7 @@ public static class HotkeysManager
 
     private static void ControllerManager_ControllerSelected(IController Controller)
     {
-        foreach (var hotkey in Hotkeys.Values)
+        foreach (Hotkey? hotkey in Hotkeys.Values)
             hotkey.ControllerSelected(Controller);
     }
 
@@ -80,8 +81,8 @@ public static class HotkeysManager
         var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
         if (targetHIDmode == HIDmode.DualShock4Controller)
         {
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-            foreach (var hotkey in hotkeys)
+            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+            foreach (Hotkey? hotkey in hotkeys)
             {
                 Application.Current.Dispatcher.BeginInvoke(() => { hotkey.IsEnabled = !hasProfileHID; });
             }
@@ -96,11 +97,9 @@ public static class HotkeysManager
 
         if (targetHIDmode == HIDmode.Xbox360Controller)
         {
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-            foreach (var hotkey in hotkeys)
-            {
+            List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+            foreach (Hotkey? hotkey in hotkeys)
                 Application.Current.Dispatcher.Invoke(() => { hotkey.IsEnabled = !hasProfileHID; });
-            }
         }
     }
 
@@ -128,12 +127,9 @@ public static class HotkeysManager
         }
 
         // enable/disable hotkey based on profile HIDmode
-        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-        foreach (var hotkey in hotkeys)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                hotkey.IsEnabled = !hasProfileHID;
-            });
+        List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+        foreach (Hotkey? hotkey in hotkeys)
+            Application.Current.Dispatcher.Invoke(() => { hotkey.IsEnabled = !hasProfileHID; });
 
         // change glyph at startup only
         if (!IsInitialized)
@@ -145,8 +141,8 @@ public static class HotkeysManager
     private static void VirtualManager_ControllerSelected(HIDmode HIDmode)
     {
         // change glyph of shortcutChangeHIDMode to the corresponding target emulated controller
-        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-        foreach (var hotkey in hotkeys)
+        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+        foreach (Hotkey? hotkey in hotkeys)
         {
             switch (HIDmode)
             {
@@ -202,10 +198,10 @@ public static class HotkeysManager
             hotkey.Draw();
 
             if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
-                Hotkeys.Add(hotkey.hotkeyId, hotkey);
+                Hotkeys.TryAdd(hotkey.hotkeyId, hotkey);
         }
 
-        foreach (var hotkey in Hotkeys.Values)
+        foreach (Hotkey? hotkey in Hotkeys.Values)
         {
             hotkey.Listening += StartListening;
             hotkey.Pinning += PinOrUnpinHotkey;
@@ -242,7 +238,7 @@ public static class HotkeysManager
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
         // manage toggle type hotkeys
-        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
+        foreach (Hotkey? hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)).ToList())
         {
             if (!hotkey.inputsHotkey.IsToggle)
                 continue;
@@ -252,7 +248,7 @@ public static class HotkeysManager
         }
 
         // manage settings type hotkeys
-        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
+        foreach (Hotkey? hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)).ToList())
         {
             var enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
             hotkey.IsEnabled = enabled;
@@ -309,7 +305,7 @@ public static class HotkeysManager
 
     private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
     {
-        IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener));
+        IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).ToList();
         foreach (Hotkey hotkey in hotkeys)
         {
             // UI thread
@@ -357,7 +353,7 @@ public static class HotkeysManager
 
     public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp)
     {
-        IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsChord.State.Equals(input.State) && (item.inputsHotkey.OnKeyDown == IsKeyDown || item.inputsHotkey.OnKeyUp == IsKeyUp));
+        List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsChord.State.Equals(input.State) && (item.inputsHotkey.OnKeyDown == IsKeyDown || item.inputsHotkey.OnKeyUp == IsKeyUp)).ToList();
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
