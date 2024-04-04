@@ -456,7 +456,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 case SensorFamily.Windows:
                 case SensorFamily.SerialUSBIMU:
-                    SensorsManager.Calibrate(SensorsManager.GamepadMotion);
+                    SensorsManager.Calibrate(IDevice.GetCurrent().GamepadMotion);
                     break;
 
                 case SensorFamily.Controller:

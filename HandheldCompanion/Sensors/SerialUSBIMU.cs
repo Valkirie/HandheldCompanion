@@ -21,7 +21,7 @@ public enum SerialPlacement
 
 public class SerialUSBIMU
 {
-    public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg);
+    public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg, double timestamp);
 
     private static readonly SerialUSBIMU serial = new();
 
@@ -242,7 +242,7 @@ public class SerialUSBIMU
             PlacementTransformation(SensorPlacement, SensorUpsideDown);
 
             // raise event
-            ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
+            ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg, DateTime.Now.TimeOfDay.TotalMilliseconds);
         }
     }
 

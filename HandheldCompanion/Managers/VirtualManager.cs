@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -283,12 +284,12 @@ namespace HandheldCompanion.Managers
             Vibrated?.Invoke(LargeMotor, SmallMotor);
         }
 
-        public static void UpdateInputs(ControllerState controllerState)
+        public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             // DS4Touch is used by both targets below, update first
             DS4Touch.UpdateInputs(controllerState);
 
-            vTarget?.UpdateInputs(controllerState);
+            vTarget?.UpdateInputs(controllerState, gamepadMotion);
             DSUServer?.UpdateInputs(controllerState);
         }
     }

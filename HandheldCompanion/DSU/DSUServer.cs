@@ -563,13 +563,13 @@ public class DSUServer
 
             // Accelerometer
             // accelXG
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].X), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].X), 0, outputData, outIdx, 4);
             outIdx += 4;
             // accelYG
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Y), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Y), 0, outputData, outIdx, 4);
             outIdx += 4;
             // accelZG
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Z), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Z), 0, outputData, outIdx, 4);
             outIdx += 4;
 
             // Gyroscope

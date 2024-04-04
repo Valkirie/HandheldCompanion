@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
@@ -12,26 +14,6 @@ namespace HandheldCompanion.Targets
 {
     internal class DualShock4Target : ViGEmTarget
     {
-        // DS4 Accelerometer g-force measurement range G SI unit to short
-        // Various sources state either +/- 2 or 4 ranges are in use 
-        private static readonly SensorSpec DS4AccelerometerSensorSpec = new SensorSpec()
-        {
-            minIn = -2.0f,
-            maxIn = 2.0f,
-            minOut = short.MinValue,
-            maxOut = short.MaxValue,
-        };
-
-        // DS4 Gyroscope angular rate measurement range deg/sec SI unit to short
-        // Note, at +/- 2000 the value is still off by a factor 5
-        private static readonly SensorSpec DS4GyroscopeSensorSpec = new SensorSpec()
-        {
-            minIn = -2000.0f,
-            maxIn = 2000.0f,
-            minOut = short.MinValue,
-            maxOut = short.MaxValue,
-        };
-
         private DS4_REPORT_EX outDS4Report;
 
         private new IDualShock4Controller virtualController;
@@ -83,7 +65,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateInputs(ControllerState Inputs)
+        public override unsafe void UpdateInputs(ControllerState Inputs, GamepadMotion gamepadMotion)
         {
             if (!IsConnected)
                 return;
@@ -180,14 +162,17 @@ namespace HandheldCompanion.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(DS4Touch.RightPadTouch.Y >> 4);
             }
 
-            // Use gyro sensor data, map to proper range, invert where needed
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].X, DS4GyroscopeSensorSpec);  // gyroPitchFull
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Y, DS4GyroscopeSensorSpec);  // gyroYawFull
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Z, DS4GyroscopeSensorSpec);  // gyroRollFull
+            // pull calibration data
+            IMUCalibration calibration = gamepadMotion.GetCalibration();
 
-            outDS4Report.wAccelX = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].X, DS4AccelerometerSensorSpec); // accelXFull
-            outDS4Report.wAccelY = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Y, DS4AccelerometerSensorSpec); // accelYFull
-            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Z, DS4AccelerometerSensorSpec); // accelZFull
+            // Use gyro sensor data, map to proper range, invert where needed
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Z, -4.0f, 4.0f, short.MinValue, short.MaxValue);
 
             // todo: implement battery value based on device
             outDS4Report.bBatteryLvlSpecial = 11;

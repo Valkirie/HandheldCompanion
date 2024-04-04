@@ -86,6 +86,11 @@ public class Dialog
         args.Cancel = !CanClose;
     }
 
+    public void UpdateTitle(string Title)
+    {
+        dialog.Title = this.Title = Title;
+    }
+
     public void UpdateContent(string Content)
     {
         dialog.Content = this.Content = Content;

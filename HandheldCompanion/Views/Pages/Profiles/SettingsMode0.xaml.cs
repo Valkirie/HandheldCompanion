@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Sensors;
@@ -123,7 +124,7 @@ public partial class SettingsMode0 : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            double dist_x = value / IMUGyrometer.sensorSpec.maxIn;
+            double dist_x = value / IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold();
 
             foreach (Control control in StackCurve.Children)
             {

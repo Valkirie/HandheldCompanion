@@ -5,14 +5,6 @@ using System.Numerics;
 
 namespace HandheldCompanion.Utils;
 
-public struct SensorSpec
-{
-    public float minIn;
-    public float maxIn;
-    public float minOut;
-    public float maxOut;
-}
-
 public enum MotionInput
 {
     /// <summary>
@@ -79,12 +71,12 @@ public static class InputUtils
         return Math.Min(max, Math.Max(min, value));
     }
 
-    public static float rangeMap(float value, SensorSpec spec)
+    public static float rangeMap(float value, float minIn, float maxIn, float minOut, float maxOut)
     {
-        float inRange = spec.maxIn - spec.minIn;
-        float outRange = spec.maxOut - spec.minOut;
+        float inRange = maxIn - minIn;
+        float outRange = maxOut - minOut;
 
-        return spec.minOut + outRange * ((value - spec.minIn) / inRange);
+        return minOut + outRange * ((value - minIn) / inRange);
     }
 
     public static float deg2rad(float degrees)
