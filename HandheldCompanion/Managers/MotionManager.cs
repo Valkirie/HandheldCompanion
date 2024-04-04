@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
@@ -186,11 +186,11 @@ namespace HandheldCompanion.Managers
                     break;
                 case MotionInput.PlayerSpace:
                     gamepadMotion.GetPlayerSpaceGyro(out float playerX, out float playerY, 1.41f);
-                    output = new Vector2(playerY, playerX);
+                    output = new Vector2(-playerY, playerX);
                     break;
                 case MotionInput.WorldSpace:
                     gamepadMotion.GetWorldSpaceGyro(out float worldX, out float worldY, 0.125f);
-                    output = new Vector2(worldY, worldX);
+                    output = new Vector2(-worldY, worldX);
                     break;
                 case MotionInput.AutoRollYawSwap:
                     gamepadMotion.GetGravity(out float gravityX, out float gravityY, out float gravityZ);
