@@ -109,7 +109,11 @@ namespace HandheldCompanion.Managers
         // gyro to joy/mouse mappings, by UI that configures them and by 3D overlay
         private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
         {
+            // TODO: handle this race condition gracefully. LayoutManager might be updating currentlayout as we land here
             Layout currentLayout = LayoutManager.GetCurrent();
+            if (currentLayout is null)
+                return;
+
             if (currentLayout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
                 if (action is not null)
                     gyroAction = action as GyroActions;
