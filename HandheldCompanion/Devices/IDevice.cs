@@ -64,7 +64,7 @@ public abstract class IDevice
     public delegate void KeyReleasedEventHandler(ButtonFlags button);
     public delegate void PowerStatusChangedEventHandler(IDevice device);
 
-    private static OpenLibSys openLibSys;
+    protected static OpenLibSys openLibSys;
     protected LockObject updateLock = new();
 
     private static IDevice device;
@@ -740,20 +740,20 @@ public abstract class IDevice
         }
     }
 
-    protected void ECRAMWrite(byte address, byte data)
+    protected virtual void ECRAMWrite(byte address, byte data)
     {
         SendECCommand(WR_EC);
         SendECData(address);
         SendECData(data);
     }
 
-    protected void SendECCommand(byte command)
+    protected virtual void SendECCommand(byte command)
     {
         if (IsECReady())
             ECRamWriteByte(EC_SC, command);
     }
 
-    protected void SendECData(byte data)
+    protected virtual void SendECData(byte data)
     {
         if (IsECReady())
             ECRamWriteByte(EC_DATA, data);
@@ -761,13 +761,14 @@ public abstract class IDevice
 
     protected bool IsECReady()
     {
-        DateTime timeout = DateTime.Now.Add(TimeSpan.FromMilliseconds(50));
-        while (DateTime.Now < timeout && (ECRamReadByte(EC_SC) & EC_IBF) != 0x0)
-            Thread.Sleep(1);
-
-        if (DateTime.Now <= timeout)
-            return true;
-
+        DateTime timeout = DateTime.Now.AddMilliseconds(250);
+        while(DateTime.Now < timeout)
+        {
+            if ((ECRamReadByte(EC_SC) & EC_IBF) == 0x0)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
