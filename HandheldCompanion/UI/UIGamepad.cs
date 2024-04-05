@@ -418,6 +418,10 @@ namespace HandheldCompanion.Managers
                         return;
                     }
                 }
+                else
+                {
+                    return;
+                }
             }
             else
             {
