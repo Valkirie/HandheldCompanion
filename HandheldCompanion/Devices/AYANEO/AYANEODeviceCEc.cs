@@ -1,5 +1,9 @@
-﻿using System.Threading;
+﻿using HandheldCompanion.Inputs;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Threading;
 using System.Windows.Media;
+using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices.AYANEO
@@ -33,6 +37,43 @@ namespace HandheldCompanion.Devices.AYANEO
                 FanValueMin = 0,
                 FanValueMax = 100
             };
+
+            this.GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
+            this.GyrometerAxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            };
+
+            this.AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+            this.AccelerometerAxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            };
+
+            this.OEMChords.Add(new DeviceChord("Custom Key Big",
+                new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F17 },
+                new List<KeyCode> { KeyCode.F17, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM1
+            ));
+            this.OEMChords.Add(new DeviceChord("Custom Key Small",
+                new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+                new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+                false, ButtonFlags.OEM2
+            ));
+            this.OEMChords.Add(new DeviceChord("Custom Key Top Left",
+                new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F15 },
+                new List<KeyCode> { KeyCode.F15, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM3
+            ));
+            this.OEMChords.Add(new DeviceChord("Custom Key Top Right",
+                new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F16 },
+                new List<KeyCode> { KeyCode.F16, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM4
+            ));
         }
 
         public override bool SetLedStatus(bool status)
