@@ -26,7 +26,7 @@ public static class HidHide
             LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
 
             MainWindow.SplashScreen.Close();
-            MessageBox.Show("Please get it from: https://github.com/ViGEm/HidHide/releases", "HidHide is missing");
+            MessageBox.Show("Unable to start Handheld Companion, the HidHide application is missing.\n\nPlease get it from: https://github.com/ViGEm/HidHide/releases", "Error");
             throw new InvalidOperationException();
         }
 
