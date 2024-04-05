@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
@@ -55,7 +55,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
 
                 MainWindow.SplashScreen.Close();
-                MessageBox.Show("Please get it from: https://github.com/ViGEm/ViGEmBus/releases", "ViGEm is missing");
+                MessageBox.Show("Unable to start Handheld Companion, the ViGEm application is missing.\n\nPlease get it from: https://github.com/ViGEm/ViGEmBus/releases", "Error");
                 throw new InvalidOperationException();
             }
 
