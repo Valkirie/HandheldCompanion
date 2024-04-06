@@ -231,4 +231,9 @@ public class AMDProcessor : Processor
             Monitor.Exit(IsBusy);
         }
     }
+
+    public void SetCoall(uint value)
+    {
+        RyzenAdj.set_coall(ry, value);
+    }
 }

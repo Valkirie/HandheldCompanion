@@ -3,6 +3,7 @@ using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -230,6 +231,17 @@ public class LegionGo : IDevice
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        // tentative: stability fix
+        if (PerformanceManager.GetProcessor() is AMDProcessor AMDProcessor)
+            AMDProcessor.SetCoall(0x100020);
+
+        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
+        {
+            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
+            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
+            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
+        }
+
         FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
@@ -249,15 +261,6 @@ public class LegionGo : IDevice
 
         SetFanTable(fanTable);
         SetSmartFanMode(profile.OEMPowerMode);
-
-        /*
-        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
-        {
-            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
-            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
-            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
-        }
-        */
     }
 
     public override bool Open()
