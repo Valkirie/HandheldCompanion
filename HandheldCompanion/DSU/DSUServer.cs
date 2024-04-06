@@ -422,7 +422,7 @@ public class DSUServer
         uint IOC_IN = 0x80000000;
         uint IOC_VENDOR = 0x18000000;
         uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-        udpSock.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
+        udpSock?.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
     }
 
     public bool Start()
