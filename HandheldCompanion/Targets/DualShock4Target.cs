@@ -178,8 +178,7 @@ namespace HandheldCompanion.Targets
             outDS4Report.bBatteryLvlSpecial = 11;
 
             // A common increment value between two reports is 188 (at full rate the report period is 1.25ms)
-            outDS4Report.wTimestamp = (ushort)TimerManager.GetElapsedDeciseconds();
-            // outDS4Report.wTimestamp += (ushort)(188.0f / 1.25f * (delta * 1000.0f)); // delta * 150000.0f
+            outDS4Report.wTimestamp += (ushort)(gamepadMotion.deltaTime * 100000.0f);
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 
