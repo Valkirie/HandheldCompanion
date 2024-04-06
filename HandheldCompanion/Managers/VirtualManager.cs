@@ -25,14 +25,13 @@ namespace HandheldCompanion.Managers
 
         public static ushort ProductId = 0x28E; // Xbox 360
         public static ushort VendorId = 0x45E;  // Microsoft
-
         public static ushort FakeVendorId = 0x76B;  // HC
+        private static CrossThreadLock threadLock = new CrossThreadLock();
 
         public static bool IsInitialized;
 
         public static event HIDChangedEventHandler HIDchanged;
         public delegate void HIDChangedEventHandler(HIDmode HIDmode);
-
 
         public static event ControllerSelectedEventHandler ControllerSelected;
         public delegate void ControllerSelectedEventHandler(HIDmode mode);
@@ -61,9 +60,6 @@ namespace HandheldCompanion.Managers
 
             // initialize DSUClient
             DSUServer = new DSUServer();
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            ProfileManager.Applied += ProfileManager_Applied;
         }
 
         public static void Start()
@@ -71,6 +67,10 @@ namespace HandheldCompanion.Managers
             // todo: improve me !!
             while (!ControllerManager.IsInitialized)
                 Thread.Sleep(250);
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -86,7 +86,9 @@ namespace HandheldCompanion.Managers
             Suspend();
 
             // unsubscrive events
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             ProfileManager.Applied -= ProfileManager_Applied;
+            ProfileManager.Discarded -= ProfileManager_Discarded;
 
             IsInitialized = false;
 
@@ -144,37 +146,26 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            try
+            // SetControllerMode takes care of ignoring identical mode switching
+            if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
+                return;
+
+            switch (profile.HID)
             {
-                // SetControllerMode takes care of ignoring identical mode switching
-                if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
-                    return;
-
-                // monitor ControllerManager and check if automatic controller management is running
-                // todo: improve me
-                if (ControllerManager.ControllerManagerIsBusy)
-                    return;
-
-                switch (profile.HID)
-                {
-                    case HIDmode.Xbox360Controller:
-                    case HIDmode.DualShock4Controller:
-                        {
-                            SetControllerMode(profile.HID);
-                            break;
-                        }
-
-                    default: // Default or not assigned
-                        {
-                            SetControllerMode(defaultHIDmode);
-                            break;
-                        }
-                }
+                case HIDmode.Xbox360Controller:
+                case HIDmode.DualShock4Controller:
+                    {
+                        SetControllerMode(profile.HID);
+                        break;
+                    }
             }
-            catch // TODO requires further testing
-            {
-                LogManager.LogError("Couldnt set per-profile HIDmode: {0}", profile.HID);
-            }
+        }
+
+        private static void ProfileManager_Discarded(Profile profile)
+        {
+            // restore default HID mode
+            if (profile.HID != HIDmode.NotSelected)
+                SetControllerMode(defaultHIDmode);
         }
 
         private static void SetDSUStatus(bool started)
@@ -187,13 +178,22 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerMode(HIDmode mode)
         {
+            if (!threadLock.TryEnter(3000))
+                return;
+
             // do not disconnect if similar to previous mode and connected
             if (HIDmode == mode)
             {
                 if (HIDstatus == HIDstatus.Disconnected)
+                {
+                    threadLock.Exit();
                     return;
+                }
                 else if (vTarget is not null && vTarget.IsConnected)
+                {
+                    threadLock.Exit();
                     return;
+                }
             }
 
             // disconnect current virtual controller
@@ -235,6 +235,8 @@ namespace HandheldCompanion.Managers
             {
                 if (mode != HIDmode.NoController)
                     LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
+
+                threadLock.Exit();
                 return;
             }
 
@@ -242,17 +244,25 @@ namespace HandheldCompanion.Managers
             vTarget.Disconnected += OnTargetDisconnected;
             vTarget.Vibrated += OnTargetVibrated;
 
-            // update status
-            SetControllerStatus(HIDstatus);
-
             // update current HIDmode
             HIDmode = mode;
+
+            threadLock.Exit();
+
+            // update status
+            SetControllerStatus(HIDstatus);
         }
 
         public static void SetControllerStatus(HIDstatus status)
         {
-            if (vTarget is null)
+            if (!threadLock.TryEnter(3000))
                 return;
+
+            if (vTarget is null)
+            {
+                threadLock.Exit();
+                return;
+            }
 
             switch (status)
             {
@@ -267,6 +277,8 @@ namespace HandheldCompanion.Managers
 
             // update current HIDstatus
             HIDstatus = status;
+
+            threadLock.Exit();
         }
 
         private static void OnTargetConnected(ViGEmTarget target)

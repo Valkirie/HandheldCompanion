@@ -218,6 +218,8 @@ public partial class ControllerPage : Page
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
     {
+        return;
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
