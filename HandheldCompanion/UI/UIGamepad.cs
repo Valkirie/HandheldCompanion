@@ -73,21 +73,10 @@ namespace HandheldCompanion.Managers
             _gamepadFrame = contentFrame;
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
-            // start listening to inputs
-            switch (SettingsManager.GetBoolean("DesktopProfileOnStart"))
-            {
-                case true:
-                    ControllerManager.InputsUpdated -= InputsUpdated;
-                    break;
-                case false:
-                    ControllerManager.InputsUpdated += InputsUpdated;
-                    break;
-            }
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
+
+            ControllerManager.InputsUpdated += InputsUpdated;
         }
 
         private void _currentWindow_ContentDialogClosed()
@@ -154,27 +143,6 @@ namespace HandheldCompanion.Managers
 
             // raise event
             LostFocus?.Invoke(_currentWindow);
-        }
-
-        private void SettingsManager_SettingValueChanged(string name, object value)
-        {
-            switch (name)
-            {
-                case "DesktopLayoutEnabled":
-                    {
-                        bool enabled = SettingsManager.GetBoolean(name, true);
-                        switch (enabled)
-                        {
-                            case true:
-                                ControllerManager.InputsUpdated -= InputsUpdated;
-                                break;
-                            case false:
-                                ControllerManager.InputsUpdated += InputsUpdated;
-                                break;
-                        }
-                    }
-                    break;
-            }
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
