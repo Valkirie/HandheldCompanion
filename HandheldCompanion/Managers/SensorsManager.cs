@@ -72,7 +72,10 @@ namespace HandheldCompanion.Managers
         
         private static void PickNextSensor()
         {
-            if (ControllerManager.GetTargetController() is not null && ControllerManager.GetTargetController().HasMotionSensor())
+            // get current controller
+            IController controller = ControllerManager.GetTargetController();
+
+            if (controller is not null && controller.HasMotionSensor())
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
             else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
@@ -121,11 +124,9 @@ namespace HandheldCompanion.Managers
                             case SensorFamily.Windows:
                                 StopListening();
                                 break;
+
                             case SensorFamily.SerialUSBIMU:
-                                if (USBSensor is not null)
-                                    USBSensor.Close();
-                                break;
-                            case SensorFamily.Controller:
+                                USBSensor?.Close();
                                 break;
                         }
 
@@ -134,24 +135,35 @@ namespace HandheldCompanion.Managers
 
                         switch(sensorFamily)
                         {
-                            case SensorFamily.Windows:
-                                break;
                             case SensorFamily.SerialUSBIMU:
                                 {
+                                    // get current USB sensor
                                     USBSensor = SerialUSBIMU.GetCurrent();
-
                                     if (USBSensor is null)
+                                    {
+                                        PickNextSensor();
                                         break;
-
-                                    USBSensor.Open();
+                                    }
 
                                     SerialPlacement placement = (SerialPlacement)SettingsManager.GetInt("SensorPlacement");
-                                    USBSensor.SetSensorPlacement(placement);
                                     bool upsidedown = SettingsManager.GetBoolean("SensorPlacementUpsideDown");
+
+                                    USBSensor.Open();
+                                    USBSensor.SetSensorPlacement(placement);
                                     USBSensor.SetSensorOrientation(upsidedown);
                                 }
                                 break;
+
                             case SensorFamily.Controller:
+                                {
+                                    // get current controller
+                                    IController controller = ControllerManager.GetTargetController();
+                                    if (controller is null || !controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
+                                    {
+                                        PickNextSensor();
+                                        break;
+                                    }
+                                }
                                 break;
                         }
 
