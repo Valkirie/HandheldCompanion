@@ -2961,8 +2961,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
     <value>Xbox 360</value>
   </data>
-  <data name="ProfilesPage_Combined" xml:space="preserve">
-    <value>Roll/Yaw</value>
+  <data name="ProfilesPage_RollYawAuto" xml:space="preserve">
+    <value>Auto</value>
   </data>
   <data name="Hint_MSIClawCenterCheck" xml:space="preserve">
     <value>MSI Center is running</value>

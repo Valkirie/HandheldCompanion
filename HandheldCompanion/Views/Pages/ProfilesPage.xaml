@@ -958,12 +958,12 @@
                                                     <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
                                                 </ui:SimpleStackPanel>
                                             </ComboBoxItem>
-                                            <!--<ComboBoxItem>
+                                            <ComboBoxItem>
                                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                     <ui:FontIcon Glyph="&#xE8B4;" />
-                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_Combined}" />
+                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_RollYawAuto}" />
                                                 </ui:SimpleStackPanel>
-                                            </ComboBoxItem>-->
+                                            </ComboBoxItem>
                                         </ComboBox>
                                     </Grid>
 

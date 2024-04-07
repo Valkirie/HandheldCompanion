@@ -5869,15 +5869,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Roll/Yaw.
-        /// </summary>
-        public static string ProfilesPage_Combined {
-            get {
-                return ResourceManager.GetString("ProfilesPage_Combined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Controller layout.
         /// </summary>
         public static string ProfilesPage_ControllerLayout {
@@ -6540,6 +6531,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_Roll {
             get {
                 return ResourceManager.GetString("ProfilesPage_Roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto.
+        /// </summary>
+        public static string ProfilesPage_RollYawAuto {
+            get {
+                return ResourceManager.GetString("ProfilesPage_RollYawAuto", resourceCulture);
             }
         }
         

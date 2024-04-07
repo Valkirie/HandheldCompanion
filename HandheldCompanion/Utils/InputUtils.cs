@@ -32,8 +32,7 @@ public enum MotionInput
     /// While more intuitive, world space controls are challenging to implement and less suitable for handheld devices.
     /// </summary>
     WorldSpace = 2,
-    AutoRollYawSwap = 3,
-    JoystickSteering = 4
+    JoystickSteering = 3
 }
 
 public enum MotionOuput
