@@ -167,7 +167,7 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "SensorSelection":
                         {
-                            var idx = Convert.ToInt32(value);
+                            int idx = Convert.ToInt32(value);
 
                             // default value
                             if (idx == -1)
