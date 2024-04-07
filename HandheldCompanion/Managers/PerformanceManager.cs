@@ -551,6 +551,10 @@ public static class PerformanceManager
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
                     if (currentPowerMode == OSPowerMode.BetterBattery)
                         TDP = (int)Math.Truncate(TDP * 0.9);
+
+                    // AMD doesn't have MSR
+                    if (type == PowerType.MsrSlow || type == PowerType.MsrFast)
+                        continue;
                 }
                 else if (processor is IntelProcessor)
                 {
@@ -745,7 +749,7 @@ public static class PerformanceManager
             if (immediate)
             {
                 processor.SetTDPLimit((PowerType)idx, values[idx], immediate);
-                await Task.Delay(12);
+                await Task.Delay(20);
             }
         }
     }
