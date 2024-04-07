@@ -35,7 +35,7 @@ public enum SteeringAxis
 {
     Roll = 0,
     Yaw = 1,
-    Combined = 2, // unused
+    Auto = 2, // unused
 }
 
 [Serializable]

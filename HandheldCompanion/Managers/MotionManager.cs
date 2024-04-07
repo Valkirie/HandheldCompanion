@@ -80,11 +80,31 @@ namespace HandheldCompanion.Managers
             controllerState.GyroState.Gyroscope[SensorState.Default] = controllerState.GyroState.Gyroscope[SensorState.GMH] * current.GyrometerMultiplier;
             controllerState.GyroState.Accelerometer[SensorState.Default] = controllerState.GyroState.Accelerometer[SensorState.GMH] * current.AccelerometerMultiplier;
 
-            // Default: swap roll/yaw
-            if (current.SteeringAxis == SteeringAxis.Yaw)
+            // Default: swap roll/yaw/auto
+            SteeringAxis steeringAxis = current.SteeringAxis;
+            if (steeringAxis == SteeringAxis.Auto)
             {
-                controllerState.GyroState.Gyroscope[SensorState.Default] = new(controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Z, -controllerState.GyroState.Gyroscope[SensorState.Default].Y);
-                controllerState.GyroState.Accelerometer[SensorState.Default] = new(controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Z, -controllerState.GyroState.Accelerometer[SensorState.Default].Y);
+                SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
+                switch(sensorSelection)
+                {
+                    case SensorFamily.Windows:
+                    case SensorFamily.SerialUSBIMU:
+                        steeringAxis = SteeringAxis.Yaw;
+                        break;
+
+                    case SensorFamily.Controller:
+                        if (Math.Abs(accelZ) > Math.Abs(accelY))
+                            steeringAxis = SteeringAxis.Yaw;
+                        break;
+                }
+            }
+
+            switch (steeringAxis)
+            {
+                case SteeringAxis.Yaw:
+                    controllerState.GyroState.Gyroscope[SensorState.Default] = new(controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Z, -controllerState.GyroState.Gyroscope[SensorState.Default].Y);
+                    controllerState.GyroState.Accelerometer[SensorState.Default] = new(controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Z, -controllerState.GyroState.Accelerometer[SensorState.Default].Y);
+                    break;
             }
 
             // update all states (except Default, GMH)
@@ -191,10 +211,6 @@ namespace HandheldCompanion.Managers
                 case MotionInput.WorldSpace:
                     gamepadMotion.GetWorldSpaceGyro(out float worldX, out float worldY, 0.125f);
                     output = new Vector2(-worldY, worldX);
-                    break;
-                case MotionInput.AutoRollYawSwap:
-                    gamepadMotion.GetGravity(out float gravityX, out float gravityY, out float gravityZ);
-                    output = InputUtils.AutoRollYawSwap(new Vector3(gravityX, gravityY, gravityZ), controllerState.GyroState.Gyroscope[SensorState.Default]);
                     break;
                 case MotionInput.JoystickSteering:
                     output.X = InputUtils.Steering(inclination.Angles.Y, currentProfile.SteeringMaxAngle, currentProfile.SteeringPower, currentProfile.SteeringDeadzone);
