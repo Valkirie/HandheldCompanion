@@ -68,7 +68,7 @@ public partial class QuickDevicePage : Page
         else
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // Revert back to resolution in device settings
                 SetResolution();
@@ -76,7 +76,7 @@ public partial class QuickDevicePage : Page
         }
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             var canChangeDisplay = !profile.IntegerScalingEnabled;
             DisplayStack.IsEnabled = canChangeDisplay;
@@ -88,7 +88,7 @@ public partial class QuickDevicePage : Page
     private void ProfileManager_Discarded(Profile profile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             SetResolution();
 
@@ -103,7 +103,7 @@ public partial class QuickDevicePage : Page
     private void NightLight_Toggled(bool enabled)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             NightLightToggle.IsOn = enabled;
         });
@@ -134,7 +134,7 @@ public partial class QuickDevicePage : Page
             radios = await Radio.GetRadiosAsync();
 
             // UI thread (async)
-            _ = Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // WIFI
                 WifiToggle.IsEnabled = radios.Where(radio => radio.Kind == RadioKind.WiFi).Any();

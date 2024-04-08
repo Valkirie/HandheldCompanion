@@ -77,7 +77,7 @@ public partial class QuickHomePage : Page
     private void SystemManager_Initialized()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             if (MultimediaManager.HasBrightnessSupport())
             {
@@ -96,25 +96,27 @@ public partial class QuickHomePage : Page
 
     private void SystemManager_BrightnessNotification(int brightness)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        using (new ScopedLock(brightnessLock))
         {
-            using (new ScopedLock(brightnessLock))
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
                 SliderBrightness.Value = brightness;
-        });
+            });
+        }
     }
 
     private void SystemManager_VolumeNotification(float volume)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        using (new ScopedLock(volumeLock))
         {
-            using (new ScopedLock(volumeLock))
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 UpdateVolumeIcon(volume);
                 SliderVolume.Value = Math.Round(volume);
-            }
-        });
+            });
+        }
     }
 
     private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -144,7 +146,7 @@ public partial class QuickHomePage : Page
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             t_CurrentProfile.Text = profile.ToString();
         });

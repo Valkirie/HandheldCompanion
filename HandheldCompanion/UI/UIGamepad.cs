@@ -173,7 +173,7 @@ namespace HandheldCompanion.Managers
         private void _gamepadFrame_PageRendered(object? sender, System.Timers.ElapsedEventArgs e)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // specific-cases
                 switch (_gamepadPage.Tag)
@@ -400,7 +400,7 @@ namespace HandheldCompanion.Managers
             }
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // get current focused element
                 Control focusedElement = FocusedElement(_currentWindow);

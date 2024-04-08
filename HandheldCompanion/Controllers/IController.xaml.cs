@@ -172,7 +172,7 @@ namespace HandheldCompanion.Controllers
         private void SetVirtualControllerVisualIndex(int value)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 foreach (FrameworkElement frameworkElement in UserIndexPanel.Children)
                 {
@@ -335,7 +335,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
@@ -458,7 +458,7 @@ namespace HandheldCompanion.Controllers
             InjectedButtons.Clear();
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ui_button_hook.IsEnabled = false;
             });
@@ -468,7 +468,7 @@ namespace HandheldCompanion.Controllers
         public virtual void Unplug()
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ui_button_hook.IsEnabled = true;
             });

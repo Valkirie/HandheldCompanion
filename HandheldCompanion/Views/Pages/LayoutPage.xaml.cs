@@ -101,7 +101,7 @@ public partial class LayoutPage : Page
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
 
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (source)
             {
@@ -118,7 +118,7 @@ public partial class LayoutPage : Page
     private void ControllerManager_ControllerSelected(IController controller)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             RefreshLayoutList();
 
@@ -142,7 +142,7 @@ public partial class LayoutPage : Page
     private void LayoutManager_Initialized()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             RefreshLayoutList();
         });
@@ -151,7 +151,7 @@ public partial class LayoutPage : Page
     private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // Get template separator index
             var idx = -1;
@@ -269,13 +269,13 @@ public partial class LayoutPage : Page
 
     private void UpdatePages()
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // This is a very important lock, it blocks backward events to the layout when
+        // this is actually the backend that triggered the update. Notifications on higher
+        // levels (pages and mappings) could potentially be blocked for optimization.
+        using (new ScopedLock(updateLock))
         {
-            // This is a very important lock, it blocks backward events to the layout when
-            // this is actually the backend that triggered the update. Notifications on higher
-            // levels (pages and mappings) could potentially be blocked for optimization.
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // Invoke Layout Updated to trigger ViewModel updates
                 LayoutUpdated?.Invoke(currentTemplate.Layout);
@@ -285,8 +285,8 @@ public partial class LayoutPage : Page
 
                 CheckBoxDefaultLayout.IsChecked = currentTemplate.Layout.IsDefaultLayout;
                 CheckBoxDefaultLayout.IsEnabled = currentTemplate.Layout != LayoutManager.GetDesktop();
-            }
-        });
+            });
+        }
     }
 
     private void cB_Layouts_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -59,7 +59,7 @@ namespace HandheldCompanion.Controls.Hints
             VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable");
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable ? Visibility.Visible : Visibility.Collapsed;
             });

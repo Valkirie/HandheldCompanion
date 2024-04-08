@@ -107,11 +107,7 @@ public class DualSenseController : JSController
 
     public override void SetLightColor(byte R, byte G, byte B)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            JslSetLightColour(UserIndex, CommonUtils.rgb_to_int(R, G, B));
-        });
+        JslSetLightColour(UserIndex, CommonUtils.rgb_to_int(R, G, B));
     }
 
     public override string GetGlyph(ButtonFlags button)

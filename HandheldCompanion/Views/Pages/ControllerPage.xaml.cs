@@ -44,7 +44,7 @@ public partial class ControllerPage : Page
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // disable emulated controller combobox if profile is not default or set to default controller
             if (!profile.Default && (HIDmode)profile.HID != HIDmode.NotSelected)
@@ -109,7 +109,7 @@ public partial class ControllerPage : Page
     private void ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
 
@@ -133,7 +133,7 @@ public partial class ControllerPage : Page
     private void ControllerPlugged(IController Controller, bool IsPowerCycling)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
 
@@ -165,7 +165,7 @@ public partial class ControllerPage : Page
     private void ControllerManager_Working(int status)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(async () =>
+        Application.Current.Dispatcher.Invoke(async () =>
         {
             // status: 0:wip, 1:sucess, 2:failed
             switch (status)
@@ -221,7 +221,7 @@ public partial class ControllerPage : Page
         return;
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             cB_HidMode.SelectedIndex = (int)mode;
         });
@@ -260,7 +260,7 @@ public partial class ControllerPage : Page
         bool isMuted = SettingsManager.GetBoolean("SteamControllerMute");
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;

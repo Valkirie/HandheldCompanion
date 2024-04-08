@@ -44,18 +44,18 @@ public partial class SettingsMode1 : Page
 
     public void SetProfile()
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SliderDeadzoneAngle.Value = ProfilesPage.selectedProfile.SteeringDeadzone;
                 SliderPower.Value = ProfilesPage.selectedProfile.SteeringPower;
                 SliderSteeringAngle.Value = ProfilesPage.selectedProfile.SteeringMaxAngle;
 
                 lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.selectedProfile.SteeringPower);
-            }
-        });
+            });
+        }
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -74,7 +74,7 @@ public partial class SettingsMode1 : Page
     private void Rotate_Needle(float y)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() => { lvAngularGauge.Value = y; });
+        Application.Current.Dispatcher.Invoke(() => { lvAngularGauge.Value = y; });
     }
 
     private void SliderSteeringAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

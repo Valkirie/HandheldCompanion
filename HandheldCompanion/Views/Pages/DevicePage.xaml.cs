@@ -67,7 +67,7 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
             });
@@ -208,7 +208,7 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateDevice(PnPDevice device = null)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SensorInternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
                 SensorExternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
@@ -218,7 +218,7 @@ namespace HandheldCompanion.Views.Pages
         private void OnColorValuesChanged(UISettings sender, object args)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (MatchAccentColor.IsOn)
                     SetAccentColor();

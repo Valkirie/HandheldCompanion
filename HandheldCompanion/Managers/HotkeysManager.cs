@@ -78,14 +78,15 @@ public static class HotkeysManager
     {
         // when the target emulated controller is Dualshock
         // only enable HIDmode switch hotkey when controller is plugged (last stage of HIDmode change in this case)
-        var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+        HIDmode targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
         if (targetHIDmode == HIDmode.DualShock4Controller)
         {
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
-            foreach (Hotkey? hotkey in hotkeys)
+            List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.BeginInvoke(() => { hotkey.IsEnabled = !hasProfileHID; });
-            }
+                foreach (Hotkey? hotkey in hotkeys)
+                    hotkey.IsEnabled = !hasProfileHID;
+            });
         }
     }
 
@@ -93,13 +94,15 @@ public static class HotkeysManager
     {
         // when the target emulated controller is Xbox Controller
         // only enable HIDmode switch hotkey when controller is unplugged (last stage of HIDmode change in this case)
-        var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
-
+        HIDmode targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
         if (targetHIDmode == HIDmode.Xbox360Controller)
         {
             List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
-            foreach (Hotkey? hotkey in hotkeys)
-                Application.Current.Dispatcher.Invoke(() => { hotkey.IsEnabled = !hasProfileHID; });
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (Hotkey? hotkey in hotkeys)
+                    hotkey.IsEnabled = !hasProfileHID;
+            });
         }
     }
 
@@ -128,8 +131,11 @@ public static class HotkeysManager
 
         // enable/disable hotkey based on profile HIDmode
         List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
-        foreach (Hotkey? hotkey in hotkeys)
-            Application.Current.Dispatcher.Invoke(() => { hotkey.IsEnabled = !hasProfileHID; });
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            foreach (Hotkey? hotkey in hotkeys)
+                hotkey.IsEnabled = !hasProfileHID;
+        });
 
         // change glyph at startup only
         if (!IsInitialized)
@@ -306,17 +312,16 @@ public static class HotkeysManager
     private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
     {
         IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).ToList();
-        foreach (Hotkey hotkey in hotkeys)
+
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            foreach (Hotkey hotkey in hotkeys)
             {
                 // stop recording and update UI
                 hotkey.StopListening(inputs, type);
-            });
-
-            SerializeHotkey(hotkey, true);
-        }
+                SerializeHotkey(hotkey, true);
+            }
+        });
     }
 
     private static Hotkey ProcessHotkey(string fileName)
@@ -356,7 +361,7 @@ public static class HotkeysManager
         List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsChord.State.Equals(input.State) && (item.inputsHotkey.OnKeyDown == IsKeyDown || item.inputsHotkey.OnKeyUp == IsKeyUp)).ToList();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             foreach (Hotkey hotkey in hotkeys)
                 hotkey.Highlight();

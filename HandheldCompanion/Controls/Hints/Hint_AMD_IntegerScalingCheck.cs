@@ -42,7 +42,7 @@ namespace HandheldCompanion.Controls.Hints
             int EmbeddedIntegerScalingSupport = RegistryUtils.GetInt(@"SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000", "DalEmbeddedIntegerScalingSupport");
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = EmbeddedIntegerScalingSupport != 1 ? Visibility.Visible : Visibility.Collapsed;
             });
