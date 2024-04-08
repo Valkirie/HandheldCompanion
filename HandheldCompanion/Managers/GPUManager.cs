@@ -1,5 +1,12 @@
-﻿using HandheldCompanion.Controls;
+﻿using HandheldCompanion.ADLX;
+using HandheldCompanion.Controls;
 using HandheldCompanion.GraphicsProcessingUnit;
+using HandheldCompanion.IGCL;
+using HandheldCompanion.Managers.Desktop;
+using SharpDX.Direct3D9;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
 {
@@ -7,34 +14,143 @@ namespace HandheldCompanion.Managers
     {
         #region events
         public static event InitializedEventHandler Initialized;
-        public delegate void InitializedEventHandler(GPU GPU);
+        public delegate void InitializedEventHandler(bool HasIGCL, bool HasADLX);
+
+        public static event HookedEventHandler Hooked;
+        public delegate void HookedEventHandler(GPU GPU);
+
+        public static event UnhookedEventHandler Unhooked;
+        public delegate void UnhookedEventHandler(GPU GPU);
         #endregion
 
         public static bool IsInitialized;
+        public static bool HasIGCL;
+        public static bool HasADLX;
 
-        private static GPU currentGPU = new();
-        
+        private static GPU currentGPU = null;
+        private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
+
         static GPUManager()
         {
-            // initialize processor
-            currentGPU = GPU.GetCurrent();
-            currentGPU.ImageSharpeningChanged += CurrentGPU_ImageSharpeningChanged;
-            currentGPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
-            currentGPU.IntegerScalingChanged += CurrentGPU_IntegerScalingChanged;
-
-            if (currentGPU is AMDGPU)
-            {
-                ((AMDGPU)currentGPU).RSRStateChanged += CurrentGPU_RSRStateChanged;
-            }
-            else if (currentGPU is IntelGPU)
-            {
-
-            }
-
             // manage events
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
             ProfileManager.Updated += ProfileManager_Updated;
+            DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
+            DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
+            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+        }
+
+        private static void GPUConnect(GPU GPU)
+        {
+            // update current GPU
+            currentGPU = GPU;
+
+            GPU.ImageSharpeningChanged += CurrentGPU_ImageSharpeningChanged;
+            GPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
+            GPU.IntegerScalingChanged += CurrentGPU_IntegerScalingChanged;
+
+            if (GPU is AMDGPU)
+            {
+                ((AMDGPU)GPU).RSRStateChanged += CurrentGPU_RSRStateChanged;
+            }
+            else if (GPU is IntelGPU)
+            {
+                // do something
+            }
+
+            if (GPU.IsInitialized)
+            {
+                GPU.Start();
+                Hooked?.Invoke(GPU);
+            }
+        }
+
+        private static void GPUDisconnect(GPU gpu)
+        {
+            if (currentGPU == gpu)
+                Unhooked?.Invoke(gpu);
+
+            gpu.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
+            gpu.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
+            gpu.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
+
+            if (gpu is AMDGPU)
+            {
+                ((AMDGPU)gpu).RSRStateChanged -= CurrentGPU_RSRStateChanged;
+            }
+            else if (gpu is IntelGPU)
+            {
+                // do something
+            }
+
+            gpu.Stop();
+        }
+
+        private static async void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
+        {
+            while (!DeviceManager.IsInitialized)
+                await Task.Delay(250);
+
+            try
+            {
+                AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName);
+                if (DisplayGPU.TryGetValue(key, out GPU gpu))
+                {
+                    // a new GPU was connected, disconnect from current gpu
+                    if (currentGPU is not null && currentGPU != gpu)
+                        GPUDisconnect(currentGPU);
+
+                    // connect to new gpu
+                    GPUConnect(gpu);
+                }
+            }
+            catch
+            {
+                // AdapterInformation can't be null
+            }
+        }
+
+        private static async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        {
+            GPU currentGPU = null;
+
+            if (adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD"))
+            {
+                currentGPU = new AMDGPU(adapterInformation);
+            }
+            else if (adapterInformation.Details.Description.Contains("Intel"))
+            {
+                currentGPU = new IntelGPU(adapterInformation);
+            }
+
+            if (currentGPU is null)
+            {
+                LogManager.LogError("Unsupported DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
+                return;
+            }
+
+            if (!currentGPU.IsInitialized)
+            {
+                LogManager.LogError("Failed to initialize DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
+                return;
+            }
+
+            DisplayGPU.TryAdd(adapterInformation, currentGPU);
+        }
+
+        private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
+        {
+            if (DisplayGPU.TryRemove(adapterInformation, out GPU gpu))
+            {
+                GPUDisconnect(gpu);
+                gpu.Dispose();
+            }
+        }
+
+        public static GPU GetCurrent()
+        {
+            return currentGPU;
         }
 
         private static void CurrentGPU_RSRStateChanged(bool Supported, bool Enabled, int Sharpness)
@@ -82,20 +198,37 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            currentGPU.Start();
+            HasIGCL = IGCLBackend.Initialize();
+            HasADLX = ADLXBackend.IntializeAdlx();
+
+            // todo: check if usefull on resume
+            // it could be DeviceManager_DisplayAdapterArrived is called already, making this redundant
+            if (currentGPU is not null)
+                currentGPU.Start();
 
             IsInitialized = true;
-            Initialized?.Invoke(currentGPU);
+            Initialized?.Invoke(HasIGCL, HasADLX);
 
             LogManager.LogInformation("{0} has started", "GPUManager");
         }
 
-        public static void Stop()
+        public static async void Stop()
         {
             if (!IsInitialized)
                 return;
 
-            currentGPU.Stop();
+            foreach (GPU gpu in DisplayGPU.Values)
+                gpu.Stop();
+
+            // wait until all GPUs are ready
+            while (DisplayGPU.Values.Any(gpu => gpu.IsBusy))
+                await Task.Delay(100);
+
+            if (HasIGCL)
+                IGCLBackend.Terminate();
+
+            if (HasADLX)
+                ADLXBackend.CloseAdlx();
 
             IsInitialized = false;
 
@@ -104,6 +237,9 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
+            if (currentGPU is null)
+                return;
+
             try
             {
                 // apply profile GPU Scaling
@@ -168,6 +304,9 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Discarded(Profile profile)
         {
+            if (currentGPU is null)
+                return;
+
             try
             {
                 /*

@@ -1,7 +1,8 @@
 ﻿using HandheldCompanion.ADLX;
+using HandheldCompanion.Managers;
+using SharpDX.Direct3D9;
 using System;
-using System.Diagnostics;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.ADLX.ADLXBackend;
@@ -27,13 +28,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             return Execute(ADLXBackend.HasRSRSupport, false);
         }
-        
+
         public override bool HasIntegerScalingSupport()
         {
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.HasIntegerScalingSupport(0), false);
+            return Execute(() => ADLXBackend.HasIntegerScalingSupport(displayIdx), false);
         }
 
         public override bool HasGPUScalingSupport()
@@ -41,7 +42,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.HasGPUScalingSupport(0), false);
+            return Execute(() => ADLXBackend.HasGPUScalingSupport(displayIdx), false);
         }
 
         public override bool HasScalingModeSupport()
@@ -49,7 +50,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.HasScalingModeSupport(0), false);
+            return Execute(() => ADLXBackend.HasScalingModeSupport(displayIdx), false);
         }
 
         public bool GetRSR()
@@ -73,7 +74,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.GetImageSharpening(0), false);
+            return Execute(() => ADLXBackend.GetImageSharpening(deviceIdx), false);
         }
 
         public override int GetImageSharpeningSharpness()
@@ -81,7 +82,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return -1;
 
-            return Execute(() => ADLXBackend.GetImageSharpeningSharpness(0), -1);
+            return Execute(() => ADLXBackend.GetImageSharpeningSharpness(deviceIdx), -1);
         }
 
         public override bool GetIntegerScaling()
@@ -89,7 +90,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.GetIntegerScaling(0), false);
+            return Execute(() => ADLXBackend.GetIntegerScaling(displayIdx), false);
         }
 
         public override bool GetGPUScaling()
@@ -97,7 +98,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.GetGPUScaling(0), false);
+            return Execute(() => ADLXBackend.GetGPUScaling(displayIdx), false);
         }
 
         public override int GetScalingMode()
@@ -105,7 +106,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return -1;
 
-            return Execute(() => ADLXBackend.GetScalingMode(0), -1);
+            return Execute(() => ADLXBackend.GetScalingMode(displayIdx), -1);
         }
 
         public bool SetRSRSharpness(int sharpness)
@@ -121,7 +122,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.SetImageSharpening(0, enable), false);
+            return Execute(() => ADLXBackend.SetImageSharpening(deviceIdx, enable), false);
         }
 
         public bool SetRSR(bool enable)
@@ -134,11 +135,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 // mutually exclusive
                 if (enable)
                 {
-                    if (ADLXBackend.GetIntegerScaling(0))
-                        ADLXBackend.SetIntegerScaling(0, false);
+                    if (ADLXBackend.GetIntegerScaling(displayIdx))
+                        ADLXBackend.SetIntegerScaling(displayIdx, false);
 
-                    if (ADLXBackend.GetImageSharpening(0))
-                        ADLXBackend.SetImageSharpening(0, false);
+                    if (ADLXBackend.GetImageSharpening(deviceIdx))
+                        ADLXBackend.SetImageSharpening(deviceIdx, false);
                 }
 
                 return ADLXBackend.SetRSR(enable);
@@ -150,7 +151,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.SetImageSharpeningSharpness(0, sharpness), false);
+            return Execute(() => ADLXBackend.SetImageSharpeningSharpness(deviceIdx, sharpness), false);
         }
 
         public override bool SetIntegerScaling(bool enabled, byte type = 0)
@@ -167,7 +168,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         ADLXBackend.SetRSR(false);
                 }
 
-                return ADLXBackend.SetIntegerScaling(0, enabled);
+                return ADLXBackend.SetIntegerScaling(displayIdx, enabled);
             }, false);
         }
 
@@ -176,7 +177,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.SetGPUScaling(0, enabled), false);
+            return Execute(() => ADLXBackend.SetGPUScaling(displayIdx, enabled), false);
         }
 
         public override bool SetScalingMode(int mode)
@@ -184,7 +185,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => ADLXBackend.SetScalingMode(0, mode), false);
+            return Execute(() => ADLXBackend.SetScalingMode(displayIdx, mode), false);
+        }
+
+        public override float GetClock()
+        {
+            return (float)TelemetryData.gpuClockSpeedValue;
         }
 
         public override float GetClock()
@@ -214,9 +220,48 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected AdlxTelemetryData TelemetryData = new();
 
-        public AMDGPU()
+        public AMDGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
-            IsInitialized = ADLXBackend.IntializeAdlx();
+            ADLX_RESULT result = ADLX_RESULT.ADLX_FAIL;
+            int adapterCount = 0;
+            int UniqueId = 0;
+            string dispName = string.Empty;
+            string friendlyName = MultimediaManager.GetDisplayFriendlyName(adapterInformation.Details.DeviceName);
+
+            result = GetNumberOfDisplays(ref adapterCount);
+            if (result != ADLX_RESULT.ADLX_OK)
+                return;
+
+            for (int idx = 0; idx < adapterCount; idx++)
+            {
+                StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
+
+                // skip if failed to retrieve display
+                result = GetDisplayName(idx, displayName, displayName.Capacity);
+                if (result != ADLX_RESULT.ADLX_OK)
+                    continue;
+
+                // skip if display is not the one we're looking for
+                if (!displayName.ToString().Equals(friendlyName))
+                    continue;
+
+                // update displayIdx
+                displayIdx = idx;
+                break;
+            }
+
+            if (displayIdx != -1)
+            {
+                // get the associated GPU UniqueId
+                result = GetDisplayGPU(displayIdx, ref UniqueId);
+                if (result == ADLX_RESULT.ADLX_OK)
+                {
+                    result = GetGPUIndex(UniqueId, ref deviceIdx);
+                    if (result == ADLX_RESULT.ADLX_OK)
+                        IsInitialized = true;
+                }
+            }
+
             if (!IsInitialized)
                 return;
 
@@ -231,34 +276,29 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (Monitor.TryEnter(telemetryLock))
+            if (telemetryLock.TryEnter())
             {
-                TelemetryData = ADLXBackend.GetTelemetryData();
-                //Debug.WriteLine("W:{0}", TelemetryData.gpuPowerValue);
-
-                Monitor.Exit(telemetryLock);
+                TelemetryData = GetTelemetryData();
+                telemetryLock.Exit();
             }
         }
 
         public override void Start()
         {
+            if (!IsInitialized)
+                return;
+
             base.Start();
         }
 
         public override async void Stop()
         {
             base.Stop();
-
-            // wait until the current ADLX tasks are completed
-            while (!Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock))
-                await Task.Delay(100);
-
-            ADLXBackend.CloseAdlx();
         }
 
         private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (Monitor.TryEnter(updateLock))
+            if (updateLock.TryEnter())
             {
                 bool GPUScaling = false;
 
@@ -300,7 +340,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     while (DateTime.Now < timeout && !RSRSupport)
                     {
                         RSRSupport = HasRSRSupport();
-                        Thread.Sleep(250);
+                        await Task.Delay(250);
                     }
                     RSR = GetRSR();
 
@@ -326,7 +366,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     while (DateTime.Now < timeout && !IntegerScalingSupport)
                     {
                         IntegerScalingSupport = HasIntegerScalingSupport();
-                        Thread.Sleep(250);
+                        await Task.Delay(250);
                     }
                     IntegerScaling = GetIntegerScaling();
 
@@ -357,7 +397,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 }
                 catch { }
 
-                Monitor.Exit(updateLock);
+                updateLock.Exit();
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using ColorPicker;
+using ColorPicker;
 using ColorPicker.Models;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
@@ -37,7 +37,7 @@ public partial class OverlayPage : Page
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
             {
@@ -53,8 +53,8 @@ public partial class OverlayPage : Page
 
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (name)
             {
@@ -270,6 +270,7 @@ public partial class OverlayPage : Page
     private void Toggle_MotionActivated_Toggled(object sender, RoutedEventArgs e)
     {
         MainWindow.overlayModel.MotionActivated = Toggle_MotionActivated.IsOn;
+        //Toggle_FaceCamera.IsEnabled = Toggle_MotionActivated.IsOn ? true : false;
 
         if (!IsLoaded)
             return;
@@ -280,7 +281,6 @@ public partial class OverlayPage : Page
     private void Toggle_FaceCamera_Toggled(object sender, RoutedEventArgs e)
     {
         MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;
-        Slider_RestingPitch.IsEnabled = Toggle_FaceCamera.IsOn ? true : false;
 
         if (!IsLoaded)
             return;

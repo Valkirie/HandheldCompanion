@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -19,7 +21,6 @@ namespace HandheldCompanion.Controllers
     {
         None = 0,
         MotionSensor = 1,
-        Calibration = 2,
     }
 
     /// <summary>
@@ -29,22 +30,22 @@ namespace HandheldCompanion.Controllers
     {
         // Buttons and axes we should be able to map to.
         // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
-        public static readonly List<ButtonFlags> TargetButtons = new()
+        protected readonly List<ButtonFlags> TargetButtons = new()
         {
-            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+            ButtonFlags.None, ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
         };
 
-        public static readonly List<AxisLayoutFlags> TargetAxis = new()
+        protected readonly List<AxisLayoutFlags> TargetAxis = new()
         {
             AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
 
-        protected List<AxisLayoutFlags> SourceAxis = new()
+        protected readonly List<AxisLayoutFlags> SourceAxis = new()
         {
             // same as target, we assume all controllers have those axes
             AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
@@ -53,7 +54,7 @@ namespace HandheldCompanion.Controllers
 
         // Buttons and axes all controllers have that we can map.
         // Additional ones can be added per controller.
-        protected List<ButtonFlags> SourceButtons = new()
+        protected readonly List<ButtonFlags> SourceButtons = new()
         {
             // same as target, we assume all controllers have those buttons
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
@@ -79,6 +80,8 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
 
+        protected GamepadMotion gamepadMotion;
+
         protected double VibrationStrength = 1.0d;
         private byte _UserIndex = 255;
         private readonly int MaxUserIndex = 10;
@@ -88,18 +91,21 @@ namespace HandheldCompanion.Controllers
         private bool workingThreadRunning;
 
         public virtual bool IsReady => true;
+        public virtual bool IsWireless => false;
 
         public bool IsBusy
         {
             get
             {
+                bool isBusy = false;
+
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    return !IsEnabled;
+                    isBusy = !IsEnabled;
                 });
 
-                return false;
+                return isBusy;
             }
 
             set
@@ -165,7 +171,7 @@ namespace HandheldCompanion.Controllers
         private void SetVirtualControllerVisualIndex(int value)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 foreach (FrameworkElement frameworkElement in UserIndexPanel.Children)
                 {
@@ -203,23 +209,63 @@ namespace HandheldCompanion.Controllers
         public IController()
         {
             InitializeComponent();
+            InitializeInputOutput();
+
             MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
+        protected virtual void UpdateSettings()
+        { }
+
+        protected virtual void InitializeInputOutput()
+        { }
+
         public virtual void AttachDetails(PnPDetails details)
         {
+            if (details is null)
+                return;
+
             this.Details = details;
             Details.isHooked = true;
+
+            if (details.isVirtual)
+                return;
+
+            // manage gamepad motion
+            gamepadMotion = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ControllerType.Glyph = details.isInternal ? "\uE990" : details.isBluetooth ? "\uE702" : "\uECF0";
+            });
+
+            /*
+            // Retrieve the oldest device using LINQ
+            PnPDetails oldest = Details.isXInput ? DeviceManager.GetOldestXInput() : DeviceManager.GetOldestDInput();
+            if (oldest is not null)
+                IsInternal = oldest.deviceInstanceId == Details.deviceInstanceId;
+            */
         }
 
-        public virtual void UpdateInputs(long ticks)
+        public virtual void UpdateInputs(long ticks, float delta)
         {
-            InputsUpdated?.Invoke(Inputs);
+            InputsUpdated?.Invoke(Inputs, gamepadMotion, delta);
+        }
+
+        public virtual void UpdateInputs(long ticks, float delta, GamepadMotion gamepadOverwrite)
+        {
+            InputsUpdated?.Invoke(Inputs, gamepadOverwrite, delta);
         }
 
         public bool HasMotionSensor()
         {
             return Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
+        }
+
+        public GamepadMotion GetMotionSensor()
+        {
+            return gamepadMotion;
         }
 
         public bool IsPhysical()
@@ -288,11 +334,11 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
-                ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
+                ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.MotionSensor) ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
@@ -341,8 +387,7 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void SetVibration(byte LargeMotor, byte SmallMotor)
-        {
-        }
+        { }
 
         // let the controller decide itself what motor to use for a specific button
         public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
@@ -412,7 +457,7 @@ namespace HandheldCompanion.Controllers
             InjectedButtons.Clear();
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ui_button_hook.IsEnabled = false;
             });
@@ -422,7 +467,7 @@ namespace HandheldCompanion.Controllers
         public virtual void Unplug()
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ui_button_hook.IsEnabled = true;
             });
@@ -507,21 +552,21 @@ namespace HandheldCompanion.Controllers
             return true;
         }
 
-        protected virtual void Calibrate()
+        public async void Calibrate()
         {
+            SensorsManager.Calibrate(gamepadMotion);
         }
 
         protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
+            Calibrate();
         }
 
         protected virtual void ui_button_hide_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        { }
 
         protected virtual void ui_button_hook_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        { }
 
         public virtual string GetGlyph(ButtonFlags button)
         {
@@ -596,6 +641,33 @@ namespace HandheldCompanion.Controllers
             return defaultGlyph;
         }
 
+        public GlyphIconInfo GetGlyphIconInfo(ButtonFlags button, int fontIconSize = 14)
+        {
+            var glyph = GetGlyph(button);
+            return new GlyphIconInfo
+            {
+                Name = GetButtonName(button),
+                Glyph = glyph,
+                FontSize = glyph is not null ? 28 : fontIconSize,
+                FontFamily = glyph is not null ? GlyphFontFamily : null,
+                Foreground = GetGlyphColor(button)
+            };
+        }
+
+        public GlyphIconInfo GetGlyphIconInfo(AxisLayoutFlags axis, int fontIconSize = 14)
+        {
+            var glyph = GetGlyph(axis);
+            return new GlyphIconInfo
+            {
+                Name = GetAxisName(axis),
+                Glyph = glyph,
+                FontSize = glyph is not null ? 28 : fontIconSize,
+                FontFamily = glyph is not null ? GlyphFontFamily : null,
+                Foreground = GetGlyphColor(axis)
+            };
+        }
+
+        [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
         {
             var FontIcon = new FontIcon
@@ -614,6 +686,8 @@ namespace HandheldCompanion.Controllers
             return FontIcon;
         }
 
+
+        [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
         public FontIcon GetFontIcon(AxisLayoutFlags axis, int FontIconSize = 14)
         {
             var FontIcon = new FontIcon
@@ -653,25 +727,25 @@ namespace HandheldCompanion.Controllers
             return axis is AxisLayoutFlags.L2 || axis is AxisLayoutFlags.R2;
         }
 
-        public static IEnumerable<ButtonFlags> GetTargetButtons()
+        public List<ButtonFlags> GetTargetButtons()
         {
-            var buttons = Enum.GetValues(typeof(ButtonFlags)).Cast<ButtonFlags>();
+            IEnumerable<ButtonFlags> buttons = Enum.GetValues(typeof(ButtonFlags)).Cast<ButtonFlags>();
 
-            return buttons.Where(a => TargetButtons.Contains(a));
+            return buttons.Where(a => TargetButtons.Contains(a)).ToList();
         }
 
-        public static IEnumerable<AxisLayoutFlags> GetTargetAxis()
+        public List<AxisLayoutFlags> GetTargetAxis()
         {
-            var axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
+            IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
 
-            return axis.Where(a => TargetAxis.Contains(a) && !IsTrigger(a));
+            return axis.Where(a => TargetAxis.Contains(a) && !IsTrigger(a)).ToList();
         }
 
-        public static IEnumerable<AxisLayoutFlags> GetTargetTriggers()
+        public List<AxisLayoutFlags> GetTargetTriggers()
         {
-            var axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
+            IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
 
-            return axis.Where(a => TargetAxis.Contains(a) && IsTrigger(a));
+            return axis.Where(a => TargetAxis.Contains(a) && IsTrigger(a)).ToList();
         }
 
         public bool HasSourceButton(ButtonFlags button)
@@ -679,9 +753,19 @@ namespace HandheldCompanion.Controllers
             return SourceButtons.Contains(button);
         }
 
+        public bool HasSourceButton(List<ButtonFlags> buttons)
+        {
+            return SourceButtons.Any(buttons.Contains);
+        }
+
         public bool HasSourceAxis(AxisLayoutFlags axis)
         {
             return SourceAxis.Contains(axis);
+        }
+
+        public bool HasSourceAxis(List<AxisLayoutFlags> axis)
+        {
+            return SourceAxis.Any(axis.Contains);
         }
 
         public string GetButtonName(ButtonFlags button)
@@ -700,7 +784,7 @@ namespace HandheldCompanion.Controllers
         public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
         public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, GamepadMotion gamepadMotion, float delta);
 
         #endregion
     }

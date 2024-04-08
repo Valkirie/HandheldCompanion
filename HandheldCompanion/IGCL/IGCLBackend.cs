@@ -384,87 +384,141 @@ namespace HandheldCompanion.IGCL
             public double FanSpeedValue;
         }
 
-        [DllImport("IGCL_Wrapper.dll")]
-        private static extern ctl_result_t IntializeIgcl();
-
-        [DllImport("IGCL_Wrapper.dll")]
-        private static extern void CloseIgcl();
-
-        [DllImport("IGCL_Wrapper.dll")]
-        public static extern uint GetAdapterCounts();
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr GetDevices(ref uint pAdapterCount);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ctl_result_t GetDeviceProperties(ctl_device_adapter_handle_t hDevice, ref ctl_device_adapter_properties_t StDeviceAdapterProperties);
-
-        // RetroScaling
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetRetroScalingCaps(ctl_device_adapter_handle_t hDevice, ref ctl_retro_scaling_caps_t RetroScalingCaps);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetRetroScalingSettings(ctl_device_adapter_handle_t hDevice, ref ctl_retro_scaling_settings_t RetroScalingSettings);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t SetRetroScalingSettings(ctl_device_adapter_handle_t hDevice, ctl_retro_scaling_settings_t retroScalingSettings);
-
-        // Scaling
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetScalingCaps(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_scaling_caps_t ScalingCaps);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetScalingSettings(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_scaling_settings_t ScalingSetting);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t SetScalingSettings(ctl_device_adapter_handle_t hDevice, uint idx, ctl_scaling_settings_t scalingSettings);
-
-        // Sharpness
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetSharpnessCaps(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_sharpness_caps_t SharpnessCaps);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetSharpnessSettings(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_sharpness_settings_t GetSharpness);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t SetSharpnessSettings(ctl_device_adapter_handle_t hDevice, uint idx, ctl_sharpness_settings_t SetSharpness);
-
-        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern ctl_result_t GetTelemetryData(ctl_device_adapter_handle_t hDevice, ref ctl_telemetry_data TelemetryData);
+        [DllImport("kernel32")]
+        public static extern IntPtr LoadLibrary(string lpFileName);
 
         [DllImport("kernel32", SetLastError = true)]
-        static extern IntPtr LocalFree(IntPtr mem);
+        private static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = false)]
+        private static extern IntPtr GetProcAddress(IntPtr hModule, [MarshalAs(UnmanagedType.LPStr)] string lpProcName);
+
+        // Define the function delegates with the same signatures as the functions in the DLL
+        private delegate ctl_result_t InitializeIgclDelegate();
+        private delegate void CloseIgclDelegate();
+        private delegate IntPtr EnumerateDevicesDelegate(ref uint pAdapterCount);
+        private delegate ctl_result_t GetDevicePropertiesDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_device_adapter_properties_t StDeviceAdapterProperties);
+        private delegate ctl_result_t GetRetroScalingCapsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_retro_scaling_caps_t RetroScalingCaps);
+        private delegate ctl_result_t GetRetroScalingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_retro_scaling_settings_t RetroScalingSettings);
+        private delegate ctl_result_t SetRetroScalingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ctl_retro_scaling_settings_t retroScalingSettings);
+        private delegate ctl_result_t GetScalingCapsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_scaling_caps_t ScalingCaps);
+        private delegate ctl_result_t GetScalingSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_scaling_settings_t ScalingSetting);
+        private delegate ctl_result_t SetScalingSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ctl_scaling_settings_t scalingSettings);
+        private delegate ctl_result_t GetSharpnessCapsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_sharpness_caps_t SharpnessCaps);
+        private delegate ctl_result_t GetSharpnessSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_sharpness_settings_t GetSharpness);
+        private delegate ctl_result_t SetSharpnessSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ctl_sharpness_settings_t SetSharpness);
+        private delegate ctl_result_t GetTelemetryDataDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_telemetry_data TelemetryData);
+
+        // Define the function pointers
+        private static InitializeIgclDelegate InitializeIgcl;
+        private static CloseIgclDelegate CloseIgcl;
+        private static EnumerateDevicesDelegate EnumerateDevices;
+        private static GetDevicePropertiesDelegate GetDeviceProperties;
+        private static GetRetroScalingCapsDelegate GetRetroScalingCaps;
+        private static GetRetroScalingSettingsDelegate GetRetroScalingSettings;
+        private static SetRetroScalingSettingsDelegate SetRetroScalingSettings;
+        private static GetScalingCapsDelegate GetScalingCaps;
+        private static GetScalingSettingsDelegate GetScalingSettings;
+        private static SetScalingSettingsDelegate SetScalingSettings;
+        private static GetSharpnessCapsDelegate GetSharpnessCaps;
+        private static GetSharpnessSettingsDelegate GetSharpnessSettings;
+        private static SetSharpnessSettingsDelegate SetSharpnessSettings;
+        private static GetTelemetryDataDelegate GetTelemetryData;
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
-        public static nint deviceIdx = 0;
+        private static IntPtr pDll = IntPtr.Zero;
+
+        // for this support library
+        public enum IGCLStatus
+        {
+            NO_ERROR = 0,
+            DLL_NOT_FOUND = 1,
+            DLL_INCORRECT_VERSION = 2,
+            DLL_INITIALIZE_ERROR = 3
+        }
+
+        private const string dllName = "IGCL_Wrapper.dll";
+        private static IGCLStatus status = IGCLStatus.NO_ERROR;
+
+        private static Delegate GetDelegate(string procName, Type delegateType)
+        {
+            IntPtr ptr = GetProcAddress(pDll, procName);
+            if (ptr != IntPtr.Zero)
+            {
+                var d = Marshal.GetDelegateForFunctionPointer(ptr, delegateType);
+                return d;
+            }
+
+            var result = Marshal.GetHRForLastWin32Error();
+            throw Marshal.GetExceptionForHR(result);
+        }
 
         public static bool Initialize()
         {
+            pDll = LoadLibrary(dllName);
+            if (pDll == IntPtr.Zero)
+            {
+                status = IGCLStatus.DLL_NOT_FOUND;
+            }
+            else
+            {
+                try
+                {
+                    // Get the function pointers
+                    InitializeIgcl = (InitializeIgclDelegate)GetDelegate("IntializeIgcl", typeof(InitializeIgclDelegate));
+                    CloseIgcl = (CloseIgclDelegate)GetDelegate("CloseIgcl", typeof(CloseIgclDelegate));
+                    EnumerateDevices = (EnumerateDevicesDelegate)GetDelegate("EnumerateDevices", typeof(EnumerateDevicesDelegate));
+                    GetDeviceProperties = (GetDevicePropertiesDelegate)GetDelegate("GetDeviceProperties", typeof(GetDevicePropertiesDelegate));
+                    GetRetroScalingCaps = (GetRetroScalingCapsDelegate)GetDelegate("GetRetroScalingCaps", typeof(GetRetroScalingCapsDelegate));
+                    GetRetroScalingSettings = (GetRetroScalingSettingsDelegate)GetDelegate("GetRetroScalingSettings", typeof(GetRetroScalingSettingsDelegate));
+                    SetRetroScalingSettings = (SetRetroScalingSettingsDelegate)GetDelegate("SetRetroScalingSettings", typeof(SetRetroScalingSettingsDelegate));
+                    GetScalingCaps = (GetScalingCapsDelegate)GetDelegate("GetScalingCaps", typeof(GetScalingCapsDelegate));
+                    GetScalingSettings = (GetScalingSettingsDelegate)GetDelegate("GetScalingSettings", typeof(GetScalingSettingsDelegate));
+                    SetScalingSettings = (SetScalingSettingsDelegate)GetDelegate("SetScalingSettings", typeof(SetScalingSettingsDelegate));
+                    GetSharpnessCaps = (GetSharpnessCapsDelegate)GetDelegate("GetSharpnessCaps", typeof(GetSharpnessCapsDelegate));
+                    GetSharpnessSettings = (GetSharpnessSettingsDelegate)GetDelegate("GetSharpnessSettings", typeof(GetSharpnessSettingsDelegate));
+                    SetSharpnessSettings = (SetSharpnessSettingsDelegate)GetDelegate("SetSharpnessSettings", typeof(SetSharpnessSettingsDelegate));
+                    GetTelemetryData = (GetTelemetryDataDelegate)GetDelegate("GetTelemetryData", typeof(GetTelemetryDataDelegate));
+                }
+                catch
+                {
+                    status = IGCLStatus.DLL_INITIALIZE_ERROR;
+                }
+            }
+
+            if (status != IGCLStatus.NO_ERROR)
+                return false;
+
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
 
             // Call Init and check the result
-            Result = IntializeIgcl();
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
+            Result = InitializeIgcl();
+            return Result == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
 
+        public static int GetDeviceIdx(string deviceName)
+        {
+            // test
+            Terminate();
+            Initialize();
+
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             uint adapterCount = 0;
 
             // Get the number of Intel devices
-            IntPtr hDevices = GetDevices(ref adapterCount);
+            IntPtr hDevices = EnumerateDevices(ref adapterCount);
             if (hDevices == IntPtr.Zero)
-                return false;
+                return -1;
 
             // Convert the device handles to an array of IntPtr
             devices = new IntPtr[adapterCount];
             Marshal.Copy(hDevices, devices, 0, (int)adapterCount);
             if (devices.Length == 0)
-                return false;
+                return -1;
 
             for (int idx = 0; idx < devices.Length; idx++)
             {
                 ctl_device_adapter_properties_t StDeviceAdapterProperties = new();
-                ctl_adapter_properties_flag_t adapterFlag;
-
                 ctl_device_adapter_handle_t hDevice = new()
                 {
                     handle = devices[idx]
@@ -474,31 +528,21 @@ namespace HandheldCompanion.IGCL
                 if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                     continue;
 
-                switch (adapterCount)
-                {
-                    case 1:
-                        deviceIdx = idx;
-                        return true;
-
-                    default:
-                        {
-                            adapterFlag = StDeviceAdapterProperties.graphics_adapter_properties;
-                            if (!adapterFlag.HasFlag(ctl_adapter_properties_flag_t.CTL_ADAPTER_PROPERTIES_FLAG_INTEGRATED))
-                            {
-                                deviceIdx = idx;
-                                return true;
-                            }
-                        }
-                        break;
-                }
+                if (deviceName.Equals(StDeviceAdapterProperties.name))
+                    return idx;
             }
 
-            return false;
+            return -1;
         }
 
         public static void Terminate()
         {
-            CloseIgcl();
+            if (pDll != IntPtr.Zero)
+            {
+                CloseIgcl();
+                FreeLibrary(pDll);
+                pDll = IntPtr.Zero;
+            }
         }
 
         internal static bool HasGPUScalingSupport(nint deviceIdx, uint displayIdx)
@@ -535,7 +579,7 @@ namespace HandheldCompanion.IGCL
             {
                 handle = device
             };
-            
+
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -556,7 +600,7 @@ namespace HandheldCompanion.IGCL
             {
                 handle = device
             };
-            
+
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -642,7 +686,7 @@ namespace HandheldCompanion.IGCL
             {
                 handle = device
             };
-            
+
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -831,7 +875,7 @@ namespace HandheldCompanion.IGCL
             // fill custom scaling details
             RetroScalingSettings.Enable = enabled;
             RetroScalingSettings.RetroScalingType = RetroScalingType;
-            
+
             Result = SetRetroScalingSettings(hDevice, RetroScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -844,7 +888,7 @@ namespace HandheldCompanion.IGCL
             return RetroScalingSettings.Enable == enabled;
         }
 
-        internal static ctl_telemetry_data GetTelemetryData()
+        public static ctl_telemetry_data GetTelemetry(nint deviceIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_telemetry_data TelemetryData = new();

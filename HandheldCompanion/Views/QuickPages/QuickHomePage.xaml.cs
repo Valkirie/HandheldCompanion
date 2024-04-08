@@ -29,6 +29,17 @@ public partial class QuickHomePage : Page
 
         ProfileManager.Applied += ProfileManager_Applied;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        GPUManager.Hooked += GPUManager_Hooked;
+    }
+
+    private void GPUManager_Hooked(GraphicsProcessingUnit.GPU GPU)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            t_CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
+        });
     }
 
     public QuickHomePage()
@@ -38,12 +49,14 @@ public partial class QuickHomePage : Page
 
     private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
     {
-        UpdatePins();
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() => { UpdatePins(); });
     }
 
     private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
     {
-        UpdatePins();
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() => { UpdatePins(); });
     }
 
     private void UpdatePins()
@@ -64,7 +77,7 @@ public partial class QuickHomePage : Page
     private void SystemManager_Initialized()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             if (MultimediaManager.HasBrightnessSupport())
             {
@@ -83,25 +96,27 @@ public partial class QuickHomePage : Page
 
     private void SystemManager_BrightnessNotification(int brightness)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        using (new ScopedLock(brightnessLock))
         {
-            using (new ScopedLock(brightnessLock))
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
                 SliderBrightness.Value = brightness;
-        });
+            });
+        }
     }
 
     private void SystemManager_VolumeNotification(float volume)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        using (new ScopedLock(volumeLock))
         {
-            using (new ScopedLock(volumeLock))
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 UpdateVolumeIcon(volume);
                 SliderVolume.Value = Math.Round(volume);
-            }
-        });
+            });
+        }
     }
 
     private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -113,7 +128,7 @@ public partial class QuickHomePage : Page
         if (brightnessLock)
             return;
 
-       MultimediaManager.SetBrightness(SliderBrightness.Value);
+        MultimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -131,7 +146,7 @@ public partial class QuickHomePage : Page
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             t_CurrentProfile.Text = profile.ToString();
         });
@@ -148,20 +163,19 @@ public partial class QuickHomePage : Page
             Properties.Resources.OverlayPage_OverlayDisplayLevel_External,
         };
 
-        switch (name)
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            case "OnScreenDisplayLevel":
-                {
-                    var overlayLevel = Convert.ToInt16(value);
-
-                    // UI thread (async)
-                    Application.Current.Dispatcher.BeginInvoke(() =>
+            switch (name)
+            {
+                case "OnScreenDisplayLevel":
                     {
+                        var overlayLevel = Convert.ToInt16(value);
                         t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
-                    });
-                }
-                break;
-        }
+                    }
+                    break;
+            }
+        });
     }
 
     private void UpdateVolumeIcon(float volume)

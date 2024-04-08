@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Views;
+﻿using HandheldCompanion.Devices;
 using System.Collections.Generic;
 using System.Management;
 
@@ -7,47 +7,19 @@ namespace HandheldCompanion;
 public static class MotherboardInfo
 {
     private static readonly ManagementObjectSearcher baseboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
-    private static ManagementObjectCollection baseboardCollection;
+    private static ManagementObjectCollection baseboardCollection = baseboardSearcher.Get();
 
     private static readonly ManagementObjectSearcher motherboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
-    private static ManagementObjectCollection motherboardCollection;
+    private static ManagementObjectCollection motherboardCollection = motherboardSearcher.Get();
 
     private static readonly ManagementObjectSearcher processorSearcher = new("root\\CIMV2", "SELECT * FROM Win32_Processor");
-    private static ManagementObjectCollection processorCollection;
+    private static ManagementObjectCollection processorCollection = processorSearcher.Get();
 
     private static readonly ManagementObjectSearcher displaySearcher = new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
-    private static ManagementObjectCollection displayCollection;
+    private static ManagementObjectCollection displayCollection = displaySearcher.Get();
 
     private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
-    private static ManagementObjectCollection videoControllerCollection;
-
-    public static void UpdateMotherboard()
-    {
-        // slow task, don't call me more than once
-        baseboardCollection = baseboardSearcher.Get();
-        motherboardCollection = motherboardSearcher.Get();
-        processorCollection = processorSearcher.Get();
-        displayCollection = displaySearcher.Get();
-        videoControllerCollection = videoControllerSearcher.Get();
-    }
-
-    public static string VideoController
-    {
-        get
-        {
-            string manufacturer = string.Empty;
-            foreach (ManagementObject videoController in videoControllerCollection)
-            {
-                manufacturer = videoController["AdapterCompatibility"].ToString();
-                if (manufacturer.Contains("Intel"))
-                    break;
-                else if (manufacturer.Contains("AMD"))
-                    break;
-            }
-
-            return manufacturer;
-        }
-    }
+    private static ManagementObjectCollection videoControllerCollection = videoControllerSearcher.Get();
 
     public static string Availability
     {
@@ -296,7 +268,7 @@ public static class MotherboardInfo
             if (_ProcessorMaxTurboSpeed != 0)
                 return _ProcessorMaxTurboSpeed;
 
-            _ProcessorMaxTurboSpeed = MainWindow.CurrentDevice.CpuClock;
+            _ProcessorMaxTurboSpeed = IDevice.GetCurrent().CpuClock;
 
             return _ProcessorMaxTurboSpeed;
         }

@@ -1,6 +1,6 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
+using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -9,14 +9,6 @@ namespace HandheldCompanion.Sensors;
 
 public class IMUAccelerometer : IMUSensor
 {
-    public new static SensorSpec sensorSpec = new()
-    {
-        minIn = -2.0f,
-        maxIn = 2.0f,
-        minOut = short.MinValue,
-        maxOut = short.MaxValue
-    };
-
     public IMUAccelerometer(SensorFamily sensorFamily, int updateInterval)
     {
         this.sensorFamily = sensorFamily;
@@ -33,7 +25,7 @@ public class IMUAccelerometer : IMUSensor
                 sensor = Accelerometer.GetDefault();
                 break;
             case SensorFamily.SerialUSBIMU:
-                sensor = SerialUSBIMU.GetDefault();
+                sensor = SerialUSBIMU.GetCurrent();
                 break;
             case SensorFamily.Controller:
                 sensor = new object();
@@ -49,15 +41,11 @@ public class IMUAccelerometer : IMUSensor
         switch (sensorFamily)
         {
             case SensorFamily.Windows:
-                ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
-                filter.SetFilterAttrs(MainWindow.CurrentDevice.oneEuroSettings.minCutoff, MainWindow.CurrentDevice.oneEuroSettings.beta);
-
+                ((Accelerometer)sensor).ReportInterval = Math.Max(((Accelerometer)sensor).MinimumReportInterval, (uint)updateInterval);
                 LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", ToString(),
                     sensorFamily.ToString(), updateInterval);
                 break;
             case SensorFamily.SerialUSBIMU:
-                filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
-
                 LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", ToString(),
                     sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                 break;
@@ -102,38 +90,21 @@ public class IMUAccelerometer : IMUSensor
         base.StopListening();
     }
 
-    private void ReadingChanged(float GyroAccelX, float GyroAccelY, float GyroAccelZ)
+    private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg, double timestamp)
     {
-        switch (sensorFamily)
-        {
-            case SensorFamily.Controller:
-                {
-                    reading.X = GyroAccelX;
-                    reading.Y = GyroAccelY;
-                    reading.Z = GyroAccelZ;
-
-                    base.ReadingChanged();
-                }
-                break;
-        }
-    }
-
-    private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
-    {
-        reading.X = (float)filter.axis1Filter.Filter(AccelerationG.X, MotionManager.DeltaSeconds);
-        reading.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, MotionManager.DeltaSeconds);
-        reading.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, MotionManager.DeltaSeconds);
+        reading.reading.X = AccelerationG.X;
+        reading.reading.Y = AccelerationG.Y;
+        reading.reading.Z = AccelerationG.Z;
+        reading.timestamp = timestamp;
 
         base.ReadingChanged();
     }
 
     private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
     {
-        if (sensor is null)
-            return;
-
-        foreach (var axis in reading_axis.Keys)
-            switch (MainWindow.CurrentDevice.AccelerometerAxisSwap[axis])
+        foreach (char axis in reading_axis.Keys)
+        {
+            switch (IDevice.GetCurrent().AccelerometerAxisSwap[axis])
             {
                 default:
                 case 'X':
@@ -146,10 +117,12 @@ public class IMUAccelerometer : IMUSensor
                     reading_axis[axis] = args.Reading.AccelerationZ;
                     break;
             }
+        }
 
-        reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AccelerometerAxis.X;
-        reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AccelerometerAxis.Y;
-        reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AccelerometerAxis.Z;
+        reading.reading.X = (float)reading_axis['X'] * IDevice.GetCurrent().AccelerometerAxis.X;
+        reading.reading.Y = (float)reading_axis['Y'] * IDevice.GetCurrent().AccelerometerAxis.Y;
+        reading.reading.Z = (float)reading_axis['Z'] * IDevice.GetCurrent().AccelerometerAxis.Z;
+        reading.timestamp = args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds;
 
         base.ReadingChanged();
     }
@@ -159,7 +132,7 @@ public class IMUAccelerometer : IMUSensor
         // throw new NotImplementedException();
     }
 
-    public new Vector3 GetCurrentReading(bool center = false, bool ratio = false)
+    public new SensorReading GetCurrentReading(bool center = false, bool ratio = false)
     {
         return this.reading;
     }

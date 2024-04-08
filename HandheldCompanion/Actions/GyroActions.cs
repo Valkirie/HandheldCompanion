@@ -7,7 +7,7 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public class GyroActions : IActions
     {
-        public MotionInput MotionInput = MotionInput.JoystickCamera;
+        public MotionInput MotionInput = MotionInput.LocalSpace;
         public MotionMode MotionMode = MotionMode.Off;
         public bool MotionToggleStatus = false;
         public bool MotionTogglePressed = false; // for debouncing

@@ -31,7 +31,7 @@ public class GPDWin4_2023_7840U : IDevice
             FanValueMax = 184
         };
 
-        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'Y' },
@@ -39,7 +39,7 @@ public class GPDWin4_2023_7840U : IDevice
             { 'Z', 'X' }
         };
 
-        AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

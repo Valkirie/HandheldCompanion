@@ -238,11 +238,33 @@ public static class WPFUtils
                     {
                         TextBox textBox = (TextBox)current;
                         if (!textBox.IsReadOnly)
-                            goto case "Button";
+                            goto case "Slider";
+                    }
+                    break;
+
+                case "RepeatButton":
+                    {
+                        RepeatButton repeatButton = (RepeatButton)current;
+                        if (!repeatButton.Name.StartsWith("PART_"))
+                        {
+                            // skip if repeat button is part of scrollbar
+                            goto case "Slider";
+                        }
                     }
                     break;
 
                 case "Button":
+                    {
+                        Button button = (Button)current;
+                        if (button.Name.Equals("NavigationViewBackButton"))
+                            break;
+                        else if (button.Name.Equals("TogglePaneButton"))
+                            break;
+                        else
+                            goto case "Slider";
+                    }
+                    break;
+
                 case "Slider":
                 case "ToggleSwitch":
                 case "NavigationViewItem":
@@ -252,7 +274,6 @@ public static class WPFUtils
                 case "ToggleButton":
                 case "CheckBox":
                 case "RadioButton":
-                case "RepeatButton":
                     {
                         FrameworkElement asType = (FrameworkElement)current;
                         if (asType.IsEnabled && asType.Focusable && asType.IsVisible)

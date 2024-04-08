@@ -34,8 +34,8 @@ public partial class QuickDevicePage : Page
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
 
-        LegionGoPanel.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Collapsed;
-        DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+        LegionGoPanel.Visibility = IDevice.GetCurrent() is LegionGo ? Visibility.Visible : Visibility.Collapsed;
+        DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
 
         NightLightToggle.IsEnabled = NightLight.Supported;
         NightLightToggle.IsOn = NightLight.Enabled;
@@ -68,7 +68,7 @@ public partial class QuickDevicePage : Page
         else
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // Revert back to resolution in device settings
                 SetResolution();
@@ -76,7 +76,7 @@ public partial class QuickDevicePage : Page
         }
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             var canChangeDisplay = !profile.IntegerScalingEnabled;
             DisplayStack.IsEnabled = canChangeDisplay;
@@ -88,7 +88,7 @@ public partial class QuickDevicePage : Page
     private void ProfileManager_Discarded(Profile profile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             SetResolution();
 
@@ -103,7 +103,7 @@ public partial class QuickDevicePage : Page
     private void NightLight_Toggled(bool enabled)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             NightLightToggle.IsOn = enabled;
         });
@@ -111,8 +111,8 @@ public partial class QuickDevicePage : Page
 
     private void SettingsManager_SettingValueChanged(string? name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (name)
             {
@@ -134,7 +134,7 @@ public partial class QuickDevicePage : Page
             radios = await Radio.GetRadiosAsync();
 
             // UI thread (async)
-            _ = Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // WIFI
                 WifiToggle.IsEnabled = radios.Where(radio => radio.Kind == RadioKind.WiFi).Any();
@@ -154,7 +154,7 @@ public partial class QuickDevicePage : Page
             ComboBoxResolution.Items.Add(resolution);
     }
 
-    private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void DesktopManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // We don't want to change the combobox when it's changed from profile integer scaling
         var currentProfile = ProfileManager.GetCurrent();
@@ -267,7 +267,7 @@ public partial class QuickDevicePage : Page
 
     private void Toggle_cFFanSpeed_Toggled(object sender, RoutedEventArgs e)
     {
-        if (MainWindow.CurrentDevice is LegionGo device)
+        if (IDevice.GetCurrent() is LegionGo device)
         {
             ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
             device.SetFanFullSpeedAsync(toggleSwitch.IsOn);

@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Views;
+﻿using HandheldCompanion.Devices;
 using System;
 using System.Linq;
 
@@ -65,7 +65,7 @@ namespace HandheldCompanion.Misc
         public double GetFanSpeed(double temp)
         {
             // Check if the temperature is within the °C range of Tjmax
-            if (temp >= MainWindow.CurrentDevice.Tjmax)
+            if (temp >= IDevice.GetCurrent().Tjmax)
                 TjmaxReached = true;
 
             if (TjmaxReached)

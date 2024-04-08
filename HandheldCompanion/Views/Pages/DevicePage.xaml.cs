@@ -1,11 +1,14 @@
-﻿using ColorPicker;
+using ColorPicker;
 using ColorPicker.Models;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using iNKORE.UI.WPF.Modern.Controls;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -27,10 +30,13 @@ namespace HandheldCompanion.Views.Pages
         {
             InitializeComponent();
 
+            // call function
+            UpdateDevice();
+
             // Adjust UI element availability based on device capabilities
-            DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
-            LEDBrightness.Visibility = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
-            StackSecondColor.Visibility = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+            DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+            LEDBrightness.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
+            StackSecondColor.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
@@ -39,7 +45,7 @@ namespace HandheldCompanion.Views.Pages
             SetControlEnabledAndVisible(LEDWheel, LEDLevel.Wheel);
             SetControlEnabledAndVisible(LEDGradient, LEDLevel.Gradient);
             SetControlEnabledAndVisible(LEDAmbilight, LEDLevel.Ambilight);
-            
+
         }
 
         public DevicePage(string? Tag) : this()
@@ -48,11 +54,28 @@ namespace HandheldCompanion.Views.Pages
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+        }
+
+        private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+        {
+            UpdateDevice(device);
+        }
+
+        private void ControllerManager_ControllerSelected(IController Controller)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
+            });
         }
 
         private void Page_Loaded(object? sender, RoutedEventArgs? e)
         {
-            if (MainWindow.CurrentDevice is LegionGo)
+            if (IDevice.GetCurrent() is LegionGo)
             {
                 LegionGoPanel.Visibility = Visibility.Visible;
 
@@ -75,13 +98,12 @@ namespace HandheldCompanion.Views.Pages
         }
 
         public void Page_Closed()
-        {
-        }
+        { }
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -137,14 +159,66 @@ namespace HandheldCompanion.Views.Pages
                     case "LEDUseSecondColor":
                         Toggle_UseSecondColor.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "LegionControllerPassthrough":
+                        Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LegionControllerGyroIndex":
+                        ComboBox_GyroController.SelectedIndex = Convert.ToInt32(value);
+                        break;
+                    case "SensorSelection":
+                        {
+                            int idx = Convert.ToInt32(value);
+
+                            // default value
+                            if (idx == -1)
+                            {
+                                if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
+                                {
+                                    SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
+                                }
+                                else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
+                                {
+                                    SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorExternal));
+                                }
+                                else
+                                {
+                                    SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
+                                }
+
+                                return;
+                            }
+
+                            cB_SensorSelection.SelectedIndex = idx;
+
+                            // bug: SelectionChanged not triggered when control isn't loaded
+                            if (!IsLoaded)
+                                cB_SensorSelection_SelectionChanged(this, null);
+                        }
+                        break;
+                    case "SensorPlacement":
+                        UpdateUI_SensorPlacement(Convert.ToInt32(value));
+                        break;
+                    case "SensorPlacementUpsideDown":
+                        Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
+            });
+        }
+
+        public void UpdateDevice(PnPDevice device = null)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SensorInternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
+                SensorExternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
             });
         }
 
         private void OnColorValuesChanged(UISettings sender, object args)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (MatchAccentColor.IsOn)
                     SetAccentColor();
@@ -158,15 +232,18 @@ namespace HandheldCompanion.Views.Pages
 
             if (Toggle_cTDP.IsOn)
             {
-                // todo: localize me !
-                var result = Dialog.ShowAsync(
-                    "Warning",
-                    "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
-                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK, string.Empty, MainWindow.GetCurrent());
+                // todo: translate me
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = "Warning",
+                    Content = "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+                }.ShowAsync();
 
-                await result; // sync call
+                await dialogTask; // sync call
 
-                switch (result.Result)
+                switch (dialogTask.Result)
                 {
                     case ContentDialogResult.Primary:
                         break;
@@ -195,7 +272,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update current device cTDP
-            MainWindow.CurrentDevice.cTDP[1] = value;
+            IDevice.GetCurrent().cTDP[1] = value;
 
             SettingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
@@ -212,7 +289,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update current device cTDP
-            MainWindow.CurrentDevice.cTDP[0] = value;
+            IDevice.GetCurrent().cTDP[0] = value;
 
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
@@ -272,10 +349,10 @@ namespace HandheldCompanion.Views.Pages
 
             if (!IsLoaded)
                 return;
-            
+
             SettingsManager.SetProperty("LEDMainColor", prevMainColor.ToString());
         }
-        
+
         private void SecondColorPicker_ColorChanged(object sender, RoutedEventArgs e)
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
@@ -348,12 +425,93 @@ namespace HandheldCompanion.Views.Pages
 
         private void SetControlEnabledAndVisible(UIElement control, LEDLevel level)
         {
-            bool isCapabilitySupported = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(level);
+            bool isCapabilitySupported = IDevice.GetCurrent().DynamicLightingCapabilities.HasFlag(level);
             control.IsEnabled = isCapabilitySupported;
             control.Visibility = isCapabilitySupported ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        #region Sensor
+        private void cB_SensorSelection_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
+        {
+            if (cB_SensorSelection.SelectedIndex == -1)
+                return;
+
+            // update dependencies
+            SensorFamily sensorFamily = (SensorFamily)cB_SensorSelection.SelectedIndex;
+
+            Toggle_SensorPlacementUpsideDown.IsEnabled = sensorFamily == SensorFamily.SerialUSBIMU;
+            Grid_SensorPlacementVisualisation.IsEnabled = sensorFamily == SensorFamily.SerialUSBIMU;
+            ui_button_calibrate.IsEnabled = sensorFamily != SensorFamily.None;
+
+            if (IsLoaded)
+                SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
+        }
+
+        private void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+        {
+            // update dependencies
+            SensorFamily sensorFamily = (SensorFamily)cB_SensorSelection.SelectedIndex;
+
+            switch (sensorFamily)
+            {
+                case SensorFamily.Windows:
+                case SensorFamily.SerialUSBIMU:
+                    SensorsManager.Calibrate(IDevice.GetCurrent().GamepadMotion);
+                    break;
+
+                case SensorFamily.Controller:
+                    IController controller = ControllerManager.GetTargetController();
+                    controller?.Calibrate();
+                    break;
+            }
+        }
+
+        private void SensorPlacement_Click(object sender, RoutedEventArgs? e)
+        {
+            var Tag = int.Parse((string)((Button)sender).Tag);
+
+            UpdateUI_SensorPlacement(Tag);
+
+            if (IsLoaded)
+                SettingsManager.SetProperty("SensorPlacement", Tag);
+        }
+
+        private void UpdateUI_SensorPlacement(int? SensorPlacement)
+        {
+            foreach (SimpleStackPanel panel in Grid_SensorPlacementVisualisation.Children)
+                foreach (Button button in panel.Children)
+                    if (int.Parse((string)button.Tag) == SensorPlacement)
+                        button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                    else
+                        button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+        }
+
+        private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, RoutedEventArgs? e)
+        {
+            var isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
+
+            if (IsLoaded)
+                SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
+        }
+        #endregion
+
         #region Legion Go Device Settings
+
+        private void Toggle_TouchpadPassthrough_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
+        }
+
+        private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LegionControllerGyroIndex", ComboBox_GyroController.SelectedIndex);
+        }
 
         private void SliderLeftJoystickDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -364,7 +522,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetStickCustomDeadzone(LegionGo.LeftJoyconIndex, (int) value - 1);
+            SapientiaUsb.SetStickCustomDeadzone(LegionGo.LeftJoyconIndex, (int)value - 1);
         }
 
         private void SliderLeftAutoSleepTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

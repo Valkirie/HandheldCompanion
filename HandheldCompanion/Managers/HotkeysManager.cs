@@ -6,9 +6,9 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,7 +35,7 @@ public static class HotkeysManager
     private const short PIN_LIMIT = 18;
     private static readonly string InstallPath;
     private static bool hasProfileHID = false;
-    public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
+    public static ConcurrentDictionary<ushort, Hotkey> Hotkeys = new();
 
     private static bool IsInitialized;
 
@@ -68,7 +68,7 @@ public static class HotkeysManager
 
     private static void ControllerManager_ControllerSelected(IController Controller)
     {
-        foreach (var hotkey in Hotkeys.Values)
+        foreach (Hotkey? hotkey in Hotkeys.Values)
             hotkey.ControllerSelected(Controller);
     }
 
@@ -76,30 +76,31 @@ public static class HotkeysManager
     {
         // when the target emulated controller is Dualshock
         // only enable HIDmode switch hotkey when controller is plugged (last stage of HIDmode change in this case)
-        var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+        HIDmode targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
         if (targetHIDmode == HIDmode.DualShock4Controller)
         {
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-            foreach (var hotkey in hotkeys)
+            List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.BeginInvoke(() => { hotkey.IsEnabled = !hasProfileHID; });
-            }
+                foreach (Hotkey? hotkey in hotkeys)
+                    hotkey.IsEnabled = !hasProfileHID;
+            });
         }
     }
 
-    private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling)
+    private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
         // when the target emulated controller is Xbox Controller
         // only enable HIDmode switch hotkey when controller is unplugged (last stage of HIDmode change in this case)
-        var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
-
+        HIDmode targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
         if (targetHIDmode == HIDmode.Xbox360Controller)
         {
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-            foreach (var hotkey in hotkeys)
+            List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.Invoke(() => { hotkey.IsEnabled = !hasProfileHID; });
-            }
+                foreach (Hotkey? hotkey in hotkeys)
+                    hotkey.IsEnabled = !hasProfileHID;
+            });
         }
     }
 
@@ -127,12 +128,12 @@ public static class HotkeysManager
         }
 
         // enable/disable hotkey based on profile HIDmode
-        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-        foreach (var hotkey in hotkeys)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
+        List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            foreach (Hotkey? hotkey in hotkeys)
                 hotkey.IsEnabled = !hasProfileHID;
-            });
+        });
 
         // change glyph at startup only
         if (!IsInitialized)
@@ -144,8 +145,8 @@ public static class HotkeysManager
     private static void VirtualManager_ControllerSelected(HIDmode HIDmode)
     {
         // change glyph of shortcutChangeHIDMode to the corresponding target emulated controller
-        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-        foreach (var hotkey in hotkeys)
+        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+        foreach (Hotkey? hotkey in hotkeys)
         {
             switch (HIDmode)
             {
@@ -201,14 +202,14 @@ public static class HotkeysManager
             hotkey.Draw();
 
             if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
-                Hotkeys.Add(hotkey.hotkeyId, hotkey);
+                Hotkeys.TryAdd(hotkey.hotkeyId, hotkey);
         }
 
-        foreach (var hotkey in Hotkeys.Values)
+        foreach (Hotkey? hotkey in Hotkeys.Values)
         {
             hotkey.Listening += StartListening;
             hotkey.Pinning += PinOrUnpinHotkey;
-            hotkey.Summoned += hotkey => InvokeTrigger(hotkey, false, true);
+            hotkey.Summoned += hotkey => InvokeTrigger(hotkey, true, true);
             hotkey.Updated += hotkey => SerializeHotkey(hotkey, true);
 
             if (!string.IsNullOrEmpty(hotkey.inputsHotkey.Settings))
@@ -241,7 +242,7 @@ public static class HotkeysManager
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
         // manage toggle type hotkeys
-        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
+        foreach (Hotkey? hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)).ToList())
         {
             if (!hotkey.inputsHotkey.IsToggle)
                 continue;
@@ -251,7 +252,7 @@ public static class HotkeysManager
         }
 
         // manage settings type hotkeys
-        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
+        foreach (Hotkey? hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)).ToList())
         {
             var enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
             hotkey.IsEnabled = enabled;
@@ -274,9 +275,17 @@ public static class HotkeysManager
 
                     if (count >= PIN_LIMIT)
                     {
-                        _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
-                            $"You can't pin more than {PIN_LIMIT} hotkeys",
-                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+                        // UI thread
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            // todo: translate me
+                            _ = new Dialog(MainWindow.GetCurrent())
+                            {
+                                Title = Resources.SettingsPage_UpdateWarning,
+                                Content = $"You can't pin more than {PIN_LIMIT} hotkeys",
+                                PrimaryButtonText = Resources.ProfilesPage_OK
+                            }.ShowAsync();
+                        });
 
                         return;
                     }
@@ -300,18 +309,14 @@ public static class HotkeysManager
 
     private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        IEnumerable<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).ToList();
+
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            // we use @ as a special character to link two ore more listeners together
-            listener = listener.TrimEnd('@');
-
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
-            foreach (var hotkey in hotkeys)
+            foreach (Hotkey hotkey in hotkeys)
             {
+                // stop recording and update UI
                 hotkey.StopListening(inputs, type);
-
-                // overwrite current file
                 SerializeHotkey(hotkey, true);
             }
         });
@@ -349,16 +354,14 @@ public static class HotkeysManager
         HotkeyUpdated?.Invoke(hotkey);
     }
 
-    public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown,
-        bool IsKeyUp)
+    public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp)
     {
+        List<Hotkey> hotkeys = Hotkeys.Values.Where(item => item.inputsChord.State.Equals(input.State) && (item.inputsHotkey.OnKeyDown == IsKeyDown || item.inputsHotkey.OnKeyUp == IsKeyUp)).ToList();
+
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            // we use @ as a special character to link two ore more listeners together
-            var trimmed = listener.TrimEnd('@');
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(trimmed));
-            foreach (var hotkey in hotkeys)
+            foreach (Hotkey hotkey in hotkeys)
                 hotkey.Highlight();
         });
 
@@ -369,7 +372,8 @@ public static class HotkeysManager
                 return;
         }
 
-        var fProcess = ProcessManager.GetForegroundProcess();
+        // get current foreground process
+        ProcessEx? fProcess = ProcessManager.GetForegroundProcess();
 
         try
         {
@@ -520,7 +524,10 @@ public static class HotkeysManager
                     }
 
                 default:
-                    KeyboardSimulator.KeyPress(input.OutputKeys.ToArray());
+                    {
+                        List<OutputKey> ouput = new(input.OutputKeys.Where(k => k.IsKeyDown == IsKeyDown && k.IsKeyUp == IsKeyUp));
+                        KeyboardSimulator.KeyPress(ouput.ToArray());
+                    }
                     break;
             }
 

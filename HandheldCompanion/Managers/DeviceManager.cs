@@ -4,13 +4,17 @@ using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
+using SharpDX.Direct3D9;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using Capabilities = HandheldCompanion.Managers.Hid.Capabilities;
 
 namespace HandheldCompanion.Managers;
 
@@ -22,6 +26,8 @@ public static class DeviceManager
     private static readonly DeviceNotificationListener HidDeviceListener = new();
 
     private static readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
+
+    private static Timer adaptersTimer = new(2000) { AutoReset = false };
 
     const ulong GENERIC_READ = (0x80000000L);
     const ulong GENERIC_WRITE = (0x40000000L);
@@ -66,6 +72,8 @@ public static class DeviceManager
     {
         // initialize hid
         HidD_GetHidGuidMethod(out HidDevice);
+
+        adaptersTimer.Elapsed += (sender, e) => RefreshDisplayAdapters(true);
     }
 
     public static void Start()
@@ -87,6 +95,7 @@ public static class DeviceManager
 
         RefreshXInput();
         RefreshDInput();
+        RefreshDisplayAdapters(true);
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -175,7 +184,7 @@ public static class DeviceManager
     public static PnPDetails FindDeviceFromUSB(string InstanceId)
     {
         PnPDetails details = null;
-        while(details is null)
+        while (details is null)
         {
             details = PnPDevices.Values.FirstOrDefault(device => device.baseContainerDeviceInstanceId.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase));
 
@@ -215,6 +224,13 @@ public static class DeviceManager
                 return deviceIndex;
 
         return 0;
+    }
+
+    [Flags]
+    private enum DeviceStatus
+    {
+        DN_DISABLEABLE = 0x00002000,
+        DN_REMOVABLE = 0x00004000
     }
 
     private static PnPDetails GetDetails(string path)
@@ -273,13 +289,40 @@ public static class DeviceManager
                 parent = check;
             }
 
+            // get root
+            IPnPDevice? root = parent;
+            string rootId = root.InstanceId;
+            while (root.Parent is not null)
+            {
+                if (rootId.Contains(@"USB\ROOT", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                if (rootId.Contains(@"ROOT\SYSTEM", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                // update root
+                root = PnPDevice.GetDeviceByInstanceId(rootId);
+
+                string Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+                if (!string.IsNullOrEmpty(Name) && Name.Contains(@"USB Hub", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                // update parent InstanceId
+                if (root.Parent is not null)
+                    rootId = root.Parent.InstanceId;
+            }
+
+            DeviceStatus Device_DevNodeStatus = (DeviceStatus)root.GetProperty<UInt32>(DevicePropertyKey.Device_DevNodeStatus);
+            bool IsDisableable = Device_DevNodeStatus.HasFlag(DeviceStatus.DN_DISABLEABLE);
+            bool IsRemovable = Device_DevNodeStatus.HasFlag(DeviceStatus.DN_REMOVABLE);
+
             // get details
             PnPDetails details = new PnPDetails
             {
                 devicePath = path,
                 SymLink = SymLink,
                 Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
-                Enumerator = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
+                EnumeratorName = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
                 deviceInstanceId = children.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
                 isVirtual = parent.IsVirtual() || children.IsVirtual(),
@@ -288,6 +331,7 @@ public static class DeviceManager
                 VendorID = ((Attributes)attributes).VendorID,
                 isXInput = children.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
             };
+            details.isExternal = IsDisableable || IsRemovable || details.isBluetooth;
 
             // get name
             string DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
@@ -312,6 +356,16 @@ public static class DeviceManager
     {
         return PnPDevices.Values.OrderBy(device => device.XInputDeviceIdx).Where(device =>
             device.VendorID == VendorId && device.ProductID == ProductId && !device.isHooked).ToList();
+    }
+
+    public static PnPDetails GetOldestXInput()
+    {
+        return PnPDevices.Values.Where(kv => !kv.isVirtual && kv.isGaming && kv.isXInput).OrderByDescending(kv => kv.FirstInstallDate).FirstOrDefault();
+    }
+
+    public static PnPDetails GetOldestDInput()
+    {
+        return PnPDevices.Values.Where(kv => kv.isVirtual && kv.isGaming && !kv.isXInput).OrderByDescending(kv => kv.FirstInstallDate).FirstOrDefault();
     }
 
     public static PnPDetails GetDeviceByInterfaceId(string path)
@@ -478,7 +532,7 @@ public static class DeviceManager
                     deviceEx.isXInput = true;
                     deviceEx.baseContainerDevicePath = obj.SymLink;
 
-                    if (deviceEx.Enumerator.Equals("USB"))
+                    if (deviceEx.EnumeratorName.Equals("USB"))
                         deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink);
 
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
@@ -616,6 +670,61 @@ public static class DeviceManager
         }
 
         return XINPUT_LED_TO_PORT_MAP[ledState];
+    }
+
+    private static Dictionary<Guid, AdapterInformation> displayAdapters = new();
+    public static void RefreshDisplayAdapters(bool elapsed = false)
+    {
+        if (elapsed)
+        {
+            // get the current list of adapters with Direct3D capabilities
+            AdapterCollection adapters = new Direct3D().Adapters;
+            List<Guid> adaptersGuids = adapters.Select(a => a.Details.DeviceIdentifier).ToList();
+            List<Guid> adaptersProcessed = new List<Guid>(); // keep track of processed adapter entries
+
+            foreach (AdapterInformation adapterInformation in adapters)
+            {
+                if (displayAdapters.Keys.Contains(adapterInformation.Details.DeviceIdentifier) || adaptersProcessed.Contains(adapterInformation.Details.DeviceIdentifier))
+                {
+                    // known device
+                }
+                else
+                {
+                    // added device
+                    Debug.WriteLine("Adapter {0} was added", adapterInformation.Details.Description);
+                    DisplayAdapterArrived?.Invoke(adapterInformation);
+                    adaptersProcessed.Add(adapterInformation.Details.DeviceIdentifier);
+                }
+            }
+
+            foreach (Guid deviceIdentifier in displayAdapters.Keys)
+            {
+                if (adaptersGuids.Contains(deviceIdentifier) || adaptersProcessed.Contains(deviceIdentifier))
+                {
+                    // known device
+                }
+                else
+                {
+                    // removed device
+                    AdapterInformation adapterInformation = displayAdapters[deviceIdentifier];
+                    Debug.WriteLine("Adapter {0} was removed", adapterInformation.Details.Description);
+                    DisplayAdapterRemoved?.Invoke(adapterInformation);
+                    adaptersProcessed.Add(deviceIdentifier);
+                }
+            }
+
+            // clear dictionary
+            displayAdapters.Clear();
+
+            // use TryAdd because "extended" screen will report the same identifier and might cause a duplicated entry error
+            foreach (AdapterInformation adapterInformation in adapters)
+                displayAdapters.TryAdd(adapterInformation.Details.DeviceIdentifier, adapterInformation);
+        }
+        else
+        {
+            adaptersTimer.Stop();
+            adaptersTimer.Start();
+        }
     }
 
     public static string[]? GetDevices(Guid? classGuid)
@@ -878,6 +987,12 @@ public static class DeviceManager
 
     public static event DInputDeviceRemovedEventHandler HidDeviceRemoved;
     public delegate void DInputDeviceRemovedEventHandler(PnPDetails device, DeviceEventArgs obj);
+
+    public static event DisplayAdapterArrivedEventHandler DisplayAdapterArrived;
+    public delegate void DisplayAdapterArrivedEventHandler(AdapterInformation adapterInformation);
+
+    public static event DisplayAdapterRemovedEventHandler DisplayAdapterRemoved;
+    public delegate void DisplayAdapterRemovedEventHandler(AdapterInformation adapterInformation);
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();

@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
+labels: Bug
 
 ---
 
@@ -12,13 +12,15 @@ labels: bug
 - [ ] AOKZOE
 - [ ] ASUS
 - [ ] GPD
+- [ ] LENOVO
+- [ ] MSI
 - [ ] ONEXPLAYER
 - [ ] VALVE
 
 **Device model**
 Your device model
 
-**Handheld Companinion Version**
+**Handheld Companion Version**
 0.X.X.X
 
 **Describe the bug**

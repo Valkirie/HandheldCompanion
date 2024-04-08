@@ -126,8 +126,10 @@ public struct ScreenRotation
 
 public class DesktopScreen
 {
-    public Display devMode;
+    public DisplayDevice devMode;
     public Screen PrimaryScreen;
+    public string DevicePath;
+    public string FriendlyName;
     public List<ScreenResolution> screenResolutions = new();
     public List<ScreenDivider> screenDividers = new();
 
@@ -145,28 +147,13 @@ public class DesktopScreen
 
     public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
     {
-        // improve me
-        int width = dmPelsWidth > dmPelsHeight ? dmPelsWidth : dmPelsHeight;
-        int height = dmPelsWidth > dmPelsHeight ? dmPelsHeight : dmPelsWidth;
+        // todo: improve me
+        // that's a dirty way to manage native portrait display or rotated display
+        ScreenResolution resolution = screenResolutions.FirstOrDefault(a => a.Width == dmPelsWidth && a.Height == dmPelsHeight);
+        if (resolution is null)
+            resolution = screenResolutions.FirstOrDefault(a => a.Width == dmPelsHeight && a.Height == dmPelsWidth);
 
-        // unreliable !
-        /*
-        switch(SystemInformation.ScreenOrientation)
-        {
-            case ScreenOrientation.Angle0:
-            case ScreenOrientation.Angle180:
-                width = dmPelsWidth;
-                height = dmPelsHeight;
-                break;
-            case ScreenOrientation.Angle90:
-            case ScreenOrientation.Angle270:
-                height = dmPelsWidth;
-                width = dmPelsHeight;
-                break;
-        }
-        */
-
-        return screenResolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
+        return resolution;
     }
 
     public int GetCurrentFrequency()
@@ -178,7 +165,7 @@ public class DesktopScreen
     public List<ScreenFramelimit> GetFramelimits()
     {
         // A list to store the quotients
-        List<ScreenFramelimit> Limits = [new(0,0)]; // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        List<ScreenFramelimit> Limits = [new(0, 0)]; // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
 
         // A variable to store the divider value, rounded to nearest even number
         int divider = 1;
@@ -222,7 +209,7 @@ public class DesktopScreen
 
         for (int i = 0; i < orderedFpsLimits.Count(); i++)
         {
-            Limits.Add(new(i+1, orderedFpsLimits.ElementAt(i)));
+            Limits.Add(new(i + 1, orderedFpsLimits.ElementAt(i)));
         }
 
         _cachedFrameLimits.Add(dmDisplayFrequency, Limits);

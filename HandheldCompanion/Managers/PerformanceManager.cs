@@ -1,12 +1,12 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
-using HandheldCompanion.Views;
+using HandheldCompanion.Utils;
 using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -32,12 +32,20 @@ public static class OSPowerMode
     public static Guid BestPerformance = new("ded574b5-45a0-4f42-8737-46345c09c238");
 }
 
+public enum CPUBoostLevel
+{
+    Disabled = 0,
+    Enabled = 1,
+    Agressive = 2,
+    EfficientEnabled = 3,
+    EfficientAgressive = 4,
+}
+
 public static class PerformanceManager
 {
     private const short INTERVAL_DEFAULT = 3000; // default interval between value scans
     private const short INTERVAL_AUTO = 1010; // default interval between value scans
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
-    public static int MaxDegreeOfParallelism = 4;
 
     public static readonly Guid[] PowerModes = new Guid[3] { OSPowerMode.BetterBattery, OSPowerMode.BetterPerformance, OSPowerMode.BestPerformance };
 
@@ -46,10 +54,10 @@ public static class PerformanceManager
     private static readonly Timer gfxWatchdog;
     private static readonly Timer powerWatchdog;
 
-    private static bool autoLock;
-    private static bool cpuLock;
-    private static bool gfxLock;
-    private static object powerLock = new();
+    private static CrossThreadLock autoLock = new();
+    private static CrossThreadLock cpuLock = new();
+    private static CrossThreadLock gfxLock = new();
+    private static CrossThreadLock powerLock = new();
 
     // AutoTDP
     private static double AutoTDP;
@@ -111,8 +119,7 @@ public static class PerformanceManager
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
-        currentCoreCount = Environment.ProcessorCount;
-        MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
+        currentCoreCount = MotherboardInfo.NumberOfCores;
     }
 
     private static void SettingsManagerOnSettingValueChanged(string name, object value)
@@ -276,10 +283,10 @@ public static class PerformanceManager
         {
             default:
             case FanMode.Hardware:
-                MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
+                IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
                 break;
             case FanMode.Software:
-                MainWindow.CurrentDevice.SetFanControl(true);
+                IDevice.GetCurrent().SetFanControl(true);
                 break;
         }
     }
@@ -334,13 +341,13 @@ public static class PerformanceManager
         RequestPowerMode(OSPowerMode.BetterPerformance);
 
         // restore default Fan mode
-        MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
+        IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
     }
 
     private static void RestoreTDP(bool immediate)
     {
         for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
-            RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
+            RequestTDP(pType, IDevice.GetCurrent().cTDP[1], immediate);
     }
 
     private static void RestoreCPUClock(bool immediate)
@@ -370,11 +377,8 @@ public static class PerformanceManager
         if (AutoTDPProcessId == 0)
             return;
 
-        if (!autoLock)
+        if (autoLock.TryEnter())
         {
-            // set lock
-            autoLock = true;
-
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
             double processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
 
@@ -408,10 +412,11 @@ public static class PerformanceManager
             }
             AutoTDPPrev = AutoTDP;
 
-            // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
+        // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
 
-            // release lock
-            autoLock = false;
+        // release lock
+        Exit:
+            autoLock.Exit();
         }
     }
 
@@ -477,7 +482,7 @@ public static class PerformanceManager
     // todo: update this function to force (re)apply profile settings
     private static void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        if (Monitor.TryEnter(powerLock))
+        if (powerLock.TryEnter())
         {
             // Checking if active power shceme has changed to reflect that
             if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
@@ -510,8 +515,9 @@ public static class PerformanceManager
                 EPPChanged?.Invoke(DCvalue);
             }
 
-            // release lock
-            Monitor.Exit(powerLock);
+        // release lock
+        Exit:
+            powerLock.Exit();
         }
     }
 
@@ -520,13 +526,10 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (!cpuLock)
+        if (cpuLock.TryEnter())
         {
-            // set lock
-            cpuLock = true;
-
-            var TDPdone = false;
-            var MSRdone = false;
+            bool TDPdone = false;
+            bool MSRdone = false;
 
             // read current values and (re)apply requested TDP if needed
             foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
@@ -537,13 +540,19 @@ public static class PerformanceManager
                 if (idx >= StoredTDP.Length)
                     break;
 
-                var TDP = StoredTDP[idx];
+                double TDP = StoredTDP[idx];
+                if (TDP == 0.0d)
+                    continue;
 
                 if (processor is AMDProcessor)
                 {
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
                     if (currentPowerMode == OSPowerMode.BetterBattery)
                         TDP = (int)Math.Truncate(TDP * 0.9);
+
+                    // AMD doesn't have MSR
+                    if (type == PowerType.MsrSlow || type == PowerType.MsrFast)
+                        continue;
                 }
                 else if (processor is IntelProcessor)
                 {
@@ -563,7 +572,7 @@ public static class PerformanceManager
                 if (ReadTDP != TDP)
                     processor.SetTDPLimit(type, TDP);
 
-                await Task.Delay(12);
+                await Task.Delay(20);
             }
 
             // are we done ?
@@ -597,8 +606,9 @@ public static class PerformanceManager
                 }
             }
 
-            // release lock
-            cpuLock = false;
+        // release lock
+        Exit:
+            cpuLock.Exit();
         }
     }
 
@@ -607,13 +617,17 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (!gfxLock)
+        if (gfxLock.TryEnter())
         {
-            // set lock
-            gfxLock = true;
+            bool GPUdone = false;
+            GPU GPU = GPUManager.GetCurrent();
+            if (GPU is null)
+            {
+                // release lock
+                goto Exit;
+            }
 
-            var GPUdone = false;
-            var CurrentGfxClock = GPU.GetCurrent().GetClock();
+            float CurrentGfxClock = GPUManager.GetCurrent().GetClock();
 
             if (CurrentGfxClock != 0)
                 gfxWatchdog.Interval = INTERVAL_DEFAULT;
@@ -624,8 +638,7 @@ public static class PerformanceManager
             if (StoredGfxClock == 0)
             {
                 // release lock
-                gfxLock = false;
-                return;
+                goto Exit;
             }
 
             // only request an update if current gfx clock is different than stored
@@ -656,8 +669,9 @@ public static class PerformanceManager
                 }
             }
 
-            // release lock
-            gfxLock = false;
+        // release lock
+        Exit:
+            gfxLock.Exit();
         }
     }
 
@@ -733,7 +747,7 @@ public static class PerformanceManager
             if (immediate)
             {
                 processor.SetTDPLimit((PowerType)idx, values[idx], immediate);
-                await Task.Delay(12);
+                await Task.Delay(20);
             }
         }
     }

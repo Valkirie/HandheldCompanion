@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +30,7 @@ namespace HandheldCompanion.Controls.Hints
 
         public Hint_LegionGoLegionSpace() : base()
         {
-            if (MainWindow.CurrentDevice is not LegionGo)
+            if (IDevice.GetCurrent() is not LegionGo)
                 return;
 
             // Get all the services installed on the local computer
@@ -83,7 +82,7 @@ namespace HandheldCompanion.Controls.Hints
             }
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = anyRunning ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -121,7 +120,7 @@ namespace HandheldCompanion.Controls.Hints
 
         public override void Stop()
         {
-            serviceTimer.Stop();
+            serviceTimer?.Stop();
             base.Stop();
         }
     }

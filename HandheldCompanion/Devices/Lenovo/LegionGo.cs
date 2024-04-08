@@ -3,6 +3,7 @@ using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -100,8 +101,8 @@ public class LegionGo : IDevice
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
 
-    public static int LeftJoyconIndex = 3;
-    public static int RightJoyconIndex = 4;
+    public const int LeftJoyconIndex = 3;
+    public const int RightJoyconIndex = 4;
 
     public LegionGo()
     {
@@ -112,6 +113,9 @@ public class LegionGo : IDevice
         _vid = 0x17EF;
         _pid = 0x6182;
 
+        // fix for threshold overflow
+        GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);
+
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
         // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
@@ -120,7 +124,7 @@ public class LegionGo : IDevice
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
-        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -128,7 +132,7 @@ public class LegionGo : IDevice
             { 'Z', 'Y' }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -149,19 +153,20 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.Wheel;
 
         // Legion Go - Quiet
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoQuietName, Properties.Resources.PowerProfileLegionGoQuietDescription) 
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
         {
             Default = true,
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterBattery,
-            OEMPowerMode = (int) LegionMode.Quiet,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
+            OEMPowerMode = (int)LegionMode.Quiet,
             Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
         });
 
         // Legion Go - Balanced
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBalancedName, Properties.Resources.PowerProfileLegionGoBalancedDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterPerformance, Properties.Resources.PowerProfileLegionGoBetterPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
@@ -173,7 +178,7 @@ public class LegionGo : IDevice
         });
 
         // Legion Go - Performance
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoPerformanceName, Properties.Resources.PowerProfileLegionGoPerformanceDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBestPerformance, Properties.Resources.PowerProfileLegionGoBestPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
@@ -197,7 +202,7 @@ public class LegionGo : IDevice
         ));
 
         // device specific layout
-        DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions {MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 };
+        DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 };
 
         DefaultLayout.ButtonLayout[ButtonFlags.RightPadClick] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton, HapticMode = HapticMode.Down, HapticStrength = HapticStrength.Low } };
         DefaultLayout.ButtonLayout[ButtonFlags.RightPadClickDown] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton, HapticMode = HapticMode.Down, HapticStrength = HapticStrength.High } };
@@ -208,12 +213,35 @@ public class LegionGo : IDevice
 
         Init();
 
+        // make sure both left and right gyros are enabled
+        SetLeftGyroStatus(1);
+        SetRightGyroStatus(1);
+
+        // make sure both left and right gyros are reporting values
+        SetGyroModeStatus(2, 1, 1);
+        SetGyroModeStatus(2, 2, 2);
+
+        // make sure both left and right gyros are reporting raw values
+        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
+        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+
         Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
         bool FanFullSpeed = task.Result;
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        // tentative: stability fix
+        if (PerformanceManager.GetProcessor() is AMDProcessor AMDProcessor)
+            AMDProcessor.SetCoall(0x100020);
+
+        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
+        {
+            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
+            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
+            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
+        }
+
         FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
@@ -233,15 +261,6 @@ public class LegionGo : IDevice
 
         SetFanTable(fanTable);
         SetSmartFanMode(profile.OEMPowerMode);
-
-        /*
-        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
-        {
-            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
-            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
-            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
-        }
-        */
     }
 
     public override bool Open()
@@ -253,6 +272,7 @@ public class LegionGo : IDevice
         SetQuickLightingEffect(0, 1);
         SetQuickLightingEffect(3, 1);
         SetQuickLightingEffect(4, 1);
+
         SetQuickLightingEffectEnable(0, false);
         SetQuickLightingEffectEnable(3, false);
         SetQuickLightingEffectEnable(4, false);

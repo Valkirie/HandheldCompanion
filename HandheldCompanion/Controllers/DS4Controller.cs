@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using System.Windows;
 using System.Windows.Media;
 using static JSL;
 
@@ -10,8 +9,7 @@ namespace HandheldCompanion.Controllers;
 public class DS4Controller : JSController
 {
     public DS4Controller()
-    {
-    }
+    { }
 
     public DS4Controller(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
@@ -20,7 +18,10 @@ public class DS4Controller : JSController
         ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
         ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
         ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
+    }
 
+    protected override void InitializeInputOutput()
+    {
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.LeftPadClick);
         SourceButtons.Add(ButtonFlags.LeftPadTouch);
@@ -39,13 +40,13 @@ public class DS4Controller : JSController
         TargetAxis.Add(AxisLayoutFlags.RightPad);
     }
 
-    public override void UpdateInputs(long ticks)
+    public override void UpdateInputs(long ticks, float delta)
     {
         // skip if controller isn't connected
         if (!IsConnected())
             return;
 
-        base.UpdateState();
+        base.UpdateState(delta);
 
         // Left Pad
         Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(UserIndex);
@@ -83,7 +84,7 @@ public class DS4Controller : JSController
             Inputs.AxisState[AxisFlags.RightPadY] = 0;
         }
 
-        base.UpdateInputs(ticks);
+        base.UpdateInputs(ticks, delta);
     }
 
     public override string ToString()
@@ -105,11 +106,7 @@ public class DS4Controller : JSController
 
     public override void SetLightColor(byte R, byte G, byte B)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            JslSetLightColour(UserIndex, CommonUtils.rgb_to_int(R, G, B));
-        });
+        JslSetLightColour(UserIndex, CommonUtils.rgb_to_int(R, G, B));
     }
 
     public override string GetGlyph(ButtonFlags button)

@@ -20,6 +20,9 @@ namespace HandheldCompanion.Controllers
         private const short TrackPadInner = short.MaxValue / 2;
         public const ushort MaxRumbleIntensity = 2048;
 
+        public GordonController()
+        { }
+
         public GordonController(PnPDetails details) : base()
         {
             AttachDetails(details);
@@ -32,7 +35,10 @@ namespace HandheldCompanion.Controllers
 
             DrawUI();
             UpdateUI();
+        }
 
+        protected override void InitializeInputOutput()
+        {
             // Additional controller specific source buttons/axes
             SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4 });
             SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
@@ -65,6 +71,7 @@ namespace HandheldCompanion.Controllers
             base.AttachDetails(details);
 
             Controller = new(details.VendorID, details.ProductID, details.GetMI());
+            UserIndex = (byte)details.GetMI();
 
             // open controller
             Open();
@@ -78,7 +85,7 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Gordon";
         }
 
-        public override void UpdateInputs(long ticks)
+        public override void UpdateInputs(long ticks, float delta)
         {
             if (input is null)
                 return;
@@ -197,18 +204,24 @@ namespace HandheldCompanion.Controllers
             }
 
             // TODO: why Z/Y swapped?
-            Inputs.GyroState.Accelerometer.X = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-            Inputs.GyroState.Accelerometer.Y = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-            Inputs.GyroState.Accelerometer.Z = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            float aX = (float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+            float aY = (float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+            float aZ = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
             // TODO: why Roll/Pitch swapped?
-            Inputs.GyroState.Gyroscope.X = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2048.0f;  // Roll
-            Inputs.GyroState.Gyroscope.Y = -(float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2048.0f;   // Pitch
-            Inputs.GyroState.Gyroscope.Z = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2048.0f;    // Yaw
+            float gX = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
+            float gY = (float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
+            float gZ = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
-            base.UpdateInputs(ticks);
+            // store motion
+            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+
+            // process motion
+            gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+
+            base.UpdateInputs(ticks, delta);
         }
-
         private void OnControllerInputReceived(GordonControllerInputEventArgs input)
         {
             this.input = input;
@@ -232,8 +245,6 @@ namespace HandheldCompanion.Controllers
             Controller.SetLizardMode(false);
             Controller.SetGyroscope(true);
             Controller.SetIdleTimeout(300);  // ~5 min
-
-            SetVirtualMuted(SettingsManager.GetBoolean("SteamControllerMute"));
 
             TimerManager.Tick += UpdateInputs;
 

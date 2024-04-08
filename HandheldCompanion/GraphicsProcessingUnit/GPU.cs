@@ -1,11 +1,14 @@
-﻿using System;
+﻿using HandheldCompanion.Utils;
+using SharpDX.Direct3D9;
+using System;
 using System.Management;
 using System.Threading.Tasks;
-using System.Timers;
+using Task = System.Threading.Tasks.Task;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {
-    public class GPU
+    public class GPU : IDisposable
     {
         #region
         public event IntegerScalingChangedEvent IntegerScalingChanged;
@@ -18,10 +21,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public delegate void GPUScalingChangedEvent(bool Supported, bool Enabled, int Mode);
         #endregion
 
-        private static GPU gpu;
-        private static string Manufacturer;
+        public AdapterInformation adapterInformation;
+        protected int deviceIdx = -1;
+        protected int displayIdx = -1;
 
-        protected bool IsInitialized = false;
+        public bool IsInitialized = false;
 
         protected const int UpdateInterval = 2000;
         protected Timer UpdateTimer;
@@ -40,74 +44,68 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevImageSharpening = false;
         protected int prevImageSharpeningSharpness = -1;
 
-        protected object updateLock = new();
-        protected object telemetryLock = new();
+        protected CrossThreadLock updateLock = new();
+        protected CrossThreadLock telemetryLock = new();
+        protected bool halting = false;
 
-        protected static object wrapperLock = new();
-        protected static T Execute<T>(Func<T> func, T defaultValue)
+        protected T Execute<T>(Func<T> func, T defaultValue)
         {
-            lock (wrapperLock)
-            {
-                try
-                {
-                    Task<T> task = Task.Run(func);
-                    if (task.Wait(TimeSpan.FromSeconds(5)))
-                    {
-                        return task.Result;
-                    }
-                }
-                catch (AccessViolationException ex)
-                {
-                    // Handle or log the exception as needed
-                }
-                catch (Exception ex)
-                {
-                    // Handle other exceptions
-                }
-
+            if (halting)
                 return defaultValue;
-            }
-        }
 
-        public GPU()
-        {
-            Manufacturer = MotherboardInfo.VideoController;
-        }
-
-        public static GPU GetCurrent()
-        {
-            if (gpu is not null)
-                return gpu;
-
-            switch (Manufacturer)
+            try
             {
-                case "Advanced Micro Devices, Inc.":
-                    gpu = new AMDGPU();
-                    break;
-                case "Intel Corporation":
-                    gpu = new IntelGPU();
-                    break;
-            }
+                Task<T> task = Task.Run(() =>
+                {
+                    return func();
+                });
 
-            return gpu;
+                if (task.Wait(TimeSpan.FromSeconds(3)))
+                    return task.Result;
+            }
+            catch (AccessViolationException)
+            { }
+            catch (Exception)
+            { }
+
+            return defaultValue;
+        }
+
+        public bool IsBusy => (UpdateTimer is not null && UpdateTimer.Enabled) || (TelemetryTimer is not null && TelemetryTimer.Enabled);
+
+        public GPU(AdapterInformation adapterInformation)
+        {
+            this.adapterInformation = adapterInformation;
         }
 
         public virtual void Start()
         {
-            if (UpdateTimer != null)
+            // release halting flag
+            halting = false;
+
+            if (UpdateTimer != null && !UpdateTimer.Enabled)
                 UpdateTimer.Start();
 
-            if (TelemetryTimer != null)
+            if (TelemetryTimer != null && !TelemetryTimer.Enabled)
                 TelemetryTimer.Start();
         }
 
         public virtual void Stop()
         {
-            if (UpdateTimer != null)
-                UpdateTimer.Stop();
+            // set halting flag
+            halting = true;
 
-            if (TelemetryTimer != null)
-                TelemetryTimer.Stop();
+            try
+            {
+                if (UpdateTimer != null && UpdateTimer.Enabled)
+                    UpdateTimer.Stop();
+
+                if (TelemetryTimer != null && TelemetryTimer.Enabled)
+                    TelemetryTimer.Stop();
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
@@ -227,6 +225,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             }
 
             return 0.0f;
+        }
+
+        public void Dispose()
+        {
+            UpdateTimer?.Dispose();
+            TelemetryTimer?.Dispose();
+            updateLock?.Dispose();
+            telemetryLock?.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

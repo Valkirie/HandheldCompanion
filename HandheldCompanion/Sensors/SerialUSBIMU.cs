@@ -21,7 +21,7 @@ public enum SerialPlacement
 
 public class SerialUSBIMU
 {
-    public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg);
+    public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg, double timestamp);
 
     private static readonly SerialUSBIMU serial = new();
 
@@ -42,7 +42,7 @@ public class SerialUSBIMU
     private Vector3 AccelerationG; // accelerometer
     private Vector3 AngularVelocityDeg; // gyrometer
 
-    private USBDeviceInfo device;
+    public USBDeviceInfo USBDevice = new();
     private readonly int maxTentative = 8;
     private bool openAutoCalib; // todo: only once! Or based on reading if it's needed?
     private SerialPortEx port = new();
@@ -54,7 +54,7 @@ public class SerialUSBIMU
 
     public event ReadingChangedEventHandler ReadingChanged;
 
-    public static SerialUSBIMU GetDefault()
+    public static SerialUSBIMU GetCurrent()
     {
         if (serial.port.IsOpen)
             return serial;
@@ -70,7 +70,7 @@ public class SerialUSBIMU
             deviceInfo = devices.FirstOrDefault(a => a.VID == VendorID && a.PID == ProductID);
             if (deviceInfo is not null)
             {
-                serial.device = deviceInfo;
+                serial.USBDevice = deviceInfo;
                 serial.port = sensor.Value;
                 serial.port.PortName = Between(deviceInfo.Name, "(", ")");
                 break;
@@ -100,7 +100,7 @@ public class SerialUSBIMU
 
     public string GetName()
     {
-        return device is not null ? device.Name : "N/A";
+        return USBDevice is not null ? USBDevice.Name : "N/A";
     }
 
     public double GetFilterCutoff()
@@ -117,7 +117,7 @@ public class SerialUSBIMU
     {
         tentative = 0; // reset tentative
 
-        LogManager.LogInformation("{0} connecting to {1}", serial.ToString(), serial.device.Name);
+        LogManager.LogInformation("{0} connecting to {1}", serial.ToString(), serial.USBDevice.Name);
 
         while (!serial.port.IsOpen && tentative < maxTentative)
             try
@@ -242,7 +242,7 @@ public class SerialUSBIMU
             PlacementTransformation(SensorPlacement, SensorUpsideDown);
 
             // raise event
-            ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
+            ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg, DateTime.Now.TimeOfDay.TotalMilliseconds);
         }
     }
 

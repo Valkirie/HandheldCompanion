@@ -1600,7 +1600,7 @@
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+  <data name="Enum.Input.WorldSpace" xml:space="preserve">
     <value>ジョイスティックカメラ</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
@@ -1708,7 +1708,7 @@
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
+  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
     <value>単純なジョイスティックとして動作します。これは従来のジョイスティック アプリケーションを対象としています</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
@@ -1798,14 +1798,14 @@
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
-  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
-    <value>Joystick Camera</value>
+  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
+    <value>World space</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
     <value>Joystick Steering</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
-    <value>Player Space</value>
+    <value>Player space</value>
   </data>
   <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
     <value>Left Stick</value>
@@ -2416,7 +2416,7 @@
   <data name="ControllerPage_TryAgain" xml:space="preserve">
     <value>Try again</value>
   </data>
-  <data name="PowerProfileLegionGoQuietName" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
     <value>Legion Go - Quiet</value>
   </data>
   <data name="Hint_CoreIsolationCheckAction" xml:space="preserve">
@@ -2452,13 +2452,13 @@
   <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
     <value>ASUS services are already running on your device. This may interfere with the application</value>
   </data>
-  <data name="PowerProfileLegionGoQuietDescription" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
   </data>
   <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
     <value>Device presets</value>
   </data>
-  <data name="PowerProfileLegionGoBalancedDescription" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleDesc" xml:space="preserve">
@@ -2536,10 +2536,10 @@
   <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
     <value>Enhances visual detail</value>
   </data>
-  <data name="PowerProfileLegionGoPerformanceName" xml:space="preserve">
+  <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
     <value>Legion Go - Performance</value>
   </data>
-  <data name="PowerProfileLegionGoPerformanceDescription" xml:space="preserve">
+  <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
   </data>
   <data name="ProfilesPage_DefaultProfile" xml:space="preserve">
@@ -2566,7 +2566,7 @@
   <data name="ProfilesPage_GraphicsSettingsDesc" xml:space="preserve">
     <value>Change the graphics settings</value>
   </data>
-  <data name="PowerProfileLegionGoBalancedName" xml:space="preserve">
+  <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
     <value>Legion Go - Balanced</value>
   </data>
   <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
@@ -2857,22 +2857,22 @@
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>User-defined power and fan speed.</value>
   </data>
-  <data name="PowerProfileROGAllyPerformanceDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
-  <data name="PowerProfileROGAllyPerformanceName" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterPerformance" xml:space="preserve">
     <value>ROG Ally - Performance</value>
   </data>
-  <data name="PowerProfileROGAllySilentDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterBatteryDesc" xml:space="preserve">
     <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
   </data>
-  <data name="PowerProfileROGAllySilentName" xml:space="preserve">
+  <data name="PowerProfileROGAllyBetterBattery" xml:space="preserve">
     <value>ROG Ally - Silent</value>
   </data>
-  <data name="PowerProfileROGAllyTurboDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyBestPerformanceDesc" xml:space="preserve">
     <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
   </data>
-  <data name="PowerProfileROGAllyTurboName" xml:space="preserve">
+  <data name="PowerProfileROGAllyBestPerformance" xml:space="preserve">
     <value>ROG Ally - Turbo</value>
   </data>
   <data name="QuickDevicePage_Desc" xml:space="preserve">
@@ -2916,5 +2916,8 @@
   </data>
   <data name="DevicePage_Lenovo_Settings" xml:space="preserve">
     <value>Lenovo Legion Go settings</value>
+  </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
 </root>

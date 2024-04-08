@@ -9,7 +9,7 @@ namespace HandheldCompanion.Inputs;
 [Serializable]
 public partial class AxisState : ICloneable
 {
-    public ConcurrentDictionary<AxisFlags, short> State = new(Environment.ProcessorCount * 2, (int)AxisFlags.Max);
+    public ConcurrentDictionary<AxisFlags, short> State = new();
 
     public AxisState(ConcurrentDictionary<AxisFlags, short> State)
     {

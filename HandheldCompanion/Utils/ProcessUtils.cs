@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Shell;
+﻿using Fastenshtein;
+using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
@@ -153,6 +155,47 @@ public static class ProcessUtils
         return matchingProcesses.ToArray();
     }
 
+    // A function that receives a window name as a string and look for the process that has the closest processName and return it
+    public static Process FindProcessByWindowName(IntPtr hWnd)
+    {
+        // Get window name
+        string windowName = GetWindowTitle(hWnd);
+
+        if (string.IsNullOrEmpty(windowName))
+            return null;
+
+        // Remove non ASCII characters and set ToLower
+        windowName = Regex.Replace(windowName, "[^A-Za-z0-9 -]", "").ToLower();
+
+        // Get all the processes that have a window
+        IEnumerable<Process> processes = Process.GetProcesses(); //.Where(p => p.MainWindowHandle == IntPtr.Zero);
+
+        // Find the process that has the closest processName to the windowName
+        // Use the Levenshtein distance as a measure of similarity
+        // https://en.wikipedia.org/wiki/Levenshtein_distance
+        int minDistance = int.MaxValue;
+        Process closestProcess = null;
+
+        foreach (Process process in processes)
+        {
+            // Get the process name
+            string processName = process.ProcessName.ToLower();
+
+            // Calculate the Levenshtein distance between the windowName and the processName
+            int distance = Levenshtein.Distance(windowName, processName);
+
+            // Update the minimum distance and the closest process if needed
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestProcess = process;
+            }
+        }
+
+        // Return the closest process or null if none was found
+        return closestProcess;
+    }
+
     public static List<Process> GetChildProcesses(Process process)
     {
         return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid=={process.Id}")
@@ -197,23 +240,22 @@ public static class ProcessUtils
         private const string UWPFrameHostApp = "ApplicationFrameHost.exe";
         private readonly byte UWPattempt;
 
-        public FindHostedProcess(IntPtr foregroundProcessID)
+        public FindHostedProcess(IntPtr hWnd)
         {
             try
             {
-                if (foregroundProcessID == IntPtr.Zero)
+                if (hWnd == IntPtr.Zero)
                     return;
 
-                _realProcess =
-                    ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
-
+                uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
+                _realProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
                 if (_realProcess is null)
                     return;
 
                 // Get real process
                 while (_realProcess.ExecutableFileName == UWPFrameHostApp && UWPattempt < 10)
                 {
-                    EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+                    EnumChildWindows(hWnd, ChildWindowCallback, IntPtr.Zero);
                     UWPattempt++;
                     Thread.Sleep(250);
                 }
@@ -226,9 +268,10 @@ public static class ProcessUtils
 
         public ProcessDiagnosticInfo _realProcess { get; private set; }
 
-        private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
+        private bool ChildWindowCallback(IntPtr hWnd, IntPtr lparam)
         {
-            var childProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
+            uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
+            ProcessDiagnosticInfo childProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
 
             if (childProcess.ExecutableFileName != UWPFrameHostApp)
                 _realProcess = childProcess;

@@ -1,9 +1,12 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
 using System.Threading;
+using System.Windows;
 
 namespace HandheldCompanion.Managers
 {
@@ -22,14 +25,13 @@ namespace HandheldCompanion.Managers
 
         public static ushort ProductId = 0x28E; // Xbox 360
         public static ushort VendorId = 0x45E;  // Microsoft
-
         public static ushort FakeVendorId = 0x76B;  // HC
+        private static CrossThreadLock threadLock = new CrossThreadLock();
 
         public static bool IsInitialized;
 
         public static event HIDChangedEventHandler HIDchanged;
         public delegate void HIDChangedEventHandler(HIDmode HIDmode);
-
 
         public static event ControllerSelectedEventHandler ControllerSelected;
         public delegate void ControllerSelectedEventHandler(HIDmode mode);
@@ -50,15 +52,14 @@ namespace HandheldCompanion.Managers
             catch (Exception)
             {
                 LogManager.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
+
+                MainWindow.SplashScreen.Close();
+                MessageBox.Show("Unable to start Handheld Companion, the ViGEm application is missing.\n\nPlease get it from: https://github.com/ViGEm/ViGEmBus/releases", "Error");
                 throw new InvalidOperationException();
             }
 
             // initialize DSUClient
             DSUServer = new DSUServer();
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            SettingsManager.Initialized += SettingsManager_Initialized;
-            ProfileManager.Applied += ProfileManager_Applied;
         }
 
         public static void Start()
@@ -66,6 +67,10 @@ namespace HandheldCompanion.Managers
             // todo: improve me !!
             while (!ControllerManager.IsInitialized)
                 Thread.Sleep(250);
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -78,11 +83,12 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            ResetViGEm();
-            DSUServer.Stop();
+            Suspend();
 
             // unsubscrive events
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             ProfileManager.Applied -= ProfileManager_Applied;
+            ProfileManager.Discarded -= ProfileManager_Discarded;
 
             IsInitialized = false;
 
@@ -97,12 +103,28 @@ namespace HandheldCompanion.Managers
 
             // set controller mode
             SetControllerMode(HIDmode);
+
+            SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
         }
 
         public static void Suspend()
         {
-            // reset vigem
-            ResetViGEm();
+            // dispose virtual controller
+            if (vTarget is not null)
+            {
+                vTarget.Disconnect();
+                vTarget.Dispose();
+                vTarget = null;
+            }
+
+            // dispose ViGEm drivers
+            if (vClient is not null)
+            {
+                vClient.Dispose();
+                vClient = null;
+            }
+
+            DSUServer.Stop();
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -117,53 +139,33 @@ namespace HandheldCompanion.Managers
                     SetControllerStatus((HIDstatus)Convert.ToInt32(value));
                     break;
                 case "DSUEnabled":
-                    if (SettingsManager.IsInitialized)
-                        SetDSUStatus(Convert.ToBoolean(value));
-                    break;
-                case "DSUport":
-                    DSUServer.port = Convert.ToInt32(value);
-                    if (SettingsManager.IsInitialized)
-                        SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+                    SetDSUStatus(Convert.ToBoolean(value));
                     break;
             }
         }
 
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            try
-            {
-                // SetControllerMode takes care of ignoring identical mode switching
-                if (HIDmode == profile.HID)
-                    return;
+            // SetControllerMode takes care of ignoring identical mode switching
+            if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
+                return;
 
-                // todo: monitor ControllerManager and check if automatic controller management is running
-                
-                switch (profile.HID)
-                {
-                    case HIDmode.Xbox360Controller:
-                    case HIDmode.DualShock4Controller:
-                        {
-                            SetControllerMode(profile.HID);
-                            break;
-                        }
-
-                    default: // Default or not assigned
-                        {
-                            SetControllerMode(defaultHIDmode);
-                            break;
-                        }
-                }
-            }
-            catch // TODO requires further testing
+            switch (profile.HID)
             {
-                LogManager.LogError("Couldnt set per-profile HIDmode: {0}", profile.HID);
+                case HIDmode.Xbox360Controller:
+                case HIDmode.DualShock4Controller:
+                    {
+                        SetControllerMode(profile.HID);
+                        break;
+                    }
             }
         }
 
-
-        private static void SettingsManager_Initialized()
+        private static void ProfileManager_Discarded(Profile profile)
         {
-            SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+            // restore default HID mode
+            if (profile.HID != HIDmode.NotSelected)
+                SetControllerMode(defaultHIDmode);
         }
 
         private static void SetDSUStatus(bool started)
@@ -176,9 +178,23 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerMode(HIDmode mode)
         {
-            // do not disconnect if similar to previous mode
-            if (HIDmode == mode && vTarget is not null)
+            if (!threadLock.TryEnter(3000))
                 return;
+
+            // do not disconnect if similar to previous mode and connected
+            if (HIDmode == mode)
+            {
+                if (HIDstatus == HIDstatus.Disconnected)
+                {
+                    threadLock.Exit();
+                    return;
+                }
+                else if (vTarget is not null && vTarget.IsConnected)
+                {
+                    threadLock.Exit();
+                    return;
+                }
+            }
 
             // disconnect current virtual controller
             if (vTarget is not null)
@@ -199,9 +215,11 @@ namespace HandheldCompanion.Managers
                         vTarget = null;
                     }
                     break;
+
                 case HIDmode.DualShock4Controller:
                     vTarget = new DualShock4Target();
                     break;
+
                 case HIDmode.Xbox360Controller:
                     // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
                     VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
@@ -217,6 +235,8 @@ namespace HandheldCompanion.Managers
             {
                 if (mode != HIDmode.NoController)
                     LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
+
+                threadLock.Exit();
                 return;
             }
 
@@ -224,17 +244,25 @@ namespace HandheldCompanion.Managers
             vTarget.Disconnected += OnTargetDisconnected;
             vTarget.Vibrated += OnTargetVibrated;
 
-            // update status
-            SetControllerStatus(HIDstatus);
-
             // update current HIDmode
             HIDmode = mode;
+
+            threadLock.Exit();
+
+            // update status
+            SetControllerStatus(HIDstatus);
         }
 
         public static void SetControllerStatus(HIDstatus status)
         {
-            if (vTarget is null)
+            if (!threadLock.TryEnter(3000))
                 return;
+
+            if (vTarget is null)
+            {
+                threadLock.Exit();
+                return;
+            }
 
             switch (status)
             {
@@ -249,6 +277,8 @@ namespace HandheldCompanion.Managers
 
             // update current HIDstatus
             HIDstatus = status;
+
+            threadLock.Exit();
         }
 
         private static void OnTargetConnected(ViGEmTarget target)
@@ -266,31 +296,13 @@ namespace HandheldCompanion.Managers
             Vibrated?.Invoke(LargeMotor, SmallMotor);
         }
 
-        public static void UpdateInputs(ControllerState controllerState)
+        public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             // DS4Touch is used by both targets below, update first
             DS4Touch.UpdateInputs(controllerState);
 
-            vTarget?.UpdateInputs(controllerState);
+            vTarget?.UpdateInputs(controllerState, gamepadMotion);
             DSUServer?.UpdateInputs(controllerState);
-        }
-
-        private static void ResetViGEm()
-        {
-            // dispose virtual controller
-            if (vTarget is not null)
-            {
-                vTarget.Disconnect();
-                vTarget.Dispose();
-                vTarget = null;
-            }
-
-            // dispose ViGEm drivers
-            if (vClient is not null)
-            {
-                vClient.Dispose();
-                vClient = null;
-            }
         }
     }
 }

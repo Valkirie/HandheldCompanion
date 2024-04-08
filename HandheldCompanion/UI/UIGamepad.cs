@@ -33,6 +33,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private GamepadWindow _currentWindow;
+        private ScrollViewer _currentScrollViewer;
         private Frame _gamepadFrame;
         private Page _gamepadPage;
         private Timer _gamepadTimer;
@@ -54,6 +55,7 @@ namespace HandheldCompanion.Managers
         {
             // set current window
             _currentWindow = gamepadWindow;
+            _currentScrollViewer = _currentWindow.GetScrollViewer(_currentWindow);
             _currentWindow.GotFocus += _currentWindow_GotFocus;
             _currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
             _currentWindow.LostFocus += _currentWindow_LostFocus;
@@ -71,21 +73,10 @@ namespace HandheldCompanion.Managers
             _gamepadFrame = contentFrame;
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
-            // start listening to inputs
-            switch (SettingsManager.GetBoolean("DesktopProfileOnStart"))
-            {
-                case true:
-                    ControllerManager.InputsUpdated -= InputsUpdated;
-                    break;
-                case false:
-                    ControllerManager.InputsUpdated += InputsUpdated;
-                    break;
-            }
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
+
+            ControllerManager.InputsUpdated += InputsUpdated;
         }
 
         private void _currentWindow_ContentDialogClosed()
@@ -154,31 +145,6 @@ namespace HandheldCompanion.Managers
             LostFocus?.Invoke(_currentWindow);
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                switch (name)
-                {
-                    case "DesktopLayoutEnabled":
-                        {
-                            var value = SettingsManager.GetBoolean(name, true);
-                            switch (value)
-                            {
-                                case true:
-                                    ControllerManager.InputsUpdated -= InputsUpdated;
-                                    break;
-                                case false:
-                                    ControllerManager.InputsUpdated += InputsUpdated;
-                                    break;
-                            }
-                        }
-                        break;
-                }
-            });
-        }
-
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             // set rendering state
@@ -207,7 +173,7 @@ namespace HandheldCompanion.Managers
         private void _gamepadFrame_PageRendered(object? sender, System.Timers.ElapsedEventArgs e)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // specific-cases
                 switch (_gamepadPage.Tag)
@@ -216,7 +182,7 @@ namespace HandheldCompanion.Managers
                     case "SettingsMode0":
                     case "SettingsMode1":
 
-                        // quicktools
+                    // quicktools
                     case "quickhome":
                     case "quicksettings":
                     case "quickdevice":
@@ -377,7 +343,7 @@ namespace HandheldCompanion.Managers
 
             return null;
         }
-        
+
         // declare a DateTime variable to store the last time the function was called
         private DateTime lastCallTime;
 
@@ -420,6 +386,10 @@ namespace HandheldCompanion.Managers
                         return;
                     }
                 }
+                else
+                {
+                    return;
+                }
             }
             else
             {
@@ -430,7 +400,7 @@ namespace HandheldCompanion.Managers
             }
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // get current focused element
                 Control focusedElement = FocusedElement(_currentWindow);
@@ -649,6 +619,14 @@ namespace HandheldCompanion.Managers
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
                 {
                     direction = WPFUtils.Direction.Right;
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickUp))
+                {
+                    _currentScrollViewer?.ScrollToVerticalOffset(_currentScrollViewer.VerticalOffset - 50);
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickDown))
+                {
+                    _currentScrollViewer?.ScrollToVerticalOffset(_currentScrollViewer.VerticalOffset + 50);
                 }
 
                 // navigation

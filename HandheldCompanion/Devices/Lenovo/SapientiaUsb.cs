@@ -130,6 +130,9 @@ namespace HandheldCompanion.Devices.Lenovo
         //获取触摸板状态 tatus：0:关，1:开
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern int GetTouchPadStatus();
+        //获取触摸板状态    status：0:关，1:开
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern int GetTrackpadStatus(int device);
         //设置触摸板状态 status：0:关，1:开
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern bool SetTouchPadStatus(int iSwitch);
@@ -174,7 +177,7 @@ namespace HandheldCompanion.Devices.Lenovo
         public static extern bool SetStickCustomDeadzone(int device, int deadzone);
 
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool GetGyroSensorDataOnorOff(int device);
+        public static extern bool SetGyroSensorDataOnorOff(int device, int status);
 
         // Range is 0-99 on Deadzone and Margin
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]

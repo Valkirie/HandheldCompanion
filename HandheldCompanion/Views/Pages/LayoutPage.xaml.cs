@@ -1,7 +1,5 @@
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
-using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -10,6 +8,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -17,22 +16,26 @@ using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
 
-/// <summary>
-///     Interaction logic for ControllerSettings.xaml
-/// </summary>
+
 public partial class LayoutPage : Page
 {
-    private LayoutTemplate currentTemplate = new();
+    // Event to update ViewModel
+    public event UpdatedLayoutHandler LayoutUpdated;
+    public delegate void UpdatedLayoutHandler(Layout layout);
+
+    // Getter to update layout in ViewModels
+    public Layout CurrentLayout => currentTemplate.Layout;
+    public LayoutTemplate currentTemplate = new();
     protected LockObject updateLock = new();
 
     // page vars
     private Dictionary<string, (ILayoutPage, NavigationViewItem)> pages;
-    private readonly ButtonsPage buttonsPage = new();
-    private readonly DpadPage dpadPage = new();
-    private readonly GyroPage gyroPage = new();
-    private readonly JoysticksPage joysticksPage = new();
-    private readonly TrackpadsPage trackpadsPage = new();
-    private readonly TriggersPage triggersPage = new();
+    private ButtonsPage buttonsPage;
+    private DpadPage dpadPage;
+    private GyroPage gyroPage;
+    private JoysticksPage joysticksPage;
+    private TrackpadsPage trackpadsPage;
+    private TriggersPage triggersPage;
 
     private NavigationView parentNavView;
     private string preNavItemTag;
@@ -46,6 +49,17 @@ public partial class LayoutPage : Page
     {
         this.Tag = Tag;
         this.parentNavView = parent;
+    }
+
+    // Initialize pages later so the reference can be made to layoutPage from MainWindow
+    public void Initialize()
+    {
+        buttonsPage = new ButtonsPage();
+        dpadPage = new DpadPage();
+        gyroPage = new GyroPage();
+        joysticksPage = new JoysticksPage();
+        trackpadsPage = new TrackpadsPage();
+        triggersPage = new TriggersPage();
 
         // create controller related pages
         this.pages = new()
@@ -65,34 +79,15 @@ public partial class LayoutPage : Page
             { "GyroPage", ( gyroPage, navGyro ) },
         };
 
-        foreach (ButtonStack buttonStack in buttonsPage.ButtonStacks.Values.Union(dpadPage.ButtonStacks.Values).Union(triggersPage.ButtonStacks.Values).Union(joysticksPage.ButtonStacks.Values).Union(trackpadsPage.ButtonStacks.Values))
+        // TODO: Temporary until conversion to MVVM
+        foreach (var template in LayoutManager.Templates)
         {
-            buttonStack.Updated += (sender, actions) => ButtonMapping_Updated((ButtonFlags)sender, actions);
-            buttonStack.Deleted += (sender) => ButtonMapping_Deleted((ButtonFlags)sender);
-        }
-
-        foreach (TriggerMapping axisMapping in triggersPage.TriggerMappings.Values)
-        {
-            axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
-        }
-
-        foreach (AxisMapping axisMapping in joysticksPage.AxisMappings.Values.Union(trackpadsPage.AxisMappings.Values))
-        {
-            axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
-        }
-
-        foreach (GyroMapping gyroMapping in gyroPage.GyroMappings.Values)
-        {
-            gyroMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            gyroMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+            LayoutManager_Updated(template);
         }
 
         LayoutManager.Updated += LayoutManager_Updated;
         LayoutManager.Initialized += LayoutManager_Initialized;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
@@ -104,30 +99,30 @@ public partial class LayoutPage : Page
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
 
-        // update layout page if layout was updated elsewhere
-        // good enough
-        switch(source)
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            case UpdateSource.QuickProfilesPage:
-                {
-                    if (currentTemplate.Executable.Equals(profile.Executable))
-                        MainWindow.layoutPage.UpdateLayout(profile.Layout);
-                }
-                break;
-        }
+            switch (source)
+            {
+                case UpdateSource.QuickProfilesPage:
+                    {
+                        if (currentTemplate.Name.Equals(profile.LayoutTitle))
+                            UpdateLayout(profile.Layout);
+                    }
+                    break;
+            }
+        });
     }
 
     private void ControllerManager_ControllerSelected(IController controller)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             RefreshLayoutList();
 
             // cascade update to (sub)pages
             foreach (var page in pages.Values)
             {
-                page.Item1.UpdateController(controller);
                 page.Item2.IsEnabled = page.Item1.IsEnabled();
             }
         });
@@ -142,22 +137,10 @@ public partial class LayoutPage : Page
             ControllerManager_ControllerSelected(controller);
     }
 
-    // todo: fix me when migrated to NO-SERVICE
-    private void VirtualManager_ControllerSelected(HIDmode HID)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // cascade update to (sub)pages
-            foreach (var page in pages.Values)
-                page.Item1.UpdateSelections();
-        });
-    }
-
     private void LayoutManager_Initialized()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             RefreshLayoutList();
         });
@@ -166,7 +149,7 @@ public partial class LayoutPage : Page
     private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // Get template separator index
             var idx = -1;
@@ -213,8 +196,8 @@ public partial class LayoutPage : Page
 
     private void SettingsManager_SettingValueChanged(string? name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (name)
             {
@@ -251,38 +234,6 @@ public partial class LayoutPage : Page
         }
     }
 
-    private void ButtonMapping_Deleted(ButtonFlags button)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.RemoveLayout(button);
-    }
-
-    private void ButtonMapping_Updated(ButtonFlags button, List<IActions> actions)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.UpdateLayout(button, actions);
-    }
-
-    private void AxisMapping_Deleted(AxisLayoutFlags axis)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.RemoveLayout(axis);
-    }
-
-    private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.UpdateLayout(axis, action);
-    }
-
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
     }
@@ -316,25 +267,24 @@ public partial class LayoutPage : Page
 
     private void UpdatePages()
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // This is a very important lock, it blocks backward events to the layout when
+        // this is actually the backend that triggered the update. Notifications on higher
+        // levels (pages and mappings) could potentially be blocked for optimization.
+        using (new ScopedLock(updateLock))
         {
-            // This is a very important lock, it blocks backward events to the layout when
-            // this is actually the backend that triggered the update. Notifications on higher
-            // levels (pages and mappings) could potentially be blocked for optimization.
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                // cascade update to (sub)pages
-                foreach (var page in pages.Values)
-                    page.Item1.Update(currentTemplate.Layout);
+                // Invoke Layout Updated to trigger ViewModel updates
+                LayoutUpdated?.Invoke(currentTemplate.Layout);
 
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
 
                 CheckBoxDefaultLayout.IsChecked = currentTemplate.Layout.IsDefaultLayout;
                 CheckBoxDefaultLayout.IsEnabled = currentTemplate.Layout != LayoutManager.GetDesktop();
-            }
-        });
+            });
+        }
     }
 
     private void cB_Layouts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -365,24 +315,26 @@ public partial class LayoutPage : Page
         if (parent.Content is not LayoutTemplate)
             return;
 
-        // get template
-        var layoutTemplate = (LayoutTemplate)parent.Content;
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
+            Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
+            DefaultButton = ContentDialogButton.Close,
+            CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+            PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+        }.ShowAsync();
 
-        var result = Dialog.ShowAsync(
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
-            ContentDialogButton.Primary,
-            $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Yes}", string.Empty, MainWindow.GetCurrent());
+        await dialogTask; // sync call
 
-        await result; // sync call
-
-        switch (result.Result)
+        switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
                 {
                     // do not overwrite currentTemplate and currentTemplate.Layout as a whole
                     // because they both have important Update notifitications set
+
+                    // get template
+                    LayoutTemplate layoutTemplate = (LayoutTemplate)parent.Content;
                     var newLayout = layoutTemplate.Layout.Clone() as Layout;
                     currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
                     currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
@@ -430,9 +382,15 @@ public partial class LayoutPage : Page
         if (newLayout.Name == string.Empty)
         {
             LayoutFlyout.Hide();
-            _ = Dialog.ShowAsync("Layout template name cannot be empty",
-                "Layout was not exported.",
-                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+
+            // todo: translate me
+            _ = new Dialog(MainWindow.GetCurrent())
+            {
+                Title = "Layout template name cannot be empty",
+                Content = "Layout was not exported.",
+                PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+            }.ShowAsync();
+
             return;
         }
 
@@ -441,10 +399,13 @@ public partial class LayoutPage : Page
 
         LayoutManager.SerializeLayoutTemplate(newLayout);
 
-        LayoutFlyout.Hide();
-        _ = Dialog.ShowAsync("Layout template exported",
-            $"{newLayout.Name} was exported.",
-            ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
+        // todo: translate me
+        _ = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = "Layout template exported",
+            Content = $"{newLayout.Name} was exported.",
+            PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+        }.ShowAsync();
     }
 
     private void Flyout_Opening(object sender, object e)

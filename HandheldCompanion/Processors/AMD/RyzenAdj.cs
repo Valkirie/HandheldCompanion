@@ -253,5 +253,8 @@ public class RyzenAdj
     public static extern float get_socket_power(IntPtr ry);
 
     [DllImport(ryzenadj)]
+    public static extern float set_coall(IntPtr ry, uint value);
+
+    [DllImport(ryzenadj)]
     public static extern RyzenFamily get_cpu_family(IntPtr ry);
 }

@@ -1,8 +1,9 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,10 +38,10 @@ public partial class SettingsMode0 : Page
 
     public void SetProfile()
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SliderSensitivityX.Value = ProfilesPage.selectedProfile.MotionSensivityX;
                 SliderSensitivityY.Value = ProfilesPage.selectedProfile.MotionSensivityY;
@@ -55,14 +56,14 @@ public partial class SettingsMode0 : Page
 
                 // temp
                 StackCurve.Children.Clear();
-                foreach (var elem in ProfilesPage.selectedProfile.MotionSensivityArray)
+                foreach (KeyValuePair<double, double> elem in ProfilesPage.selectedProfile.MotionSensivityArray)
                 {
                     // skip first item ?
                     if (elem.Key == 0)
                         continue;
 
-                    var height = elem.Value * StackCurve.Height;
-                    var thumb = new Thumb
+                    double height = elem.Value * StackCurve.Height;
+                    Thumb thumb = new Thumb
                     {
                         Tag = elem.Key,
                         Width = 8,
@@ -77,8 +78,8 @@ public partial class SettingsMode0 : Page
 
                     StackCurve.Children.Add(thumb);
                 }
-            }
-        });
+            });
+        }
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -121,13 +122,13 @@ public partial class SettingsMode0 : Page
     private void Highlight_Thumb(float value)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            double dist_x = value / IMUGyrometer.sensorSpec.maxIn;
+            double dist_x = value / IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold();
 
             foreach (Control control in StackCurve.Children)
             {
-                var x = (double)control.Tag;
+                double x = (double)control.Tag;
 
                 if (dist_x > x)
                     control.BorderThickness = new Thickness(0, 0, 0, 20);

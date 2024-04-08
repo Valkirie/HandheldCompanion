@@ -156,7 +156,7 @@ public class RTSS : IPlatform
         // hook new process
         AppEntry appEntry = null;
 
-        var ProcessId = processEx.GetProcessId();
+        var ProcessId = processEx.ProcessId;
         if (ProcessId == 0)
             return;
 
@@ -198,7 +198,7 @@ public class RTSS : IPlatform
 
     private void ProcessManager_ProcessStopped(ProcessEx processEx)
     {
-        var ProcessId = processEx.GetProcessId();
+        var ProcessId = processEx.ProcessId;
         if (ProcessId == 0)
             return;
 
@@ -220,6 +220,15 @@ public class RTSS : IPlatform
             if (GetTargetFPS() != RequestedFramerate)
                 SetTargetFPS(RequestedFramerate);
 
+            try
+            {
+                // force "Show On-Screen Display" to On
+                SetFlags(~RTSSHOOKSFLAG_OSD_VISIBLE, RTSSHOOKSFLAG_OSD_VISIBLE);
+            }
+            catch (DllNotFoundException)
+            { }
+
+            // force "On-Screen Display Support" to On
             if (GetEnableOSD() != true)
                 SetEnableOSD(true);
 
@@ -245,11 +254,9 @@ public class RTSS : IPlatform
             return (double)appE.StatFrameTimeBufFramerate / 10;
         }
         catch (InvalidDataException)
-        {
-        }
+        { }
         catch (FileNotFoundException)
-        {
-        }
+        { }
 
         return 0.0d;
     }

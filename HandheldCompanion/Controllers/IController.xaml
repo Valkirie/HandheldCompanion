@@ -25,10 +25,16 @@
 
                 <DockPanel>
                     <ui:FontIcon
+                        Name="ControllerIcon"
                         VerticalAlignment="Center"
                         FontFamily="PromptFont"
                         FontSize="30"
                         Glyph="&#x243C;" />
+                    <ui:FontIcon
+                        Name="ControllerType"
+                        Margin="6,0,0,0"
+                        VerticalAlignment="Center"
+                        Glyph="&#xECF1;" />
 
                     <ui:SimpleStackPanel
                         Margin="12,0,0,0"
@@ -108,12 +114,14 @@
                         Width="100"
                         Margin="6,0,0,0"
                         Click="ui_button_hide_Click"
+                        Content="Hide"
                         FontSize="14"
                         Style="{DynamicResource AccentButtonStyle}" />
                     <Button
                         Name="ui_button_calibrate"
                         Width="100"
                         Margin="6,0,0,0"
+                        d:Visibility="Visible"
                         Click="ui_button_calibrate_Click"
                         Content="Calibrate"
                         FontSize="14"
@@ -124,10 +132,13 @@
 
             <TextBlock
                 Name="ProgressBarWarning"
-                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                d:Visibility="Visible"
+                Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
                 Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{x:Static resx:Resources.XInputController_Warning_USB}"
                 TextAlignment="Center"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                Visibility="Collapsed" />
         </ui:SimpleStackPanel>
     </Border>
 </UserControl>

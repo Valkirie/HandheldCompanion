@@ -952,11 +952,16 @@
                                                     <Label Content="{x:Static resx:Resources.ProfilesPage_Yaw}" />
                                                 </ui:SimpleStackPanel>
                                             </ComboBoxItem>
-
                                             <ComboBoxItem>
                                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                     <ui:FontIcon Glyph="&#xE8B4;" />
                                                     <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
+                                                </ui:SimpleStackPanel>
+                                            </ComboBoxItem>
+                                            <ComboBoxItem>
+                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ui:FontIcon Glyph="&#xE8B4;" />
+                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_RollYawAuto}" />
                                                 </ui:SimpleStackPanel>
                                             </ComboBoxItem>
                                         </ComboBox>
@@ -994,7 +999,7 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
 
-                                    <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
+                                    <Grid>
                                         <Button
                                             Name="MotionControlAdditional"
                                             HorizontalAlignment="Stretch"

@@ -1,7 +1,8 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
@@ -18,11 +19,6 @@ namespace HandheldCompanion.Targets
             // initialize controller
             HID = HIDmode.Xbox360Controller;
 
-            // create new ViGEm client
-            // this shouldn't happen, caused by profile HIDmode logic, fixme!
-            if (VirtualManager.vClient is null)
-                VirtualManager.vClient = new ViGEmClient();
-
             virtualController = VirtualManager.vClient.CreateXbox360Controller(vendorId, productId);
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
@@ -38,26 +34,22 @@ namespace HandheldCompanion.Targets
             try
             {
                 virtualController.Connect();
-                TimerManager.Tick += UpdateReport;
 
                 base.Connect();
             }
             catch (Exception ex)
             {
-                virtualController.Disconnect();
+                virtualController?.Disconnect();
                 LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
             }
         }
 
         public override void Disconnect()
         {
-            if (!IsConnected)
-                return;
-
             try
             {
-                virtualController.Disconnect();
-                TimerManager.Tick -= UpdateReport;
+                if (virtualController != null)
+                    virtualController.Disconnect();
 
                 base.Disconnect();
             }
@@ -69,7 +61,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateReport(long ticks)
+        public override unsafe void UpdateInputs(ControllerState Inputs, GamepadMotion gamepadMotion)
         {
             if (!IsConnected)
                 return;
@@ -109,18 +101,21 @@ namespace HandheldCompanion.Targets
             }
             catch (VigemBusNotFoundException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
             catch (VigemInvalidTargetException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
         }
 
         public override void Dispose()
         {
             if (virtualController is not null)
+            {
                 virtualController.Disconnect();
+                virtualController = null;
+            }
 
             base.Dispose();
         }

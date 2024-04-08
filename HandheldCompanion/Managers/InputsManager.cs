@@ -1,9 +1,9 @@
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Events;
 using static HandheldCompanion.Managers.InputsHotkey;
+using Application = System.Windows.Application;
 using ButtonState = HandheldCompanion.Inputs.ButtonState;
 using Timer = System.Timers.Timer;
 
@@ -55,6 +56,7 @@ public static class InputsManager
     // InputsChord variables
     private static InputsChord currentChord = new();
     private static InputsChord prevChord = new();
+    private static InputsChord successChord = new();
     private static readonly InputsChord storedChord = new();
     private static string SpecialKey;
 
@@ -120,7 +122,8 @@ public static class InputsManager
     {
         // triggered when key is pressed for a long time
         currentChord.InputsType = InputsChordType.Long;
-        CheckForSequence(true, false);
+        if (CheckForSequence(true, false))
+            successChord.InputsType = InputsChordType.Long;
     }
 
     private static void InputsChordInput_Elapsed()
@@ -144,16 +147,15 @@ public static class InputsManager
 
         if (!IsListening)
         {
-            var keys = GetTriggersFromChord(currentChord);
-
+            List<string> keys = GetTriggersFromChord(currentChord);
             if (keys.Count != 0)
             {
                 LogManager.LogDebug("Captured: Buttons: {0}, Type: {1}, IsKeyDown: {2}", string.Join(',', currentChord.State.Buttons),
                     currentChord.InputsType, IsKeyDown);
 
-                foreach (var key in keys)
+                foreach (string key in keys)
                 {
-                    var hotkey = InputsHotkeys.Values.FirstOrDefault(item => item.Listener == key);
+                    InputsHotkey? hotkey = InputsHotkeys.Values.FirstOrDefault(item => item.Listener == key);
                     if (hotkey is null)
                         continue;
 
@@ -162,20 +164,25 @@ public static class InputsManager
                     // this takes care of repeated keybinds actions
                     if (hotkey.Listener == "shortcutChangeHIDMode")
                     {
-                        var inputType = currentChord.InputsType;
+                        InputsChordType inputType = currentChord.InputsType;
                         if ((inputType == InputsChordType.Click && IsKeyUp) || (inputType == InputsChordType.Long && IsKeyDown))
                         {
-                            var hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-                            foreach (var hidHotkey in hidHotkeys)
+                            List<Hotkey> hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+
+                            Application.Current.Dispatcher.Invoke(() =>
                             {
-                                if (!hidHotkey.IsEnabled)
-                                    return false;
-                                System.Windows.Application.Current.Dispatcher.Invoke(() => { hidHotkey.IsEnabled = false; });
-                            }
+                                foreach (Hotkey hidHotkey in hidHotkeys)
+                                {
+                                    if (!hidHotkey.IsEnabled)
+                                        continue;
+
+                                    hidHotkey.IsEnabled = false;
+                                }
+                            });
                         }
                     }
 
-                    var chord = Triggers[key];
+                    InputsChord chord = Triggers[key];
                     switch (chord.InputsType)
                     {
                         case InputsChordType.Click:
@@ -191,7 +198,16 @@ public static class InputsManager
                         case InputsChordType.Long:
                             {
                                 if (IsKeyUp)
-                                    continue;
+                                {
+                                    switch (hotkey.hotkeyType)
+                                    {
+                                        // we should always allow custom hotkeys (keyboard keys) to be released
+                                        case InputsHotkeyType.Custom:
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                }
                             }
                             break;
                     }
@@ -203,7 +219,7 @@ public static class InputsManager
             }
 
             // get the associated keys
-            foreach (var chord in MainWindow.CurrentDevice.OEMChords.Where(a => currentChord.State.Contains(a.state)))
+            foreach (DeviceChord? chord in IDevice.GetCurrent().OEMChords.Where(a => currentChord.State.Contains(a.state)))
             {
                 // it could be the currentChord isn't mapped but a InputsChordType.Long is
                 currentChord.InputsType = InputsChordType.Long;
@@ -307,7 +323,7 @@ public static class InputsManager
             return;
         }
 
-        foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
+        foreach (DeviceChord? pair in IDevice.GetCurrent().OEMChords.Where(a => !a.silenced))
         {
             List<KeyCode> chord = pair.chords[args.IsKeyDown];
             if (KeyIndex >= chord.Count)
@@ -352,7 +368,7 @@ public static class InputsManager
             // search for matching triggers
             List<KeyCode> buffer_keys = GetChord(BufferKeys);
 
-            foreach (DeviceChord? chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
+            foreach (DeviceChord? chord in IDevice.GetCurrent().OEMChords.Where(a =>
                          a.chords[args.IsKeyDown].Count == BufferKeys.Count))
             {
                 // compare ordered enumerable
@@ -473,8 +489,10 @@ public static class InputsManager
 
     public static void Start()
     {
-        if (MainWindow.CurrentDevice.HasKey())
+        if (IDevice.GetCurrent().HasKey())
             InitGlobalHook();
+
+        ControllerManager.InputsUpdated += UpdateInputs;
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -486,6 +504,8 @@ public static class InputsManager
     {
         if (!IsInitialized)
             return;
+
+        ControllerManager.InputsUpdated -= UpdateInputs;
 
         IsInitialized = false;
 
@@ -515,8 +535,11 @@ public static class InputsManager
         m_GlobalHook = null;
     }
 
-    public static void UpdateReport(ButtonState buttonState)
+    private static void UpdateInputs(ControllerState controllerState)
     {
+        // prepare button state
+        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
+
         // half-press should be removed if full-press is also present
         if (currentChord.State[ButtonFlags.L2Full])
         {
@@ -570,7 +593,18 @@ public static class InputsManager
         // IsKeyDown
         if (!buttonState.IsEmpty())
         {
-            currentChord.State = buttonState.Clone() as ButtonState;
+            if (!successChord.State.IsEmpty())
+            {
+                if (!buttonState.Contains(successChord.State))
+                {
+                    IsKeyDown = false;
+                    IsKeyUp = true;
+                    currentChord.InputsType = successChord.InputsType;
+
+                    goto Done;
+                }
+            }
+
             storedChord.State.AddRange(buttonState);
 
             currentChord.InputsType = InputsChordType.Click;
@@ -581,18 +615,28 @@ public static class InputsManager
         // IsKeyUp
         else if (IsKeyDown && !currentChord.State.Equals(buttonState))
         {
-            IsKeyUp = true;
             IsKeyDown = false;
+            IsKeyUp = true;
 
-            currentChord.State = storedChord.State.Clone() as ButtonState;
+            if (!successChord.State.IsEmpty())
+                currentChord.InputsType = successChord.InputsType;
         }
 
-        var success = CheckForSequence(IsKeyDown, IsKeyUp);
+    Done:
+        currentChord.State = storedChord.State.Clone() as ButtonState;
 
-        if (buttonState.IsEmpty() && IsKeyUp)
+        if (CheckForSequence(IsKeyDown, IsKeyUp))
+        {
+            successChord = new();
+            successChord.State = currentChord.State.Clone() as ButtonState;
+            successChord.InputsType = currentChord.InputsType;
+        }
+
+        if ((buttonState.IsEmpty() || !successChord.State.IsEmpty()) && IsKeyUp)
         {
             currentChord.State.Clear();
             storedChord.State.Clear();
+            successChord.State.Clear();
         }
 
         prevState = buttonState.Clone() as ButtonState;
@@ -604,7 +648,7 @@ public static class InputsManager
 
     public static void StartListening(Hotkey hotkey, ListenerType type)
     {
-        if (!MainWindow.CurrentDevice.HasKey())
+        if (!IDevice.GetCurrent().HasKey())
             InitGlobalHook();
 
         // force expiration on previous listener, if any
@@ -638,11 +682,35 @@ public static class InputsManager
 
     private static void StopListening(InputsChord inputsChord = null)
     {
-        if (!MainWindow.CurrentDevice.HasKey())
+        if (!IDevice.GetCurrent().HasKey())
             DisposeGlobalHook();
 
         if (inputsChord is null)
             inputsChord = new InputsChord();
+
+        // the below logic is here to make sure every KeyDown has an equivalent KeyUp
+        List<OutputKey> missingOutputs = new List<OutputKey>();
+        foreach (OutputKey key in inputsChord.OutputKeys.Where(k => k.IsKeyDown))
+        {
+            bool hasUp = inputsChord.OutputKeys.Any(k => k.KeyValue == key.KeyValue && k.IsKeyUp);
+            if (!hasUp)
+            {
+                missingOutputs.Add(new()
+                {
+                    KeyValue = key.KeyValue,
+                    ScanCode = key.ScanCode,
+                    IsExtendedKey = key.IsExtendedKey,
+                    IsKeyDown = false,
+                    IsKeyUp = true,
+                    Timestamp = key.Timestamp,
+                });
+            }
+        }
+
+        // invert order to make sure key are released in right order
+        missingOutputs.Reverse();
+        foreach (OutputKey key in missingOutputs)
+            inputsChord.OutputKeys.Add(key);
 
         switch (currentType)
         {

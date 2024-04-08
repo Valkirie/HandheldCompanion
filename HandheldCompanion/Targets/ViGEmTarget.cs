@@ -1,4 +1,5 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
@@ -8,8 +9,6 @@ namespace HandheldCompanion.Targets
 {
     public abstract class ViGEmTarget : IDisposable
     {
-        protected ControllerState Inputs = new();
-
         public HIDmode HID = HIDmode.NoController;
 
         protected IVirtualGamepad virtualController;
@@ -53,14 +52,11 @@ namespace HandheldCompanion.Targets
             LogManager.LogInformation("{0} disconnected", ToString());
         }
 
-        public void UpdateInputs(ControllerState inputs)
-        {
-            Inputs = inputs;
-        }
+        public virtual void UpdateInputs(ControllerState inputs, GamepadMotion gamepadMotion)
+        { }
 
-        public virtual unsafe void UpdateReport(long ticks)
-        {
-        }
+        public virtual unsafe void UpdateReport(long ticks, float delta)
+        { }
 
         public virtual void Dispose()
         {

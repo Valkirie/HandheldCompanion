@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
@@ -40,6 +42,7 @@ public static class ControllerManager
     private static bool ControllerManagementSuccess = false;
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 3;
+    public static bool ControllerManagerIsBusy = false;
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -48,6 +51,7 @@ public static class ControllerManager
     private static FocusedWindow focusedWindows = FocusedWindow.None;
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
+    private static SensorFamily sensorSelection = SensorFamily.None;
 
     public static bool IsInitialized;
 
@@ -79,8 +83,8 @@ public static class ControllerManager
 
         VirtualManager.Vibrated += VirtualManager_Vibrated;
 
-        MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
-        MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
+        IDevice.GetCurrent().KeyPressed += CurrentDevice_KeyPressed;
+        IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
@@ -190,15 +194,13 @@ public static class ControllerManager
     private static void CurrentDevice_KeyReleased(ButtonFlags button)
     {
         // calls current controller (if connected)
-        var controller = GetTargetController();
-        controller?.InjectButton(button, false, true);
+        targetController?.InjectButton(button, false, true);
     }
 
     private static void CurrentDevice_KeyPressed(ButtonFlags button)
     {
         // calls current controller (if connected)
-        var controller = GetTargetController();
-        controller?.InjectButton(button, true, false);
+        targetController?.InjectButton(button, true, false);
     }
 
     private static void CheckControllerScenario()
@@ -225,85 +227,60 @@ public static class ControllerManager
 
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        switch (name)
         {
-            switch (name)
-            {
-                case "VibrationStrength":
-                    uint VibrationStrength = Convert.ToUInt32(value);
-                    targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
-                    break;
+            case "VibrationStrength":
+                uint VibrationStrength = Convert.ToUInt32(value);
+                targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
+                break;
 
-                case "SteamControllerMute":
+            case "ControllerManagement":
+                {
+                    ControllerManagement = Convert.ToBoolean(value);
+                    switch (ControllerManagement)
                     {
-                        IController target = GetTargetController();
-                        if (target is null)
-                            return;
-
-                        if (target is not SteamController)
-                            return;
-
-                        bool Muted = Convert.ToBoolean(value);
-                        ((SteamController)target).SetVirtualMuted(Muted);
-                    }
-                    break;
-
-                case "ControllerManagement":
-                    {
-                        ControllerManagement = Convert.ToBoolean(value);
-                        switch(ControllerManagement)
-                        {
-                            case true:
+                        case true:
+                            {
+                                if (!watchdogThreadRunning)
                                 {
-                                    if (!watchdogThreadRunning)
-                                    {
-                                        watchdogThreadRunning = true;
+                                    watchdogThreadRunning = true;
 
-                                        watchdogThread = new Thread(watchdogThreadLoop);
-                                        watchdogThread.IsBackground = true;
-                                        watchdogThread.Start();
-                                    }
+                                    watchdogThread = new Thread(watchdogThreadLoop);
+                                    watchdogThread.IsBackground = true;
+                                    watchdogThread.Start();
                                 }
-                                break;
-                            case false:
+                            }
+                            break;
+                        case false:
+                            {
+                                // suspend watchdog
+                                if (watchdogThread is not null)
                                 {
-                                    // suspend watchdog
-                                    if (watchdogThread is not null)
-                                    {
-                                        watchdogThreadRunning = false;
-                                        // Ensure the thread has finished execution
-                                        if (watchdogThread.IsAlive)
-                                            watchdogThread.Join();
-                                        watchdogThread = null;
-                                    }
+                                    watchdogThreadRunning = false;
+                                    // Ensure the thread has finished execution
+                                    if (watchdogThread.IsAlive)
+                                        watchdogThread.Join();
+                                    watchdogThread = null;
                                 }
-                                break;
-                        }
+                            }
+                            break;
                     }
-                    break;
+                }
+                break;
 
-                case "LegionControllerPassthrough":
-                    {
-                        IController target = GetTargetController();
-                        if (target is null)
-                            return;
-
-                        if (target is not LegionController)
-                            return;
-
-                        bool enabled = Convert.ToBoolean(value);
-                        ((LegionController)target).SetPassthrough(enabled);
-                    }
-                    break;
-            }
-        });
+            case "SensorSelection":
+                sensorSelection = (SensorFamily)Convert.ToInt32(value);
+                break;
+        }
     }
 
     private static void DeviceManager_Initialized()
     {
+        // todo: we might need to rethink this function
+        return;
+
         // search for last known controller and connect
-        var path = SettingsManager.GetString("HIDInstancePath");
+        string path = SettingsManager.GetString("HIDInstancePath");
 
         if (Controllers.ContainsKey(path))
         {
@@ -394,7 +371,7 @@ public static class ControllerManager
             }
             else
             {
-                // UI thread (sync)
+                // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     switch (joyShockType)
@@ -470,7 +447,7 @@ public static class ControllerManager
             }
             else
             {
-                // UI thread (sync)
+                // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     // search for a supported controller
@@ -605,13 +582,16 @@ public static class ControllerManager
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
+        // is controller current target ?
+        bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
+
         // unhide on remove 
         if (!IsPowerCycling)
         {
             controller.Unhide(false);
 
             // unplug controller, if needed
-            if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+            if (WasTarget)
                 ClearTargetController();
             else
                 controller.Unplug();
@@ -623,12 +603,12 @@ public static class ControllerManager
         LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
 
         // raise event
-        ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
     private static void watchdogThreadLoop(object? obj)
     {
-        while(watchdogThreadRunning)
+        while (watchdogThreadRunning)
         {
             // monitoring unexpected slot changes
             HashSet<byte> UserIndexes = new();
@@ -677,6 +657,7 @@ public static class ControllerManager
 
                             ControllerManagementSuccess = false;
                             ControllerManagementAttempts = 0;
+                            ControllerManagerIsBusy = false;
 
                             Working?.Invoke(2);
 
@@ -694,7 +675,23 @@ public static class ControllerManager
                         {
                             Working?.Invoke(0);
                             ControllerManagementSuccess = false;
-                            ControllerManagementAttempts++;
+                            ControllerManagerIsBusy = true;
+
+                            bool HasBusyWireless = false;
+                            bool HasCyclingController = false;
+
+                            // do we have a pending wireless controller ?
+                            XInputController wirelessController = GetPhysicalControllers().OfType<XInputController>().FirstOrDefault(controller => controller.IsWireless && controller.IsBusy);
+                            if (wirelessController is not null)
+                            {
+                                // update busy flag
+                                HasBusyWireless = true;
+
+                                // is the controller power cyclinc ?
+                                PowerCyclers.TryGetValue(wirelessController.Details.baseContainerDeviceInstanceId, out HasCyclingController);
+                                if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
+                                    goto Exit;
+                            }
 
                             // suspend virtual controller
                             VirtualManager.Suspend();
@@ -717,6 +714,10 @@ public static class ControllerManager
                             // suspend and resume virtual controller
                             VirtualManager.Suspend();
                             VirtualManager.Resume();
+
+                            // increment attempt counter (if no wireless controller is power cycling)
+                            if (!HasCyclingController)
+                                ControllerManagementAttempts++;
                         }
                     }
                     else
@@ -738,6 +739,7 @@ public static class ControllerManager
                 }
             }
 
+        Exit:
             Thread.Sleep(2000);
         }
     }
@@ -852,6 +854,9 @@ public static class ControllerManager
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
+        // is controller current target ?
+        bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
+
         // controller was unplugged
         if (!IsPowerCycling)
         {
@@ -859,7 +864,7 @@ public static class ControllerManager
             Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
 
             // controller is current target
-            if (targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+            if (WasTarget)
                 ClearTargetController();
             else
                 controller.Unplug();
@@ -868,7 +873,7 @@ public static class ControllerManager
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
-        ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
     private static object targetLock = new object();
@@ -978,7 +983,7 @@ public static class ControllerManager
                     if (pnPDriver is not null)
                     {
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
-                            usbPnPDevice.CyclePort();
+                        usbPnPDevice.CyclePort();
                     }
 
                     if (!deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
@@ -990,7 +995,6 @@ public static class ControllerManager
             }
         }
         catch { }
-
 
         return false;
     }
@@ -1076,45 +1080,43 @@ public static class ControllerManager
         return Controllers.Values.ToList();
     }
 
-    private static void UpdateInputs(ControllerState controllerState)
+    private static ControllerState mutedState = new ControllerState();
+    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
     {
-        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
-
         // raise event
         InputsUpdated?.Invoke(controllerState);
 
-        // pass inputs to Inputs manager
-        InputsManager.UpdateReport(buttonState);
-
-        // pass to SensorsManager for sensors value reading
-        SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
         switch (sensorSelection)
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
-                SensorsManager.UpdateReport(controllerState);
+                gamepadMotion = IDevice.GetCurrent().GamepadMotion;
+                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
                 break;
         }
 
-        // pass to MotionManager for calculations
-        MotionManager.UpdateReport(controllerState);
-
-        // pass inputs to Overlay Model
-        MainWindow.overlayModel.UpdateReport(controllerState);
-
-        // pass inputs to Layout manager
-        controllerState = LayoutManager.MapController(controllerState);
+        // compute motion
+        if (gamepadMotion is not null)
+        {
+            MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
+            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion);
+        }
 
         // controller is muted
         if (ControllerMuted)
         {
-            ControllerState emptyState = new ControllerState();
-            emptyState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
+            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
 
-            controllerState = emptyState;
+            // swap states
+            controllerState = mutedState;
+        }
+        else
+        {
+            // compute layout
+            controllerState = LayoutManager.MapController(controllerState);
         }
 
-        VirtualManager.UpdateInputs(controllerState);
+        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
     internal static IController GetEmulatedController()
@@ -1148,7 +1150,7 @@ public static class ControllerManager
     public delegate void ControllerPluggedEventHandler(IController Controller, bool IsPowerCycling);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
-    public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling);
+    public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling, bool WasTarget);
 
     public static event ControllerSelectedEventHandler ControllerSelected;
     public delegate void ControllerSelectedEventHandler(IController Controller);

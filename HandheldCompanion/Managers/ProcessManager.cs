@@ -30,13 +30,30 @@ public static class ProcessManager
     [DllImport("user32.dll")]
     public static extern bool IsWindowVisible(int h);
 
+    // Import the necessary user32.dll functions
+    [DllImport("user32.dll")]
+    static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax,
+        IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc,
+        uint idProcess, uint idThread, uint dwFlags);
+
+    // Declare the WinEventDelegate
+    private static WinEventDelegate winDelegate = null;
+
+    // Define the WinEventDelegate
+    delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
+        int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
+    // Constants for WinEvent hook
+    private const uint WINEVENT_OUTOFCONTEXT = 0;
+    private const uint EVENT_SYSTEM_FOREGROUND = 3;
+
     // process vars
     private static readonly Timer ForegroundTimer;
     private static readonly Timer ProcessWatcher;
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
     private static ProcessEx foregroundProcess;
-    private static ProcessEx previousProcess;
+    private static IntPtr foregroundWindow;
 
     private static bool IsInitialized;
 
@@ -57,11 +74,21 @@ public static class ProcessManager
             TreeScope.Children,
             OnWindowOpened);
 
-        ForegroundTimer = new Timer(1000);
-        ForegroundTimer.Elapsed += ForegroundCallback;
+        // Set up the WinEvent hook
+        winDelegate = new WinEventDelegate(WinEventProc);
+        IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
+            IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
+
+        ForegroundTimer = new Timer(2000);
+        ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback();
 
         ProcessWatcher = new Timer(2000);
-        ProcessWatcher.Elapsed += ProcessWatcher_Elapsed;
+        ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
+    }
+
+    private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+    {
+        ForegroundCallback();
     }
 
     private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
@@ -139,6 +166,7 @@ public static class ProcessManager
     {
         if (Processes.TryGetValue(processId, out var process))
             return process;
+
         return null;
     }
 
@@ -154,22 +182,40 @@ public static class ProcessManager
 
     public static List<ProcessEx> GetProcesses(string executable)
     {
-        return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase))
-            .ToList();
+        return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
-    private static void ForegroundCallback(object? sender, EventArgs e)
+    private static void ForegroundCallback()
     {
         IntPtr hWnd = GetforegroundWindow();
+        if (foregroundWindow == hWnd)
+            return;
+
+        int processId = 0;
+
+        // update current foreground window
+        foregroundWindow = hWnd;
 
         ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-        if (processInfo is null)
+        if (processInfo is not null)
+        {
+            processId = (int)processInfo.ProcessId;
+        }
+        else
+        {
+            // we couldn't find the hosted process
+            // use Levenshtein to find the process with closest name
+            Process process = ProcessUtils.FindProcessByWindowName(hWnd);
+            if (process is not null)
+                processId = process.Id;
+        }
+
+        // failed to retrieve process
+        if (processId == 0)
             return;
 
         try
         {
-            int processId = (int)processInfo.ProcessId;
-
             if (!Processes.TryGetValue(processId, out ProcessEx process))
             {
                 if (!CreateProcess(processId, (int)hWnd))
@@ -252,7 +298,14 @@ public static class ProcessManager
                 return true;
 
             // hook exited event
-            proc.EnableRaisingEvents = true;
+            try
+            {
+                proc.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                // access denied
+            }
             proc.Exited += ProcessHalted;
 
             // check process path
@@ -272,7 +325,6 @@ public static class ProcessManager
             {
                 // create process
                 processEx = new ProcessEx(proc, path, exec, filter);
-                // processEx.MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
             });
 
             if (processEx is null)
@@ -280,7 +332,8 @@ public static class ProcessManager
 
             processEx.MainWindowHandle = hWnd;
             processEx.MainThread = GetMainThread(proc);
-            processEx.MainThread.Disposed += (sender, e) => processEx.MainThreadDisposed();
+            if (processEx.MainThread is not null)
+                processEx.MainThread.Disposed += (sender, e) => processEx.MainThreadDisposed();
             processEx.Platform = PlatformManager.GetPlatform(proc);
 
             Processes.TryAdd(ProcessID, processEx);
@@ -295,7 +348,7 @@ public static class ProcessManager
 
             return true;
         }
-        catch
+        catch (Exception ex)
         {
             // process has too high elevation
         }
@@ -417,10 +470,10 @@ public static class ProcessManager
         return mainThread;
     }
 
-    private static void ProcessWatcher_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    private static void ProcessWatcher_Elapsed()
     {
         Parallel.ForEach(Processes,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, process =>
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
             {
                 ProcessEx processEx = process.Value;
                 processEx.Refresh();
@@ -439,7 +492,7 @@ public static class ProcessManager
         processEx.RefreshChildProcesses();
 
         Parallel.ForEach(processEx.Children,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtResumeProcess(process.Handle);
@@ -464,7 +517,7 @@ public static class ProcessManager
         processEx.RefreshChildProcesses();
 
         Parallel.ForEach(processEx.Children,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtSuspendProcess(process.Handle);

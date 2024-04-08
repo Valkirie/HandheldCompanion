@@ -28,6 +28,9 @@ public class NeptuneController : SteamController
     private Thread rumbleThread;
     private bool rumbleThreadRunning;
 
+    public NeptuneController()
+    { }
+
     public NeptuneController(PnPDetails details) : base()
     {
         AttachDetails(details);
@@ -35,21 +38,15 @@ public class NeptuneController : SteamController
         // UI
         DrawUI();
         UpdateUI();
+    }
 
+    protected override void InitializeInputOutput()
+    {
         // Additional controller specific source buttons/axes
-        SourceButtons.AddRange(new List<ButtonFlags>
-            { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
         SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftStickTouch, ButtonFlags.RightStickTouch });
-        SourceButtons.AddRange(new List<ButtonFlags>
-        {
-            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp,
-            ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight
-        });
-        SourceButtons.AddRange(new List<ButtonFlags>
-        {
-            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp,
-            ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight
-        });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
 
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);
@@ -69,6 +66,7 @@ public class NeptuneController : SteamController
         base.AttachDetails(details);
 
         Controller = new(details.VendorID, details.ProductID, details.GetMI());
+        UserIndex = 0;
 
         // open controller
         Open();
@@ -79,7 +77,7 @@ public class NeptuneController : SteamController
         return "Valve Software Steam Controller";
     }
 
-    public override void UpdateInputs(long ticks)
+    public override void UpdateInputs(long ticks, float delta)
     {
         if (input is null)
             return;
@@ -234,16 +232,23 @@ public class NeptuneController : SteamController
         }
 
         // TODO: why Z/Y swapped?
-        Inputs.GyroState.Accelerometer.X = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-        Inputs.GyroState.Accelerometer.Y = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-        Inputs.GyroState.Accelerometer.Z = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
         // TODO: why Roll/Pitch swapped?
-        Inputs.GyroState.Gyroscope.X = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2048.0f;  // Roll
-        Inputs.GyroState.Gyroscope.Y = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2048.0f;   // Pitch
-        Inputs.GyroState.Gyroscope.Z = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2048.0f;    // Yaw
+        float gX = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
+        float gY = (float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
+        float gZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
-        base.UpdateInputs(ticks);
+        // store motion
+        Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+        Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+
+        // process motion
+        gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+
+        base.UpdateInputs(ticks, delta);
     }
 
     private void Open()
@@ -271,7 +276,7 @@ public class NeptuneController : SteamController
 
             // remove handler
             Controller.OnControllerInputReceived = null;
-            
+
             Controller.Close();
             isConnected = false;
         }
@@ -317,8 +322,6 @@ public class NeptuneController : SteamController
         rumbleThread = new Thread(RumbleThreadLoop);
         rumbleThread.IsBackground = true;
         rumbleThread.Start();
-
-        SetVirtualMuted(SettingsManager.GetBoolean("SteamControllerMute"));
 
         TimerManager.Tick += UpdateInputs;
 

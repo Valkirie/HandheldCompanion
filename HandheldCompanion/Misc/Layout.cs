@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,10 +25,16 @@ public partial class Layout : ICloneable, IDisposable
 
     public Layout(bool fill) : this()
     {
+        // reset layout(s)
+        Dispose();
+
+        // get current controller
+        IController controller = ControllerManager.GetEmulatedController();
+
         // generic button mapping
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
         {
-            if (!IController.TargetButtons.Contains(button))
+            if (!controller.GetTargetButtons().Contains(button))
                 continue;
 
             ButtonLayout[button] = new List<IActions>() { new ButtonActions() { Button = button } };
@@ -39,22 +46,31 @@ public partial class Layout : ICloneable, IDisposable
         ButtonLayout[ButtonFlags.LeftPadClickLeft] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadLeft } };
         ButtonLayout[ButtonFlags.LeftPadClickRight] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadRight } };
 
+        // DualShock4
+        ButtonLayout[ButtonFlags.LeftPadTouch] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.LeftPadTouch } };
+        ButtonLayout[ButtonFlags.LeftPadClick] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.LeftPadClick } };
+        ButtonLayout[ButtonFlags.RightPadTouch] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.RightPadTouch } };
+        ButtonLayout[ButtonFlags.RightPadClick] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.RightPadClick } };
+
         // generic axis mapping
         foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
         {
-            if (!IController.TargetAxis.Contains(axis))
+            if (!controller.GetTargetAxis().Contains(axis))
                 continue;
 
-            switch (axis)
-            {
-                case AxisLayoutFlags.L2:
-                case AxisLayoutFlags.R2:
-                    AxisLayout[axis] = new TriggerActions { Axis = axis };
-                    break;
-                default:
-                    AxisLayout[axis] = new AxisActions { Axis = axis };
-                    break;
-            }
+            AxisLayout[axis] = new AxisActions { Axis = axis };
+        }
+
+        AxisLayout[AxisLayoutFlags.LeftPad] = new AxisActions { Axis = AxisLayoutFlags.LeftPad };
+        AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightPad };
+
+        // generic axis mapping
+        foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
+        {
+            if (!controller.GetTargetTriggers().Contains(axis))
+                continue;
+
+            AxisLayout[axis] = new TriggerActions { Axis = axis };
         }
     }
 
@@ -66,7 +82,7 @@ public partial class Layout : ICloneable, IDisposable
             new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
 
         deserialized.IsDefaultLayout = false; // Clone shouldn't be default layout in case it is true
-        
+
         return deserialized;
     }
 
@@ -90,7 +106,7 @@ public partial class Layout : ICloneable, IDisposable
 
     public void UpdateLayout(AxisLayoutFlags axis, IActions action)
     {
-        switch(axis)
+        switch (axis)
         {
             default:
                 AxisLayout[axis] = action;

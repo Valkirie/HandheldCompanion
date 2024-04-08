@@ -1,7 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Properties;
-using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
@@ -184,7 +184,7 @@ public class Hotkey
     private void DrawGlyph()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update glyphs
             mainControl.HotkeyIcon.FontFamily = quickControl.QuickIcon.FontFamily = inputsHotkey.fontFamily;
@@ -196,7 +196,7 @@ public class Hotkey
     private void DrawName()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             mainControl.HotkeyDesc.Text = inputsHotkey.GetDescription();
             mainControl.HotkeyName.Text = quickControl.QuickName.Text = mainControl.HotkeyCustomName.Text = Name;
@@ -283,7 +283,7 @@ public class Hotkey
     public void DrawInput()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // mainButton content
             SimpleStackPanel inputContent = new()
@@ -295,10 +295,10 @@ public class Hotkey
             mainControl.MainGrid.IsEnabled = true;
             if (HasInput())
             {
-                var controller = ControllerManager.GetTargetController();
+                IController? controller = ControllerManager.GetTargetController();
                 if (controller is null)
                     controller = ControllerManager.GetEmulatedController();
-                var device = MainWindow.CurrentDevice;
+                IDevice? device = IDevice.GetCurrent();
 
                 foreach (var button in inputsChord.State.Buttons)
                 {
@@ -306,7 +306,7 @@ public class Hotkey
                     var fontIcon = new FontIcon();
 
                     switch (button)
-                    {                           
+                    {
                         case Inputs.ButtonFlags.OEM1:
                         case Inputs.ButtonFlags.OEM2:
                         case Inputs.ButtonFlags.OEM3:
@@ -319,7 +319,7 @@ public class Hotkey
                         case Inputs.ButtonFlags.OEM10:
                             {
                                 //
-                                fontIcon = MainWindow.CurrentDevice.GetFontIcon(button);
+                                fontIcon = IDevice.GetCurrent().GetFontIcon(button);
                             }
                             break;
                         default:
@@ -328,7 +328,7 @@ public class Hotkey
                             }
                             break;
                     }
-                            
+
                     // display only one label, default one is not enough
                     if (fontIcon.Glyph != IController.defaultGlyph)
                     {
@@ -380,7 +380,7 @@ public class Hotkey
     private void DrawOutput()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update button content
             switch (HasOutput())
@@ -405,7 +405,7 @@ public class Hotkey
     private void DrawPin()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update pin button
             switch (IsPinned)
@@ -425,7 +425,7 @@ public class Hotkey
     private void DrawErase()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update delete button status
             mainControl.HotkeyErase.IsEnabled = HasInput() || HasOutput();
@@ -440,7 +440,7 @@ public class Hotkey
     public void SetToggle(bool toggle)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (toggle)
             {

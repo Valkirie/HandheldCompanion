@@ -94,7 +94,7 @@ public class ROGAlly : IDevice
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
-        GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -102,7 +102,7 @@ public class ROGAlly : IDevice
             { 'Z', 'Y' }
         };
 
-        AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -122,31 +122,38 @@ public class ROGAlly : IDevice
         DynamicLightingCapabilities |= LEDLevel.Wheel;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllySilentName, Properties.Resources.PowerProfileROGAllySilentDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyBetterBattery, Properties.Resources.PowerProfileROGAllyBetterBatteryDesc)
         {
             Default = true,
             DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Silent,
             OSPowerMode = OSPowerMode.BetterBattery,
-            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a")
+            CPUBoostLevel = CPUBoostLevel.Disabled,
+            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 10.0d, 10.0d, 10.0d }
         });
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyPerformanceName, Properties.Resources.PowerProfileROGAllyPerformanceDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyBetterPerformance, Properties.Resources.PowerProfileROGAllyBetterPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Performance,
             OSPowerMode = OSPowerMode.BetterPerformance,
-            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f")
+            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
         });
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyTurboName, Properties.Resources.PowerProfileROGAllyTurboDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyBestPerformance, Properties.Resources.PowerProfileROGAllyBestPerformanceDesc)
         {
             Default = true,
             DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Turbo,
             OSPowerMode = OSPowerMode.BestPerformance,
-            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238")
+            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d }
         });
 
         OEMChords.Add(new DeviceChord("CC",
@@ -161,14 +168,14 @@ public class ROGAlly : IDevice
 
         // M1 and M2 do a repeating input when holding the button
         OEMChords.Add(new DeviceChord("M1",
-            new List<KeyCode> { KeyCode.F17 },
-            new List<KeyCode> { KeyCode.F17 },
+            new List<KeyCode> { KeyCode.F18 },
+            new List<KeyCode> { KeyCode.F18 },
             false, ButtonFlags.OEM3
         ));
 
         OEMChords.Add(new DeviceChord("M2",
-            new List<KeyCode> { KeyCode.F18 },
-            new List<KeyCode> { KeyCode.F18 },
+            new List<KeyCode> { KeyCode.F17 },
+            new List<KeyCode> { KeyCode.F17 },
             false, ButtonFlags.OEM4
         ));
     }
@@ -261,7 +268,7 @@ public class ROGAlly : IDevice
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
 
-    private byte[] M1F17M2F18 = new byte[64]
+    private byte[] M1F18M2F17 = new byte[64]
         {
             0x5A, 0xD1, 0x02, 0x08, 0x2C, 0x02, 0x00, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x30, 0x00, 0x00,
@@ -664,7 +671,7 @@ public class ROGAlly : IDevice
         SendHidControlWrite(flushBufferWriteChanges);   // 16
 
         // Choose the appropriate mapping based on the 'Remap' flag
-        SendHidControlWrite(Remap ? M1F17M2F18 : M1M2Default);  // Step 17
+        SendHidControlWrite(Remap ? M1F18M2F17 : M1M2Default);  // Step 17
 
         SendHidControlWrite(flushBufferWriteChanges);   // 18
 

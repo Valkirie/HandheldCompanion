@@ -1,7 +1,9 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
-using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
@@ -11,26 +13,6 @@ namespace HandheldCompanion.Targets
 {
     internal class DualShock4Target : ViGEmTarget
     {
-        // DS4 Accelerometer g-force measurement range G SI unit to short
-        // Various sources state either +/- 2 or 4 ranges are in use 
-        private static readonly SensorSpec DS4AccelerometerSensorSpec = new SensorSpec()
-        {
-            minIn = -4.0f,
-            maxIn = 4.0f,
-            minOut = short.MinValue,
-            maxOut = short.MaxValue,
-        };
-
-        // DS4 Gyroscope angular rate measurement range deg/sec SI unit to short
-        // Note, at +/- 2000 the value is still off by a factor 5
-        private static readonly SensorSpec DS4GyroscopeSensorSpec = new SensorSpec()
-        {
-            minIn = -2000.0f,
-            maxIn = 2000.0f,
-            minOut = short.MinValue,
-            maxOut = short.MaxValue,
-        };
-
         private DS4_REPORT_EX outDS4Report;
 
         private new IDualShock4Controller virtualController;
@@ -39,11 +21,6 @@ namespace HandheldCompanion.Targets
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
-
-            // create new ViGEm client
-            // this shouldn't happen, caused by profile HIDmode logic, fixme!
-            if (VirtualManager.vClient is null)
-                VirtualManager.vClient = new ViGEmClient();
 
             virtualController = VirtualManager.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
             virtualController.AutoSubmitReport = false;
@@ -60,26 +37,22 @@ namespace HandheldCompanion.Targets
             try
             {
                 virtualController.Connect();
-                TimerManager.Tick += UpdateReport;
 
                 base.Connect();
             }
             catch (Exception ex)
             {
-                virtualController.Disconnect();
+                virtualController?.Disconnect();
                 LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
             }
         }
 
         public override void Disconnect()
         {
-            if (!IsConnected)
-                return;
-
             try
             {
-                virtualController.Disconnect();
-                TimerManager.Tick -= UpdateReport;
+                if (virtualController != null)
+                    virtualController.Disconnect();
 
                 base.Disconnect();
             }
@@ -91,7 +64,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateReport(long ticks)
+        public override unsafe void UpdateInputs(ControllerState Inputs, GamepadMotion gamepadMotion)
         {
             if (!IsConnected)
                 return;
@@ -188,18 +161,23 @@ namespace HandheldCompanion.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(DS4Touch.RightPadTouch.Y >> 4);
             }
 
+            // pull calibration data
+            IMUCalibration calibration = gamepadMotion.GetCalibration();
+
             // Use gyro sensor data, map to proper range, invert where needed
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope.X, DS4GyroscopeSensorSpec);    // gyroPitchFull
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-Inputs.GyroState.Gyroscope.Y, DS4GyroscopeSensorSpec);   // gyroYawFull
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope.Z, DS4GyroscopeSensorSpec);    // gyroRollFull
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
 
-            outDS4Report.wAccelX = (short)InputUtils.rangeMap(-Inputs.GyroState.Accelerometer.X, DS4AccelerometerSensorSpec); // accelXFull
-            outDS4Report.wAccelY = (short)InputUtils.rangeMap(-Inputs.GyroState.Accelerometer.Y, DS4AccelerometerSensorSpec); // accelYFull
-            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer.Z, DS4AccelerometerSensorSpec);  // accelZFull
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Z, -4.0f, 4.0f, short.MinValue, short.MaxValue);
 
+            // todo: implement battery value based on device
             outDS4Report.bBatteryLvlSpecial = 11;
 
-            outDS4Report.wTimestamp = (ushort)(TimerManager.GetElapsedSeconds());
+            // A common increment value between two reports is 188 (at full rate the report period is 1.25ms)
+            outDS4Report.wTimestamp += (ushort)(gamepadMotion.deltaTime * 100000.0f);
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 
@@ -209,11 +187,11 @@ namespace HandheldCompanion.Targets
             }
             catch (VigemBusNotFoundException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
             catch (VigemInvalidTargetException ex)
             {
-                LogManager.LogCritical(ex.Message);
+                LogManager.LogError(ex.Message);
             }
         }
 

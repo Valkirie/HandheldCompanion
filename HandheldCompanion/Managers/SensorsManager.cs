@@ -1,9 +1,13 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
+using System.Numerics;
+using System.Threading.Tasks;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers
@@ -35,43 +39,48 @@ namespace HandheldCompanion.Managers
         private static void ControllerManager_ControllerSelected(IController Controller)
         {
             // select controller as current sensor if current sensor selection is none
-            if (sensorFamily == SensorFamily.None && Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
+            if (Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+            else
+                PickNextSensor();
         }
 
-        private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling)
+        private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
             if (sensorFamily != SensorFamily.Controller)
                 return;
 
             // skip if controller isn't current or doesn't have motion sensor anyway
-            if (!Controller.HasMotionSensor() || Controller != ControllerManager.GetTargetController())
+            if (!Controller.HasMotionSensor() || !WasTarget)
                 return;
-            
-            if (sensorFamily == SensorFamily.Controller)
-                PickNextSensor();
+
+            // pick next available sensor
+            PickNextSensor();
         }
 
         private static void DeviceManager_UsbDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
         {
-            if (USBSensor is null)
+            if (USBSensor is null || sensorFamily != SensorFamily.SerialUSBIMU)
                 return;
 
             // If the USB Gyro is unplugged, close serial connection
             USBSensor.Close();
 
-            if (sensorFamily == SensorFamily.SerialUSBIMU)
-                PickNextSensor();
+            // pick next available sensor
+            PickNextSensor();
         }
-        
+
         private static void PickNextSensor()
         {
-            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
-            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
-            else if (ControllerManager.GetTargetController() is not null && ControllerManager.GetTargetController().HasMotionSensor())
+            // get current controller
+            IController controller = ControllerManager.GetTargetController();
+
+            if (controller is not null && controller.HasMotionSensor())
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+            else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
+            else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
             else
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
         }
@@ -79,7 +88,7 @@ namespace HandheldCompanion.Managers
         private static void DeviceManager_UsbDeviceArrived(PnPDevice device, DeviceEventArgs obj)
         {
             // If USB Gyro is plugged, hook into it
-            USBSensor = SerialUSBIMU.GetDefault();
+            USBSensor = SerialUSBIMU.GetCurrent();
 
             // select serial usb as current sensor if current sensor selection is none
             if (sensorFamily == SensorFamily.None)
@@ -110,42 +119,51 @@ namespace HandheldCompanion.Managers
                         if (sensorFamily == sensorSelection)
                             return;
 
-                        switch(sensorFamily)
+                        switch (sensorFamily)
                         {
                             case SensorFamily.Windows:
                                 StopListening();
                                 break;
+
                             case SensorFamily.SerialUSBIMU:
-                                if (USBSensor is not null)
-                                    USBSensor.Close();
-                                break;
-                            case SensorFamily.Controller:
+                                USBSensor?.Close();
                                 break;
                         }
 
                         // update current sensorFamily
                         sensorFamily = sensorSelection;
 
-                        switch(sensorFamily)
+                        switch (sensorFamily)
                         {
-                            case SensorFamily.Windows:
-                                break;
                             case SensorFamily.SerialUSBIMU:
                                 {
-                                    USBSensor = SerialUSBIMU.GetDefault();
-
+                                    // get current USB sensor
+                                    USBSensor = SerialUSBIMU.GetCurrent();
                                     if (USBSensor is null)
+                                    {
+                                        PickNextSensor();
                                         break;
-
-                                    USBSensor.Open();
+                                    }
 
                                     SerialPlacement placement = (SerialPlacement)SettingsManager.GetInt("SensorPlacement");
-                                    USBSensor.SetSensorPlacement(placement);
                                     bool upsidedown = SettingsManager.GetBoolean("SensorPlacementUpsideDown");
+
+                                    USBSensor.Open();
+                                    USBSensor.SetSensorPlacement(placement);
                                     USBSensor.SetSensorOrientation(upsidedown);
                                 }
                                 break;
+
                             case SensorFamily.Controller:
+                                {
+                                    // get current controller
+                                    IController controller = ControllerManager.GetTargetController();
+                                    if (controller is null || !controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
+                                    {
+                                        PickNextSensor();
+                                        break;
+                                    }
+                                }
                                 break;
                         }
 
@@ -177,47 +195,145 @@ namespace HandheldCompanion.Managers
 
         public static void Resume(bool update)
         {
-            if (Gyrometer is not null)
-                Gyrometer.UpdateSensor();
-
-            if (Accelerometer is not null)
-                Accelerometer.UpdateSensor();
+            Gyrometer?.UpdateSensor();
+            Accelerometer?.UpdateSensor();
         }
 
         private static void StopListening()
         {
-            // if required, halt gyrometer
-            if (Gyrometer is not null)
-                Gyrometer.StopListening();
-
-            // if required, halt accelerometer
-            if (Accelerometer is not null)
-                Accelerometer?.StopListening();
+            Gyrometer?.StopListening();
+            Accelerometer?.StopListening();
         }
 
-        public static void UpdateReport(ControllerState controllerState)
+        private static double prevTimestamp = 0.0d;
+        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, ref float delta)
         {
-            switch(sensorFamily)
-            {
-                case SensorFamily.None:
-                case SensorFamily.Controller:
-                    return;
-            }
+            Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
+            Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
 
-            if (Gyrometer is not null)
-                controllerState.GyroState.Gyroscope = Gyrometer.GetCurrentReading();
+            // todo: create an IMU class
+            double TotalMilliseconds = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
+            double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
+            prevTimestamp = TotalMilliseconds;
 
-            if (Accelerometer is not null)
-                controllerState.GyroState.Accelerometer = Accelerometer.GetCurrentReading();
+            // replace delta with delta from sensor
+            delta = (float)DeltaSeconds;
+
+            // store motion
+            controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
+            controllerState.GyroState.SetAccelerometer(accel.X, accel.Y, accel.Z);
+
+            // process motion
+            gamepadMotion.ProcessMotion(gyro.X, gyro.Y, gyro.Z, accel.X, accel.Y, accel.Z, delta);
         }
 
         public static void SetSensorFamily(SensorFamily sensorFamily)
         {
             // initialize sensors
-            var UpdateInterval = TimerManager.GetPeriod();
+            int UpdateInterval = TimerManager.GetPeriod();
 
-            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
+            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval, IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold());
             Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
+        }
+
+        public static async void Calibrate(GamepadMotion gamepadMotion)
+        {
+            Dialog dialog = new Dialog(MainWindow.GetCurrent())
+            {
+                Title = "Please place the controller on a stable and level surface.",
+                Content = string.Empty,
+                CanClose = false
+            };
+
+            // display calibration dialog
+            dialog.Show();
+
+            // skip if null
+            if (gamepadMotion is null)
+                goto Close;
+
+            for (int i = 4; i > 0; i--)
+            {
+                dialog.UpdateContent($"Calibration will start in {i} seconds.");
+                await Task.Delay(1000);
+            }
+
+            dialog.UpdateContent("Calibrating stationary sensor noise and drift correction...");
+
+            // reset motion values
+            gamepadMotion.ResetMotion();
+
+            // wait until device is steady
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout && !gamepadMotion.GetAutoCalibrationIsSteady())
+                await Task.Delay(100);
+
+            // device is either too shaky or stalled
+            bool IsSteady = gamepadMotion.GetAutoCalibrationIsSteady();
+            if (!IsSteady)
+            {
+                gamepadMotion.GetCalibratedGyro(out float x, out float y, out float z);
+
+                // display message
+                if (x == 0 && y == 0 && z == 0)
+                    dialog.UpdateContent("Calibration failed: gyroscope is silent.");
+                else
+                    dialog.UpdateContent("Calibration failed: device is too shaky.");
+
+                goto Close;
+            }
+
+            // start continuous calibration
+            gamepadMotion.StartContinuousCalibration();
+
+            // give gamepad motion 3 seconds to get values
+            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout)
+                await Task.Delay(100);
+
+            // halt continuous calibration
+            gamepadMotion.PauseContinuousCalibration();
+
+            // get continuous calibration confidence
+            float confidence = gamepadMotion.GetAutoCalibrationConfidence();
+
+            // get/set calibration offsets
+            gamepadMotion.GetCalibrationOffset(out float xOffset, out float yOffset, out float zOffset);
+            gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
+
+            dialog.UpdateTitle("Please take back the controller in hands and get ready to shake it.");
+
+            for (int i = 4; i > 0; i--)
+            {
+                dialog.UpdateContent($"Threshold calibration will start in {i} seconds.");
+                await Task.Delay(1000);
+            }
+
+            dialog.UpdateContent("Shake the device in all direction...");
+
+            // reset motion values
+            gamepadMotion.ResetThresholdCalibration();
+            gamepadMotion.StartThresholdCalibration();
+
+            // wait until device is steady
+            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout)
+                await Task.Delay(100);
+
+            gamepadMotion.PauseThresholdCalibration();
+
+            // get calibration offsets
+            gamepadMotion.SetCalibrationThreshold(gamepadMotion.maxGyro, gamepadMotion.maxAccel);
+
+            // store calibration offsets
+            IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
+
+            // display message
+            dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
+
+        Close:
+            await Task.Delay(2000);
+            dialog.Hide();
         }
     }
 }

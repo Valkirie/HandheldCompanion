@@ -5,6 +5,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;
 using System.Management;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace HandheldCompanion.Controls.Hints
@@ -58,7 +59,7 @@ namespace HandheldCompanion.Controls.Hints
             VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable");
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -69,15 +70,18 @@ namespace HandheldCompanion.Controls.Hints
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity", 0);
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable", 0);
 
-            var result = Dialog.ShowAsync($"{Properties.Resources.Dialog_ForceRestartTitle}",
-                $"{Properties.Resources.Dialog_ForceRestartDesc}",
-                ContentDialogButton.Primary, null,
-                $"{Properties.Resources.Dialog_Yes}",
-                $"{Properties.Resources.Dialog_No}", MainWindow.GetCurrent());
-            
-            await result;
+            Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+            {
+                Title = Properties.Resources.Dialog_ForceRestartTitle,
+                Content = Properties.Resources.Dialog_ForceRestartDesc,
+                DefaultButton = ContentDialogButton.Close,
+                CloseButtonText = Properties.Resources.Dialog_No,
+                PrimaryButtonText = Properties.Resources.Dialog_Yes
+            }.ShowAsync();
 
-            switch (result.Result)
+            await dialogTask; // sync call
+
+            switch (dialogTask.Result)
             {
                 case ContentDialogResult.Primary:
                     using (Process shutdown = new())

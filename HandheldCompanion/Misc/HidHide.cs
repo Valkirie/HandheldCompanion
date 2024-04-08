@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using Nefarius.Drivers.HidHide;
 using Newtonsoft.Json;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace HandheldCompanion;
 
@@ -21,8 +23,10 @@ public static class HidHide
         // verifying HidHide is installed
         if (!service.IsInstalled)
         {
-            LogManager.LogCritical("HidHide is missing. Please get it from: {0}",
-                "https://github.com/ViGEm/HidHide/releases");
+            LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+
+            MainWindow.SplashScreen.Close();
+            MessageBox.Show("Unable to start Handheld Companion, the HidHide application is missing.\n\nPlease get it from: https://github.com/ViGEm/HidHide/releases", "Error");
             throw new InvalidOperationException();
         }
 
@@ -156,7 +160,7 @@ public static class HidHide
             if (process is null)
                 return false;
 
-            switch(status)
+            switch (status)
             {
                 case true:
                     process.StartInfo.Arguments = $"--cloak-on";

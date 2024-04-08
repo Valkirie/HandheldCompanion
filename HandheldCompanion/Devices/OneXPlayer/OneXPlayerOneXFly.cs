@@ -4,6 +4,7 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
@@ -27,6 +28,7 @@ public class OneXPlayerOneXFly : IDevice
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -34,6 +36,7 @@ public class OneXPlayerOneXFly : IDevice
             { 'Z', 'Y' }
         };
 
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
@@ -165,7 +168,7 @@ public class OneXPlayerOneXFly : IDevice
 
         // Define the HID message for setting brightness.
         byte[] msg = { 0x00, 0x07, 0xFF, 0xFD, 0x01, 0x05, (byte)brightness };
-            
+
         // Write the HID message to set the LED brightness.
         hidDevice.Write(msg);
 

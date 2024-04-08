@@ -1,4 +1,5 @@
 using HandheldCompanion.Controls;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -12,11 +13,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
-using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -64,7 +63,7 @@ public abstract class IDevice
     public delegate void KeyReleasedEventHandler(ButtonFlags button);
     public delegate void PowerStatusChangedEventHandler(IDevice device);
 
-    private static OpenLibSys openLibSys;
+    protected static OpenLibSys openLibSys;
     protected LockObject updateLock = new();
 
     private static IDevice device;
@@ -73,7 +72,6 @@ public abstract class IDevice
     public Dictionary<byte, HidDevice> hidDevices = new();
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
-
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()
     {
         { 'X', 'X' },
@@ -82,13 +80,14 @@ public abstract class IDevice
     };
 
     public Vector3 GyrometerAxis = new(1.0f, 1.0f, 1.0f);
-
     public SortedDictionary<char, char> GyrometerAxisSwap = new()
     {
         { 'X', 'X' },
         { 'Y', 'Y' },
         { 'Z', 'Z' }
     };
+
+    public GamepadMotion GamepadMotion;
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
     public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
@@ -136,9 +135,6 @@ public abstract class IDevice
     // trigger specific settings
     public List<DeviceChord> OEMChords = new();
 
-    // filter settings
-    public OneEuroSettings oneEuroSettings = new(0.002d, 0.008d);
-
     // UI
     protected FontFamily GlyphFontFamily = new("PromptFont");
     protected const string defaultGlyph = "\u2753";
@@ -157,10 +153,24 @@ public abstract class IDevice
     // key press delay to use for certain scenarios
     public short KeyPressDelay = 20;
 
-    protected USBDeviceInfo sensor = new();
-
     public IDevice()
     {
+        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+    }
+
+    private void VirtualManager_ControllerSelected(HIDmode mode)
+    {
+        SetKeyPressDelay(mode);
+    }
+
+    private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    {
+        // todo: improve me
+        PullSensors();
     }
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
@@ -182,12 +192,10 @@ public abstract class IDevice
     public string Processor = string.Empty;
     public int NumberOfCores = 0;
 
-    public static IDevice GetDefault()
+    public static IDevice GetCurrent()
     {
         if (device is not null)
             return device;
-
-        MotherboardInfo.UpdateMotherboard();
 
         var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
         var ProductName = MotherboardInfo.Product;
@@ -272,6 +280,11 @@ public abstract class IDevice
                         case "NEXT Advance":
                         case "NEXT":
                             device = new AYANEONEXT();
+                            break;
+                        case "NEXT Lite":
+                            device = Processor.Contains("4500U")
+                                ? new AYANEONEXTLite4500U()
+                                : new AYANEONEXTLite();
                             break;
                         case "AYANEO 2":
                         case "GEEK":
@@ -446,6 +459,16 @@ public abstract class IDevice
                     }
                 }
                 break;
+            case "MICRO-STAR INTERNATIONAL CO., LTD.":
+                {
+                    switch (ProductName)
+                    {
+                        case "MS-1T41":
+                            device = new ClawA1M();
+                            break;
+                    }
+                }
+                break;
         }
 
         LogManager.LogInformation("{0} from {1}", ProductName, ManufacturerName);
@@ -544,8 +567,8 @@ public abstract class IDevice
         if (gyrometer is not null && accelerometer is not null)
         {
             // check sensor
-            var DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
-            sensor = DeviceUtils.GetUSBDevice(DeviceId);
+            string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
+            USBDeviceInfo sensor = GetUSBDevice(DeviceId);
             if (sensor is not null)
                 InternalSensorName = sensor.Name;
 
@@ -556,7 +579,7 @@ public abstract class IDevice
             Capabilities &= ~DeviceCapabilities.InternalSensor;
         }
 
-        SerialUSBIMU? USB = SerialUSBIMU.GetDefault();
+        SerialUSBIMU? USB = SerialUSBIMU.GetCurrent();
         if (USB is not null)
         {
             ExternalSensorName = USB.GetName();
@@ -567,14 +590,6 @@ public abstract class IDevice
         {
             Capabilities &= ~DeviceCapabilities.ExternalSensor;
         }
-    }
-
-    public bool RestartSensor()
-    {
-        if (sensor is null)
-            return false;
-
-        return PnPUtil.RestartDevice(sensor.DeviceId);
     }
 
     public virtual void SetFanDuty(double percent)
@@ -718,20 +733,20 @@ public abstract class IDevice
         }
     }
 
-    protected void ECRAMWrite(byte address, byte data)
+    protected virtual void ECRAMWrite(byte address, byte data)
     {
         SendECCommand(WR_EC);
         SendECData(address);
         SendECData(data);
     }
 
-    protected void SendECCommand(byte command)
+    protected virtual void SendECCommand(byte command)
     {
         if (IsECReady())
             ECRamWriteByte(EC_SC, command);
     }
 
-    protected void SendECData(byte data)
+    protected virtual void SendECData(byte data)
     {
         if (IsECReady())
             ECRamWriteByte(EC_DATA, data);
@@ -739,13 +754,14 @@ public abstract class IDevice
 
     protected bool IsECReady()
     {
-        DateTime timeout = DateTime.Now.Add(TimeSpan.FromMilliseconds(50));
-        while (DateTime.Now < timeout && (ECRamReadByte(EC_SC) & EC_IBF) != 0x0)
-            Thread.Sleep(1);
-
-        if (DateTime.Now <= timeout)
-            return true;
-
+        DateTime timeout = DateTime.Now.AddMilliseconds(250);
+        while (DateTime.Now < timeout)
+        {
+            if ((ECRamReadByte(EC_SC) & EC_IBF) == 0x0)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -831,6 +847,20 @@ public abstract class IDevice
         return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
     }
 
+    public GlyphIconInfo GetGlyphIconInfo(ButtonFlags button, int fontIconSize = 14)
+    {
+        var glyph = GetGlyph(button);
+        return new GlyphIconInfo
+        {
+            Name = GetButtonName(button),
+            Glyph = glyph,
+            FontSize = glyph is not null ? 28 : fontIconSize,
+            FontFamily = glyph is not null ? GlyphFontFamily : null,
+            Foreground = null
+        };
+    }
+
+    [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
     public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
     {
         var FontIcon = new FontIcon

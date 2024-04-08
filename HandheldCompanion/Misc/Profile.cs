@@ -31,6 +31,13 @@ public enum UpdateSource
     ProfilesPageUpdateOnly = 6
 }
 
+public enum SteeringAxis
+{
+    Roll = 0,
+    Yaw = 1,
+    Auto = 2, // unused
+}
+
 [Serializable]
 public partial class Profile : ICloneable, IComparable
 {
@@ -62,7 +69,7 @@ public partial class Profile : ICloneable, IComparable
     public float GyrometerMultiplier { get; set; } = 1.0f; // gyroscope multiplicator (remove me)
     public float AccelerometerMultiplier { get; set; } = 1.0f; // accelerometer multiplicator (remove me)
 
-    public int SteeringAxis { get; set; } = 0; // 0 = Roll, 1 = Yaw
+    public SteeringAxis SteeringAxis { get; set; } = SteeringAxis.Roll;
 
     public bool MotionInvertHorizontal { get; set; } // if true, invert horizontal axis
     public bool MotionInvertVertical { get; set; } // if false, invert vertical axis
@@ -87,7 +94,7 @@ public partial class Profile : ICloneable, IComparable
     // power & graphics
     public Guid PowerProfile { get; set; } = new();
     public int FramerateValue { get; set; } = 0; // default RTSS value
-    public bool GPUScaling { get; set;} = false;
+    public bool GPUScaling { get; set; } = false;
     public int ScalingMode { get; set; } = 0; // default AMD value
     public bool RSREnabled { get; set; } = false;
     public int RSRSharpness { get; set; } = 20; // default AMD value
@@ -96,8 +103,6 @@ public partial class Profile : ICloneable, IComparable
     public byte IntegerScalingType { get; set; } = 0;
     public bool RISEnabled { get; set; } = false;
     public int RISSharpness { get; set; } = 80; // default AMD value
-    public bool CPUCoreEnabled { get; set; } = false;
-    public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 
     // AppCompatFlags
     public bool FullScreenOptimization { get; set; } = true;
@@ -167,7 +172,7 @@ public partial class Profile : ICloneable, IComparable
 
         if (!Default)
             name = System.IO.Path.GetFileNameWithoutExtension(Executable);
-        
+
         // sub profile files will be of form "executable - #guid"
         if (IsSubProfile)
             name = $"{name} - {Guid}";

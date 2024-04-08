@@ -107,17 +107,22 @@ public partial class OverlayQuickTools : GamepadWindow
         // create pages
         homePage = new("quickhome");
         devicePage = new("quickdevice");
-        performancePage = new("quickperformance");
         profilesPage = new("quickprofiles");
-        overlayPage = new("quickoverlay");
         suspenderPage = new("quicksuspender");
 
         _pages.Add("QuickHomePage", homePage);
         _pages.Add("QuickDevicePage", devicePage);
-        _pages.Add("QuickPerformancePage", performancePage);
         _pages.Add("QuickProfilesPage", profilesPage);
-        _pages.Add("QuickOverlayPage", overlayPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
+    }
+
+    public void LoadPages_MVVM()
+    {
+        overlayPage = new QuickOverlayPage();
+        performancePage = new QuickPerformancePage();
+
+        _pages.Add("QuickOverlayPage", overlayPage);
+        _pages.Add("QuickPerformancePage", performancePage);
     }
 
     public static OverlayQuickTools GetCurrent()
@@ -127,8 +132,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (name)
             {
@@ -147,7 +152,7 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
         UpdateLocation(QuickToolsLocation);
@@ -156,7 +161,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void UpdateLocation(int QuickToolsLocation)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (QuickToolsLocation)
             {
@@ -186,7 +191,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void PowerManager_PowerStatusChanged(PowerStatus status)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             var BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
             BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";

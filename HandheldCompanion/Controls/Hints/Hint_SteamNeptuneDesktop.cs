@@ -28,7 +28,7 @@ namespace HandheldCompanion.Controls.Hints
             bool DesktopProfileApplied = PlatformManager.Steam.HasDesktopProfileApplied();
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (status)
                 {
