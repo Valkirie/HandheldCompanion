@@ -77,7 +77,7 @@ namespace HandheldCompanion.Controls.Hints
             }
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = anyRunning ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -102,7 +102,7 @@ namespace HandheldCompanion.Controls.Hints
 
         public override void Stop()
         {
-            serviceTimer.Stop();
+            serviceTimer?.Stop();
             base.Stop();
         }
     }

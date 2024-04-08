@@ -213,7 +213,7 @@ public partial class OverlayModel : OverlayWindow
         HighLightButtons();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // Define transformation group for model
             var Transform3DGroupModel = new Transform3DGroup();
@@ -355,7 +355,7 @@ public partial class OverlayModel : OverlayWindow
                 continue;
 
             // Execute the following code on the UI thread
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // Todo, there is a bug here when switching 3D overlay type that
                 // things are checked from a controller that does not exist or opposite

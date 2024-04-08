@@ -104,7 +104,7 @@ namespace HandheldCompanion.Controls.Hints
             bool hasProcesses = HasProcesses();
 
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = hasTask || hasProcesses ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -118,7 +118,7 @@ namespace HandheldCompanion.Controls.Hints
 
         public override void Stop()
         {
-            watcherTimer.Stop();
+            watcherTimer?.Stop();
             base.Stop();
         }
     }

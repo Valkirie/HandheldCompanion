@@ -134,7 +134,7 @@ public partial class QuickProfilesPage : Page
     private void MultimediaManager_Initialized()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
             desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
@@ -159,7 +159,7 @@ public partial class QuickProfilesPage : Page
         bool IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = GPU is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
@@ -182,7 +182,7 @@ public partial class QuickProfilesPage : Page
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             StackProfileRSR.IsEnabled = false;
             StackProfileIS.IsEnabled = false;
@@ -193,20 +193,20 @@ public partial class QuickProfilesPage : Page
 
     private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 StackProfileRSR.IsEnabled = Supported;
-            }
-        });
+            });
+        }
     }
 
     private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(async () =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             using (new ScopedLock(updateLock))
             {
@@ -220,20 +220,20 @@ public partial class QuickProfilesPage : Page
 
     private void OnIntegerScalingChanged(bool Supported, bool Enabled)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 StackProfileIS.IsEnabled = Supported;
-            }
-        });
+            });
+        }
     }
 
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
             {
@@ -257,7 +257,7 @@ public partial class QuickProfilesPage : Page
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             cB_Framerate.Items.Clear();
 
@@ -279,7 +279,7 @@ public partial class QuickProfilesPage : Page
     private void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             int idx = -1;
             foreach (var item in ProfileStack.Children)
@@ -318,7 +318,7 @@ public partial class QuickProfilesPage : Page
     private void PowerProfileManager_Updated(PowerProfile powerProfile, UpdateSource source)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             int idx = -1;
             foreach (var item in ProfileStack.Children)
@@ -392,7 +392,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             SelectedPowerProfileName.Text = powerProfile.Name;
         });
@@ -421,10 +421,10 @@ public partial class QuickProfilesPage : Page
         // update profile
         selectedProfile = profile;
 
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // update profile name
                 CurrentProfileName.Text = selectedProfile.Name;
@@ -520,8 +520,8 @@ public partial class QuickProfilesPage : Page
                 // RIS
                 RISToggle.IsOn = selectedProfile.RISEnabled;
                 RISSlider.Value = selectedProfile.RISSharpness;
-            }
-        });
+            });
+        }
     }
 
     private void ProfileManager_Deleted(Profile profile)
@@ -539,10 +539,10 @@ public partial class QuickProfilesPage : Page
         // update real profile
         realProfile = ProfileManager.GetProfileFromPath(processEx.Path, true);
 
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
                 ProfileIcon.Source = processEx.ProcessIcon;
@@ -565,8 +565,8 @@ public partial class QuickProfilesPage : Page
                     ProcessPath.Text = string.Empty;
                     SubProfilesBorder.Visibility = Visibility.Collapsed;
                 }
-            }
-        });
+            });
+        }
     }
 
     private void UpdateProfile()

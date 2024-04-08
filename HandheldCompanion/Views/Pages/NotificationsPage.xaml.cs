@@ -35,7 +35,7 @@ namespace HandheldCompanion.Views.Pages
         private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 bool hasAnyVisible = Notifications.Children.OfType<IHint>().Any(element => element.Visibility == Visibility.Visible);
                 NothingToSee.Visibility = hasAnyVisible ? Visibility.Collapsed : Visibility.Visible;
@@ -56,11 +56,11 @@ namespace HandheldCompanion.Views.Pages
         public void Page_Closed()
         {
             // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 IEnumerable<IHint> notifications = Notifications.Children.OfType<IHint>();
                 foreach(IHint hint in notifications)
-                    hint.Stop();
+                    hint?.Stop();
             });
         }
 

@@ -79,7 +79,7 @@ public partial class ProfilesPage : Page
     private void MultimediaManager_Initialized()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
             desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
@@ -104,7 +104,7 @@ public partial class ProfilesPage : Page
         bool IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = GPU is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
@@ -125,7 +125,7 @@ public partial class ProfilesPage : Page
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             StackProfileRSR.IsEnabled = false;
             StackProfileIS.IsEnabled = false;
@@ -136,47 +136,47 @@ public partial class ProfilesPage : Page
 
     private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 StackProfileRSR.IsEnabled = Supported;
-            }
-        });
+            });
+        }
     }
 
     private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(async () =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 GPUScalingToggle.IsEnabled = Supported;
                 StackProfileRIS.IsEnabled = Supported; // check if processor is AMD should be enough
                 StackProfileRSR.IsEnabled = Supported;
                 StackProfileIS.IsEnabled = Supported;
-            }
-        });
+            });
+        }
     }
 
     private void OnIntegerScalingChanged(bool Supported, bool Enabled)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 StackProfileIS.IsEnabled = Supported;
-            }
-        });
+            });
+        }
     }
 
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
             {
@@ -197,7 +197,7 @@ public partial class ProfilesPage : Page
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             cB_Framerate.Items.Clear();
 
@@ -369,7 +369,7 @@ public partial class ProfilesPage : Page
     private void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             int idx = -1;
             foreach (var item in ProfileStack.Children)
@@ -408,7 +408,7 @@ public partial class ProfilesPage : Page
     private void PowerProfileManager_Updated(PowerProfile powerProfile, UpdateSource source)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             int idx = -1;
             foreach (var item in ProfileStack.Children)
@@ -479,7 +479,7 @@ public partial class ProfilesPage : Page
     private void PowerProfile_Selected(PowerProfile powerProfile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update UI
             SelectedPowerProfileName.Text = powerProfile.Name;
@@ -507,7 +507,7 @@ public partial class ProfilesPage : Page
                 MotionMapped = true;
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             MotionControlAdditional.IsEnabled = MotionMapped ? true : false;
         });
@@ -519,13 +519,13 @@ public partial class ProfilesPage : Page
             return;
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        using (new ScopedLock(updateLock))
         {
-            using (new ScopedLock(updateLock))
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // disable delete button if is default profile or any sub profile is running
                 b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running); //TODO consider sub profiles pertaining to this main profile is running
-                // prevent user from renaming default profile
+                                                                                                                                     // prevent user from renaming default profile
                 b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
                 // prevent user from disabling default profile
                 Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
@@ -659,8 +659,8 @@ public partial class ProfilesPage : Page
                 // update dropdown lists
                 cB_Profiles.Items.Refresh();
                 cb_SubProfilePicker.Items.Refresh();
-            }
-        });
+            });
+        }
     }
 
     private void UpdateSubProfiles()
@@ -793,7 +793,7 @@ public partial class ProfilesPage : Page
     private void Template_Updated(LayoutTemplate layoutTemplate)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             selectedProfile.LayoutTitle = layoutTemplate.Name;
         });
@@ -831,7 +831,7 @@ public partial class ProfilesPage : Page
         }
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             var idx = -1;
             if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
@@ -872,7 +872,7 @@ public partial class ProfilesPage : Page
     public void ProfileDeleted(Profile profile)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             int prevIdx = cB_Profiles.SelectedIndex;
 
@@ -924,7 +924,7 @@ public partial class ProfilesPage : Page
     private void ProfileManagerLoaded()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() => { cB_Profiles.SelectedItem = ProfileManager.GetDefault(); });
+        Application.Current.Dispatcher.Invoke(() => { cB_Profiles.SelectedItem = ProfileManager.GetDefault(); });
     }
 
     #endregion

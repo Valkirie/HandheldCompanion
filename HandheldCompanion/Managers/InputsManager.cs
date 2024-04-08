@@ -14,6 +14,7 @@ using WindowsInput.Events;
 using static HandheldCompanion.Managers.InputsHotkey;
 using ButtonState = HandheldCompanion.Inputs.ButtonState;
 using Timer = System.Timers.Timer;
+using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers;
 
@@ -167,13 +168,18 @@ public static class InputsManager
                         InputsChordType inputType = currentChord.InputsType;
                         if ((inputType == InputsChordType.Click && IsKeyUp) || (inputType == InputsChordType.Long && IsKeyDown))
                         {
-                            var hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
-                            foreach (var hidHotkey in hidHotkeys)
+                            List<Hotkey> hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode")).ToList();
+
+                            Application.Current.Dispatcher.Invoke(() =>
                             {
-                                if (!hidHotkey.IsEnabled)
-                                    return false;
-                                System.Windows.Application.Current.Dispatcher.Invoke(() => { hidHotkey.IsEnabled = false; });
-                            }
+                                foreach (Hotkey hidHotkey in hidHotkeys)
+                                {
+                                    if (!hidHotkey.IsEnabled)
+                                        continue;
+
+                                    hidHotkey.IsEnabled = false;
+                                }
+                            });
                         }
                     }
 

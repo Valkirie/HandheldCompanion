@@ -26,7 +26,7 @@ namespace HandheldCompanion.Misc
                 _Name = value;
 
                 // UI thread (async)
-                Application.Current.Dispatcher.BeginInvoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     foreach (UIElement uIElement in uIElements.Values)
                         uIElement.textBlock1.Text = value;
@@ -46,7 +46,7 @@ namespace HandheldCompanion.Misc
                 _Description = value;
 
                 // UI thread (async)
-                Application.Current.Dispatcher.BeginInvoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     foreach (UIElement uIElement in uIElements.Values)
                         uIElement.textBlock2.Text = value;

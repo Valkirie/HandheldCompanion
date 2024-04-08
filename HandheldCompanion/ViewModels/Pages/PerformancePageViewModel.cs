@@ -498,7 +498,7 @@ namespace HandheldCompanion.ViewModels
                     // TODO: Get rid of UI update here of fan graph UI dependency
                     if(!IsQuickTools)
                     {
-                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        Application.Current.Dispatcher.Invoke(() =>
                         {
                             _updatingFanCurveUI = true;
                             // update charts
@@ -605,7 +605,7 @@ namespace HandheldCompanion.ViewModels
 
                 FanPresetSilentCommand = new DelegateCommand(() =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
@@ -618,7 +618,7 @@ namespace HandheldCompanion.ViewModels
 
                 FanPresetPerformanceCommand = new DelegateCommand(() =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
@@ -631,7 +631,7 @@ namespace HandheldCompanion.ViewModels
 
                 FanPresetTurboCommand = new DelegateCommand(() =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)

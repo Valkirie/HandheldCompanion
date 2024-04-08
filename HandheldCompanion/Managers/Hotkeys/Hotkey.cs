@@ -185,7 +185,7 @@ public class Hotkey
     private void DrawGlyph()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update glyphs
             mainControl.HotkeyIcon.FontFamily = quickControl.QuickIcon.FontFamily = inputsHotkey.fontFamily;
@@ -197,7 +197,7 @@ public class Hotkey
     private void DrawName()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             mainControl.HotkeyDesc.Text = inputsHotkey.GetDescription();
             mainControl.HotkeyName.Text = quickControl.QuickName.Text = mainControl.HotkeyCustomName.Text = Name;
@@ -284,7 +284,7 @@ public class Hotkey
     public void DrawInput()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // mainButton content
             SimpleStackPanel inputContent = new()
@@ -381,7 +381,7 @@ public class Hotkey
     private void DrawOutput()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update button content
             switch (HasOutput())
@@ -406,7 +406,7 @@ public class Hotkey
     private void DrawPin()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update pin button
             switch (IsPinned)
@@ -426,7 +426,7 @@ public class Hotkey
     private void DrawErase()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // update delete button status
             mainControl.HotkeyErase.IsEnabled = HasInput() || HasOutput();
@@ -441,7 +441,7 @@ public class Hotkey
     public void SetToggle(bool toggle)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (toggle)
             {
