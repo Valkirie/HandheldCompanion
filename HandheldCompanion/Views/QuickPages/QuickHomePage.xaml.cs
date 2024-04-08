@@ -128,7 +128,7 @@ public partial class QuickHomePage : Page
         if (brightnessLock)
             return;
 
-       MultimediaManager.SetBrightness(SliderBrightness.Value);
+        MultimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -169,11 +169,11 @@ public partial class QuickHomePage : Page
             switch (name)
             {
                 case "OnScreenDisplayLevel":
-                {
-                    var overlayLevel = Convert.ToInt16(value);
-                    t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
-                }
-                break;
+                    {
+                        var overlayLevel = Convert.ToInt16(value);
+                        t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
+                    }
+                    break;
             }
         });
     }

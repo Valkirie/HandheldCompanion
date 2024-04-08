@@ -6,7 +6,6 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,10 +74,10 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != ModifierIndex)
                 {
                     if (Action is KeyboardActions keyboardAction)
-                        keyboardAction.Modifiers = (ModifierSet) value;
+                        keyboardAction.Modifiers = (ModifierSet)value;
 
                     else if (Action is MouseActions mouseAction)
-                        mouseAction.Modifiers = (ModifierSet) value;
+                        mouseAction.Modifiers = (ModifierSet)value;
 
                     OnPropertyChanged(nameof(ModifierIndex));
                 }
@@ -131,7 +130,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is not null && value != HapticModeIndex)
                 {
-                    Action.HapticMode = (HapticMode) value;
+                    Action.HapticMode = (HapticMode)value;
                     OnPropertyChanged(nameof(HapticModeIndex));
                 }
             }
@@ -144,7 +143,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is not null && value != HapticStrengthIndex)
                 {
-                    Action.HapticStrength = (HapticStrength) value;
+                    Action.HapticStrength = (HapticStrength)value;
                     OnPropertyChanged(nameof(HapticStrengthIndex));
                 }
             }
@@ -176,7 +175,8 @@ namespace HandheldCompanion.ViewModels
             _parentStack = parentStack;
             IsInitialMapping = isInitialMapping;
 
-            ButtonCommand = new DelegateCommand(() => {
+            ButtonCommand = new DelegateCommand(() =>
+            {
                 if (IsInitialMapping)
                     _parentStack.AddMapping();
                 else
@@ -193,7 +193,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     _keyboardKeysTargets.Add(new MappingTargetViewModel
                     {
-                        Tag = (VirtualKeyCode) key,
+                        Tag = (VirtualKeyCode)key,
                         Content = EnumUtils.GetDescriptionFromEnumValue(key)
                     });
                 }
@@ -222,7 +222,7 @@ namespace HandheldCompanion.ViewModels
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)
         {
-            var actionType = newActionType ?? (ActionType) ActionTypeIndex;
+            var actionType = newActionType ?? (ActionType)ActionTypeIndex;
             if (actionType == ActionType.Disabled)
             {
                 if (Action is not null) Delete();
@@ -231,7 +231,7 @@ namespace HandheldCompanion.ViewModels
                 return;
             }
 
-            var fallbackPressType = (PressType) _pressTypeFallbackIndex;
+            var fallbackPressType = (PressType)_pressTypeFallbackIndex;
 
             if (actionType == ActionType.Button)
             {
@@ -245,7 +245,7 @@ namespace HandheldCompanion.ViewModels
                 var targets = new List<MappingTargetViewModel>();
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach(var button in controller.GetTargetButtons())
+                foreach (var button in controller.GetTargetButtons())
                 {
                     var mappingTargetVm = new MappingTargetViewModel
                     {
@@ -254,7 +254,7 @@ namespace HandheldCompanion.ViewModels
                     };
                     targets.Add(mappingTargetVm);
 
-                    if(button == ((ButtonActions)Action).Button)
+                    if (button == ((ButtonActions)Action).Button)
                     {
                         matchingTargetVm = mappingTargetVm;
                     }

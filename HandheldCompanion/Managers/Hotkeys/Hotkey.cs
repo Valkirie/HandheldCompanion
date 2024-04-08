@@ -2,7 +2,6 @@
 using HandheldCompanion.Controls;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Properties;
-using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
@@ -307,7 +306,7 @@ public class Hotkey
                     var fontIcon = new FontIcon();
 
                     switch (button)
-                    {                           
+                    {
                         case Inputs.ButtonFlags.OEM1:
                         case Inputs.ButtonFlags.OEM2:
                         case Inputs.ButtonFlags.OEM3:
@@ -329,7 +328,7 @@ public class Hotkey
                             }
                             break;
                     }
-                            
+
                     // display only one label, default one is not enough
                     if (fontIcon.Glyph != IController.defaultGlyph)
                     {

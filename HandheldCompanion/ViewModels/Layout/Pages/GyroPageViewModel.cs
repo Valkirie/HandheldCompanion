@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Views;
 using System.Collections.Generic;
 
 namespace HandheldCompanion.ViewModels
@@ -14,7 +13,7 @@ namespace HandheldCompanion.ViewModels
 
         public GyroPageViewModel()
         {
-            foreach(var layoutFlag in _pageLayoutFlags)
+            foreach (var layoutFlag in _pageLayoutFlags)
             {
                 GyroMappings.Add(new GyroMappingViewModel(layoutFlag));
             }

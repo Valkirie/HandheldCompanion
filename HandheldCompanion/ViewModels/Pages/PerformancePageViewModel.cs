@@ -57,7 +57,7 @@ namespace HandheldCompanion.ViewModels
             {
                 _selectedPreset = value;
                 if (!IsQuickTools)
-                {                 
+                {
                     _selectedPresetIndex = ProfilePickerItems.IndexOf(ProfilePickerItems.First(p => p.LinkedPresetId == _selectedPreset.Guid));
                 }
                 OnPropertyChanged(string.Empty); // Refresh all properties
@@ -405,7 +405,7 @@ namespace HandheldCompanion.ViewModels
                 // Ensure the index is within the bounds of the collection
                 if (value != _selectedPresetIndex && value >= 0 && value < ProfilePickerItems.Count)
                 {
-                    _selectedPresetIndex = value;                    
+                    _selectedPresetIndex = value;
                     _selectedPreset = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndex].LinkedPresetId.Value);
 
                     OnPropertyChanged(string.Empty);
@@ -489,14 +489,14 @@ namespace HandheldCompanion.ViewModels
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-            PropertyChanged += 
-                (sender, e) => 
+            PropertyChanged +=
+                (sender, e) =>
                 {
                     if (SelectedPreset is null)
                         return;
 
                     // TODO: Get rid of UI update here of fan graph UI dependency
-                    if(!IsQuickTools)
+                    if (!IsQuickTools)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
@@ -541,7 +541,7 @@ namespace HandheldCompanion.ViewModels
                 PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
             });
 
-            DeletePresetCommand = new DelegateCommand(async () => 
+            DeletePresetCommand = new DelegateCommand(async () =>
             {
                 Task<ContentDialogResult> dialogTask = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
                 {
@@ -595,7 +595,7 @@ namespace HandheldCompanion.ViewModels
                     // Update the corresponding item in ProfilePickerItems
                     var selectedItem = ProfilePickerItems.FirstOrDefault(item => item.LinkedPresetId == SelectedPreset.Guid);
                     if (selectedItem != null)
-                    {                
+                    {
                         PresetName = ModifyPresetName;
                         PresetDescription = ModifyPresetDescription;
 
@@ -646,7 +646,7 @@ namespace HandheldCompanion.ViewModels
             #endregion
         }
 
-        
+
         public override void Dispose()
         {
             SettingsManager.SettingValueChanged -= SettingsManager_SettingsValueChanged;
@@ -673,7 +673,7 @@ namespace HandheldCompanion.ViewModels
 
         private void SettingsManager_SettingsValueChanged(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case "ConfigurableTDPOverride":
                 case "ConfigurableTDPOverrideDown":
@@ -770,7 +770,7 @@ namespace HandheldCompanion.ViewModels
             for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
                 SelectedPreset.FanProfile.fanSpeeds[idx] = (double)_fanGraphLineSeries.ActualValues[idx];
         }
-        
+
         private void ChartMovePoint(Point point)
         {
             if (_storedChartPoint is not null)

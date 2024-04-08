@@ -42,12 +42,12 @@ namespace HandheldCompanion.ViewModels
         public bool FullScreenOptimization
         {
             get => !Process.FullScreenOptimization;
-            set {} // empty set to allow binding to ToggleSwitch.IsOn
+            set { } // empty set to allow binding to ToggleSwitch.IsOn
         }
         public bool HighDPIAware
         {
             get => !Process.HighDPIAware;
-            set {} // empty set to allow binding to ToggleSwitch.IsOn
+            set { } // empty set to allow binding to ToggleSwitch.IsOn
         }
 
         public ICommand KillProcessCommand { get; private set; }
@@ -84,7 +84,7 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
-            if (_process is not null) 
+            if (_process is not null)
                 _process.Refreshed -= ProcessRefreshed;
 
             base.Dispose();

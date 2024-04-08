@@ -1,8 +1,8 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using System;
 using HidLibrary;
+using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Numerics;

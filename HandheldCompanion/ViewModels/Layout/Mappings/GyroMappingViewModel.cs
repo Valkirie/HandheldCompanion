@@ -14,7 +14,7 @@ namespace HandheldCompanion.ViewModels
 {
     public class GyroMappingViewModel : MappingViewModel
     {
-        private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes = 
+        private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.LeftButton,
             MouseActionsType.RightButton,
@@ -212,7 +212,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is GyroActions gyroAction && value != MotionModeIndex)
                 {
-                    gyroAction.MotionMode = (MotionMode) value;
+                    gyroAction.MotionMode = (MotionMode)value;
                     OnPropertyChanged(nameof(MotionModeIndex));
                 }
             }
@@ -261,7 +261,7 @@ namespace HandheldCompanion.ViewModels
         {
             if (Action is not GyroActions gyroAction)
                 return;
-            
+
             switch (listener)
             {
                 case "shortcutProfilesPage@":
@@ -271,7 +271,7 @@ namespace HandheldCompanion.ViewModels
                         // update hotkey UI
                         _gyroHotkey.inputsChord.State = gyroAction.MotionTrigger.Clone() as ButtonState;
                         _gyroHotkey.DrawInput();
-                    }                  
+                    }
                     break;
             }
 
@@ -292,7 +292,7 @@ namespace HandheldCompanion.ViewModels
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)
         {
-            var actionType = newActionType ?? (ActionType) ActionTypeIndex;
+            var actionType = newActionType ?? (ActionType)ActionTypeIndex;
             if (actionType == ActionType.Disabled)
             {
                 if (Action is not null) Delete();
@@ -318,7 +318,7 @@ namespace HandheldCompanion.ViewModels
 
                 // Build Targets
                 var targets = new List<MappingTargetViewModel>();
-                
+
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetAxis())
                 {
@@ -410,7 +410,7 @@ namespace HandheldCompanion.ViewModels
 
         protected override void UpdateMapping(Layout layout)
         {
-            if (layout.GyroLayout.TryGetValue((AxisLayoutFlags) Value, out var newAction))
+            if (layout.GyroLayout.TryGetValue((AxisLayoutFlags)Value, out var newAction))
             {
                 _gyroHotkey.inputsChord.State = ((GyroActions)newAction).MotionTrigger.Clone() as ButtonState;
                 _gyroHotkey.DrawInput();

@@ -140,7 +140,7 @@ public partial class MainWindow : GamepadWindow
 
         AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow);
         AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools);
-        
+
         AddNotifyIconSeparator();
 
         AddNotifyIconItem(Properties.Resources.MainWindow_Exit);
@@ -160,32 +160,32 @@ public partial class MainWindow : GamepadWindow
         SplashScreen.LoadingSequence.Text = "Initializing device...";
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
-        
+
         string currentDeviceType = CurrentDevice.GetType().Name;
         switch (currentDeviceType)
         {
-        /*
-         * workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
-         * todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
-         * https://dlcdnets.asus.com/pub/ASUS/IOTHMD/Image/Driver/Chipset/34644/BoschG-sensor_ROG_Bosch_Z_V1.0.1.7_34644.exe?model=ROG%20Ally%20(2023)
+            /*
+             * workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
+             * todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
+             * https://dlcdnets.asus.com/pub/ASUS/IOTHMD/Image/Driver/Chipset/34644/BoschG-sensor_ROG_Bosch_Z_V1.0.1.7_34644.exe?model=ROG%20Ally%20(2023)
 
-            case "AYANEOAIRPlus":
-            case "ROGAlly":
-                {
-                    LogManager.LogInformation("Restarting: {0}", CurrentDevice.InternalSensorName);
-
-                    if (CurrentDevice.RestartSensor())
+                case "AYANEOAIRPlus":
+                case "ROGAlly":
                     {
-                        // give the device some breathing space once restarted
-                        Thread.Sleep(500);
+                        LogManager.LogInformation("Restarting: {0}", CurrentDevice.InternalSensorName);
 
-                        LogManager.LogInformation("Successfully restarted: {0}", CurrentDevice.InternalSensorName);
+                        if (CurrentDevice.RestartSensor())
+                        {
+                            // give the device some breathing space once restarted
+                            Thread.Sleep(500);
+
+                            LogManager.LogInformation("Successfully restarted: {0}", CurrentDevice.InternalSensorName);
+                        }
+                        else
+                            LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
                     }
-                    else
-                        LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
-                }
-                break;
-        */
+                    break;
+            */
 
             case "SteamDeck":
                 {
@@ -272,7 +272,7 @@ public partial class MainWindow : GamepadWindow
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        switch(msg)
+        switch (msg)
         {
             case WM_DISPLAYCHANGE:
             case WM_DEVICECHANGE:
@@ -425,23 +425,23 @@ public partial class MainWindow : GamepadWindow
         devicePage = new DevicePage("device");
         profilesPage = new ProfilesPage("profiles");
         settingsPage = new SettingsPage("settings");
-        
+
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
-        
+
         notificationsPage = new NotificationsPage("notifications");
         notificationsPage.StatusChanged += NotificationsPage_LayoutUpdated;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
         _pages.Add("DevicePage", devicePage);
-        
+
         _pages.Add("ProfilesPage", profilesPage);
-        
+
         _pages.Add("OverlayPage", overlayPage);
         _pages.Add("SettingsPage", settingsPage);
         _pages.Add("HotkeysPage", hotkeysPage);
-        
+
         _pages.Add("NotificationsPage", notificationsPage);
     }
 

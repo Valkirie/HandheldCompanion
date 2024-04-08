@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
 namespace HandheldCompanion.Misc;
@@ -12,7 +11,7 @@ public class Dialog
     private ContentDialog dialog;
 
     public string Title;
-    public string Content;    
+    public string Content;
     public ContentDialogButton DefaultButton = ContentDialogButton.Primary;
     public string PrimaryButtonText = string.Empty;
     public string SecondaryButtonText = string.Empty;

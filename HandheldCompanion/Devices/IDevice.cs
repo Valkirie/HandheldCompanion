@@ -13,11 +13,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
-using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -757,7 +755,7 @@ public abstract class IDevice
     protected bool IsECReady()
     {
         DateTime timeout = DateTime.Now.AddMilliseconds(250);
-        while(DateTime.Now < timeout)
+        while (DateTime.Now < timeout)
         {
             if ((ECRamReadByte(EC_SC) & EC_IBF) == 0x0)
             {

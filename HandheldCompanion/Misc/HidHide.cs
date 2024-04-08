@@ -160,7 +160,7 @@ public static class HidHide
             if (process is null)
                 return false;
 
-            switch(status)
+            switch (status)
             {
                 case true:
                     process.StartInfo.Arguments = $"--cloak-on";

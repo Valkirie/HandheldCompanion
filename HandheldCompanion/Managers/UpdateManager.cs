@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
-using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

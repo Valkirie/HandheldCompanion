@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using static JSL;
 
 namespace HandheldCompanion.Controllers;
 
@@ -277,7 +276,7 @@ public class NeptuneController : SteamController
 
             // remove handler
             Controller.OnControllerInputReceived = null;
-            
+
             Controller.Close();
             isConnected = false;
         }

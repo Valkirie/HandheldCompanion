@@ -80,7 +80,7 @@ public class Steam : IPlatform
 
         // restore files even if Steam is still running
         RestoreFiles();
-        
+
         return base.Stop();
     }
 

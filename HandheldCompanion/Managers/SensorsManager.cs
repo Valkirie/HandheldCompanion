@@ -69,7 +69,7 @@ namespace HandheldCompanion.Managers
             // pick next available sensor
             PickNextSensor();
         }
-        
+
         private static void PickNextSensor()
         {
             // get current controller
@@ -119,7 +119,7 @@ namespace HandheldCompanion.Managers
                         if (sensorFamily == sensorSelection)
                             return;
 
-                        switch(sensorFamily)
+                        switch (sensorFamily)
                         {
                             case SensorFamily.Windows:
                                 StopListening();
@@ -133,7 +133,7 @@ namespace HandheldCompanion.Managers
                         // update current sensorFamily
                         sensorFamily = sensorSelection;
 
-                        switch(sensorFamily)
+                        switch (sensorFamily)
                         {
                             case SensorFamily.SerialUSBIMU:
                                 {
@@ -330,7 +330,7 @@ namespace HandheldCompanion.Managers
 
             // display message
             dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
-        
+
         Close:
             await Task.Delay(2000);
             dialog.Hide();

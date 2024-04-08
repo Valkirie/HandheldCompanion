@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +59,7 @@ namespace HandheldCompanion.Controls.Hints
 
         private void ServiceTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if(!serviceControllers.Any())
+            if (!serviceControllers.Any())
                 return;
 
             // Check if any of the services in the list exist and are running

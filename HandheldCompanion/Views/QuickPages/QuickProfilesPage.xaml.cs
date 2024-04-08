@@ -108,7 +108,7 @@ public partial class QuickProfilesPage : Page
             };
 
             // create icon
-            var icon = new FontIcon() {  Glyph = mode.ToGlyph() };
+            var icon = new FontIcon() { Glyph = mode.ToGlyph() };
 
             if (!string.IsNullOrEmpty(icon.Glyph))
                 simpleStackPanel.Children.Add(icon);
@@ -941,11 +941,11 @@ public partial class QuickProfilesPage : Page
         // wait until lock is released
         if (updateLock)
             return;
-        
+
         // return if combobox selected item is null
         if (cb_SubProfiles.SelectedIndex == -1)
             return;
-        
+
         LogManager.LogInformation($"Subprofile changed in Quick Settings - ind: {cb_SubProfiles.SelectedIndex} - subprofile: {cb_SubProfiles.SelectedItem}");
         selectedProfile = (Profile)cb_SubProfiles.SelectedItem;
         UpdateProfile();

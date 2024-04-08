@@ -4,7 +4,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HidLibrary;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -13,15 +12,14 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
-using static JSL;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace HandheldCompanion.Controllers
 {
     public class LegionController : XInputController
     {
         // Import the user32.dll library
-        [DllImport("user32.dll", SetLastError = true)][return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref uint pvParam, uint fWinIni);
 
         [Flags]
@@ -58,7 +56,7 @@ namespace HandheldCompanion.Controllers
         private const byte LCONTROLLER_STATE_IDX = 11;
         private const byte RCONTROLLER_STATE_IDX = 12;
 
-        private HashSet<int> READY_STATES = new HashSet<int>() {25, 60};
+        private HashSet<int> READY_STATES = new HashSet<int>() { 25, 60 };
 
         private Thread dataThread;
         private bool dataThreadRunning;
@@ -84,7 +82,7 @@ namespace HandheldCompanion.Controllers
         }
 
         private bool IsPassthrough = false;
-        private int GyroIndex = LegionGo.RightJoyconIndex; 
+        private int GyroIndex = LegionGo.RightJoyconIndex;
 
         private uint LongPressTime = 1000;                      // The minimum time in milliseconds for a long press
         private const int MaxDistance = 40;                     // Maximum distance tolerance between touch and untouch in pixels
@@ -384,7 +382,7 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.B8:
                     return "\u27F1"; // Scroll down
             }
-            
+
             return base.GetGlyph(button);
         }
 

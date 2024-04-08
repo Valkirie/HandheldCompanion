@@ -59,7 +59,7 @@ namespace HandheldCompanion.Views.Pages
             Application.Current.Dispatcher.Invoke(() =>
             {
                 IEnumerable<IHint> notifications = Notifications.Children.OfType<IHint>();
-                foreach(IHint hint in notifications)
+                foreach (IHint hint in notifications)
                     hint?.Stop();
             });
         }

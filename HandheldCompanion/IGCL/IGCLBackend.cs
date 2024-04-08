@@ -579,7 +579,7 @@ namespace HandheldCompanion.IGCL
             {
                 handle = device
             };
-            
+
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -600,7 +600,7 @@ namespace HandheldCompanion.IGCL
             {
                 handle = device
             };
-            
+
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -686,7 +686,7 @@ namespace HandheldCompanion.IGCL
             {
                 handle = device
             };
-            
+
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
@@ -875,7 +875,7 @@ namespace HandheldCompanion.IGCL
             // fill custom scaling details
             RetroScalingSettings.Enable = enabled;
             RetroScalingSettings.RetroScalingType = RetroScalingType;
-            
+
             Result = SetRetroScalingSettings(hDevice, RetroScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;

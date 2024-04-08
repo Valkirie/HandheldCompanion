@@ -165,7 +165,7 @@ public class DesktopScreen
     public List<ScreenFramelimit> GetFramelimits()
     {
         // A list to store the quotients
-        List<ScreenFramelimit> Limits = [new(0,0)]; // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        List<ScreenFramelimit> Limits = [new(0, 0)]; // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
 
         // A variable to store the divider value, rounded to nearest even number
         int divider = 1;
@@ -209,7 +209,7 @@ public class DesktopScreen
 
         for (int i = 0; i < orderedFpsLimits.Count(); i++)
         {
-            Limits.Add(new(i+1, orderedFpsLimits.ElementAt(i)));
+            Limits.Add(new(i + 1, orderedFpsLimits.ElementAt(i)));
         }
 
         _cachedFrameLimits.Add(dmDisplayFrequency, Limits);

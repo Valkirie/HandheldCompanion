@@ -1,5 +1,4 @@
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -10,12 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using NumQuaternion = System.Numerics.Quaternion;
 using NumVector3 = System.Numerics.Vector3;
 
 namespace HandheldCompanion.Views.Windows;
@@ -76,10 +73,10 @@ public partial class OverlayModel : OverlayWindow
             {
                 case "OverlayControllerMotion":
                     MotionActivated = Convert.ToBoolean(value);
-                    
+
                     // On change of motion activated, reset object alignment
                     ResetModelPose();
-                    
+
                     break;
             }
         });

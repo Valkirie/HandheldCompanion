@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using SharpDX.XInput;
 using steam_hidapi.net.Hid;
 using System;
 

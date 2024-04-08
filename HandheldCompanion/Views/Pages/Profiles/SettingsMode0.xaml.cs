@@ -1,7 +1,6 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;

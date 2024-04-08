@@ -1,11 +1,6 @@
-using HandheldCompanion.Devices;
 using HandheldCompanion.ViewModels;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
 using System.Diagnostics;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace HandheldCompanion.Views.Pages;

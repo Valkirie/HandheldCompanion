@@ -608,7 +608,7 @@ public static class ControllerManager
 
     private static void watchdogThreadLoop(object? obj)
     {
-        while(watchdogThreadRunning)
+        while (watchdogThreadRunning)
         {
             // monitoring unexpected slot changes
             HashSet<byte> UserIndexes = new();
@@ -739,7 +739,7 @@ public static class ControllerManager
                 }
             }
 
-            Exit:
+        Exit:
             Thread.Sleep(2000);
         }
     }
@@ -983,7 +983,7 @@ public static class ControllerManager
                     if (pnPDriver is not null)
                     {
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
-                            usbPnPDevice.CyclePort();
+                        usbPnPDevice.CyclePort();
                     }
 
                     if (!deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
@@ -1079,7 +1079,7 @@ public static class ControllerManager
     {
         return Controllers.Values.ToList();
     }
-    
+
     private static ControllerState mutedState = new ControllerState();
     private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
     {

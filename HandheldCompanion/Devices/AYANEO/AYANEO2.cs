@@ -1,6 +1,3 @@
-using HandheldCompanion.Inputs;
-using System.Collections.Generic;
-using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
 
 public class AYANEO2 : AYANEO.AYANEODeviceCEc

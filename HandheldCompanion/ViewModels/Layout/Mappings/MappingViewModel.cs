@@ -28,15 +28,15 @@ namespace HandheldCompanion.ViewModels
 
         public int ActionTypeIndex
         {
-            get => Action is not null ? (int) Action.actionType : 0;
+            get => Action is not null ? (int)Action.actionType : 0;
             set
             {
                 if (value != ActionTypeIndex)
                 {
                     if (Action is not null)
-                        Action.actionType = (ActionType) value;
+                        Action.actionType = (ActionType)value;
 
-                    ActionTypeChanged((ActionType) value);
+                    ActionTypeChanged((ActionType)value);
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace HandheldCompanion.ViewModels
 
         // Purely UI related properties, they should NOT update the Layout
         // Avoid unnecessary save/update calls
-        protected HashSet<string> ExcludedUpdateProperties = 
+        protected HashSet<string> ExcludedUpdateProperties =
         [
             nameof(Name),
             nameof(Glyph),
@@ -221,7 +221,7 @@ namespace HandheldCompanion.ViewModels
             Action = newAction;
 
             _updateToModel = updateToModel;
-            
+
             ActionTypeChanged(); // Includes full UI update
 
             // Reset update to model

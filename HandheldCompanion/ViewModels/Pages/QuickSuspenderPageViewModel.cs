@@ -3,7 +3,6 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 
 namespace HandheldCompanion.ViewModels
 {

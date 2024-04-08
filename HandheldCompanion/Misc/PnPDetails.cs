@@ -148,8 +148,8 @@ public class PnPDetails
     public bool InstallCustomDriver(string driverName, bool basedevice = true)
     {
         PnPDevice device;
-        
-        switch(basedevice)
+
+        switch (basedevice)
         {
             case true:
                 device = GetBasePnPDevice();

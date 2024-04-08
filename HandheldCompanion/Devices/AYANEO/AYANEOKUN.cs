@@ -36,7 +36,7 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
 
     protected override byte[] MapColorValues(int zone, Color color)
     {
-        switch(zone)
+        switch (zone)
         {
             case 1:
                 return [color.G, color.R, color.B];
