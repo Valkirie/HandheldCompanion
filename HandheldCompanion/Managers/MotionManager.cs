@@ -1,21 +1,15 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using Microsoft.WindowsAPICodePack.Sensors;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Windows;
 using static HandheldCompanion.Utils.DeviceUtils;
-using static JSL;
 using SensorState = HandheldCompanion.Inputs.GyroState.SensorState;
 
 namespace HandheldCompanion.Managers
@@ -58,7 +52,7 @@ namespace HandheldCompanion.Managers
         {
             SetupMotion(controllerState, gamepadMotion, delta);
             ProcessMotion(controllerState, gamepadMotion, delta);
-            
+
             if (controllerState.ButtonState.Buttons.Intersect(resetFlags).Count() == 4)
                 gamepadMotion.ResetMotion();
         }
@@ -85,7 +79,7 @@ namespace HandheldCompanion.Managers
             if (steeringAxis == SteeringAxis.Auto)
             {
                 SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
-                switch(sensorSelection)
+                switch (sensorSelection)
                 {
                     case SensorFamily.Windows:
                     case SensorFamily.SerialUSBIMU:

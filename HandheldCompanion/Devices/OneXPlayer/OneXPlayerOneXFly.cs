@@ -168,7 +168,7 @@ public class OneXPlayerOneXFly : IDevice
 
         // Define the HID message for setting brightness.
         byte[] msg = { 0x00, 0x07, 0xFF, 0xFD, 0x01, 0x05, (byte)brightness };
-            
+
         // Write the HID message to set the LED brightness.
         hidDevice.Write(msg);
 

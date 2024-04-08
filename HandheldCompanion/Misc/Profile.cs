@@ -94,7 +94,7 @@ public partial class Profile : ICloneable, IComparable
     // power & graphics
     public Guid PowerProfile { get; set; } = new();
     public int FramerateValue { get; set; } = 0; // default RTSS value
-    public bool GPUScaling { get; set;} = false;
+    public bool GPUScaling { get; set; } = false;
     public int ScalingMode { get; set; } = 0; // default AMD value
     public bool RSREnabled { get; set; } = false;
     public int RSRSharpness { get; set; } = 20; // default AMD value
@@ -172,7 +172,7 @@ public partial class Profile : ICloneable, IComparable
 
         if (!Default)
             name = System.IO.Path.GetFileNameWithoutExtension(Executable);
-        
+
         // sub profile files will be of form "executable - #guid"
         if (IsSubProfile)
             name = $"{name} - {Guid}";

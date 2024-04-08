@@ -217,7 +217,7 @@ public static class ProfileManager
             return;
 
         // get index of currently applied profile
-        int currentIndex = subProfilesList.IndexOf(currentProfile);        
+        int currentIndex = subProfilesList.IndexOf(currentProfile);
         int newIndex = currentIndex;
 
         // previous? decrement, next? increment

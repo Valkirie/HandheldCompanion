@@ -5,7 +5,6 @@ using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace HandheldCompanion.Managers
 
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
-        
+
         static GPUManager()
         {
             // manage events

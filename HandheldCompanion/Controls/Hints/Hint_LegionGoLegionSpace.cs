@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

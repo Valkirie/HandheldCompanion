@@ -43,7 +43,7 @@ namespace HandheldCompanion.Managers
 
             foreach (PowerProfile devicePowerProfile in IDevice.GetCurrent().DevicePowerProfiles)
             {
-                if(!profiles.ContainsKey(devicePowerProfile.Guid))
+                if (!profiles.ContainsKey(devicePowerProfile.Guid))
                     UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
             }
 

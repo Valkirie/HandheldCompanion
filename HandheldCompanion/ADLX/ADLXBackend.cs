@@ -74,7 +74,7 @@ namespace HandheldCompanion.ADLX
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool CloseAdlx();
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetNumberOfDisplays(ref int displayNum);
-        
+
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern ADLX_RESULT GetDisplayName(int idx, StringBuilder dispName, int nameLength);
 

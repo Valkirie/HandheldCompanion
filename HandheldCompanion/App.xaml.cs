@@ -110,7 +110,7 @@ public partial class App : Application
     {
         var ex = default(Exception);
         ex = (Exception)e.Exception;
-        if(ex.InnerException != null)
+        if (ex.InnerException != null)
         {
             LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
         }

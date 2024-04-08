@@ -82,7 +82,7 @@ public partial class Layout : ICloneable, IDisposable
             new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
 
         deserialized.IsDefaultLayout = false; // Clone shouldn't be default layout in case it is true
-        
+
         return deserialized;
     }
 
@@ -106,7 +106,7 @@ public partial class Layout : ICloneable, IDisposable
 
     public void UpdateLayout(AxisLayoutFlags axis, IActions action)
     {
-        switch(axis)
+        switch (axis)
         {
             default:
                 AxisLayout[axis] = action;

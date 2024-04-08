@@ -3,7 +3,6 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Threading.Tasks;
@@ -206,10 +205,10 @@ public partial class ControllerPage : Page
                 {
                     default:
                     case ContentDialogResult.Primary:
-                            Toggle_ControllerManagement.IsOn = false;
+                        Toggle_ControllerManagement.IsOn = false;
                         break;
                     case ContentDialogResult.None:
-                            Toggle_ControllerManagement.IsOn = true;
+                        Toggle_ControllerManagement.IsOn = true;
                         break;
                 }
             }
@@ -287,7 +286,7 @@ public partial class ControllerPage : Page
             bool notmuted = !isHidden && hasVirtual && (!isSteam || (isSteam && !isMuted));
             HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
 
-            Hints.Visibility =  (HintsNoPhysicalConnected.Visibility == Visibility.Visible ||
+            Hints.Visibility = (HintsNoPhysicalConnected.Visibility == Visibility.Visible ||
                                 HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
                                 HintsNeptuneHidden.Visibility == Visibility.Visible ||
                                 HintsNotMuted.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;

@@ -153,13 +153,13 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.Wheel;
 
         // Legion Go - Quiet
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc) 
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
         {
             Default = true,
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterBattery,
             CPUBoostLevel = CPUBoostLevel.Disabled,
-            OEMPowerMode = (int) LegionMode.Quiet,
+            OEMPowerMode = (int)LegionMode.Quiet,
             Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
@@ -202,7 +202,7 @@ public class LegionGo : IDevice
         ));
 
         // device specific layout
-        DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions {MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 };
+        DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 };
 
         DefaultLayout.ButtonLayout[ButtonFlags.RightPadClick] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton, HapticMode = HapticMode.Down, HapticStrength = HapticStrength.Low } };
         DefaultLayout.ButtonLayout[ButtonFlags.RightPadClickDown] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton, HapticMode = HapticMode.Down, HapticStrength = HapticStrength.High } };

@@ -4,7 +4,6 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
@@ -12,9 +11,9 @@ using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Events;
 using static HandheldCompanion.Managers.InputsHotkey;
+using Application = System.Windows.Application;
 using ButtonState = HandheldCompanion.Inputs.ButtonState;
 using Timer = System.Timers.Timer;
-using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers;
 
@@ -200,7 +199,7 @@ public static class InputsManager
                             {
                                 if (IsKeyUp)
                                 {
-                                    switch(hotkey.hotkeyType)
+                                    switch (hotkey.hotkeyType)
                                     {
                                         // we should always allow custom hotkeys (keyboard keys) to be released
                                         case InputsHotkeyType.Custom:
@@ -691,7 +690,7 @@ public static class InputsManager
 
         // the below logic is here to make sure every KeyDown has an equivalent KeyUp
         List<OutputKey> missingOutputs = new List<OutputKey>();
-        foreach(OutputKey key in inputsChord.OutputKeys.Where(k => k.IsKeyDown))
+        foreach (OutputKey key in inputsChord.OutputKeys.Where(k => k.IsKeyDown))
         {
             bool hasUp = inputsChord.OutputKeys.Any(k => k.KeyValue == key.KeyValue && k.IsKeyUp);
             if (!hasUp)

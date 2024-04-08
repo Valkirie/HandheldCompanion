@@ -45,7 +45,7 @@ namespace HandheldCompanion.Views.Pages
             SetControlEnabledAndVisible(LEDWheel, LEDLevel.Wheel);
             SetControlEnabledAndVisible(LEDGradient, LEDLevel.Gradient);
             SetControlEnabledAndVisible(LEDAmbilight, LEDLevel.Ambilight);
-            
+
         }
 
         public DevicePage(string? Tag) : this()
@@ -349,10 +349,10 @@ namespace HandheldCompanion.Views.Pages
 
             if (!IsLoaded)
                 return;
-            
+
             SettingsManager.SetProperty("LEDMainColor", prevMainColor.ToString());
         }
-        
+
         private void SecondColorPicker_ColorChanged(object sender, RoutedEventArgs e)
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
@@ -452,7 +452,7 @@ namespace HandheldCompanion.Views.Pages
             // update dependencies
             SensorFamily sensorFamily = (SensorFamily)cB_SensorSelection.SelectedIndex;
 
-            switch(sensorFamily)
+            switch (sensorFamily)
             {
                 case SensorFamily.Windows:
                 case SensorFamily.SerialUSBIMU:
@@ -522,7 +522,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetStickCustomDeadzone(LegionGo.LeftJoyconIndex, (int) value - 1);
+            SapientiaUsb.SetStickCustomDeadzone(LegionGo.LeftJoyconIndex, (int)value - 1);
         }
 
         private void SliderLeftAutoSleepTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

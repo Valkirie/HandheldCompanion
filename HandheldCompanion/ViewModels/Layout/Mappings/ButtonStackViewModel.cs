@@ -55,7 +55,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             ButtonMappings.Clear();
-            
+
             base.Dispose();
         }
 
@@ -105,7 +105,7 @@ namespace HandheldCompanion.ViewModels
                     // Model update should not go through as on update the entire stack is being recreated
                     // If updateToModel is true, ButtonMappings will end up empty 
                     //      => UpdateFromMapping() => UpdateMapping(layout) => UpdateFromMapping()
-                    newMapping.SetAction(action, false); 
+                    newMapping.SetAction(action, false);
                 }
 
                 ButtonMappings.ReplaceWith(newMappings);

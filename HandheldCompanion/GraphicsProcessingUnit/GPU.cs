@@ -2,7 +2,6 @@
 using SharpDX.Direct3D9;
 using System;
 using System.Management;
-using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using Timer = System.Timers.Timer;

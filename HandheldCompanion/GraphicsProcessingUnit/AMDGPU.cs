@@ -3,7 +3,6 @@ using HandheldCompanion.Managers;
 using SharpDX.Direct3D9;
 using System;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.ADLX.ADLXBackend;
@@ -29,7 +28,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             return Execute(ADLXBackend.HasRSRSupport, false);
         }
-        
+
         public override bool HasIntegerScalingSupport()
         {
             if (!IsInitialized)

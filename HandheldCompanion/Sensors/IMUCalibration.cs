@@ -20,7 +20,7 @@ namespace HandheldCompanion.Sensors
 
         public IMUCalibration()
         { }
-        
+
         static IMUCalibration()
         {
             // initialiaze path

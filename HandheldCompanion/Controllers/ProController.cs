@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using System.Collections.Generic;
 using static JSL;
 
 namespace HandheldCompanion.Controllers;

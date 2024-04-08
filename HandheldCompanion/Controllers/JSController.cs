@@ -1,12 +1,9 @@
-﻿using HandheldCompanion.Helpers;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Threading.Tasks;
-using System.Windows;
 using static JSL;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Controllers;
 
@@ -121,7 +118,7 @@ public class JSController : IController
         // store motion
         Inputs.GyroState.SetGyroscope(iMU_STATE.gyroX, iMU_STATE.gyroY, iMU_STATE.gyroZ);
         Inputs.GyroState.SetAccelerometer(iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ);
-        
+
         // process motion
         gamepadMotion.ProcessMotion(iMU_STATE.gyroX, iMU_STATE.gyroY, iMU_STATE.gyroZ, iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ, delta);
     }

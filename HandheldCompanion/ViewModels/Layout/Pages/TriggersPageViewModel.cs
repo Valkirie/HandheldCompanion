@@ -46,8 +46,8 @@ namespace HandheldCompanion.ViewModels
 
         public TriggersPageViewModel()
         {
-            foreach (var flag in _leftTrigger) 
-            { 
+            foreach (var flag in _leftTrigger)
+            {
                 LeftTriggerMappings.Add(new ButtonStackViewModel(flag));
             }
 

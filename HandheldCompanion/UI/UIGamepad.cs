@@ -182,7 +182,7 @@ namespace HandheldCompanion.Managers
                     case "SettingsMode0":
                     case "SettingsMode1":
 
-                        // quicktools
+                    // quicktools
                     case "quickhome":
                     case "quicksettings":
                     case "quickdevice":
@@ -343,7 +343,7 @@ namespace HandheldCompanion.Managers
 
             return null;
         }
-        
+
         // declare a DateTime variable to store the last time the function was called
         private DateTime lastCallTime;
 

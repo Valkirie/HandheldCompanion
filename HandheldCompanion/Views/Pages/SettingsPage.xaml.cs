@@ -1,24 +1,17 @@
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using iNKORE.UI.WPF.Modern;
-using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Helpers;
 using iNKORE.UI.WPF.Modern.Helpers.Styles;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using static HandheldCompanion.Managers.UpdateManager;
-using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -349,7 +342,7 @@ public partial class SettingsPage : Page
         if (culture.Name == CultureInfo.CurrentCulture.Name)
             return;
 
-        _= new Dialog(MainWindow.GetCurrent())
+        _ = new Dialog(MainWindow.GetCurrent())
         {
             Title = Properties.Resources.SettingsPage_AppLanguageWarning,
             Content = Properties.Resources.SettingsPage_AppLanguageWarningDesc,

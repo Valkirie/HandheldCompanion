@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Views;
 using System;
 using System.Diagnostics;
 using System.Timers;

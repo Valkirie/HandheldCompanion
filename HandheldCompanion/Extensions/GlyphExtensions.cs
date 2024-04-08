@@ -15,10 +15,10 @@ namespace HandheldCompanion.Extensions
                     return "\uF119";
                 case MotionInput.WorldSpace:
                     return "\uE714";
-                    /*
-                case MotionInput.AutoRollYawSwap:
-                    return "\uE7F8";
-                    */
+                /*
+            case MotionInput.AutoRollYawSwap:
+                return "\uE7F8";
+                */
                 case MotionInput.JoystickSteering:
                     return "\uEC47";
             }

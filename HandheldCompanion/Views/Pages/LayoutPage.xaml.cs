@@ -1,7 +1,5 @@
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
-using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -82,7 +80,7 @@ public partial class LayoutPage : Page
         };
 
         // TODO: Temporary until conversion to MVVM
-        foreach(var template in LayoutManager.Templates)
+        foreach (var template in LayoutManager.Templates)
         {
             LayoutManager_Updated(template);
         }

@@ -225,7 +225,7 @@ public class RTSS : IPlatform
                 // force "Show On-Screen Display" to On
                 SetFlags(~RTSSHOOKSFLAG_OSD_VISIBLE, RTSSHOOKSFLAG_OSD_VISIBLE);
             }
-            catch(DllNotFoundException)
+            catch (DllNotFoundException)
             { }
 
             // force "On-Screen Display Support" to On

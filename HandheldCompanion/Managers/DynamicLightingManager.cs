@@ -1,7 +1,6 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Views;
 using SharpDX;
 using SharpDX.Direct3D9;
 using System;
@@ -77,7 +76,7 @@ public static class DynamicLightingManager
             return;
 
         StopAmbilight();
-        
+
         ReleaseDirect3DDevice();
 
         IsInitialized = false;
@@ -344,7 +343,7 @@ public static class DynamicLightingManager
             }
         }
 
-        foreach(Color color in colorList)
+        foreach (Color color in colorList)
         {
             squareRedSum += color.R;
             squareGreenSum += color.G;

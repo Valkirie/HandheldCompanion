@@ -136,7 +136,7 @@ namespace HandheldCompanion.Platforms
 
         private void HandleCPU_Power(ISensor sensor)
         {
-            switch(sensor.Name)
+            switch (sensor.Name)
             {
                 case "Package":
                 case "CPU Package":

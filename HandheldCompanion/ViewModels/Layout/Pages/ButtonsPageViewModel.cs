@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Views;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +12,7 @@ namespace HandheldCompanion.ViewModels
         private static readonly List<ButtonFlags> _BUMPERS = [ButtonFlags.L1, ButtonFlags.R1];
         private static readonly List<ButtonFlags> _MENU = [ButtonFlags.Back, ButtonFlags.Start, ButtonFlags.Special, ButtonFlags.Special2];
         private static readonly List<ButtonFlags> _BACKGRIPS = [ButtonFlags.L4, ButtonFlags.L5, ButtonFlags.R4, ButtonFlags.R5];
-        
+
         private bool _isABXYEnabled;
         public bool IsABXYEnabled
         {

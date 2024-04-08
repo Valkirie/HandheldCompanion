@@ -1,17 +1,11 @@
 ﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.ServiceProcess;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
-using Task = System.Threading.Tasks.Task;
 using TaskScheduled = Microsoft.Win32.TaskScheduler.Task;
 
 namespace HandheldCompanion.Controls.Hints
@@ -63,7 +57,7 @@ namespace HandheldCompanion.Controls.Hints
             TaskScheduled task = GetTask();
             if (task is null)
                 return false;
-            
+
             return task.Enabled;
         }
 

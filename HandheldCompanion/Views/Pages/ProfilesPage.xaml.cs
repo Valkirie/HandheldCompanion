@@ -51,7 +51,7 @@ public partial class ProfilesPage : Page
     public ProfilesPage()
     {
         InitializeComponent();
-        
+
         // manage events
         ProfileManager.Deleted += ProfileDeleted;
         ProfileManager.Updated += ProfileUpdated;
@@ -1020,7 +1020,7 @@ public partial class ProfilesPage : Page
     {
         if (selectedProfile is null)
             return;
-        
+
         LogManager.LogInformation($"Submitting profile in ProfilesPage: {selectedProfile} - is Sub Profile? {selectedProfile.IsSubProfile}");
 
         switch (source)
@@ -1144,7 +1144,7 @@ public partial class ProfilesPage : Page
         {
             selectedProfile.ScalingMode = GPUScalingComboBox.SelectedIndex;
         }
-     
+
         UpdateProfile();
     }
 
