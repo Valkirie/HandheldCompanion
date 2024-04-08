@@ -6,10 +6,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickPerformance"
-    Title="{x:Static resx:Resources.QuickPerformancePage_Title}"
+    Title="{Binding PresetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
     Margin="15,0,0,0"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:PerformancePageViewModel}"
     d:DesignHeight="1500"
     d:DesignWidth="640"
     KeepAlive="True"
@@ -17,7 +19,7 @@
 
     <ui:SimpleStackPanel Margin="0,6,0,6">
 
-        <ui:SimpleStackPanel Name="PowerSettingsPanel" Spacing="6">
+        <ui:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
 
             <!--  Maximum CPU Count  -->
@@ -54,39 +56,38 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="CPUCoreToggle"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="CPUCoreToggle_Toggled" />
+                            IsOn="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </Grid>
 
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <DockPanel
                         d:Visibility="Visible"
                         ScrollViewer.PanningMode="HorizontalOnly"
-                        Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBox
                             Height="32"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             IsReadOnly="True"
-                            Text="{Binding Value, StringFormat={}{0:N0} Cores, ElementName=CPUCoreSlider, Mode=OneWay}" />
+                            Text="{Binding CPUCoreCount, StringFormat={}{0:N0} Cores, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                         <Slider
-                            x:Name="CPUCoreSlider"
                             Margin="8,0,0,0"
                             VerticalAlignment="Center"
                             AutoToolTipPrecision="0"
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
+                            Maximum="{Binding CPUCoreMaximum}"
                             Minimum="2"
                             Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            ValueChanged="CPUCoreSlider_ValueChanged" />
+                            Value="{Binding CPUCoreCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SimpleStackPanel>
             </Border>
@@ -97,11 +98,7 @@
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <ui:SimpleStackPanel
-                    Name="StackProfileTDP"
-                    IsEnabled="False"
-                    Spacing="6">
-
+                <ui:SimpleStackPanel IsEnabled="{Binding SupportsTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="9*" MinWidth="200" />
@@ -129,28 +126,26 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="TDPToggle"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="TDPToggle_Toggled" />
+                            IsOn="{Binding TDPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </Grid>
 
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <DockPanel
                         d:Visibility="Visible"
                         ScrollViewer.PanningMode="HorizontalOnly"
-                        Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBox
                             Height="32"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             IsReadOnly="True"
-                            Text="{Binding Value, StringFormat={}{0:N0} W, ElementName=TDPSlider, Mode=OneWay}" />
+                            Text="{Binding TDPOverrideValue, StringFormat={}{0:N0} W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                         <Slider
-                            x:Name="TDPSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -158,12 +153,14 @@
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="5"
+                            Maximum="{Binding TDPMaximum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Minimum="{Binding TDPMinimum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             SmallChange="1"
                             Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            ValueChanged="TDPSlider_ValueChanged" />
+                            Value="{Binding TDPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SimpleStackPanel>
             </Border>
@@ -174,11 +171,7 @@
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <ui:SimpleStackPanel
-                    Name="StackProfileAutoTDP"
-                    IsEnabled="False"
-                    Spacing="6">
-
+                <ui:SimpleStackPanel IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="9*" MinWidth="200" />
@@ -205,25 +198,23 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="AutoTDPToggle"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="AutoTDPToggle_Toggled" />
+                            IsOn="{Binding AutoTDPEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </Grid>
 
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBox
                             Height="32"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             IsReadOnly="True"
-                            Text="{Binding Value, StringFormat={}{0:N0} FPS, ElementName=AutoTDPSlider, Mode=OneWay}" />
+                            Text="{Binding AutoTDPRequestedFPS, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                         <Slider
-                            x:Name="AutoTDPSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -231,15 +222,14 @@
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="10"
-                            Maximum="60"
+                            Maximum="{Binding AutoTDPMaximum, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Minimum="20"
                             SmallChange="1"
                             Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            ValueChanged="AutoTDPRequestedFPSSlider_ValueChanged"
-                            Value="30" />
+                            Value="{Binding AutoTDPRequestedFPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SimpleStackPanel>
             </Border>
@@ -250,7 +240,7 @@
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <ui:SimpleStackPanel Name="StackProfileEPP" Spacing="6">
+                <ui:SimpleStackPanel Spacing="6">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="9*" MinWidth="200" />
@@ -277,22 +267,20 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="EPPToggle"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="EPPToggle_Toggled" />
+                            IsOn="{Binding EPPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </Grid>
 
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ui:SimpleStackPanel
                             Margin="0,0,0,0"
                             VerticalAlignment="Center"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider
-                                x:Name="EPPSlider"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
                                 AutoToolTipPrecision="0"
@@ -306,7 +294,7 @@
                                 TickFrequency="10"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                ValueChanged="EPPSlider_ValueChanged" />
+                                Value="{Binding EPPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Grid Name="EPPGrid">
                                 <TextBlock
@@ -331,7 +319,7 @@
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <ui:SimpleStackPanel Name="StackProfileCPUClock" Spacing="6">
+                <ui:SimpleStackPanel Spacing="6">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="9*" MinWidth="200" />
@@ -359,25 +347,23 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="CPUToggle"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="CPUToggle_Toggled" />
+                            IsOn="{Binding CPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </Grid>
 
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=CPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding ElementName=CPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBox
                             Height="32"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             IsReadOnly="True"
-                            Text="{Binding Value, StringFormat={}{0:N0} Mhz, ElementName=CPUSlider, Mode=OneWay}" />
+                            Text="{Binding CPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                         <Slider
-                            x:Name="CPUSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -385,12 +371,14 @@
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="500"
+                            Maximum="{Binding CPUFreqMaximum}"
+                            Minimum="{Binding CPUFreqMinimum}"
                             SmallChange="100"
                             Style="{DynamicResource SliderStyle1}"
                             TickFrequency="100"
                             TickPlacement="BottomRight"
                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            ValueChanged="CPUSlider_ValueChanged" />
+                            Value="{Binding CPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SimpleStackPanel>
             </Border>
@@ -401,10 +389,7 @@
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <ui:SimpleStackPanel
-                    Name="StackProfileGPUClock"
-                    IsEnabled="False"
-                    Spacing="6">
+                <ui:SimpleStackPanel IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="9*" MinWidth="200" />
@@ -432,25 +417,23 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="GPUToggle"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="GPUToggle_Toggled" />
+                            IsOn="{Binding GPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </Grid>
 
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBox
                             Height="32"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             IsReadOnly="True"
-                            Text="{Binding Value, StringFormat={}{0:N0} Mhz, ElementName=GPUSlider, Mode=OneWay}" />
+                            Text="{Binding GPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                         <Slider
-                            x:Name="GPUSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -458,19 +441,20 @@
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="500"
+                            Maximum="{Binding GPUFreqMaximum}"
+                            Minimum="{Binding GPUFreqMinimum}"
                             SmallChange="100"
                             Style="{DynamicResource SliderStyle1}"
                             TickFrequency="100"
                             TickPlacement="BottomRight"
                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            ValueChanged="GPUSlider_ValueChanged" />
+                            Value="{Binding GPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SimpleStackPanel>
             </Border>
 
             <!--  CPU Boost  -->
             <Border
-                Name="StackProfileCPUBoost"
                 Padding="15,12,12,12"
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -502,11 +486,9 @@
 
                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                         <ComboBox
-                            Name="CPUBoostLevel"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            SelectedIndex="0"
-                            SelectionChanged="CPUBoostLevel_SelectionChanged">
+                            SelectedIndex="{Binding CPUBoostLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="Disabled" />
                             <ComboBoxItem Content="Enabled" />
                             <ComboBoxItem Content="Agressive" />
@@ -519,7 +501,6 @@
 
             <!--  Power mode  -->
             <Border
-                Name="StackProfilePowerMode"
                 Padding="15,12,12,12"
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -552,11 +533,9 @@
 
                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                         <ComboBox
-                            Name="PowerMode"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            SelectedIndex="0"
-                            SelectionChanged="PowerMode_SelectionChanged">
+                            SelectedIndex="{Binding OSPowerMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Name="PowerModeEfficiency" Content="{x:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}" />
                             <ComboBoxItem Name="PowerModeBalanced" Content="{x:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}" />
                             <ComboBoxItem Name="PowerModePerformance" Content="{x:Static resx:Resources.QuickPerformancePage_PowerModePerformance}" />
@@ -599,13 +578,11 @@
 
                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                         <ComboBox
-                            Name="FanMode"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            SelectedIndex="0"
-                            SelectionChanged="FanMode_SelectionChanged">
-                            <ComboBoxItem Name="FanModeHardware" Content="Hardware" />
-                            <ComboBoxItem Name="FanModeSoftware" Content="Software" />
+                            SelectedIndex="{Binding FanMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Hardware" />
+                            <ComboBoxItem Content="Software" IsEnabled="{Binding SupportsSoftwareFanMode}" />
                         </ComboBox>
                     </DockPanel>
                 </Grid>
@@ -614,10 +591,10 @@
             <Border Padding="0,12,0,12">
                 <Grid>
                     <Button
-                        Name="Button_PowerSettings_Delete"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        Click="Button_PowerSettings_Delete_Click"
+                        Command="{Binding DeletePresetCommand}"
+                        IsEnabled="{Binding CanDeletePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{DynamicResource AccentButtonStyle}">
                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_DeletePowerProfileButton}" />
                     </Button>

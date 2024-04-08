@@ -164,52 +164,52 @@ public class InputsHotkey
         // User customizable hotkeys
         {
             50,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2780", "shortcutCustom0", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2780", "shortcutCustom0", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             51,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2781", "shortcutCustom1", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2781", "shortcutCustom1", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             52,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2782", "shortcutCustom2", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2782", "shortcutCustom2", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             53,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2783", "shortcutCustom3", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2783", "shortcutCustom3", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             54,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2784", "shortcutCustom4", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2784", "shortcutCustom4", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             55,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2785", "shortcutCustom5", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2785", "shortcutCustom5", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             56,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2786", "shortcutCustom6", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2786", "shortcutCustom6", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             57,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2787", "shortcutCustom7", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2787", "shortcutCustom7", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             58,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2788", "shortcutCustom8", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2788", "shortcutCustom8", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
         {
             59,
-            new InputsHotkey(InputsHotkeyType.Custom, "\u2789", "shortcutCustom9", "Segoe UI Symbol", 20, false, true,
+            new InputsHotkey(InputsHotkeyType.Custom, "\u2789", "shortcutCustom9", "Segoe UI Symbol", 20, true, true,
                 null, string.Empty)
         },
 
