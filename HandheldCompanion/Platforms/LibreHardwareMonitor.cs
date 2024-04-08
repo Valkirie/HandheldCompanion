@@ -136,10 +136,13 @@ namespace HandheldCompanion.Platforms
 
         private void HandleCPU_Power(ISensor sensor)
         {
-            if (sensor.Name == "Package")
+            switch (sensor.Name)
             {
-                CPUPower = (float)sensor.Value;
-                CPUPowerChanged?.Invoke(CPUPower);
+                case "Package":
+                case "CPU Package":
+                    CPUPower = (float)sensor.Value;
+                    CPUPowerChanged?.Invoke(CPUPower);
+                    break;
             }
         }
 

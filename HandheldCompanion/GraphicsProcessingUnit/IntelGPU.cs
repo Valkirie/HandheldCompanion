@@ -110,11 +110,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return (float)TelemetryData.GpuCurrentClockFrequencyValue;
         }
 
-        public override float GetClock()
-        {
-            return (float)TelemetryData.GpuCurrentClockFrequencyValue;
-        }
-
         public override float GetLoad()
         {
             return (float)TelemetryData.GlobalActivityValue;

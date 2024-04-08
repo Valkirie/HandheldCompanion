@@ -193,11 +193,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return (float)TelemetryData.gpuClockSpeedValue;
         }
 
-        public override float GetClock()
-        {
-            return (float)TelemetryData.gpuClockSpeedValue;
-        }
-
         public override float GetLoad()
         {
             return (float)TelemetryData.gpuUsageValue;

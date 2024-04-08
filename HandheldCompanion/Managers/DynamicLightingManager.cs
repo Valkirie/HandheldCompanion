@@ -1,5 +1,6 @@
+using HandheldCompanion.Devices;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Views;
 using SharpDX;
 using SharpDX.Direct3D9;
 using System;
@@ -48,8 +49,8 @@ public static class DynamicLightingManager
         rightLedTracker = new ColorTracker();
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
-        MainWindow.CurrentDevice.PowerStatusChanged += CurrentDevice_PowerStatusChanged;
+        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        IDevice.GetCurrent().PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
         ambilightThread = new Thread(ambilightThreadLoop);
         ambilightThread.IsBackground = true;
@@ -75,7 +76,7 @@ public static class DynamicLightingManager
             return;
 
         StopAmbilight();
-        
+
         ReleaseDirect3DDevice();
 
         IsInitialized = false;
@@ -83,7 +84,7 @@ public static class DynamicLightingManager
         LogManager.LogInformation("{0} has stopped", "DynamicLightingManager");
     }
 
-    private static void SystemManager_DisplaySettingsChanged(Desktop.ScreenResolution resolution)
+    private static void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // Update the screen width and height values when display changes
         // Get the primary screen dimensions
@@ -176,7 +177,7 @@ public static class DynamicLightingManager
     private static void UpdateLED()
     {
         bool LEDSettingsEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
-        MainWindow.CurrentDevice.SetLedStatus(LEDSettingsEnabled);
+        IDevice.GetCurrent().SetLedStatus(LEDSettingsEnabled);
 
         if (LEDSettingsEnabled)
         {
@@ -185,7 +186,7 @@ public static class DynamicLightingManager
             int LEDSpeed = SettingsManager.GetInt("LEDSpeed");
 
             // Set brightness and color based on settings
-            MainWindow.CurrentDevice.SetLedBrightness(LEDBrightness);
+            IDevice.GetCurrent().SetLedBrightness(LEDBrightness);
 
             // Get colors
             Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
@@ -200,7 +201,7 @@ public static class DynamicLightingManager
                     {
                         StopAmbilight();
 
-                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, useSecondColor ? LEDSecondColor : LEDMainColor, LEDSettingsLevel, LEDSpeed);
+                        IDevice.GetCurrent().SetLedColor(LEDMainColor, useSecondColor ? LEDSecondColor : LEDMainColor, LEDSettingsLevel, LEDSpeed);
                     }
                     break;
 
@@ -210,7 +211,7 @@ public static class DynamicLightingManager
                     {
                         StopAmbilight();
 
-                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel, LEDSpeed);
+                        IDevice.GetCurrent().SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel, LEDSpeed);
                     }
                     break;
 
@@ -222,8 +223,8 @@ public static class DynamicLightingManager
                             StartAmbilight();
 
                             // Provide LEDs with initial brightness
-                            MainWindow.CurrentDevice.SetLedBrightness(100);
-                            MainWindow.CurrentDevice.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+                            IDevice.GetCurrent().SetLedBrightness(100);
+                            IDevice.GetCurrent().SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
                         }
 
                         ambilightThreadDelay = (int)((double)defaultThreadDelay / 100.0d * LEDSpeed);
@@ -236,8 +237,8 @@ public static class DynamicLightingManager
             StopAmbilight();
 
             // Set both brightness to 0 and color to black
-            MainWindow.CurrentDevice.SetLedBrightness(0);
-            MainWindow.CurrentDevice.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+            IDevice.GetCurrent().SetLedBrightness(0);
+            IDevice.GetCurrent().SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
         }
     }
 
@@ -276,7 +277,7 @@ public static class DynamicLightingManager
                 if (averageColorLeft != previousColorLeft || averageColorRight != previousColorRight)
                 {
                     // Change LED colors of the device
-                    MainWindow.CurrentDevice.SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);
+                    IDevice.GetCurrent().SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);
 
                     // Update the previous colors for next time
                     previousColorLeft = averageColorLeft;
@@ -342,7 +343,7 @@ public static class DynamicLightingManager
             }
         }
 
-        foreach(Color color in colorList)
+        foreach (Color color in colorList)
         {
             squareRedSum += color.R;
             squareGreenSum += color.G;
