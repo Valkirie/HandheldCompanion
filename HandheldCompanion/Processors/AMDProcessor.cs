@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Processors.AMD;
-using HandheldCompanion.Views;
 using System;
 using System.Threading;
 using System.Timers;
@@ -174,7 +173,7 @@ public class AMDProcessor : Processor
     {
         if (Monitor.TryEnter(IsBusy))
         {
-            switch(family)
+            switch (family)
             {
                 case RyzenFamily.FAM_VANGOGH:
                     {
@@ -207,7 +206,7 @@ public class AMDProcessor : Processor
                         // you can't restore default frequency on AMD GPUs
                         if (clock == 12750)
                             return;
-                        
+
                         int error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
 
                         /*
@@ -230,5 +229,10 @@ public class AMDProcessor : Processor
 
             Monitor.Exit(IsBusy);
         }
+    }
+
+    public void SetCoall(uint value)
+    {
+        RyzenAdj.set_coall(ry, value);
     }
 }
