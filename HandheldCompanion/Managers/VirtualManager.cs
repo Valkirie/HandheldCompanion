@@ -6,7 +6,9 @@ using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using static HandheldCompanion.Managers.ControllerManager;
 
 namespace HandheldCompanion.Managers
 {
@@ -144,11 +146,14 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+        private static async void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             // SetControllerMode takes care of ignoring identical mode switching
             if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
                 return;
+
+            while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
+                await Task.Delay(1000);
 
             switch (profile.HID)
             {
@@ -161,8 +166,11 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void ProfileManager_Discarded(Profile profile)
+        private static async void ProfileManager_Discarded(Profile profile)
         {
+            while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
+                await Task.Delay(1000);
+
             // restore default HID mode
             if (profile.HID != HIDmode.NotSelected)
                 SetControllerMode(defaultHIDmode);
