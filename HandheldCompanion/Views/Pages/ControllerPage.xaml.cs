@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static HandheldCompanion.Managers.ControllerManager;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -30,7 +31,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        ControllerManager.Working += ControllerManager_Working;
+        ControllerManager.StatusChanged += ControllerManager_Working;
         ProfileManager.Applied += ProfileManager_Applied;
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
@@ -161,22 +162,22 @@ public partial class ControllerPage : Page
         ControllerRefresh();
     }
 
-    private void ControllerManager_Working(int status)
+    private void ControllerManager_Working(ControllerManagerStatus status)
     {
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(async () =>
         {
-            // status: 0:wip, 1:sucess, 2:failed
             switch (status)
             {
-                case 0:
+                case ControllerManagerStatus.Busy:
                     ControllerLoading.Visibility = Visibility.Visible;
                     VirtualDevices.IsEnabled = false;
                     PhysicalDevices.IsEnabled = false;
                     MainGrid.IsEnabled = false;
                     break;
-                case 1:
-                case 2:
+
+                case ControllerManagerStatus.Succeeded:
+                case ControllerManagerStatus.Failed:
                     ControllerLoading.Visibility = Visibility.Hidden;
                     VirtualDevices.IsEnabled = true;
                     PhysicalDevices.IsEnabled = true;
@@ -186,8 +187,7 @@ public partial class ControllerPage : Page
 
             ControllerRefresh();
 
-            // failed
-            if (status == 2)
+            if (status == ControllerManagerStatus.Failed)
             {
                 // todo: translate me
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())

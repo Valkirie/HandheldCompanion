@@ -39,10 +39,8 @@ public static class ControllerManager
     private static bool watchdogThreadRunning;
     private static bool ControllerManagement;
 
-    private static bool ControllerManagementSuccess = false;
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 3;
-    public static bool ControllerManagerIsBusy = false;
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -53,7 +51,18 @@ public static class ControllerManager
     private static bool ControllerMuted;
     private static SensorFamily sensorSelection = SensorFamily.None;
 
+    private static object targetLock = new object();
+    public static ControllerManagerStatus managerStatus = ControllerManagerStatus.Pending;
+
     public static bool IsInitialized;
+
+    public enum ControllerManagerStatus
+    {
+        Pending = 0,
+        Busy = 1,
+        Succeeded = 2,
+        Failed = 3,
+    }
 
     static ControllerManager()
     {
@@ -262,6 +271,8 @@ public static class ControllerManager
                                         watchdogThread.Join();
                                     watchdogThread = null;
                                 }
+
+                                UpdateStatus(ControllerManagerStatus.Failed);
                             }
                             break;
                     }
@@ -655,11 +666,8 @@ public static class ControllerManager
                             if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
                                 ResumeControllers();
 
-                            ControllerManagementSuccess = false;
+                            UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
-                            ControllerManagerIsBusy = false;
-
-                            Working?.Invoke(2);
 
                             // suspend watchdog
                             if (watchdogThread is not null)
@@ -673,9 +681,7 @@ public static class ControllerManager
                         }
                         else
                         {
-                            Working?.Invoke(0);
-                            ControllerManagementSuccess = false;
-                            ControllerManagerIsBusy = true;
+                            UpdateStatus(ControllerManagerStatus.Busy);
 
                             bool HasBusyWireless = false;
                             bool HasCyclingController = false;
@@ -728,13 +734,9 @@ public static class ControllerManager
                             ResumeControllers();
 
                         // give us one extra loop to make sure we're good
-                        if (!ControllerManagementSuccess)
-                        {
-                            ControllerManagementSuccess = true;
-                            Working?.Invoke(1);
-                        }
-                        else
-                            ControllerManagementAttempts = 0;
+                        if (managerStatus != ControllerManagerStatus.Succeeded)
+                            UpdateStatus(ControllerManagerStatus.Succeeded);
+                        ControllerManagementAttempts = 0;
                     }
                 }
             }
@@ -742,6 +744,12 @@ public static class ControllerManager
         Exit:
             Thread.Sleep(2000);
         }
+    }
+
+    private static void UpdateStatus(ControllerManagerStatus status)
+    {
+        managerStatus = status;
+        StatusChanged?.Invoke(status);
     }
 
     private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -875,8 +883,6 @@ public static class ControllerManager
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
-
-    private static object targetLock = new object();
 
     private static void ClearTargetController()
     {
@@ -1158,8 +1164,8 @@ public static class ControllerManager
     public static event InputsUpdatedEventHandler InputsUpdated;
     public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
-    public static event WorkingEventHandler Working;
-    public delegate void WorkingEventHandler(int status);
+    public static event StatusChangedEventHandler StatusChanged;
+    public delegate void StatusChangedEventHandler(ControllerManagerStatus status);
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
