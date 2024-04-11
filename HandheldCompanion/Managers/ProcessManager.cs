@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -88,7 +89,8 @@ public static class ProcessManager
 
     private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
     {
-        ForegroundCallback();
+        // avoid locking UI thread
+        new Thread(() => { ForegroundCallback(); }).Start();        
     }
 
     private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
