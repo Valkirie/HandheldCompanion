@@ -46,6 +46,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected CrossThreadLock updateLock = new();
         protected CrossThreadLock telemetryLock = new();
+        protected object functionLock = new();
         protected bool halting = false;
 
         protected T Execute<T>(Func<T> func, T defaultValue)
@@ -53,20 +54,23 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (halting)
                 return defaultValue;
 
-            try
+            lock (functionLock)
             {
-                Task<T> task = Task.Run(() =>
+                try
                 {
-                    return func();
-                });
+                    Task<T> task = Task.Run(() =>
+                    {
+                        return func();
+                    });
 
-                if (task.Wait(TimeSpan.FromSeconds(3)))
-                    return task.Result;
+                    if (task.Wait(TimeSpan.FromSeconds(3)))
+                        return task.Result;
+                }
+                catch (AccessViolationException)
+                { }
+                catch (Exception)
+                { }
             }
-            catch (AccessViolationException)
-            { }
-            catch (Exception)
-            { }
 
             return defaultValue;
         }
