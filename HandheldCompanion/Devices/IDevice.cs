@@ -64,7 +64,7 @@ public abstract class IDevice
     public delegate void PowerStatusChangedEventHandler(IDevice device);
 
     protected static OpenLibSys openLibSys;
-    protected LockObject updateLock = new();
+    protected object updateLock = new();
 
     private static IDevice device;
 
