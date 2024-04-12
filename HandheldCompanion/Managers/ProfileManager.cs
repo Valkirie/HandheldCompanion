@@ -627,7 +627,10 @@ public static class ProfileManager
             subProfiles.Remove(subProfile);
 
             // warn owner
-            bool isCurrent = subProfile.Guid == currentProfile.Guid;
+            bool isCurrent = false;
+
+            if (currentProfile != null)
+                isCurrent = subProfile.Guid == currentProfile.Guid;
 
             // raise event
             Discarded?.Invoke(subProfile);
