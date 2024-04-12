@@ -123,12 +123,5 @@ namespace HandheldCompanion.ADLX
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetScalingMode(int displayIdx, int mode);
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetAdlxTelemetry(int GPU, ref AdlxTelemetryData adlxTelemetryData);
-
-        internal static AdlxTelemetryData GetTelemetryData()
-        {
-            AdlxTelemetryData TelemetryData = new();
-            bool Result = GetAdlxTelemetry(0, ref TelemetryData);
-            return TelemetryData;
-        }
     }
 }

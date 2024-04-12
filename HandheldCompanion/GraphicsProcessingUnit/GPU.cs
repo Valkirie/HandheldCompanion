@@ -44,8 +44,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevImageSharpening = false;
         protected int prevImageSharpeningSharpness = -1;
 
-        protected CrossThreadLock updateLock = new();
-        protected CrossThreadLock telemetryLock = new();
+        protected object updateLock = new();
+        protected object telemetryLock = new();
         protected object functionLock = new();
         protected bool halting = false;
 
@@ -235,8 +235,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             UpdateTimer?.Dispose();
             TelemetryTimer?.Dispose();
-            updateLock?.Dispose();
-            telemetryLock?.Dispose();
+            updateLock = null;
+            telemetryLock = null;
 
             GC.SuppressFinalize(this);
         }

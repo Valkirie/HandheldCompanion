@@ -3,7 +3,7 @@ using HandheldCompanion.Managers;
 using SharpDX.Direct3D9;
 using System;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Timers;
 using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
@@ -20,6 +20,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private bool prevRSRSupport = false;
         private bool prevRSR = false;
         private int prevRSRSharpness = -1;
+
+        protected new AdlxTelemetryData TelemetryData = new();
 
         public bool HasRSRSupport()
         {
@@ -188,6 +190,18 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => ADLXBackend.SetScalingMode(displayIdx, mode), false);
         }
 
+        private AdlxTelemetryData GetTelemetry()
+        {
+            if (!IsInitialized)
+                return TelemetryData;
+
+            return Execute(() =>
+            {
+                ADLXBackend.GetAdlxTelemetry(deviceIdx, ref TelemetryData);
+                return TelemetryData;
+            }, TelemetryData);
+        }
+
         public override float GetClock()
         {
             return (float)TelemetryData.gpuClockSpeedValue;
@@ -212,8 +226,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             return (float)TelemetryData.gpuVramValue;
         }
-
-        protected AdlxTelemetryData TelemetryData = new();
 
         public AMDGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
@@ -271,10 +283,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (telemetryLock.TryEnter())
+            if (Monitor.TryEnter(telemetryLock))
             {
-                TelemetryData = GetTelemetryData();
-                telemetryLock.Exit();
+                try
+                {
+                    TelemetryData = GetTelemetry();
+                }
+                finally
+                {
+                    Monitor.Exit(telemetryLock);
+                }
             }
         }
 
@@ -291,108 +309,113 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             base.Stop();
         }
 
-        private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (updateLock.TryEnter())
+            if (Monitor.TryEnter(updateLock))
             {
-                bool GPUScaling = false;
-
                 try
                 {
-                    // check for GPU Scaling support
-                    // if yes, get GPU Scaling (bool)
-                    bool GPUScalingSupport = HasGPUScalingSupport();
-                    if (GPUScalingSupport)
-                        GPUScaling = GetGPUScaling();
+                    bool GPUScaling = false;
 
-                    // check for Scaling Mode support
-                    // if yes, get Scaling Mode (int)
-                    bool ScalingSupport = HasScalingModeSupport();
-                    int ScalingMode = 0;
-                    if (ScalingSupport)
-                        ScalingMode = GetScalingMode();
-
-                    if (GPUScalingSupport != prevGPUScalingSupport || GPUScaling != prevGPUScaling || ScalingMode != prevScalingMode)
+                    try
                     {
-                        // raise event
-                        base.OnGPUScalingChanged(GPUScalingSupport, GPUScaling, ScalingMode);
+                        // check for GPU Scaling support
+                        // if yes, get GPU Scaling (bool)
+                        bool GPUScalingSupport = HasGPUScalingSupport();
+                        if (GPUScalingSupport)
+                            GPUScaling = GetGPUScaling();
 
-                        prevGPUScaling = GPUScaling;
-                        prevScalingMode = ScalingMode;
-                        prevGPUScalingSupport = GPUScalingSupport;
+                        // check for Scaling Mode support
+                        // if yes, get Scaling Mode (int)
+                        bool ScalingSupport = HasScalingModeSupport();
+                        int ScalingMode = 0;
+                        if (ScalingSupport)
+                            ScalingMode = GetScalingMode();
+
+                        if (GPUScalingSupport != prevGPUScalingSupport || GPUScaling != prevGPUScaling || ScalingMode != prevScalingMode)
+                        {
+                            // raise event
+                            base.OnGPUScalingChanged(GPUScalingSupport, GPUScaling, ScalingMode);
+
+                            prevGPUScaling = GPUScaling;
+                            prevScalingMode = ScalingMode;
+                            prevGPUScalingSupport = GPUScalingSupport;
+                        }
                     }
-                }
-                catch { }
+                    catch { }
 
-                try
+                    try
+                    {
+                        // get rsr
+                        bool RSRSupport = false;
+                        bool RSR = false;
+                        int RSRSharpness = GetRSRSharpness();
+
+                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                        while (DateTime.Now < timeout && !RSRSupport)
+                        {
+                            RSRSupport = HasRSRSupport();
+                            Thread.Sleep(250);
+                        }
+                        RSR = GetRSR();
+
+                        if (RSRSupport != prevRSRSupport || RSR != prevRSR || RSRSharpness != prevRSRSharpness)
+                        {
+                            // raise event
+                            RSRStateChanged?.Invoke(RSRSupport, RSR, RSRSharpness);
+
+                            prevRSRSupport = RSRSupport;
+                            prevRSR = RSR;
+                            prevRSRSharpness = RSRSharpness;
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        // get gpu scaling and scaling mode
+                        bool IntegerScalingSupport = false;
+                        bool IntegerScaling = false;
+
+                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                        while (DateTime.Now < timeout && !IntegerScalingSupport)
+                        {
+                            IntegerScalingSupport = HasIntegerScalingSupport();
+                            Thread.Sleep(250);
+                        }
+                        IntegerScaling = GetIntegerScaling();
+
+                        if (IntegerScalingSupport != prevIntegerScalingSupport || IntegerScaling != prevIntegerScaling)
+                        {
+                            // raise event
+                            base.OnIntegerScalingChanged(IntegerScalingSupport, IntegerScaling);
+
+                            prevIntegerScalingSupport = IntegerScalingSupport;
+                            prevIntegerScaling = IntegerScaling;
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        bool ImageSharpening = GetImageSharpening();
+                        int ImageSharpeningSharpness = GetImageSharpeningSharpness();
+
+                        if (ImageSharpening != prevImageSharpening || ImageSharpeningSharpness != prevImageSharpeningSharpness)
+                        {
+                            // raise event
+                            base.OnImageSharpeningChanged(ImageSharpening, ImageSharpeningSharpness);
+
+                            prevImageSharpening = ImageSharpening;
+                            prevImageSharpeningSharpness = ImageSharpeningSharpness;
+                        }
+                    }
+                    catch { }
+                }
+                finally
                 {
-                    // get rsr
-                    bool RSRSupport = false;
-                    bool RSR = false;
-                    int RSRSharpness = GetRSRSharpness();
-
-                    DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-                    while (DateTime.Now < timeout && !RSRSupport)
-                    {
-                        RSRSupport = HasRSRSupport();
-                        await Task.Delay(250);
-                    }
-                    RSR = GetRSR();
-
-                    if (RSRSupport != prevRSRSupport || RSR != prevRSR || RSRSharpness != prevRSRSharpness)
-                    {
-                        // raise event
-                        RSRStateChanged?.Invoke(RSRSupport, RSR, RSRSharpness);
-
-                        prevRSRSupport = RSRSupport;
-                        prevRSR = RSR;
-                        prevRSRSharpness = RSRSharpness;
-                    }
+                    Monitor.Exit(updateLock);
                 }
-                catch { }
-
-                try
-                {
-                    // get gpu scaling and scaling mode
-                    bool IntegerScalingSupport = false;
-                    bool IntegerScaling = false;
-
-                    DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-                    while (DateTime.Now < timeout && !IntegerScalingSupport)
-                    {
-                        IntegerScalingSupport = HasIntegerScalingSupport();
-                        await Task.Delay(250);
-                    }
-                    IntegerScaling = GetIntegerScaling();
-
-                    if (IntegerScalingSupport != prevIntegerScalingSupport || IntegerScaling != prevIntegerScaling)
-                    {
-                        // raise event
-                        base.OnIntegerScalingChanged(IntegerScalingSupport, IntegerScaling);
-
-                        prevIntegerScalingSupport = IntegerScalingSupport;
-                        prevIntegerScaling = IntegerScaling;
-                    }
-                }
-                catch { }
-
-                try
-                {
-                    bool ImageSharpening = GetImageSharpening();
-                    int ImageSharpeningSharpness = GetImageSharpeningSharpness();
-
-                    if (ImageSharpening != prevImageSharpening || ImageSharpeningSharpness != prevImageSharpeningSharpness)
-                    {
-                        // raise event
-                        base.OnImageSharpeningChanged(ImageSharpening, ImageSharpeningSharpness);
-
-                        prevImageSharpening = ImageSharpening;
-                        prevImageSharpeningSharpness = ImageSharpeningSharpness;
-                    }
-                }
-                catch { }
-
-                updateLock.Exit();
             }
         }
     }

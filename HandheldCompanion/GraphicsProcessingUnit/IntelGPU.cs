@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.IGCL;
 using SharpDX.Direct3D9;
+using System.Threading;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
@@ -10,6 +11,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
     {
         #region events
         #endregion
+
+        protected new ctl_telemetry_data TelemetryData = new();
 
         public override bool HasIntegerScalingSupport()
         {
@@ -105,6 +108,17 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
         }
 
+        private ctl_telemetry_data GetTelemetry()
+        {
+            if (!IsInitialized)
+                return TelemetryData;
+
+            return Execute(() =>
+            {
+                return IGCLBackend.GetTelemetry(deviceIdx);
+            }, TelemetryData);
+        }
+
         public override float GetClock()
         {
             return (float)TelemetryData.GpuCurrentClockFrequencyValue;
@@ -125,8 +139,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return (float)TelemetryData.GpuCurrentTemperatureValue;
         }
 
-        protected ctl_telemetry_data TelemetryData = new();
-
         public IntelGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
             deviceIdx = GetDeviceIdx(adapterInformation.Details.Description);
@@ -142,10 +154,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (telemetryLock.TryEnter())
+            if (Monitor.TryEnter(telemetryLock))
             {
-                TelemetryData = GetTelemetry(deviceIdx);
-                telemetryLock.Exit();
+                try
+                {
+                    TelemetryData = GetTelemetry();
+                }
+                finally
+                {
+                    Monitor.Exit(telemetryLock);
+                }
             }
         }
 
