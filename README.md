@@ -21,7 +21,7 @@ A few examples of the most common use cases are:
 - You want to add universal motion controls (UMC) to any game.
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
 - You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
-- You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://yuzu-emu.org/) games with full motion controls through UDP motion control protocol.
+- You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://ryujinx.org/) games with full motion controls through UDP motion control protocol.
 
 [Youtube Channel](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 
