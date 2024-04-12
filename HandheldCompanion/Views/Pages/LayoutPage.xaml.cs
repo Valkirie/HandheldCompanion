@@ -8,6 +8,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +27,7 @@ public partial class LayoutPage : Page
     // Getter to update layout in ViewModels
     public Layout CurrentLayout => currentTemplate.Layout;
     public LayoutTemplate currentTemplate = new();
-    protected LockObject updateLock = new();
+    protected object updateLock = new();
 
     // page vars
     private Dictionary<string, (ILayoutPage, NavigationViewItem)> pages;
@@ -270,9 +271,9 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
-        using (new ScopedLock(updateLock))
+        lock (updateLock)
         {
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Invoke Layout Updated to trigger ViewModel updates

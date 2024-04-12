@@ -4,6 +4,7 @@ using LiveCharts;
 using LiveCharts.Defaults;
 using System;
 using System.Numerics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,7 +15,7 @@ namespace HandheldCompanion.Views.Pages.Profiles;
 /// </summary>
 public partial class SettingsMode1 : Page
 {
-    private LockObject updateLock = new();
+    private object updateLock = new();
 
     private readonly int SteeringArraySize = 30;
     private readonly ChartValues<ObservablePoint> SteeringLinearityPoints;
@@ -44,7 +45,7 @@ public partial class SettingsMode1 : Page
 
     public void SetProfile()
     {
-        using (new ScopedLock(updateLock))
+        lock (updateLock)
         {
             // UI thread (async)
             Application.Current.Dispatcher.Invoke(() =>
@@ -82,7 +83,8 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
@@ -94,7 +96,8 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         lvLineSeriesValues.Values = GeneratePoints(SliderPower.Value);
@@ -108,7 +111,8 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;

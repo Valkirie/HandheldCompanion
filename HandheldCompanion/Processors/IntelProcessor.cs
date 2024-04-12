@@ -43,7 +43,7 @@ public class IntelProcessor : Processor
 
     public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
     {
-        if (Monitor.TryEnter(IsBusy))
+        lock (updateLock)
         {
             var error = 0;
 
@@ -58,8 +58,6 @@ public class IntelProcessor : Processor
             }
 
             base.SetTDPLimit(type, limit, immediate, error);
-
-            Monitor.Exit(IsBusy);
         }
     }
 
@@ -70,13 +68,11 @@ public class IntelProcessor : Processor
 
     public override void SetGPUClock(double clock, int result)
     {
-        if (Monitor.TryEnter(IsBusy))
+        lock (updateLock)
         {
             var error = platform.set_gfx_clk((int)clock);
 
             base.SetGPUClock(clock, error);
-
-            Monitor.Exit(IsBusy);
         }
     }
 }

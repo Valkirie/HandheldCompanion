@@ -21,7 +21,7 @@ public class Processor
     protected readonly Timer updateTimer = new() { Interval = 3000, AutoReset = true };
 
     public bool CanChangeTDP, CanChangeGPU;
-    protected object IsBusy = new();
+    protected object updateLock = new();
     public bool IsInitialized;
 
     protected static string Name, ProcessorID;

@@ -215,7 +215,7 @@ public class RTSS : IPlatform
 
     private void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        if (Monitor.TryEnter(updateLock))
+        lock (updateLock)
         {
             if (GetTargetFPS() != RequestedFramerate)
                 SetTargetFPS(RequestedFramerate);
@@ -231,8 +231,6 @@ public class RTSS : IPlatform
             // force "On-Screen Display Support" to On
             if (GetEnableOSD() != true)
                 SetEnableOSD(true);
-
-            Monitor.Exit(updateLock);
         }
     }
 

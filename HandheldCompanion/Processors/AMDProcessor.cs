@@ -71,7 +71,7 @@ public class AMDProcessor : Processor
         if (ry == IntPtr.Zero)
             return;
 
-        if (Monitor.TryEnter(IsBusy))
+        lock (updateLock)
         {
             // 15W : 15000
             limit *= 1000;
@@ -92,14 +92,12 @@ public class AMDProcessor : Processor
             }
 
             base.SetTDPLimit(type, limit, immediate, error);
-
-            Monitor.Exit(IsBusy);
         }
     }
 
     public override void SetGPUClock(double clock, int result)
     {
-        if (Monitor.TryEnter(IsBusy))
+        lock (updateLock)
         {
             switch (family)
             {
@@ -154,8 +152,6 @@ public class AMDProcessor : Processor
                     }
                     break;
             }
-
-            Monitor.Exit(IsBusy);
         }
     }
 

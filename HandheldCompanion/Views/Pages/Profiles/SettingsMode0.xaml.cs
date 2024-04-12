@@ -5,6 +5,7 @@ using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -19,7 +20,7 @@ namespace HandheldCompanion.Views.Pages.Profiles;
 public partial class SettingsMode0 : Page
 {
     private Hotkey ProfilesPageHotkey;
-    private LockObject updateLock = new();
+    private object updateLock = new();
 
     public SettingsMode0()
     {
@@ -38,7 +39,7 @@ public partial class SettingsMode0 : Page
 
     public void SetProfile()
     {
-        using (new ScopedLock(updateLock))
+        lock (updateLock)
         {
             // UI thread (async)
             Application.Current.Dispatcher.Invoke(() =>
@@ -100,7 +101,8 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
@@ -112,7 +114,8 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
@@ -227,7 +230,8 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.AimingSightsMultiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
@@ -239,7 +243,8 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.FlickstickEnabled = Toggle_FlickStick.IsOn;
@@ -251,7 +256,8 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.FlickstickDuration = (float)tb_ProfileFlickDuration.Value / 1000;
@@ -263,7 +269,8 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (Monitor.IsEntered(updateLock))
             return;
 
         ProfilesPage.selectedProfile.FlickstickSensivity = (float)tb_ProfileStickSensitivity.Value;
