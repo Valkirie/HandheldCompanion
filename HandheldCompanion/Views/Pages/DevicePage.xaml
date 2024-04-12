@@ -139,7 +139,7 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             VerticalAlignment="Center"
-                            Maximum="64"
+                            Maximum="75"
                             SpinButtonPlacementMode="Inline"
                             ValueChanged="NumberBox_TDPMax_ValueChanged" />
                     </Grid>
