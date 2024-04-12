@@ -33,7 +33,9 @@ public partial class QuickProfilesPage : Page
     private ProcessEx currentProcess;
     private Profile selectedProfile;
 
-    private object updateLock = new();
+    private CrossThreadLock profileLock = new();
+    private CrossThreadLock foregroundLock = new();
+    private CrossThreadLock graphicLock = new();
 
     private Hotkey GyroHotkey = new(61);
     private Profile realProfile;
@@ -404,7 +406,7 @@ public partial class QuickProfilesPage : Page
                 return;
         }
 
-        if (Monitor.TryEnter(updateLock))
+        if (profileLock.TryEnter())
         {
             try
             {
@@ -519,7 +521,7 @@ public partial class QuickProfilesPage : Page
             }
             finally
             {
-                Monitor.Exit(updateLock);
+                profileLock.Exit();
             }
         }
     }
@@ -533,7 +535,7 @@ public partial class QuickProfilesPage : Page
 
     private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
     {
-        if (Monitor.TryEnter(updateLock))
+        if (foregroundLock.TryEnter())
         {
             try
             {
@@ -571,7 +573,7 @@ public partial class QuickProfilesPage : Page
             }
             finally
             {
-                Monitor.Exit(updateLock);
+                foregroundLock.Exit();
             }
         }
     }
@@ -585,7 +587,7 @@ public partial class QuickProfilesPage : Page
     private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
     {
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (foregroundLock.IsEntered())
             return;
 
         // update real profile
@@ -633,7 +635,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -649,7 +651,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         // try get current actions, if exists
@@ -710,7 +712,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -728,7 +730,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -746,7 +748,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
@@ -759,7 +761,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
@@ -808,7 +810,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -824,7 +826,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonSuperResolution, RSRToggle.IsOn);
@@ -840,7 +842,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         selectedProfile.RSRSharpness = (int)RSRSlider.Value;
@@ -853,7 +855,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonImageSharpening, RISToggle.IsOn);
@@ -869,7 +871,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         selectedProfile.RISSharpness = (int)RISSlider.Value;
@@ -882,21 +884,11 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
         UpdateProfile();
-    }
-
-    private void Button_PowerSettings_Create_Click(object sender, RoutedEventArgs e)
-    {
-        int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
-
-        string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
-        PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription);
-
-        PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
     }
 
     private void IntegerScalingToggle_Toggled(object sender, RoutedEventArgs e)
@@ -905,7 +897,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.IntegerScaling, IntegerScalingToggle.IsOn);
@@ -918,7 +910,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         int selectedIndex = GPUScalingComboBox.SelectedIndex;
@@ -941,49 +933,11 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.GPUScaling, GPUScalingToggle.IsOn);
         UpdateProfile();
-    }
-
-    private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (selectedProfile is null)
-            return;
-
-        // prevent update loop
-        if (Monitor.IsEntered(updateLock))
-            return;
-
-        // return if combobox selected item is null
-        if (cb_SubProfiles.SelectedIndex == -1)
-            return;
-
-        LogManager.LogInformation($"Subprofile changed in Quick Settings - ind: {cb_SubProfiles.SelectedIndex} - subprofile: {cb_SubProfiles.SelectedItem}");
-        selectedProfile = (Profile)cb_SubProfiles.SelectedItem;
-        UpdateProfile();
-    }
-
-    private void cB_Framerate_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (selectedProfile is null)
-            return;
-
-        // prevent update loop
-        if (Monitor.IsEntered(updateLock))
-            return;
-
-        // return if combobox selected item is null
-        if (cB_Framerate.SelectedIndex == -1)
-            return;
-
-        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
-        {
-            selectedProfile.FramerateValue = screenFramelimit.limit;
-            UpdateProfile();
-        }
     }
 
     private void IntegerScalingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -992,7 +946,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         var divider = 1;
@@ -1011,11 +965,59 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         selectedProfile.IntegerScalingType = (byte)IntegerScalingTypeComboBox.SelectedIndex;
         UpdateProfile();
+    }
+
+    private void Button_PowerSettings_Create_Click(object sender, RoutedEventArgs e)
+    {
+        int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
+
+        string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
+        PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription);
+
+        PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
+    }
+
+    private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        // return if combobox selected item is null
+        if (cb_SubProfiles.SelectedIndex == -1)
+            return;
+
+        LogManager.LogInformation($"Subprofile changed in Quick Settings - ind: {cb_SubProfiles.SelectedIndex} - subprofile: {cb_SubProfiles.SelectedItem}");
+        selectedProfile = (Profile)cb_SubProfiles.SelectedItem;
+        UpdateProfile();
+    }
+
+    private void cB_Framerate_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        // return if combobox selected item is null
+        if (cB_Framerate.SelectedIndex == -1)
+            return;
+
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        {
+            selectedProfile.FramerateValue = screenFramelimit.limit;
+            UpdateProfile();
+        }
     }
 
     private enum UpdateGraphicsSettingsSource
@@ -1028,7 +1030,7 @@ public partial class QuickProfilesPage : Page
 
     private void UpdateGraphicsSettings(UpdateGraphicsSettingsSource source, bool isEnabled)
     {
-        if (Monitor.TryEnter(updateLock))
+        if (graphicLock.TryEnter())
         {
             try
             {
@@ -1097,7 +1099,7 @@ public partial class QuickProfilesPage : Page
             }
             finally
             {
-                Monitor.Exit(updateLock);
+                graphicLock.Exit();
             }
         }
     }

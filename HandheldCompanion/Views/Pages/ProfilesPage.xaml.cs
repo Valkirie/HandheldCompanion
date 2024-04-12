@@ -40,7 +40,8 @@ public partial class ProfilesPage : Page
     private readonly SettingsMode0 page0 = new("SettingsMode0");
     private readonly SettingsMode1 page1 = new("SettingsMode1");
 
-    private object updateLock = new();
+    private CrossThreadLock profileLock = new();
+    private CrossThreadLock graphicLock = new();
 
     private const int UpdateInterval = 500;
     private static Timer UpdateTimer;
@@ -511,7 +512,7 @@ public partial class ProfilesPage : Page
         if (selectedProfile is null)
             return;
 
-        if (Monitor.TryEnter(updateLock))
+        if (profileLock.TryEnter())
         {
             try
             {
@@ -657,7 +658,7 @@ public partial class ProfilesPage : Page
             }
             finally
             {
-                Monitor.Exit(updateLock);
+                profileLock.Exit();
             }
         }
     }
@@ -723,7 +724,7 @@ public partial class ProfilesPage : Page
     private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
     {
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
@@ -739,7 +740,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;
@@ -765,7 +766,7 @@ public partial class ProfilesPage : Page
     private void Toggle_EnableProfile_Toggled(object sender, RoutedEventArgs e)
     {
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.Enabled = Toggle_EnableProfile.IsOn;
@@ -934,7 +935,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
@@ -947,7 +948,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.AccelerometerMultiplier = (float)tb_ProfileAcceleroValue.Value;
@@ -960,7 +961,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.SteeringAxis = (SteeringAxis)cB_GyroSteering.SelectedIndex;
@@ -970,7 +971,7 @@ public partial class ProfilesPage : Page
     private void cB_InvertHorizontal_Checked(object sender, RoutedEventArgs e)
     {
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.MotionInvertHorizontal = (bool)cB_InvertHorizontal.IsChecked;
@@ -980,7 +981,7 @@ public partial class ProfilesPage : Page
     private void cB_InvertVertical_Checked(object sender, RoutedEventArgs e)
     {
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
@@ -990,7 +991,7 @@ public partial class ProfilesPage : Page
     private void Toggle_ControllerLayout_Toggled(object sender, RoutedEventArgs e)
     {
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         // Layout settings
@@ -1039,7 +1040,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonSuperResolution, RSRToggle.IsOn);
@@ -1055,7 +1056,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         selectedProfile.RSRSharpness = (int)RSRSlider.Value;
@@ -1068,7 +1069,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonImageSharpening, RISToggle.IsOn);
@@ -1084,7 +1085,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         selectedProfile.RISSharpness = (int)RISSlider.Value;
@@ -1097,7 +1098,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.IntegerScaling, IntegerScalingToggle.IsOn);
@@ -1110,7 +1111,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         var divider = 1;
@@ -1129,7 +1130,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         int selectedIndex = GPUScalingComboBox.SelectedIndex;
@@ -1153,7 +1154,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
             return;
 
         UpdateGraphicsSettings(UpdateGraphicsSettingsSource.GPUScaling, GPUScalingToggle.IsOn);
@@ -1166,7 +1167,7 @@ public partial class ProfilesPage : Page
             return;
         
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         ComboBoxItem selectedEmulatedController = (ComboBoxItem)cB_EmulatedController.SelectedItem;
@@ -1186,7 +1187,7 @@ public partial class ProfilesPage : Page
             return;
         
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         LogManager.LogInformation($"Subprofile changed in ProfilesPage - ind: {cb_SubProfilePicker.SelectedIndex} - {cb_SubProfilePicker.SelectedItem}");
@@ -1299,7 +1300,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
@@ -1319,7 +1320,7 @@ public partial class ProfilesPage : Page
 
     private void UpdateGraphicsSettings(UpdateGraphicsSettingsSource source, bool isEnabled)
     {
-        if (Monitor.TryEnter(updateLock))
+        if (graphicLock.TryEnter())
         {
             try
             {
@@ -1388,7 +1389,7 @@ public partial class ProfilesPage : Page
             }
             finally
             {
-                Monitor.Exit(updateLock);
+                graphicLock.Exit();
             }
         }
     }
@@ -1399,7 +1400,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.FullScreenOptimization = UseFullscreenOptimizations.IsOn;
@@ -1412,7 +1413,7 @@ public partial class ProfilesPage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(updateLock))
+        if (profileLock.IsEntered())
             return;
 
         selectedProfile.HighDPIAware = UseHighDPIAwareness.IsOn;
