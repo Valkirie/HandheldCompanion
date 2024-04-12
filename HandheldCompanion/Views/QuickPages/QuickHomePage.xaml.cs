@@ -2,6 +2,7 @@
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -13,8 +14,8 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickHomePage : Page
 {
-    private LockObject brightnessLock = new();
-    private LockObject volumeLock = new();
+    private object brightnessLock = new();
+    private object volumeLock = new();
 
     public QuickHomePage(string Tag) : this()
     {
@@ -76,27 +77,37 @@ public partial class QuickHomePage : Page
 
     private void SystemManager_Initialized()
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        if (MultimediaManager.HasBrightnessSupport())
         {
-            if (MultimediaManager.HasBrightnessSupport())
+            lock (brightnessLock)
             {
-                SliderBrightness.IsEnabled = true;
-                SliderBrightness.Value = MultimediaManager.GetBrightness();
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SliderBrightness.IsEnabled = true;
+                    SliderBrightness.Value = MultimediaManager.GetBrightness();
+                });
             }
+        }
 
-            if (MultimediaManager.HasVolumeSupport())
+        if (MultimediaManager.HasVolumeSupport())
+        {
+            lock (volumeLock)
             {
-                SliderVolume.IsEnabled = true;
-                SliderVolume.Value = MultimediaManager.GetVolume();
-                UpdateVolumeIcon((float)SliderVolume.Value);
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SliderVolume.IsEnabled = true;
+                    SliderVolume.Value = MultimediaManager.GetVolume();
+                    UpdateVolumeIcon((float)SliderVolume.Value);
+                });
             }
-        });
+        }
     }
 
     private void SystemManager_BrightnessNotification(int brightness)
     {
-        using (new ScopedLock(brightnessLock))
+        lock(brightnessLock)
         {
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
@@ -108,7 +119,7 @@ public partial class QuickHomePage : Page
 
     private void SystemManager_VolumeNotification(float volume)
     {
-        using (new ScopedLock(volumeLock))
+        lock(volumeLock)
         {
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
@@ -124,8 +135,8 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        // wait until lock is released
-        if (brightnessLock)
+        // prevent update loop
+        if (Monitor.IsEntered(brightnessLock))
             return;
 
         MultimediaManager.SetBrightness(SliderBrightness.Value);
@@ -136,8 +147,8 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        // wait until lock is released
-        if (volumeLock)
+        // prevent update loop
+        if (Monitor.IsEntered(volumeLock))
             return;
 
         MultimediaManager.SetVolume(SliderVolume.Value);
