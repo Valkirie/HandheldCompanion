@@ -570,7 +570,10 @@ public static class PerformanceManager
 
                 // only request an update if current limit is different than stored
                 if (ReadTDP != TDP)
+                {
                     processor.SetTDPLimit(type, TDP);
+                    CurrentTDP[idx] = TDP;
+                }
 
                 await Task.Delay(20);
             }
@@ -727,28 +730,18 @@ public static class PerformanceManager
 
         // immediately apply
         if (immediate)
+        {
             processor.SetTDPLimit((PowerType)idx, value, immediate);
+            CurrentTDP[idx] = value;
+        }
     }
 
     private static async void RequestTDP(double[] values, bool immediate = false)
     {
-        if (processor is null || !processor.IsInitialized)
-            return;
-
         for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
-            // make sure we're not trying to run below or above specs
-            values[idx] = Math.Min(TDPMax, Math.Max(TDPMin, values[idx]));
-
-            // update value read by timer
-            StoredTDP[idx] = values[idx];
-
-            // immediately apply
-            if (immediate)
-            {
-                processor.SetTDPLimit((PowerType)idx, values[idx], immediate);
-                await Task.Delay(20);
-            }
+            RequestTDP((PowerType)idx, values[idx], immediate);
+            await Task.Delay(20);
         }
     }
 
