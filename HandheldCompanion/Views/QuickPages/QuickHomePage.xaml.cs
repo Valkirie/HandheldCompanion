@@ -14,8 +14,8 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickHomePage : Page
 {
-    private object brightnessLock = new();
-    private object volumeLock = new();
+    private CrossThreadLock brightnessLock = new();
+    private CrossThreadLock volumeLock = new();
 
     public QuickHomePage(string Tag) : this()
     {
@@ -107,26 +107,40 @@ public partial class QuickHomePage : Page
 
     private void SystemManager_BrightnessNotification(int brightness)
     {
-        lock(brightnessLock)
+        if (brightnessLock.TryEnter())
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            try
             {
-                SliderBrightness.Value = brightness;
-            });
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SliderBrightness.Value = brightness;
+                });
+            }
+            finally
+            {
+                brightnessLock.Exit();
+            }
         }
     }
 
     private void SystemManager_VolumeNotification(float volume)
     {
-        lock(volumeLock)
+        if (volumeLock.TryEnter())
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            try
             {
-                UpdateVolumeIcon(volume);
-                SliderVolume.Value = Math.Round(volume);
-            });
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateVolumeIcon(volume);
+                    SliderVolume.Value = Math.Round(volume);
+                });
+            }
+            finally
+            {
+                volumeLock.Exit();
+            }
         }
     }
 
@@ -136,7 +150,7 @@ public partial class QuickHomePage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(brightnessLock))
+        if (brightnessLock.IsEntered())
             return;
 
         MultimediaManager.SetBrightness(SliderBrightness.Value);
@@ -148,7 +162,7 @@ public partial class QuickHomePage : Page
             return;
 
         // prevent update loop
-        if (Monitor.IsEntered(volumeLock))
+        if (volumeLock.IsEntered())
             return;
 
         MultimediaManager.SetVolume(SliderVolume.Value);
