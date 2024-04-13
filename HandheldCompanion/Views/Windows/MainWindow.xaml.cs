@@ -153,6 +153,9 @@ public partial class MainWindow : GamepadWindow
         // initialize HidHide
         HidHide.RegisterApplication(CurrentExe);
 
+        // collect details from MotherboardInfo
+        MotherboardInfo.Collect();
+
         // initialize title
         Title += $" ({fileVersionInfo.FileVersion})";
 
@@ -228,24 +231,21 @@ public partial class MainWindow : GamepadWindow
 
         // start static managers in sequence
         SplashScreen.LoadingSequence.Text = "Initializing managers...";
-        Dispatcher.Invoke(new Action(() =>
-        {
-            GPUManager.Start();
-            PowerProfileManager.Start();
-            ProfileManager.Start();
-            ControllerManager.Start();
-            HotkeysManager.Start();
-            DeviceManager.Start();
-            OSDManager.Start();
-            LayoutManager.Start();
-            SystemManager.Start();
-            DynamicLightingManager.Start();
-            MultimediaManager.Start();
-            VirtualManager.Start();
-            InputsManager.Start();
-            SensorsManager.Start();
-            TimerManager.Start();
-        }), DispatcherPriority.Background); // Lower priority
+        GPUManager.Start();
+        PowerProfileManager.Start();
+        ProfileManager.Start();
+        ControllerManager.Start();
+        HotkeysManager.Start();
+        DeviceManager.Start();
+        OSDManager.Start();
+        LayoutManager.Start();
+        SystemManager.Start();
+        DynamicLightingManager.Start();
+        MultimediaManager.Start();
+        VirtualManager.Start();
+        InputsManager.Start();
+        SensorsManager.Start();
+        TimerManager.Start();
 
         // todo: improve overall threading logic
         new Thread(() => { PlatformManager.Start(); }).Start();
