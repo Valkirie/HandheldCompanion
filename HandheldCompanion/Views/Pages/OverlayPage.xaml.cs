@@ -372,7 +372,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayLevel", OnScreenDisplayLevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayLevel", ((ComboBox)sender).SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayTimeLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -380,7 +380,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayTimeLevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayTimeLevel", ((ComboBox)sender).SelectedIndex);
     }
 
 
@@ -389,7 +389,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayFPSLevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayFPSLevel", ((ComboBox)sender).SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayCPULevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -397,7 +397,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayCPULevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayCPULevel", ((ComboBox)sender).SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayRAMLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -405,7 +405,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayRAMLevel", ComboBoxOnScreenDisplayRAMLevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayRAMLevel", ((ComboBox)sender).SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayGPULevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -413,7 +413,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayGPULevel", ComboBoxOnScreenDisplayGPULevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayGPULevel", ((ComboBox)sender).SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayVRAMLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -421,7 +421,7 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayVRAMLevel", ComboBoxOnScreenDisplayVRAMLevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayVRAMLevel", ((ComboBox)sender).SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayBATTLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -429,6 +429,6 @@ public partial class OverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayBATTLevel", ComboBoxOnScreenDisplayBATTLevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayBATTLevel", ((ComboBox)sender).SelectedIndex);
     }
 }
