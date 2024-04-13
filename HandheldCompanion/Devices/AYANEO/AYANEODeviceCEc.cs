@@ -76,6 +76,25 @@ namespace HandheldCompanion.Devices.AYANEO
             ));
         }
 
+        public override bool Open()
+        {
+            if (!base.Open()) return false;
+            lock (this.updateLock)
+            {
+                this.CEcControl_RgbHoldControl();
+            }
+            return true;
+        }
+
+        public override void Close()
+        {
+            lock (this.updateLock)
+            {
+                this.CEcControl_RgbReleaseControl();
+            }
+            base.Close();
+        }
+
         public override bool SetLedStatus(bool status)
         {
             lock (this.updateLock)
@@ -159,11 +178,6 @@ namespace HandheldCompanion.Devices.AYANEO
             this.CEcRgb_I2cWrite(group, 0x02, 0xc0);
         }
 
-        private void CEcRgb_SlowOff(LEDGroup group)
-        {
-            this.CEcRgb_I2cWrite(group, 0x02, 0xc0 + (byte)'\a');
-        }
-
         private void CEcRgb_SetColorAll(LEDGroup group, Color color)
         {
             foreach (int zone in this.rgbZones)
@@ -214,6 +228,16 @@ namespace HandheldCompanion.Devices.AYANEO
             this.ECRAMWrite(0xbf, 0x10);
             Thread.Sleep(5); // AYASpace does this so copied it here
             this.ECRAMWrite(0xbf, 0xfe);
+        }
+
+        protected virtual void CEcControl_RgbHoldControl()
+        {
+            this.ECRAMWrite(0xbf, 0xfe);
+        }
+
+        protected virtual void CEcControl_RgbReleaseControl()
+        {
+            this.ECRAMWrite(0xbf, 0x00);
         }
     }
 }

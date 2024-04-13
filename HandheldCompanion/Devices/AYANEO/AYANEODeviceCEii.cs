@@ -99,15 +99,30 @@ namespace HandheldCompanion.Devices.AYANEO
             Thread.Sleep(10); // AYASpace does this so copied it here
         }
 
+        public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)
+        {
+            ushort address2 = BitConverter.ToUInt16(new byte[] { (byte)address, offset }, 0);
+            return base.ECRamDirectWrite(address2, this.ECDetails, data);
+        }
+
+        protected override void CEcControl_RgbHoldControl()
+        {
+            this.CEiiEcHelper_RgbStart();
+        }
+
+        protected override void CEcControl_RgbReleaseControl()
+        {
+            this.CEiiEcHelper_RgbStop();
+        }
+
         protected void CEiiEcHelper_RgbStart()
         {
             this.ECRamDirectWrite(0x87, 0xa5);
         }
 
-        public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)
+        protected void CEiiEcHelper_RgbStop()
         {
-            ushort address2 = BitConverter.ToUInt16(new byte[] { (byte)address, offset }, 0);
-            return base.ECRamDirectWrite(address2, this.ECDetails, data);
+            this.ECRamDirectWrite(0x87, 0x00);
         }
     }
 }
