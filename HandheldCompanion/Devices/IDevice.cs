@@ -829,11 +829,6 @@ public abstract class IDevice
         return false;
     }
 
-    protected void PowerStatusChange(IDevice device)
-    {
-        PowerStatusChanged?.Invoke(device);
-    }
-
     public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
     {
         HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, new int[] { deviceId }).ToArray();
