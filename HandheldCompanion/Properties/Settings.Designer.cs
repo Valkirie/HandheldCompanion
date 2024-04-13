@@ -17,13 +17,15 @@ namespace HandheldCompanion.Properties
     internal sealed partial class Settings : ApplicationSettingsBase
     {
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
-        public static Settings Default {
-            get {
+
+        public static Settings Default
+        {
+            get
+            {
                 return defaultInstance;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -1021,9 +1023,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayTimeLevel {
+        public int OnScreenDisplayTimeLevel {
             get {
-                return ((string)(this["OnScreenDisplayTimeLevel"]));
+                return ((int)(this["OnScreenDisplayTimeLevel"]));
             }
             set {
                 this["OnScreenDisplayTimeLevel"] = value;
@@ -1033,9 +1035,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayCPULevel {
+        public int OnScreenDisplayCPULevel {
             get {
-                return ((string)(this["OnScreenDisplayCPULevel"]));
+                return ((int)(this["OnScreenDisplayCPULevel"]));
             }
             set {
                 this["OnScreenDisplayCPULevel"] = value;
@@ -1045,9 +1047,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayRAMLevel {
+        public int OnScreenDisplayRAMLevel {
             get {
-                return ((string)(this["OnScreenDisplayRAMLevel"]));
+                return ((int)(this["OnScreenDisplayRAMLevel"]));
             }
             set {
                 this["OnScreenDisplayRAMLevel"] = value;
@@ -1057,9 +1059,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayGPULevel {
+        public int OnScreenDisplayGPULevel {
             get {
-                return ((string)(this["OnScreenDisplayGPULevel"]));
+                return ((int)(this["OnScreenDisplayGPULevel"]));
             }
             set {
                 this["OnScreenDisplayGPULevel"] = value;
@@ -1069,9 +1071,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayVRAMLevel {
+        public int OnScreenDisplayVRAMLevel {
             get {
-                return ((string)(this["OnScreenDisplayVRAMLevel"]));
+                return ((int)(this["OnScreenDisplayVRAMLevel"]));
             }
             set {
                 this["OnScreenDisplayVRAMLevel"] = value;
@@ -1081,9 +1083,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayBatteryLevel {
+        public int OnScreenDisplayBatteryLevel {
             get {
-                return ((string)(this["OnScreenDisplayBatteryLevel"]));
+                return ((int)(this["OnScreenDisplayBatteryLevel"]));
             }
             set {
                 this["OnScreenDisplayBatteryLevel"] = value;
@@ -1093,9 +1095,9 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public string OnScreenDisplayFPSLevel {
+        public int OnScreenDisplayFPSLevel {
             get {
-                return ((string)(this["OnScreenDisplayFPSLevel"]));
+                return ((int)(this["OnScreenDisplayFPSLevel"]));
             }
             set {
                 this["OnScreenDisplayFPSLevel"] = value;
