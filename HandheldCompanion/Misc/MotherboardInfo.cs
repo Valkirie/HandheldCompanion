@@ -1,42 +1,61 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Views;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Management;
+using System.Runtime.CompilerServices;
 
 namespace HandheldCompanion;
 
 public static class MotherboardInfo
 {
     private static readonly ManagementObjectSearcher baseboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
-    private static ManagementObjectCollection baseboardCollection;
+    private static ManagementObjectCollection? baseboardCollection;
 
     private static readonly ManagementObjectSearcher motherboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
-    private static ManagementObjectCollection motherboardCollection;
+    private static ManagementObjectCollection? motherboardCollection;
 
     private static readonly ManagementObjectSearcher processorSearcher = new("root\\CIMV2", "SELECT * FROM Win32_Processor");
-    private static ManagementObjectCollection processorCollection;
+    private static ManagementObjectCollection? processorCollection;
 
     private static readonly ManagementObjectSearcher displaySearcher = new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
-    private static ManagementObjectCollection displayCollection;
+    private static ManagementObjectCollection? displayCollection;
 
     private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
-    private static ManagementObjectCollection videoControllerCollection;
+    private static ManagementObjectCollection? videoControllerCollection;
+
+    private static object cacheLock = new();
+    private static Dictionary<string, object> cache = new();
+
+    private static readonly string cacheDirectory;
+    private const string fileName = "motherboard.json";
+
+    static MotherboardInfo()
+    {
+        cacheDirectory = Path.Combine(MainWindow.SettingsPath, "cache");
+        if (!Directory.Exists(cacheDirectory))
+            Directory.CreateDirectory(cacheDirectory);
+    }
 
     public static void Collect()
     {
-        // TODO: Cache those details to speed-up next startup
-        baseboardCollection = baseboardSearcher.Get();
-        motherboardCollection = motherboardSearcher.Get();
-        processorCollection = processorSearcher.Get();
-        displayCollection = displaySearcher.Get();
-        videoControllerCollection = videoControllerSearcher.Get();
+        if (!loadCache())
+        {
+            baseboardCollection = baseboardSearcher.Get();
+            motherboardCollection = motherboardSearcher.Get();
+            processorCollection = processorSearcher.Get();
+            displayCollection = displaySearcher.Get();
+            videoControllerCollection = videoControllerSearcher.Get();
+        }
     }
 
     public static string Availability
     {
         get
         {
-            var result = queryCollectionString(motherboardCollection, "Availability");
+            string result = Convert.ToString(queryCacheValue(motherboardCollection, "Availability"));
             if (int.TryParse(result, out var value))
                 return GetAvailability(value);
             else
@@ -48,7 +67,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionStringList(displayCollection, "Description");
+            return (List<string>)queryCacheValue(displayCollection, "Description");
         }
     }
 
@@ -56,7 +75,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionBool(baseboardCollection, "HostingBoard");
+            return Convert.ToBoolean(queryCacheValue(baseboardCollection, "HostingBoard"));
         }
     }
 
@@ -64,7 +83,7 @@ public static class MotherboardInfo
     {
         get
         {
-            var result = queryCollectionString(baseboardCollection, "InstallDate");
+            string result = Convert.ToString(queryCacheValue(baseboardCollection, "InstallDate"));
             if (!string.IsNullOrEmpty(result))
                 return ConvertToDateTime(result);
             else
@@ -72,26 +91,11 @@ public static class MotherboardInfo
         }
     }
 
-    private static string _Manufacturer = string.Empty;
     public static string Manufacturer
     {
         get
         {
-            if (!string.IsNullOrEmpty(_Manufacturer))
-                return _Manufacturer;
-
-            if (baseboardCollection is not null)
-                foreach (ManagementObject queryObj in baseboardCollection)
-                {
-                    var query = queryObj["Manufacturer"];
-                    if (query is not null)
-                    {
-                        _Manufacturer = query.ToString();
-                        break;
-                    }
-                }
-
-            return _Manufacturer;
+            return Convert.ToString(queryCacheValue(baseboardCollection, "Manufacturer"));
         }
     }
 
@@ -99,31 +103,15 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(baseboardCollection, "Model");
+            return Convert.ToString(queryCacheValue(baseboardCollection, "Model"));
         }
     }
 
-    private static int _NumberOfCores = 0;
     public static int NumberOfCores
     {
         get
         {
-            if (_NumberOfCores != 0)
-                return _NumberOfCores;
-
-            if (processorCollection is not null)
-                foreach (ManagementObject queryObj in processorCollection)
-                {
-                    var query = queryObj["NumberOfCores"];
-                    if (query is not null)
-                    {
-                        if (int.TryParse(query.ToString(), out var value))
-                            _NumberOfCores = value;
-                        break;
-                    }
-                }
-
-            return _NumberOfCores;
+            return Convert.ToInt32(queryCacheValue(processorCollection, "NumberOfCores"));
         }
     }
 
@@ -131,7 +119,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(baseboardCollection, "PartNumber");
+            return Convert.ToString(queryCacheValue(baseboardCollection, "PartNumber"));
         }
     }
 
@@ -139,7 +127,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(motherboardCollection, "PNPDeviceID");
+            return Convert.ToString(queryCacheValue(motherboardCollection, "PNPDeviceID"));
         }
     }
 
@@ -147,7 +135,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(motherboardCollection, "PrimaryBusType");
+            return Convert.ToString(queryCacheValue(motherboardCollection, "PrimaryBusType"));
         }
     }
 
@@ -155,7 +143,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(processorCollection, "processorID").TrimEnd();
+            return Convert.ToString(queryCacheValue(processorCollection, "processorID")).TrimEnd();
         }
     }
 
@@ -163,7 +151,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(processorCollection, "Name").TrimEnd();
+            return Convert.ToString(queryCacheValue(processorCollection, "Name")).TrimEnd();
         }
     }
 
@@ -171,31 +159,15 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(processorCollection, "Manufacturer").TrimEnd();
+            return Convert.ToString(queryCacheValue(processorCollection, "Manufacturer")).TrimEnd();
         }
     }
 
-    private static uint _ProcessorMaxClockSpeed = 0;
     public static uint ProcessorMaxClockSpeed
     {
         get
         {
-            if (_ProcessorMaxClockSpeed != 0)
-                return _ProcessorMaxClockSpeed;
-
-            if (processorCollection is not null)
-                foreach (ManagementObject queryObj in processorCollection)
-                {
-                    var query = queryObj["MaxClockSpeed"];
-                    if (query is not null)
-                    {
-                        if (uint.TryParse(query.ToString(), out var value))
-                            _ProcessorMaxClockSpeed = value;
-                        break;
-                    }
-                }
-
-            return _ProcessorMaxClockSpeed;
+            return Convert.ToUInt32(queryCacheValue(processorCollection, "MaxClockSpeed"));
         }
     }
 
@@ -217,7 +189,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(baseboardCollection, "Product");
+            return Convert.ToString(queryCacheValue(baseboardCollection, "Product"));
         }
     }
 
@@ -225,7 +197,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionBool(baseboardCollection, "Removable");
+            return Convert.ToBoolean(queryCacheValue(baseboardCollection, "Removable"));
         }
     }
 
@@ -233,7 +205,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionBool(baseboardCollection, "Replaceable");
+            return Convert.ToBoolean(queryCacheValue(baseboardCollection, "Replaceable"));
         }
     }
 
@@ -241,7 +213,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(motherboardCollection, "RevisionNumber");
+            return Convert.ToString(queryCacheValue(motherboardCollection, "RevisionNumber"));
         }
     }
 
@@ -249,7 +221,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(motherboardCollection, "SecondaryBusType");
+            return Convert.ToString(queryCacheValue(motherboardCollection, "SecondaryBusType"));
         }
     }
 
@@ -257,7 +229,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(baseboardCollection, "SerialNumber");
+            return Convert.ToString(queryCacheValue(baseboardCollection, "SerialNumber"));
         }
     }
 
@@ -265,7 +237,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(baseboardCollection, "Status");
+            return Convert.ToString(queryCacheValue(baseboardCollection, "Status"));
         }
     }
 
@@ -273,7 +245,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(motherboardCollection, "SystemName");
+            return Convert.ToString(queryCacheValue(motherboardCollection, "SystemName"));
         }
     }
 
@@ -281,49 +253,33 @@ public static class MotherboardInfo
     {
         get
         {
-            return queryCollectionString(baseboardCollection, "Version");
+            return Convert.ToString(queryCacheValue(baseboardCollection, "Version"));
         }
     }
 
-    private static string queryCollectionString(ManagementObjectCollection collection, string query)
+    private static object queryCacheValue(ManagementObjectCollection collection, string query, [CallerArgumentExpression("collection")] string collectionName = "")
     {
-        if (collection is not null)
-            foreach (ManagementObject queryObj in collection)
+        if (!cache.ContainsKey($"{collectionName}-{query}"))
+        {
+            if (collection is not null)
             {
-                var queryResult = queryObj[query];
-                if (queryResult is not null)
-                    return queryResult.ToString();
+                foreach (ManagementObject queryObj in collection)
+                {
+                    object queryResult = queryObj[query];
+                    if (queryResult is not null)
+                    {
+                        cache.Add($"{collectionName}-{query}", queryResult);
+                        writeCache();
+                        break;
+                    }
+                }
             }
+        }
+
+        if (cache.TryGetValue($"{collectionName}-{query}", out var result))
+            return result;
 
         return string.Empty;
-    }
-
-    private static List<string> queryCollectionStringList(ManagementObjectCollection collection, string query)
-    {
-        List<string> strings = new();
-        if (collection is not null)
-            foreach (ManagementObject queryObj in collection)
-            {
-                var queryResult = queryObj[query];
-                if (queryResult is not null)
-                    strings.Add(queryResult.ToString().ToUpper());
-            }
-
-        return strings;
-    }
-
-    private static bool queryCollectionBool(ManagementObjectCollection collection, string query)
-    {
-        if (collection is not null)
-            foreach (ManagementObject queryObj in collection)
-            {
-                var queryResult = queryObj[query];
-                if (queryResult is not null)
-                    if (queryResult.ToString() == "True")
-                        return true;
-            }
-
-        return false;
     }
 
     private static string GetAvailability(int availability)
@@ -370,5 +326,45 @@ public static class MotherboardInfo
         convertedTime = date + "/" + month + "/" + year + " " +
                         hours + ":" + minutes + ":" + seconds + " " + meridian;
         return convertedTime;
+    }
+
+    private static bool loadCache()
+    {
+        lock (cacheLock)
+        {
+            string cacheFile = Path.Combine(cacheDirectory, fileName);
+            if (File.Exists(cacheFile))
+            {
+                string cacheJSON = File.ReadAllText(cacheFile);
+
+                Dictionary<string, object>? cache = JsonConvert.DeserializeObject<Dictionary<string, object>>(cacheJSON, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
+                if (cache is not null)
+                {
+                    MotherboardInfo.cache = cache;
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+    }
+
+    private static void writeCache()
+    {
+        lock (cacheLock)
+        {
+            string cacheFile = Path.Combine(cacheDirectory, fileName);
+
+            string jsonString = JsonConvert.SerializeObject(cache, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+
+            File.WriteAllText(cacheFile, jsonString);
+        }
     }
 }

@@ -46,6 +46,9 @@ public class Processor
             case "AuthenticAMD":
                 processor = new AMDProcessor();
                 break;
+            default:
+                LogManager.LogError("Failed to retrieve processor family: {0}", Manufacturer);
+                break;
         }
 
         return processor;
