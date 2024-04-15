@@ -1,5 +1,8 @@
 using LibreHardwareMonitor.Hardware;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms
 {
@@ -10,6 +13,7 @@ namespace HandheldCompanion.Platforms
 
         private Timer updateTimer;
         private int updateInterval = 1000;
+        private object updateLock = new();
 
         public float? CPULoad;
         public float? CPUClock;
@@ -21,6 +25,8 @@ namespace HandheldCompanion.Platforms
         public float? BatteryLevel;
         public float? BatteryPower;
         public float? BatteryTimeSpan;
+
+        public bool IsBusy => (Monitor.IsEntered(updateLock));
 
         public LibreHardwareMonitor()
         {
@@ -59,6 +65,10 @@ namespace HandheldCompanion.Platforms
             if (updateTimer is not null)
                 updateTimer.Stop();
 
+            // wait until all tasks are complete
+            while (IsBusy)
+                Task.Delay(100).Wait();
+
             if (computer is not null)
                 computer.Close();
 
@@ -67,21 +77,25 @@ namespace HandheldCompanion.Platforms
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // pull temperature sensor
-            foreach (var hardware in computer.Hardware)
+            lock (updateLock)
             {
-                hardware.Update();
-                switch (hardware.HardwareType)
+                // pull temperature sensor
+                foreach (IHardware? hardware in computer.Hardware)
                 {
-                    case HardwareType.Cpu:
-                        HandleCPU(hardware);
-                        break;
-                    case HardwareType.Memory:
-                        HandleMemory(hardware);
-                        break;
-                    case HardwareType.Battery:
-                        HandleBattery(hardware);
-                        break;
+                    hardware.Update();
+
+                    switch (hardware.HardwareType)
+                    {
+                        case HardwareType.Cpu:
+                            HandleCPU(hardware);
+                            break;
+                        case HardwareType.Memory:
+                            HandleMemory(hardware);
+                            break;
+                        case HardwareType.Battery:
+                            HandleBattery(hardware);
+                            break;
+                    }
                 }
             }
         }
