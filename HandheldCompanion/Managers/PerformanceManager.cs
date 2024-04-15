@@ -867,18 +867,15 @@ public static class PerformanceManager
         // initialize processor
         processor = Processor.GetCurrent();
 
-        if (processor.IsInitialized)
+        if (processor is not null && processor.IsInitialized)
         {
             processor.StatusChanged += Processor_StatusChanged;
             processor.Initialize();
         }
-
-        // deprecated
-        /*
-        processor.ValueChanged += Processor_ValueChanged;
-        processor.LimitChanged += Processor_LimitChanged;
-        processor.MiscChanged += Processor_MiscChanged;
-        */
+        else
+        {
+            ProcessorStatusChanged?.Invoke(false, false);
+        }
 
         IsInitialized = true;
         Initialized?.Invoke();
