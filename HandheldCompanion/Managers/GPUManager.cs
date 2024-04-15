@@ -24,8 +24,8 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public static bool IsInitialized;
-        public static bool HasIGCL;
-        public static bool HasADLX;
+        public static bool IsLoaded_IGCL;
+        public static bool IsLoaded_ADLX;
 
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
@@ -198,8 +198,8 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            HasIGCL = IGCLBackend.Initialize();
-            HasADLX = ADLXBackend.IntializeAdlx();
+            IsLoaded_IGCL = IGCLBackend.Initialize();
+            IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
 
             // todo: check if usefull on resume
             // it could be DeviceManager_DisplayAdapterArrived is called already, making this redundant
@@ -207,7 +207,7 @@ namespace HandheldCompanion.Managers
                 currentGPU.Start();
 
             IsInitialized = true;
-            Initialized?.Invoke(HasIGCL, HasADLX);
+            Initialized?.Invoke(IsLoaded_IGCL, IsLoaded_ADLX);
 
             LogManager.LogInformation("{0} has started", "GPUManager");
         }
@@ -224,11 +224,17 @@ namespace HandheldCompanion.Managers
             while (DisplayGPU.Values.Any(gpu => gpu.IsBusy))
                 await Task.Delay(100);
 
-            if (HasIGCL)
+            if (IsLoaded_IGCL)
+            {
                 IGCLBackend.Terminate();
+                IsLoaded_IGCL = false;
+            }
 
-            if (HasADLX)
+            if (IsLoaded_ADLX)
+            {
                 ADLXBackend.CloseAdlx();
+                IsLoaded_ADLX = false;
+            }
 
             IsInitialized = false;
 

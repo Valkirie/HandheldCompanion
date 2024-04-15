@@ -2,6 +2,7 @@
 using SharpDX.Direct3D9;
 using System;
 using System.Management;
+using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using Timer = System.Timers.Timer;
@@ -75,7 +76,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return defaultValue;
         }
 
-        public bool IsBusy => (UpdateTimer is not null && UpdateTimer.Enabled) || (TelemetryTimer is not null && TelemetryTimer.Enabled);
+        public bool IsBusy => (Monitor.IsEntered(telemetryLock) || Monitor.IsEntered(functionLock) || Monitor.IsEntered(updateLock));
 
         public GPU(AdapterInformation adapterInformation)
         {
@@ -99,17 +100,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // set halting flag
             halting = true;
 
-            try
-            {
-                if (UpdateTimer != null && UpdateTimer.Enabled)
-                    UpdateTimer.Stop();
+            if (UpdateTimer != null && UpdateTimer.Enabled)
+                UpdateTimer.Stop();
 
-                if (TelemetryTimer != null && TelemetryTimer.Enabled)
-                    TelemetryTimer.Stop();
-            }
-            catch (Exception ex)
-            {
-            }
+            if (TelemetryTimer != null && TelemetryTimer.Enabled)
+                TelemetryTimer.Stop();
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
