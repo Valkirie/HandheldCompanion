@@ -113,30 +113,30 @@ namespace HandheldCompanion.Managers
 
         private static async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
-            GPU currentGPU = null;
+            GPU GPU = null;
 
             if (adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD"))
             {
-                currentGPU = new AMDGPU(adapterInformation);
+                GPU = new AMDGPU(adapterInformation);
             }
             else if (adapterInformation.Details.Description.Contains("Intel"))
             {
-                currentGPU = new IntelGPU(adapterInformation);
+                GPU = new IntelGPU(adapterInformation);
             }
 
-            if (currentGPU is null)
+            if (GPU is null)
             {
                 LogManager.LogError("Unsupported DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
                 return;
             }
 
-            if (!currentGPU.IsInitialized)
+            if (!GPU.IsInitialized)
             {
                 LogManager.LogError("Failed to initialize DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
                 return;
             }
 
-            DisplayGPU.TryAdd(adapterInformation, currentGPU);
+            DisplayGPU.TryAdd(adapterInformation, GPU);
         }
 
         private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
