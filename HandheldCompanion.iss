@@ -49,7 +49,8 @@
 #define NewDirectXVersion "9.29.1974"
 #define NewViGemVersion "1.22.0.0"
 #define NewHidHideVersion "1.5.212"
-#define NewRtssVersion "7.3.6"
+; RTSS 7.3.6
+#define NewRtssVersion "7.3.5.28010"
 
 //#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/b280d97f-25a9-4ab7-8a12-8291aa3af117/a37ed0e68f51fcd973e9f6cb4f40b1a7/windowsdesktop-runtime-8.0.0-win-x64.exe"
 //#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f9e3b581-059d-429f-9f0d-1d1167ff7e32/bd7661030cd5d66cd3eee0fd20b24540/windowsdesktop-runtime-8.0.0-win-x86.exe"   
@@ -724,11 +725,11 @@ end;
 
 procedure Dependency_AddRTSS;
 begin
-  Dependency_Add_With_Version('RTSSSetup735.exe', '{#NewRtssVersion}', regGetInstalledVersion('{#RtssName}'),
+  Dependency_Add_With_Version('RTSSSetup736.exe', '{#NewRtssVersion}', regGetInstalledVersion('{#RtssName}'),
     '/S',
     '{#RtssName}',
     '{#RtssDownloadLink}',
-    '', True, False);   
+    '', True, True);   
 
   stopProcess('{#EncoderServer64Exe}');
   stopProcess('{#RTSSHooksLoader64Exe}');
