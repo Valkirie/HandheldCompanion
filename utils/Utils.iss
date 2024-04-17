@@ -29,7 +29,7 @@ end;
 function isHidHideInstalled():boolean;
 begin
   result:= false;
-  if(FileExists(ExpandConstant('{commonpf}') + '\Nefarius Software Solutions\HidHide\HidHide_Updater.exe')) then
+  if(FileExists(ExpandConstant('{commonpf}') + '\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe')) then
   begin
     log('HidHide is already installed.');
     result:= true; 
@@ -42,7 +42,7 @@ var
   versionNumber, filePath:string;
 begin
   result:= '';
-  filePath:= ExpandConstant('{commonpf}') + '\Nefarius Software Solutions\HidHide\HidHide_Updater.exe';
+  filePath:= ExpandConstant('{commonpf}') + '\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe';
 
   if(FileExists(filePath)) then
   begin 
