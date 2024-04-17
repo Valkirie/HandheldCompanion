@@ -13,13 +13,13 @@ namespace HandheldCompanion.Managers
     public static class GPUManager
     {
         #region events
-        public static event InitializedEventHandler Initialized;
+        public static event InitializedEventHandler? Initialized;
         public delegate void InitializedEventHandler(bool HasIGCL, bool HasADLX);
 
-        public static event HookedEventHandler Hooked;
+        public static event HookedEventHandler? Hooked;
         public delegate void HookedEventHandler(GPU GPU);
 
-        public static event UnhookedEventHandler Unhooked;
+        public static event UnhookedEventHandler? Unhooked;
         public delegate void UnhookedEventHandler(GPU GPU);
         #endregion
 
@@ -29,17 +29,6 @@ namespace HandheldCompanion.Managers
 
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
-
-        static GPUManager()
-        {
-            // manage events
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
-            ProfileManager.Updated += ProfileManager_Updated;
-            DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
-            DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
-            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
-        }
 
         private static void GPUConnect(GPU GPU)
         {
@@ -60,10 +49,10 @@ namespace HandheldCompanion.Managers
             }
 
             if (GPU.IsInitialized)
-            {
                 GPU.Start();
+
+            if (IsInitialized && GPU.IsInitialized)
                 Hooked?.Invoke(GPU);
-            }
         }
 
         private static void GPUDisconnect(GPU gpu)
@@ -113,30 +102,33 @@ namespace HandheldCompanion.Managers
 
         private static async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
-            GPU GPU = null;
+            while (!IsInitialized)
+                await Task.Delay(250);
+
+            GPU newGPU = null;
 
             if (adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD"))
             {
-                GPU = new AMDGPU(adapterInformation);
+                newGPU = new AMDGPU(adapterInformation);
             }
             else if (adapterInformation.Details.Description.Contains("Intel"))
             {
-                GPU = new IntelGPU(adapterInformation);
+                newGPU = new IntelGPU(adapterInformation);
             }
 
-            if (GPU is null)
+            if (newGPU is null)
             {
                 LogManager.LogError("Unsupported DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
                 return;
             }
 
-            if (!GPU.IsInitialized)
+            if (!newGPU.IsInitialized)
             {
                 LogManager.LogError("Failed to initialize DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
                 return;
             }
 
-            DisplayGPU.TryAdd(adapterInformation, GPU);
+            DisplayGPU.TryAdd(adapterInformation, newGPU);
         }
 
         private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
@@ -155,6 +147,9 @@ namespace HandheldCompanion.Managers
 
         private static void CurrentGPU_RSRStateChanged(bool Supported, bool Enabled, int Sharpness)
         {
+            if (!IsInitialized)
+                return;
+
             // todo: use ProfileMager events
             Profile profile = ProfileManager.GetCurrent();
             AMDGPU amdGPU = (AMDGPU)currentGPU;
@@ -167,6 +162,9 @@ namespace HandheldCompanion.Managers
 
         private static void CurrentGPU_IntegerScalingChanged(bool Supported, bool Enabled)
         {
+            if (!IsInitialized)
+                return;
+
             // todo: use ProfileMager events
             Profile profile = ProfileManager.GetCurrent();
 
@@ -176,6 +174,9 @@ namespace HandheldCompanion.Managers
 
         private static void CurrentGPU_GPUScalingChanged(bool Supported, bool Enabled, int Mode)
         {
+            if (!IsInitialized)
+                return;
+
             // todo: use ProfileMager events
             Profile profile = ProfileManager.GetCurrent();
 
@@ -187,6 +188,9 @@ namespace HandheldCompanion.Managers
 
         private static void CurrentGPU_ImageSharpeningChanged(bool Enabled, int Sharpness)
         {
+            if (!IsInitialized)
+                return;
+
             // todo: use ProfileMager events
             Profile profile = ProfileManager.GetCurrent();
 
@@ -198,6 +202,9 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
+            if (IsInitialized)
+                return;
+
             IsLoaded_IGCL = IGCLBackend.Initialize();
             IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
 
@@ -209,41 +216,56 @@ namespace HandheldCompanion.Managers
             IsInitialized = true;
             Initialized?.Invoke(IsLoaded_IGCL, IsLoaded_ADLX);
 
+            // manage events
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
+            ProfileManager.Updated += ProfileManager_Updated;
+            DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
+            DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
+            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+
             LogManager.LogInformation("{0} has started", "GPUManager");
         }
 
-        public static async void Stop()
+        public static void Stop()
         {
             if (!IsInitialized)
                 return;
 
+            IsInitialized = false;
+
+            // manage events
+            ProfileManager.Applied -= ProfileManager_Applied;
+            ProfileManager.Discarded -= ProfileManager_Discarded;
+            ProfileManager.Updated -= ProfileManager_Updated;
+            DeviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
+            DeviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
+            MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
 
-            // wait until all GPUs are ready
-            while (DisplayGPU.Values.Any(gpu => gpu.IsBusy))
-                await Task.Delay(100);
-
-            if (IsLoaded_IGCL)
+            lock (GPU.functionLock)
             {
-                IGCLBackend.Terminate();
-                IsLoaded_IGCL = false;
-            }
+                if (IsLoaded_IGCL)
+                {
+                    IGCLBackend.Terminate();
+                    IsLoaded_IGCL = false;
+                }
 
-            if (IsLoaded_ADLX)
-            {
-                ADLXBackend.CloseAdlx();
-                IsLoaded_ADLX = false;
+                if (IsLoaded_ADLX)
+                {
+                    ADLXBackend.CloseAdlx();
+                    IsLoaded_ADLX = false;
+                }
             }
-
-            IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "GPUManager");
         }
 
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            if (currentGPU is null)
+            if (!IsInitialized || currentGPU is null)
                 return;
 
             try
@@ -310,7 +332,7 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Discarded(Profile profile)
         {
-            if (currentGPU is null)
+            if (!IsInitialized || currentGPU is null)
                 return;
 
             try

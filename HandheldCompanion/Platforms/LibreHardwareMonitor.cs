@@ -1,8 +1,5 @@
 using LibreHardwareMonitor.Hardware;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms
 {
@@ -25,8 +22,6 @@ namespace HandheldCompanion.Platforms
         public float? BatteryLevel;
         public float? BatteryPower;
         public float? BatteryTimeSpan;
-
-        public bool IsBusy => (Monitor.IsEntered(updateLock));
 
         public LibreHardwareMonitor()
         {
@@ -66,11 +61,11 @@ namespace HandheldCompanion.Platforms
                 updateTimer.Stop();
 
             // wait until all tasks are complete
-            while (IsBusy)
-                Task.Delay(100).Wait();
-
-            if (computer is not null)
-                computer.Close();
+            lock (updateLock)
+            {
+                if (computer is not null)
+                    computer.Close();
+            }
 
             return base.Stop(kill);
         }

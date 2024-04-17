@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.IGCL;
 using SharpDX.Direct3D9;
-using System.Threading;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
@@ -89,6 +88,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override bool SetImageSharpeningSharpness(int sharpness)
         {
+            if (!IsInitialized)
+                return false;
+
             return Execute(() => IGCLBackend.SetImageSharpeningSharpness(deviceIdx, 0, sharpness), false);
         }
 
@@ -154,16 +156,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (Monitor.TryEnter(telemetryLock))
+            if (halting)
+                return;
+
+            lock (telemetryLock)
             {
-                try
-                {
-                    TelemetryData = GetTelemetry();
-                }
-                finally
-                {
-                    Monitor.Exit(telemetryLock);
-                }
+                TelemetryData = GetTelemetry();
             }
         }
 
@@ -175,7 +173,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             base.Start();
         }
 
-        public override async void Stop()
+        public override void Stop()
         {
             base.Stop();
         }

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace HandheldCompanion.ADLX
 {
-    public class ADLXBackend
+    public static class ADLXBackend
     {
         public const string ADLX_Wrapper = @"ADLX_Wrapper.dll";
 
