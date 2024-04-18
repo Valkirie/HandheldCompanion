@@ -331,7 +331,7 @@ namespace HandheldCompanion.Controllers
                     base.UpdateInputs(ticks, delta);
                     break;
                 case LegionGo.RightJoyconIndex:
-                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+                    gamepadMotionR.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
                     base.UpdateInputs(ticks, delta, gamepadMotionR);
                     break;
             }
