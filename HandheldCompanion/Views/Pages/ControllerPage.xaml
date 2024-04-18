@@ -163,7 +163,10 @@
             </ui:SimpleStackPanel>
 
             <!--  Virtual devices  -->
-            <ui:SimpleStackPanel Name="VirtualDevices" Spacing="24">
+            <ui:SimpleStackPanel
+                Name="VirtualDevices"
+                Spacing="24"
+                Visibility="Collapsed">
                 <ui:SimpleStackPanel Spacing="6">
                     <DockPanel>
                         <TextBlock
@@ -177,10 +180,7 @@
                             Text="{x:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
                     </DockPanel>
 
-                    <ui:SimpleStackPanel
-                        Name="VirtualDevicesList"
-                        Spacing="6"
-                        Visibility="Collapsed" />
+                    <ui:SimpleStackPanel Name="VirtualDevicesList" Spacing="6" />
                 </ui:SimpleStackPanel>
 
                 <!--  WARNING: No physical controller detected  -->
@@ -223,7 +223,10 @@
             </ui:SimpleStackPanel>
 
             <!--  Input devices  -->
-            <ui:SimpleStackPanel Name="PhysicalDevices" Spacing="24">
+            <ui:SimpleStackPanel
+                Name="PhysicalDevices"
+                Spacing="24"
+                Visibility="Collapsed">
                 <ui:SimpleStackPanel Spacing="6">
                     <DockPanel>
                         <TextBlock
@@ -237,10 +240,7 @@
                             Text="{x:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
                     </DockPanel>
 
-                    <ui:SimpleStackPanel
-                        Name="PhysicalDevicesList"
-                        Spacing="6"
-                        Visibility="Collapsed" />
+                    <ui:SimpleStackPanel Name="PhysicalDevicesList" Spacing="6" />
                 </ui:SimpleStackPanel>
 
                 <!--  WARNING: No physical controller detected  -->

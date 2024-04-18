@@ -111,7 +111,7 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
+            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevicesList : PhysicalDevicesList;
 
             // Search for an existing controller, remove it
             foreach (IController ctrl in targetPanel.Children)
