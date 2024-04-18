@@ -159,6 +159,7 @@ public partial class SettingsPage : Page
                     Toggle_QuicktoolsAutoHide.IsOn = Convert.ToBoolean(value);
                     break;
                 case "UISounds":
+                    Toggle_UISounds.IsEnabled = MultimediaManager.HasVolumeSupport();
                     Toggle_UISounds.IsOn = Convert.ToBoolean(value);
                     break;
             }
