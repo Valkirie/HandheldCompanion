@@ -4,6 +4,7 @@ using LiveCharts;
 using LiveCharts.Defaults;
 using System;
 using System.Numerics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,7 +15,7 @@ namespace HandheldCompanion.Views.Pages.Profiles;
 /// </summary>
 public partial class SettingsMode1 : Page
 {
-    private LockObject updateLock = new();
+    private CrossThreadLock updateLock = new();
 
     private readonly int SteeringArraySize = 30;
     private readonly ChartValues<ObservablePoint> SteeringLinearityPoints;
@@ -44,17 +45,24 @@ public partial class SettingsMode1 : Page
 
     public void SetProfile()
     {
-        using (new ScopedLock(updateLock))
+        if (updateLock.TryEnter())
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.Invoke(() =>
+            try
             {
-                SliderDeadzoneAngle.Value = ProfilesPage.selectedProfile.SteeringDeadzone;
-                SliderPower.Value = ProfilesPage.selectedProfile.SteeringPower;
-                SliderSteeringAngle.Value = ProfilesPage.selectedProfile.SteeringMaxAngle;
+                // UI thread (async)
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SliderDeadzoneAngle.Value = ProfilesPage.selectedProfile.SteeringDeadzone;
+                    SliderPower.Value = ProfilesPage.selectedProfile.SteeringPower;
+                    SliderSteeringAngle.Value = ProfilesPage.selectedProfile.SteeringMaxAngle;
 
-                lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.selectedProfile.SteeringPower);
-            });
+                    lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.selectedProfile.SteeringPower);
+                });
+            }
+            finally
+            {
+                updateLock.Exit();
+            }
         }
     }
 
@@ -82,7 +90,8 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (updateLock.IsEntered())
             return;
 
         ProfilesPage.selectedProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
@@ -94,7 +103,8 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (updateLock.IsEntered())
             return;
 
         lvLineSeriesValues.Values = GeneratePoints(SliderPower.Value);
@@ -108,7 +118,8 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        if (updateLock)
+        // prevent update loop
+        if (updateLock.IsEntered())
             return;
 
         ProfilesPage.selectedProfile.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;
