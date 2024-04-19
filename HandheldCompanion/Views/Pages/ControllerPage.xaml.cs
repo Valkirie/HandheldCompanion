@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static HandheldCompanion.Managers.ControllerManager;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -30,7 +31,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        ControllerManager.Working += ControllerManager_Working;
+        ControllerManager.StatusChanged += ControllerManager_Working;
         ProfileManager.Applied += ProfileManager_Applied;
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
@@ -110,7 +111,7 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
+            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevicesList : PhysicalDevicesList;
 
             // Search for an existing controller, remove it
             foreach (IController ctrl in targetPanel.Children)
@@ -134,7 +135,7 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
+            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevicesList : PhysicalDevicesList;
 
             // Search for an existing controller, remove it
             foreach (IController ctrl in targetPanel.Children)
@@ -161,22 +162,22 @@ public partial class ControllerPage : Page
         ControllerRefresh();
     }
 
-    private void ControllerManager_Working(int status)
+    private void ControllerManager_Working(ControllerManagerStatus status)
     {
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(async () =>
         {
-            // status: 0:wip, 1:sucess, 2:failed
             switch (status)
             {
-                case 0:
+                case ControllerManagerStatus.Busy:
                     ControllerLoading.Visibility = Visibility.Visible;
                     VirtualDevices.IsEnabled = false;
                     PhysicalDevices.IsEnabled = false;
                     MainGrid.IsEnabled = false;
                     break;
-                case 1:
-                case 2:
+
+                case ControllerManagerStatus.Succeeded:
+                case ControllerManagerStatus.Failed:
                     ControllerLoading.Visibility = Visibility.Hidden;
                     VirtualDevices.IsEnabled = true;
                     PhysicalDevices.IsEnabled = true;
@@ -186,8 +187,7 @@ public partial class ControllerPage : Page
 
             ControllerRefresh();
 
-            // failed
-            if (status == 2)
+            if (status == ControllerManagerStatus.Failed)
             {
                 // todo: translate me
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
@@ -276,7 +276,7 @@ public partial class ControllerPage : Page
 
             // hint: Has physical controller (not Neptune) hidden, but no virtual controller
             VirtualDevices.Visibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
-            WarningNoVirtual.Visibility = !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
+            WarningNoVirtual.Visibility = isHidden && !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
             bool neptunehidden = isHidden && isSteam && isMuted;

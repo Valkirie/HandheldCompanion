@@ -10,6 +10,7 @@ namespace HandheldCompanion.Platforms
 
         private Timer updateTimer;
         private int updateInterval = 1000;
+        private object updateLock = new();
 
         public float? CPULoad;
         public float? CPUClock;
@@ -59,29 +60,37 @@ namespace HandheldCompanion.Platforms
             if (updateTimer is not null)
                 updateTimer.Stop();
 
-            if (computer is not null)
-                computer.Close();
+            // wait until all tasks are complete
+            lock (updateLock)
+            {
+                if (computer is not null)
+                    computer.Close();
+            }
 
             return base.Stop(kill);
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // pull temperature sensor
-            foreach (var hardware in computer.Hardware)
+            lock (updateLock)
             {
-                hardware.Update();
-                switch (hardware.HardwareType)
+                // pull temperature sensor
+                foreach (IHardware? hardware in computer.Hardware)
                 {
-                    case HardwareType.Cpu:
-                        HandleCPU(hardware);
-                        break;
-                    case HardwareType.Memory:
-                        HandleMemory(hardware);
-                        break;
-                    case HardwareType.Battery:
-                        HandleBattery(hardware);
-                        break;
+                    hardware.Update();
+
+                    switch (hardware.HardwareType)
+                    {
+                        case HardwareType.Cpu:
+                            HandleCPU(hardware);
+                            break;
+                        case HardwareType.Memory:
+                            HandleMemory(hardware);
+                            break;
+                        case HardwareType.Battery:
+                            HandleBattery(hardware);
+                            break;
+                    }
                 }
             }
         }

@@ -3,7 +3,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Processors.AMD;
 using System;
 using System.Threading;
-using System.Timers;
 
 namespace HandheldCompanion.Processors;
 
@@ -65,77 +64,6 @@ public class AMDProcessor : Processor
 
             IsInitialized = true;
         }
-
-        foreach (var type in (PowerType[])Enum.GetValues(typeof(PowerType)))
-        {
-            // write default limits
-            m_Limits[type] = 0;
-            m_PrevLimits[type] = 0;
-
-            /*
-            // write default values
-            m_Values[type] = 0;
-            m_PrevValues[type] = 0;
-            */
-        }
-    }
-
-    public override void Initialize()
-    {
-        updateTimer.Elapsed += UpdateTimer_Elapsed;
-        base.Initialize();
-    }
-
-    public override void Stop()
-    {
-        updateTimer.Elapsed -= UpdateTimer_Elapsed;
-        base.Stop();
-    }
-
-    protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
-    {
-        if (Monitor.TryEnter(IsBusy))
-        {
-            RyzenAdj.get_table_values(ry);
-            RyzenAdj.refresh_table(ry);
-
-            // read limit(s)
-            var limit_fast = (int)RyzenAdj.get_fast_limit(ry);
-            var limit_slow = (int)RyzenAdj.get_slow_limit(ry);
-            var limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
-
-            if (limit_fast != 0)
-                m_Limits[PowerType.Fast] = limit_fast;
-            if (limit_slow != 0)
-                m_Limits[PowerType.Slow] = limit_slow;
-            if (limit_stapm != 0)
-                m_Limits[PowerType.Stapm] = limit_stapm;
-
-            // read value(s)
-            var value_fast = (int)RyzenAdj.get_fast_value(ry);
-            var value_slow = (int)RyzenAdj.get_slow_value(ry);
-            var value_stapm = (int)RyzenAdj.get_stapm_value(ry);
-
-            while (value_fast == 0)
-                value_fast = (int)RyzenAdj.get_fast_value(ry);
-            while (value_slow == 0)
-                value_slow = (int)RyzenAdj.get_slow_value(ry);
-            while (value_stapm == 0)
-                value_stapm = (int)RyzenAdj.get_stapm_value(ry);
-
-            m_Values[PowerType.Fast] = value_fast;
-            m_Values[PowerType.Slow] = value_slow;
-            m_Values[PowerType.Stapm] = value_stapm;
-
-            // read gfx_clk
-            var gfx_clk = (int)RyzenAdj.get_gfx_clk(ry);
-            if (gfx_clk != 0)
-                m_Misc["gfx_clk"] = gfx_clk;
-
-            base.UpdateTimer_Elapsed(sender, e);
-
-            Monitor.Exit(IsBusy);
-        }
     }
 
     public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
@@ -143,7 +71,7 @@ public class AMDProcessor : Processor
         if (ry == IntPtr.Zero)
             return;
 
-        if (Monitor.TryEnter(IsBusy))
+        lock (updateLock)
         {
             // 15W : 15000
             limit *= 1000;
@@ -164,14 +92,12 @@ public class AMDProcessor : Processor
             }
 
             base.SetTDPLimit(type, limit, immediate, error);
-
-            Monitor.Exit(IsBusy);
         }
     }
 
     public override void SetGPUClock(double clock, int result)
     {
-        if (Monitor.TryEnter(IsBusy))
+        lock (updateLock)
         {
             switch (family)
             {
@@ -226,8 +152,6 @@ public class AMDProcessor : Processor
                     }
                     break;
             }
-
-            Monitor.Exit(IsBusy);
         }
     }
 

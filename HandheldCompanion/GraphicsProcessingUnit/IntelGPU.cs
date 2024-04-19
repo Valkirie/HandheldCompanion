@@ -11,6 +11,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         #region events
         #endregion
 
+        protected new ctl_telemetry_data TelemetryData = new();
+
         public override bool HasIntegerScalingSupport()
         {
             if (!IsInitialized)
@@ -86,6 +88,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override bool SetImageSharpeningSharpness(int sharpness)
         {
+            if (!IsInitialized)
+                return false;
+
             return Execute(() => IGCLBackend.SetImageSharpeningSharpness(deviceIdx, 0, sharpness), false);
         }
 
@@ -103,6 +108,17 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 return false;
 
             return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
+        }
+
+        private ctl_telemetry_data GetTelemetry()
+        {
+            if (!IsInitialized)
+                return TelemetryData;
+
+            return Execute(() =>
+            {
+                return IGCLBackend.GetTelemetry(deviceIdx);
+            }, TelemetryData);
         }
 
         public override float GetClock()
@@ -125,8 +141,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return (float)TelemetryData.GpuCurrentTemperatureValue;
         }
 
-        protected ctl_telemetry_data TelemetryData = new();
-
         public IntelGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
             deviceIdx = GetDeviceIdx(adapterInformation.Details.Description);
@@ -142,10 +156,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (telemetryLock.TryEnter())
+            if (halting)
+                return;
+
+            lock (telemetryLock)
             {
-                TelemetryData = GetTelemetry(deviceIdx);
-                telemetryLock.Exit();
+                TelemetryData = GetTelemetry();
             }
         }
 
@@ -157,7 +173,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             base.Start();
         }
 
-        public override async void Stop()
+        public override void Stop()
         {
             base.Stop();
         }

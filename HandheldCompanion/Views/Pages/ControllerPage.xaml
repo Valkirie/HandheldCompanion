@@ -163,23 +163,25 @@
             </ui:SimpleStackPanel>
 
             <!--  Virtual devices  -->
-            <ui:SimpleStackPanel Spacing="6">
-                <DockPanel>
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BaseTextBlockStyle}"
-                        Text="{x:Static resx:Resources.ControllerPage_VirtualDevices}" />
-                    <TextBlock
-                        Margin="4,0,0,0"
-                        VerticalAlignment="Center"
-                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                        Text="{x:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
-                </DockPanel>
+            <ui:SimpleStackPanel
+                Name="VirtualDevices"
+                Spacing="24"
+                Visibility="Collapsed">
+                <ui:SimpleStackPanel Spacing="6">
+                    <DockPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Text="{x:Static resx:Resources.ControllerPage_VirtualDevices}" />
+                        <TextBlock
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Text="{x:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
+                    </DockPanel>
 
-                <ui:SimpleStackPanel
-                    Name="VirtualDevices"
-                    Spacing="6"
-                    Visibility="Collapsed" />
+                    <ui:SimpleStackPanel Name="VirtualDevicesList" Spacing="6" />
+                </ui:SimpleStackPanel>
 
                 <!--  WARNING: No physical controller detected  -->
                 <Border
@@ -221,23 +223,25 @@
             </ui:SimpleStackPanel>
 
             <!--  Input devices  -->
-            <ui:SimpleStackPanel Spacing="6">
-                <DockPanel>
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BaseTextBlockStyle}"
-                        Text="{x:Static resx:Resources.ControllerPage_PhysicalDevices}" />
-                    <TextBlock
-                        Margin="4,0,0,0"
-                        VerticalAlignment="Center"
-                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                        Text="{x:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
-                </DockPanel>
+            <ui:SimpleStackPanel
+                Name="PhysicalDevices"
+                Spacing="24"
+                Visibility="Collapsed">
+                <ui:SimpleStackPanel Spacing="6">
+                    <DockPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Text="{x:Static resx:Resources.ControllerPage_PhysicalDevices}" />
+                        <TextBlock
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Text="{x:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
+                    </DockPanel>
 
-                <ui:SimpleStackPanel
-                    Name="PhysicalDevices"
-                    Spacing="6"
-                    Visibility="Collapsed" />
+                    <ui:SimpleStackPanel Name="PhysicalDevicesList" Spacing="6" />
+                </ui:SimpleStackPanel>
 
                 <!--  WARNING: No physical controller detected  -->
                 <Border

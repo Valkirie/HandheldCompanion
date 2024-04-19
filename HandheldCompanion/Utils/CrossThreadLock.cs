@@ -72,5 +72,10 @@ namespace HandheldCompanion.Utils
             _semaphore.Dispose();
             GC.SuppressFinalize(this);
         }
+
+        public bool IsEntered()
+        {
+            return _isEntered;
+        }
     }
 }

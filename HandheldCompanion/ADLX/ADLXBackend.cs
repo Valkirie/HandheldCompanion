@@ -3,7 +3,7 @@ using System.Text;
 
 namespace HandheldCompanion.ADLX
 {
-    public class ADLXBackend
+    public static class ADLXBackend
     {
         public const string ADLX_Wrapper = @"ADLX_Wrapper.dll";
 
@@ -123,12 +123,5 @@ namespace HandheldCompanion.ADLX
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetScalingMode(int displayIdx, int mode);
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetAdlxTelemetry(int GPU, ref AdlxTelemetryData adlxTelemetryData);
-
-        internal static AdlxTelemetryData GetTelemetryData()
-        {
-            AdlxTelemetryData TelemetryData = new();
-            bool Result = GetAdlxTelemetry(0, ref TelemetryData);
-            return TelemetryData;
-        }
     }
 }

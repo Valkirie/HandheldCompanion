@@ -54,6 +54,9 @@ namespace HandheldCompanion.UI
             {
                 using (WaveOutEvent waveOut = new WaveOutEvent())
                 {
+                    if (waveOut.DeviceNumber == -1)
+                        return;
+
                     waveOut.Init(waveReader);
                     waveOut.Play();
 
