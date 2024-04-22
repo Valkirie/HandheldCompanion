@@ -87,7 +87,7 @@ public class LegionGo : IDevice
         "SetSmartFanMode",
         new() { { "Data", fanMode } });
 
-    private Task SetCPUPowerLimit(CapabilityID capabilityID, int limit) =>
+    public Task SetCPUPowerLimit(CapabilityID capabilityID, int limit) =>
         WMI.CallAsync("root\\WMI",
             $"SELECT * FROM LENOVO_OTHER_METHOD",
             "SetFeatureValue",
@@ -231,17 +231,6 @@ public class LegionGo : IDevice
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        // tentative: stability fix
-        if (PerformanceManager.GetProcessor() is AMDProcessor AMDProcessor)
-            AMDProcessor.SetCoall(0x100020);
-
-        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
-        {
-            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
-            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
-            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
-        }
-
         FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {

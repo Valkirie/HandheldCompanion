@@ -2,7 +2,7 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Processors.AMD;
 using System;
-using System.Threading;
+using static HandheldCompanion.Devices.LegionGo;
 
 namespace HandheldCompanion.Processors;
 
@@ -73,25 +73,42 @@ public class AMDProcessor : Processor
 
         lock (updateLock)
         {
-            // 15W : 15000
-            limit *= 1000;
-
-            var error = 0;
-
-            switch (type)
+            // device specific: Lenovo Legion Go
+            if (IDevice.GetCurrent() is LegionGo legion)
             {
-                case PowerType.Fast:
-                    error = RyzenAdj.set_fast_limit(ry, (uint)limit);
-                    break;
-                case PowerType.Slow:
-                    error = RyzenAdj.set_slow_limit(ry, (uint)limit);
-                    break;
-                case PowerType.Stapm:
-                    error = RyzenAdj.set_stapm_limit(ry, (uint)limit);
-                    break;
+                switch(type)
+                {
+                    case PowerType.Fast:
+                        legion.SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)limit);
+                        legion.SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)limit);
+                        break;
+                    case PowerType.Slow:
+                        legion.SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)limit);
+                        break;
+                }
             }
+            else
+            {
+                // 15W : 15000
+                limit *= 1000;
 
-            base.SetTDPLimit(type, limit, immediate, error);
+                var error = 0;
+
+                switch (type)
+                {
+                    case PowerType.Fast:
+                        error = RyzenAdj.set_fast_limit(ry, (uint)limit);
+                        break;
+                    case PowerType.Slow:
+                        error = RyzenAdj.set_slow_limit(ry, (uint)limit);
+                        break;
+                    case PowerType.Stapm:
+                        error = RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                        break;
+                }
+
+                base.SetTDPLimit(type, limit, immediate, error);
+            }
         }
     }
 
@@ -103,13 +120,10 @@ public class AMDProcessor : Processor
             {
                 case RyzenFamily.FAM_VANGOGH:
                     {
-                        using (var sd = VangoghGPU.Open())
+                        using (VangoghGPU? sd = VangoghGPU.Open())
                         {
                             if (sd is null)
-                            {
-                                base.SetGPUClock(clock, 1);
                                 return;
-                            }
 
                             if (clock == 12750)
                             {
@@ -121,8 +135,6 @@ public class AMDProcessor : Processor
                                 sd.HardMinGfxClock = (uint)clock; //hardMin
                                 sd.SoftMaxGfxClock = (uint)clock; //softMax
                             }
-
-                            base.SetGPUClock(clock, 0);
                         }
                     }
                     break;
@@ -134,20 +146,6 @@ public class AMDProcessor : Processor
                             return;
 
                         int error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
-
-                        /*
-                        if (clock == 12750)
-                        {
-                            error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)IDevice.GetCurrent().GfxClock[0]);
-                            error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)IDevice.GetCurrent().GfxClock[1]);
-                        }
-                        else
-                        {
-                            error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)clock);
-                            error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)clock);
-                        }
-                        */
-
                         base.SetGPUClock(clock, error);
                     }
                     break;
