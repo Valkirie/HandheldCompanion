@@ -18,6 +18,7 @@ namespace HandheldCompanion.Helpers
             new Device("AMD Custom GPU 0932", 0x80600000, 0x8067ffff, new uint[] { 0x063F0E00 }),
             // BIOS 107
             new Device("AMD Custom GPU 0932", 0x80500000, 0x8057ffff, new uint[] { 0x063F0F00 }),
+            new Device("AMD Custom GPU 0932", 0x80600000, 0x8067ffff, new uint[] { 0x063F0A00 }),
 
             // SteamDeck unofficial APU drivers
             // https://sourceforge.net/projects/amernimezone/files/Release%20Polaris-Vega-Navi/AMD%20SOC%20Driver%20Variant/
@@ -73,7 +74,7 @@ namespace HandheldCompanion.Helpers
 
                 if (!discoveredDevices.ContainsKey(deviceName))
                 {
-                    LogManager.LogError("GPU: {0}: Not matched.", deviceName);
+                    LogManager.LogDebug("GPU: {0}: Not matched.", deviceName);
                     continue;
                 }
 
@@ -81,13 +82,13 @@ namespace HandheldCompanion.Helpers
                 var ranges = DeviceManager.GetDeviceMemResources(devicePNP);
                 if (ranges is null)
                 {
-                    LogManager.LogError("GPU: {0}: {1}: No memory ranges", deviceName, devicePNP);
+                    LogManager.LogDebug("GPU: {0}: {1}: No memory ranges", deviceName, devicePNP);
                     continue;
                 }
                 var expectedRange = new Tuple<UIntPtr, UIntPtr>(new UIntPtr(device.Item2), new UIntPtr(device.Item3));
                 if (!ranges.Contains(expectedRange))
                 {
-                    LogManager.LogError("GPU: {0}: {1}: Memory range not found: {2}",
+                    LogManager.LogDebug("GPU: {0}: {1}: Memory range not found: {2}",
                         deviceName,
                         devicePNP,
                         String.Join(",", ranges.Select((item) => item.ToString()))
@@ -99,7 +100,7 @@ namespace HandheldCompanion.Helpers
                 {
                     if (gpu is null)
                     {
-                        LogManager.LogError("GPU: {0}: {1}: Failed to open.", deviceName, devicePNP);
+                        LogManager.LogDebug("GPU: {0}: {1}: Failed to open.", deviceName, devicePNP);
                         continue;
                     }
 
@@ -108,10 +109,9 @@ namespace HandheldCompanion.Helpers
                     {
                         // Silence SMU_Version = 0 since it happens fairly often
                         if (smuVersion != 0)
-                        {
-                            LogManager.LogError("GPU: {0}: {1}: SMU not supported: {2:X8} (IO: {3})", deviceName, devicePNP, smuVersion, expectedRange);
-                        }
-                        return DetectionStatus.Retryable;
+                            LogManager.LogDebug("GPU: {0}: {1}: SMU not supported: {2:X8} (IO: {3})", deviceName, devicePNP, smuVersion, expectedRange);
+
+                        continue;
                     }
 
                     LogManager.LogInformation("GPU: {0}: Matched!", deviceName);
