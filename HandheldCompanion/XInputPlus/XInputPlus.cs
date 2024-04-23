@@ -228,6 +228,8 @@ public static class XInputPlus
     public static bool RegisterApplication(Profile profile)
     {
         string DirectoryPath = Path.GetDirectoryName(profile.Path);
+        if (string.IsNullOrEmpty(DirectoryPath))
+            return false;
 
         // get binary type (x64, x86)
         BinaryType bt;
@@ -302,6 +304,8 @@ public static class XInputPlus
     public static bool UnregisterApplication(Profile profile)
     {
         string DirectoryPath = Path.GetDirectoryName(profile.Path);
+        if (string.IsNullOrEmpty(DirectoryPath))
+            return false;
 
         // check if dll files can be deployed
         if (!CheckDeployment(DirectoryPath))
