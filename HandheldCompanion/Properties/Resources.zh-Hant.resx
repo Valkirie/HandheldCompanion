@@ -749,10 +749,10 @@
     <value>確認</value>
   </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
-    <value>GPU頻率</value>
+    <value>GPU時脈</value>
   </data>
   <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
-    <value>手動設置GPU頻率</value>
+    <value>手動設置GPU時脈</value>
   </data>
   <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
     <value> MHz</value>
@@ -1325,10 +1325,10 @@
     <value>GPU</value>
   </data>
   <data name="ProfilesPage_GPUMhz" xml:space="preserve">
-    <value>GPU最大頻率</value>
+    <value>GPU最大時脈</value>
   </data>
   <data name="ProfilesPage_GPUMhzDesc" xml:space="preserve">
-    <value>設置GPU最大頻率（Mhz）</value>
+    <value>設置GPU最大時脈（Mhz）</value>
   </data>
   <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
     <value>左搖杆死區</value>
