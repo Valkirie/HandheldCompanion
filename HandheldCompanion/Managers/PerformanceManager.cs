@@ -84,7 +84,7 @@ public static class PerformanceManager
     private static readonly double[] FPSHistory = new double[6];
     private static bool gfxWatchdogPendingStop;
 
-    private static Processor processor;
+    private static Processor? processor;
     private static double ProcessValueFPSPrevious;
     private static double StoredGfxClock;
 
@@ -888,7 +888,7 @@ public static class PerformanceManager
         if (!IsInitialized)
             return;
 
-        if (processor.IsInitialized)
+        if (processor is not null && processor.IsInitialized)
             processor.Stop();
 
         powerWatchdog.Stop();
@@ -901,10 +901,7 @@ public static class PerformanceManager
         LogManager.LogInformation("{0} has started", "PerformanceManager");
     }
 
-    public static Processor GetProcessor()
-    {
-        return processor;
-    }
+    public static Processor GetProcessor() => processor;
 
     #region imports
 
