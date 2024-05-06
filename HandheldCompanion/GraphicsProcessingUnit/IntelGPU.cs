@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.IGCL;
 using SharpDX.Direct3D9;
+using System.Threading;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
@@ -159,9 +160,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (halting)
                 return;
 
-            lock (telemetryLock)
+            if (Monitor.TryEnter(telemetryLock))
             {
-                TelemetryData = GetTelemetry();
+                try
+                {
+                    TelemetryData = GetTelemetry();
+                }
+                finally
+                {
+                    Monitor.Exit(telemetryLock);
+                }
             }
         }
 

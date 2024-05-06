@@ -58,6 +58,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     {
                         lock (functionLock)
                         {
+                            // make sure while we were waiting for the lock
+                            // that someone else didn't unitialize the GPU backend
                             if (!halting && GPUManager.IsInitialized)
                                 return func();
                             else
