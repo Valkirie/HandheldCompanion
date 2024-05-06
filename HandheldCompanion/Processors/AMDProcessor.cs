@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Processors.AMD;
 using System;
@@ -35,6 +35,7 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_REMBRANDT:
                 case RyzenFamily.FAM_MENDOCINO:
                 case RyzenFamily.FAM_PHEONIX:
+                case RyzenFamily.FAM_HAWKPOINT:
                     CanChangeGPU = true;
                     break;
                 case RyzenFamily.FAM_VANGOGH:
@@ -58,6 +59,7 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_REMBRANDT:
                 case RyzenFamily.FAM_MENDOCINO:
                 case RyzenFamily.FAM_PHEONIX:
+                case RyzenFamily.FAM_HAWKPOINT:
                     CanChangeTDP = true;
                     break;
             }

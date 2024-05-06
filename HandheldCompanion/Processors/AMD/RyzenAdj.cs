@@ -17,6 +17,7 @@ public enum RyzenFamily
     FAM_REMBRANDT = 7,
     FAM_MENDOCINO = 8,
     FAM_PHEONIX = 9,
+    FAM_HAWKPOINT = 10,
     FAM_END
 }
 
