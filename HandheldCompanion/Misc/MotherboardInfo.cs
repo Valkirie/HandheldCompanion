@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Management;
 using System.Runtime.CompilerServices;
 
@@ -39,23 +40,21 @@ public static class MotherboardInfo
             Directory.CreateDirectory(cacheDirectory);
     }
 
-    public static void Collect()
+    private static Dictionary<string, KeyValuePair<ManagementObjectCollection, ManagementObjectSearcher>> collections = new()
     {
-        if (!loadCache())
-        {
-            baseboardCollection = baseboardSearcher.Get();
-            motherboardCollection = motherboardSearcher.Get();
-            processorCollection = processorSearcher.Get();
-            displayCollection = displaySearcher.Get();
-            videoControllerCollection = videoControllerSearcher.Get();
-        }
-    }
+        { "baseboard", new(baseboardCollection, baseboardSearcher) },
+        { "motherboard", new(motherboardCollection, motherboardSearcher) },
+        { "processor", new(processorCollection, processorSearcher) },
+        { "display", new(displayCollection, displaySearcher) },
+        { "video", new(videoControllerCollection, videoControllerSearcher) },
+    };
 
+    // unused
     public static string Availability
     {
         get
         {
-            string result = Convert.ToString(queryCacheValue(motherboardCollection, "Availability"));
+            string result = Convert.ToString(queryCacheValue("motherboard", "Availability"));
             if (int.TryParse(result, out var value))
                 return GetAvailability(value);
             else
@@ -63,27 +62,30 @@ public static class MotherboardInfo
         }
     }
 
+    // unused
     public static List<string> DisplayDescription
     {
         get
         {
-            return (List<string>)queryCacheValue(displayCollection, "Description");
+            return (List<string>)queryCacheValue("display", "Description");
         }
     }
 
+    // unused
     public static bool HostingBoard
     {
         get
         {
-            return Convert.ToBoolean(queryCacheValue(baseboardCollection, "HostingBoard"));
+            return Convert.ToBoolean(queryCacheValue("baseboard", "HostingBoard"));
         }
     }
 
+    // unused
     public static string InstallDate
     {
         get
         {
-            string result = Convert.ToString(queryCacheValue(baseboardCollection, "InstallDate"));
+            string result = Convert.ToString(queryCacheValue("baseboard", "InstallDate"));
             if (!string.IsNullOrEmpty(result))
                 return ConvertToDateTime(result);
             else
@@ -95,15 +97,16 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "Manufacturer"));
+            return Convert.ToString(queryCacheValue("baseboard", "Manufacturer"));
         }
     }
 
+    // unused
     public static string Model
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "Model"));
+            return Convert.ToString(queryCacheValue("baseboard", "Model"));
         }
     }
 
@@ -111,31 +114,34 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToInt32(queryCacheValue(processorCollection, "NumberOfCores"));
+            return Convert.ToInt32(queryCacheValue("processor", "NumberOfCores"));
         }
     }
 
+    // unused
     public static string PartNumber
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "PartNumber"));
+            return Convert.ToString(queryCacheValue("baseboard", "PartNumber"));
         }
     }
 
+    // unused
     public static string PNPDeviceID
     {
         get
         {
-            return Convert.ToString(queryCacheValue(motherboardCollection, "PNPDeviceID"));
+            return Convert.ToString(queryCacheValue("motherboard", "PNPDeviceID"));
         }
     }
 
+    // unused
     public static string PrimaryBusType
     {
         get
         {
-            return Convert.ToString(queryCacheValue(motherboardCollection, "PrimaryBusType"));
+            return Convert.ToString(queryCacheValue("motherboard", "PrimaryBusType"));
         }
     }
 
@@ -143,7 +149,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(processorCollection, "processorID")).TrimEnd();
+            return Convert.ToString(queryCacheValue("processor", "processorID")).TrimEnd();
         }
     }
 
@@ -151,7 +157,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(processorCollection, "Name")).TrimEnd();
+            return Convert.ToString(queryCacheValue("processor", "Name")).TrimEnd();
         }
     }
 
@@ -159,15 +165,16 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(processorCollection, "Manufacturer")).TrimEnd();
+            return Convert.ToString(queryCacheValue("processor", "Manufacturer")).TrimEnd();
         }
     }
 
+    // unused
     public static uint ProcessorMaxClockSpeed
     {
         get
         {
-            return Convert.ToUInt32(queryCacheValue(processorCollection, "MaxClockSpeed"));
+            return Convert.ToUInt32(queryCacheValue("processor", "MaxClockSpeed"));
         }
     }
 
@@ -189,55 +196,61 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "Product"));
+            return Convert.ToString(queryCacheValue("baseboard", "Product"));
         }
     }
 
+    // unused
     public static bool Removable
     {
         get
         {
-            return Convert.ToBoolean(queryCacheValue(baseboardCollection, "Removable"));
+            return Convert.ToBoolean(queryCacheValue("baseboard", "Removable"));
         }
     }
 
+    // unused
     public static bool Replaceable
     {
         get
         {
-            return Convert.ToBoolean(queryCacheValue(baseboardCollection, "Replaceable"));
+            return Convert.ToBoolean(queryCacheValue("baseboard", "Replaceable"));
         }
     }
 
+    // unused
     public static string RevisionNumber
     {
         get
         {
-            return Convert.ToString(queryCacheValue(motherboardCollection, "RevisionNumber"));
+            return Convert.ToString(queryCacheValue("motherboard", "RevisionNumber"));
         }
     }
 
+    // unused
     public static string SecondaryBusType
     {
         get
         {
-            return Convert.ToString(queryCacheValue(motherboardCollection, "SecondaryBusType"));
+            return Convert.ToString(queryCacheValue("motherboard", "SecondaryBusType"));
         }
     }
 
+    // unused
     public static string SerialNumber
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "SerialNumber"));
+            return Convert.ToString(queryCacheValue("baseboard", "SerialNumber"));
         }
     }
 
+    // unused
     public static string Status
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "Status"));
+            return Convert.ToString(queryCacheValue("baseboard", "Status"));
         }
     }
 
@@ -245,7 +258,7 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(motherboardCollection, "SystemName"));
+            return Convert.ToString(queryCacheValue("motherboard", "SystemName"));
         }
     }
 
@@ -253,33 +266,48 @@ public static class MotherboardInfo
     {
         get
         {
-            return Convert.ToString(queryCacheValue(baseboardCollection, "Version"));
+            return Convert.ToString(queryCacheValue("baseboard", "Version"));
         }
     }
 
-    private static object queryCacheValue(ManagementObjectCollection collection, string query, [CallerArgumentExpression("collection")] string collectionName = "")
+    private static object queryCacheValue(string collectionName, string query)
     {
-        if (!cache.ContainsKey($"{collectionName}-{query}"))
+        bool hasvalue = false;
+
+        // pull value if it exsts and check if correct
+        if (cache.TryGetValue($"{collectionName}-{query}", out object? result))
         {
-            if (collection is not null)
+            switch (result)
             {
-                foreach (ManagementObject queryObj in collection)
-                {
-                    object queryResult = queryObj[query];
-                    if (queryResult is not null)
-                    {
-                        cache.Add($"{collectionName}-{query}", queryResult);
-                        writeCache();
-                        break;
-                    }
-                }
+                case string s when !string.IsNullOrEmpty(s):
+                case int i when i != 0:
+                case uint ui when ui != 0:
+                    hasvalue = true;
+                    break;
             }
         }
 
-        if (cache.TryGetValue($"{collectionName}-{query}", out var result))
-            return result;
+        if (!hasvalue)
+        {
+            ManagementObjectCollection collection = collections[collectionName].Key;
+            ManagementObjectSearcher searcher = collections[collectionName].Value;
 
-        return string.Empty;
+            // use searcher if collection is null
+            collection ??= searcher.Get();
+
+            // set or update result
+            result = collection.Cast<ManagementObject>().Select(queryObj => queryObj[query]).FirstOrDefault(result => result != null);
+
+            if (result != null)
+            {
+                // update cache
+                cache[$"{collectionName}-{query}"] = result;
+                writeCache();
+            }
+            else return string.Empty;
+        }
+
+        return result;
     }
 
     private static string GetAvailability(int availability)
@@ -328,7 +356,7 @@ public static class MotherboardInfo
         return convertedTime;
     }
 
-    private static bool loadCache()
+    public static bool Collect()
     {
         lock (cacheLock)
         {
