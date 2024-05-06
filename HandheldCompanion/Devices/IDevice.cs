@@ -351,6 +351,13 @@ public abstract class IDevice
                                 case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
                                     device = new GPDWin4_2023_7840U();
                                     break;
+                                case "AMD Ryzen 5 8640U w/ Radeon 760M Graphics":
+                                    device = new GPDWin4_2024_8640U();
+                                    break;
+                                case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
+                                    device = new GPDWin4_2024_8840U();
+                                    break;
+
                             }
                             break;
                         case "G1619-03":
