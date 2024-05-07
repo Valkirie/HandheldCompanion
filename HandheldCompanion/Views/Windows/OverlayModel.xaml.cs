@@ -13,6 +13,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using NumQuaternion = System.Numerics.Quaternion;
 using NumVector3 = System.Numerics.Vector3;
 
 namespace HandheldCompanion.Views.Windows;
@@ -29,6 +30,9 @@ public partial class OverlayModel : OverlayWindow
     private Quaternion DevicePose;
     private Vector3D DevicePoseRad;
     private Vector3D DiffAngle = new(0, 0, 0);
+    private static MadgwickAHRS madgwickAHRS;
+
+    private static IEnumerable<ButtonFlags> resetFlags = new List<ButtonFlags>() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4 };
 
     public bool FaceCamera = false;
     public Vector3D FaceCameraObjectAlignment;
@@ -53,6 +57,9 @@ public partial class OverlayModel : OverlayWindow
         this._hotkeyId = 1;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        float samplePeriod = TimerManager.GetPeriod() / 1000f;
+        madgwickAHRS = new(samplePeriod, 0.05f);
 
         ResetModelPose();
 
@@ -86,8 +93,9 @@ public partial class OverlayModel : OverlayWindow
     {
         // Reset model to initial pose
         FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
-        DevicePose = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-        DevicePoseRad = new Vector3D(0, 3.14, 0);
+        DevicePose = new Quaternion(0.0f, 0.0f, 0.0f, -1.0f);
+
+        madgwickAHRS.Reset();
     }
 
     private void Window_Closing(object sender, CancelEventArgs e)
@@ -178,23 +186,44 @@ public partial class OverlayModel : OverlayWindow
     private RotateTransform3D DeviceRotateTransformFaceCameraY;
     private RotateTransform3D DeviceRotateTransformFaceCameraZ;
 
-    public void UpdateReport(ControllerState Inputs, GamepadMotion gamepadMotion)
+    public void UpdateReport(ControllerState Inputs, GamepadMotion gamepadMotion, float deltaSeconds)
     {
+        // Update only if 3D overlay is visible
+        if (Visibility != Visibility.Visible)
+            return;
+
         this.Inputs = Inputs;
 
-        // Add return here if motion is not wanted for 3D model
+        // Return here if motion is not wanted for 3D model i.e. only update gamepad inputs
         if (!MotionActivated)
             return;
+
+        // Reset device pose if all facebuttons are pressed at the same time
+        if (Inputs.ButtonState.Buttons.Intersect(resetFlags).Count() == 4)
+            ResetModelPose();
 
         // Rotate for different coordinate system of 3D model and motion algorithm
         // Motion algorithm uses DS4 coordinate system
         // 3D model, has Z+ up, X+ to the right, Y+ towards the screen
-        gamepadMotion.GetOrientation(out float w, out float x, out float y, out float z);
-        DevicePose = new Quaternion(x, y, z, w);
+
+        // Update Madgwick orientation filter with IMU sensor data for 3D overlay
+        madgwickAHRS.UpdateReport(
+            -1 * InputUtils.deg2rad(gamepadMotion.gyroX), 
+            InputUtils.deg2rad(gamepadMotion.gyroY), 
+            -1 * InputUtils.deg2rad(gamepadMotion.gyroZ), 
+            gamepadMotion.accelX,
+            -1 * gamepadMotion.accelY,
+            gamepadMotion.accelZ, 
+            0.01 // TODO, workaround for sensor Internal giving 0 deltaSeconds, while sensor None gives something plausible
+            );
+
+        // System.Numerics to Media.3D, library really requires System.Numerics
+        NumQuaternion quaternion = madgwickAHRS.GetQuaternion();
+        DevicePose = new Quaternion(quaternion.W, quaternion.X, quaternion.Y, quaternion.Z);
 
         // Also make euler equivalent availible of quaternions
         NumVector3 euler = InputUtils.ToEulerAngles(DevicePose);
-        DevicePoseRad = new Vector3D(-euler.X, -euler.Y, -euler.Z);
+        DevicePoseRad = new Vector3D(euler.X, euler.Y, euler.Z);
     }
 
     private void DrawModel(object? sender, EventArgs e)
@@ -220,8 +249,9 @@ public partial class OverlayModel : OverlayWindow
             DeviceRotateTransform = new RotateTransform3D(Ax3DDevicePose);
             Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
-            // User requested resting pitch of device around X axis
-            var Ax3DRestingPitch = new AxisAngleRotation3D(new Vector3D(1, 0, 0), DesiredAngleDeg.X);
+            // User requested resting pitch of device around X axis, invert when motion is enabled
+            float direction = MotionActivated ? -1 : 1;
+            var Ax3DRestingPitch = new AxisAngleRotation3D(new Vector3D(1, 0, 0), direction * DesiredAngleDeg.X);
             RotateTransform3D DeviceRotateTransform3DRestingPitch = new RotateTransform3D(Ax3DRestingPitch);
             Transform3DGroupModel.Children.Add(DeviceRotateTransform3DRestingPitch);
 
@@ -272,25 +302,36 @@ public partial class OverlayModel : OverlayWindow
                 Transform3DGroupModelPrevious = Transform3DGroupModel;
             }
 
-            // Upward visibility rotation for shoulder buttons
-            // Model angle to compensate for
+            // Upward rotation for shoulder buttons angle
+            // to compensate for visiblity
+            float modelPoseXDeg = 0.0f;
 
-            var ModelPoseXDeg = 0.0f;
+            // Adjust the model's pose based on whether motion is activated.
+            if (MotionActivated)
+            {
+                // Start by setting the model pose based on the device's orientation adjusted by the desired angle from the UI.
+                modelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)DesiredAngleDeg.X;
 
-            if (FaceCamera && MotionActivated)
-                ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X;
+                // If the model should face the camera, further adjust by the camera object's alignment.
+                if (FaceCamera)
+                {
+                    modelPoseXDeg -= (float)FaceCameraObjectAlignment.Z;
+                }
+            }
             else
-                // Model pose is only adjusted by requested pitch angle
-                ModelPoseXDeg = (float)DesiredAngleDeg.X;
+            {
+                // If motion is not activated, set the model's pose to the desired UI pitch angle directly.
+                modelPoseXDeg = (float)DesiredAngleDeg.X;
+            }
 
             var ShoulderButtonsAngleDeg = 0.0f;
 
-            // Rotate shoulder buttons based on ModelPoseXDeg
-            if (ModelPoseXDeg < 0)
-                ShoulderButtonsAngleDeg = Math.Clamp(90.0f - 1 * ModelPoseXDeg, 90.0f, 180.0f);
-            else if (ModelPoseXDeg >= 0 && ModelPoseXDeg <= 45.0f)
-                ShoulderButtonsAngleDeg = 90.0f - 2 * ModelPoseXDeg;
-            else if (ModelPoseXDeg < 45.0f) ShoulderButtonsAngleDeg = 0.0f;
+            // Rotate shoulder buttons based on modelPoseXDeg
+            if (modelPoseXDeg < 0)
+                ShoulderButtonsAngleDeg = Math.Clamp(90.0f - 1 * modelPoseXDeg, 90.0f, 180.0f);
+            else if (modelPoseXDeg >= 0 && modelPoseXDeg <= 45.0f)
+                ShoulderButtonsAngleDeg = 90.0f - 2 * modelPoseXDeg;
+            else if (modelPoseXDeg < 45.0f) ShoulderButtonsAngleDeg = 0.0f;
 
             // Update shoulder buttons left, rotate into view angle, trigger angle and trigger gradient color
             UpdateShoulderButtons(

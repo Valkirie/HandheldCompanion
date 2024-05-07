@@ -1087,7 +1087,7 @@ public static class ControllerManager
     }
 
     private static ControllerState mutedState = new ControllerState();
-    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
+    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float deltaTimeSeconds)
     {
         // raise event
         InputsUpdated?.Invoke(controllerState);
@@ -1097,15 +1097,15 @@ public static class ControllerManager
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
                 gamepadMotion = IDevice.GetCurrent().GamepadMotion;
-                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
+                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref deltaTimeSeconds);
                 break;
         }
 
         // compute motion
         if (gamepadMotion is not null)
         {
-            MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
-            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion);
+            MotionManager.UpdateReport(controllerState, gamepadMotion);
+            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, deltaTimeSeconds);
         }
 
         // controller is muted
