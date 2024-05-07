@@ -19,8 +19,6 @@ namespace HandheldCompanion.Managers
         private static GyroActions gyroAction = new();
         private static Inclination inclination = new();
 
-        private static IEnumerable<ButtonFlags> resetFlags = new List<ButtonFlags>() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4 };
-
         public static event SettingsMode0EventHandler SettingsMode0Update;
         public delegate void SettingsMode0EventHandler(Vector3 gyrometer);
 
@@ -34,7 +32,6 @@ namespace HandheldCompanion.Managers
 
         static MotionManager()
         {
-            float samplePeriod = TimerManager.GetPeriod() / 1000f;
         }
 
         public static void Start()
@@ -48,18 +45,15 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
         }
 
-        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
+        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
-            SetupMotion(controllerState, gamepadMotion, delta);
-            ProcessMotion(controllerState, gamepadMotion, delta);
-
-            if (controllerState.ButtonState.Buttons.Intersect(resetFlags).Count() == 4)
-                gamepadMotion.ResetMotion();
+            SetupMotion(controllerState, gamepadMotion);
+            ProcessMotion(controllerState, gamepadMotion);
         }
 
         // this function sets some basic motion settings, sensitivity and inverts
         // and is enough for DS4/DSU gyroscope handling
-        private static void SetupMotion(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
+        private static void SetupMotion(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             Profile current = ProfileManager.GetCurrent();
 
@@ -128,8 +122,8 @@ namespace HandheldCompanion.Managers
         }
 
         // this function is used for advanced motion calculations used by
-        // gyro to joy/mouse mappings, by UI that configures them and by 3D overlay
-        private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
+        // gyro to joy/mouse mappings and by UI that configures them
+        private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             // TODO: handle this race condition gracefully. LayoutManager might be updating currentlayout as we land here
             Layout currentLayout = LayoutManager.GetCurrent();
@@ -238,4 +232,6 @@ namespace HandheldCompanion.Managers
             controllerState.AxisState[AxisFlags.GyroY] = (short)Math.Clamp(output.Y, short.MinValue, short.MaxValue);
         }
     }
+
+
 }
