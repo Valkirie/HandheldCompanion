@@ -107,6 +107,11 @@ public class Steam : IPlatform
         if (!File.Exists(configPath))
             return false;
 
+        // check if file is being used
+        // todo: improve me
+        if (FileUtils.IsFileUsed(configPath))
+            return true;
+
         string configText = File.ReadAllText(configPath);
         string fileText = Encoding.UTF8.GetString(Resources.empty_neptune, 0, Resources.empty_neptune.Length);
 
