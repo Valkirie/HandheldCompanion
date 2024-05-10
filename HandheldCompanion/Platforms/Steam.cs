@@ -143,7 +143,7 @@ public class Steam : IPlatform
             ReplaceFiles();
 
             // hook into current process
-            if (!Process.HasExited)
+            if (Process is not null && !Process.HasExited)
                 Process.Exited += Process_Exited;
         }
     }
