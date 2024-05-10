@@ -343,6 +343,9 @@ public abstract class IDevice
                                 case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
                                     device = new GPDWinMini_7840U();
                                     break;
+                                case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
+                                    device = new GPDWinMini_8840U();
+                                    break;
                             }
                             break;
                         case "G1618-03":
