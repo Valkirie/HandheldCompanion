@@ -266,13 +266,10 @@
     <Setting Name="OnScreenDisplayVRAMLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="OnScreenDisplayBatteryLevel" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
     <Setting Name="OnScreenDisplayFPSLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="OnScreenDisplayBATTLevel" Type="System.String" Scope="User">
+    <Setting Name="OnScreenDisplayBATTLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="OnScreenDisplayOrder" Type="System.String" Scope="User">
