@@ -1445,10 +1445,10 @@
     <value>風扇轉速</value>
   </data>
   <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
-    <value>調整顯示器的解析度與刷新率</value>
+    <value>調整顯示器的解析度</value>
   </data>
   <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>顯示器解析度與刷新率</value>
+    <value>顯示器解析度</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
     <value>右上</value>
@@ -2798,7 +2798,7 @@
     <value>快捷偏好</value>
   </data>
   <data name="QuickProfilesPage_Title" xml:space="preserve">
-    <value>總則</value>
+    <value>快速設定檔</value>
   </data>
   <data name="QuickProfilesPage_Desc" xml:space="preserve">
     <value>效能, 體感及圖形設定</value>
