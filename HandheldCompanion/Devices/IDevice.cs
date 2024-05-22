@@ -368,6 +368,12 @@ public abstract class IDevice
                 {
                     switch (ProductName)
                     {
+                        case "ONEXPLAYER X1 i":
+                            device = new OneXPlayerX1Intel();
+                            break;
+                        case "ONEXPLAYER X1 a": // TDOO: check name after release
+                            device = new OneXPlayerX1AMD();
+                            break;
                         case "ONEXPLAYER F1":
                             {
                                 switch (Version)

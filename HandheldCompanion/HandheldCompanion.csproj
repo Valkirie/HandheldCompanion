@@ -80,6 +80,7 @@
     <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_onexplayer_onexfly.png" />
+    <None Remove="Resources\device_onexplayer_x1.png" />
     <None Remove="Resources\device_rog_ally.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
     <None Remove="Resources\droix.png" />
@@ -139,6 +140,7 @@
     <Resource Include="Resources\device_onexplayer_2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\device_onexplayer_onexfly.png" />
+    <Resource Include="Resources\device_onexplayer_x1.png" />
     <Resource Include="Resources\device_rog_ally.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />
     <Resource Include="Resources\droix.png" />
