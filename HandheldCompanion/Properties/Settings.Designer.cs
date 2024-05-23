@@ -256,30 +256,6 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double OverlayControllerRestingYaw {
-            get {
-                return ((double)(this["OverlayControllerRestingYaw"]));
-            }
-            set {
-                this["OverlayControllerRestingYaw"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double OverlayControllerRestingRoll {
-            get {
-                return ((double)(this["OverlayControllerRestingRoll"]));
-            }
-            set {
-                this["OverlayControllerRestingRoll"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool SensorPlacementUpsideDown {
             get {
@@ -328,7 +304,7 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool OverlayRenderAntialiasing {
             get {
                 return ((bool)(this["OverlayRenderAntialiasing"]));
