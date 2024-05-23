@@ -306,6 +306,12 @@ public abstract class IDevice
                         case "GEEK 1S":
                             device = new AYANEO2S();
                             break;
+                        case "FLIP KB":
+                            device = new AYANEOFlipKB();
+                            break;
+                        case "FLIP DS":
+                            device = new AYANEOFlipDS();
+                            break;
                     }
                 }
                 break;
