@@ -73,6 +73,7 @@ namespace HandheldCompanion.Managers
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
+            ControllerManager.StatusChanged += ControllerManager_StatusChanged;
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -99,34 +100,40 @@ namespace HandheldCompanion.Managers
 
         public static void Resume()
         {
-            // create new ViGEm client
-            if (vClient is null)
-                vClient = new ViGEmClient();
+            lock (threadLock)
+            {
+                // create new ViGEm client
+                if (vClient is null)
+                    vClient = new ViGEmClient();
 
-            // set controller mode
-            SetControllerMode(HIDmode);
+                // set controller mode
+                SetControllerMode(HIDmode);
 
-            SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+                SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+            }
         }
 
         public static void Suspend()
         {
-            // dispose virtual controller
-            if (vTarget is not null)
+            lock (threadLock)
             {
-                vTarget.Disconnect();
-                vTarget.Dispose();
-                vTarget = null;
-            }
+                // dispose virtual controller
+                if (vTarget is not null)
+                {
+                    vTarget.Disconnect();
+                    vTarget.Dispose();
+                    vTarget = null;
+                }
 
-            // dispose ViGEm drivers
-            if (vClient is not null)
-            {
-                vClient.Dispose();
-                vClient = null;
-            }
+                // dispose ViGEm drivers
+                if (vClient is not null)
+                {
+                    vClient.Dispose();
+                    vClient = null;
+                }
 
-            DSUServer.Stop();
+                DSUServer.Stop();
+            }
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -174,6 +181,20 @@ namespace HandheldCompanion.Managers
             // restore default HID mode
             if (profile.HID != HIDmode.NotSelected)
                 SetControllerMode(defaultHIDmode);
+        }
+
+        private static void ControllerManager_StatusChanged(ControllerManagerStatus status, int attempts)
+        {
+            switch(status)
+            {
+                // busy or pending
+                case ControllerManagerStatus.Pending:
+                case ControllerManagerStatus.Busy:
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         private static void SetDSUStatus(bool started)
@@ -246,10 +267,10 @@ namespace HandheldCompanion.Managers
 
                 // update current HIDmode
                 HIDmode = mode;
-            }
 
-            // update status
-            SetControllerStatus(HIDstatus);
+                // update status
+                SetControllerStatus(HIDstatus);
+            }
         }
 
         public static void SetControllerStatus(HIDstatus status)

@@ -749,7 +749,7 @@ public static class ControllerManager
     private static void UpdateStatus(ControllerManagerStatus status)
     {
         managerStatus = status;
-        StatusChanged?.Invoke(status);
+        StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }
 
     private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -1165,7 +1165,7 @@ public static class ControllerManager
     public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
     public static event StatusChangedEventHandler StatusChanged;
-    public delegate void StatusChangedEventHandler(ControllerManagerStatus status);
+    public delegate void StatusChangedEventHandler(ControllerManagerStatus status, int attempts);
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
