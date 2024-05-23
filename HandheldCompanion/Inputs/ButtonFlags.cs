@@ -59,7 +59,6 @@ public enum ButtonFlags : byte
     OEM9 = 38,
     OEM10 = 39,
 
-    // Steam Deck
     [Description("Left Pad Touch")] LeftPadTouch = 40,
     [Description("Right Pad Touch")] RightPadTouch = 41,
 
