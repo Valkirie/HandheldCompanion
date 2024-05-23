@@ -321,7 +321,7 @@ public partial class OverlayModel : OverlayWindow
                 // If the model should face the camera, further adjust by the camera object's alignment.
                 if (FaceCamera)
                 {
-                    modelPoseXDeg += (float)FaceCameraObjectAlignment.X;
+                    modelPoseXDeg -= (float)FaceCameraObjectAlignment.Z;
                 }
             }
             else
