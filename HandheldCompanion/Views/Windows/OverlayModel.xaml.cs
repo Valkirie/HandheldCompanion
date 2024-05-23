@@ -27,6 +27,7 @@ public partial class OverlayModel : OverlayWindow
 
     private IModel CurrentModel;
     public Vector3D DesiredAngleDeg = new(0, 0, 0);
+    public float RestingPitchAngleDeg;
     private Quaternion DevicePose;
     private Vector3D DevicePoseRad;
     private Vector3D DiffAngle = new(0, 0, 0);
@@ -42,15 +43,17 @@ public partial class OverlayModel : OverlayWindow
     private OverlayModelMode Modelmode;
     public bool MotionActivated = true;
 
-    private Transform3DGroup Transform3DGroupModelPrevious = new();
+    private Transform3DGroup Transform3DGroupModelPrev = new();
 
     private float ShoulderButtonsAngleDegLeftPrev;
-    private float ShoulderTriggerAngleRightPrev;
-    private float TriggerAngleShoulderLeft;
+    private float ShoulderButtonsAngleDegRightPrev;
+    
     private float ShoulderTriggerAngleLeftPrev;
-    private float TriggerAngleShoulderRight;
-    private float TriggerAngleShoulderRightPrev;
+    private float ShoulderTriggerAngleRightPrev;
 
+    private float TriggerAngleShoulderLeft;
+    private float TriggerAngleShoulderRight;
+        
     public OverlayModel()
     {
         InitializeComponent();
@@ -92,8 +95,14 @@ public partial class OverlayModel : OverlayWindow
     private void ResetModelPose()
     {
         // Reset model to initial pose
-        FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
+        FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d); // Angles when facing camera
         DevicePose = new Quaternion(0.0f, 0.0f, 0.0f, -1.0f);
+
+        ShoulderButtonsAngleDegLeftPrev = 0;
+        ShoulderButtonsAngleDegRightPrev = 0;
+
+        ShoulderTriggerAngleLeftPrev = 0;
+        ShoulderTriggerAngleRightPrev = 0;
 
         madgwickAHRS.Reset();
     }
@@ -120,7 +129,8 @@ public partial class OverlayModel : OverlayWindow
 
     public void UpdateModel()
     {
-        IModel newModel = null;
+        IModel newModel;
+
         switch (Modelmode)
         {
             case OverlayModelMode.DualSense:
@@ -152,6 +162,8 @@ public partial class OverlayModel : OverlayWindow
 
         if (newModel != CurrentModel)
         {
+            ResetModelPose();
+
             CurrentModel = newModel;
 
             ModelVisual3D.Content = CurrentModel.model3DGroup;
@@ -249,9 +261,11 @@ public partial class OverlayModel : OverlayWindow
             DeviceRotateTransform = new RotateTransform3D(Ax3DDevicePose);
             Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
-            // User requested resting pitch of device around X axis, invert when motion is enabled
-            float direction = MotionActivated ? -1 : 1;
-            var Ax3DRestingPitch = new AxisAngleRotation3D(new Vector3D(1, 0, 0), direction * DesiredAngleDeg.X);
+            // User requested resting pitch of device around X axis, invert when motion but not face camera is enabled
+            float direction = 1;
+            if (MotionActivated && !FaceCamera) { direction = -1; }
+
+            var Ax3DRestingPitch = new AxisAngleRotation3D(new Vector3D(1, 0, 0), direction * RestingPitchAngleDeg);
             RotateTransform3D DeviceRotateTransform3DRestingPitch = new RotateTransform3D(Ax3DRestingPitch);
             Transform3DGroupModel.Children.Add(DeviceRotateTransform3DRestingPitch);
 
@@ -260,78 +274,77 @@ public partial class OverlayModel : OverlayWindow
             RotateTransform3D DeviceRotateTransform3DImportViewPortCorrection = new RotateTransform3D(Ax3DImportViewPortCorrection);
             Transform3DGroupModel.Children.Add(DeviceRotateTransform3DImportViewPortCorrection);
 
-            // Determine diff angles
-            DiffAngle.X = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X -
+            // Devices rotates (slowly) towards a default position facing the camara 
+            if (FaceCamera && MotionActivated)
+            {
+                // Determine diff angles
+                DiffAngle.X = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X -
                           (float)DesiredAngleDeg.X;
-            DiffAngle.Y = InputUtils.rad2deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y -
+                DiffAngle.Y = InputUtils.rad2deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y -
                           (float)DesiredAngleDeg.Y;
-            DiffAngle.Z = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z -
+                DiffAngle.Z = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z -
                           (float)DesiredAngleDeg.Z;
 
-            // Handle wrap around at -180 +180 position which is horizontal for steering
-            DiffAngle.Y = (float)DevicePoseRad.Y < 0.0 ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
+                // Correction amount for camera, increase slowly
+                FaceCameraObjectAlignment += DiffAngle * 0.0015; // 0.0015 = ~90 degrees in 30 seconds at 30 FPS
 
-            // Correction amount for camera, increase slowly
-            FaceCameraObjectAlignment += DiffAngle * 0.0015; // 0.0015 = ~90 degrees in 30 seconds
-
-            // Devices rotates (slowly) towards a default position facing the camara 
-            // Calculation above is done to:
-            // - "quickly" move to the correct pose when enabled as it's calculated in the background
-            // - rotate shoulder buttons into view requires angle value
-
-            if (FaceCamera)
-            {
-                // Transform YZX
-                var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(0, 1, 0), FaceCameraObjectAlignment.Y);
-                DeviceRotateTransformFaceCameraY = new RotateTransform3D(Ax3DFaceCameraY);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);
-
-                var Ax3DFaceCameraZ = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
-                DeviceRotateTransformFaceCameraZ = new RotateTransform3D(Ax3DFaceCameraZ);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);
-
-                var Ax3DFaceCameraX = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.X);
+                // Apply face camera correction angles to the XYZ axis
+                var Ax3DFaceCameraX = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.X);
                 DeviceRotateTransformFaceCameraX = new RotateTransform3D(Ax3DFaceCameraX);
                 Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
+
+                var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.Y);
+                DeviceRotateTransformFaceCameraY = new RotateTransform3D(Ax3DFaceCameraY);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);                
+                
+                var Ax3DFaceCameraZ = new AxisAngleRotation3D(new Vector3D(0, 1, 0), -FaceCameraObjectAlignment.Z);
+                DeviceRotateTransformFaceCameraZ = new RotateTransform3D(Ax3DFaceCameraZ);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);
             }
 
-            // Transform mode with group if there are any changes
-            if (Transform3DGroupModel != Transform3DGroupModelPrevious)
+            // Transform model group if there are any changes
+            if (Transform3DGroupModel != Transform3DGroupModelPrev)
             {
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;
-                Transform3DGroupModelPrevious = Transform3DGroupModel;
+                Transform3DGroupModelPrev = Transform3DGroupModel;
             }
 
-            // Upward rotation for shoulder buttons angle
-            // to compensate for visiblity
+            // Upward rotation for shoulder buttons angle to compensate for visiblity
             float modelPoseXDeg = 0.0f;
 
-            // Adjust the model's pose based on whether motion is activated.
+            // Determine the model's pose based motion, face camera and resting pitch
             if (MotionActivated)
             {
-                // Start by setting the model pose based on the device's orientation adjusted by the desired angle from the UI.
-                modelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)DesiredAngleDeg.X;
+                // Start by setting the model pose based on the device's orientation adjusted by the desired angle from the UI
+                modelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)RestingPitchAngleDeg;
 
                 // If the model should face the camera, further adjust by the camera object's alignment.
                 if (FaceCamera)
                 {
-                    modelPoseXDeg -= (float)FaceCameraObjectAlignment.Z;
+                    modelPoseXDeg += (float)FaceCameraObjectAlignment.X;
                 }
             }
             else
             {
-                // If motion is not activated, set the model's pose to the desired UI pitch angle directly.
-                modelPoseXDeg = (float)DesiredAngleDeg.X;
+                // If motion is not activated, set the model's pose to the desired UI pitch angle directly
+                modelPoseXDeg = (float)RestingPitchAngleDeg;
             }
 
-            var ShoulderButtonsAngleDeg = 0.0f;
-
             // Rotate shoulder buttons based on modelPoseXDeg
+            float ShoulderButtonsAngleDeg = 0.0f;
+
             if (modelPoseXDeg < 0)
+            {
                 ShoulderButtonsAngleDeg = Math.Clamp(90.0f - 1 * modelPoseXDeg, 90.0f, 180.0f);
+            }
             else if (modelPoseXDeg >= 0 && modelPoseXDeg <= 45.0f)
+            {
                 ShoulderButtonsAngleDeg = 90.0f - 2 * modelPoseXDeg;
-            else if (modelPoseXDeg < 45.0f) ShoulderButtonsAngleDeg = 0.0f;
+            }
+            else if (modelPoseXDeg < 45.0f)
+            {
+                ShoulderButtonsAngleDeg = 0.0f;
+            }
 
             // Update shoulder buttons left, rotate into view angle, trigger angle and trigger gradient color
             UpdateShoulderButtons(
@@ -353,8 +366,8 @@ public partial class OverlayModel : OverlayWindow
                 CurrentModel.TriggerMaxAngleDeg,
                 AxisFlags.R2,
                 ShoulderButtonsAngleDeg,
-                ref TriggerAngleShoulderRightPrev,
                 ref ShoulderTriggerAngleRightPrev,
+                ref ShoulderButtonsAngleDegRightPrev,
                 CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
                 CurrentModel.HighlightMaterials
             );
@@ -422,7 +435,7 @@ public partial class OverlayModel : OverlayWindow
         }
     }
 
-    private Material GradientHighlight(Material defaultMaterial, Material highlightMaterial, float factor)
+    private DiffuseMaterial GradientHighlight(Material defaultMaterial, Material highlightMaterial, float factor)
     {
         // Extract start and end colors
         Color startColor = ((SolidColorBrush)((DiffuseMaterial)defaultMaterial).Brush).Color;

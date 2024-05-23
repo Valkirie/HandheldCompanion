@@ -291,7 +291,7 @@ public partial class OverlayPage : Page
 
     private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        MainWindow.overlayModel.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
+        MainWindow.overlayModel.RestingPitchAngleDeg = -1 * (float)Slider_RestingPitch.Value;
 
         if (!IsLoaded)
             return;
