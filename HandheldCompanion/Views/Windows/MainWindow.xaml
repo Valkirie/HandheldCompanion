@@ -191,7 +191,8 @@
                         <ui:SimpleStackPanel
                             Name="GamepadUIToggle"
                             Orientation="Horizontal"
-                            Spacing="2">
+                            Spacing="2"
+                            Visibility="Collapsed">
                             <ui:FontIcon
                                 Name="GamepadUIToggleIcon"
                                 Height="40"
@@ -209,7 +210,8 @@
                         <ui:SimpleStackPanel
                             Name="GamepadUISelect"
                             Orientation="Horizontal"
-                            Spacing="2">
+                            Spacing="2"
+                            Visibility="Collapsed">
                             <ui:FontIcon
                                 Name="GamepadUISelectIcon"
                                 Height="40"
@@ -227,7 +229,8 @@
                         <ui:SimpleStackPanel
                             Name="GamepadUIBack"
                             Orientation="Horizontal"
-                            Spacing="2">
+                            Spacing="2"
+                            Visibility="Collapsed">
                             <ui:FontIcon
                                 Name="GamepadUIBackIcon"
                                 Height="40"
