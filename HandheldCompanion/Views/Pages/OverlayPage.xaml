@@ -117,8 +117,8 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
+                            IsEnabled="False"
                             SelectionChanged="OnScreenDisplayLevel_SelectionChanged">
-
                             <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Disabled}" />
                             <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />
                             <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Extended}" />
