@@ -276,9 +276,9 @@ namespace HandheldCompanion.Managers
 
                 // display message
                 if (x == 0 && y == 0 && z == 0)
-                    dialog.UpdateContent("Calibration failed: gyroscope is silent.");
+                    dialog.UpdateContent("Calibration failed: device is silent.");
                 else
-                    dialog.UpdateContent("Calibration failed: device is too shaky.");
+                    dialog.UpdateContent("Calibration failed: device is silent or unsteady.");
 
                 goto Close;
             }
@@ -301,6 +301,7 @@ namespace HandheldCompanion.Managers
             gamepadMotion.GetCalibrationOffset(out float xOffset, out float yOffset, out float zOffset);
             gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
 
+            /*
             dialog.UpdateTitle("Please take back the controller in hands and get ready to shake it.");
 
             for (int i = 4; i > 0; i--)
@@ -327,6 +328,7 @@ namespace HandheldCompanion.Managers
 
             // store calibration offsets
             IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
+            */
 
             // display message
             dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
