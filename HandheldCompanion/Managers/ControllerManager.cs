@@ -272,7 +272,7 @@ public static class ControllerManager
                                     watchdogThread = null;
                                 }
 
-                                UpdateStatus(ControllerManagerStatus.Failed);
+                                UpdateStatus(ControllerManagerStatus.Pending);
                             }
                             break;
                     }
