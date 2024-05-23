@@ -63,7 +63,9 @@
     <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2.png" />
     <None Remove="Resources\device_aya_2021.png" />
-    <None Remove="Resources\device_aya_air.png" />
+	<None Remove="Resources\device_aya_air.png" />
+	<None Remove="Resources\device_aya_flip_ds.png" />
+	<None Remove="Resources\device_aya_flip_kb.png" />
     <None Remove="Resources\device_aya_kun.png" />
     <None Remove="Resources\device_aya_next.png" />
     <None Remove="Resources\device_aya_slide.png" />
@@ -108,7 +110,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\device_aya_kun.png" />
+	<Resource Include="Resources\device_aya_flip_ds.png" />
+	<Resource Include="Resources\device_aya_flip_kb.png" />
+	<Resource Include="Resources\device_aya_kun.png" />
     <Resource Include="Resources\device_aya_slide.png" />
     <Resource Include="Resources\device_cncdan_nucdeck.png" />
     <Resource Include="Resources\device_gpd_winmini.png" />
