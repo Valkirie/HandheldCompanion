@@ -21,12 +21,6 @@
     </Page.Resources>
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:ProgressRing
-            Name="ControllerLoading"
-            Width="125"
-            Height="125"
-            Visibility="Hidden" />
-
         <ui:SimpleStackPanel Spacing="24">
 
             <!--  Hints  -->

@@ -749,7 +749,7 @@ public static class ControllerManager
     private static void UpdateStatus(ControllerManagerStatus status)
     {
         managerStatus = status;
-        StatusChanged?.Invoke(status);
+        StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }
 
     private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -1087,7 +1087,7 @@ public static class ControllerManager
     }
 
     private static ControllerState mutedState = new ControllerState();
-    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
+    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float deltaTimeSeconds)
     {
         // raise event
         InputsUpdated?.Invoke(controllerState);
@@ -1097,15 +1097,15 @@ public static class ControllerManager
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
                 gamepadMotion = IDevice.GetCurrent().GamepadMotion;
-                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
+                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref deltaTimeSeconds);
                 break;
         }
 
         // compute motion
         if (gamepadMotion is not null)
         {
-            MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
-            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion);
+            MotionManager.UpdateReport(controllerState, gamepadMotion);
+            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, deltaTimeSeconds);
         }
 
         // controller is muted
@@ -1165,7 +1165,7 @@ public static class ControllerManager
     public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
     public static event StatusChangedEventHandler StatusChanged;
-    public delegate void StatusChangedEventHandler(ControllerManagerStatus status);
+    public delegate void StatusChangedEventHandler(ControllerManagerStatus status, int attempts);
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();

@@ -162,7 +162,14 @@ public partial class ControllerPage : Page
         ControllerRefresh();
     }
 
-    private void ControllerManager_Working(ControllerManagerStatus status)
+    private Dialog dialog = new Dialog(MainWindow.GetCurrent())
+    {
+        Title = "Controller Management",
+        Content = "Initializing controller reconfiguration… Please wait.",
+        CanClose = false
+    };
+
+    private void ControllerManager_Working(ControllerManagerStatus status, int attempts)
     {
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(async () =>
@@ -170,48 +177,68 @@ public partial class ControllerPage : Page
             switch (status)
             {
                 case ControllerManagerStatus.Busy:
-                    ControllerLoading.Visibility = Visibility.Visible;
-                    VirtualDevices.IsEnabled = false;
-                    PhysicalDevices.IsEnabled = false;
-                    MainGrid.IsEnabled = false;
+                    {
+                        switch (attempts)
+                        {
+                            case 0:
+                                // set dialog settings
+                                dialog.CanClose = false;
+                                dialog.DefaultButton = ContentDialogButton.Primary;
+                                dialog.CloseButtonText = string.Empty;
+                                dialog.PrimaryButtonText = string.Empty;
+
+                                dialog.Content = "Attempting to reorder controllers, please hold on...";
+                                break;
+                            case 1:
+                                dialog.Content = "Reordering in progress, hang tight...";
+                                break;
+                            case 2:
+                                dialog.Content = "Final attempt to reorder controllers, stand by...";
+                                break;
+                        }
+
+                        dialog.Show();
+                    }
                     break;
 
                 case ControllerManagerStatus.Succeeded:
+                    {
+                        dialog.UpdateContent("Controller reordering complete. Thank you for your patience.");
+                        await Task.Delay(2000);
+                        dialog.Hide();
+                    }
+                    break;
+
                 case ControllerManagerStatus.Failed:
-                    ControllerLoading.Visibility = Visibility.Hidden;
-                    VirtualDevices.IsEnabled = true;
-                    PhysicalDevices.IsEnabled = true;
-                    MainGrid.IsEnabled = true;
+                    {
+                        // set dialog settings
+                        dialog.CanClose = false;
+                        dialog.DefaultButton = ContentDialogButton.Close;
+                        dialog.CloseButtonText = Properties.Resources.ControllerPage_Close;
+                        dialog.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
+                        
+                        dialog.Content = $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion";
+
+                        Task<ContentDialogResult> dialogTask = dialog.ShowAsync();
+
+                        await dialogTask; // sync call
+
+                        switch (dialogTask.Result)
+                        {
+                            default:
+                            case ContentDialogResult.Primary:
+                                Toggle_ControllerManagement.IsOn = false;
+                                break;
+                            case ContentDialogResult.None:
+                                Toggle_ControllerManagement.IsOn = true;
+                                break;
+                        }
+                    }
                     break;
             }
 
+            // here ?
             ControllerRefresh();
-
-            if (status == ControllerManagerStatus.Failed)
-            {
-                // todo: translate me
-                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
-                {
-                    Title = Properties.Resources.SettingsPage_UpdateWarning,
-                    Content = $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
-                    DefaultButton = ContentDialogButton.Close,
-                    CloseButtonText = Properties.Resources.ControllerPage_Close,
-                    PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain
-                }.ShowAsync();
-
-                await dialogTask; // sync call
-
-                switch (dialogTask.Result)
-                {
-                    default:
-                    case ContentDialogResult.Primary:
-                        Toggle_ControllerManagement.IsOn = false;
-                        break;
-                    case ContentDialogResult.None:
-                        Toggle_ControllerManagement.IsOn = true;
-                        break;
-                }
-            }
         });
     }
 
