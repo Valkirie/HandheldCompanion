@@ -868,7 +868,7 @@
                             Name="Toggle_FaceCamera"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            IsEnabled="False"
+                            IsEnabled="True"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_FaceCamera_Toggled" />
                     </Grid>
