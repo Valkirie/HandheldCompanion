@@ -328,6 +328,15 @@ public class ROGAlly : IDevice
         if (asusACPI is null)
             return false;
 
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.OpenDevice();
+            device.MonitorDeviceEvents = true;
+
+            Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
+            ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
+        }
+
         // force M1/M2 to send F17 and F18
         ConfigureController(true);
 
@@ -369,13 +378,7 @@ public class ROGAlly : IDevice
 
             if (device.ReadFeatureData(out byte[] data, INPUT_HID_ID))
             {
-                device.OpenDevice();
-                device.MonitorDeviceEvents = true;
-
                 hidDevices[INPUT_HID_ID] = device;
-
-                Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
-                ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
             }
             else if (device.ReadFeatureData(out data, AURA_HID_ID))
             {
@@ -383,18 +386,19 @@ public class ROGAlly : IDevice
             }
         }
 
-        hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+        {
+            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-        PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-        string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
-        PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-        Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-        string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        }
 
-        return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        return false;
     }
 
     private void OnReport(HidReport result, HidDevice device)

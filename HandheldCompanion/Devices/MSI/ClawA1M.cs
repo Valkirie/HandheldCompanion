@@ -243,18 +243,19 @@ public class ClawA1M : IDevice
             break;
         }
 
-        hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+        {
+            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-        PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-        string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
-        PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-        Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-        string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        }
 
-        return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        return false;
     }
 
     public override bool Open()
@@ -269,9 +270,6 @@ public class ClawA1M : IDevice
         // configure controller to XInput
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.OpenDevice();
-            device.MonitorDeviceEvents = true;
-
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.XInput, (byte)MKeysFunction.Macro };
             device.Write(msg);
         }
@@ -289,9 +287,19 @@ public class ClawA1M : IDevice
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.Desktop, (byte)MKeysFunction.Macro };
             device.Write(msg);
+        }
 
-            device.MonitorDeviceEvents = false;
-            device.CloseDevice();
+        // close devices
+        foreach (HidDevice hidDevice in hidDevices.Values)
+        {
+            if (!hidDevice.IsConnected)
+                continue;
+
+            if (hidDevice.IsOpen)
+            {
+                hidDevice.MonitorDeviceEvents = false;
+                hidDevice.CloseDevice();
+            }
         }
 
         base.Close();
