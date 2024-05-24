@@ -12,11 +12,18 @@ public class OneXPlayerX1 : IDevice
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX1";
+        
+        // device specific capacities
+        Capabilities = DeviceCapabilities.FanControl;
 
         ECDetails = new ECDetails
         {
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
             AddressStatusCommandPort = 0x4E,
             AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 184
         };
 
         OEMChords.Add(new DeviceChord("Turbo",
