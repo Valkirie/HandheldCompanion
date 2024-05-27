@@ -5,15 +5,6 @@
     xmlns:local="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:primitives="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/iNKORE.UI.WPF.Modern;component/Themes/Styles/Button.xaml" />
-        <ResourceDictionary>
-            <ui:BindingProxy x:Key="OverlayCornerRadiusProxy" Value="{DynamicResource OverlayCornerRadius}" />
-            <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
-            <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-            <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
-        </ResourceDictionary>
-    </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="DefaultContentControlStyle" TargetType="ContentControl">
         <Setter Property="HorizontalContentAlignment" Value="Left" />

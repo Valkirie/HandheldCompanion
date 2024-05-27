@@ -4,12 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:primitives="http://schemas.inkore.net/lib/ui/wpf/modern">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary>
-            <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-            <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
-        </ResourceDictionary>
-    </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="RepeatButtonTransparent" TargetType="RepeatButton">
         <Setter Property="OverridesDefaultStyle" Value="true" />
