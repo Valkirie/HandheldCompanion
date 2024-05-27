@@ -88,12 +88,20 @@ public static class InputUtils
         return rad * (180 / (float)Math.PI);
     }
 
-    public static float MapRange(float Value, float OldMin, float OldMax, float NewMin, float NewMax)
+    public static float MapRange(float value, float oldMin, float oldMax, float newMin, float newMax)
     {
-        return (NewMin + (NewMax - NewMin) * (Value - OldMin) / (OldMax - OldMin));
+        // Validate input range
+        if (oldMin == oldMax)
+        {
+            throw new ArgumentException("oldMin and oldMax cannot be equal.");
+        }
+
+        // Map the value to the new range
+        float proportion = (value - oldMin) / (oldMax - oldMin);
+        return newMin + (newMax - newMin) * proportion;
     }
 
-    public static byte NormalizeXboxInput(float input)
+        public static byte NormalizeXboxInput(float input)
     {
         input = Math.Clamp(input, short.MinValue, short.MaxValue);
         float output = input / ushort.MaxValue * byte.MaxValue + (byte.MaxValue / 2.0f);
