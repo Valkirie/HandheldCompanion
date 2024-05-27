@@ -59,6 +59,6 @@ public class AYANEONEXT : IDevice
                 return "\u220B";
         }
 
-        return defaultGlyph;
+        return base.GetGlyph(button);
     }
 }

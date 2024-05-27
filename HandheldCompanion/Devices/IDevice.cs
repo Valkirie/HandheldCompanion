@@ -866,13 +866,13 @@ public abstract class IDevice
 
     public GlyphIconInfo GetGlyphIconInfo(ButtonFlags button, int fontIconSize = 14)
     {
-        var glyph = GetGlyph(button);
+        string? glyph = GetGlyph(button);
         return new GlyphIconInfo
         {
             Name = GetButtonName(button),
-            Glyph = glyph,
-            FontSize = glyph is not null ? 28 : fontIconSize,
-            FontFamily = glyph is not null ? GlyphFontFamily : null,
+            Glyph = glyph is not null ? glyph : defaultGlyph,
+            FontSize = fontIconSize,
+            FontFamily = GlyphFontFamily,
             Foreground = null
         };
     }
@@ -880,7 +880,7 @@ public abstract class IDevice
     [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
     public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
     {
-        var FontIcon = new FontIcon
+        FontIcon FontIcon = new FontIcon
         {
             Glyph = GetGlyph(button),
             FontSize = FontIconSize,
@@ -888,10 +888,7 @@ public abstract class IDevice
         };
 
         if (FontIcon.Glyph is not null)
-        {
             FontIcon.FontFamily = GlyphFontFamily;
-            FontIcon.FontSize = 28;
-        }
 
         return FontIcon;
     }
