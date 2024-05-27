@@ -488,7 +488,7 @@ public static class ProfileManager
         }
 
         // failed to parse
-        if (profile is null || profile.Name is null || profile.Path is null)
+        if (profile is null || string.IsNullOrEmpty(profile.Name) || string.IsNullOrEmpty(profile.Path))
         {
             LogManager.LogError("Failed to parse profile {0}", fileName);
             return;
