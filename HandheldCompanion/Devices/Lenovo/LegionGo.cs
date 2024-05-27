@@ -211,22 +211,10 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B7] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollUp } };
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
 
-        Init();
-
-        // make sure both left and right gyros are enabled
-        SetLeftGyroStatus(1);
-        SetRightGyroStatus(1);
-
-        // make sure both left and right gyros are reporting values
-        SetGyroModeStatus(2, 1, 1);
-        SetGyroModeStatus(2, 2, 2);
-
-        // make sure both left and right gyros are reporting raw values
-        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
-        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
-
+        /*
         Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
         bool FanFullSpeed = task.Result;
+        */
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -258,20 +246,36 @@ public class LegionGo : IDevice
         if (!success)
             return false;
 
+        // initialize SapientiaUsb
+        Init();
+
+        // make sure both left and right gyros are enabled
+        SetLeftGyroStatus(1);
+        SetRightGyroStatus(1);
+
+        // make sure both left and right gyros are reporting values
+        SetGyroModeStatus(2, 1, 1);
+        SetGyroModeStatus(2, 2, 2);
+
+        // make sure both left and right gyros are reporting raw values
+        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
+        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+
+        // disable QuickLightingEffect(s)
         SetQuickLightingEffect(0, 1);
         SetQuickLightingEffect(3, 1);
         SetQuickLightingEffect(4, 1);
-
         SetQuickLightingEffectEnable(0, false);
         SetQuickLightingEffectEnable(3, false);
         SetQuickLightingEffectEnable(4, false);
 
+        // get current light profile(s)
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
 
         // Legion XInput controller and other Legion devices shares the same USBHUB
         while (ControllerManager.PowerCyclers.Count > 0)
-            Thread.Sleep(500);
+            Thread.Sleep(100);
 
         return true;
     }
