@@ -41,6 +41,6 @@ public class GPDWin3 : IDevice
                 return "\u220F";
         }
 
-        return defaultGlyph;
+        return base.GetGlyph(button);
     }
 }

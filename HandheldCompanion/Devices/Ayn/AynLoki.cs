@@ -172,6 +172,6 @@ public class AynLoki : IDevice
                 return "\u220D";
         }
 
-        return defaultGlyph;
+        return base.GetGlyph(button);
     }
 }

@@ -70,6 +70,6 @@ public class AYANEO2021 : IDevice
                 return "\u243D";
         }
 
-        return defaultGlyph;
+        return base.GetGlyph(button);
     }
 }

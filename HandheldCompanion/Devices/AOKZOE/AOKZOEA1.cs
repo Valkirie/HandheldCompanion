@@ -127,6 +127,6 @@ public class AOKZOEA1 : IDevice
                 return "\u2211";
         }
 
-        return defaultGlyph;
+        return base.GetGlyph(button);
     }
 }

@@ -616,7 +616,7 @@ public class ROGAlly : IDevice
                 return "\u2213";
         }
 
-        return defaultGlyph;
+        return base.GetGlyph(button);
     }
 
     private void ConfigureController(bool Remap)
