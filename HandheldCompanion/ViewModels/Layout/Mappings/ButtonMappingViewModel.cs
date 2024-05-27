@@ -207,7 +207,7 @@ namespace HandheldCompanion.ViewModels
 
             if (OEM.Contains(button))
             {
-                UpdateIcon(IDevice.GetCurrent().GetGlyphIconInfo(button));
+                UpdateIcon(IDevice.GetCurrent().GetGlyphIconInfo(button, 28));
             }
         }
 
@@ -217,7 +217,7 @@ namespace HandheldCompanion.ViewModels
             if (OEM.Contains(flag))
                 return;
 
-            UpdateIcon(controller.GetGlyphIconInfo(flag));
+            UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
         }
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)

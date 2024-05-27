@@ -317,15 +317,10 @@ public class Hotkey
                         case Inputs.ButtonFlags.OEM8:
                         case Inputs.ButtonFlags.OEM9:
                         case Inputs.ButtonFlags.OEM10:
-                            {
-                                //
-                                fontIcon = IDevice.GetCurrent().GetFontIcon(button);
-                            }
+                            fontIcon = IDevice.GetCurrent().GetFontIcon(button, 28);
                             break;
                         default:
-                            {
-                                fontIcon = controller.GetFontIcon(button);
-                            }
+                            fontIcon = controller.GetFontIcon(button, 28);
                             break;
                     }
 

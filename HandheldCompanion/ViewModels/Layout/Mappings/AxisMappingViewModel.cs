@@ -229,7 +229,7 @@ namespace HandheldCompanion.ViewModels
 
             if (IsSupported)
             {
-                UpdateIcon(controller.GetGlyphIconInfo(flag));
+                UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
             }
         }
 

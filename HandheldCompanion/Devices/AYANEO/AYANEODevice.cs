@@ -36,7 +36,7 @@ namespace HandheldCompanion.Devices.AYANEO
                     return "\uE001";
             }
 
-            return defaultGlyph;
+            return base.GetGlyph(button);
         }
     }
 }

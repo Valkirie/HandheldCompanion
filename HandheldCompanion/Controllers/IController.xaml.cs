@@ -687,26 +687,26 @@ namespace HandheldCompanion.Controllers
 
         public GlyphIconInfo GetGlyphIconInfo(ButtonFlags button, int fontIconSize = 14)
         {
-            var glyph = GetGlyph(button);
+            string? glyph = GetGlyph(button);
             return new GlyphIconInfo
             {
                 Name = GetButtonName(button),
-                Glyph = glyph,
-                FontSize = glyph is not null ? 28 : fontIconSize,
-                FontFamily = glyph is not null ? GlyphFontFamily : null,
+                Glyph = glyph is not null ? glyph : defaultGlyph,
+                FontSize = fontIconSize,
+                FontFamily = GlyphFontFamily,
                 Foreground = GetGlyphColor(button)
             };
         }
 
         public GlyphIconInfo GetGlyphIconInfo(AxisLayoutFlags axis, int fontIconSize = 14)
         {
-            var glyph = GetGlyph(axis);
+            string? glyph = GetGlyph(axis);
             return new GlyphIconInfo
             {
                 Name = GetAxisName(axis),
-                Glyph = glyph,
-                FontSize = glyph is not null ? 28 : fontIconSize,
-                FontFamily = glyph is not null ? GlyphFontFamily : null,
+                Glyph = glyph is not null ? glyph : defaultGlyph,
+                FontSize = fontIconSize,
+                FontFamily = GlyphFontFamily,
                 Foreground = GetGlyphColor(axis)
             };
         }
@@ -722,10 +722,7 @@ namespace HandheldCompanion.Controllers
             };
 
             if (FontIcon.Glyph is not null)
-            {
                 FontIcon.FontFamily = GlyphFontFamily;
-                FontIcon.FontSize = 28;
-            }
 
             return FontIcon;
         }
@@ -742,10 +739,7 @@ namespace HandheldCompanion.Controllers
             };
 
             if (FontIcon.Glyph is not null)
-            {
                 FontIcon.FontFamily = GlyphFontFamily;
-                FontIcon.FontSize = 28;
-            }
 
             return FontIcon;
         }
