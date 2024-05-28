@@ -212,12 +212,18 @@ namespace HandheldCompanion.Managers
             Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
 
             // todo: create an IMU class
-            double TotalMilliseconds = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
-            double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
-            prevTimestamp = TotalMilliseconds;
+            double timestamp = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
+            if (timestamp != 0.0d)
+            {
+                double TotalMilliseconds = Gyrometer is not null ? timestamp : 0.0d;
+                double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
 
-            // replace delta with delta from sensor
-            delta = (float)DeltaSeconds;
+                // replace delta with sensor value
+                delta = (float)DeltaSeconds;
+
+                // update previous timestamp
+                prevTimestamp = TotalMilliseconds;
+            }
 
             // store motion
             controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
@@ -325,10 +331,10 @@ namespace HandheldCompanion.Managers
 
             // get calibration offsets
             gamepadMotion.SetCalibrationThreshold(gamepadMotion.maxGyro, gamepadMotion.maxAccel);
+            */
 
             // store calibration offsets
             IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
-            */
 
             // display message
             dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
