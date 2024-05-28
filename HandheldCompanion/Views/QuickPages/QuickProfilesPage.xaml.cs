@@ -995,7 +995,6 @@ public partial class QuickProfilesPage : Page
         if (cb_SubProfiles.SelectedIndex == -1)
             return;
 
-        LogManager.LogInformation($"Subprofile changed in Quick Settings - ind: {cb_SubProfiles.SelectedIndex} - subprofile: {cb_SubProfiles.SelectedItem}");
         selectedProfile = (Profile)cb_SubProfiles.SelectedItem;
         UpdateProfile();
     }
