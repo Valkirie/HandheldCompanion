@@ -211,9 +211,9 @@ namespace HandheldCompanion.Managers
             Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
             Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
 
-            // todo: create an IMU class
+            /*
             double timestamp = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
-            if (timestamp != 0.0d)
+            if (timestamp != prevTimestamp)
             {
                 double TotalMilliseconds = Gyrometer is not null ? timestamp : 0.0d;
                 double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
@@ -224,6 +224,7 @@ namespace HandheldCompanion.Managers
                 // update previous timestamp
                 prevTimestamp = TotalMilliseconds;
             }
+            */
 
             // store motion
             controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
