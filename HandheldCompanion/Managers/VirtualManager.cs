@@ -86,7 +86,7 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            Suspend();
+            Suspend(true);
 
             // unsubscrive events
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
@@ -98,22 +98,26 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "VirtualManager");
         }
 
-        public static void Resume()
+        public static void Resume(bool OS)
         {
             lock (threadLock)
             {
-                // create new ViGEm client
-                if (vClient is null)
-                    vClient = new ViGEmClient();
+                if (OS)
+                {
+                    // create new ViGEm client
+                    if (vClient is null)
+                        vClient = new ViGEmClient();
+
+                    // update DSU status
+                    SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+                }
 
                 // set controller mode
                 SetControllerMode(HIDmode);
-
-                SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
             }
         }
 
-        public static void Suspend()
+        public static void Suspend(bool OS)
         {
             lock (threadLock)
             {
@@ -125,14 +129,18 @@ namespace HandheldCompanion.Managers
                     vTarget = null;
                 }
 
-                // dispose ViGEm drivers
-                if (vClient is not null)
+                if (OS)
                 {
-                    vClient.Dispose();
-                    vClient = null;
-                }
+                    // dispose ViGEm drivers
+                    if (vClient is not null)
+                    {
+                        vClient.Dispose();
+                        vClient = null;
+                    }
 
-                DSUServer.Stop();
+                    // halt DSU
+                    SetDSUStatus(false);
+                }
             }
         }
 
@@ -225,6 +233,11 @@ namespace HandheldCompanion.Managers
                     vTarget.Dispose();
                     vTarget = null;
                 }
+
+                // this shouldn't happen !
+                // todo: improve the overall locking logic here
+                if (vClient is null)
+                    return;
 
                 switch (mode)
                 {

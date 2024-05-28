@@ -193,7 +193,7 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "SensorsManager");
         }
 
-        public static void Resume(bool update)
+        public static void Resume(bool OS)
         {
             Gyrometer?.UpdateSensor();
             Accelerometer?.UpdateSensor();

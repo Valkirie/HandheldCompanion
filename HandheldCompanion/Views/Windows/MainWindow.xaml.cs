@@ -562,7 +562,7 @@ public partial class MainWindow : GamepadWindow
                         // resume manager(s)
                         InputsManager.Start();
                         TimerManager.Start();
-                        VirtualManager.Resume();
+                        VirtualManager.Resume(true);
                         SensorsManager.Resume(true);
                         GPUManager.Start();
 
@@ -575,7 +575,7 @@ public partial class MainWindow : GamepadWindow
                     {
                         // wait for all HIDs to be ready
                         while (!CurrentDevice.IsReady())
-                            Thread.Sleep(500);
+                            Thread.Sleep(100);
 
                         // open current device (threaded to avoid device to hang)
                         CurrentDevice.Open();
@@ -587,7 +587,7 @@ public partial class MainWindow : GamepadWindow
                 {
                     // when device goes to sleep
                     // suspend manager(s)
-                    VirtualManager.Suspend();
+                    VirtualManager.Suspend(true);
                     TimerManager.Stop();
                     SensorsManager.Stop();
                     InputsManager.Stop();
