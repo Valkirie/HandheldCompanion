@@ -219,14 +219,17 @@ public partial class OverlayModel : OverlayWindow
         // 3D model, has Z+ up, X+ to the right, Y+ towards the screen
 
         // Update Madgwick orientation filter with IMU sensor data for 3D overlay
+        gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
+        gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
+
         madgwickAHRS.UpdateReport(
-            -1 * InputUtils.deg2rad(gamepadMotion.gyroX), 
-            InputUtils.deg2rad(gamepadMotion.gyroY), 
-            -1 * InputUtils.deg2rad(gamepadMotion.gyroZ), 
-            gamepadMotion.accelX,
-            -1 * gamepadMotion.accelY,
-            gamepadMotion.accelZ, 
-            0.01 // TODO, workaround for sensor Internal giving 0 deltaSeconds, while sensor None gives something plausible
+            -InputUtils.deg2rad(gyroX), 
+            InputUtils.deg2rad(gyroY), 
+            -InputUtils.deg2rad(gyroZ),
+            accelX,
+            -accelY,
+            accelZ, 
+            gamepadMotion.deltaTime
             );
 
         // System.Numerics to Media.3D, library really requires System.Numerics
