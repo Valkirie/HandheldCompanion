@@ -107,9 +107,8 @@ public class RTSS : IPlatform
         // If RTSS was started while HC was fully initialized, we need to pass both current profile and foreground process
         if (SettingsManager.IsInitialized)
         {
-            var foregroundProcess = ProcessManager.GetForegroundProcess();
-            if (foregroundProcess is not null)
-                ProcessManager_ForegroundChanged(foregroundProcess, null);
+            ProcessEx foregroundProcess = ProcessManager.GetForegroundProcess();
+            ProcessManager_ForegroundChanged(foregroundProcess, null);
 
             ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
         }
@@ -151,8 +150,11 @@ public class RTSS : IPlatform
         }
     }
 
-    private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+    private async void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
+        if (processEx is null || processEx == ProcessManager.Empty)
+            return;
+
         // hook new process
         AppEntry appEntry = null;
 

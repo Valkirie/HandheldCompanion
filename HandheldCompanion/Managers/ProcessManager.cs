@@ -274,7 +274,7 @@ public static class ProcessManager
         if (foregroundProcess == processEx)
         {
             LogManager.LogDebug("{0} process {1} that had foreground has halted", foregroundProcess.Platform, foregroundProcess.Executable);
-            ForegroundChanged?.Invoke(Empty, foregroundProcess);
+            ForegroundChanged?.Invoke(null, foregroundProcess);
         }
 
         Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
@@ -551,7 +551,7 @@ public static class ProcessManager
 
     public static event ForegroundChangedEventHandler ForegroundChanged;
 
-    public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
+    public delegate void ForegroundChangedEventHandler(ProcessEx? processEx, ProcessEx? backgroundEx);
 
     public static event ProcessStartedEventHandler ProcessStarted;
 
