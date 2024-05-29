@@ -368,26 +368,29 @@ public static class ProfileManager
         }
     }
 
-    private static void ProcessManager_ForegroundChanged(ProcessEx proc, ProcessEx back)
+    private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
+        if (processEx is null || processEx == ProcessManager.Empty)
+            return;
+
         try
         {
-            Profile profile = GetProfileFromPath(proc.Path, false);
+            Profile profile = GetProfileFromPath(processEx.Path, false);
 
             if (!profile.Default)
             {
-                if (!profile.Path.Equals(proc.Path))
+                if (!profile.Path.Equals(processEx.Path))
                 {
                     // update profile path
-                    profile.Path = proc.Path;
+                    profile.Path = processEx.Path;
                     UpdateOrCreateProfile(profile);
                 }
             }
 
             // raise event
-            if (back is not null)
+            if (backgroundEx is not null)
             {
-                Profile backProfile = GetProfileFromPath(back.Path, false);
+                Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
 
                 if (!backProfile.Guid.Equals(profile.Guid))
                     Discarded?.Invoke(backProfile);
@@ -395,9 +398,7 @@ public static class ProfileManager
 
             ApplyProfile(profile);
         }
-        catch
-        {
-        }
+        catch { }
     }
 
     private static void ProfileCreated(object sender, FileSystemEventArgs e)

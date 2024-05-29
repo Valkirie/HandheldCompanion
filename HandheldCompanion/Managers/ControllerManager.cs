@@ -192,8 +192,9 @@ public static class ControllerManager
         CheckControllerScenario();
     }
 
-    private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+    private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
+        // update current process
         foregroundProcess = processEx;
 
         // check applicable scenarios

@@ -533,7 +533,7 @@ public partial class QuickProfilesPage : Page
             ProcessManager_ForegroundChanged(currentProcess, null);
     }
 
-    private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
         if (foregroundLock.TryEnter())
         {
@@ -542,16 +542,21 @@ public partial class QuickProfilesPage : Page
                 // update current process
                 currentProcess = processEx;
 
+                // get path
+                string path = currentProcess != null ? currentProcess.Path : string.Empty;
+                ImageSource imageSource = currentProcess != null ? currentProcess.ProcessIcon : null;
+                nint handle = currentProcess != null ? currentProcess.MainWindowHandle : IntPtr.Zero;
+
                 // update real profile
-                realProfile = ProfileManager.GetProfileFromPath(processEx.Path, true);
+                realProfile = ProfileManager.GetProfileFromPath(path, true);
 
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
-                    ProfileIcon.Source = processEx.ProcessIcon;
+                    ProfileIcon.Source = imageSource;
 
-                    if (processEx.MainWindowHandle != IntPtr.Zero)
+                    if (handle != IntPtr.Zero)
                     {
                         // string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
 
@@ -608,7 +613,7 @@ public partial class QuickProfilesPage : Page
 
     private void CreateProfile()
     {
-        if (currentProcess is null)
+        if (currentProcess is null || currentProcess == ProcessManager.Empty)
             return;
 
         // create profile
