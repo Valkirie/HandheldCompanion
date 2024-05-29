@@ -71,38 +71,55 @@ public class ProcessEx : IDisposable
         if (string.IsNullOrEmpty(Path))
             return string.Empty;
 
-        using (var key = Registry.CurrentUser.OpenSubKey(AppCompatRegistry))
+        lock (registryLock)
         {
-            string valueStr = (string)key?.GetValue(Path);
-            return valueStr;
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey(AppCompatRegistry))
+                {
+                    string valueStr = (string)key?.GetValue(Path);
+                    return valueStr;
+                }
+            }
+            catch { }
         }
+
+        return string.Empty;
     }
 
+    private static object registryLock = new();
     public static void SetAppCompatFlag(string Path, string Flag, bool value)
     {
         if (string.IsNullOrEmpty(Path))
             return;
 
-        using (var key = Registry.CurrentUser.CreateSubKey(AppCompatRegistry, RegistryKeyPermissionCheck.ReadWriteSubTree))
+        lock (registryLock)
         {
-            if (key != null)
+            try
             {
-                List<string> values = new List<string> { "~" }; ;
-                string valueStr = (string)key.GetValue(Path);
+                using (var key = Registry.CurrentUser.CreateSubKey(AppCompatRegistry, RegistryKeyPermissionCheck.ReadWriteSubTree))
+                {
+                    if (key != null)
+                    {
+                        List<string> values = new List<string> { "~" }; ;
+                        string valueStr = (string)key.GetValue(Path);
 
-                if (!string.IsNullOrEmpty(valueStr))
-                    values = valueStr.Split(' ').ToList();
+                        if (!string.IsNullOrEmpty(valueStr))
+                            values = valueStr.Split(' ').ToList();
 
-                values.Remove(Flag);
+                        values.Remove(Flag);
 
-                if (value)
-                    values.Add(Flag);
+                        if (value)
+                            values.Add(Flag);
 
-                if (values.Count == 1 && values[0] == "~" && !string.IsNullOrEmpty(valueStr))
-                    key.DeleteValue(Path);
-                else
-                    key.SetValue(Path, string.Join(" ", values), RegistryValueKind.String);
+                            if (values.Count == 1 && values[0] == "~" && !string.IsNullOrEmpty(valueStr))
+                                key.DeleteValue(Path);
+                            else
+                                key.SetValue(Path, string.Join(" ", values), RegistryValueKind.String);
+                    }
+                }
             }
+            catch { }
         }
     }
 
