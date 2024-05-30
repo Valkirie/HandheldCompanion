@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
@@ -82,7 +82,7 @@ public partial class App : Application
                 break;
             case "fr-FR":
             case "en-US":
-            case "zh-CN":
+            case "zh-Hans":
             case "zh-Hant":
             case "de-DE":
             case "it-IT":
@@ -90,6 +90,11 @@ public partial class App : Application
             case "es-ES":
             case "ja-JP":
             case "ru-RU":
+                culture = new CultureInfo(CurrentCulture);
+                break;
+            case "zh-CN": // fallback change locale name from zh-CN to zh-Hans
+                SettingsManager.SetProperty("CurrentCulture", "zh-Hans", true);
+                CurrentCulture = "zh-Hans";
                 culture = new CultureInfo(CurrentCulture);
                 break;
         }
