@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:Background="White"
     d:DesignWidth="800"
@@ -73,8 +74,8 @@
                         MinWidth="200"
                         Margin="0,0,10,0"
                         HorizontalAlignment="Stretch"
-                        Content="{x:Static resx:Resources.InputsHotkey_fallbackInput}"
-                        ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackInput}" />
+                        Content="{l:Static resx:Resources.InputsHotkey_fallbackInput}"
+                        ToolTip="{l:Static resx:Resources.InputsHotkey_fallbackInput}" />
                     <Button
                         Name="HotkeyOutput"
                         Height="40"
@@ -82,8 +83,8 @@
                         Margin="0,0,10,0"
                         HorizontalAlignment="Stretch"
                         d:Visibility="Visible"
-                        Content="{x:Static resx:Resources.InputsHotkey_fallbackOutput}"
-                        ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackOutput}"
+                        Content="{l:Static resx:Resources.InputsHotkey_fallbackOutput}"
+                        ToolTip="{l:Static resx:Resources.InputsHotkey_fallbackOutput}"
                         Visibility="Collapsed" />
                 </ui:SimpleStackPanel>
 

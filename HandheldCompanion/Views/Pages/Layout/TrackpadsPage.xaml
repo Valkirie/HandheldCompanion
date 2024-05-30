@@ -6,9 +6,10 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
-    Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+    Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:TrackpadsPageViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -18,7 +19,7 @@
 
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRACKPAD BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftButtonsMappings}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
@@ -26,13 +27,13 @@
             </ui:ItemsRepeater>
 
             <!--  LEFT TRACKPAD  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
         </ui:SimpleStackPanel>
 
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT TRACKPAD BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightButtonsMappings}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
@@ -40,7 +41,7 @@
             </ui:ItemsRepeater>
 
             <!--  RIGHT TRACKPAD  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding RightAxisMappings}" />
         </ui:SimpleStackPanel>
 

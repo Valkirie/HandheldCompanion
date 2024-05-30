@@ -1,4 +1,4 @@
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
@@ -99,10 +99,7 @@ public partial class App : Application
                 break;
         }
 
-        Thread.CurrentThread.CurrentCulture = culture;
-        Thread.CurrentThread.CurrentUICulture = culture;
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        Localization.TranslationSource.Instance.CurrentCulture = culture;
 
         // handle exceptions nicely
         var currentDomain = default(AppDomain);

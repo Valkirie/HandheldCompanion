@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:HandheldCompanion.Controllers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -106,7 +107,7 @@
                         Name="ui_button_hook"
                         Width="100"
                         Click="ui_button_hook_Click"
-                        Content="{x:Static resx:Resources.Controller_Connect}"
+                        Content="{l:Static resx:Resources.Controller_Connect}"
                         FontSize="14"
                         Style="{DynamicResource AccentButtonStyle}" />
                     <Button
@@ -135,7 +136,7 @@
                 d:Visibility="Visible"
                 Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Static resx:Resources.XInputController_Warning_USB}"
+                Text="{l:Static resx:Resources.XInputController_Warning_USB}"
                 TextAlignment="Center"
                 TextWrapping="Wrap"
                 Visibility="Collapsed" />

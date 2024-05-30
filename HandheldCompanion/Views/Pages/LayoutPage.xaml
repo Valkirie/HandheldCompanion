@@ -5,9 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Layout"
-    Title="{x:Static resx:Resources.ProfilesPage_ControllerLayout}"
+    Title="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -30,7 +31,7 @@
         <ui:NavigationView.MenuItems>
             <ui:NavigationViewItem
                 Name="navButtons"
-                Content="{x:Static resx:Resources.LayoutPage_Buttons}"
+                Content="{l:Static resx:Resources.LayoutPage_Buttons}"
                 Tag="ButtonsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;" />
@@ -39,7 +40,7 @@
 
             <ui:NavigationViewItem
                 Name="navDpad"
-                Content="{x:Static resx:Resources.LayoutPage_Dpad}"
+                Content="{l:Static resx:Resources.LayoutPage_Dpad}"
                 Tag="DpadPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;" />
@@ -48,7 +49,7 @@
 
             <ui:NavigationViewItem
                 Name="navTriggers"
-                Content="{x:Static resx:Resources.LayoutPage_Triggers}"
+                Content="{l:Static resx:Resources.LayoutPage_Triggers}"
                 Tag="TriggersPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;" />
@@ -57,7 +58,7 @@
 
             <ui:NavigationViewItem
                 Name="navJoysticks"
-                Content="{x:Static resx:Resources.LayoutPage_Joysticks}"
+                Content="{l:Static resx:Resources.LayoutPage_Joysticks}"
                 Tag="JoysticksPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;" />
@@ -66,7 +67,7 @@
 
             <ui:NavigationViewItem
                 Name="navTrackpads"
-                Content="{x:Static resx:Resources.LayoutPage_Trackpads}"
+                Content="{l:Static resx:Resources.LayoutPage_Trackpads}"
                 Tag="TrackpadsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
@@ -75,7 +76,7 @@
 
             <ui:NavigationViewItem
                 Name="navGyro"
-                Content="{x:Static resx:Resources.LayoutPage_Gyro}"
+                Content="{l:Static resx:Resources.LayoutPage_Gyro}"
                 IsEnabled="False"
                 Tag="GyroPage">
                 <ui:NavigationViewItem.Icon>
@@ -93,7 +94,7 @@
                     d:Visibility="Visible"
                     Spacing="12">
 
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_TemplatePicker}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.LayoutPage_TemplatePicker}" />
                     <ComboBox
                         Name="cB_Layouts"
                         HorizontalAlignment="Stretch"
@@ -105,12 +106,12 @@
                         <!--  TEMPLATES  -->
                         <ComboBoxItem
                             Name="cB_LayoutsSplitterTemplates"
-                            Content="{x:Static resx:Resources.LayoutPage_Templates}"
+                            Content="{l:Static resx:Resources.LayoutPage_Templates}"
                             IsEnabled="false" />
                         <!--  COMMUNITY  -->
                         <ComboBoxItem
                             Name="cB_LayoutsSplitterCommunity"
-                            Content="{x:Static resx:Resources.LayoutPage_Community}"
+                            Content="{l:Static resx:Resources.LayoutPage_Community}"
                             IsEnabled="false" />
                     </ComboBox>
 
@@ -122,7 +123,7 @@
                             <CheckBox
                                 Name="CheckBoxDeviceLayouts"
                                 Checked="CheckBoxDeviceLayouts_Checked"
-                                Content="{x:Static resx:Resources.LayoutPage_ShowCurrentControllerTemplates}"
+                                Content="{l:Static resx:Resources.LayoutPage_ShowCurrentControllerTemplates}"
                                 IsChecked="True"
                                 Unchecked="CheckBoxDeviceLayouts_Checked" />
 
@@ -135,7 +136,7 @@
                                 <Button
                                     Name="ButtonApplyLayout"
                                     Click="ButtonApplyLayout_Click"
-                                    Content="{x:Static resx:Resources.LayoutPage_ApplyTemplate}"
+                                    Content="{l:Static resx:Resources.LayoutPage_ApplyTemplate}"
                                     IsEnabled="False"
                                     Style="{DynamicResource AccentButtonStyle}" />
 
@@ -148,26 +149,26 @@
                                             Opening="Flyout_Opening"
                                             Placement="Left">
                                             <ui:SimpleStackPanel Width="400" Spacing="24">
-                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_ExportLayout}" />
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.LayoutPage_ExportLayout}" />
 
                                                 <ui:SimpleStackPanel Spacing="6">
                                                     <TextBox
                                                         Name="LayoutTitle"
                                                         HorizontalAlignment="Stretch"
-                                                        ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutTitle}" />
+                                                        ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutTitle}" />
                                                     <TextBox
                                                         Name="LayoutDescription"
                                                         HorizontalAlignment="Stretch"
-                                                        ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutDesc}" />
+                                                        ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutDesc}" />
                                                     <TextBox
                                                         Name="LayoutAuthor"
                                                         HorizontalAlignment="Stretch"
-                                                        ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutAuthor}" />
-                                                    <CheckBox x:Name="ExportForCurrent" Content="{x:Static resx:Resources.LayoutPage_ExportCurrentController}" />
+                                                        ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutAuthor}" />
+                                                    <CheckBox x:Name="ExportForCurrent" Content="{l:Static resx:Resources.LayoutPage_ExportCurrentController}" />
                                                     <CheckBox
                                                         x:Name="SaveGameInfo"
                                                         Click="SaveGameInfo_Toggled"
-                                                        Content="{x:Static resx:Resources.LayoutPage_SaveGameInfoLayout}"
+                                                        Content="{l:Static resx:Resources.LayoutPage_SaveGameInfoLayout}"
                                                         IsChecked="True" />
 
                                                     <!--  Separator  -->
@@ -188,13 +189,13 @@
                                                             Grid.Column="0"
                                                             HorizontalAlignment="Stretch"
                                                             Click="LayoutExportButton_Click"
-                                                            Content="{x:Static resx:Resources.LayoutPage_Confirm}" />
+                                                            Content="{l:Static resx:Resources.LayoutPage_Confirm}" />
                                                         <Button
                                                             Name="LayoutCancelButton"
                                                             Grid.Column="2"
                                                             HorizontalAlignment="Stretch"
                                                             Click="LayoutCancelButton_Click"
-                                                            Content="{x:Static resx:Resources.LayoutPage_Cancel}" />
+                                                            Content="{l:Static resx:Resources.LayoutPage_Cancel}" />
                                                     </Grid>
                                                 </ui:SimpleStackPanel>
                                             </ui:SimpleStackPanel>
@@ -207,7 +208,7 @@
                         <CheckBox
                             Name="CheckBoxDefaultLayout"
                             Checked="CheckBoxDefaultLayout_Checked"
-                            Content="{x:Static resx:Resources.LayoutPage_SetAsDefault}"
+                            Content="{l:Static resx:Resources.LayoutPage_SetAsDefault}"
                             Unchecked="CheckBoxDefaultLayout_Checked" />
                     </ui:SimpleStackPanel>
 

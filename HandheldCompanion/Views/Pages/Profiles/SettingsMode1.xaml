@@ -7,8 +7,9 @@
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    Title="{x:Static resx:Resources.SettingsMode1_AdditionalSettings}"
+    Title="{l:Static resx:Resources.SettingsMode1_AdditionalSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
@@ -19,7 +20,7 @@
 
             <!--  Joystick steering preview  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_JoystickSteeringPreview}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_JoystickSteeringPreview}" />
 
                 <!--  Steering Visuals  -->
                 <Border
@@ -89,7 +90,7 @@
                             </lvc:CartesianChart.Series>
                             <lvc:CartesianChart.AxisY>
                                 <lvc:Axis
-                                    Title="{x:Static resx:Resources.SettingsMode1_JoystickGameInput}"
+                                    Title="{l:Static resx:Resources.SettingsMode1_JoystickGameInput}"
                                     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
                                     MaxValue="1.00001"
                                     MinValue="0.0">
@@ -100,7 +101,7 @@
                             </lvc:CartesianChart.AxisY>
                             <lvc:CartesianChart.AxisX>
                                 <lvc:Axis
-                                    Title="{x:Static resx:Resources.SettingsMode1_JoystickSteering}"
+                                    Title="{l:Static resx:Resources.SettingsMode1_JoystickSteering}"
                                     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
                                     MaxValue="1.00001"
                                     MinValue="0">
@@ -116,7 +117,7 @@
             </ui:SimpleStackPanel>
 
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_JoystickSteeringOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_JoystickSteeringOptions}" />
 
                 <!--  Steering angle  -->
                 <Border
@@ -138,11 +139,11 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_MaxSteeringAngle}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_MaxSteeringAngle}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsMode1_MaxSteeringAngleDesc}"
+                                    Text="{l:Static resx:Resources.SettingsMode1_MaxSteeringAngleDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -198,11 +199,11 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_SteeringLinearity}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_SteeringLinearity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsMode1_SteeringLinearityDesc}"
+                                    Text="{l:Static resx:Resources.SettingsMode1_SteeringLinearityDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -258,11 +259,11 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_Deadzone}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_Deadzone}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsMode1_DeadzoneDesc}"
+                                    Text="{l:Static resx:Resources.SettingsMode1_DeadzoneDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>

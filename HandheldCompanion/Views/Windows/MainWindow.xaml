@@ -6,8 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    Title="{x:Static resx:Resources.MainWindow_HandheldCompanion}"
+    Title="{l:Static resx:Resources.MainWindow_HandheldCompanion}"
     Width="1280"
     Height="720"
     MinWidth="700"
@@ -45,7 +46,7 @@
             <!--  Game icon  -->
             <ui:NavigationViewItem
                 Name="navController"
-                Content="{x:Static resx:Resources.MainWindow_navController}"
+                Content="{l:Static resx:Resources.MainWindow_navController}"
                 Tag="ControllerPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
@@ -55,7 +56,7 @@
             <!--  Device icon  -->
             <ui:NavigationViewItem
                 Name="navDevice"
-                Content="{x:Static resx:Resources.MainWindow_navDevice}"
+                Content="{l:Static resx:Resources.MainWindow_navDevice}"
                 Tag="DevicePage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
@@ -65,7 +66,7 @@
             <!--  Performance icon  -->
             <ui:NavigationViewItem
                 Name="navPerformance"
-                Content="{x:Static resx:Resources.MainWindow_navPerformance}"
+                Content="{l:Static resx:Resources.MainWindow_navPerformance}"
                 Tag="PerformancePage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe9d9;" />
@@ -75,7 +76,7 @@
             <!--  Profiles icon  -->
             <ui:NavigationViewItem
                 Name="navProfiles"
-                Content="{x:Static resx:Resources.MainWindow_navProfiles}"
+                Content="{l:Static resx:Resources.MainWindow_navProfiles}"
                 Tag="ProfilesPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;" />
@@ -85,7 +86,7 @@
             <!--  Overlay icon  -->
             <ui:NavigationViewItem
                 Name="navOverlay"
-                Content="{x:Static resx:Resources.MainWindow_navOverlay}"
+                Content="{l:Static resx:Resources.MainWindow_navOverlay}"
                 Tag="OverlayPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
@@ -95,7 +96,7 @@
             <!--  Hotkeys icon  -->
             <ui:NavigationViewItem
                 Name="navHotkeys"
-                Content="{x:Static resx:Resources.MainWindow_navHotkeys}"
+                Content="{l:Static resx:Resources.MainWindow_navHotkeys}"
                 Tag="HotkeysPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF26B;" />
@@ -105,7 +106,7 @@
             <!--  About icon  -->
             <ui:NavigationViewItem
                 Name="navAbout"
-                Content="{x:Static resx:Resources.MainWindow_navAbout}"
+                Content="{l:Static resx:Resources.MainWindow_navAbout}"
                 Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
@@ -117,7 +118,7 @@
             <!--  Notifications icon  -->
             <ui:NavigationViewItem
                 Name="navNotifications"
-                Content="{x:Static resx:Resources.MainWindow_navNotifications}"
+                Content="{l:Static resx:Resources.MainWindow_navNotifications}"
                 Tag="NotificationsPage">
                 <ui:NavigationViewItem.Icon>
                     <Grid>
@@ -144,7 +145,7 @@
             <!--  Settings  -->
             <ui:NavigationViewItem
                 Name="navSettings"
-                Content="{x:Static resx:Resources.MainWindow_Settings}"
+                Content="{l:Static resx:Resources.MainWindow_Settings}"
                 Tag="SettingsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:SymbolIcon Symbol="Setting" />

@@ -6,10 +6,11 @@
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Performance"
-    Title="{x:Static resx:Resources.PerformancePage_Device}"
+    Title="{l:Static resx:Resources.PerformancePage_Device}"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:PerformancePageViewModel}"
     d:DesignHeight="2000"
@@ -41,11 +42,11 @@
                                 Glyph="&#xE7EE;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.PowerProfilesPage_PresetSelection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.PowerProfilesPage_PresetSelection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.PowerProfilesPage_PresetSelectionDesc}"
+                                    Text="{l:Static resx:Resources.PowerProfilesPage_PresetSelectionDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -175,7 +176,7 @@
                 Margin="0,-20,0,0"
                 IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
                 <!--  Maximum CPU Count  -->
                 <Border
@@ -271,11 +272,11 @@
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_TDPOverride}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </DockPanel>
@@ -343,11 +344,11 @@
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
+                                    <TextBlock Text="{l:Static resx:Resources.ProfilesPage_AutoTDP}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </DockPanel>
@@ -412,11 +413,11 @@
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EPP}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_EPP}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_EPPDesc}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </DockPanel>
@@ -456,12 +457,12 @@
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Text="{x:Static resx:Resources.ProfilesPage_CPU}" />
+                                        Text="{l:Static resx:Resources.ProfilesPage_CPU}" />
                                     <TextBlock
                                         Grid.Column="2"
                                         Margin="0,0,12,0"
                                         HorizontalAlignment="Right"
-                                        Text="{x:Static resx:Resources.ProfilesPage_GPU}" />
+                                        Text="{l:Static resx:Resources.ProfilesPage_GPU}" />
                                 </Grid>
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -492,11 +493,11 @@
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUControl}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_CPUControl}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
+                                        Text="{l:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </DockPanel>
@@ -562,11 +563,11 @@
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_GPUControl}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                                        Text="{l:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </DockPanel>
@@ -630,11 +631,11 @@
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostMode}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_CPUBoostMode}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}"
+                                    Text="{l:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </DockPanel>
@@ -677,11 +678,11 @@
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_PowerMode}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeDesc}"
+                                    Text="{l:Static resx:Resources.QuickPerformancePage_PowerModeDesc}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </DockPanel>
@@ -691,9 +692,9 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding OSPowerMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Name="PowerModeEfficiency" Content="{x:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}" />
-                                <ComboBoxItem Name="PowerModeBalanced" Content="{x:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}" />
-                                <ComboBoxItem Name="PowerModePerformance" Content="{x:Static resx:Resources.QuickPerformancePage_PowerModePerformance}" />
+                                <ComboBoxItem Name="PowerModeEfficiency" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}" />
+                                <ComboBoxItem Name="PowerModeBalanced" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}" />
+                                <ComboBoxItem Name="PowerModePerformance" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModePerformance}" />
                             </ComboBox>
                         </DockPanel>
                     </Grid>
@@ -702,7 +703,7 @@
 
             <!--  Power settings  -->
             <ui:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FanSettings}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
 
                 <!--  Fan mode  -->
                 <Border
@@ -815,7 +816,7 @@
                             </lvc:CartesianChart.AxisX>
                         </lvc:CartesianChart>
 
-                        <Label HorizontalAlignment="Center" Content="{x:Static resx:Resources.SettingsMode0_CustomResponsePresetOptions}" />
+                        <Label HorizontalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetOptions}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3.33*" />

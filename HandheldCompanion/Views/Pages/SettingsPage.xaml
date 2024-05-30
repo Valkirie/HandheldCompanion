@@ -5,9 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Settings"
-    Title="{x:Static resx:Resources.SettingsPage_Settings}"
+    Title="{l:Static resx:Resources.SettingsPage_Settings}"
     d:Background="White"
     d:DesignHeight="2400"
     d:DesignWidth="1000"
@@ -60,11 +61,11 @@
                         FontSize="20"
                         Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"
                         Style="{StaticResource BaseTextBlockStyle}"
-                        Text="{x:Static resx:Resources.SettingsPage_UpToDate}" />
+                        Text="{l:Static resx:Resources.SettingsPage_UpToDate}" />
                     <TextBlock
                         Name="LabelUpdateDate"
                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                        Text="{x:Static resx:Resources.SettingsPage_LastChecked}" />
+                        Text="{l:Static resx:Resources.SettingsPage_LastChecked}" />
                     <ui:ProgressBar
                         Name="ProgressBarUpdate"
                         Margin="0,0,10,0"
@@ -78,7 +79,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Click="B_CheckUpdate_Click"
-                    Content="{x:Static resx:Resources.SettingsPage_CheckForUpdates}"
+                    Content="{l:Static resx:Resources.SettingsPage_CheckForUpdates}"
                     Style="{DynamicResource AccentButtonStyle}" />
             </Grid>
 
@@ -94,7 +95,7 @@
 
             <!--  General options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_GeneralOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_GeneralOptions}" />
 
                 <!--  Auto-start application  -->
                 <Border
@@ -116,11 +117,11 @@
                                 Glyph="&#xED35;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AutoStartApp}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_AutoStartAppDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_AutoStartAppDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -154,11 +155,11 @@
                                 Glyph="&#xEE40;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_OpenAppBackground}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -192,11 +193,11 @@
                                 Glyph="&#xE921;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_CloseMinimizes}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_CloseMinimizesDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_CloseMinimizesDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -230,11 +231,11 @@
                                 Glyph="&#xEA6C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStart}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStart}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStartDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStartDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -268,11 +269,11 @@
                                 Glyph="&#xE1CA;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientation}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NativeDisplayOrientation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_NativeDisplayOrientationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -286,7 +287,7 @@
                                 x:Name="Text_NativeDisplayOrientation"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationNotSet}" />
+                                Text="{l:Static resx:Resources.SettingsPage_NativeDisplayOrientationNotSet}" />
                             <Button
                                 Name="Button_DetectNativeDisplayOrientation"
                                 Width="120"
@@ -294,7 +295,7 @@
                                 Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 Click="Button_DetectNativeDisplayOrientation_Click"
-                                Content="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationDetect}" />
+                                Content="{l:Static resx:Resources.SettingsPage_NativeDisplayOrientationDetect}" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -319,11 +320,11 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AppTheme}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AppTheme}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_AppThemeDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_AppThemeDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -334,9 +335,9 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_Theme_SelectionChanged">
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeDefault}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeLight}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeDark}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDefault}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeLight}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDark}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -362,11 +363,11 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Backdrop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_BackdropDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -377,10 +378,10 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_Backdrop_SelectionChanged">
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropNone}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropMica}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -405,11 +406,11 @@
                                 Glyph="&#xF2B7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AppLanguage}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_AppLanguageDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_AppLanguageDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -443,11 +444,11 @@
                                 Glyph="&#xe7f5;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_UISounds}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_UISounds}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_UISoundsDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_UISoundsDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -464,7 +465,7 @@
 
             <!--  Quicktools options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
 
                 <!--  Quicktools position  -->
                 <Border
@@ -486,11 +487,11 @@
                                 Glyph="&#xE8A7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -501,8 +502,8 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationLeft}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationRight}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationLeft}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationRight}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -528,11 +529,11 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Backdrop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
+                                    Text="{l:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -543,10 +544,10 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropNone}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropMica}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -573,11 +574,11 @@
                                 Glyph="&#xED1A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HideWhenLoseFocus}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -594,7 +595,7 @@
 
             <!--  Notification options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_NotificationOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NotificationOptions}" />
 
                 <!--  Toast notification  -->
                 <Border
@@ -616,11 +617,11 @@
                                 Glyph="&#xE7E7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ToastNotification}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_ToastNotificationDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_ToastNotificationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -637,7 +638,7 @@
 
             <!--  Third-party applications  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
 
                 <!--  RTSS  -->
                 <Border
@@ -659,11 +660,11 @@
                                 Glyph="&#xEA6C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>

@@ -339,16 +339,7 @@ public partial class SettingsPage : Page
 
         SettingsManager.SetProperty("CurrentCulture", culture.Name);
 
-        // prevent message from being displayed again...
-        if (culture.Name == CultureInfo.CurrentCulture.Name)
-            return;
-
-        _ = new Dialog(MainWindow.GetCurrent())
-        {
-            Title = Properties.Resources.SettingsPage_AppLanguageWarning,
-            Content = Properties.Resources.SettingsPage_AppLanguageWarningDesc,
-            PrimaryButtonText = Properties.Resources.ProfilesPage_OK
-        }.ShowAsync();
+        Localization.TranslationSource.Instance.CurrentCulture = CultureInfo.GetCultureInfo(culture.Name);
     }
 
     private void Toggle_Notification_Toggled(object? sender, RoutedEventArgs? e)

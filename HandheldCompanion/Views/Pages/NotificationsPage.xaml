@@ -6,9 +6,10 @@
     xmlns:hints="clr-namespace:HandheldCompanion.Controls.Hints"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="About"
-    Title="{x:Static resx:Resources.MainWindow_navNotifications}"
+    Title="{l:Static resx:Resources.MainWindow_navNotifications}"
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -42,11 +43,11 @@
                         <TextBlock
                             Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                             Style="{StaticResource BodyTextBlockStyle}"
-                            Text="{x:Static resx:Resources.NotificationsPage_NothingToSee}" />
+                            Text="{l:Static resx:Resources.NotificationsPage_NothingToSee}" />
                         <TextBlock
                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="{x:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
+                            Text="{l:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
                             TextWrapping="Wrap" />
                     </ui:SimpleStackPanel>
                 </DockPanel>

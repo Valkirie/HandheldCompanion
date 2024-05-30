@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels">
 
@@ -525,8 +526,8 @@
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_StyleofInput}"
-                                            ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofInputTooltip}" />
+                                            Text="{l:Static resx:Resources.ProfilesPage_StyleofInput}"
+                                            ToolTip="{l:Static resx:Resources.ProfilesPage_StyleofInputTooltip}" />
                                         <TextBlock
                                             Name="Text_InputHint"
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
@@ -573,11 +574,11 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" />
+                                            Text="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}"
+                                            Text="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}"
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
@@ -591,9 +592,9 @@
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Left"
                                             SelectedIndex="{Binding MotionModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
                                         </ComboBox>
                                         <ContentControl Content="{Binding HotkeyContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </ui:SimpleStackPanel>

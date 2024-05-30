@@ -6,9 +6,10 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
-    Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+    Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonsPageViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -18,7 +19,7 @@
 
         <!--  A,B,X,Y  -->
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsABXYEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_ABXY}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_ABXY}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ABXYStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
@@ -28,7 +29,7 @@
 
         <!--  BUMPERS  -->
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsBUMPERSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Bumpers}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Bumpers}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BUMPERSStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
@@ -38,7 +39,7 @@
 
         <!--  BACK GRIPS  -->
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsBACKGRIPSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Back_Grips}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Back_Grips}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BACKGRIPSStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
@@ -48,7 +49,7 @@
 
         <!--  MENU  -->
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsMENUEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Menu}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Menu}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding MENUStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
@@ -58,7 +59,7 @@
 
         <!--  OEM  -->
         <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsOEMEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_OEM}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_OEM}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding OEMStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />

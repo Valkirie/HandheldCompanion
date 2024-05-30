@@ -7,9 +7,10 @@
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Device"
-    Title="{x:Static resx:Resources.DevicePage_Device}"
+    Title="{l:Static resx:Resources.DevicePage_Device}"
     d:Background="White"
     d:DesignHeight="1500"
     d:DesignWidth="1000"
@@ -21,7 +22,7 @@
         <ui:SimpleStackPanel Spacing="24">
             <!--  Power options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_PowerOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PowerOptions}" />
 
                 <!--  Configurable TDP  -->
                 <Border
@@ -43,11 +44,11 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -83,11 +84,11 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMin}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_TDPMin}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_TDPMinDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -125,11 +126,11 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMax}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_TDPMax}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_TDPMaxDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -208,11 +209,11 @@
                                     Glyph="&#xE706;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_DynamicLighting_Brightness}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_DynamicLighting_BrightnessDesc}"
+                                        Text="{l:Static resx:Resources.DevicePage_DynamicLighting_BrightnessDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -269,11 +270,11 @@
                                         Glyph="&#xF4A5;" />
 
                                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_DynamicLighting}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLighting}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.DevicePage_DynamicLightingDesc}"
+                                            Text="{l:Static resx:Resources.DevicePage_DynamicLightingDesc}"
                                             TextWrapping="Wrap" />
                                     </ui:SimpleStackPanel>
                                 </DockPanel>
@@ -289,43 +290,43 @@
 
                                     <ComboBoxItem
                                         Name="LEDSolidColor"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
                                         IsEnabled="False"
                                         Tag="0"
                                         Visibility="Collapsed" />
                                     <ComboBoxItem
                                         Name="LEDBreathing"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
                                         IsEnabled="False"
                                         Tag="1"
                                         Visibility="Collapsed" />
                                     <ComboBoxItem
                                         Name="LEDRainbow"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
                                         IsEnabled="False"
                                         Tag="2"
                                         Visibility="Collapsed" />
                                     <ComboBoxItem
                                         Name="LEDWave"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
                                         IsEnabled="False"
                                         Tag="4"
                                         Visibility="Collapsed" />
                                     <ComboBoxItem
                                         Name="LEDWheel"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
                                         IsEnabled="False"
                                         Tag="8"
                                         Visibility="Collapsed" />
                                     <ComboBoxItem
                                         Name="LEDGradient"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
                                         IsEnabled="False"
                                         Tag="16"
                                         Visibility="Collapsed" />
                                     <ComboBoxItem
                                         Name="LEDAmbilight"
-                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
                                         IsEnabled="False"
                                         Tag="32"
                                         Visibility="Collapsed" />
@@ -352,7 +353,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}" />
+                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}" />
 
                                         <DockPanel
                                             Grid.Column="1"
@@ -407,7 +408,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}" />
+                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}" />
 
                                         <ComboBox
                                             Name="LEDDirection"
@@ -442,7 +443,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}" />
+                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}" />
 
                                         <ui:ToggleSwitch
                                             Name="MatchAccentColor"
@@ -468,7 +469,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_MainColorSelection}" />
+                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_MainColorSelection}" />
 
                                         <colorpicker:PortableColorPicker
                                             Name="MainColorPicker"
@@ -501,7 +502,7 @@
                                             <TextBlock
                                                 VerticalAlignment="Center"
                                                 Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{x:Static resx:Resources.DevicePage_UseSecondColor}"
+                                                Text="{l:Static resx:Resources.DevicePage_UseSecondColor}"
                                                 TextWrapping="Wrap" />
 
                                             <ui:ToggleSwitch
@@ -530,7 +531,7 @@
                                             <TextBlock
                                                 VerticalAlignment="Center"
                                                 Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{x:Static resx:Resources.DevicePage_DynamicLighting_SecondColorSelection}" />
+                                                Text="{l:Static resx:Resources.DevicePage_DynamicLighting_SecondColorSelection}" />
 
                                             <colorpicker:PortableColorPicker
                                                 Name="SecondColorPicker"
@@ -563,7 +564,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.DevicePage_AmbilightVerticalBlackBarDetectionDesc}"
+                                            Text="{l:Static resx:Resources.DevicePage_AmbilightVerticalBlackBarDetectionDesc}"
                                             TextWrapping="Wrap" />
 
                                         <ui:ToggleSwitch
@@ -583,7 +584,7 @@
 
             <!--  Sensor options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorOptions}" />
 
                 <!--  Sensor Selection  -->
                 <Border
@@ -605,11 +606,11 @@
                                 Glyph="&#xE950;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorSelection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -623,19 +624,19 @@
 
                             <ComboBoxItem
                                 Name="SensorNone"
-                                Content="{x:Static resx:Resources.SettingsPage_SensorNone}"
+                                Content="{l:Static resx:Resources.SettingsPage_SensorNone}"
                                 IsEnabled="True" />
                             <ComboBoxItem
                                 Name="SensorInternal"
-                                Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"
+                                Content="{l:Static resx:Resources.SettingsPage_SensorInternal}"
                                 IsEnabled="False" />
                             <ComboBoxItem
                                 Name="SensorExternal"
-                                Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"
+                                Content="{l:Static resx:Resources.SettingsPage_SensorExternal}"
                                 IsEnabled="False" />
                             <ComboBoxItem
                                 Name="SensorController"
-                                Content="{x:Static resx:Resources.MainWindow_navController}"
+                                Content="{l:Static resx:Resources.MainWindow_navController}"
                                 IsEnabled="False" />
                         </ComboBox>
                     </Grid>
@@ -661,11 +662,11 @@
                                 Glyph="&#xE950;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorCalibration}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorCalibration}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_SensorCalibrationDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_SensorCalibrationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -703,11 +704,11 @@
                                 Glyph="&#xE80A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorPlacementDirection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -795,11 +796,11 @@
                                 Glyph="&#xE1CA;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -822,7 +823,7 @@
                 d:Visibility="Visible"
                 Spacing="6"
                 Visibility="Collapsed">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_Lenovo_Settings}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_Settings}" />
 
                 <Border
                     Name="TouchpadPassthrough"
@@ -844,11 +845,11 @@
                                 Glyph="&#xe772;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
+                                    Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -882,11 +883,11 @@
                                 Glyph="&#xE950;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorSelection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                                    Text="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -920,11 +921,11 @@
                                     Glyph="&#xE7FC;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -946,7 +947,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -994,7 +995,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -1042,7 +1043,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -1090,7 +1091,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -1148,11 +1149,11 @@
                                     Glyph="&#xE7FC;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerRight}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -1174,7 +1175,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -1222,7 +1223,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -1270,7 +1271,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
 
                                     <DockPanel
                                         Grid.Column="1"
@@ -1318,7 +1319,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
+                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
 
                                     <DockPanel
                                         Grid.Column="1"

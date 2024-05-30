@@ -5,9 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickDevice"
-    Title="{x:Static resx:Resources.QuickDevicePage_Title}"
+    Title="{l:Static resx:Resources.QuickDevicePage_Title}"
     Margin="15,0,0,0"
     d:Background="White"
     d:DesignHeight="1200"
@@ -49,11 +50,11 @@
                                 Glyph="&#xE799;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_DisplayResolution}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_DisplayResolution}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.QuickSettingsPage_DisplayResolutionDesc}"
+                                    Text="{l:Static resx:Resources.QuickSettingsPage_DisplayResolutionDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -82,7 +83,7 @@
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
+                                Text="{l:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
                     </Grid>
@@ -107,11 +108,11 @@
                                 Glyph="&#xE2CB;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_DisplayFrequency}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_DisplayFrequency}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.QuickSettingsPage_DisplayFrequencyDesc}"
+                                    Text="{l:Static resx:Resources.QuickSettingsPage_DisplayFrequencyDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -302,11 +303,11 @@
                             Glyph="&#xE7BC;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_FullFanSpeedText}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_FullFanSpeedText}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
+                                Text="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
                     </DockPanel>

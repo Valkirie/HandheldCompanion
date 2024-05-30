@@ -6,9 +6,10 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
-    Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+    Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:DpadPageViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -16,7 +17,7 @@
 
     <!--  DIRECTIONAL PAD  -->
     <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DPadPage_DPad}" />
+        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DPadPage_DPad}" />
         <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ButtonStacks}">
             <ui:ItemsRepeater.Layout>
                 <ui:StackLayout Spacing="6" />
