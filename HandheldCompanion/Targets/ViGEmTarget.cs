@@ -38,18 +38,22 @@ namespace HandheldCompanion.Targets
             Vibrated?.Invoke(LargeMotor, SmallMotor);
         }
 
-        public virtual void Connect()
+        public virtual bool Connect()
         {
             IsConnected = true;
             Connected?.Invoke(this);
             LogManager.LogInformation("{0} connected", ToString());
+
+            return true;
         }
 
-        public virtual void Disconnect()
+        public virtual bool Disconnect()
         {
             IsConnected = false;
             Disconnected?.Invoke(this);
             LogManager.LogInformation("{0} disconnected", ToString());
+
+            return true;
         }
 
         public virtual void UpdateInputs(ControllerState inputs, GamepadMotion gamepadMotion)
