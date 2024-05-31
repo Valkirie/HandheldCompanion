@@ -2319,14 +2319,8 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="Enum_KeyFlags_Z" xml:space="preserve">
     <value>Z</value>
   </data>
-  <data name="Enum_MotionOuput_LeftStick" xml:space="preserve">
-    <value>LeftStick</value>
-  </data>
   <data name="Enum_MotionOuput_MoveCursor" xml:space="preserve">
     <value>MoveCursor</value>
-  </data>
-  <data name="Enum_MotionOuput_RightStick" xml:space="preserve">
-    <value>RightStick</value>
   </data>
   <data name="Enum_MotionOuput_ScrollWheel" xml:space="preserve">
     <value>ScrollWheel</value>

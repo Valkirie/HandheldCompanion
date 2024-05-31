@@ -2325,14 +2325,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum_KeyFlags_Z" xml:space="preserve">
     <value>Z</value>
   </data>
-  <data name="Enum_MotionOuput_LeftStick" xml:space="preserve">
-    <value>LeftStick</value>
-  </data>
   <data name="Enum_MotionOuput_MoveCursor" xml:space="preserve">
     <value>MoveCursor</value>
-  </data>
-  <data name="Enum_MotionOuput_RightStick" xml:space="preserve">
-    <value>RightStick</value>
   </data>
   <data name="Enum_MotionOuput_ScrollWheel" xml:space="preserve">
     <value>ScrollWheel</value>
@@ -2993,5 +2987,23 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="PowerProfileMSIClawBetterPerformanceDesc" xml:space="preserve">
     <value>The best system settings that MSI recommends.</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Profiles" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="Enum_MotionOutput_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Enum_MotionOutput_MoveCursor" xml:space="preserve">
+    <value>Move Cursor</value>
+  </data>
+  <data name="Enum_MotionOutput_ScrollWheel" xml:space="preserve">
+    <value>Scroll Wheel</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_Gyroscope" xml:space="preserve">
+    <value>Gyroscope</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_Special2" xml:space="preserve">
+    <value>Special 2</value>
   </data>
 </root>

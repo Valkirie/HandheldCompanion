@@ -24,20 +24,20 @@ namespace HandheldCompanion.Extensions
             }
         }
 
-        public static string ToGlyph(this MotionOuput motionOuput)
+        public static string ToGlyph(this MotionOutput motionOuput)
         {
             switch (motionOuput)
             {
                 default:
-                case MotionOuput.Disabled:
+                case MotionOutput.Disabled:
                     return "\uE8D8";
-                case MotionOuput.RightStick:
+                case MotionOutput.RightStick:
                     return "\uF109";
-                case MotionOuput.LeftStick:
+                case MotionOutput.LeftStick:
                     return "\uF108";
-                case MotionOuput.MoveCursor:
+                case MotionOutput.MoveCursor:
                     return "\uE962";
-                case MotionOuput.ScrollWheel:
+                case MotionOutput.ScrollWheel:
                     return "\uEC8F";
             }
         }

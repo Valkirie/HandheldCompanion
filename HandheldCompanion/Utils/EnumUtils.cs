@@ -11,14 +11,14 @@ public static class EnumUtils
     public static string GetDescriptionFromEnumValue(Enum value, string prefix = "", string suffix = "")
     {
         // return localized string if available
-        var key = string.Empty;
+        string key;
 
         if (!string.IsNullOrEmpty(prefix))
-            key = $"Enum.{prefix}.{value.GetType().Name}.{value}";
+            key = $"Enum_{prefix}_{value.GetType().Name}_{value}";
         else if (!string.IsNullOrEmpty(suffix))
-            key = $"Enum.{value.GetType().Name}.{value}.{suffix}";
+            key = $"Enum_{value.GetType().Name}_{value}_{suffix}";
         else
-            key = $"Enum.{value.GetType().Name}.{value}";
+            key = $"Enum_{value.GetType().Name}_{value}";
 
         var root = Resources.ResourceManager.GetString(key);
 
@@ -31,9 +31,9 @@ public static class EnumUtils
         try
         {
             attribute = value.GetType()
-                .GetField(value.ToString())
-                .GetCustomAttributes(typeof(DescriptionAttribute), false)
-                .SingleOrDefault() as DescriptionAttribute;
+                        .GetField(value.ToString())
+                        .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                        .SingleOrDefault() as DescriptionAttribute;
         }
         catch { }
 

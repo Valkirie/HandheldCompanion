@@ -35,7 +35,7 @@ public enum MotionInput
     JoystickSteering = 3
 }
 
-public enum MotionOuput
+public enum MotionOutput
 {
     Disabled = 0,
     LeftStick = 1,

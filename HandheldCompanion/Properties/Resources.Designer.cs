@@ -1917,6 +1917,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Profiles {
+            get {
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quick tools.
         /// </summary>
         public static string Enum_InputsHotkeyType_Quicktools {
@@ -2682,29 +2691,11 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LeftStick.
-        /// </summary>
-        public static string Enum_MotionOuput_LeftStick {
-            get {
-                return ResourceManager.GetString("Enum_MotionOuput_LeftStick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to MoveCursor.
         /// </summary>
         public static string Enum_MotionOuput_MoveCursor {
             get {
                 return ResourceManager.GetString("Enum_MotionOuput_MoveCursor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to RightStick.
-        /// </summary>
-        public static string Enum_MotionOuput_RightStick {
-            get {
-                return ResourceManager.GetString("Enum_MotionOuput_RightStick", resourceCulture);
             }
         }
         
@@ -2718,6 +2709,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string Enum_MotionOutput_Disabled {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Left Stick.
         /// </summary>
         public static string Enum_MotionOutput_LeftStick {
@@ -2727,11 +2727,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Cursor.
+        /// </summary>
+        public static string Enum_MotionOutput_MoveCursor {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_MoveCursor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Right Stick.
         /// </summary>
         public static string Enum_MotionOutput_RightStick {
             get {
                 return ResourceManager.GetString("Enum_MotionOutput_RightStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scroll Wheel.
+        /// </summary>
+        public static string Enum_MotionOutput_ScrollWheel {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_ScrollWheel", resourceCulture);
             }
         }
         
@@ -3083,6 +3101,15 @@ namespace HandheldCompanion.Properties {
         public static string Enum_SteamDeck_ButtonFlags_OEM1 {
             get {
                 return ResourceManager.GetString("Enum_SteamDeck_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gyroscope.
+        /// </summary>
+        public static string Enum_XInputController_AxisLayoutFlags_Gyroscope {
+            get {
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_Gyroscope", resourceCulture);
             }
         }
         
@@ -3470,6 +3497,15 @@ namespace HandheldCompanion.Properties {
         public static string Enum_XInputController_ButtonFlags_Special {
             get {
                 return ResourceManager.GetString("Enum_XInputController_ButtonFlags_Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Special 2.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Special2 {
+            get {
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_Special2", resourceCulture);
             }
         }
         
