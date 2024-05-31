@@ -293,19 +293,21 @@ namespace HandheldCompanion.Managers
                 if (vTarget is null)
                     return;
 
+                bool success = false;
                 switch (status)
                 {
                     default:
                     case HIDstatus.Connected:
-                        vTarget.Connect();
+                        success = vTarget.Connect();
                         break;
                     case HIDstatus.Disconnected:
-                        vTarget.Disconnect();
+                        success = vTarget.Disconnect();
                         break;
                 }
 
                 // update current HIDstatus
-                HIDstatus = status;
+                if (success)
+                    HIDstatus = status;
             }
         }
 
