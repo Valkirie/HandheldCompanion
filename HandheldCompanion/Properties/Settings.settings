@@ -171,7 +171,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="QuickToolsLocation" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="QuicktoolsBackdrop" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
