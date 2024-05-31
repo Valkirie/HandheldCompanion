@@ -117,9 +117,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="chord_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\controller_base\chord_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="empty_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\XInputPlus\x64\XInput1_3.dl_;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\XInputPlus\x86\XInput1_3.dl_;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="XInputPlusInjector" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\XInputPlus\Loader\XInputPlusInjector.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="XInputPlusInjector64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\XInputPlus\Loader\XInputPlusInjector64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="AboutPage_About" xml:space="preserve">
     <value>Sobre</value>
-    <comment> </comment>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
     <value>Uma combinação de serviço Windows e aplicação otimizada com interface de toque para melhorar a experiência de seu computador de jogo portátil de mão. Os recursos incluem: controle de movimento conhecido também como controle giroscópico, simulação de controlador virtual, sobreposição de acesso rápido para ferramentas, touchpads virtuais, modelo 3D de controlador, sistema de perfis de configurações baseado na aplicação ativa. Handheld Companion depende do driver do ViGEmBus e bibliotecas ViGEmClient como também o filtro de driver do HidHide em modo kernel. Algoritmos de controle de movimentos são baseados no trabalho de Jibbsmart e informação disponível em GyroWiki.</value>
@@ -193,8 +217,14 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Ocultamento de controle</value>
   </data>
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
+    <value>Configurações de controle</value>
+  </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Desconectar</value>
+  </data>
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
+    <value>Dispositivos de entrada</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
     <value>Reexibir controle ao encerrar</value>
@@ -207,10 +237,6 @@
   </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>Alterar a força da vibração do controle</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
     <value>Diminuir o valor de TDP</value>
@@ -793,7 +819,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>Sim</value>
   </data>
-  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
+  <data name="Properties_Resources_ControllerPage_Disconnect" xml:space="preserve">
     <value>Desconectar</value>
   </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
@@ -1033,9 +1059,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="WarningElevated" xml:space="preserve">
     <value>Execute esta ferramenta como um Administrador para destravar estas configurações</value>
   </data>
-  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
-  </data>
   <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
     <value>Silenciar controle virtual</value>
   </data>
@@ -1053,12 +1076,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
     <value>Compensar por zona morta dentro do jogo, melhor o registro de movimentos pequenos</value>
-  </data>
-  <data name="chord_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\controller_base\chord_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="empty_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
     <value>Melhorar a circularidade do analógico</value>
@@ -1366,6 +1383,9 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Usar o motor de tremida de alta definição, ao custo de maior uso de CPU</value>
   </data>
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
+    <value>Configurações do controlador</value>
+  </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
     <value>Aplicar modelo</value>
   </data>
@@ -1438,8 +1458,65 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
     <value>Mínimo</value>
   </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
   <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
     <value>Externo</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
+    <value>Minimal</value>
+  </data>
+  <data name="OverlayPage_CustomSettings" xml:space="preserve">
+    <value>Custom Settings</value>
+  </data>
+  <data name="OverlayPage_TimeLevel" xml:space="preserve">
+    <value>Time Level</value>
+  </data>
+  <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
+    <value>The level of information for your time.</value>
+  </data>
+  <data name="OverlayPage_FPSLevel" xml:space="preserve">
+    <value>FPS Level</value>
+  </data>
+  <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
+    <value>The level of information for your FPS.</value>
+  </data>
+  <data name="OverlayPage_CPULevel" xml:space="preserve">
+    <value>CPU Level</value>
+  </data>
+  <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
+    <value>The level of information for your CPU.</value>
+  </data>
+  <data name="OverlayPage_RAMLevel" xml:space="preserve">
+    <value>RAM Level</value>
+  </data>
+  <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
+    <value>The level of information for your RAM.</value>
+  </data>
+  <data name="OverlayPage_GPULevel" xml:space="preserve">
+    <value>GPU Level</value>
+  </data>
+  <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
+    <value>The level of information for your GPU.</value>
+  </data>
+  <data name="OverlayPage_VRAMLevel" xml:space="preserve">
+    <value>VRAM Level</value>
+  </data>
+  <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
+    <value>The level of information for your VRAM.</value>
+  </data>
+  <data name="OverlayPage_BATTLevel" xml:space="preserve">
+    <value>Battery Level</value>
+  </data>
+  <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
+    <value>The level of information for your battery.</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>Alterar o layout do controle virtual</value>
@@ -1558,520 +1635,508 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
     <value>Redirecionamento</value>
   </data>
-  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
+  <data name="Enum_MotionInput_AutoRollYawSwap_Desc" xml:space="preserve">
     <value>Esta entrada irá operar como um joystick simples. Ideal para notebook ou portáteis no estilo concha, alternada automática de rolagem de guinada baseado em como o dispositivo está sendo segurado (aberto em 90 ou 180 graus).</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_AYANEO2_ButtonFlags_OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_AYANEO2_ButtonFlags_OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_AYANEO2_ButtonFlags_OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum_AYANEO2_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_B1" xml:space="preserve">
     <value>Cruz</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_B2" xml:space="preserve">
     <value>Círculo</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_B3" xml:space="preserve">
     <value>Quadrado</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_B4" xml:space="preserve">
     <value>Triângulo</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_Back" xml:space="preserve">
     <value>Share</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_Special" xml:space="preserve">
     <value>Sony</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_Start" xml:space="preserve">
     <value>Options</value>
   </data>
-  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+  <data name="Enum_HIDmode_DualShock4Controller" xml:space="preserve">
     <value>Controle DualShock 4 emulado</value>
   </data>
-  <data name="Enum.HIDmode.NoController" xml:space="preserve">
+  <data name="Enum_HIDmode_NoController" xml:space="preserve">
     <value>Sem controle emulado</value>
   </data>
-  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+  <data name="Enum_HIDmode_Xbox360Controller" xml:space="preserve">
     <value>Controle XBOX 360 emulado</value>
   </data>
-  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
+  <data name="Enum_HIDstatus_Connected" xml:space="preserve">
     <value>Conectado</value>
   </data>
-  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+  <data name="Enum_HIDstatus_Disconnected" xml:space="preserve">
     <value>Desconectado</value>
   </data>
-  <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
+  <data name="Enum_Input_AutoRollYawSwap" xml:space="preserve">
     <value>Alternar Rolagem de Guinada Auto</value>
   </data>
-  <data name="Enum.Input.WorldSpace" xml:space="preserve">
+  <data name="Enum_Input_WorldSpace" xml:space="preserve">
     <value>Câmera de Joystick</value>
   </data>
-  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
+  <data name="Enum_Input_JoystickSteering" xml:space="preserve">
     <value>Joystick de direção (tipo volante)</value>
   </data>
-  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
+  <data name="Enum_Input_PlayerSpace" xml:space="preserve">
     <value>Espaço do jogador</value>
   </data>
-  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_HC" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_Overlay" xml:space="preserve">
     <value>Sobreposição</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_Quicktools" xml:space="preserve">
     <value>Ferramentas rápidas</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_Windows" xml:space="preserve">
     <value>Windows</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_B1" xml:space="preserve">
     <value>A</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_B2" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_B3" xml:space="preserve">
     <value>X</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_B4" xml:space="preserve">
     <value>Y</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_Back" xml:space="preserve">
     <value>View</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="Enum.Output.LeftStick" xml:space="preserve">
+  <data name="Enum_Output_LeftStick" xml:space="preserve">
     <value>Analógico esquerdo</value>
   </data>
-  <data name="Enum.Output.RightStick" xml:space="preserve">
+  <data name="Enum_Output_RightStick" xml:space="preserve">
     <value>Analógico direito</value>
   </data>
-  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_Default" xml:space="preserve">
     <value>Este é seu perfil padrão de controle. Este perfil será aplicado a todas as suas aplicações que não possuem um perfil específico. Algumas opções que requerem a definição de um arquivo executável estarão desabilitadas.</value>
   </data>
-  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_MissingExecutable" xml:space="preserve">
     <value>Opa. Parece que esse perfil não possui um arquivo executável definido. Como isto será possível?</value>
   </data>
-  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_MissingPath" xml:space="preserve">
     <value>Opa. Parece que esse perfil não possui um caminho de diretório até a aplicação. Algumas opções que requerem a definição de um arquivo executável estarão desabilitadas.</value>
   </data>
-  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_MissingPermission" xml:space="preserve">
     <value>Opa. Parece que você não possui o nível de permissão necessário para modificar o conteúdo desta aplicação. Certifique-se de iniciar este programa com privilégios administrativos.</value>
   </data>
-  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_None" xml:space="preserve">
     <value>Nada para ver aqui.</value>
   </data>
-  <data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_Running" xml:space="preserve">
     <value>Opa. Parece que o arquivo executável deste perfil está em execução. Algumas opções estarão indisponíveis até que a execução seja encerrada.</value>
   </data>
-  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+  <data name="Enum_QualityOfServiceLevel_Default" xml:space="preserve">
     <value>Padrão</value>
   </data>
-  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+  <data name="Enum_QualityOfServiceLevel_Eco" xml:space="preserve">
     <value>Eco</value>
   </data>
-  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+  <data name="Enum_QualityOfServiceLevel_High" xml:space="preserve">
     <value>Alta</value>
   </data>
-  <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
+  <data name="Enum_ServiceStartMode_Automatic" xml:space="preserve">
     <value>Automático</value>
   </data>
-  <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
+  <data name="Enum_ServiceStartMode_Disabled" xml:space="preserve">
     <value>Desabilitado</value>
   </data>
-  <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
+  <data name="Enum_ServiceStartMode_Manual" xml:space="preserve">
     <value>Manual</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B1" xml:space="preserve">
     <value>A</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B2" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B3" xml:space="preserve">
     <value>X</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B4" xml:space="preserve">
     <value>Y</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_Back" xml:space="preserve">
     <value>View</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_L1" xml:space="preserve">
     <value>LB</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_R1" xml:space="preserve">
     <value>RB</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_Special" xml:space="preserve">
     <value>Guia</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="Enum.MotionInput.WorldSpace.Desc" xml:space="preserve">
+  <data name="Enum_MotionInput_WorldSpace_Desc" xml:space="preserve">
     <value>Esta entrada irá operar como um joystick simples. Isto é voltado para aplicações que utilizam joystick tradicional</value>
   </data>
-  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
+  <data name="Enum_MotionInput_JoystickSteering_Desc" xml:space="preserve">
     <value>Esta entrada irá operar como um joystick otimizado para controlar um volante ou um jogo de corrida</value>
   </data>
-  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
+  <data name="Enum_MotionInput_PlayerSpace_Desc" xml:space="preserve">
     <value>Esta entrada irá operar como um joystick otimizado para controlar uma câmera em primeira ou terceira pessoa</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_Handheld" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
-  <data name="Enum.SteamDeck.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_SteamDeck_ButtonFlags_OEM1" xml:space="preserve">
     <value>Opções</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum_NeptuneController_ButtonFlags_Special" xml:space="preserve">
     <value>STEAM</value>
   </data>
-  <data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_ROGAlly_ButtonFlags_OEM1" xml:space="preserve">
     <value>Centro de comando</value>
   </data>
-  <data name="Enum.ROGAlly.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_ROGAlly_ButtonFlags_OEM2" xml:space="preserve">
     <value>Armory crate</value>
   </data>
-  <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_ROGAlly_ButtonFlags_OEM3" xml:space="preserve">
     <value>M1</value>
   </data>
-  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_AYANEO2021Pro_ButtonFlags_OEM1" xml:space="preserve">
     <value>Win</value>
   </data>
-  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_AYANEO2021Pro_ButtonFlags_OEM2" xml:space="preserve">
     <value>Esc</value>
   </data>
-  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_AYANEO2021Pro_ButtonFlags_OEM3" xml:space="preserve">
     <value>KB</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_Custom" xml:space="preserve">
     <value>Personalizado</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
+  <data name="Enum_InputsHotkeyType_Device" xml:space="preserve">
     <value>Dispositivo</value>
   </data>
-  <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
+  <data name="Enum_MotionInput_AutoRollYawSwap" xml:space="preserve">
     <value>Troca automática Rolamento e Leme</value>
   </data>
-  <data name="Enum.MotionInput.WorldSpace" xml:space="preserve">
+  <data name="Enum_MotionInput_WorldSpace" xml:space="preserve">
     <value>Câmera de Joystick</value>
   </data>
-  <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
+  <data name="Enum_MotionInput_JoystickSteering" xml:space="preserve">
     <value>Direção de Joystick</value>
   </data>
-  <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
+  <data name="Enum_MotionInput_PlayerSpace" xml:space="preserve">
     <value>Espaço do Jogador</value>
   </data>
-  <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
+  <data name="Enum_MotionOutput_LeftStick" xml:space="preserve">
     <value>Analógico Esquerdo</value>
   </data>
-  <data name="Enum.MotionOutput.RightStick" xml:space="preserve">
+  <data name="Enum_MotionOutput_RightStick" xml:space="preserve">
     <value>Analógico Direito</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
+  <data name="Enum_XInputController_AxisLayoutFlags_L2" xml:space="preserve">
     <value>L2</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
+  <data name="Enum_XInputController_AxisLayoutFlags_LeftThumb" xml:space="preserve">
     <value>Analógico Esquerdo</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
+  <data name="Enum_XInputController_AxisLayoutFlags_R2" xml:space="preserve">
     <value>R2</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
+  <data name="Enum_XInputController_AxisLayoutFlags_RightThumb" xml:space="preserve">
     <value>Analógico Direito</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B5" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B5" xml:space="preserve">
     <value>B5</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B6" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B6" xml:space="preserve">
     <value>B6</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B7" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B7" xml:space="preserve">
     <value>B7</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.B8" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_B8" xml:space="preserve">
     <value>B8</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_DPadDown" xml:space="preserve">
     <value>DPad Baixo</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_DPadLeft" xml:space="preserve">
     <value>DPad Esquerda</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_DPadRight" xml:space="preserve">
     <value>DPad Direita</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_DPadUp" xml:space="preserve">
     <value>DPad Cima</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_L2" xml:space="preserve">
     <value>L2</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_L3" xml:space="preserve">
     <value>L3</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.L4" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_L4" xml:space="preserve">
     <value>L4</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.L5" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_L5" xml:space="preserve">
     <value>L5</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_LeftThumb" xml:space="preserve">
     <value>Analógico Esquerdo</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbDown" xml:space="preserve">
     <value>Analógico Esquerdo Baixo</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbLeft" xml:space="preserve">
     <value>Analógico Esquerdo Esquerda</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbRight" xml:space="preserve">
     <value>Analógico Esquerdo Direita</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbUp" xml:space="preserve">
     <value>Analógico Esquerdo Cima</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_OEM1" xml:space="preserve">
     <value>OEM1</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_OEM2" xml:space="preserve">
     <value>OEM2</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_OEM3" xml:space="preserve">
     <value>OEM3</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_R2" xml:space="preserve">
     <value>R2</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_R3" xml:space="preserve">
     <value>R3</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.R4" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_R4" xml:space="preserve">
     <value>R4</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.R5" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_R5" xml:space="preserve">
     <value>R5</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_RightThumb" xml:space="preserve">
     <value>Analógico Direito</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_RightThumbDown" xml:space="preserve">
     <value>Analógico Direito Baixo</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_RightThumbLeft" xml:space="preserve">
     <value>Analógico Direito Esquerda</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_RightThumbRight" xml:space="preserve">
     <value>Analógico Direito Direita</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
+  <data name="Enum_XInputController_ButtonFlags_RightThumbUp" xml:space="preserve">
     <value>Analógico Direito Cima</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_A" xml:space="preserve">
     <value>A</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_AlwaysOn" xml:space="preserve">
     <value>Sempre Ligado</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_B" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_Back" xml:space="preserve">
     <value>Back</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_DPadDown" xml:space="preserve">
     <value>DPad Baixo</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_DPadLeft" xml:space="preserve">
     <value>DPad Esquerda</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_DPadRight" xml:space="preserve">
     <value>DPad Direita</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_DPadUp" xml:space="preserve">
     <value>DPad Cima</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_LeftShoulder" xml:space="preserve">
     <value>Ombro Esquerda</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_LeftThumb" xml:space="preserve">
     <value>Polegar Esquerda</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_LeftTrigger" xml:space="preserve">
     <value>Gatilho Esquerda</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_RightShoulder" xml:space="preserve">
     <value>Ombro Direita</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_RightThumb" xml:space="preserve">
     <value>Polegar Direita</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_RightTrigger" xml:space="preserve">
     <value>Gatilho Direita</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_Start" xml:space="preserve">
     <value>Start</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_X" xml:space="preserve">
     <value>X</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+  <data name="Enum_GamepadButtonFlagsExt_Y" xml:space="preserve">
     <value>Y</value>
   </data>
-  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+  <data name="Enum_ProfileErrorCode_IsRunning" xml:space="preserve">
     <value>Opa. Este perfil parece estar em execução algumas opções necessitam que o executável esteja encerrado.</value>
   </data>
-  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\XInputPlus\x64\XInput1_3.dl_;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\XInputPlus\x86\XInput1_3.dl_;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="XInputPlusInjector" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\XInputPlus\Loader\XInputPlusInjector.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="XInputPlusInjector64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\XInputPlus\Loader\XInputPlusInjector64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Enum.ProController.AxisLayoutFlags.L2" xml:space="preserve">
+  <data name="Enum_ProController_AxisLayoutFlags_L2" xml:space="preserve">
     <value>ZL</value>
   </data>
-  <data name="Enum.ProController.AxisLayoutFlags.R2" xml:space="preserve">
+  <data name="Enum_ProController_AxisLayoutFlags_R2" xml:space="preserve">
     <value>ZR</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_B1" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_B2" xml:space="preserve">
     <value>A</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_B3" xml:space="preserve">
     <value>Y</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_B4" xml:space="preserve">
     <value>X</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_Back" xml:space="preserve">
     <value>Menos</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.L1" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_L1" xml:space="preserve">
     <value>L</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.R1" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_R1" xml:space="preserve">
     <value>R</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_Special" xml:space="preserve">
     <value>Home</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.Special2" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_Special2" xml:space="preserve">
     <value>Captura</value>
   </data>
-  <data name="Enum.ProController.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum_ProController_ButtonFlags_Start" xml:space="preserve">
     <value>Mais</value>
   </data>
-  <data name="Enum.DS4Controller.AxisLayoutFlags.LeftPad" xml:space="preserve">
+  <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
     <value>Deslize simples</value>
   </data>
-  <data name="Enum.DS4Controller.AxisLayoutFlags.RightPad" xml:space="preserve">
+  <data name="Enum_DS4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
     <value>Deslize Multi-touch</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.LeftPadClick" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
     <value>Clique Simples</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.LeftPadTouch" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
     <value>Toque simples</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.RightPadClick" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Clique Multi-touch</value>
   </data>
-  <data name="Enum.DS4Controller.ButtonFlags.RightPadTouch" xml:space="preserve">
+  <data name="Enum_DS4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
     <value>Toque Multi-touch</value>
   </data>
-  <data name="Enum.DualSenseController.AxisLayoutFlags.LeftPad" xml:space="preserve">
+  <data name="Enum_DualSenseController_AxisLayoutFlags_LeftPad" xml:space="preserve">
     <value>Deslize simples</value>
   </data>
-  <data name="Enum.DualSenseController.AxisLayoutFlags.RightPad" xml:space="preserve">
+  <data name="Enum_DualSenseController_AxisLayoutFlags_RightPad" xml:space="preserve">
     <value>Deslize Multi-touch</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_B1" xml:space="preserve">
     <value>Cruz</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_B2" xml:space="preserve">
     <value>Círculo</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_B3" xml:space="preserve">
     <value>Quadrado</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_B4" xml:space="preserve">
     <value>Triângulo</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_Back" xml:space="preserve">
     <value>Share</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.LeftPadClick" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_LeftPadClick" xml:space="preserve">
     <value>Clique simples</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.LeftPadTouch" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_LeftPadTouch" xml:space="preserve">
     <value>Toque simples</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.RightPadClick" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Click multi-touch</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.RightPadTouch" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_RightPadTouch" xml:space="preserve">
     <value>Toque multi-touch</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_Special" xml:space="preserve">
     <value>Sony</value>
   </data>
-  <data name="Enum.DualSenseController.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum_DualSenseController_ButtonFlags_Start" xml:space="preserve">
     <value>Options</value>
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
@@ -2080,202 +2145,202 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>Você não pode desfazer esta ação. Anteriormente aplicado ao modelo: {0}</value>
   </data>
-  <data name="Enum.KeyFlags.A" xml:space="preserve">
+  <data name="Enum_KeyFlags_A" xml:space="preserve">
     <value>A</value>
   </data>
-  <data name="Enum.KeyFlags.Alt" xml:space="preserve">
+  <data name="Enum_KeyFlags_Alt" xml:space="preserve">
     <value>Alt</value>
   </data>
-  <data name="Enum.KeyFlags.Apostrophe" xml:space="preserve">
+  <data name="Enum_KeyFlags_Apostrophe" xml:space="preserve">
     <value>Apóstrofe</value>
   </data>
-  <data name="Enum.KeyFlags.B" xml:space="preserve">
+  <data name="Enum_KeyFlags_B" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="Enum.KeyFlags.Backslash" xml:space="preserve">
+  <data name="Enum_KeyFlags_Backslash" xml:space="preserve">
     <value>Backslash</value>
   </data>
-  <data name="Enum.KeyFlags.Backspace" xml:space="preserve">
+  <data name="Enum_KeyFlags_Backspace" xml:space="preserve">
     <value>Backspace</value>
   </data>
-  <data name="Enum.KeyFlags.C" xml:space="preserve">
+  <data name="Enum_KeyFlags_C" xml:space="preserve">
     <value>C</value>
   </data>
-  <data name="Enum.KeyFlags.Comma" xml:space="preserve">
+  <data name="Enum_KeyFlags_Comma" xml:space="preserve">
     <value>Vírgula</value>
   </data>
-  <data name="Enum.KeyFlags.Control" xml:space="preserve">
+  <data name="Enum_KeyFlags_Control" xml:space="preserve">
     <value>Control</value>
   </data>
-  <data name="Enum.KeyFlags.D" xml:space="preserve">
+  <data name="Enum_KeyFlags_D" xml:space="preserve">
     <value>D</value>
   </data>
-  <data name="Enum.KeyFlags.Delete" xml:space="preserve">
+  <data name="Enum_KeyFlags_Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="Enum.KeyFlags.E" xml:space="preserve">
+  <data name="Enum_KeyFlags_E" xml:space="preserve">
     <value>E</value>
   </data>
-  <data name="Enum.KeyFlags.End" xml:space="preserve">
+  <data name="Enum_KeyFlags_End" xml:space="preserve">
     <value>End</value>
   </data>
-  <data name="Enum.KeyFlags.Enter" xml:space="preserve">
+  <data name="Enum_KeyFlags_Enter" xml:space="preserve">
     <value>Enter</value>
   </data>
-  <data name="Enum.KeyFlags.Equal" xml:space="preserve">
+  <data name="Enum_KeyFlags_Equal" xml:space="preserve">
     <value>Igual</value>
   </data>
-  <data name="Enum.KeyFlags.Escape" xml:space="preserve">
+  <data name="Enum_KeyFlags_Escape" xml:space="preserve">
     <value>Escape</value>
   </data>
-  <data name="Enum.KeyFlags.F" xml:space="preserve">
+  <data name="Enum_KeyFlags_F" xml:space="preserve">
     <value>F</value>
   </data>
-  <data name="Enum.KeyFlags.F1" xml:space="preserve">
+  <data name="Enum_KeyFlags_F1" xml:space="preserve">
     <value>F1</value>
   </data>
-  <data name="Enum.KeyFlags.F10" xml:space="preserve">
+  <data name="Enum_KeyFlags_F10" xml:space="preserve">
     <value>F10</value>
   </data>
-  <data name="Enum.KeyFlags.F11" xml:space="preserve">
+  <data name="Enum_KeyFlags_F11" xml:space="preserve">
     <value>F11</value>
   </data>
-  <data name="Enum.KeyFlags.F12" xml:space="preserve">
+  <data name="Enum_KeyFlags_F12" xml:space="preserve">
     <value>F12</value>
   </data>
-  <data name="Enum.KeyFlags.F2" xml:space="preserve">
+  <data name="Enum_KeyFlags_F2" xml:space="preserve">
     <value>F2</value>
   </data>
-  <data name="Enum.KeyFlags.F3" xml:space="preserve">
+  <data name="Enum_KeyFlags_F3" xml:space="preserve">
     <value>F3</value>
   </data>
-  <data name="Enum.KeyFlags.F4" xml:space="preserve">
+  <data name="Enum_KeyFlags_F4" xml:space="preserve">
     <value>F4</value>
   </data>
-  <data name="Enum.KeyFlags.F5" xml:space="preserve">
+  <data name="Enum_KeyFlags_F5" xml:space="preserve">
     <value>F5</value>
   </data>
-  <data name="Enum.KeyFlags.F6" xml:space="preserve">
+  <data name="Enum_KeyFlags_F6" xml:space="preserve">
     <value>F6</value>
   </data>
-  <data name="Enum.KeyFlags.F7" xml:space="preserve">
+  <data name="Enum_KeyFlags_F7" xml:space="preserve">
     <value>F7</value>
   </data>
-  <data name="Enum.KeyFlags.F8" xml:space="preserve">
+  <data name="Enum_KeyFlags_F8" xml:space="preserve">
     <value>F8</value>
   </data>
-  <data name="Enum.KeyFlags.F9" xml:space="preserve">
+  <data name="Enum_KeyFlags_F9" xml:space="preserve">
     <value>F9</value>
   </data>
-  <data name="Enum.KeyFlags.G" xml:space="preserve">
+  <data name="Enum_KeyFlags_G" xml:space="preserve">
     <value>G</value>
   </data>
-  <data name="Enum.KeyFlags.Grave" xml:space="preserve">
+  <data name="Enum_KeyFlags_Grave" xml:space="preserve">
     <value>Crase</value>
   </data>
-  <data name="Enum.KeyFlags.H" xml:space="preserve">
+  <data name="Enum_KeyFlags_H" xml:space="preserve">
     <value>H</value>
   </data>
-  <data name="Enum.KeyFlags.Home" xml:space="preserve">
+  <data name="Enum_KeyFlags_Home" xml:space="preserve">
     <value>Home</value>
   </data>
-  <data name="Enum.KeyFlags.I" xml:space="preserve">
+  <data name="Enum_KeyFlags_I" xml:space="preserve">
     <value>I</value>
   </data>
-  <data name="Enum.KeyFlags.Insert" xml:space="preserve">
+  <data name="Enum_KeyFlags_Insert" xml:space="preserve">
     <value>Insert</value>
   </data>
-  <data name="Enum.KeyFlags.J" xml:space="preserve">
+  <data name="Enum_KeyFlags_J" xml:space="preserve">
     <value>J</value>
   </data>
-  <data name="Enum.KeyFlags.K" xml:space="preserve">
+  <data name="Enum_KeyFlags_K" xml:space="preserve">
     <value>K</value>
   </data>
-  <data name="Enum.KeyFlags.L" xml:space="preserve">
+  <data name="Enum_KeyFlags_L" xml:space="preserve">
     <value>L</value>
   </data>
-  <data name="Enum.KeyFlags.M" xml:space="preserve">
+  <data name="Enum_KeyFlags_M" xml:space="preserve">
     <value>M</value>
   </data>
-  <data name="Enum.KeyFlags.Minus" xml:space="preserve">
+  <data name="Enum_KeyFlags_Minus" xml:space="preserve">
     <value>Minus</value>
   </data>
-  <data name="Enum.KeyFlags.N" xml:space="preserve">
+  <data name="Enum_KeyFlags_N" xml:space="preserve">
     <value>N</value>
   </data>
-  <data name="Enum.KeyFlags.O" xml:space="preserve">
+  <data name="Enum_KeyFlags_O" xml:space="preserve">
     <value>O</value>
   </data>
-  <data name="Enum.KeyFlags.P" xml:space="preserve">
+  <data name="Enum_KeyFlags_P" xml:space="preserve">
     <value>P</value>
   </data>
-  <data name="Enum.KeyFlags.Pause" xml:space="preserve">
+  <data name="Enum_KeyFlags_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
-  <data name="Enum.KeyFlags.Period" xml:space="preserve">
+  <data name="Enum_KeyFlags_Period" xml:space="preserve">
     <value>Ponto</value>
   </data>
-  <data name="Enum.KeyFlags.Q" xml:space="preserve">
+  <data name="Enum_KeyFlags_Q" xml:space="preserve">
     <value>Q</value>
   </data>
-  <data name="Enum.KeyFlags.R" xml:space="preserve">
+  <data name="Enum_KeyFlags_R" xml:space="preserve">
     <value>R</value>
   </data>
-  <data name="Enum.KeyFlags.S" xml:space="preserve">
+  <data name="Enum_KeyFlags_S" xml:space="preserve">
     <value>S</value>
   </data>
-  <data name="Enum.KeyFlags.Semicolon" xml:space="preserve">
+  <data name="Enum_KeyFlags_Semicolon" xml:space="preserve">
     <value>PontoVírgula</value>
   </data>
-  <data name="Enum.KeyFlags.Shift" xml:space="preserve">
+  <data name="Enum_KeyFlags_Shift" xml:space="preserve">
     <value>Shift</value>
   </data>
-  <data name="Enum.KeyFlags.Slash" xml:space="preserve">
+  <data name="Enum_KeyFlags_Slash" xml:space="preserve">
     <value>Slash</value>
   </data>
-  <data name="Enum.KeyFlags.Space" xml:space="preserve">
+  <data name="Enum_KeyFlags_Space" xml:space="preserve">
     <value>Espaço</value>
   </data>
-  <data name="Enum.KeyFlags.T" xml:space="preserve">
+  <data name="Enum_KeyFlags_T" xml:space="preserve">
     <value>T</value>
   </data>
-  <data name="Enum.KeyFlags.Tab" xml:space="preserve">
+  <data name="Enum_KeyFlags_Tab" xml:space="preserve">
     <value>Tab</value>
   </data>
-  <data name="Enum.KeyFlags.U" xml:space="preserve">
+  <data name="Enum_KeyFlags_U" xml:space="preserve">
     <value>U</value>
   </data>
-  <data name="Enum.KeyFlags.V" xml:space="preserve">
+  <data name="Enum_KeyFlags_V" xml:space="preserve">
     <value>V</value>
   </data>
-  <data name="Enum.KeyFlags.W" xml:space="preserve">
+  <data name="Enum_KeyFlags_W" xml:space="preserve">
     <value>W</value>
   </data>
-  <data name="Enum.KeyFlags.X" xml:space="preserve">
+  <data name="Enum_KeyFlags_X" xml:space="preserve">
     <value>X</value>
   </data>
-  <data name="Enum.KeyFlags.Y" xml:space="preserve">
+  <data name="Enum_KeyFlags_Y" xml:space="preserve">
     <value>Y</value>
   </data>
-  <data name="Enum.KeyFlags.Z" xml:space="preserve">
+  <data name="Enum_KeyFlags_Z" xml:space="preserve">
     <value>Z</value>
   </data>
-  <data name="Enum.MotionOuput.LeftStick" xml:space="preserve">
+  <data name="Enum_MotionOuput_LeftStick" xml:space="preserve">
     <value>AnalógicoEsquerdo</value>
   </data>
-  <data name="Enum.MotionOuput.MoveCursor" xml:space="preserve">
+  <data name="Enum_MotionOuput_MoveCursor" xml:space="preserve">
     <value>MoverCursor</value>
   </data>
-  <data name="Enum.MotionOuput.RightStick" xml:space="preserve">
+  <data name="Enum_MotionOuput_RightStick" xml:space="preserve">
     <value>AnalógicoDireito</value>
   </data>
-  <data name="Enum.MotionOuput.ScrollWheel" xml:space="preserve">
+  <data name="Enum_MotionOuput_ScrollWheel" xml:space="preserve">
     <value>RodaDeMouse</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.LeftStick" xml:space="preserve">
+  <data name="Enum_XInputController_AxisLayoutFlags_LeftStick" xml:space="preserve">
     <value>AnalógicoEsquerdo</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
+  <data name="Enum_XInputController_AxisLayoutFlags_RightStick" xml:space="preserve">
     <value>AnalógicoDireito</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">
@@ -2500,40 +2565,40 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Favor aguarde um momento enquanto religamos o seu controle.</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.B5" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_B5" xml:space="preserve">
     <value>M2</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.L4" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_L4" xml:space="preserve">
     <value>Y1</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.L5" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_L5" xml:space="preserve">
     <value>Y2</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.R4" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_R4" xml:space="preserve">
     <value>M3</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.R5" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_R5" xml:space="preserve">
     <value>Y3</value>
   </data>
-  <data name="Enum.LegionGo.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum_LegionGo_ButtonFlags_OEM1" xml:space="preserve">
     <value>LegionR</value>
   </data>
-  <data name="Enum.LegionGo.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum_LegionGo_ButtonFlags_OEM2" xml:space="preserve">
     <value>LegionL</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.B6" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_B6" xml:space="preserve">
     <value>Botão da roda do mouse</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.B7" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_B7" xml:space="preserve">
     <value>Roda do mouse para cima</value>
   </data>
-  <data name="Enum.LegionController.ButtonFlags.B8" xml:space="preserve">
+  <data name="Enum_LegionController_ButtonFlags_B8" xml:space="preserve">
     <value>Roda do mouse para baixo</value>
   </data>
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>Controle: {0}</value>
   </data>
-  <data name="Enum.ROGAlly.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
     <value>M2</value>
   </data>
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
@@ -2794,74 +2859,11 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
     <value>1/1 suporta apenas Tela Cheia Exclusiva (verdadeira).</value>
   </data>
-  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
-    <value>Configurações de controle</value>
-  </data>
-  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
-    <value>Dispositivos de entrada</value>
-  </data>
-  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
-    <value>Configurações do controlador</value>
-  </data>
-  <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
-    <value>Change virtual controller type</value>
-  </data>
-  <data name="OverlayPage_BATTLevel" xml:space="preserve">
-    <value>Battery Level</value>
-  </data>
-  <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
-    <value>Change virtual controller status</value>
-  </data>
-  <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
-    <value>connected to the computer</value>
-  </data>
-  <data name="ControllerPage_VirtualType" xml:space="preserve">
-    <value>Controller type</value>
-  </data>
-  <data name="ControllerPage_VirtualStatus" xml:space="preserve">
-    <value>Controller status</value>
-  </data>
-  <data name="OverlayPage_CPULevel" xml:space="preserve">
-    <value>CPU Level</value>
-  </data>
-  <data name="OverlayPage_CustomSettings" xml:space="preserve">
-    <value>Custom Settings</value>
-  </data>
-  <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
-    <value>Custom</value>
-  </data>
-  <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
-    <value>Disabled</value>
-  </data>
   <data name="SettingsPage_UISounds" xml:space="preserve">
     <value>Enable UI sounds</value>
   </data>
   <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
     <value>Enable or disable UI sounds on navigation</value>
-  </data>
-  <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
-    <value>Full</value>
-  </data>
-  <data name="OverlayPage_FPSLevel" xml:space="preserve">
-    <value>FPS Level</value>
-  </data>
-  <data name="OverlayPage_GPULevel" xml:space="preserve">
-    <value>GPU Level</value>
-  </data>
-  <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
-    <value>is what the computer uses</value>
-  </data>
-  <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
-    <value>Integer Scaling</value>
-  </data>
-  <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
-    <value>Minimal</value>
-  </data>
-  <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
-    <value>Nearest Neighbor</value>
-  </data>
-  <data name="OverlayPage_RAMLevel" xml:space="preserve">
-    <value>RAM Level</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
     <value>Scaling type</value>
@@ -2869,35 +2871,32 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_ResolutionScaleTypeDesc" xml:space="preserve">
     <value>Select scaling type to adapt the scaling aspect ratio</value>
   </data>
-  <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
-    <value>The level of information for your VRAM.</value>
+  <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
+    <value>Integer Scaling</value>
   </data>
-  <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
-    <value>The level of information for your time.</value>
+  <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
+    <value>Nearest Neighbor</value>
   </data>
-  <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
-    <value>The level of information for your RAM.</value>
-  </data>
-  <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
-    <value>The level of information for your GPU.</value>
-  </data>
-  <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
-    <value>The level of information for your FPS.</value>
-  </data>
-  <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
-    <value>The level of information for your CPU.</value>
-  </data>
-  <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
-    <value>The level of information for your battery.</value>
-  </data>
-  <data name="OverlayPage_TimeLevel" xml:space="preserve">
-    <value>Time Level</value>
-  </data>
-  <data name="OverlayPage_VRAMLevel" xml:space="preserve">
-    <value>VRAM Level</value>
+  <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
+    <value>connected to the computer</value>
   </data>
   <data name="ControllerPage_VirtualDevices" xml:space="preserve">
     <value>Virtual controller</value>
+  </data>
+  <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
+    <value>is what the computer uses</value>
+  </data>
+  <data name="ControllerPage_VirtualStatus" xml:space="preserve">
+    <value>Controller status</value>
+  </data>
+  <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
+    <value>Change virtual controller status</value>
+  </data>
+  <data name="ControllerPage_VirtualType" xml:space="preserve">
+    <value>Controller type</value>
+  </data>
+  <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
+    <value>Change virtual controller type</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
     <value>Auto Sleep Time</value>

@@ -1228,7 +1228,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -1237,7 +1237,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -1246,7 +1246,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -1255,7 +1255,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2_ButtonFlags_OEM4 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM4", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2_ButtonFlags_OEM4", resourceCulture);
             }
         }
         
@@ -1264,7 +1264,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2021Pro_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2021Pro_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -1273,7 +1273,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2021Pro_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2021Pro_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -1282,7 +1282,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEO2021Pro_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEO2021Pro_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -1291,7 +1291,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -1300,7 +1300,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -1309,7 +1309,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -1318,7 +1318,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM4 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM4", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM4", resourceCulture);
             }
         }
         
@@ -1327,7 +1327,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRLite_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRLite_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -1336,7 +1336,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRLite_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRLite_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -1345,7 +1345,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRLite_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRLite_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -1354,7 +1354,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRLite_ButtonFlags_OEM4 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM4", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRLite_ButtonFlags_OEM4", resourceCulture);
             }
         }
         
@@ -1363,7 +1363,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRPro_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -1372,7 +1372,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRPro_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -1381,7 +1381,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRPro_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -1390,7 +1390,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM4 {
             get {
-                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM4", resourceCulture);
+                return ResourceManager.GetString("Enum_AYANEOAIRPro_ButtonFlags_OEM4", resourceCulture);
             }
         }
         
@@ -1399,7 +1399,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.AxisLayoutFlags.LeftPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_AxisLayoutFlags_LeftPad", resourceCulture);
             }
         }
         
@@ -1408,7 +1408,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_AxisLayoutFlags_RightPad {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.AxisLayoutFlags.RightPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_AxisLayoutFlags_RightPad", resourceCulture);
             }
         }
         
@@ -1417,7 +1417,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_B1 {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B1", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B1", resourceCulture);
             }
         }
         
@@ -1426,7 +1426,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_B2 {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B2", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B2", resourceCulture);
             }
         }
         
@@ -1435,7 +1435,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_B3 {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B3", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B3", resourceCulture);
             }
         }
         
@@ -1444,7 +1444,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_B4 {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B4", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B4", resourceCulture);
             }
         }
         
@@ -1453,7 +1453,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_Back {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Back", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_Back", resourceCulture);
             }
         }
         
@@ -1462,7 +1462,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_LeftPadClick {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.LeftPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_LeftPadClick", resourceCulture);
             }
         }
         
@@ -1471,7 +1471,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.LeftPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_LeftPadTouch", resourceCulture);
             }
         }
         
@@ -1480,7 +1480,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_RightPadClick {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.RightPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_RightPadClick", resourceCulture);
             }
         }
         
@@ -1489,7 +1489,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_RightPadTouch {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.RightPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_RightPadTouch", resourceCulture);
             }
         }
         
@@ -1498,7 +1498,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_Special {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Special", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_Special", resourceCulture);
             }
         }
         
@@ -1507,7 +1507,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_Start {
             get {
-                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Start", resourceCulture);
+                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_Start", resourceCulture);
             }
         }
         
@@ -1516,7 +1516,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.AxisLayoutFlags.LeftPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_AxisLayoutFlags_LeftPad", resourceCulture);
             }
         }
         
@@ -1525,7 +1525,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_AxisLayoutFlags_RightPad {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.AxisLayoutFlags.RightPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_AxisLayoutFlags_RightPad", resourceCulture);
             }
         }
         
@@ -1534,7 +1534,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_B1 {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B1", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B1", resourceCulture);
             }
         }
         
@@ -1543,7 +1543,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_B2 {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B2", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B2", resourceCulture);
             }
         }
         
@@ -1552,7 +1552,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_B3 {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B3", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B3", resourceCulture);
             }
         }
         
@@ -1561,7 +1561,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_B4 {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B4", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B4", resourceCulture);
             }
         }
         
@@ -1570,7 +1570,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_Back {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Back", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_Back", resourceCulture);
             }
         }
         
@@ -1579,7 +1579,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_LeftPadClick {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.LeftPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_LeftPadClick", resourceCulture);
             }
         }
         
@@ -1588,7 +1588,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.LeftPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_LeftPadTouch", resourceCulture);
             }
         }
         
@@ -1597,7 +1597,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_RightPadClick {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.RightPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_RightPadClick", resourceCulture);
             }
         }
         
@@ -1606,7 +1606,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_RightPadTouch {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.RightPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_RightPadTouch", resourceCulture);
             }
         }
         
@@ -1615,7 +1615,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_Special {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Special", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_Special", resourceCulture);
             }
         }
         
@@ -1624,7 +1624,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_Start {
             get {
-                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Start", resourceCulture);
+                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_Start", resourceCulture);
             }
         }
         
@@ -1633,7 +1633,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_A {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.A", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_A", resourceCulture);
             }
         }
         
@@ -1642,7 +1642,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_AlwaysOn", resourceCulture);
             }
         }
         
@@ -1651,7 +1651,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_B {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.B", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_B", resourceCulture);
             }
         }
         
@@ -1660,7 +1660,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_Back {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Back", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_Back", resourceCulture);
             }
         }
         
@@ -1669,7 +1669,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_DPadDown {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadDown", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_DPadDown", resourceCulture);
             }
         }
         
@@ -1678,7 +1678,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_DPadLeft {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadLeft", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_DPadLeft", resourceCulture);
             }
         }
         
@@ -1687,7 +1687,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_DPadRight {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadRight", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_DPadRight", resourceCulture);
             }
         }
         
@@ -1696,7 +1696,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_DPadUp {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadUp", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_DPadUp", resourceCulture);
             }
         }
         
@@ -1705,7 +1705,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_LeftShoulder {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftShoulder", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_LeftShoulder", resourceCulture);
             }
         }
         
@@ -1714,7 +1714,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_LeftThumb {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftThumb", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_LeftThumb", resourceCulture);
             }
         }
         
@@ -1723,7 +1723,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_LeftTrigger {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftTrigger", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_LeftTrigger", resourceCulture);
             }
         }
         
@@ -1732,7 +1732,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_RightShoulder {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightShoulder", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_RightShoulder", resourceCulture);
             }
         }
         
@@ -1741,7 +1741,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_RightThumb {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightThumb", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_RightThumb", resourceCulture);
             }
         }
         
@@ -1750,7 +1750,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_RightTrigger {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightTrigger", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_RightTrigger", resourceCulture);
             }
         }
         
@@ -1759,7 +1759,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_Start {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_Start", resourceCulture);
             }
         }
         
@@ -1768,7 +1768,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_X {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.X", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_X", resourceCulture);
             }
         }
         
@@ -1777,7 +1777,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_Y {
             get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Y", resourceCulture);
+                return ResourceManager.GetString("Enum_GamepadButtonFlagsExt_Y", resourceCulture);
             }
         }
         
@@ -1786,7 +1786,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_HIDmode_DualShock4Controller {
             get {
-                return ResourceManager.GetString("Enum.HIDmode.DualShock4Controller", resourceCulture);
+                return ResourceManager.GetString("Enum_HIDmode_DualShock4Controller", resourceCulture);
             }
         }
         
@@ -1795,7 +1795,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_HIDmode_NoController {
             get {
-                return ResourceManager.GetString("Enum.HIDmode.NoController", resourceCulture);
+                return ResourceManager.GetString("Enum_HIDmode_NoController", resourceCulture);
             }
         }
         
@@ -1804,7 +1804,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_HIDmode_Xbox360Controller {
             get {
-                return ResourceManager.GetString("Enum.HIDmode.Xbox360Controller", resourceCulture);
+                return ResourceManager.GetString("Enum_HIDmode_Xbox360Controller", resourceCulture);
             }
         }
         
@@ -1813,7 +1813,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_HIDstatus_Connected {
             get {
-                return ResourceManager.GetString("Enum.HIDstatus.Connected", resourceCulture);
+                return ResourceManager.GetString("Enum_HIDstatus_Connected", resourceCulture);
             }
         }
         
@@ -1822,7 +1822,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_HIDstatus_Disconnected {
             get {
-                return ResourceManager.GetString("Enum.HIDstatus.Disconnected", resourceCulture);
+                return ResourceManager.GetString("Enum_HIDstatus_Disconnected", resourceCulture);
             }
         }
         
@@ -1831,7 +1831,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Input_AutoRollYawSwap {
             get {
-                return ResourceManager.GetString("Enum.Input.AutoRollYawSwap", resourceCulture);
+                return ResourceManager.GetString("Enum_Input_AutoRollYawSwap", resourceCulture);
             }
         }
         
@@ -1840,7 +1840,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Input_JoystickSteering {
             get {
-                return ResourceManager.GetString("Enum.Input.JoystickSteering", resourceCulture);
+                return ResourceManager.GetString("Enum_Input_JoystickSteering", resourceCulture);
             }
         }
         
@@ -1849,7 +1849,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Input_LocalSpace {
             get {
-                return ResourceManager.GetString("Enum.Input.LocalSpace", resourceCulture);
+                return ResourceManager.GetString("Enum_Input_LocalSpace", resourceCulture);
             }
         }
         
@@ -1858,7 +1858,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Input_PlayerSpace {
             get {
-                return ResourceManager.GetString("Enum.Input.PlayerSpace", resourceCulture);
+                return ResourceManager.GetString("Enum_Input_PlayerSpace", resourceCulture);
             }
         }
         
@@ -1867,7 +1867,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Input_WorldSpace {
             get {
-                return ResourceManager.GetString("Enum.Input.WorldSpace", resourceCulture);
+                return ResourceManager.GetString("Enum_Input_WorldSpace", resourceCulture);
             }
         }
         
@@ -1876,7 +1876,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_Custom {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Custom", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Custom", resourceCulture);
             }
         }
         
@@ -1885,7 +1885,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_Device {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Device", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Device", resourceCulture);
             }
         }
         
@@ -1894,7 +1894,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_Handheld {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Handheld", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Handheld", resourceCulture);
             }
         }
         
@@ -1903,7 +1903,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_HC {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.HC", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_HC", resourceCulture);
             }
         }
         
@@ -1912,7 +1912,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_Overlay {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Overlay", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Overlay", resourceCulture);
             }
         }
         
@@ -1921,7 +1921,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_Quicktools {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Quicktools", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Quicktools", resourceCulture);
             }
         }
         
@@ -1930,7 +1930,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_InputsHotkeyType_Windows {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Windows", resourceCulture);
+                return ResourceManager.GetString("Enum_InputsHotkeyType_Windows", resourceCulture);
             }
         }
         
@@ -1939,7 +1939,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_A {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.A", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_A", resourceCulture);
             }
         }
         
@@ -1948,7 +1948,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Alt {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Alt", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Alt", resourceCulture);
             }
         }
         
@@ -1957,7 +1957,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Apostrophe {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Apostrophe", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Apostrophe", resourceCulture);
             }
         }
         
@@ -1966,7 +1966,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_B {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.B", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_B", resourceCulture);
             }
         }
         
@@ -1975,7 +1975,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Backslash {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Backslash", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Backslash", resourceCulture);
             }
         }
         
@@ -1984,7 +1984,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Backspace {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Backspace", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Backspace", resourceCulture);
             }
         }
         
@@ -1993,7 +1993,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_C {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.C", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_C", resourceCulture);
             }
         }
         
@@ -2002,7 +2002,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Comma {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Comma", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Comma", resourceCulture);
             }
         }
         
@@ -2011,7 +2011,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Control {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Control", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Control", resourceCulture);
             }
         }
         
@@ -2020,7 +2020,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_D {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.D", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_D", resourceCulture);
             }
         }
         
@@ -2029,7 +2029,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Delete {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Delete", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Delete", resourceCulture);
             }
         }
         
@@ -2038,7 +2038,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_E {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.E", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_E", resourceCulture);
             }
         }
         
@@ -2047,7 +2047,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_End {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.End", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_End", resourceCulture);
             }
         }
         
@@ -2056,7 +2056,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Enter {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Enter", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Enter", resourceCulture);
             }
         }
         
@@ -2065,7 +2065,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Equal {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Equal", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Equal", resourceCulture);
             }
         }
         
@@ -2074,7 +2074,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Escape {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Escape", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Escape", resourceCulture);
             }
         }
         
@@ -2083,7 +2083,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F", resourceCulture);
             }
         }
         
@@ -2092,7 +2092,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F1 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F1", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F1", resourceCulture);
             }
         }
         
@@ -2101,7 +2101,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F10 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F10", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F10", resourceCulture);
             }
         }
         
@@ -2110,7 +2110,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F11 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F11", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F11", resourceCulture);
             }
         }
         
@@ -2119,7 +2119,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F12 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F12", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F12", resourceCulture);
             }
         }
         
@@ -2128,7 +2128,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F2 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F2", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F2", resourceCulture);
             }
         }
         
@@ -2137,7 +2137,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F3 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F3", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F3", resourceCulture);
             }
         }
         
@@ -2146,7 +2146,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F4 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F4", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F4", resourceCulture);
             }
         }
         
@@ -2155,7 +2155,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F5 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F5", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F5", resourceCulture);
             }
         }
         
@@ -2164,7 +2164,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F6 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F6", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F6", resourceCulture);
             }
         }
         
@@ -2173,7 +2173,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F7 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F7", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F7", resourceCulture);
             }
         }
         
@@ -2182,7 +2182,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F8 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F8", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F8", resourceCulture);
             }
         }
         
@@ -2191,7 +2191,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_F9 {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.F9", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_F9", resourceCulture);
             }
         }
         
@@ -2200,7 +2200,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_G {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.G", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_G", resourceCulture);
             }
         }
         
@@ -2209,7 +2209,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Grave {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Grave", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Grave", resourceCulture);
             }
         }
         
@@ -2218,7 +2218,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_H {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.H", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_H", resourceCulture);
             }
         }
         
@@ -2227,7 +2227,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Home {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Home", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Home", resourceCulture);
             }
         }
         
@@ -2236,7 +2236,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_I {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.I", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_I", resourceCulture);
             }
         }
         
@@ -2245,7 +2245,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Insert {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Insert", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Insert", resourceCulture);
             }
         }
         
@@ -2254,7 +2254,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_J {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.J", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_J", resourceCulture);
             }
         }
         
@@ -2263,7 +2263,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_K {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.K", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_K", resourceCulture);
             }
         }
         
@@ -2272,7 +2272,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_L {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.L", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_L", resourceCulture);
             }
         }
         
@@ -2281,7 +2281,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_M {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.M", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_M", resourceCulture);
             }
         }
         
@@ -2290,7 +2290,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Minus {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Minus", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Minus", resourceCulture);
             }
         }
         
@@ -2299,7 +2299,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_N {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.N", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_N", resourceCulture);
             }
         }
         
@@ -2308,7 +2308,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_O {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.O", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_O", resourceCulture);
             }
         }
         
@@ -2317,7 +2317,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_P {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.P", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_P", resourceCulture);
             }
         }
         
@@ -2326,7 +2326,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Pause {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Pause", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Pause", resourceCulture);
             }
         }
         
@@ -2335,7 +2335,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Period {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Period", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Period", resourceCulture);
             }
         }
         
@@ -2344,7 +2344,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Q {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Q", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Q", resourceCulture);
             }
         }
         
@@ -2353,7 +2353,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_R {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.R", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_R", resourceCulture);
             }
         }
         
@@ -2362,7 +2362,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_S {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.S", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_S", resourceCulture);
             }
         }
         
@@ -2371,7 +2371,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Semicolon {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Semicolon", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Semicolon", resourceCulture);
             }
         }
         
@@ -2380,7 +2380,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Shift {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Shift", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Shift", resourceCulture);
             }
         }
         
@@ -2389,7 +2389,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Slash {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Slash", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Slash", resourceCulture);
             }
         }
         
@@ -2398,7 +2398,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Space {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Space", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Space", resourceCulture);
             }
         }
         
@@ -2407,7 +2407,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_T {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.T", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_T", resourceCulture);
             }
         }
         
@@ -2416,7 +2416,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Tab {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Tab", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Tab", resourceCulture);
             }
         }
         
@@ -2425,7 +2425,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_U {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.U", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_U", resourceCulture);
             }
         }
         
@@ -2434,7 +2434,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_V {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.V", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_V", resourceCulture);
             }
         }
         
@@ -2443,7 +2443,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_W {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.W", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_W", resourceCulture);
             }
         }
         
@@ -2452,7 +2452,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_X {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.X", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_X", resourceCulture);
             }
         }
         
@@ -2461,7 +2461,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Y {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Y", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Y", resourceCulture);
             }
         }
         
@@ -2470,7 +2470,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_KeyFlags_Z {
             get {
-                return ResourceManager.GetString("Enum.KeyFlags.Z", resourceCulture);
+                return ResourceManager.GetString("Enum_KeyFlags_Z", resourceCulture);
             }
         }
         
@@ -2479,7 +2479,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_B5 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B5", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_B5", resourceCulture);
             }
         }
         
@@ -2488,7 +2488,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_B6 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B6", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_B6", resourceCulture);
             }
         }
         
@@ -2497,7 +2497,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_B7 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B7", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_B7", resourceCulture);
             }
         }
         
@@ -2506,7 +2506,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_B8 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B8", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_B8", resourceCulture);
             }
         }
         
@@ -2515,7 +2515,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_L4 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.L4", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_L4", resourceCulture);
             }
         }
         
@@ -2524,7 +2524,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_L5 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.L5", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_L5", resourceCulture);
             }
         }
         
@@ -2533,7 +2533,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_R4 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.R4", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_R4", resourceCulture);
             }
         }
         
@@ -2542,7 +2542,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_R5 {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.R5", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_R5", resourceCulture);
             }
         }
         
@@ -2551,7 +2551,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_RightPadClick {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.RightPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_RightPadClick", resourceCulture);
             }
         }
         
@@ -2560,7 +2560,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_RightPadClickDown {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.RightPadClickDown", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_RightPadClickDown", resourceCulture);
             }
         }
         
@@ -2569,7 +2569,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_RightPadTouch {
             get {
-                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.RightPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionController_ButtonFlags_RightPadTouch", resourceCulture);
             }
         }
         
@@ -2578,7 +2578,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionGo_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.LegionGo.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionGo_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -2587,7 +2587,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_LegionGo_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.LegionGo.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_LegionGo_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -2596,7 +2596,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_AutoRollYawSwap {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_AutoRollYawSwap", resourceCulture);
             }
         }
         
@@ -2605,7 +2605,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_AutoRollYawSwap_Desc {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap.Desc", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_AutoRollYawSwap_Desc", resourceCulture);
             }
         }
         
@@ -2614,7 +2614,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_JoystickSteering {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.JoystickSteering", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_JoystickSteering", resourceCulture);
             }
         }
         
@@ -2623,7 +2623,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_JoystickSteering_Desc {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.JoystickSteering.Desc", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_JoystickSteering_Desc", resourceCulture);
             }
         }
         
@@ -2632,7 +2632,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_LocalSpace {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.LocalSpace", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_LocalSpace", resourceCulture);
             }
         }
         
@@ -2641,7 +2641,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_LocalSpace_Desc {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.LocalSpace.Desc", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_LocalSpace_Desc", resourceCulture);
             }
         }
         
@@ -2650,7 +2650,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.PlayerSpace", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_PlayerSpace", resourceCulture);
             }
         }
         
@@ -2659,7 +2659,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace_Desc {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.PlayerSpace.Desc", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_PlayerSpace_Desc", resourceCulture);
             }
         }
         
@@ -2668,7 +2668,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_WorldSpace {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.WorldSpace", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_WorldSpace", resourceCulture);
             }
         }
         
@@ -2677,7 +2677,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionInput_WorldSpace_Desc {
             get {
-                return ResourceManager.GetString("Enum.MotionInput.WorldSpace.Desc", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionInput_WorldSpace_Desc", resourceCulture);
             }
         }
         
@@ -2686,7 +2686,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionOuput_LeftStick {
             get {
-                return ResourceManager.GetString("Enum.MotionOuput.LeftStick", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionOuput_LeftStick", resourceCulture);
             }
         }
         
@@ -2695,7 +2695,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionOuput_MoveCursor {
             get {
-                return ResourceManager.GetString("Enum.MotionOuput.MoveCursor", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionOuput_MoveCursor", resourceCulture);
             }
         }
         
@@ -2704,7 +2704,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionOuput_RightStick {
             get {
-                return ResourceManager.GetString("Enum.MotionOuput.RightStick", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionOuput_RightStick", resourceCulture);
             }
         }
         
@@ -2713,7 +2713,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionOuput_ScrollWheel {
             get {
-                return ResourceManager.GetString("Enum.MotionOuput.ScrollWheel", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionOuput_ScrollWheel", resourceCulture);
             }
         }
         
@@ -2722,7 +2722,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionOutput_LeftStick {
             get {
-                return ResourceManager.GetString("Enum.MotionOutput.LeftStick", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionOutput_LeftStick", resourceCulture);
             }
         }
         
@@ -2731,7 +2731,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_MotionOutput_RightStick {
             get {
-                return ResourceManager.GetString("Enum.MotionOutput.RightStick", resourceCulture);
+                return ResourceManager.GetString("Enum_MotionOutput_RightStick", resourceCulture);
             }
         }
         
@@ -2740,7 +2740,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_B1 {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B1", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_B1", resourceCulture);
             }
         }
         
@@ -2749,7 +2749,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_B2 {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B2", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_B2", resourceCulture);
             }
         }
         
@@ -2758,7 +2758,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_B3 {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B3", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_B3", resourceCulture);
             }
         }
         
@@ -2767,7 +2767,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_B4 {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B4", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_B4", resourceCulture);
             }
         }
         
@@ -2776,7 +2776,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_Back {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Back", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_Back", resourceCulture);
             }
         }
         
@@ -2785,7 +2785,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_Special {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Special", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_Special", resourceCulture);
             }
         }
         
@@ -2794,7 +2794,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_Start {
             get {
-                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Start", resourceCulture);
+                return ResourceManager.GetString("Enum_NeptuneController_ButtonFlags_Start", resourceCulture);
             }
         }
         
@@ -2803,7 +2803,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Output_LeftStick {
             get {
-                return ResourceManager.GetString("Enum.Output.LeftStick", resourceCulture);
+                return ResourceManager.GetString("Enum_Output_LeftStick", resourceCulture);
             }
         }
         
@@ -2812,7 +2812,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_Output_RightStick {
             get {
-                return ResourceManager.GetString("Enum.Output.RightStick", resourceCulture);
+                return ResourceManager.GetString("Enum_Output_RightStick", resourceCulture);
             }
         }
         
@@ -2821,7 +2821,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_AxisLayoutFlags_L2 {
             get {
-                return ResourceManager.GetString("Enum.ProController.AxisLayoutFlags.L2", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_AxisLayoutFlags_L2", resourceCulture);
             }
         }
         
@@ -2830,7 +2830,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_AxisLayoutFlags_R2 {
             get {
-                return ResourceManager.GetString("Enum.ProController.AxisLayoutFlags.R2", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_AxisLayoutFlags_R2", resourceCulture);
             }
         }
         
@@ -2839,7 +2839,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_B1 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.B1", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B1", resourceCulture);
             }
         }
         
@@ -2848,7 +2848,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_B2 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.B2", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B2", resourceCulture);
             }
         }
         
@@ -2857,7 +2857,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_B3 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.B3", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B3", resourceCulture);
             }
         }
         
@@ -2866,7 +2866,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_B4 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.B4", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B4", resourceCulture);
             }
         }
         
@@ -2875,7 +2875,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_Back {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.Back", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Back", resourceCulture);
             }
         }
         
@@ -2884,7 +2884,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_L1 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.L1", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_L1", resourceCulture);
             }
         }
         
@@ -2893,7 +2893,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_R1 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.R1", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_R1", resourceCulture);
             }
         }
         
@@ -2902,7 +2902,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_Special {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.Special", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Special", resourceCulture);
             }
         }
         
@@ -2911,7 +2911,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_Special2 {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.Special2", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Special2", resourceCulture);
             }
         }
         
@@ -2920,7 +2920,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProController_ButtonFlags_Start {
             get {
-                return ResourceManager.GetString("Enum.ProController.ButtonFlags.Start", resourceCulture);
+                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Start", resourceCulture);
             }
         }
         
@@ -2929,7 +2929,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_Default {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.Default", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_Default", resourceCulture);
             }
         }
         
@@ -2938,7 +2938,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_IsRunning {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.IsRunning", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_IsRunning", resourceCulture);
             }
         }
         
@@ -2947,7 +2947,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_MissingExecutable {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingExecutable", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_MissingExecutable", resourceCulture);
             }
         }
         
@@ -2956,7 +2956,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_MissingPath {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPath", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_MissingPath", resourceCulture);
             }
         }
         
@@ -2965,7 +2965,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_MissingPermission {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPermission", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_MissingPermission", resourceCulture);
             }
         }
         
@@ -2974,7 +2974,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_None {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.None", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_None", resourceCulture);
             }
         }
         
@@ -2983,7 +2983,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ProfileErrorCode_Running {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.Running", resourceCulture);
+                return ResourceManager.GetString("Enum_ProfileErrorCode_Running", resourceCulture);
             }
         }
         
@@ -2992,7 +2992,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_QualityOfServiceLevel_Default {
             get {
-                return ResourceManager.GetString("Enum.QualityOfServiceLevel.Default", resourceCulture);
+                return ResourceManager.GetString("Enum_QualityOfServiceLevel_Default", resourceCulture);
             }
         }
         
@@ -3001,7 +3001,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_QualityOfServiceLevel_Eco {
             get {
-                return ResourceManager.GetString("Enum.QualityOfServiceLevel.Eco", resourceCulture);
+                return ResourceManager.GetString("Enum_QualityOfServiceLevel_Eco", resourceCulture);
             }
         }
         
@@ -3010,7 +3010,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_QualityOfServiceLevel_High {
             get {
-                return ResourceManager.GetString("Enum.QualityOfServiceLevel.High", resourceCulture);
+                return ResourceManager.GetString("Enum_QualityOfServiceLevel_High", resourceCulture);
             }
         }
         
@@ -3019,7 +3019,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_ROGAlly_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -3028,7 +3028,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_ROGAlly_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -3037,7 +3037,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_ROGAlly_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -3046,7 +3046,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM4 {
             get {
-                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM4", resourceCulture);
+                return ResourceManager.GetString("Enum_ROGAlly_ButtonFlags_OEM4", resourceCulture);
             }
         }
         
@@ -3055,7 +3055,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ServiceStartMode_Automatic {
             get {
-                return ResourceManager.GetString("Enum.ServiceStartMode.Automatic", resourceCulture);
+                return ResourceManager.GetString("Enum_ServiceStartMode_Automatic", resourceCulture);
             }
         }
         
@@ -3064,7 +3064,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ServiceStartMode_Disabled {
             get {
-                return ResourceManager.GetString("Enum.ServiceStartMode.Disabled", resourceCulture);
+                return ResourceManager.GetString("Enum_ServiceStartMode_Disabled", resourceCulture);
             }
         }
         
@@ -3073,7 +3073,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_ServiceStartMode_Manual {
             get {
-                return ResourceManager.GetString("Enum.ServiceStartMode.Manual", resourceCulture);
+                return ResourceManager.GetString("Enum_ServiceStartMode_Manual", resourceCulture);
             }
         }
         
@@ -3082,7 +3082,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_SteamDeck_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.SteamDeck.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_SteamDeck_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -3091,7 +3091,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_L2 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.L2", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_L2", resourceCulture);
             }
         }
         
@@ -3100,7 +3100,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_LeftStick {
             get {
-                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.LeftStick", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_LeftStick", resourceCulture);
             }
         }
         
@@ -3109,7 +3109,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_LeftThumb {
             get {
-                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.LeftThumb", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_LeftThumb", resourceCulture);
             }
         }
         
@@ -3118,7 +3118,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_R2 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.R2", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_R2", resourceCulture);
             }
         }
         
@@ -3127,7 +3127,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_RightStick {
             get {
-                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.RightStick", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_RightStick", resourceCulture);
             }
         }
         
@@ -3136,7 +3136,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_RightThumb {
             get {
-                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.RightThumb", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_RightThumb", resourceCulture);
             }
         }
         
@@ -3145,7 +3145,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B1 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B1", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B1", resourceCulture);
             }
         }
         
@@ -3154,7 +3154,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B2 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B2", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B2", resourceCulture);
             }
         }
         
@@ -3163,7 +3163,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B3 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B3", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B3", resourceCulture);
             }
         }
         
@@ -3172,7 +3172,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B4 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B4", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B4", resourceCulture);
             }
         }
         
@@ -3181,7 +3181,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B5 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B5", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B5", resourceCulture);
             }
         }
         
@@ -3190,7 +3190,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B6 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B6", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B6", resourceCulture);
             }
         }
         
@@ -3199,7 +3199,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B7 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B7", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B7", resourceCulture);
             }
         }
         
@@ -3208,7 +3208,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_B8 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B8", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_B8", resourceCulture);
             }
         }
         
@@ -3217,7 +3217,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_Back {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Back", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_Back", resourceCulture);
             }
         }
         
@@ -3226,7 +3226,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_DPadDown {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadDown", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_DPadDown", resourceCulture);
             }
         }
         
@@ -3235,7 +3235,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_DPadLeft {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadLeft", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_DPadLeft", resourceCulture);
             }
         }
         
@@ -3244,7 +3244,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_DPadRight {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadRight", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_DPadRight", resourceCulture);
             }
         }
         
@@ -3253,7 +3253,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_DPadUp {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadUp", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_DPadUp", resourceCulture);
             }
         }
         
@@ -3262,7 +3262,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_L1 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L1", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_L1", resourceCulture);
             }
         }
         
@@ -3271,7 +3271,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_L2 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L2", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_L2", resourceCulture);
             }
         }
         
@@ -3280,7 +3280,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_L3 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L3", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_L3", resourceCulture);
             }
         }
         
@@ -3289,7 +3289,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_L4 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L4", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_L4", resourceCulture);
             }
         }
         
@@ -3298,7 +3298,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_L5 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L5", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_L5", resourceCulture);
             }
         }
         
@@ -3307,7 +3307,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_LeftThumb {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumb", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_LeftThumb", resourceCulture);
             }
         }
         
@@ -3316,7 +3316,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_LeftThumbDown {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbDown", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_LeftThumbDown", resourceCulture);
             }
         }
         
@@ -3325,7 +3325,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_LeftThumbLeft {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbLeft", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_LeftThumbLeft", resourceCulture);
             }
         }
         
@@ -3334,7 +3334,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_LeftThumbRight {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbRight", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_LeftThumbRight", resourceCulture);
             }
         }
         
@@ -3343,7 +3343,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_LeftThumbUp {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbUp", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_LeftThumbUp", resourceCulture);
             }
         }
         
@@ -3352,7 +3352,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_OEM1", resourceCulture);
             }
         }
         
@@ -3361,7 +3361,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_OEM2", resourceCulture);
             }
         }
         
@@ -3370,7 +3370,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_OEM3", resourceCulture);
             }
         }
         
@@ -3379,7 +3379,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_R1 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R1", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_R1", resourceCulture);
             }
         }
         
@@ -3388,7 +3388,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_R2 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R2", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_R2", resourceCulture);
             }
         }
         
@@ -3397,7 +3397,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_R3 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R3", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_R3", resourceCulture);
             }
         }
         
@@ -3406,7 +3406,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_R4 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R4", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_R4", resourceCulture);
             }
         }
         
@@ -3415,7 +3415,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_R5 {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R5", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_R5", resourceCulture);
             }
         }
         
@@ -3424,7 +3424,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_RightThumb {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumb", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_RightThumb", resourceCulture);
             }
         }
         
@@ -3433,7 +3433,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_RightThumbDown {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbDown", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_RightThumbDown", resourceCulture);
             }
         }
         
@@ -3442,7 +3442,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_RightThumbLeft {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbLeft", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_RightThumbLeft", resourceCulture);
             }
         }
         
@@ -3451,7 +3451,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_RightThumbRight {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbRight", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_RightThumbRight", resourceCulture);
             }
         }
         
@@ -3460,7 +3460,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_RightThumbUp {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbUp", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_RightThumbUp", resourceCulture);
             }
         }
         
@@ -3469,7 +3469,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_Special {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Special", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_Special", resourceCulture);
             }
         }
         
@@ -3478,7 +3478,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_Start {
             get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Start", resourceCulture);
+                return ResourceManager.GetString("Enum_XInputController_ButtonFlags_Start", resourceCulture);
             }
         }
         
@@ -6964,7 +6964,7 @@ namespace HandheldCompanion.Properties {
         /// </summary>
         public static string Properties_Resources_ControllerPage_Disconnect {
             get {
-                return ResourceManager.GetString("Properties.Resources.ControllerPage_Disconnect", resourceCulture);
+                return ResourceManager.GetString("Properties_Resources_ControllerPage_Disconnect", resourceCulture);
             }
         }
         
