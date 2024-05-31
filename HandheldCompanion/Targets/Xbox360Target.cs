@@ -26,34 +26,39 @@ namespace HandheldCompanion.Targets
             LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
         }
 
-        public override void Connect()
+        public override bool Connect()
         {
             if (IsConnected)
-                return;
+                return true;
 
             try
             {
                 virtualController.Connect();
-
-                base.Connect();
+                return base.Connect();
             }
             catch (Exception ex)
             {
                 virtualController?.Disconnect();
                 LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
+                return false;
             }
         }
 
-        public override void Disconnect()
+        public override bool Disconnect()
         {
+            if (!IsConnected)
+                return true;
+
             try
             {
-                if (virtualController != null)
-                    virtualController.Disconnect();
-
-                base.Disconnect();
+                virtualController?.Disconnect();
+                return base.Disconnect();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to disconnect {0}. {1}", this.ToString(), ex.Message);
+                return false;
+            }
         }
 
         public void FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)

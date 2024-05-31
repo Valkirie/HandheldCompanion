@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Sensors;
+using HandheldCompanion.Sensors;
 using System;
 using System.Runtime.InteropServices;
 
@@ -73,7 +73,7 @@ namespace HandheldCompanion.Helpers
         }
 
         // Implement the ProcessMotion function
-        public void ProcessMotion(float gyroX, float gyroY, float gyroZ, float accelX, float accelY, float accelZ, float deltaTime)
+        public void ProcessMotion(float gyroX, float gyroY, float gyroZ, float accelX, float accelY, float accelZ, float deltaTimeSeconds)
         {
             this.gyroX = gyroX;
             this.gyroY = gyroY;
@@ -81,7 +81,7 @@ namespace HandheldCompanion.Helpers
             this.accelX = accelX;
             this.accelY = accelY;
             this.accelZ = accelZ;
-            this.deltaTime = deltaTime;
+            this.deltaTime = deltaTimeSeconds;
 
             if (thresholdCalibration)
             {
@@ -100,7 +100,7 @@ namespace HandheldCompanion.Helpers
                     maxAccel = accelZ;
             }
 
-            ProcessMotion(handle, gyroX, gyroY, gyroZ, accelX, accelY, accelZ, deltaTime);
+            ProcessMotion(handle, gyroX, gyroY, gyroZ, accelX, accelY, accelZ, deltaTimeSeconds);
         }
 
         public void GetRawGyro(out float x, out float y, out float z)

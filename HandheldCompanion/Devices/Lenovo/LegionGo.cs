@@ -87,7 +87,7 @@ public class LegionGo : IDevice
         "SetSmartFanMode",
         new() { { "Data", fanMode } });
 
-    private Task SetCPUPowerLimit(CapabilityID capabilityID, int limit) =>
+    public Task SetCPUPowerLimit(CapabilityID capabilityID, int limit) =>
         WMI.CallAsync("root\\WMI",
             $"SELECT * FROM LENOVO_OTHER_METHOD",
             "SetFeatureValue",
@@ -211,37 +211,14 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B7] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollUp } };
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
 
-        Init();
-
-        // make sure both left and right gyros are enabled
-        SetLeftGyroStatus(1);
-        SetRightGyroStatus(1);
-
-        // make sure both left and right gyros are reporting values
-        SetGyroModeStatus(2, 1, 1);
-        SetGyroModeStatus(2, 2, 2);
-
-        // make sure both left and right gyros are reporting raw values
-        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
-        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
-
+        /*
         Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
         bool FanFullSpeed = task.Result;
+        */
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        // tentative: stability fix
-        if (PerformanceManager.GetProcessor() is AMDProcessor AMDProcessor)
-            AMDProcessor.SetCoall(0x100020);
-
-        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
-        {
-            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
-            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
-            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
-        }
-
         FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
@@ -269,20 +246,36 @@ public class LegionGo : IDevice
         if (!success)
             return false;
 
+        // initialize SapientiaUsb
+        Init();
+
+        // make sure both left and right gyros are enabled
+        SetLeftGyroStatus(1);
+        SetRightGyroStatus(1);
+
+        // make sure both left and right gyros are reporting values
+        SetGyroModeStatus(2, 1, 1);
+        SetGyroModeStatus(2, 2, 2);
+
+        // make sure both left and right gyros are reporting raw values
+        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
+        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+
+        // disable QuickLightingEffect(s)
         SetQuickLightingEffect(0, 1);
         SetQuickLightingEffect(3, 1);
         SetQuickLightingEffect(4, 1);
-
         SetQuickLightingEffectEnable(0, false);
         SetQuickLightingEffectEnable(3, false);
         SetQuickLightingEffectEnable(4, false);
 
+        // get current light profile(s)
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
 
         // Legion XInput controller and other Legion devices shares the same USBHUB
         while (ControllerManager.PowerCyclers.Count > 0)
-            Thread.Sleep(500);
+            Thread.Sleep(100);
 
         return true;
     }

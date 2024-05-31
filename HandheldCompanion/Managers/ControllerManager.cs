@@ -192,8 +192,9 @@ public static class ControllerManager
         CheckControllerScenario();
     }
 
-    private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+    private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
+        // update current process
         foregroundProcess = processEx;
 
         // check applicable scenarios
@@ -272,7 +273,7 @@ public static class ControllerManager
                                     watchdogThread = null;
                                 }
 
-                                UpdateStatus(ControllerManagerStatus.Failed);
+                                UpdateStatus(ControllerManagerStatus.Pending);
                             }
                             break;
                     }
@@ -700,7 +701,7 @@ public static class ControllerManager
                             }
 
                             // suspend virtual controller
-                            VirtualManager.Suspend();
+                            VirtualManager.Suspend(false);
 
                             // suspend all physical controllers
                             foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
@@ -710,7 +711,7 @@ public static class ControllerManager
                             }
 
                             // resume virtual controller
-                            VirtualManager.Resume();
+                            VirtualManager.Resume(false);
 
                             // resume all physical controllers
                             StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
@@ -718,8 +719,8 @@ public static class ControllerManager
                                 ResumeControllers();
 
                             // suspend and resume virtual controller
-                            VirtualManager.Suspend();
-                            VirtualManager.Resume();
+                            VirtualManager.Suspend(false);
+                            VirtualManager.Resume(false);
 
                             // increment attempt counter (if no wireless controller is power cycling)
                             if (!HasCyclingController)

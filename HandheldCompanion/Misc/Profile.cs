@@ -4,6 +4,7 @@ using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;
@@ -126,15 +127,14 @@ public partial class Profile : ICloneable, IComparable
     {
         if (!string.IsNullOrEmpty(path))
         {
+            Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(path);
 
-            var AppProperties = ProcessUtils.GetAppProperties(path);
-
-            var ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
+            string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
             // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
             // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
 
-            Executable = AppProperties["FileName"];
-            Name = ProductName;
+            Executable = System.IO.Path.GetFileName(path);
+            Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
             Path = path;
         }
 

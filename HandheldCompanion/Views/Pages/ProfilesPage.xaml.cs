@@ -668,30 +668,40 @@ public partial class ProfilesPage : Page
         if (selectedMainProfile is null)
             return;
 
-        var ind = 0; // default or main profile itself
-
-        // add main profile as first subprofile
-        cb_SubProfilePicker.Items.Clear();
-        cb_SubProfilePicker.Items.Add(selectedMainProfile);
-
-        // if main profile is not default, occupy sub profiles dropdown list
-        if (!selectedMainProfile.Default)
+        if (profileLock.TryEnter())
         {
-            foreach (Profile subprofile in ProfileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
+            try
             {
-                cb_SubProfilePicker.Items.Add(subprofile);
+                int idx = 0; // default or main profile itself
 
-                // select sub profile if it's favorite for main profile
-                if (subprofile.IsFavoriteSubProfile)
-                    ind = cb_SubProfilePicker.Items.IndexOf(subprofile);
+                // add main profile as first subprofile
+                cb_SubProfilePicker.Items.Clear();
+                cb_SubProfilePicker.Items.Add(selectedMainProfile);
+
+                // if main profile is not default, occupy sub profiles dropdown list
+                if (!selectedMainProfile.Default)
+                {
+                    foreach (Profile subprofile in ProfileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
+                    {
+                        cb_SubProfilePicker.Items.Add(subprofile);
+
+                        // select sub profile if it's favorite for main profile
+                        if (subprofile.IsFavoriteSubProfile)
+                            idx = cb_SubProfilePicker.Items.IndexOf(subprofile);
+                    }
+                }
+
+                // refresh sub profiles dropdown
+                cb_SubProfilePicker.Items.Refresh();
+
+                // set subprofile to be applied
+                cb_SubProfilePicker.SelectedIndex = idx;
+            }
+            finally
+            {
+                profileLock.Exit();
             }
         }
-
-        // refresh sub profiles dropdown
-        cb_SubProfilePicker.Items.Refresh();
-
-        // set subprofile to be applied
-        cb_SubProfilePicker.SelectedIndex = ind;
 
         // update UI elements
         UpdateUI();
@@ -1021,8 +1031,6 @@ public partial class ProfilesPage : Page
         if (selectedProfile is null)
             return;
 
-        LogManager.LogInformation($"Submitting profile in ProfilesPage: {selectedProfile} - is Sub Profile? {selectedProfile.IsSubProfile}");
-
         switch (source)
         {
             case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile, update main profile only but don't apply it
@@ -1185,21 +1193,18 @@ public partial class ProfilesPage : Page
     {
         if (cb_SubProfilePicker.SelectedIndex == -1)
             return;
-        
+
+        // update selected profile
+        selectedProfile = (Profile)cb_SubProfilePicker.SelectedItem;
+        UpdateUI();
+
         // prevent update loop
         if (profileLock.IsEntered())
             return;
 
-        LogManager.LogInformation($"Subprofile changed in ProfilesPage - ind: {cb_SubProfilePicker.SelectedIndex} - {cb_SubProfilePicker.SelectedItem}");
-
         // selected sub profile
         if (selectedProfile != cb_SubProfilePicker.SelectedItem)
-        {
-            selectedProfile = (Profile)cb_SubProfilePicker.SelectedItem;
             UpdateProfile();
-        }
-
-        UpdateUI();
     }
 
     private void b_SubProfileCreate_Click(object sender, RoutedEventArgs e)

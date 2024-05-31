@@ -16,6 +16,8 @@ namespace HandheldCompanion;
 /// </summary>
 public partial class App : Application
 {
+    public static bool IsMultiThreaded { get; } = false;
+
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
     ///     executed, and as such is the logical equivalent of main() or WinMain().
@@ -36,8 +38,10 @@ public partial class App : Application
         var CurrentAssembly = Assembly.GetExecutingAssembly();
         var fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
-        // initialize log
+        // set environment variables
         Environment.SetEnvironmentVariable("APP_BASE_DIRECTORY", AppContext.BaseDirectory);
+
+        // initialize log
         LogManager.Initialize("HandheldCompanion");
         LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
