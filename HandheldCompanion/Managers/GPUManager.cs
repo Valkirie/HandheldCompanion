@@ -23,9 +23,9 @@ namespace HandheldCompanion.Managers
         public delegate void UnhookedEventHandler(GPU GPU);
         #endregion
 
-        public static bool IsInitialized;
-        public static bool IsLoaded_IGCL;
-        public static bool IsLoaded_ADLX;
+        public static bool IsInitialized = false;
+        public static bool IsLoaded_IGCL = false;
+        public static bool IsLoaded_ADLX = false;
 
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
@@ -205,8 +205,14 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            IsLoaded_IGCL = IGCLBackend.Initialize();
-            IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
+            lock (GPU.functionLock)
+            {
+                if (!IsLoaded_IGCL)
+                    IsLoaded_IGCL = IGCLBackend.Initialize();
+
+                if (!IsLoaded_ADLX)
+                    IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
+            }
 
             // todo: check if usefull on resume
             // it could be DeviceManager_DisplayAdapterArrived is called already, making this redundant

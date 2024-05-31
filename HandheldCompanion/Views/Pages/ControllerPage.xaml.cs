@@ -212,7 +212,7 @@ public partial class ControllerPage : Page
                 case ControllerManagerStatus.Failed:
                     {
                         // set dialog settings
-                        dialog.CanClose = false;
+                        dialog.CanClose = true;
                         dialog.DefaultButton = ContentDialogButton.Close;
                         dialog.CloseButtonText = Properties.Resources.ControllerPage_Close;
                         dialog.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;

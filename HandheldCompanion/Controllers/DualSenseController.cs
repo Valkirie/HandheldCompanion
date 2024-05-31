@@ -58,7 +58,7 @@ public class DualSenseController : JSController
             float joyShockY0 = JslGetTouchY(UserIndex);
 
             Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(joyShockX0, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(joyShockY0, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(joyShockY0, 0.0f, 1.1442206f, short.MaxValue, short.MinValue);
         }
         else
         {
@@ -76,7 +76,7 @@ public class DualSenseController : JSController
             float joyShockY1 = JslGetTouchY(UserIndex, true);
 
             Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(joyShockX1, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(joyShockY1, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(joyShockY1, 0.0f, 1.1442206f, short.MaxValue, short.MinValue);
         }
         else
         {

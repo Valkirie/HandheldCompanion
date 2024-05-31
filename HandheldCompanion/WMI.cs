@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,8 @@ namespace HandheldCompanion
             }
             catch (ManagementException ex)
             {
-                throw new ManagementException($"Read failed: {ex.Message}. [scope={scope}, query={query}]", ex);
+                LogManager.LogError($"Read failed: {ex.Message}. [scope={scope}, query={query}]", ex);
+                return Enumerable.Empty<T>();
             }
         }
 
@@ -62,7 +64,11 @@ namespace HandheldCompanion
                 var queryFormatted = query.ToString(WMIPropertyValueFormatter.Instance);
                 var mos = new ManagementObjectSearcher(scope, queryFormatted);
                 var managementObjects = await mos.GetAsync().ConfigureAwait(false);
-                var managementObject = managementObjects.FirstOrDefault() ?? throw new InvalidOperationException("No results in query");
+                var managementObject = managementObjects.FirstOrDefault();
+
+                // Check if managementObject is null and return the default value
+                if (managementObject == null)
+                    return;
 
                 var mo = (ManagementObject)managementObject;
                 var methodParamsObject = mo.GetMethodParameters(methodName);
@@ -73,19 +79,26 @@ namespace HandheldCompanion
             }
             catch (ManagementException ex)
             {
-                throw new ManagementException($"Call failed: {ex.Message}. [scope={scope}, query={query}, methodName={methodName}]", ex);
+                LogManager.LogError($"Call failed: {ex.Message}. [scope={scope}, query={query}, methodName={methodName}]", ex);
             }
         }
 
         public static async Task<T> CallAsync<T>(string scope, FormattableString query, string methodName, Dictionary<string, object> methodParams, Func<PropertyDataCollection, T> converter)
         {
+            // Define a default value for the type T
+            T defaultValue = default(T);
+
             try
             {
                 var queryFormatted = query.ToString(WMIPropertyValueFormatter.Instance);
 
                 var mos = new ManagementObjectSearcher(scope, queryFormatted);
                 var managementObjects = await mos.GetAsync().ConfigureAwait(false);
-                var managementObject = managementObjects.FirstOrDefault() ?? throw new InvalidOperationException("No results in query");
+                var managementObject = managementObjects.FirstOrDefault();
+
+                // Check if managementObject is null and return the default value
+                if (managementObject == null)
+                    return defaultValue;
 
                 var mo = (ManagementObject)managementObject;
                 var methodParamsObject = mo.GetMethodParameters(methodName);
@@ -98,7 +111,9 @@ namespace HandheldCompanion
             }
             catch (ManagementException ex)
             {
-                throw new ManagementException($"Call failed: {ex.Message}. [scope={scope}, query={query}, methodName={methodName}]", ex);
+                // Log the exception details and return the default value
+                LogManager.LogError($"Call failed: {ex.Message}. [scope={scope}, query={query}, methodName={methodName}]");
+                return defaultValue;
             }
         }
 

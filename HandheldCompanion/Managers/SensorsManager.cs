@@ -193,7 +193,7 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "SensorsManager");
         }
 
-        public static void Resume(bool update)
+        public static void Resume(bool OS)
         {
             Gyrometer?.UpdateSensor();
             Accelerometer?.UpdateSensor();
@@ -211,13 +211,20 @@ namespace HandheldCompanion.Managers
             Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
             Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
 
-            // todo: create an IMU class
-            double TotalMilliseconds = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
-            double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
-            prevTimestamp = TotalMilliseconds;
+            /*
+            double timestamp = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
+            if (timestamp != prevTimestamp)
+            {
+                double TotalMilliseconds = Gyrometer is not null ? timestamp : 0.0d;
+                double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
 
-            // replace delta with delta from sensor
-            delta = (float)DeltaSeconds;
+                // replace delta with sensor value
+                delta = (float)DeltaSeconds;
+
+                // update previous timestamp
+                prevTimestamp = TotalMilliseconds;
+            }
+            */
 
             // store motion
             controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
@@ -276,9 +283,9 @@ namespace HandheldCompanion.Managers
 
                 // display message
                 if (x == 0 && y == 0 && z == 0)
-                    dialog.UpdateContent("Calibration failed: gyroscope is silent.");
+                    dialog.UpdateContent("Calibration failed: device is silent.");
                 else
-                    dialog.UpdateContent("Calibration failed: device is too shaky.");
+                    dialog.UpdateContent("Calibration failed: device is silent or unsteady.");
 
                 goto Close;
             }
@@ -301,6 +308,7 @@ namespace HandheldCompanion.Managers
             gamepadMotion.GetCalibrationOffset(out float xOffset, out float yOffset, out float zOffset);
             gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
 
+            /*
             dialog.UpdateTitle("Please take back the controller in hands and get ready to shake it.");
 
             for (int i = 4; i > 0; i--)
@@ -324,6 +332,7 @@ namespace HandheldCompanion.Managers
 
             // get calibration offsets
             gamepadMotion.SetCalibrationThreshold(gamepadMotion.maxGyro, gamepadMotion.maxAccel);
+            */
 
             // store calibration offsets
             IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());

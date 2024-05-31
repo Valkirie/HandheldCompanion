@@ -29,1377 +29,969 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ToastEnable
-        {
-            get
-            {
+        public bool ToastEnable {
+            get {
                 return ((bool)(this["ToastEnable"]));
             }
-            set
-            {
+            set {
                 this["ToastEnable"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool RunAtStartup
-        {
-            get
-            {
+        public bool RunAtStartup {
+            get {
                 return ((bool)(this["RunAtStartup"]));
             }
-            set
-            {
+            set {
                 this["RunAtStartup"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StartMinimized
-        {
-            get
-            {
+        public bool StartMinimized {
+            get {
                 return ((bool)(this["StartMinimized"]));
             }
-            set
-            {
+            set {
                 this["StartMinimized"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool CloseMinimises
-        {
-            get
-            {
+        public bool CloseMinimises {
+            get {
                 return ((bool)(this["CloseMinimises"]));
             }
-            set
-            {
+            set {
                 this["CloseMinimises"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("720")]
-        public double MainWindowHeight
-        {
-            get
-            {
+        public double MainWindowHeight {
+            get {
                 return ((double)(this["MainWindowHeight"]));
             }
-            set
-            {
+            set {
                 this["MainWindowHeight"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1280")]
-        public double MainWindowWidth
-        {
-            get
-            {
+        public double MainWindowWidth {
+            get {
                 return ((double)(this["MainWindowWidth"]));
             }
-            set
-            {
+            set {
                 this["MainWindowWidth"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double MainWindowLeft
-        {
-            get
-            {
+        public double MainWindowLeft {
+            get {
                 return ((double)(this["MainWindowLeft"]));
             }
-            set
-            {
+            set {
                 this["MainWindowLeft"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double MainWindowTop
-        {
-            get
-            {
+        public double MainWindowTop {
+            get {
                 return ((double)(this["MainWindowTop"]));
             }
-            set
-            {
+            set {
                 this["MainWindowTop"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int MainWindowState
-        {
-            get
-            {
+        public int MainWindowState {
+            get {
                 return ((int)(this["MainWindowState"]));
             }
-            set
-            {
+            set {
                 this["MainWindowState"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int MainWindowTheme
-        {
-            get
-            {
+        public int MainWindowTheme {
+            get {
                 return ((int)(this["MainWindowTheme"]));
             }
-            set
-            {
+            set {
                 this["MainWindowTheme"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1989-12-20")]
-        public global::System.DateTime UpdateLastChecked
-        {
-            get
-            {
+        public global::System.DateTime UpdateLastChecked {
+            get {
                 return ((global::System.DateTime)(this["UpdateLastChecked"]));
             }
-            set
-            {
+            set {
                 this["UpdateLastChecked"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OverlayModel
-        {
-            get
-            {
+        public int OverlayModel {
+            get {
                 return ((int)(this["OverlayModel"]));
             }
-            set
-            {
+            set {
                 this["OverlayModel"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("7")]
-        public int OverlayControllerAlignment
-        {
-            get
-            {
+        public int OverlayControllerAlignment {
+            get {
                 return ((int)(this["OverlayControllerAlignment"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerAlignment"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("300")]
-        public double OverlayControllerSize
-        {
-            get
-            {
+        public double OverlayControllerSize {
+            get {
                 return ((double)(this["OverlayControllerSize"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerSize"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int OverlayTrackpadsAlignment
-        {
-            get
-            {
+        public int OverlayTrackpadsAlignment {
+            get {
                 return ((int)(this["OverlayTrackpadsAlignment"]));
             }
-            set
-            {
+            set {
                 this["OverlayTrackpadsAlignment"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.25")]
-        public double OverlayTrackpadsOpacity
-        {
-            get
-            {
+        public double OverlayTrackpadsOpacity {
+            get {
                 return ((double)(this["OverlayTrackpadsOpacity"]));
             }
-            set
-            {
+            set {
                 this["OverlayTrackpadsOpacity"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("250")]
-        public double OverlayTrackpadsSize
-        {
-            get
-            {
+        public double OverlayTrackpadsSize {
+            get {
                 return ((double)(this["OverlayTrackpadsSize"]));
             }
-            set
-            {
+            set {
                 this["OverlayTrackpadsSize"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
-        public string CurrentCulture
-        {
-            get
-            {
+        public string CurrentCulture {
+            get {
                 return ((string)(this["CurrentCulture"]));
             }
-            set
-            {
+            set {
                 this["CurrentCulture"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double OverlayControllerRestingPitch
-        {
-            get
-            {
+        public double OverlayControllerRestingPitch {
+            get {
                 return ((double)(this["OverlayControllerRestingPitch"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerRestingPitch"] = value;
             }
         }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double OverlayControllerRestingYaw
-        {
-            get
-            {
-                return ((double)(this["OverlayControllerRestingYaw"]));
-            }
-            set
-            {
-                this["OverlayControllerRestingYaw"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double OverlayControllerRestingRoll
-        {
-            get
-            {
-                return ((double)(this["OverlayControllerRestingRoll"]));
-            }
-            set
-            {
-                this["OverlayControllerRestingRoll"] = value;
-            }
-        }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SensorPlacementUpsideDown
-        {
-            get
-            {
+        public bool SensorPlacementUpsideDown {
+            get {
                 return ((bool)(this["SensorPlacementUpsideDown"]));
             }
-            set
-            {
+            set {
                 this["SensorPlacementUpsideDown"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
-        public int SensorSelection
-        {
-            get
-            {
+        public int SensorSelection {
+            get {
                 return ((int)(this["SensorSelection"]));
             }
-            set
-            {
+            set {
                 this["SensorSelection"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SensorPlacement
-        {
-            get
-            {
+        public int SensorPlacement {
+            get {
                 return ((int)(this["SensorPlacement"]));
             }
-            set
-            {
+            set {
                 this["SensorPlacement"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public double OverlayRenderInterval
-        {
-            get
-            {
+        public double OverlayRenderInterval {
+            get {
                 return ((double)(this["OverlayRenderInterval"]));
             }
-            set
-            {
+            set {
                 this["OverlayRenderInterval"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OverlayRenderAntialiasing
-        {
-            get
-            {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OverlayRenderAntialiasing {
+            get {
                 return ((bool)(this["OverlayRenderAntialiasing"]));
             }
-            set
-            {
+            set {
                 this["OverlayRenderAntialiasing"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool OverlayFaceCamera
-        {
-            get
-            {
+        public bool OverlayFaceCamera {
+            get {
                 return ((bool)(this["OverlayFaceCamera"]));
             }
-            set
-            {
+            set {
                 this["OverlayFaceCamera"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("720")]
-        public double QuickToolsHeight
-        {
-            get
-            {
+        public double QuickToolsHeight {
+            get {
                 return ((double)(this["QuickToolsHeight"]));
             }
-            set
-            {
+            set {
                 this["QuickToolsHeight"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ConfigurableTDPOverride
-        {
-            get
-            {
+        public bool ConfigurableTDPOverride {
+            get {
                 return ((bool)(this["ConfigurableTDPOverride"]));
             }
-            set
-            {
+            set {
                 this["ConfigurableTDPOverride"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double ConfigurableTDPOverrideUp
-        {
-            get
-            {
+        public double ConfigurableTDPOverrideUp {
+            get {
                 return ((double)(this["ConfigurableTDPOverrideUp"]));
             }
-            set
-            {
+            set {
                 this["ConfigurableTDPOverrideUp"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double ConfigurableTDPOverrideDown
-        {
-            get
-            {
+        public double ConfigurableTDPOverrideDown {
+            get {
                 return ((double)(this["ConfigurableTDPOverrideDown"]));
             }
-            set
-            {
+            set {
                 this["ConfigurableTDPOverrideDown"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public double OverlayControllerOpacity
-        {
-            get
-            {
+        public double OverlayControllerOpacity {
+            get {
                 return ((double)(this["OverlayControllerOpacity"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerOpacity"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#00000000")]
-        public string OverlayControllerBackgroundColor
-        {
-            get
-            {
+        public string OverlayControllerBackgroundColor {
+            get {
                 return ((string)(this["OverlayControllerBackgroundColor"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerBackgroundColor"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int MainWindowPrevState
-        {
-            get
-            {
+        public int MainWindowPrevState {
+            get {
                 return ((int)(this["MainWindowPrevState"]));
             }
-            set
-            {
+            set {
                 this["MainWindowPrevState"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool FirstStart
-        {
-            get
-            {
+        public bool FirstStart {
+            get {
                 return ((bool)(this["FirstStart"]));
             }
-            set
-            {
+            set {
                 this["FirstStart"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int MainWindowBackdrop
-        {
-            get
-            {
+        public int MainWindowBackdrop {
+            get {
                 return ((int)(this["MainWindowBackdrop"]));
             }
-            set
-            {
+            set {
                 this["MainWindowBackdrop"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseEnergyStar
-        {
-            get
-            {
+        public bool UseEnergyStar {
+            get {
                 return ((bool)(this["UseEnergyStar"]));
             }
-            set
-            {
+            set {
                 this["UseEnergyStar"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("https://api.github.com/repos/Valkirie/HandheldCompanion")]
-        public string UpdateUrl
-        {
-            get
-            {
+        public string UpdateUrl {
+            get {
                 return ((string)(this["UpdateUrl"]));
             }
-            set
-            {
+            set {
                 this["UpdateUrl"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool OverlayControllerAlwaysOnTop
-        {
-            get
-            {
+        public bool OverlayControllerAlwaysOnTop {
+            get {
                 return ((bool)(this["OverlayControllerAlwaysOnTop"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerAlwaysOnTop"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool HIDuncloakonclose
-        {
-            get
-            {
+        public bool HIDuncloakonclose {
+            get {
                 return ((bool)(this["HIDuncloakonclose"]));
             }
-            set
-            {
+            set {
                 this["HIDuncloakonclose"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public double VibrationStrength
-        {
-            get
-            {
+        public double VibrationStrength {
+            get {
                 return ((double)(this["VibrationStrength"]));
             }
-            set
-            {
+            set {
                 this["VibrationStrength"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string HIDInstancePath
-        {
-            get
-            {
+        public string HIDInstancePath {
+            get {
                 return ((string)(this["HIDInstancePath"]));
             }
-            set
-            {
+            set {
                 this["HIDInstancePath"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool OverlayControllerMotion
-        {
-            get
-            {
+        public bool OverlayControllerMotion {
+            get {
                 return ((bool)(this["OverlayControllerMotion"]));
             }
-            set
-            {
+            set {
                 this["OverlayControllerMotion"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SteamControllerMute
-        {
-            get
-            {
+        public bool SteamControllerMute {
+            get {
                 return ((bool)(this["SteamControllerMute"]));
             }
-            set
-            {
+            set {
                 this["SteamControllerMute"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool HIDcloakonconnect
-        {
-            get
-            {
+        public bool HIDcloakonconnect {
+            get {
                 return ((bool)(this["HIDcloakonconnect"]));
             }
-            set
-            {
+            set {
                 this["HIDcloakonconnect"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool HIDvibrateonconnect
-        {
-            get
-            {
+        public bool HIDvibrateonconnect {
+            get {
                 return ((bool)(this["HIDvibrateonconnect"]));
             }
-            set
-            {
+            set {
                 this["HIDvibrateonconnect"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuickToolsIsPaneOpen
-        {
-            get
-            {
+        public bool QuickToolsIsPaneOpen {
+            get {
                 return ((bool)(this["QuickToolsIsPaneOpen"]));
             }
-            set
-            {
+            set {
                 this["QuickToolsIsPaneOpen"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool LayoutFilterOnDevice
-        {
-            get
-            {
+        public bool LayoutFilterOnDevice {
+            get {
                 return ((bool)(this["LayoutFilterOnDevice"]));
             }
-            set
-            {
+            set {
                 this["LayoutFilterOnDevice"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("40")]
-        public double QuietModeDuty
-        {
-            get
-            {
+        public double QuietModeDuty {
+            get {
                 return ((double)(this["QuietModeDuty"]));
             }
-            set
-            {
+            set {
                 this["QuietModeDuty"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuietModeToggled
-        {
-            get
-            {
+        public bool QuietModeToggled {
+            get {
                 return ((bool)(this["QuietModeToggled"]));
             }
-            set
-            {
+            set {
                 this["QuietModeToggled"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuietModeEnabled
-        {
-            get
-            {
+        public bool QuietModeEnabled {
+            get {
                 return ((bool)(this["QuietModeEnabled"]));
             }
-            set
-            {
+            set {
                 this["QuietModeEnabled"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool MainWindowIsPaneOpen
-        {
-            get
-            {
+        public bool MainWindowIsPaneOpen {
+            get {
                 return ((bool)(this["MainWindowIsPaneOpen"]));
             }
-            set
-            {
+            set {
                 this["MainWindowIsPaneOpen"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool DesktopProfileOnStart
-        {
-            get
-            {
+        public bool DesktopProfileOnStart {
+            get {
                 return ((bool)(this["DesktopProfileOnStart"]));
             }
-            set
-            {
+            set {
                 this["DesktopProfileOnStart"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuietModeDisclosure
-        {
-            get
-            {
+        public bool QuietModeDisclosure {
+            get {
                 return ((bool)(this["QuietModeDisclosure"]));
             }
-            set
-            {
+            set {
                 this["QuietModeDisclosure"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OnScreenDisplayLevel
-        {
-            get
-            {
+        public int OnScreenDisplayLevel {
+            get {
                 return ((int)(this["OnScreenDisplayLevel"]));
             }
-            set
-            {
+            set {
                 this["OnScreenDisplayLevel"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1000")]
-        public double OnScreenDisplayRefreshRate
-        {
-            get
-            {
+        public double OnScreenDisplayRefreshRate {
+            get {
                 return ((double)(this["OnScreenDisplayRefreshRate"]));
             }
-            set
-            {
+            set {
                 this["OnScreenDisplayRefreshRate"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
-        public int NativeDisplayOrientation
-        {
-            get
-            {
+        public int NativeDisplayOrientation {
+            get {
                 return ((int)(this["NativeDisplayOrientation"]));
             }
-            set
-            {
+            set {
                 this["NativeDisplayOrientation"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool PlatformRTSSEnabled
-        {
-            get
-            {
+        public bool PlatformRTSSEnabled {
+            get {
                 return ((bool)(this["PlatformRTSSEnabled"]));
             }
-            set
-            {
+            set {
                 this["PlatformRTSSEnabled"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int QuickToolsLocation
-        {
-            get
-            {
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int QuickToolsLocation {
+            get {
                 return ((int)(this["QuickToolsLocation"]));
             }
-            set
-            {
+            set {
                 this["QuickToolsLocation"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int QuicktoolsBackdrop
-        {
-            get
-            {
+        public int QuicktoolsBackdrop {
+            get {
                 return ((int)(this["QuicktoolsBackdrop"]));
             }
-            set
-            {
+            set {
                 this["QuicktoolsBackdrop"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuickToolsAutoHide
-        {
-            get
-            {
+        public bool QuickToolsAutoHide {
+            get {
                 return ((bool)(this["QuickToolsAutoHide"]));
             }
-            set
-            {
+            set {
                 this["QuickToolsAutoHide"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ControllerManagement
-        {
-            get
-            {
+        public bool ControllerManagement {
+            get {
                 return ((bool)(this["ControllerManagement"]));
             }
-            set
-            {
+            set {
                 this["ControllerManagement"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection SuspendedControllers
-        {
-            get
-            {
+        public global::System.Collections.Specialized.StringCollection SuspendedControllers {
+            get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedControllers"]));
             }
-            set
-            {
+            set {
                 this["SuspendedControllers"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool HidModeDoNotShowAgain
-        {
-            get
-            {
+        public bool HidModeDoNotShowAgain {
+            get {
                 return ((bool)(this["HidModeDoNotShowAgain"]));
             }
-            set
-            {
+            set {
                 this["HidModeDoNotShowAgain"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int HIDmode
-        {
-            get
-            {
+        public int HIDmode {
+            get {
                 return ((int)(this["HIDmode"]));
             }
-            set
-            {
+            set {
                 this["HIDmode"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int HIDstatus
-        {
-            get
-            {
+        public int HIDstatus {
+            get {
                 return ((int)(this["HIDstatus"]));
             }
-            set
-            {
+            set {
                 this["HIDstatus"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool DSUEnabled
-        {
-            get
-            {
+        public bool DSUEnabled {
+            get {
                 return ((bool)(this["DSUEnabled"]));
             }
-            set
-            {
+            set {
                 this["DSUEnabled"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("26760")]
-        public int DSUport
-        {
-            get
-            {
+        public int DSUport {
+            get {
                 return ((int)(this["DSUport"]));
             }
-            set
-            {
+            set {
                 this["DSUport"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
-        public string DSUip
-        {
-            get
-            {
+        public string DSUip {
+            get {
                 return ((string)(this["DSUip"]));
             }
-            set
-            {
+            set {
                 this["DSUip"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public double LEDBrightness
-        {
-            get
-            {
+        public double LEDBrightness {
+            get {
                 return ((double)(this["LEDBrightness"]));
             }
-            set
-            {
+            set {
                 this["LEDBrightness"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFF00")]
-        public string LEDMainColor
-        {
-            get
-            {
+        public string LEDMainColor {
+            get {
                 return ((string)(this["LEDMainColor"]));
             }
-            set
-            {
+            set {
                 this["LEDMainColor"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LEDAmbilightVerticalBlackBarDetection
-        {
-            get
-            {
+        public bool LEDAmbilightVerticalBlackBarDetection {
+            get {
                 return ((bool)(this["LEDAmbilightVerticalBlackBarDetection"]));
             }
-            set
-            {
+            set {
                 this["LEDAmbilightVerticalBlackBarDetection"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LEDUseSecondColor
-        {
-            get
-            {
+        public bool LEDUseSecondColor {
+            get {
                 return ((bool)(this["LEDUseSecondColor"]));
             }
-            set
-            {
+            set {
                 this["LEDUseSecondColor"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int LEDSettingsLevel
-        {
-            get
-            {
+        public int LEDSettingsLevel {
+            get {
                 return ((int)(this["LEDSettingsLevel"]));
             }
-            set
-            {
+            set {
                 this["LEDSettingsLevel"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool LEDSettingsEnabled
-        {
-            get
-            {
+        public bool LEDSettingsEnabled {
+            get {
                 return ((bool)(this["LEDSettingsEnabled"]));
             }
-            set
-            {
+            set {
                 this["LEDSettingsEnabled"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFF00")]
-        public string LEDSecondColor
-        {
-            get
-            {
+        public string LEDSecondColor {
+            get {
                 return ((string)(this["LEDSecondColor"]));
             }
-            set
-            {
+            set {
                 this["LEDSecondColor"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LEDSettingsUseAccentColor
-        {
-            get
-            {
+        public bool LEDSettingsUseAccentColor {
+            get {
                 return ((bool)(this["LEDSettingsUseAccentColor"]));
             }
-            set
-            {
+            set {
                 this["LEDSettingsUseAccentColor"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public double LEDSpeed
-        {
-            get
-            {
+        public double LEDSpeed {
+            get {
                 return ((double)(this["LEDSpeed"]));
             }
-            set
-            {
+            set {
                 this["LEDSpeed"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection SuspendedDevices
-        {
-            get
-            {
+        public global::System.Collections.Specialized.StringCollection SuspendedDevices {
+            get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedDevices"]));
             }
-            set
-            {
+            set {
                 this["SuspendedDevices"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LegionControllerPassthrough
-        {
-            get
-            {
+        public bool LegionControllerPassthrough {
+            get {
                 return ((bool)(this["LegionControllerPassthrough"]));
             }
-            set
-            {
+            set {
                 this["LegionControllerPassthrough"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OnScreenDisplayToggle
-        {
-            get
-            {
+        public bool OnScreenDisplayToggle {
+            get {
                 return ((bool)(this["OnScreenDisplayToggle"]));
             }
-            set
-            {
+            set {
                 this["OnScreenDisplayToggle"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int LastOnScreenDisplayLevel
-        {
-            get
-            {
+        public int LastOnScreenDisplayLevel {
+            get {
                 return ((int)(this["LastOnScreenDisplayLevel"]));
             }
-            set
-            {
+            set {
                 this["LastOnScreenDisplayLevel"] = value;
             }
         }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayTimeLevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayTimeLevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayTimeLevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayCPULevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayCPULevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayCPULevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayRAMLevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayRAMLevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayRAMLevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayGPULevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayGPULevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayGPULevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayVRAMLevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayVRAMLevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayVRAMLevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayBatteryLevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayBatteryLevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayBatteryLevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayFPSLevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayFPSLevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayFPSLevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int OnScreenDisplayBATTLevel
-        {
-            get
-            {
-                return ((int)(this["OnScreenDisplayBATTLevel"]));
-            }
-            set
-            {
-                this["OnScreenDisplayBATTLevel"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Time,GPU,CPU,VRAM,RAM,BATT,FPS")]
-        public string OnScreenDisplayOrder
-        {
-            get
-            {
-                return ((string)(this["OnScreenDisplayOrder"]));
-            }
-            set
-            {
-                this["OnScreenDisplayOrder"] = value;
-            }
-        }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UISounds
-        {
-            get
-            {
+        public bool UISounds {
+            get {
                 return ((bool)(this["UISounds"]));
             }
-            set
-            {
+            set {
                 this["UISounds"] = value;
             }
         }

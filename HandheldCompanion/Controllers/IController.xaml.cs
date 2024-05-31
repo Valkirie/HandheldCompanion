@@ -573,13 +573,14 @@ namespace HandheldCompanion.Controllers
             switch (button)
             {
                 case ButtonFlags.DPadUp:
-                    return "\u219F"; // Button A
+                    return "\u219F";
                 case ButtonFlags.DPadDown:
-                    return "\u21A1"; // Button B
+                    return "\u21A1";
                 case ButtonFlags.DPadLeft:
-                    return "\u219E"; // Button X
+                    return "\u219E";
                 case ButtonFlags.DPadRight:
-                    return "\u21A0"; // Button Y
+                    return "\u21A0";
+
                 case ButtonFlags.LeftStickClick:
                     return "\u21BA";
                 case ButtonFlags.RightStickClick:
@@ -600,10 +601,39 @@ namespace HandheldCompanion.Controllers
                     return "\u21BD";
                 case ButtonFlags.RightStickRight:
                     return "\u21C1";
+
                 case ButtonFlags.VolumeUp:
                     return "\u21fe";
                 case ButtonFlags.VolumeDown:
                     return "\u21fd";
+
+                case ButtonFlags.LeftPadTouch:
+                    return "\u2268";
+                case ButtonFlags.RightPadTouch:
+                    return "\u2269";
+
+                case ButtonFlags.LeftPadClick:
+                    return "\u2266";
+                case ButtonFlags.RightPadClick:
+                    return "\u2267";
+
+                case ButtonFlags.LeftPadClickDown:
+                    return "\u2274";
+                case ButtonFlags.LeftPadClickUp:
+                    return "\u2270";
+                case ButtonFlags.LeftPadClickRight:
+                    return "\u2272";
+                case ButtonFlags.LeftPadClickLeft:
+                    return "\u226E";
+
+                case ButtonFlags.RightPadClickDown:
+                    return "\u2275";
+                case ButtonFlags.RightPadClickUp:
+                    return "\u2271";
+                case ButtonFlags.RightPadClickRight:
+                    return "\u2273";
+                case ButtonFlags.RightPadClickLeft:
+                    return "\u226F";
             }
 
             return defaultGlyph;
@@ -621,6 +651,14 @@ namespace HandheldCompanion.Controllers
                     return "\u21C6";
                 case AxisFlags.RightStickY:
                     return "\u21F5";
+
+                // Todo, need dedicated icons
+                case AxisFlags.LeftPadX:
+                case AxisFlags.LeftPadY:
+                    return "\u2264";
+                case AxisFlags.RightPadX:
+                case AxisFlags.RightPadY:
+                    return "\u2265";
             }
 
             return defaultGlyph;
@@ -634,8 +672,14 @@ namespace HandheldCompanion.Controllers
                     return "\u21CB";
                 case AxisLayoutFlags.RightStick:
                     return "\u21CC";
+
                 case AxisLayoutFlags.Gyroscope:
                     return "\u2B94";
+
+                case AxisLayoutFlags.LeftPad:
+                    return "\u2264";
+                case AxisLayoutFlags.RightPad:
+                    return "\u2265";
             }
 
             return defaultGlyph;
@@ -643,26 +687,26 @@ namespace HandheldCompanion.Controllers
 
         public GlyphIconInfo GetGlyphIconInfo(ButtonFlags button, int fontIconSize = 14)
         {
-            var glyph = GetGlyph(button);
+            string? glyph = GetGlyph(button);
             return new GlyphIconInfo
             {
                 Name = GetButtonName(button),
-                Glyph = glyph,
-                FontSize = glyph is not null ? 28 : fontIconSize,
-                FontFamily = glyph is not null ? GlyphFontFamily : null,
+                Glyph = glyph is not null ? glyph : defaultGlyph,
+                FontSize = fontIconSize,
+                FontFamily = GlyphFontFamily,
                 Foreground = GetGlyphColor(button)
             };
         }
 
         public GlyphIconInfo GetGlyphIconInfo(AxisLayoutFlags axis, int fontIconSize = 14)
         {
-            var glyph = GetGlyph(axis);
+            string? glyph = GetGlyph(axis);
             return new GlyphIconInfo
             {
                 Name = GetAxisName(axis),
-                Glyph = glyph,
-                FontSize = glyph is not null ? 28 : fontIconSize,
-                FontFamily = glyph is not null ? GlyphFontFamily : null,
+                Glyph = glyph is not null ? glyph : defaultGlyph,
+                FontSize = fontIconSize,
+                FontFamily = GlyphFontFamily,
                 Foreground = GetGlyphColor(axis)
             };
         }
@@ -678,10 +722,7 @@ namespace HandheldCompanion.Controllers
             };
 
             if (FontIcon.Glyph is not null)
-            {
                 FontIcon.FontFamily = GlyphFontFamily;
-                FontIcon.FontSize = 28;
-            }
 
             return FontIcon;
         }
@@ -698,10 +739,7 @@ namespace HandheldCompanion.Controllers
             };
 
             if (FontIcon.Glyph is not null)
-            {
                 FontIcon.FontFamily = GlyphFontFamily;
-                FontIcon.FontSize = 28;
-            }
 
             return FontIcon;
         }
