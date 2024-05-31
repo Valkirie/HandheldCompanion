@@ -170,7 +170,6 @@
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
     <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.12.2" />
     <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.18.1" />
-    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
@@ -2331,6 +2330,9 @@
     </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="Nefarius.ViGEm.Client">
+      <HintPath>..\Resources\Nefarius.ViGEm.Client.dll</HintPath>
     </Reference>
     <Reference Include="RTSSSharedMemoryNET">
       <HintPath>Resources\RTSSSharedMemoryNET.dll</HintPath>
