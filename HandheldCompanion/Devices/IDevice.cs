@@ -387,8 +387,11 @@ public abstract class IDevice
                         case "ONEXPLAYER X1 i":
                             device = new OneXPlayerX1Intel();
                             break;
-                        case "ONEXPLAYER X1 a": // TDOO: check name after release
+                        case "ONEXPLAYER X1 A":
                             device = new OneXPlayerX1AMD();
+                            break;
+                        case "ONEXPLAYER X1 mini":
+                            device = new OneXPlayerX1Mini();
                             break;
                         case "ONEXPLAYER F1":
                             {
