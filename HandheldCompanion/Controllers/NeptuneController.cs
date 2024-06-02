@@ -15,6 +15,7 @@ public class NeptuneController : SteamController
 {
     private steam_hidapi.net.NeptuneController Controller;
     private NeptuneControllerInputEventArgs input;
+    private float deltaTime;
 
     private const short TrackPadInner = 21844;
 
@@ -246,9 +247,9 @@ public class NeptuneController : SteamController
         Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
 
         // process motion
-        gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+        gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, this.deltaTime);
 
-        base.UpdateInputs(ticks, delta);
+        base.UpdateInputs(ticks, this.deltaTime);
     }
 
     private void Open()
@@ -302,6 +303,7 @@ public class NeptuneController : SteamController
     private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
     {
         this.input = input;
+        this.deltaTime = TimerManager.GetDelta();
     }
 
     public override void Plug()

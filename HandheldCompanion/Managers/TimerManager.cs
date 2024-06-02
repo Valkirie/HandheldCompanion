@@ -17,7 +17,6 @@ public static class TimerManager
     public static Stopwatch Stopwatch;
 
     private static float PreviousTotalMilliseconds;
-    private static float DeltaSeconds;
 
     public static bool IsInitialized;
 
@@ -32,11 +31,17 @@ public static class TimerManager
     private static void DoWork()
     {
         // update timestamp
+        float delta = GetDelta();
+        Tick?.Invoke(Stopwatch.ElapsedTicks, delta);
+    }
+
+    public static float GetDelta()
+    {
         float TotalMilliseconds = (float)Stopwatch.Elapsed.TotalMilliseconds;
-        DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000.0f;
+        float delta = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000.0f;
         PreviousTotalMilliseconds = TotalMilliseconds;
 
-        Tick?.Invoke(Stopwatch.ElapsedTicks, DeltaSeconds);
+        return delta;
     }
 
     public static int GetPeriod()
