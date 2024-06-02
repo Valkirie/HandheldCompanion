@@ -139,8 +139,10 @@ namespace HandheldCompanion.Controllers
                     case true:
                         {
                             workingThreadRunning = true;
-                            workingThread = new Thread(workingThreadLoop);
-                            workingThread.IsBackground = true;
+                            workingThread = new Thread(workingThreadLoop)
+                            {
+                                IsBackground = true,
+                            };
                             workingThread.Start();
                         }
                         return;

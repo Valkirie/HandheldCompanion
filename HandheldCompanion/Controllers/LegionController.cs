@@ -212,8 +212,11 @@ namespace HandheldCompanion.Controllers
                 if (dataThread is null)
                 {
                     dataThreadRunning = true;
-                    dataThread = new Thread(dataThreadLoop);
-                    dataThread.IsBackground = true;
+                    dataThread = new Thread(dataThreadLoop)
+                    {
+                        IsBackground = true,
+                        Priority = ThreadPriority.Highest
+                    };
                     dataThread.Start();
                 }
             }
