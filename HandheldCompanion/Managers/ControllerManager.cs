@@ -40,7 +40,7 @@ public static class ControllerManager
     private static bool ControllerManagement;
 
     private static int ControllerManagementAttempts = 0;
-    private const int ControllerManagementMaxAttempts = 3;
+    private const int ControllerManagementMaxAttempts = 4;
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -660,8 +660,6 @@ public static class ControllerManager
                         // disable that setting if we failed too many times
                         if (ControllerManagementAttempts == ControllerManagementMaxAttempts)
                         {
-                            SettingsManager.SetProperty("ControllerManagement", false);
-
                             // resume all physical controllers
                             StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
                             if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
@@ -670,15 +668,7 @@ public static class ControllerManager
                             UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
 
-                            // suspend watchdog
-                            if (watchdogThread is not null)
-                            {
-                                watchdogThreadRunning = false;
-                                // Ensure the thread has finished execution
-                                if (watchdogThread.IsAlive)
-                                    watchdogThread.Join();
-                                watchdogThread = null;
-                            }
+                            SettingsManager.SetProperty("ControllerManagement", false);
                         }
                         else
                         {
@@ -720,6 +710,7 @@ public static class ControllerManager
 
                             // suspend and resume virtual controller
                             VirtualManager.Suspend(false);
+                            Thread.Sleep(1000);
                             VirtualManager.Resume(false);
 
                             // increment attempt counter (if no wireless controller is power cycling)

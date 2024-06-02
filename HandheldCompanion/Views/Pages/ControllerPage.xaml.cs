@@ -193,6 +193,9 @@ public partial class ControllerPage : Page
                                 dialog.Content = "Reordering in progress, hang tight...";
                                 break;
                             case 2:
+                                dialog.Content = "Red or green, red or green, which do I cut?!";
+                                break;
+                            case 3:
                                 dialog.Content = "Final attempt to reorder controllers, stand by...";
                                 break;
                         }
@@ -225,10 +228,6 @@ public partial class ControllerPage : Page
 
                         switch (dialogTask.Result)
                         {
-                            default:
-                            case ContentDialogResult.Primary:
-                                Toggle_ControllerManagement.IsOn = false;
-                                break;
                             case ContentDialogResult.None:
                                 Toggle_ControllerManagement.IsOn = true;
                                 break;
