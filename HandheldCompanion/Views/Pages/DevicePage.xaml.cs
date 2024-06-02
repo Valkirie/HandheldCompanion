@@ -505,6 +505,14 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
         }
 
+        private void Toggle_LegionBatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LegionBatteryChargeLimit", Toggle_LegionBatteryChargeLimit.IsOn);
+        }
+
         private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded)

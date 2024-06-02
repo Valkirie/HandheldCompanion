@@ -97,6 +97,18 @@ public class LegionGo : IDevice
                 { "value", limit },
             });
 
+    // InstantBootAc (0x03010001) controls the 80% power charge limit.
+    // https://github.com/aarron-lee/LegionGoRemapper/blob/ab823f2042fc857cca856687a385a033d68c58bf/py_modules/legion_space.py#L138
+    public Task SetBatteryChargeLimit(bool enabled) =>
+        WMI.CallAsync("root\\WMI",
+            $"SELECT * FROM LENOVO_OTHER_METHOD",
+            "SetFeatureValue",
+            new()
+            {
+                { "IDs", (int)CapabilityID.InstantBootAc },
+                { "value", enabled ? 1 : 0 },
+            });
+
     public const byte INPUT_HID_ID = 0x04;
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
@@ -210,6 +222,9 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B6] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.MiddleButton } };
         DefaultLayout.ButtonLayout[ButtonFlags.B7] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollUp } };
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
+
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        UpdateSettings();
 
         /*
         Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
@@ -426,5 +441,20 @@ public class LegionGo : IDevice
         }
 
         return defaultGlyph;
+    }
+
+    protected void UpdateSettings()
+    {
+        SetBatteryChargeLimit(SettingsManager.GetBoolean("LegionBatteryChargeLimit"));
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value)
+    {
+        switch (name)
+        {
+            case "LegionBatteryChargeLimit":
+                SetBatteryChargeLimit(Convert.ToBoolean(value));
+                break;
+        }
     }
 }

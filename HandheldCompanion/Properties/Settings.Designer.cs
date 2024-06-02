@@ -1103,5 +1103,20 @@ namespace HandheldCompanion.Properties
                 this["LegionControllerGyroIndex"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LegionBatteryChargeLimit
+        {
+            get
+            {
+                return ((bool)(this["LegionBatteryChargeLimit"]));
+            }
+            set
+            {
+                this["LegionBatteryChargeLimit"] = value;
+            }
+        }
     }
 }
