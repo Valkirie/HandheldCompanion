@@ -354,20 +354,15 @@ namespace HandheldCompanion.Controllers
             }
         }
 
-        private async void dataThreadLoop(object? obj)
+        private void dataThreadLoop(object? obj)
         {
             // pull latest Data
             while (dataThreadRunning)
             {
-                if (hidDevice is null)
-                    continue;
-
-                HidReport report = hidDevice.ReadReport();
+                HidDeviceData report = hidDevice?.ReadData(0);
                 if (report is not null)
                 {
-                    // check if packet is safe
-                    if (READY_STATES.Contains(report.Data[STATUS_IDX]))
-                        Data = report.Data;
+                    Buffer.BlockCopy(report.Data, 1, Data, 0, report.Data.Length - 1);
                 }
             }
         }
