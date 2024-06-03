@@ -472,6 +472,13 @@ public partial class ProfilesPage : Page
 
     private void PowerProfile_Selected(PowerProfile powerProfile)
     {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {

@@ -386,6 +386,10 @@ public partial class QuickProfilesPage : Page
         if (selectedProfile is null)
             return;
 
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
