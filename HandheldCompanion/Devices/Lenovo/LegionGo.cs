@@ -82,6 +82,12 @@ public class LegionGo : IDevice
         "Fan_Set_Table",
         new() { { "FanTable", fanTable.GetBytes() } });
 
+    public static Task<int> GetSmartFanModeAsync() => WMI.CallAsync("root\\WMI",
+        $"SELECT * FROM LENOVO_GAMEZONE_DATA",
+        "GetSmartFanMode",
+        [],
+        pdc => Convert.ToInt32(pdc["Data"].Value));
+
     private Task SetSmartFanMode(int fanMode) => WMI.CallAsync("root\\WMI",
         $"SELECT * FROM LENOVO_GAMEZONE_DATA",
         "SetSmartFanMode",
@@ -213,7 +219,7 @@ public class LegionGo : IDevice
 
         /*
         Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
-        bool FanFullSpeed = task.Result;
+        bool FanFullSpeed = task.Result; 
         */
     }
 
@@ -236,8 +242,14 @@ public class LegionGo : IDevice
             });
         }
 
+        // update fan table
         SetFanTable(fanTable);
-        SetSmartFanMode(profile.OEMPowerMode);
+
+        Task<int> fanModeTask = Task.Run(async () => await GetSmartFanModeAsync());
+        int fanMode = fanModeTask.Result;
+
+        if (fanMode != profile.OEMPowerMode)
+            SetSmartFanMode(profile.OEMPowerMode);
     }
 
     public override bool Open()
