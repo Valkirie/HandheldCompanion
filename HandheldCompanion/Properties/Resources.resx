@@ -3006,4 +3006,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum_XInputController_ButtonFlags_Special2" xml:space="preserve">
     <value>Special 2</value>
   </data>
+  <data name="DevicePage_LegionBatteryChargeLimit" xml:space="preserve">
+    <value>80% Battery Charge Limit</value>
+  </data>
+  <data name="DevicePage_LegionBatteryChargeLimit_Desc" xml:space="preserve">
+    <value>Sets the maximum charge level of the battery to 80%</value>
+  </data>
 </root>
