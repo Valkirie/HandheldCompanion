@@ -298,9 +298,9 @@ namespace HandheldCompanion.Controllers
                 default:
                 case LegionGo.LeftJoyconIndex:
                     {
-                        aX = (short)(Data[34] << 8 | Data[35]) * -(2.0f / short.MaxValue);
-                        aZ = (short)(Data[36] << 8 | Data[37]) * -(2.0f / short.MaxValue);
-                        aY = (short)(Data[38] << 8 | Data[39]) * -(2.0f / short.MaxValue);
+                        aX = (short)(Data[34] << 8 | Data[35]) * -(4.0f / short.MaxValue);
+                        aZ = (short)(Data[36] << 8 | Data[37]) * -(4.0f / short.MaxValue);
+                        aY = (short)(Data[38] << 8 | Data[39]) * -(4.0f / short.MaxValue);
 
                         gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
                         gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
@@ -310,9 +310,9 @@ namespace HandheldCompanion.Controllers
 
                 case LegionGo.RightJoyconIndex:
                     {
-                        aX = (short)(Data[49] << 8 | Data[50]) * -(2.0f / short.MaxValue);
-                        aZ = (short)(Data[47] << 8 | Data[48]) * (2.0f / short.MaxValue);
-                        aY = (short)(Data[51] << 8 | Data[52]) * -(2.0f / short.MaxValue);
+                        aX = (short)(Data[49] << 8 | Data[50]) * -(4.0f / short.MaxValue);
+                        aZ = (short)(Data[47] << 8 | Data[48]) * (4.0f / short.MaxValue);
+                        aY = (short)(Data[51] << 8 | Data[52]) * -(4.0f / short.MaxValue);
 
                         gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
                         gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
