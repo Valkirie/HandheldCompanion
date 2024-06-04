@@ -224,12 +224,6 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        UpdateSettings();
-
-        /*
-        Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
-        bool FanFullSpeed = task.Result;
-        */
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -441,11 +435,6 @@ public class LegionGo : IDevice
         }
 
         return defaultGlyph;
-    }
-
-    protected void UpdateSettings()
-    {
-        SetBatteryChargeLimit(SettingsManager.GetBoolean("LegionBatteryChargeLimit"));
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
