@@ -1070,6 +1070,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 80% Battery Charge Limit.
+        /// </summary>
+        public static string DevicePage_LegionBatteryChargeLimit {
+            get {
+                return ResourceManager.GetString("DevicePage_LegionBatteryChargeLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sets the maximum charge level of the battery to 80%.
+        /// </summary>
+        public static string DevicePage_LegionBatteryChargeLimit_Desc {
+            get {
+                return ResourceManager.GetString("DevicePage_LegionBatteryChargeLimit_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Sleep Time.
         /// </summary>
         public static string DevicePage_Lenovo_ControllerAutoSleepTime {
