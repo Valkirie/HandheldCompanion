@@ -363,7 +363,7 @@ public static class ProcessManager
         if (string.IsNullOrEmpty(path))
             return ProcessFilter.Restricted;
 
-        // manual filtering
+        // manual filtering, case entries need to be all lower case
         switch (exec.ToLower())
         {
             // handheld companion
@@ -420,8 +420,9 @@ public static class ProcessManager
             case "hwinfo64.exe":
             case "lockapp.exe":
             case "logioverlay.exe":
-            case "MSPCManager.exe":
-            case "PowerToys.MouseWithoutBordersHelper.exe":
+            case "losslessscaling.exe":
+            case "mspcmanager.exe":
+            case "powertoys.mousewithoutbordershelper.exe":
             case "radeonsoftware.exe":
             case "rtkuwp.exe":
             case "searchapp.exe":
