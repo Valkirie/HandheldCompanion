@@ -226,8 +226,8 @@ public partial class OverlayModel : OverlayWindow
             -InputUtils.deg2rad(gyroX), 
             InputUtils.deg2rad(gyroY), 
             -InputUtils.deg2rad(gyroZ),
-            -accelX,
-            accelY,
+            accelX,
+            -accelY,
             accelZ, 
             gamepadMotion.deltaTime
             );
