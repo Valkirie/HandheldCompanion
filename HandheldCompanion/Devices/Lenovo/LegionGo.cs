@@ -444,6 +444,23 @@ public class LegionGo : IDevice
                 return "\u2216";
             case ButtonFlags.OEM8:
                 return "\u2217";
+
+            case ButtonFlags.L4:
+                return "\u2215";
+            case ButtonFlags.L5:
+                return "\u2216";
+            case ButtonFlags.R4:
+                return "\u2214";
+            case ButtonFlags.R5:
+                return "\u2217";
+            case ButtonFlags.B5:
+                return "\u2213";
+            case ButtonFlags.B6:
+                return "\u27F7";
+            case ButtonFlags.B7:
+                return "\u27F0";
+            case ButtonFlags.B8:
+                return "\u27F1";
         }
 
         return defaultGlyph;

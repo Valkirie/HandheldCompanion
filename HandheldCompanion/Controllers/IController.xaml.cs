@@ -636,6 +636,15 @@ namespace HandheldCompanion.Controllers
                     return "\u2273";
                 case ButtonFlags.RightPadClickLeft:
                     return "\u226F";
+
+                case ButtonFlags.L4:
+                    return "\u2276";
+                case ButtonFlags.L5:
+                    return "\u2278";
+                case ButtonFlags.R4:
+                    return "\u2277";
+                case ButtonFlags.R5:
+                    return "\u2279";
             }
 
             return defaultGlyph;
