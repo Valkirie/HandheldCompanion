@@ -71,7 +71,7 @@ public partial class ButtonState : ICloneable
     public override bool Equals(object obj)
     {
         if (obj is ButtonState buttonState)
-            return buttonState.Buttons.SequenceEqual(Buttons);
+            return Enumerable.SequenceEqual(Buttons.OrderBy(e => e), buttonState.Buttons.OrderBy(e => e));
 
         return false;
     }
