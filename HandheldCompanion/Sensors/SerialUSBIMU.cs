@@ -39,6 +39,8 @@ public class SerialUSBIMU
         }
     };
 
+    public static List<string> SerialPortNamesInUse { get; set; } = new List<string>(); // COM ports in use
+
     private Vector3 AccelerationG; // accelerometer
     private Vector3 AngularVelocityDeg; // gyrometer
 
@@ -59,11 +61,19 @@ public class SerialUSBIMU
         if (serial.port.IsOpen)
             return serial;
 
+        // Holds information about the USB device
         USBDeviceInfo deviceInfo = null;
+
+        // Retrieve the list of available serial devices
         var devices = GetSerialDevices();
 
+        // Iterate through each sensor vendor
         foreach (var sensor in vendors)
         {
+            // Skip the serial port name if it matches a COM port already in use
+            if (SerialPortNamesInUse.Contains(sensor.Value.PortName))
+                continue;
+
             var VendorID = sensor.Key.Key;
             var ProductID = sensor.Key.Value;
 
