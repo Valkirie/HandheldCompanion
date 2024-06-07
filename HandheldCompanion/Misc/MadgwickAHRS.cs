@@ -22,7 +22,7 @@ public class MadgwickAHRS
 
     // Sample period
     // Beta, algorithm gain beta.
-    public MadgwickAHRS(float samplePeriod, float beta)
+    public MadgwickAHRS(float samplePeriod, float beta = 0f)
     {
         SamplePeriod = samplePeriod;
         Beta = beta;
