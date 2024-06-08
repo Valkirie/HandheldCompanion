@@ -31,20 +31,28 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Supported Devices
 
 - ASUS ROG Ally
-- AOKZOE A1
+- Lenovo Legion Go
+- MSI Claw A1M
+- AOKZOE A1 and A1 Pro
+- AOKZOE A2
+- Steam Deck (LCD, OLED)
 - AYA Neo and its different versions
 - AYA Neo Next and its different versions
 - AYA Neo Air and it's different versions
 - AYA Neo 2, Geek, 2S Geek 1S
 - AYA Neo KUN
+- AYA Neo Flip DS and Flip KB
+- AYA Neo Slide
+- ONEXPLAYER X1 (Intel)
+- ONEXPLAYER OneXFly
+- ONEXPLAYER 2 and 2 Pro
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (INTEL, AMD)
 - GPD Win 2
 - GPD Win 3
-- GPD Win 4
-- Steam Deck (LCD, OLED)
+- GPD Win 4 (8640U and 8840U)
+- GPD Win Mini (7640U and 7840U)
 - Ayn Loki (all models)
-- Lenovo Legion Go
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)
