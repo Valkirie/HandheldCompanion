@@ -619,6 +619,7 @@ public partial class ProfilesPage : Page
                     // power profile
                     PowerProfile powerProfile = PowerProfileManager.GetProfile(selectedProfile.PowerProfile);
                     powerProfile.Check(this);
+                    SelectedPowerProfileName.Text = powerProfile.Name;
 
                     // display warnings
                     WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);

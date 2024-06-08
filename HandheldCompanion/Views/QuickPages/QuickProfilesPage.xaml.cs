@@ -461,6 +461,7 @@ public partial class QuickProfilesPage : Page
                     // power profile
                     PowerProfile powerProfile = PowerProfileManager.GetProfile(profile.PowerProfile);
                     powerProfile?.Check(this);
+                    SelectedPowerProfileName.Text = powerProfile?.Name;
 
                     // gyro layout
                     if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
