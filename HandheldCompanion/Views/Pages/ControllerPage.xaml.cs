@@ -164,8 +164,8 @@ public partial class ControllerPage : Page
 
     private Dialog dialog = new Dialog(MainWindow.GetCurrent())
     {
-        Title = "Controller Management",
-        Content = "Initializing controller reconfiguration… Please wait.",
+        Title = Properties.Resources.ControllerPage_ControllerManagement,
+        Content = Properties.Resources.ControllerPage_ControllerManagement_Content,
         CanClose = false
     };
 
@@ -187,16 +187,16 @@ public partial class ControllerPage : Page
                                 dialog.CloseButtonText = string.Empty;
                                 dialog.PrimaryButtonText = string.Empty;
 
-                                dialog.Content = "Attempting to reorder controllers, please hold on...";
+                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Attempting;
                                 break;
                             case 1:
-                                dialog.Content = "Reordering in progress, hang tight...";
+                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Reordering;
                                 break;
                             case 2:
-                                dialog.Content = "Red or green, red or green, which do I cut?!";
+                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_RedOrGreen;
                                 break;
                             case 3:
-                                dialog.Content = "Final attempt to reorder controllers, stand by...";
+                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_FinalAttempt;
                                 break;
                         }
 
@@ -206,7 +206,7 @@ public partial class ControllerPage : Page
 
                 case ControllerManagerStatus.Succeeded:
                     {
-                        dialog.UpdateContent("Controller reordering complete. Thank you for your patience.");
+                        dialog.UpdateContent(Properties.Resources.ControllerPage_ControllerManagment_Done);
                         await Task.Delay(2000);
                         dialog.Hide();
                     }
@@ -220,7 +220,7 @@ public partial class ControllerPage : Page
                         dialog.CloseButtonText = Properties.Resources.ControllerPage_Close;
                         dialog.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
                         
-                        dialog.Content = $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion";
+                        dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Failed;
 
                         Task<ContentDialogResult> dialogTask = dialog.ShowAsync();
 

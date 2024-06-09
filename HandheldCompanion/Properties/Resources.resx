@@ -3030,4 +3030,139 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="PowerProfileOneXPlayerX1IntelBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
+  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
+    <value>Initializing controller reconfiguration… Please wait.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagment_Attempting" xml:space="preserve">
+    <value>Attempting to reorder controllers, please hold on...</value>
+  </data>
+  <data name="ControllerPage_ControllerManagment_Done" xml:space="preserve">
+    <value>Controller reordering complete. Thank you for your patience.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagment_Failed" xml:space="preserve">
+    <value>We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion</value>
+  </data>
+  <data name="ControllerPage_ControllerManagment_FinalAttempt" xml:space="preserve">
+    <value>Final attempt to reorder controllers, stand by...</value>
+  </data>
+  <data name="ControllerPage_ControllerManagment_RedOrGreen" xml:space="preserve">
+    <value>Red or green, red or green, which do I cut?!</value>
+  </data>
+  <data name="ControllerPage_ControllerManagment_Reordering" xml:space="preserve">
+    <value>Reordering in progress, hang tight...</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
+    <value>Flipped Landscape</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_FlippedPortrait" xml:space="preserve">
+    <value>Flipped Portrait</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_Landscape" xml:space="preserve">
+    <value>Landscape</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_NotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_Portrait" xml:space="preserve">
+    <value>Portait</value>
+  </data>
+  <data name="DevicePage_DynamicLightDesc" xml:space="preserve">
+    <value>Use dynamic lighting on my device</value>
+  </data>
+  <data name="DevicePage_DynamicLightTitle" xml:space="preserve">
+    <value>Dynamic lighting settings</value>
+  </data>
+  <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
+    <value>Calibrate</value>
+  </data>
+  <data name="LayoutPage_Export" xml:space="preserve">
+    <value>Export layout</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
+    <value>Agressive</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientAggressive" xml:space="preserve">
+    <value>Efficient aggressive</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientEnabled" xml:space="preserve">
+    <value>Efficient enabled</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
+    <value>Change the power profile fan mode</value>
+  </data>
+  <data name="PerformancePage_FanMode_Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Aggressive" xml:space="preserve">
+    <value>Aggressive</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Quiet" xml:space="preserve">
+    <value>Quiet</value>
+  </data>
+  <data name="PerformancePage_FanMode_Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="PerformancePage_FanMode_Title" xml:space="preserve">
+    <value>Fan mode</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
+    <value>Controls CPU unparked core count limit</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
+    <value>Maximum CPU Count</value>
+  </data>
+  <data name="PerformangePage_Preset_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PerformangePage_Preset_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PerformangePage_Preset_Name" xml:space="preserve">
+    <value>Power Preset Name</value>
+  </data>
+  <data name="PerformangePage_Preset_Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="ProfilesPage_Compatibility" xml:space="preserve">
+    <value>Compatibility settings</value>
+  </data>
+  <data name="ProfilesPage_Compatibility_Fullscreen" xml:space="preserve">
+    <value>Use fullscreen optimizations</value>
+  </data>
+  <data name="ProfilesPage_Compatibility_HighDPI" xml:space="preserve">
+    <value>Use High DPI awareness</value>
+  </data>
+  <data name="ProfilesPage_Dialogue_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ProfilesPage_Dialogue_Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Desc" xml:space="preserve">
+    <value>Change the graphics settings</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Title" xml:space="preserve">
+    <value>Graphics settings</value>
+  </data>
+  <data name="ProfilesPage_Layout_Desc" xml:space="preserve">
+    <value>Your modified layout for this executable.</value>
+  </data>
+  <data name="ProfilesPage_NewSubProfile" xml:space="preserve">
+    <value>(New Sub Profile)</value>
+  </data>
+  <data name="ProfilesPage_ProfileRenamingDialogue_Name" xml:space="preserve">
+    <value>Profile Name</value>
+  </data>
+  <data name="ProfilesPage_SubProfileRenamingDialogue_Name" xml:space="preserve">
+    <value>Sub Profile Name</value>
+  </data>
 </root>

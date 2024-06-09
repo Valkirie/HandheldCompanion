@@ -431,11 +431,74 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Initializing controller reconfiguration… Please wait..
+        /// </summary>
+        public static string ControllerPage_ControllerManagement_Content {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatically manage your controllers for greater compatibility.
         /// </summary>
         public static string ControllerPage_ControllerManagementDesc {
             get {
                 return ResourceManager.GetString("ControllerPage_ControllerManagementDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempting to reorder controllers, please hold on....
+        /// </summary>
+        public static string ControllerPage_ControllerManagment_Attempting {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagment_Attempting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller reordering complete. Thank you for your patience..
+        /// </summary>
+        public static string ControllerPage_ControllerManagment_Done {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagment_Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We&apos;ve failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion.
+        /// </summary>
+        public static string ControllerPage_ControllerManagment_Failed {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagment_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Final attempt to reorder controllers, stand by....
+        /// </summary>
+        public static string ControllerPage_ControllerManagment_FinalAttempt {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagment_FinalAttempt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Red or green, red or green, which do I cut?!.
+        /// </summary>
+        public static string ControllerPage_ControllerManagment_RedOrGreen {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagment_RedOrGreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reordering in progress, hang tight....
+        /// </summary>
+        public static string ControllerPage_ControllerManagment_Reordering {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagment_Reordering", resourceCulture);
             }
         }
         
@@ -917,6 +980,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use dynamic lighting on my device.
+        /// </summary>
+        public static string DevicePage_DynamicLightDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Effects.
         /// </summary>
         public static string DevicePage_DynamicLighting {
@@ -1070,6 +1142,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dynamic lighting settings.
+        /// </summary>
+        public static string DevicePage_DynamicLightTitle {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLightTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sets the fan to max speed.
         /// </summary>
         public static string DevicePage_FullFanSpeedDesc {
@@ -1174,6 +1255,15 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_PowerOptions {
             get {
                 return ResourceManager.GetString("DevicePage_PowerOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calibrate.
+        /// </summary>
+        public static string DevicePage_SensorCalibration_Button {
+            get {
+                return ResourceManager.GetString("DevicePage_SensorCalibration_Button", resourceCulture);
             }
         }
         
@@ -4429,6 +4519,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export layout.
+        /// </summary>
+        public static string LayoutPage_Export {
+            get {
+                return ResourceManager.GetString("LayoutPage_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export for current controller.
         /// </summary>
         public static string LayoutPage_ExportCurrentController {
@@ -5491,11 +5590,173 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Agressive.
+        /// </summary>
+        public static string PerformancePage_CPUBoost_Aggressive {
+            get {
+                return ResourceManager.GetString("PerformancePage_CPUBoost_Aggressive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string PerformancePage_CPUBoost_Disabled {
+            get {
+                return ResourceManager.GetString("PerformancePage_CPUBoost_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Efficient aggressive.
+        /// </summary>
+        public static string PerformancePage_CPUBoost_EfficientAggressive {
+            get {
+                return ResourceManager.GetString("PerformancePage_CPUBoost_EfficientAggressive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Efficient enabled.
+        /// </summary>
+        public static string PerformancePage_CPUBoost_EfficientEnabled {
+            get {
+                return ResourceManager.GetString("PerformancePage_CPUBoost_EfficientEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        public static string PerformancePage_CPUBoost_Enabled {
+            get {
+                return ResourceManager.GetString("PerformancePage_CPUBoost_Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Performance.
         /// </summary>
         public static string PerformancePage_Device {
             get {
                 return ResourceManager.GetString("PerformancePage_Device", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the power profile fan mode.
+        /// </summary>
+        public static string PerformancePage_FanMode_Desc {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hardware.
+        /// </summary>
+        public static string PerformancePage_FanMode_Hardware {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Hardware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aggressive.
+        /// </summary>
+        public static string PerformancePage_FanMode_Preset_Aggressive {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Preset_Aggressive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string PerformancePage_FanMode_Preset_Default {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Preset_Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quiet.
+        /// </summary>
+        public static string PerformancePage_FanMode_Preset_Quiet {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Preset_Quiet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Software.
+        /// </summary>
+        public static string PerformancePage_FanMode_Software {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Software", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fan mode.
+        /// </summary>
+        public static string PerformancePage_FanMode_Title {
+            get {
+                return ResourceManager.GetString("PerformancePage_FanMode_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls CPU unparked core count limit.
+        /// </summary>
+        public static string PerformancePage_MaxCPU_Desc {
+            get {
+                return ResourceManager.GetString("PerformancePage_MaxCPU_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum CPU Count.
+        /// </summary>
+        public static string PerformancePage_MaxCPU_Title {
+            get {
+                return ResourceManager.GetString("PerformancePage_MaxCPU_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string PerformangePage_Preset_Cancel {
+            get {
+                return ResourceManager.GetString("PerformangePage_Preset_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string PerformangePage_Preset_Description {
+            get {
+                return ResourceManager.GetString("PerformangePage_Preset_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power Preset Name.
+        /// </summary>
+        public static string PerformangePage_Preset_Name {
+            get {
+                return ResourceManager.GetString("PerformangePage_Preset_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string PerformangePage_Preset_Rename {
+            get {
+                return ResourceManager.GetString("PerformangePage_Preset_Rename", resourceCulture);
             }
         }
         
@@ -5977,6 +6238,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compatibility settings.
+        /// </summary>
+        public static string ProfilesPage_Compatibility {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Compatibility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use fullscreen optimizations.
+        /// </summary>
+        public static string ProfilesPage_Compatibility_Fullscreen {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Compatibility_Fullscreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use High DPI awareness.
+        /// </summary>
+        public static string ProfilesPage_Compatibility_HighDPI {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Compatibility_HighDPI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller layout.
         /// </summary>
         public static string ProfilesPage_ControllerLayout {
@@ -6099,6 +6387,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_DeleteProfile {
             get {
                 return ResourceManager.GetString("ProfilesPage_DeleteProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string ProfilesPage_Dialogue_Cancel {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Dialogue_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string ProfilesPage_Dialogue_Rename {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Dialogue_Rename", resourceCulture);
             }
         }
         
@@ -6292,6 +6598,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change the graphics settings.
+        /// </summary>
+        public static string ProfilesPage_GraphicsSetting_Desc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsSetting_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Graphics settings.
+        /// </summary>
+        public static string ProfilesPage_GraphicsSetting_Title {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsSetting_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Graphics settings.
         /// </summary>
         public static string ProfilesPage_GraphicsSettings {
@@ -6436,6 +6760,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your modified layout for this executable..
+        /// </summary>
+        public static string ProfilesPage_Layout_Desc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Layout_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Motion control settings.
         /// </summary>
         public static string ProfilesPage_MotionControlSettings {
@@ -6450,6 +6783,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_MotionControlSettingsDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_MotionControlSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (New Sub Profile).
+        /// </summary>
+        public static string ProfilesPage_NewSubProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_NewSubProfile", resourceCulture);
             }
         }
         
@@ -6522,6 +6864,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_ProfilePath {
             get {
                 return ResourceManager.GetString("ProfilesPage_ProfilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Name.
+        /// </summary>
+        public static string ProfilesPage_ProfileRenamingDialogue_Name {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileRenamingDialogue_Name", resourceCulture);
             }
         }
         
@@ -6774,6 +7125,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_StyleofOutputTooltip {
             get {
                 return ResourceManager.GetString("ProfilesPage_StyleofOutputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sub Profile Name.
+        /// </summary>
+        public static string ProfilesPage_SubProfileRenamingDialogue_Name {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SubProfileRenamingDialogue_Name", resourceCulture);
             }
         }
         
@@ -8306,6 +8666,51 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_RivaTunerStatisticsServerDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_RivaTunerStatisticsServerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flipped Landscape.
+        /// </summary>
+        public static string SettingsPage_ScreenRotation_FlippedLandscape {
+            get {
+                return ResourceManager.GetString("SettingsPage_ScreenRotation_FlippedLandscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flipped Portrait.
+        /// </summary>
+        public static string SettingsPage_ScreenRotation_FlippedPortrait {
+            get {
+                return ResourceManager.GetString("SettingsPage_ScreenRotation_FlippedPortrait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Landscape.
+        /// </summary>
+        public static string SettingsPage_ScreenRotation_Landscape {
+            get {
+                return ResourceManager.GetString("SettingsPage_ScreenRotation_Landscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not set.
+        /// </summary>
+        public static string SettingsPage_ScreenRotation_NotSet {
+            get {
+                return ResourceManager.GetString("SettingsPage_ScreenRotation_NotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Portait.
+        /// </summary>
+        public static string SettingsPage_ScreenRotation_Portrait {
+            get {
+                return ResourceManager.GetString("SettingsPage_ScreenRotation_Portrait", resourceCulture);
             }
         }
         

@@ -122,19 +122,19 @@ public partial class SettingsPage : Page
                     switch (nativeOrientation)
                     {
                         case ScreenRotation.Rotations.DEFAULT:
-                            Text_NativeDisplayOrientation.Text = "Landscape";
+                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_Landscape;
                             break;
                         case ScreenRotation.Rotations.D90:
-                            Text_NativeDisplayOrientation.Text = "Portrait";
+                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_Portrait;
                             break;
                         case ScreenRotation.Rotations.D180:
-                            Text_NativeDisplayOrientation.Text = "Flipped Landscape";
+                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_FlippedLandscape;
                             break;
                         case ScreenRotation.Rotations.D270:
-                            Text_NativeDisplayOrientation.Text = "Flipped Portrait";
+                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_FlippedPortrait;
                             break;
                         default:
-                            Text_NativeDisplayOrientation.Text = "Not set";
+                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_NotSet;
                             break;
                     }
 

@@ -797,7 +797,7 @@ public partial class ProfilesPage : Page
         LayoutTemplate layoutTemplate = new(selectedProfile.Layout)
         {
             Name = selectedProfile.LayoutTitle,
-            Description = "Your modified layout for this executable.",
+            Description = Properties.Resources.ProfilesPage_Layout_Desc,
             Author = Environment.UserName,
             Executable = selectedProfile.Executable,
             Product = selectedProfile.Name,
@@ -1219,7 +1219,7 @@ public partial class ProfilesPage : Page
     {
         // create a new sub profile matching the original profile's settings
         Profile newSubProfile = (Profile)selectedProfile.Clone();
-        newSubProfile.Name = "(New Sub Profile)";
+        newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
         newSubProfile.Guid = Guid.NewGuid(); // must be unique
         newSubProfile.IsSubProfile = true;
         newSubProfile.IsFavoriteSubProfile = true;

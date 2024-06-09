@@ -189,7 +189,7 @@
 
             <!--  Dynamic lighting settings  -->
             <ui:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Dynamic lighting settings" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLightTitle}" />
 
                 <!--  Use Dynamic lighting  -->
                 <Border
@@ -211,7 +211,7 @@
                                 Glyph="&#xE781;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use dynamic lighting on my device" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLightDesc}" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -717,7 +717,7 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             Click="ui_button_calibrate_Click"
-                            Content="Calibrate"
+                            Content="{l:Static resx:Resources.DevicePage_SensorCalibration_Button}"
                             FontSize="14"
                             Style="{DynamicResource AccentButtonStyle}" />
                     </Grid>

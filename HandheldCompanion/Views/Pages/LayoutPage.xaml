@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Layout"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
@@ -115,9 +115,7 @@
                             IsEnabled="false" />
                     </ComboBox>
 
-                    <ui:SimpleStackPanel
-                        Orientation="Vertical"
-                        Spacing="6">
+                    <ui:SimpleStackPanel Orientation="Vertical" Spacing="6">
 
                         <Grid>
                             <CheckBox
@@ -141,7 +139,7 @@
                                     Style="{DynamicResource AccentButtonStyle}" />
 
                                 <!--  Export layout  -->
-                                <Button Name="ButtonLayoutSettings" Content="Export layout">
+                                <Button Name="ButtonLayoutSettings" Content="{l:Static resx:Resources.LayoutPage_Export}">
                                     <ui:FlyoutService.Flyout>
                                         <ui:Flyout
                                             x:Name="LayoutFlyout"

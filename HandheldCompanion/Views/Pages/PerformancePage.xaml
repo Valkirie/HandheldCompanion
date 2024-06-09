@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Performance"
@@ -151,18 +151,18 @@
 
             <ui:ContentDialog
                 Name="PowerProfileSettingsDialog"
-                CloseButtonText="Cancel"
+                CloseButtonText="{l:Static resx:Resources.PerformangePage_Preset_Cancel}"
                 PrimaryButtonCommand="{Binding ConfirmModifyCommand}"
-                PrimaryButtonText="Rename">
+                PrimaryButtonText="{l:Static resx:Resources.PerformangePage_Preset_Rename}">
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Name" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.PerformangePage_Preset_Name}" />
                     <TextBox
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                         Text="{Binding ModifyPresetName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Description" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.PerformangePage_Preset_Description}" />
                     <TextBox
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
@@ -202,11 +202,11 @@
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Maximum CPU Count" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.PerformancePage_MaxCPU_Title}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Controls CPU unparked core count limit"
+                                        Text="{l:Static resx:Resources.PerformancePage_MaxCPU_Desc}"
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </DockPanel>
@@ -645,11 +645,11 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding CPUBoostLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" />
-                                <ComboBoxItem Content="Enabled" />
-                                <ComboBoxItem Content="Agressive" />
-                                <ComboBoxItem Content="Efficient enabled" />
-                                <ComboBoxItem Content="Efficient aggressive" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_CPUBoost_Disabled}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_CPUBoost_Enabled}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_CPUBoost_Aggressive}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_CPUBoost_EfficientEnabled}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_CPUBoost_EfficientAggressive}" />
                             </ComboBox>
                         </DockPanel>
                     </Grid>
@@ -701,7 +701,7 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!--  Power settings  -->
+            <!--  Fan settings  -->
             <ui:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
 
@@ -727,11 +727,11 @@
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Fan mode" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.PerformancePage_FanMode_Title}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Change the power profile fan mode"
+                                    Text="{l:Static resx:Resources.PerformancePage_FanMode_Desc}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </DockPanel>
@@ -741,8 +741,8 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding FanMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Hardware" />
-                                <ComboBoxItem Content="Software" IsEnabled="{Binding SupportsSoftwareFanMode}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_FanMode_Hardware}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_FanMode_Software}" IsEnabled="{Binding SupportsSoftwareFanMode}" />
                             </ComboBox>
                         </DockPanel>
                     </Grid>
@@ -827,17 +827,17 @@
                             <Button
                                 HorizontalAlignment="Center"
                                 Command="{Binding FanPresetSilentCommand}"
-                                Content="Quiet" />
+                                Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Quiet}" />
                             <Button
                                 Grid.Column="1"
                                 HorizontalAlignment="Center"
                                 Command="{Binding FanPresetPerformanceCommand}"
-                                Content="Default" />
+                                Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Default}" />
                             <Button
                                 Grid.Column="2"
                                 HorizontalAlignment="Center"
                                 Command="{Binding FanPresetTurboCommand}"
-                                Content="Aggressive" />
+                                Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Aggressive}" />
                         </Grid>
                     </ui:SimpleStackPanel>
                 </Border>
