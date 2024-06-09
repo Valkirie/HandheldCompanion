@@ -29,6 +29,13 @@ public class OneXPlayerX1 : IDevice
     
     private readonly SerialQueue _queue = new SerialQueue();
     
+    // Local Values for LED Values
+    private bool LEDEnabled;
+    private int LEDBrightness;
+    private LEDLevel LEDCurrentLevel;
+    private Color LEDControllerColor;
+    private Color LEDBackColor;
+    
     public OneXPlayerX1()
     {
         // device specific settings
@@ -74,6 +81,12 @@ public class OneXPlayerX1 : IDevice
             new List<KeyCode> { KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM1
             ));
+        
+        LEDEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
+        LEDBrightness = SettingsManager.GetInt("LEDBrightness");
+        LEDCurrentLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
+        LEDControllerColor = SettingsManager.GetColor("LEDMainColor");
+        LEDBackColor = SettingsManager.GetColor("LEDSecondColor");
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -132,43 +145,57 @@ public class OneXPlayerX1 : IDevice
 
     public override bool SetLedStatus(bool enable)
     {
-        // Turn On/Off X1 Back LED
-        byte[] prefix = { 0xFD, 0x3F };
-        byte[] positionL = { 0x03 };
-        byte[] positionR = { 0x04 };
-        byte[] LEDOptionOn = { 0xFD, 0x00, 0x00, enable ? (byte)0x01 : (byte)0x00 };
-        byte[] fill = Enumerable.Repeat(new[] { new byte(), new byte(), new byte() }, 18)
-            .SelectMany(colorBytes => colorBytes)
-            .ToArray();
-    
-        byte[] leftCommand = prefix.Concat(positionL).Concat(LEDOptionOn).Concat(fill).Concat(new byte[] { 0x00, 0x3F, 0xFD }).ToArray();
-        byte[] rightCommand = prefix.Concat(positionR).Concat(LEDOptionOn).Concat(fill).Concat(new byte[] { 0x00, 0x3F, 0xFD }).ToArray();
-        
-        WriteToSerialPort(leftCommand);
-        WriteToSerialPort(rightCommand);
-        
+        if (LEDEnabled != enable)
+        {
+            // Turn On/Off X1 Back LED
+            byte[] prefix = { 0xFD, 0x3F };
+            byte[] positionL = { 0x03 };
+            byte[] positionR = { 0x04 };
+            byte[] LEDOptionOn = { 0xFD, 0x00, 0x00, enable ? (byte)0x01 : (byte)0x00 };
+            byte[] fill = Enumerable.Repeat(new[] { new byte(), new byte(), new byte() }, 18)
+                .SelectMany(colorBytes => colorBytes)
+                .ToArray();
+
+            byte[] leftCommand = prefix.Concat(positionL).Concat(LEDOptionOn).Concat(fill)
+                .Concat(new byte[] { 0x00, 0x3F, 0xFD }).ToArray();
+            byte[] rightCommand = prefix.Concat(positionR).Concat(LEDOptionOn).Concat(fill)
+                .Concat(new byte[] { 0x00, 0x3F, 0xFD }).ToArray();
+
+            WriteToSerialPort(leftCommand);
+            WriteToSerialPort(rightCommand);
+
+            LEDEnabled = enable;
+        }
+
         return true;
     }
     
     public override bool SetLedBrightness(int brightness)
     {
-        // X1 brightness range is: 1, 3, 4, convert from 0 - 100 % range
-        brightness = brightness == 0 ? 0 : brightness < 33 ? 1 : brightness > 66 ? 4 : 3;
+        if (LEDBrightness != brightness)
+        {
+            // X1 brightness range is: 1, 3, 4, convert from 0 - 100 % range
+            brightness = brightness == 0 ? 0 : brightness < 33 ? 1 : brightness > 66 ? 4 : 3;
 
-        // Define the HID message for setting brightness.
-        byte[] msg = {
-            0xFD, 0x3F, 0x00, 0xFD, 0x03,
-            0x00, 0x01, 0x05, (byte)brightness, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3F, 0xFD
-        };
+            // Define the HID message for setting brightness.
+            byte[] msg =
+            {
+                0xFD, 0x3F, 0x00, 0xFD, 0x03,
+                0x00, 0x01, 0x05, (byte)brightness, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3F, 0xFD
+            };
 
-        // Write the SerialPort message to set the LED brightness.
-        WriteToSerialPort(msg);
+            // Write the SerialPort message to set the LED brightness.
+            WriteToSerialPort(msg);
 
-        // Turn On/Off Back LED
-        SetLedStatus(brightness > 0);
+            // Turn On/Off Back LED
+            SetLedStatus(brightness > 0);
+
+            LEDBrightness = brightness;
+        }
 
         return true;
     }
@@ -227,10 +254,23 @@ public class OneXPlayerX1 : IDevice
         byte[] msgL = prefix.Concat(positionBackL).Concat(LEDOptionBack).Concat(rgbDataBack).Concat(new byte[] { ledColorBack.R, ledColorBack.G, 0x3F, 0xFD }).ToArray();
         byte[] msgR = prefix.Concat(positionBackR).Concat(LEDOptionBack).Concat(rgbDataBack).Concat(new byte[] { ledColorBack.R, ledColorBack.G, 0x3F, 0xFD }).ToArray();
 
-        WriteToSerialPort(msgController);
-        WriteToSerialPort(msgL);
-        WriteToSerialPort(msgR);
+        if (LEDControllerColor != mainColor || LEDCurrentLevel != level)
+        {
+            WriteToSerialPort(msgController);
+            
+            LEDControllerColor = mainColor;
+            LEDCurrentLevel = level;
+        }
 
+        if (LEDBackColor != secondaryColor || LEDCurrentLevel != level)
+        {
+            WriteToSerialPort(msgL);
+            WriteToSerialPort(msgR);
+
+            LEDBackColor = secondaryColor;
+            LEDCurrentLevel = level;
+        }
+        
         return true;
     }
 
@@ -240,6 +280,7 @@ public class OneXPlayerX1 : IDevice
         {
             _queue.Enqueue(() =>
             {
+                //LogManager.LogInformation("Write To SerialPort: {0}", data);
                 _serialPort.Write(data, 0, data.Length);
                 Task.Delay(TaskDelay).Wait();
             });
