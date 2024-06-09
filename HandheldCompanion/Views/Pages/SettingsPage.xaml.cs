@@ -340,6 +340,8 @@ public partial class SettingsPage : Page
         SettingsManager.SetProperty("CurrentCulture", culture.Name);
 
         Localization.TranslationSource.Instance.CurrentCulture = CultureInfo.GetCultureInfo(culture.Name);
+        
+        NavigationService?.Refresh();
     }
 
     private void Toggle_Notification_Toggled(object? sender, RoutedEventArgs? e)
