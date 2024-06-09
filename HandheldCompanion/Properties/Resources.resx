@@ -3012,4 +3012,22 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_LegionBatteryChargeLimit_Desc" xml:space="preserve">
     <value>Sets the maximum charge level of the battery to 80%</value>
   </data>
+  <data name="PowerProfileOneXPlayerX1IntelBestPerformance" xml:space="preserve">
+    <value>Super Performance</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBestPerformanceDesc" xml:space="preserve">
+    <value>The optimum performance for Intel Core Ultra.</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterBattery" xml:space="preserve">
+    <value>Efficiency</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterBatteryDesc" xml:space="preserve">
+    <value>Lowest TDP for long battery life.</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterPerformanceDesc" xml:space="preserve">
+    <value>Balances performance, temperature and acoustic for any scenario.</value>
+  </data>
 </root>
