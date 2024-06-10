@@ -482,6 +482,7 @@ public abstract class IDevice
                     switch (ProductName)
                     {
                         case "LNVNB161216":
+                        case "83E1":
                             device = new LegionGo();
                             break;
                     }
