@@ -222,7 +222,7 @@ namespace HandheldCompanion.Controllers
 
             base.UpdateInputs(ticks, delta);
         }
-        private void OnControllerInputReceived(GordonControllerInputEventArgs input)
+        private async Task OnControllerInputReceived(GordonControllerInputEventArgs input)
         {
             this.input = input;
         }
@@ -231,7 +231,7 @@ namespace HandheldCompanion.Controllers
         {
             try
             {
-                Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+                Controller.OnControllerInputReceived = input => OnControllerInputReceived(input);
 
                 // open controller
                 Open();

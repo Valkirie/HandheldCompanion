@@ -330,12 +330,12 @@ namespace HandheldCompanion.Controllers
             {
                 default:
                 case LegionGo.LeftJoyconIndex:
-                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ);
-                    base.UpdateInputs(ticks, gamepadMotion.deltaTime);
+                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+                    base.UpdateInputs(ticks, delta);
                     break;
                 case LegionGo.RightJoyconIndex:
-                    gamepadMotionR.ProcessMotion(gX, gY, gZ, aX, aY, aZ);
-                    base.UpdateInputs(ticks, gamepadMotionR.deltaTime, gamepadMotionR);
+                    gamepadMotionR.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+                    base.UpdateInputs(ticks, delta, gamepadMotionR);
                     break;
             }
         }
@@ -361,20 +361,7 @@ namespace HandheldCompanion.Controllers
             {
                 HidDeviceData report = hidDevice?.ReadData(0);
                 if (report is not null)
-                {
                     Buffer.BlockCopy(report.Data, 1, Data, 0, report.Data.Length - 1);
-
-                    switch (GyroIndex)
-                    {
-                        default:
-                        case LegionGo.LeftJoyconIndex:
-                            gamepadMotion.deltaTime = TimerManager.GetDelta();
-                            break;
-                        case LegionGo.RightJoyconIndex:
-                            gamepadMotionR.deltaTime = TimerManager.GetDelta();
-                            break;
-                    }
-                }
             }
         }
 

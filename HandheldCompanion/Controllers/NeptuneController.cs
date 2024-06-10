@@ -15,7 +15,6 @@ public class NeptuneController : SteamController
 {
     private steam_hidapi.net.NeptuneController Controller;
     private NeptuneControllerInputEventArgs input;
-    private float deltaTime;
 
     private const short TrackPadInner = 21844;
 
@@ -233,9 +232,9 @@ public class NeptuneController : SteamController
         }
 
         // TODO: why Z/Y swapped?
-        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 4.0f;
+        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 4.0f;
+        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 4.0f;
 
         // TODO: why Roll/Pitch swapped?
         float gX = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
@@ -247,9 +246,9 @@ public class NeptuneController : SteamController
         Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
 
         // process motion
-        gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, this.deltaTime);
+        gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-        base.UpdateInputs(ticks, this.deltaTime);
+        base.UpdateInputs(ticks, delta);
     }
 
     private void Open()
@@ -263,9 +262,14 @@ public class NeptuneController : SteamController
             Controller.RequestLizardMode(false);
 
             // create handler
-            Controller.OnControllerInputReceived += input => Task.Run(() => OnControllerInputReceived(input));
+            Controller.OnControllerInputReceived += input => OnControllerInputReceived(input);
         }
         catch { }
+    }
+
+    private async Task OnControllerInputReceived(NeptuneControllerInputEventArgs input)
+    {
+        this.input = input;
     }
 
     private void Close()
@@ -298,12 +302,6 @@ public class NeptuneController : SteamController
         base.Unhide(powerCycle);
         if (!powerCycle)
             Open();
-    }
-
-    private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
-    {
-        this.input = input;
-        this.deltaTime = TimerManager.GetDelta();
     }
 
     public override void Plug()
