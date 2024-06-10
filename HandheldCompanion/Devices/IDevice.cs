@@ -200,6 +200,7 @@ public abstract class IDevice
         var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
+        var SystemModel = MotherboardInfo.SystemModel;
         var Version = MotherboardInfo.Version;
         var Processor = MotherboardInfo.ProcessorName;
         var NumberOfCores = MotherboardInfo.NumberOfCores;
@@ -482,8 +483,19 @@ public abstract class IDevice
                     switch (ProductName)
                     {
                         case "LNVNB161216":
-                        case "83E1":
                             device = new LegionGo();
+                            break;
+
+                        // Weird...
+                        case "INVALID":
+                            {
+                                switch (SystemModel)
+                                {
+                                    case "83E1":
+                                        device = new LegionGo();
+                                        break;
+                                }    
+                            }
                             break;
                     }
                 }

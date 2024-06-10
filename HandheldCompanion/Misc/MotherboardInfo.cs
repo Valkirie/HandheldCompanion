@@ -27,6 +27,9 @@ public static class MotherboardInfo
     private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
     private static ManagementObjectCollection? videoControllerCollection;
 
+    private static readonly ManagementObjectSearcher computerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_ComputerSystem");
+    private static ManagementObjectCollection? computerCollection;
+
     private static object cacheLock = new();
     private static Dictionary<string, object> cache = new();
 
@@ -47,6 +50,7 @@ public static class MotherboardInfo
         { "processor", new(processorCollection, processorSearcher) },
         { "display", new(displayCollection, displaySearcher) },
         { "video", new(videoControllerCollection, videoControllerSearcher) },
+        { "computer", new(computerCollection, computerSearcher) },
     };
 
     // unused
@@ -107,6 +111,15 @@ public static class MotherboardInfo
         get
         {
             return Convert.ToString(queryCacheValue("baseboard", "Model"));
+        }
+    }
+
+    // unused
+    public static string SystemModel
+    {
+        get
+        {
+            return Convert.ToString(queryCacheValue("computer", "Model"));
         }
     }
 
