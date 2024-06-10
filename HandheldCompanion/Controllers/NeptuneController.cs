@@ -231,12 +231,12 @@ public class NeptuneController : SteamController
             Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = false;
         }
 
-        // TODO: why Z/Y swapped?
-        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 4.0f;
-        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 4.0f;
-        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 4.0f;
+        // Accelerometer has 16 bit resolution and a range of +/- 2g
+        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
-        // TODO: why Roll/Pitch swapped?
+        // Gyroscope has 16 bit resolution and a range of +/- 2000 dps
         float gX = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
         float gY = (float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
         float gZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw

@@ -203,12 +203,12 @@ namespace HandheldCompanion.Controllers
                 Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = false;
             }
 
-            // TODO: why Z/Y swapped?
+            // Accelerometer has 16 bit resolution and a range of +/- 2g
             float aX = (float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
             float aY = (float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
             float aZ = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
-            // TODO: why Roll/Pitch swapped?
+            // Gyroscope has 16 bit resolution and a range of +/- 2000 dps
             float gX = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
             float gY = (float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
             float gZ = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
