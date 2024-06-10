@@ -7,6 +7,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
+using Sentry;
+using Sentry.Profiling;
 using static HandheldCompanion.WinAPI;
 
 namespace HandheldCompanion;
@@ -24,6 +27,7 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        InitializeSentry();
         InitializeComponent();
     }
 
@@ -108,6 +112,8 @@ public partial class App : Application
         currentDomain.UnhandledException += CurrentDomain_UnhandledException;
         // Handler for exceptions in threads behind forms.
         System.Windows.Forms.Application.ThreadException += Application_ThreadException;
+        // Handler for exceptions in dispatcher.
+        DispatcherUnhandledException += App_DispatcherUnhandledException;
 
         MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
         MainWindow.Show();
@@ -115,23 +121,86 @@ public partial class App : Application
 
     private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
-        var ex = default(Exception);
-        ex = (Exception)e.Exception;
+        Exception ex = (Exception)e.Exception;
+
+        // send to sentry
+        if (SentrySdk.IsEnabled)
+            SentrySdk.CaptureException(ex);
+
         if (ex.InnerException != null)
-        {
             LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
-        }
+
         LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
     }
 
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        var ex = default(Exception);
-        ex = (Exception)e.ExceptionObject;
+        Exception ex = (Exception)e.ExceptionObject;
+
+        // send to sentry
+        if (SentrySdk.IsEnabled)
+            SentrySdk.CaptureException(ex);
+
         if (ex.InnerException != null)
-        {
             LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
-        }
+
         LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
+    }
+
+    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        Exception ex = (Exception)e.Exception;
+
+        // send to sentry
+        if (SentrySdk.IsEnabled)
+            SentrySdk.CaptureException(ex);
+
+        if (ex.InnerException != null)
+            LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
+
+        LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
+
+        // If you want to avoid the application from crashing:
+        e.Handled = true;
+    }
+
+    private void InitializeSentry()
+    {
+        string url = SentryConfig.DSN_URL;
+
+        if (!string.IsNullOrEmpty(url))
+        {            
+            SentrySdk.Init(options =>
+            {
+                // Tells which project in Sentry to send events to:
+                options.Dsn = url;
+
+                #if DEBUG
+                // When configuring for the first time, to see what the SDK is doing:
+                options.Debug = true;
+                #else
+                options.Debug = false;
+                #endif
+                
+                // Enable Global Mode since this is a client app
+                options.IsGlobalModeEnabled = true;
+
+                // Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
+                // We recommend adjusting this value in production.
+                options.TracesSampleRate = 1.0;
+                
+                // Sample rate for profiling, applied on top of othe TracesSampleRate,
+                // e.g. 0.2 means we want to profile 20 % of the captured transactions.
+                // We recommend adjusting this value in production.
+                options.ProfilesSampleRate = 1.0;
+
+                // Requires NuGet package: Sentry.Profiling
+                // Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.
+                options.AddIntegration(new ProfilingIntegration(
+                    // During startup, wait up to 500ms to profile the app startup code. This could make launching the app a bit slower so comment it out if your prefer profiling to start asynchronously
+                    TimeSpan.FromMilliseconds(500)
+                ));
+            });
+        }
     }
 }

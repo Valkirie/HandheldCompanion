@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -16,6 +16,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -51,6 +52,7 @@
       <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
       <SubType>Designer</SubType>
     </None>
+    <None Include="SentryConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -171,6 +173,8 @@
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
     <PackageReference Include="PrecisionTimer.NET" Version="2.2.5.3" />
+    <PackageReference Include="Sentry" Version="4.7.0" />
+    <PackageReference Include="Sentry.Profiling" Version="4.7.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
@@ -2350,5 +2354,13 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="if exist &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; (&#xA;    copy &quot;.\SentryConfig.cs&quot; &quot;.\SentryConfig.cs.bak&quot;&#xA;    copy &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; &quot;.\SentryConfig.cs&quot;&#xA;)" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if exist &quot;.\SentryConfig.cs.bak&quot; (&#xA;    copy &quot;.\SentryConfig.cs.bak&quot; &quot;.\SentryConfig.cs&quot;&#xA;    del &quot;.\SentryConfig.cs.bak&quot;&#xA;)" />
+  </Target>
 
 </Project>
