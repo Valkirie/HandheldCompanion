@@ -145,6 +145,46 @@
                             ValueChanged="NumberBox_TDPMax_ValueChanged" />
                     </Grid>
                 </Border>
+
+                <Border
+                    Name="BatteryChargeLimit"
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Collapsed">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE862;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit_Desc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_BatteryChargeLimit"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_BatteryChargeLimit_Toggled" />
+                    </Grid>
+                </Border>
             </ui:SimpleStackPanel>
 
             <!--  Dynamic lighting settings  -->
@@ -688,8 +728,8 @@
                     Name="SensorPlacementVisualisation"
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=cB_SensorSelection, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200" />
@@ -780,7 +820,8 @@
                     Name="SensorPlacementUpsideDown"
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=cB_SensorSelection, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -860,44 +901,6 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_TouchpadPassthrough_Toggled" />
-                    </Grid>
-                </Border>
-
-                <Border
-                    Name="BatteryChargeLimit"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE862;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_LegionBatteryChargeLimit}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.DevicePage_LegionBatteryChargeLimit_Desc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_LegionBatteryChargeLimit"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_LegionBatteryChargeLimit_Toggled" />
                     </Grid>
                 </Border>
 

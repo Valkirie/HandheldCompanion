@@ -272,7 +272,7 @@
     <Setting Name="LegionControllerGyroIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LegionBatteryChargeLimit" Type="System.Boolean" Scope="User">
+    <Setting Name="BatteryChargeLimit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

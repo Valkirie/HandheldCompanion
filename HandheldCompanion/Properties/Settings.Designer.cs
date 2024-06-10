@@ -1107,15 +1107,15 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LegionBatteryChargeLimit
+        public bool BatteryChargeLimit
         {
             get
             {
-                return ((bool)(this["LegionBatteryChargeLimit"]));
+                return ((bool)(this["BatteryChargeLimit"]));
             }
             set
             {
-                this["LegionBatteryChargeLimit"] = value;
+                this["BatteryChargeLimit"] = value;
             }
         }
     }

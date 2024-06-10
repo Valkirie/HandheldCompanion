@@ -27,46 +27,41 @@ public class SteamDeck : IDevice
     private static readonly IntPtr PDFV = new(0xFE700C00 + 0x4C);
     private static readonly IntPtr XBID = new(0xFE700300 + 0xBD);
     private static readonly IntPtr PDCT = new(0xFE700C00 + 0x01);
+    private static readonly IntPtr MCBL = new(0xFE700B00 + 0x9F);
 
-    /*
-     * SteamDeck LCD:
-     * F7A0107 (PD ver: 0xB030)
-     * F7A0110 (PD ver: 0xB030)
-     * F7A0113 (PD ver: 0xB030)
-     * F7A0115 (PD ver: 0xB030)
-     * F7A0116 (PD ver: 0xB030)
-     * F7A0119 (PD ver: 0xB030)
-     * 
-     * SteamDeck OLED:
-     * F7G0107 (PD ver: 0x1050)
-     */
-
-    public static readonly ushort[] SupportedFirmwares =
+    public struct DeviceVersion
     {
-        // Steam Deck - LCD version
-        0xB030,
-        // Steam Deck - OLED version
-        0x1050, // BIOS 107
-        0x1030, // BIOS 105
-        0x1010,
+        public ushort Firmware { get; set; }
+        public byte BoardID { get; set; }
+        public byte PDCS { get; set; }
+
+        public bool BatteryTempLE { get; set; }
+        public bool MaxBatteryCharge { get; set; }
+
+        public bool IsSupported(ushort deviceFirmware, byte deviceBoardID, byte devicePDCS)
+        {
+            if (Firmware != 0 && Firmware != deviceFirmware)
+                return false;
+            if (BoardID != 0 && BoardID != deviceBoardID)
+                return false;
+            if (PDCS != 0 && PDCS != devicePDCS)
+                return false;
+            return true;
+        }
     };
 
-    public static readonly byte[] SupportedBoardID =
+    private static readonly DeviceVersion[] deviceVersions =
     {
         // Steam Deck - LCD version
-        0x6,
-        0xA,        
+        new DeviceVersion() { Firmware = 0xB030, BoardID = 0x6, PDCS = 0 /* 0x2B */, BatteryTempLE = false },
+        new DeviceVersion() { Firmware = 0xB030, BoardID = 0xA, PDCS = 0 /* 0x2B */, BatteryTempLE = false, MaxBatteryCharge = true },
         // Steam Deck - OLED version
-        0x5,
+        new DeviceVersion() { Firmware = 0x1030, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true },
+        new DeviceVersion() { Firmware = 0x1050, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true }
     };
 
-    public static readonly byte[] SupportedPDCS =
-    {
-        // Steam Deck - LCD version
-        0x2B,
-        // Steam Deck - OLED version
-        0x2F,
-    };
+    public bool BatteryTempLE { get; set; }
+    public bool MaxBatteryCharge { get; set; }
 
     private InpOut inpOut;
 
@@ -91,6 +86,8 @@ public class SteamDeck : IDevice
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
         ));
+
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -109,10 +106,8 @@ public class SteamDeck : IDevice
     public static byte PDCS { get; private set; }
 
     public override bool IsOpen => inpOut is not null;
-
-    public override bool IsSupported =>
-        SupportedFirmwares.Contains(FirmwareVersion) &&
-        SupportedBoardID.Contains(BoardID);
+    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault((v) => v.IsSupported(FirmwareVersion, BoardID, PDCS));
+    public override bool IsSupported => SupportedDevice is not null;
 
     public override bool Open()
     {
@@ -200,5 +195,67 @@ public class SteamDeck : IDevice
 
         var data = BitConverter.GetBytes(rpm);
         inpOut.WriteMemory(FSLO_FSHI, data);
+    }
+
+    public override float ReadFanDuty()
+    {
+        var data = inpOut?.ReadMemory(FNRL_FNRH, 2);
+        if (data is null)
+            return 0.0f;
+        return BitConverter.ToUInt16(data);
+    }
+
+    public float GetBattTemperature()
+    {
+        var data = inpOut?.ReadMemory(BATH_BATL, 2);
+        if (data is null)
+            return 0;
+        int value = SupportedDevice?.BatteryTempLE == true ?
+            ((data[1] << 8) + data[0]) :
+            ((data[0] << 8) + data[1]);
+        return (float)(value - 0x0AAC) / 10.0f;
+    }
+
+    public int? GetMaxBatteryCharge()
+    {
+        if (SupportedDevice?.MaxBatteryCharge != true)
+            return null;
+        var data = inpOut?.ReadMemory(MCBL, 1);
+        if (data is null)
+            return null;
+        if (data[0] > 100)
+            return null;
+        return data[0];
+    }
+
+    public void SetMaxBatteryCharge(int chargeLimit)
+    {
+        if (SupportedDevice?.MaxBatteryCharge != true)
+            return;
+        if (chargeLimit < 0 || chargeLimit > 100)
+            return;
+        byte[] data = BitConverter.GetBytes(chargeLimit);
+        inpOut?.WriteMemory(MCBL, data);
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value)
+    {
+        switch (name)
+        {
+            case "BatteryChargeLimit":
+                {
+                    bool enabled = Convert.ToBoolean(value);
+                    switch (enabled)
+                    {
+                        case true:
+                            SetMaxBatteryCharge(80);
+                            break;
+                        case false:
+                            SetMaxBatteryCharge(100);
+                            break;
+                    }
+                }
+                break;
+        }
     }
 }

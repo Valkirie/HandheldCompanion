@@ -470,7 +470,7 @@ public class LegionGo : IDevice
     {
         switch (name)
         {
-            case "LegionBatteryChargeLimit":
+            case "BatteryChargeLimit":
                 SetBatteryChargeLimit(Convert.ToBoolean(value));
                 break;
         }

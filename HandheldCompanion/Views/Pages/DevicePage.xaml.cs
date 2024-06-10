@@ -37,6 +37,7 @@ namespace HandheldCompanion.Views.Pages
             DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
             LEDBrightness.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
             StackSecondColor.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+            BatteryChargeLimit.Visibility = IDevice.GetCurrent() is LegionGo || IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
 
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
@@ -45,7 +46,6 @@ namespace HandheldCompanion.Views.Pages
             SetControlEnabledAndVisible(LEDWheel, LEDLevel.Wheel);
             SetControlEnabledAndVisible(LEDGradient, LEDLevel.Gradient);
             SetControlEnabledAndVisible(LEDAmbilight, LEDLevel.Ambilight);
-
         }
 
         public DevicePage(string? Tag) : this()
@@ -505,12 +505,12 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
         }
 
-        private void Toggle_LegionBatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)
+        private void Toggle_BatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)
         {
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LegionBatteryChargeLimit", Toggle_LegionBatteryChargeLimit.IsOn);
+            SettingsManager.SetProperty("BatteryChargeLimit", Toggle_BatteryChargeLimit.IsOn);
         }
 
         private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
