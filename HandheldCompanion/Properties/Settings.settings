@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HandheldCompanion.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
@@ -229,6 +229,9 @@
     </Setting>
     <Setting Name="LEDSpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="LEDPresetIndex" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="SuspendedDevices" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />

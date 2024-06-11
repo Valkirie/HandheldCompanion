@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using HandheldCompanion.Models;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Timer = System.Timers.Timer;
 
@@ -154,6 +155,7 @@ public static class DynamicLightingManager
             case "LEDSettingsLevel":
             case "LEDSpeed":
             case "LEDUseSecondColor":
+            case "LEDPresetIndex":
                 RequestUpdate();
                 break;
 
@@ -192,6 +194,11 @@ public static class DynamicLightingManager
             Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
             Color LEDSecondColor = SettingsManager.GetColor("LEDSecondColor");
             bool useSecondColor = SettingsManager.GetBoolean("LEDUseSecondColor");
+            
+            // Get Preset
+            int LEDPresetIndex = SettingsManager.GetInt("LEDPresetIndex");
+            List<LEDPreset> presets = IDevice.GetCurrent().LEDPresets;
+            LEDPreset? selectedPreset = LEDPresetIndex < presets.Count ? presets[LEDPresetIndex] : null;
 
             switch (LEDSettingsLevel)
             {
@@ -228,6 +235,13 @@ public static class DynamicLightingManager
                         }
 
                         ambilightThreadDelay = (int)((double)defaultThreadDelay / 100.0d * LEDSpeed);
+                    }
+                    break;
+                case LEDLevel.LEDPreset:
+                    {
+                        StopAmbilight();
+
+                        IDevice.GetCurrent().SetLEDPreset(selectedPreset);
                     }
                     break;
             }

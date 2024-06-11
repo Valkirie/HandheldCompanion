@@ -25,6 +25,7 @@ public class DeviceUtils
         Wheel = 8,
         Gradient = 16,
         Ambilight = 32,
+        LEDPreset = 64,
     }
 
     public enum LEDDirection

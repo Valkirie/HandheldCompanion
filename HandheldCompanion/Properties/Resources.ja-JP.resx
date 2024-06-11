@@ -2393,13 +2393,13 @@
     <value>Effects</value>
   </data>
   <data name="DevicePage_DynamicLightingDesc" xml:space="preserve">
-    <value>Choose color themes and effects for your lighting</value>
+    <value>照明のカラーテーマと効果を選択する</value>
   </data>
   <data name="DevicePage_DynamicLighting_Ambilight" xml:space="preserve">
     <value>Ambilight</value>
   </data>
   <data name="DevicePage_DynamicLighting_SolidColor" xml:space="preserve">
-    <value>Solid Color</value>
+    <value>色</value>
   </data>
   <data name="DevicePage_DynamicLighting_Brightness" xml:space="preserve">
     <value>Brightness</value>
@@ -2913,5 +2913,44 @@
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset01" xml:space="preserve">
+    <value>モンスター覚醒</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset02" xml:space="preserve">
+    <value>フローイングライト</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset03" xml:space="preserve">
+    <value>日没残照</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset04" xml:space="preserve">
+    <value>カラフルなネオン</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset05" xml:space="preserve">
+    <value>ドリーミー</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset06" xml:space="preserve">
+    <value>サイバーパンク</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset07" xml:space="preserve">
+    <value>カラフル</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset08" xml:space="preserve">
+    <value>AOKクラシック</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset09" xml:space="preserve">
+    <value>OXPクラシック</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset10" xml:space="preserve">
+    <value>オーロラ</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
+    <value>暖かい陽</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
+    <value>プリセット効果</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_PresetsSelection" xml:space="preserve">
+    <value>プリセットを選択</value>
   </data>
 </root>

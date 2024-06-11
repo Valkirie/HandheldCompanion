@@ -15,6 +15,7 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
+using HandheldCompanion.Models;
 using WindowsInput.Events;
 using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -91,6 +92,7 @@ public abstract class IDevice
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
     public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
+    public List<LEDPreset> LEDPresets { get; protected set; } = [];
 
     protected const byte EC_OBF = 0x01;  // Output Buffer Full
     protected const byte EC_IBF = 0x02;  // Input Buffer Full
@@ -679,6 +681,11 @@ public abstract class IDevice
     }
 
     public virtual bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
+    {
+        return true;
+    }
+
+    public virtual bool SetLEDPreset(LEDPreset? preset)
     {
         return true;
     }

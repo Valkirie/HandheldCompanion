@@ -2372,16 +2372,16 @@
     <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
-    <value>Effects</value>
+    <value>燈光效果</value>
   </data>
   <data name="DevicePage_DynamicLightingDesc" xml:space="preserve">
-    <value>Choose color themes and effects for your lighting</value>
+    <value>選擇適合您的照明的顏色主題和效果</value>
   </data>
   <data name="DevicePage_DynamicLighting_Ambilight" xml:space="preserve">
     <value>Ambilight</value>
   </data>
   <data name="DevicePage_DynamicLighting_SolidColor" xml:space="preserve">
-    <value>Solid Color</value>
+    <value>純色</value>
   </data>
   <data name="DevicePage_DynamicLighting_Brightness" xml:space="preserve">
     <value>Brightness</value>
@@ -2895,5 +2895,44 @@
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset01" xml:space="preserve">
+    <value>怪獸初醒</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset02" xml:space="preserve">
+    <value>流光溢彩</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset03" xml:space="preserve">
+    <value>落日余暉</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset04" xml:space="preserve">
+    <value>七彩霓虹</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset05" xml:space="preserve">
+    <value>如夢似幻</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset06" xml:space="preserve">
+    <value>賽博朋克</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset07" xml:space="preserve">
+    <value>五彩斑斕</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset08" xml:space="preserve">
+    <value>AOK經典</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset09" xml:space="preserve">
+    <value>OXP經典</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset10" xml:space="preserve">
+    <value>綺麗極光</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
+    <value>冬日暖陽</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
+    <value>預設效果</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_PresetsSelection" xml:space="preserve">
+    <value>選擇效果</value>
   </data>
 </root>

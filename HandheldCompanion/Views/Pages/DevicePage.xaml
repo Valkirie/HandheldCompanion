@@ -370,6 +370,12 @@
                                         IsEnabled="False"
                                         Tag="32"
                                         Visibility="Collapsed" />
+                                    <ComboBoxItem
+                                        Name="LEDPreset"
+                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Presets}"
+                                        IsEnabled="False"
+                                        Tag="64"
+                                        Visibility="Collapsed" />
                                 </ComboBox>
 
                             </Grid>
@@ -613,6 +619,44 @@
                                             HorizontalAlignment="Right"
                                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                                             Toggled="Toggle_AmbilightVerticalBlackBarDetection_Toggled" />
+                                    </Grid>
+                                </ui:SimpleStackPanel>
+
+                                <!-- OEM Presets -->
+                                <ui:SimpleStackPanel
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=7}">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_PresetsSelection}"
+                                            TextWrapping="Wrap" />
+
+                                        <ComboBox
+                                            Name="LedPresetsComboBox"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            Margin="12,0,0,0"
+                                            SelectionChanged="LEDOEMPreset_SelectionChanged">
+                                            <ComboBox.ItemTemplate>
+                                                <ItemContainerTemplate>
+                                                    <WrapPanel>
+                                                        <Image Source="{Binding IconPath}" Width="25" Height="25" />
+                                                        <TextBlock Text="{Binding DisplayName}" Height="25" Margin="10,6,0,0" />
+                                                    </WrapPanel>
+                                                </ItemContainerTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                            
                                     </Grid>
                                 </ui:SimpleStackPanel>
 

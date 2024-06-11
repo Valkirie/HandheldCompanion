@@ -9,6 +9,7 @@ using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 using HandheldCompanion.Misc.Threading.Tasks;
+using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
 
 namespace HandheldCompanion.Devices;
@@ -35,6 +36,7 @@ public class OneXPlayerX1 : IDevice
     private LEDLevel LEDCurrentLevel;
     private Color LEDControllerColor;
     private Color LEDBackColor;
+    private LEDPreset? LEDPreset;
     
     public OneXPlayerX1()
     {
@@ -64,7 +66,22 @@ public class OneXPlayerX1 : IDevice
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
-        DynamicLightingCapabilities |= LEDLevel.Rainbow;
+        DynamicLightingCapabilities |= LEDLevel.LEDPreset;
+
+        LEDPresets = new List<LEDPreset>()
+        {
+            new ("LEDPreset_OneXPlayerX1_Preset01", "onexplayer/preset01.png", 0x0D),
+            new ("LEDPreset_OneXPlayerX1_Preset02", "onexplayer/preset02.png", 0x03),
+            new ("LEDPreset_OneXPlayerX1_Preset03", "onexplayer/preset03.png", 0x0B),
+            new ("LEDPreset_OneXPlayerX1_Preset04", "onexplayer/preset04.png", 0x05),
+            new ("LEDPreset_OneXPlayerX1_Preset05", "onexplayer/preset05.png", 0x07),
+            new ("LEDPreset_OneXPlayerX1_Preset06", "onexplayer/preset06.png", 0x09),
+            new ("LEDPreset_OneXPlayerX1_Preset07", "onexplayer/preset07.png", 0x0C),
+            new ("LEDPreset_OneXPlayerX1_Preset08", "onexplayer/preset08.png", 0x14),
+            new ("LEDPreset_OneXPlayerX1_Preset09", "onexplayer/preset09.png", 0x1E3),
+            new ("LEDPreset_OneXPlayerX1_Preset10", "onexplayer/preset10.png", 0x01),
+            new ("LEDPreset_OneXPlayerX1_Preset11", "onexplayer/preset11.png", 0x08),
+        };
 
         ECDetails = new ECDetails
         {
@@ -87,6 +104,9 @@ public class OneXPlayerX1 : IDevice
         LEDCurrentLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
         LEDControllerColor = SettingsManager.GetColor("LEDMainColor");
         LEDBackColor = SettingsManager.GetColor("LEDSecondColor");
+
+        int selectedIndex = SettingsManager.GetInt("LEDPresetIndex");
+        LEDPreset = selectedIndex < LEDPresets.Count ? LEDPresets[selectedIndex] : null;
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -235,18 +255,6 @@ public class OneXPlayerX1 : IDevice
                     .ToArray();
                 
                 break;
-            
-            case LEDLevel.Rainbow:
-                // OneXConsole "Flowing Light" effect as a rainbow effect
-                LEDOptionContoller = new byte[] { 0x03, 0x00, 0x00 };
-
-                // RGB data empty, repeats 54 times, fill accordingly
-                rgbDataController = Enumerable.Repeat((byte)0x00, 54).ToArray();
-
-                ledColorController.R = 0x00;
-                ledColorController.G = 0x00;
-                
-                break;
         }
 
         // Combine prefix, LED Option, RGB data, and closing byte (0x00)
@@ -269,6 +277,42 @@ public class OneXPlayerX1 : IDevice
 
             LEDBackColor = secondaryColor;
             LEDCurrentLevel = level;
+        }
+        
+        return true;
+    }
+
+    public override bool SetLEDPreset(LEDPreset? preset)
+    {
+        if (preset is not null)
+        {
+            byte[] prefix = { 0xFD, 0x3F };
+            byte[] positionController = { 0x00 };
+            byte[] LEDOptionContoller = { (byte)preset.Value, 0x00, 0x00 };
+            byte[] rgbDataController;
+            byte[] msgController;
+            
+            if (preset.Value == 0x1E3)
+            {
+                // OXP Class Special Format
+                LEDOptionContoller = new byte[] { 0xFE, 0x00, 0x00 };
+                rgbDataController = Enumerable.Repeat(new[] { (byte)0xB7, (byte)0x30, (byte)0x00 }, 18).SelectMany(colorBytes => colorBytes).ToArray();
+                msgController = prefix.Concat(positionController).Concat(LEDOptionContoller).Concat(rgbDataController).Concat(new byte[] { 0xB7, 0x30, 0x3F, 0xFD }).ToArray();
+            }
+            else
+            {
+                // Other Preset Fill 0x00
+                rgbDataController = Enumerable.Repeat((byte)0x00, 54).ToArray();
+                msgController = prefix.Concat(positionController).Concat(LEDOptionContoller).Concat(rgbDataController).Concat(new byte[] { 0x00, 0x00, 0x3F, 0xFD }).ToArray();
+            }
+            
+            if (preset != LEDPreset)
+            {
+                WriteToSerialPort(msgController);
+            }
+            
+            LEDPreset = preset;
+
         }
         
         return true;

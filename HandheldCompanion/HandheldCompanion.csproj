@@ -89,6 +89,17 @@
     <None Remove="Resources\device_valve_jupiter.png" />
     <None Remove="Resources\droix.png" />
     <None Remove="Resources\icon.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset01.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset02.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset03.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset04.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset05.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset06.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset07.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset08.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset09.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset10.png" />
+    <None Remove="Resources\led_presets\onexplayer\preset11.png" />
     <None Remove="Resources\MainBody.mtl" />
     <None Remove="Resources\MainBody.obj" />
     <None Remove="Resources\Screen.mtl" />
@@ -151,6 +162,17 @@
     <Resource Include="Resources\device_valve_jupiter.png" />
     <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset01.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset02.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset03.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset04.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset05.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset06.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset07.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset08.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset09.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset10.png" />
+    <Resource Include="Resources\led_presets\onexplayer\preset11.png" />
   </ItemGroup>
 
   <ItemGroup>

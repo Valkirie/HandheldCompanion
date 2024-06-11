@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Windows.UI.ViewManagement;
+using HandheldCompanion.Models;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
 
@@ -46,6 +47,7 @@ namespace HandheldCompanion.Views.Pages
             SetControlEnabledAndVisible(LEDWheel, LEDLevel.Wheel);
             SetControlEnabledAndVisible(LEDGradient, LEDLevel.Gradient);
             SetControlEnabledAndVisible(LEDAmbilight, LEDLevel.Ambilight);
+            SetControlEnabledAndVisible(LEDPreset, LEDLevel.LEDPreset);
         }
 
         public DevicePage(string? Tag) : this()
@@ -94,6 +96,20 @@ namespace HandheldCompanion.Views.Pages
                 SapientiaUsb.LegionTriggerDeadzone legionGoRightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex);
                 SliderRightTriggerDeadzone.Value = legionGoRightTrigger.Deadzone + 1;
                 SliderRightTriggerMargin.Value = legionGoRightTrigger.Margin + 1;
+            }
+
+            if (LedPresetsComboBox.ItemsSource is null)
+            {
+                // First Time
+                LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
+            }
+            else
+            {
+                // Refresh preset ComboBox when localization changed or re-enter page
+                int currentSelected = LedPresetsComboBox.SelectedIndex;
+                LedPresetsComboBox.ItemsSource = null;
+                LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
+                LedPresetsComboBox.SelectedIndex = currentSelected;
             }
         }
 
@@ -158,6 +174,12 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDUseSecondColor":
                         Toggle_UseSecondColor.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LEDPresetIndex":
+                        int presetIndex = Convert.ToInt32(value);
+                        if (presetIndex < IDevice.GetCurrent().LEDPresets.Count) {
+                            LedPresetsComboBox.SelectedIndex = presetIndex;
+                        }
                         break;
                     case "LegionControllerPassthrough":
                         Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
@@ -334,6 +356,15 @@ namespace HandheldCompanion.Views.Pages
             int level = Convert.ToInt32(comboBoxItem.Tag);
 
             SettingsManager.SetProperty("LEDSettingsLevel", level);
+        }
+        
+        private void LEDOEMPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            int selectedIndex = LedPresetsComboBox.SelectedIndex;
+            SettingsManager.SetProperty("LEDPresetIndex", selectedIndex);
         }
 
         private void MainColorPicker_ColorChanged(object sender, RoutedEventArgs e)

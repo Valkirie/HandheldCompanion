@@ -939,6 +939,18 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LEDPresetIndex {
+            get {
+                return ((int)(this["LEDPresetIndex"]));
+            }
+            set {
+                this["LEDPresetIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public global::System.Collections.Specialized.StringCollection SuspendedDevices {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedDevices"]));
