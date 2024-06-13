@@ -187,6 +187,9 @@ namespace HandheldCompanion.Views.Pages
                     case "LegionControllerGyroIndex":
                         ComboBox_GyroController.SelectedIndex = Convert.ToInt32(value);
                         break;
+                    case "LegionBatteryChargeLimit":
+                        Toggle_LegionBatteryChargeLimit.IsOn = Convert.ToBoolean(value);
+                        break;
                     case "SensorSelection":
                         {
                             int idx = Convert.ToInt32(value);
