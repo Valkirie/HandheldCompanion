@@ -115,16 +115,7 @@ public abstract class IDevice
     public double Tjmax = 95;
 
     // power profile(s)
-    public List<PowerProfile> DevicePowerProfiles = new List<PowerProfile>()
-    {
-        // Default profile
-        new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
-        {
-            Default = true,
-            Guid = Guid.Empty,
-            OSPowerMode = OSPowerMode.BetterPerformance
-        }
-    };
+    public List<PowerProfile> DevicePowerProfiles = new List<PowerProfile>();
 
     public List<double[]> fanPresets = new()
     {
@@ -158,6 +149,15 @@ public abstract class IDevice
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+
+        // add default power profile
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+        {
+            Default = true,
+            Guid = Guid.Empty,
+            OSPowerMode = OSPowerMode.BetterPerformance,
+            TDPOverrideValues = new double[] { this.nTDP[0], this.nTDP[1], this.nTDP[2] }
+        });
 
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;

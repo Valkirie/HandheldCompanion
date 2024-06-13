@@ -535,7 +535,10 @@ namespace HandheldCompanion.ViewModels
                 string name = string.Format(baseName, idx);
 
                 // Create the new power profile
-                PowerProfile powerProfile = new PowerProfile(name, Resources.PowerProfileManualDescription);
+                PowerProfile powerProfile = new PowerProfile(name, Resources.PowerProfileManualDescription)
+                {
+                    TDPOverrideValues = IDevice.GetCurrent().nTDP
+                };
 
                 // Update or create the profile
                 PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);

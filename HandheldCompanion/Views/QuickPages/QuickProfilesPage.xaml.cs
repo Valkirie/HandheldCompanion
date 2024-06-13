@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Inputs;
@@ -987,7 +988,10 @@ public partial class QuickProfilesPage : Page
         int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
 
         string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
-        PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription);
+        PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription)
+        {
+            TDPOverrideValues = IDevice.GetCurrent().nTDP
+        };
 
         PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
     }
