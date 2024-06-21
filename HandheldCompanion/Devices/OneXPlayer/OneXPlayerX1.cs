@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -20,7 +21,7 @@ public class OneXPlayerX1 : IDevice
 
     // Enable COM Port for LED Control
     public bool EnableSerialPort = true;
-    public string SerialPortName = "COM3";
+    public string SerialPortDeviceName = "CH340";
     public int SerialPortBaudRate = 115200;
     public Parity SerialPortParity = Parity.Even;
     public int SerialPortDataBits = 8;
@@ -125,10 +126,15 @@ public class OneXPlayerX1 : IDevice
         var success = base.Open();
         if (!success)
             return false;
-
-
+        
         if (EnableSerialPort)
         {
+            var devices = GetSerialDevices();
+            
+            USBDeviceInfo deviceInfo = devices.FirstOrDefault(a => a.Name.Contains(SerialPortDeviceName));
+            
+            var SerialPortName = Regex.Match(deviceInfo.Name, "COM\\d+").Value;
+            
             // Add the serial port name to be excluded for other instances
             SerialUSBIMU.SerialPortNamesInUse.Add(SerialPortName);
 
