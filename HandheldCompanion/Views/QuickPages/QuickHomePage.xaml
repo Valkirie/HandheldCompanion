@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickHome"
     Title="{l:Static resx:Resources.QuickHomePage_Title}"
@@ -35,7 +35,7 @@
                 Columns="4">
                 <UniformGrid.Resources>
                     <Style TargetType="{x:Type ui:SimpleStackPanel}">
-                        <Setter Property="Margin" Value="6" />
+                        <Setter Property="Margin" Value="3" />
                     </Style>
                 </UniformGrid.Resources>
             </UniformGrid>
@@ -46,6 +46,7 @@
             VerticalAlignment="Bottom"
             Spacing="6">
 
+            <!--
             <Button
                 Name="QuickDevicePage"
                 Height="66"
@@ -179,7 +180,7 @@
             </Button>
 
             <Button
-                Name="QuickSuspenderPage"
+                Name="QuickApplicationsPage"
                 Height="66"
                 Padding="15,12,12,12"
                 HorizontalAlignment="Stretch"
@@ -195,11 +196,11 @@
                             Glyph="&#xEC0A;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSuspenderPage_Title}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickApplicationsPage_Title}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{l:Static resx:Resources.QuickSuspenderPage_Desc}"
+                                Text="{l:Static resx:Resources.QuickApplicationsPage_Desc}"
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
@@ -211,7 +212,7 @@
                         FontSize="12"
                         Glyph="&#xE974;" />
                 </Grid>
-            </Button>
+            </Button>-->
 
             <Border
                 Padding="15,12,12,12"
@@ -220,8 +221,8 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" MinWidth="200" />
-                        <ColumnDefinition Width="8*" MinWidth="200" />
+                        <ColumnDefinition Width="2*" MinWidth="100" />
+                        <ColumnDefinition Width="8*" MinWidth="100" />
                     </Grid.ColumnDefinitions>
 
                     <ui:SimpleStackPanel VerticalAlignment="Center">
@@ -267,8 +268,8 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" MinWidth="200" />
-                        <ColumnDefinition Width="8*" MinWidth="200" />
+                        <ColumnDefinition Width="2*" MinWidth="100" />
+                        <ColumnDefinition Width="8*" MinWidth="100" />
                     </Grid.ColumnDefinitions>
 
                     <ui:SimpleStackPanel VerticalAlignment="Center">

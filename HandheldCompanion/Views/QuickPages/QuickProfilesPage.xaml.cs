@@ -141,7 +141,7 @@ public partial class QuickProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
+            DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
             desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
         });
     }
@@ -501,7 +501,7 @@ public partial class QuickProfilesPage : Page
                     }
 
                     // Framerate limit
-                    DesktopScreen? desktopScreen = MultimediaManager.GetDesktopScreen();
+                    DesktopScreen? desktopScreen = MultimediaManager.PrimaryDesktop;
                     if (desktopScreen is not null)
                         cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 

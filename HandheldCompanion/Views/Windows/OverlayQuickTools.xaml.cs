@@ -59,7 +59,7 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WS_EX_NOACTIVATE = 0x08000000;
     const int GWL_EXSTYLE = -20;
 
-    private HwndSource hwndSource;
+    public HwndSource hwndSource;
 
     private Dictionary<UIElement, CacheMode> cacheModes = new();
     private Timer WM_PAINT_TIMER;
@@ -76,7 +76,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public QuickPerformancePage performancePage;
     public QuickProfilesPage profilesPage;
     public QuickOverlayPage overlayPage;
-    public QuickSuspenderPage suspenderPage;
+    public QuickApplicationsPage applicationsPage;
 
     private static OverlayQuickTools CurrentWindow;
     private string preNavItemTag;
@@ -108,12 +108,12 @@ public partial class OverlayQuickTools : GamepadWindow
         homePage = new("quickhome");
         devicePage = new("quickdevice");
         profilesPage = new("quickprofiles");
-        suspenderPage = new("quicksuspender");
+        applicationsPage = new("quickapplications");
 
         _pages.Add("QuickHomePage", homePage);
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickProfilesPage", profilesPage);
-        _pages.Add("QuickSuspenderPage", suspenderPage);
+        _pages.Add("QuickApplicationsPage", applicationsPage);
     }
 
     public void LoadPages_MVVM()
@@ -138,15 +138,13 @@ public partial class OverlayQuickTools : GamepadWindow
             switch (name)
             {
                 case "QuickToolsLocation":
-                    {
-                        var QuickToolsLocation = Convert.ToInt32(value);
-                        UpdateLocation(QuickToolsLocation);
-                    }
+                    UpdateLocation();
                     break;
                 case "QuickToolsAutoHide":
-                    {
-                        AutoHide = Convert.ToBoolean(value);
-                    }
+                    AutoHide = Convert.ToBoolean(value);
+                    break;
+                case "QuickToolsScreen":
+                    UpdateLocation();
                     break;
             }
         });
@@ -154,37 +152,66 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void SystemManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
-        int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
-        UpdateLocation(QuickToolsLocation);
+        // ignore if we're not ready yet
+        if (!MultimediaManager.IsInitialized)
+            return;
+
+        UpdateLocation();
     }
 
-    private void UpdateLocation(int QuickToolsLocation)
+    private const double _MaxWidth = 960;
+    private const double _MaxHeight = 960;
+
+    private void UpdateLocation()
     {
+        // pull quicktools settings
+        int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
+        string FriendlyName = SettingsManager.GetString("QuickToolsScreen");
+
+        // Attempt to find the screen with the specified friendly name
+        DesktopScreen friendlyScreen = MultimediaManager.AllScreens[FriendlyName] ?? MultimediaManager.PrimaryDesktop;
+
+        // Find the corresponding Screen object
+        Screen targerScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
+
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (QuickToolsLocation)
             {
-                // top, left
-                // bottom, left
                 case 0:
-                case 2:
-                    this.SetWindowPosition(WindowPositions.Left, Screen.PrimaryScreen);
+                    MaxWidth = (int)Math.Min(_MaxWidth, targerScreen.WpfBounds.Width);
+                    MaxHeight = _MaxHeight;
+                    Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("QuickToolsWidth"));
+                    WindowStyle = WindowStyle.ToolWindow;
+
+                    this.SetWindowPosition(WindowPositions.BottomLeft, targerScreen);
                     Left += Margin.Left;
+                    Top -= Margin.Bottom;
                     break;
 
-                // top, right
-                // bottom, right
                 default:
                 case 1:
-                case 3:
-                    this.SetWindowPosition(WindowPositions.Right, Screen.PrimaryScreen);
+                    MaxWidth = (int)Math.Min(_MaxWidth, targerScreen.WpfBounds.Width);
+                    MaxHeight = _MaxHeight;
+                    Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("QuickToolsWidth"));
+                    WindowStyle = WindowStyle.ToolWindow;
+
+                    this.SetWindowPosition(WindowPositions.BottomRight, targerScreen);
                     Left -= Margin.Right;
+                    Top -= Margin.Bottom;
                     break;
+
+                case 2:
+                    MaxWidth = double.PositiveInfinity;
+                    MaxHeight = double.PositiveInfinity;
+                    WindowStyle = WindowStyle.None;
+
+                    this.SetWindowPosition(WindowPositions.Maximize, targerScreen);
+                    return;
             }
 
-            Height = MinHeight = MaxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - (2.0d * Margin.Top));
-            Top = Margin.Top;
+            Height = MinHeight = Math.Min(MaxHeight, targerScreen.WpfBounds.Height - Margin.Top);
         });
     }
 
@@ -398,6 +425,13 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
+        switch(WindowStyle)
+        {
+            case WindowStyle.ToolWindow:
+                SettingsManager.SetProperty("QuickToolsWidth", ActualWidth);
+                break;
+        }
+
         e.Cancel = !isClosing;
 
         if (!isClosing)
@@ -464,6 +498,9 @@ public partial class OverlayQuickTools : GamepadWindow
         // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
+        // NavView doesn't load any page by default, so load home page.
+        navView.SelectedItem = navView.MenuItems[1];
+
         // If navigation occurs on SelectionChanged, this isn't needed.
         // Because we use ItemInvoked to navigate, we need to call Navigate
         // here to load the home page.
@@ -494,7 +531,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
         navView.IsBackEnabled = ContentFrame.CanGoBack;
-        navHeader.Text = ((Page)((ContentControl)sender).Content).Title;
+        // navHeader.Text = ((Page)((ContentControl)sender).Content).Title;
     }
 
     private void UpdateTime(object? sender, EventArgs e)

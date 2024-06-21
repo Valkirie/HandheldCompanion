@@ -338,7 +338,7 @@
     <value>Alternar Suspensão de tarefa</value>
   </data>
   <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
-    <value>Suspender or resumir a aplicação em primeiro plano</value>
+    <value>Applications or resumir a aplicação em primeiro plano</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>Handheld Companion</value>
@@ -509,7 +509,7 @@
     <value>Resumir</value>
   </data>
   <data name="ProcessEx_processSuspend" xml:space="preserve">
-    <value>Suspender</value>
+    <value>Applications</value>
   </data>
   <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Configurações adicionais</value>
@@ -2526,11 +2526,11 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>Ações</value>
   </data>
-  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
-    <value>Suspender e resumir aplicativos</value>
+  <data name="QuickApplicationsPage_Desc" xml:space="preserve">
+    <value>Gerir aplicativos</value>
   </data>
-  <data name="QuickSuspenderPage_Title" xml:space="preserve">
-    <value>Suspender</value>
+  <data name="QuickApplicationsPage_Title" xml:space="preserve">
+    <value>Applications</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>Taxa de atualização</value>

@@ -12,6 +12,8 @@ public static class WinAPI
     public const UInt32 SWP_NOMOVE = 0x0002;
     public const UInt32 SWP_NOACTIVATE = 0x0010;
     public const UInt32 SWP_NOZORDER = 0x0004;
+    public const UInt32 SWP_SHOWWINDOW = 0x0040;
+    public const UInt32 SWP_FRAMECHANGED = 0x0020;
 
     public const int WM_ACTIVATEAPP = 0x001C;
     public const int WM_ACTIVATE = 0x0006;

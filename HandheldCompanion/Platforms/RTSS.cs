@@ -26,8 +26,9 @@ public class RTSS : IPlatform
     private const uint RTSSHOOKSFLAG_LIMITER_DISABLED = 4;
     private const string GLOBAL_PROFILE = "";
 
-    private readonly ConcurrentList<int> HookedProcessIds = new();
+    private int HookedProcessId = 0;
     private bool ProfileLoaded;
+    private AppEntry appEntry;
 
     private int RequestedFramerate;
 
@@ -129,7 +130,7 @@ public class RTSS : IPlatform
     {
         int frameLimit = 0;
 
-        DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
+        DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
 
         if (desktopScreen is not null)
         {
@@ -156,9 +157,10 @@ public class RTSS : IPlatform
             return;
 
         // hook new process
-        AppEntry appEntry = null;
+        appEntry = null;
 
         var ProcessId = processEx.ProcessId;
+        var foregroundId = ProcessId;
         if (ProcessId == 0)
             return;
 
@@ -171,6 +173,9 @@ public class RTSS : IPlatform
              * - RTSS was closed
              */
 
+            ProcessEx foreground = ProcessManager.GetForegroundProcess();
+            foregroundId = foreground is not null ? foreground.ProcessId : 0;
+
             try
             {
                 appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == ProcessId).FirstOrDefault();
@@ -182,34 +187,26 @@ public class RTSS : IPlatform
             catch { }
 
             await Task.Delay(1000);
-        } while (appEntry is null && ProcessManager.HasProcess(ProcessId) && KeepAlive);
+        } while (appEntry is null && foregroundId == ProcessId && KeepAlive);
 
         if (appEntry is null)
             return;
 
+        // set HookedProcessId
+        HookedProcessId = appEntry.ProcessId;
+
         // raise event
         Hooked?.Invoke(appEntry);
-
-        // we're already hooked into this process
-        if (HookedProcessIds.Contains(ProcessId))
-            return;
-
-        // store into array
-        HookedProcessIds.Add(ProcessId);
     }
 
     private void ProcessManager_ProcessStopped(ProcessEx processEx)
     {
         var ProcessId = processEx.ProcessId;
-        if (ProcessId == 0)
+        if (ProcessId != HookedProcessId)
             return;
 
-        // we're not hooked into this process
-        if (!HookedProcessIds.Contains(ProcessId))
-            return;
-
-        // remove from array
-        HookedProcessIds.Remove(ProcessId);
+        // clear HookedProcessId
+        HookedProcessId = 0;
 
         // raise event
         Unhooked?.Invoke(ProcessId);
@@ -242,16 +239,49 @@ public class RTSS : IPlatform
             StartProcess();
     }
 
-    public double GetFramerate(int processId)
+    public bool HasHook()
+    {
+        return HookedProcessId != 0;
+    }
+
+    public void RefreshAppEntry()
+    {
+        // refresh appEntry
+        var processId = appEntry.ProcessId;
+        appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == processId);
+    }
+
+    public double GetFramerate(bool refresh = false)
     {
         try
         {
-            var appE = OSD.GetAppEntries()
-                .Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == processId);
-            if (appE is null)
+            if (refresh)
+                RefreshAppEntry();
+
+            if (appEntry is null)
                 return 0.0d;
 
-            return (double)appE.StatFrameTimeBufFramerate / 10;
+            return (double)appEntry.StatFrameTimeBufFramerate / 10;
+        }
+        catch (InvalidDataException)
+        { }
+        catch (FileNotFoundException)
+        { }
+
+        return 0.0d;
+    }
+
+    public double GetFrametime(bool refresh = false)
+    {
+        try
+        {
+            if (refresh)
+                RefreshAppEntry();
+
+            if (appEntry is null)
+                return 0.0d;
+
+            return (double)appEntry.InstantaneousFrameTime / 1000;
         }
         catch (InvalidDataException)
         { }

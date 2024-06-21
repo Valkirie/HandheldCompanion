@@ -2500,11 +2500,11 @@
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>Actions</value>
   </data>
-  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
-    <value>Suspend and resume apps</value>
+  <data name="QuickApplicationsPage_Desc" xml:space="preserve">
+    <value>Manage applications</value>
   </data>
-  <data name="QuickSuspenderPage_Title" xml:space="preserve">
-    <value>Suspender</value>
+  <data name="QuickApplicationsPage_Title" xml:space="preserve">
+    <value>Applications</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>Refresh rate</value>

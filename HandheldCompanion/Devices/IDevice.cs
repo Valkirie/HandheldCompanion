@@ -525,6 +525,7 @@ public abstract class IDevice
         // get the actual handheld device
         device.ManufacturerName = ManufacturerName;
         device.ProductName = ProductName;
+        device.Processor = Processor;
 
         return device;
     }

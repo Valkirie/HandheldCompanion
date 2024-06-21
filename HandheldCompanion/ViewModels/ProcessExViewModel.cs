@@ -1,4 +1,6 @@
 ﻿using HandheldCompanion.Controls;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Windows;
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -51,6 +53,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public ICommand KillProcessCommand { get; private set; }
+        public ICommand BringProcessCommand { get; private set; }
 
         public ProcessExViewModel(ProcessEx process)
         {
@@ -59,6 +62,20 @@ namespace HandheldCompanion.ViewModels
             KillProcessCommand = new DelegateCommand(() =>
             {
                 Process.Process?.Kill();
+            });
+
+            BringProcessCommand = new DelegateCommand(() =>
+            {
+                // Get the screen where the reference window is located
+                var screen = System.Windows.Forms.Screen.FromHandle(OverlayQuickTools.GetCurrent().hwndSource.Handle);
+
+                // Get the working area of the screen
+                var workingArea = screen.WorkingArea;
+
+                // Move the window to the new screen and maximize it
+                ProcessUtils.ShowWindow(Process.MainWindowHandle, 9);
+                WinAPI.SetWindowPos(Process.MainWindowHandle, IntPtr.Zero, workingArea.X, workingArea.Y, workingArea.Width, workingArea.Height, WinAPI.SWP_SHOWWINDOW | WinAPI.SWP_FRAMECHANGED);
+                ProcessUtils.ShowWindow(Process.MainWindowHandle, 3);
             });
         }
 
@@ -80,6 +97,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsSuspended));
             OnPropertyChanged(nameof(FullScreenOptimization));
             OnPropertyChanged(nameof(HighDPIAware));
+            OnPropertyChanged(nameof(Title));
         }
 
         public override void Dispose()

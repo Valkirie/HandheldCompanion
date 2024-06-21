@@ -383,8 +383,8 @@ public static class ProcessManager
 
             case "rw.exe": // Used to change TDP
             case "kx.exe": // Used to change TDP
-            case "devenv.exe": // Visual Studio
-            case "msedge.exe": // Edge has energy awareness
+            // case "devenv.exe": // Visual Studio
+            // case "msedge.exe": // Edge has energy awareness
             case "webviewhost.exe":
             case "taskmgr.exe":
             case "procmon.exe":

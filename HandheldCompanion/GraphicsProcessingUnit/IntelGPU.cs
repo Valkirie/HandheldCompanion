@@ -122,9 +122,19 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             }, TelemetryData);
         }
 
+        public override bool HasClock()
+        {
+            return TelemetryData.GpuCurrentClockFrequencySupported;
+        }
+
         public override float GetClock()
         {
             return (float)TelemetryData.GpuCurrentClockFrequencyValue;
+        }
+
+        public override bool HasLoad()
+        {
+            return TelemetryData.GlobalActivitySupported;
         }
 
         public override float GetLoad()
@@ -132,9 +142,19 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return (float)TelemetryData.GlobalActivityValue;
         }
 
+        public override bool HasPower()
+        {
+            return TelemetryData.GpuEnergySupported;
+        }
+
         public override float GetPower()
         {
             return (float)TelemetryData.GpuEnergyValue;
+        }
+
+        public override bool HasTemperature()
+        {
+            return TelemetryData.GpuCurrentTemperatureSupported;
         }
 
         public override float GetTemperature()
@@ -149,6 +169,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 return;
 
             IsInitialized = true;
+
+            // pull telemetry once
+            TelemetryData = GetTelemetry();
 
             TelemetryTimer = new Timer(TelemetryInterval);
             TelemetryTimer.AutoReset = true;

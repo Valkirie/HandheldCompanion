@@ -4,14 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="QuickTools"
-    Width="640"
-    Height="720"
-    MinWidth="640"
-    MinHeight="450"
-    MaxWidth="640"
+    Width="450"
+    MinWidth="450"
+    MaxWidth="960"
+    MaxHeight="960"
     Margin="12"
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -28,56 +28,120 @@
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
 
-    <ui:NavigationView
-        Name="navView"
-        Margin="0,-30,0,0"
-        BackRequested="navView_BackRequested"
-        IsPaneToggleButtonVisible="False"
-        IsSettingsVisible="False"
-        ItemInvoked="navView_ItemInvoked"
-        Loaded="navView_Loaded"
-        PaneDisplayMode="Top"
-        SelectionFollowsFocus="Enabled">
+    <Grid>
+        <DockPanel Margin="12,2,0,0" VerticalAlignment="Top">
+            <ui:FontIcon
+                Name="BatteryIndicatorIcon"
+                VerticalAlignment="Center"
+                FontSize="30" />
+            <TextBlock
+                Name="BatteryIndicatorPercentage"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center"
+                Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock
+                Name="BatteryIndicatorLifeRemaining"
+                Margin="4,0,0,0"
+                VerticalAlignment="Center"
+                Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock
+                Name="Time"
+                Margin="12,0,0,0"
+                VerticalAlignment="Center"
+                Style="{StaticResource BodyTextBlockStyle}" />
+        </DockPanel>
 
-        <ui:NavigationView.Header>
-            <TextBlock x:Name="navHeader" Margin="-34,-30,0,0" />
-        </ui:NavigationView.Header>
+        <ui:NavigationView
+            Name="navView"
+            Margin="0,31,0,0"
+            BackRequested="navView_BackRequested"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="False"
+            IsSettingsVisible="False"
+            ItemInvoked="navView_ItemInvoked"
+            Loaded="navView_Loaded"
+            PaneDisplayMode="Top"
+            SelectionFollowsFocus="Enabled"
+            Style="{StaticResource NavigationViewStyle1}">
 
-        <ui:NavigationView.FooterMenuItems>
-            <ui:NavigationViewItem IsEnabled="False">
-                <DockPanel Height="40">
-                    <ui:FontIcon
-                        Name="BatteryIndicatorIcon"
-                        VerticalAlignment="Center"
-                        FontSize="30" />
-                    <TextBlock
-                        Name="BatteryIndicatorPercentage"
-                        Margin="2,0,0,0"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BodyTextBlockStyle}" />
-                    <TextBlock
-                        Name="BatteryIndicatorLifeRemaining"
-                        Margin="4,0,0,0"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BodyTextBlockStyle}" />
-                    <TextBlock
-                        Name="Time"
-                        Margin="12,0,0,0"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BodyTextBlockStyle}" />
-                </DockPanel>
-            </ui:NavigationViewItem>
-            <ui:NavigationViewItem IsEnabled="False" />
-        </ui:NavigationView.FooterMenuItems>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem IsEnabled="False">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE760;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-        <Grid>
-            <ui:ContentDialog Name="ContentDialog" />
-            <common:TouchScrollViewer
-                x:Name="scrollViewer"
-                Margin="0,-20,0,12"
-                PanningMode="VerticalOnly">
-                <ui:Frame Name="ContentFrame" />
-            </common:TouchScrollViewer>
-        </Grid>
-    </ui:NavigationView>
+                <ui:NavigationViewItem
+                    Name="navHome"
+                    Content="{l:Static resx:Resources.QuickHomePage_Title}"
+                    FontSize="12"
+                    Style="{StaticResource NavigationViewItemStyle1}"
+                    Tag="QuickHomePage">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem
+                    Name="navDevice"
+                    Content="{l:Static resx:Resources.QuickDevicePage_Title}"
+                    FontSize="12"
+                    Style="{StaticResource NavigationViewItemStyle1}"
+                    Tag="QuickDevicePage">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70A;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem
+                    Name="navProfiles"
+                    Content="{l:Static resx:Resources.QuickProfilesPage_Title}"
+                    FontSize="12"
+                    Style="{StaticResource NavigationViewItemStyle1}"
+                    Tag="QuickProfilesPage">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE77B;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem
+                    Name="navOverlay"
+                    Content="{l:Static resx:Resources.QuickOverlayPage_Title}"
+                    FontSize="12"
+                    Style="{StaticResource NavigationViewItemStyle1}"
+                    Tag="QuickOverlayPage">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem
+                    Name="navApplications"
+                    Content="{l:Static resx:Resources.QuickApplicationsPage_Title}"
+                    FontSize="12"
+                    Style="{StaticResource NavigationViewItemStyle1}"
+                    Tag="QuickApplicationsPage">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem IsEnabled="False">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE761;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+
+            <Grid>
+                <ui:ContentDialog Name="ContentDialog" />
+                <common:TouchScrollViewer
+                    x:Name="scrollViewer"
+                    Margin="0,12,0,12"
+                    PanningMode="VerticalOnly">
+                    <ui:Frame Name="ContentFrame" />
+                </common:TouchScrollViewer>
+            </Grid>
+        </ui:NavigationView>
+    </Grid>
 </common:GamepadWindow>

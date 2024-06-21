@@ -43,6 +43,7 @@ public partial class QuickDevicePage : Page
         // manage events
         NightLight.Toggled += NightLight_Toggled;
 
+        // why is that part of a timer ?
         radioTimer = new(1000);
         radioTimer.Elapsed += RadioTimer_Elapsed;
         radioTimer.Start();
@@ -58,7 +59,7 @@ public partial class QuickDevicePage : Page
         // Go to profile integer scaling resolution
         if (profile.IntegerScalingEnabled)
         {
-            DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
+            DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
             var profileResolution = desktopScreen?.screenDividers.FirstOrDefault(d => d.divider == profile.IntegerScalingDivider);
             if (profileResolution is not null)
             {
@@ -133,16 +134,26 @@ public partial class QuickDevicePage : Page
             // Get the Bluetooth radio
             radios = await Radio.GetRadiosAsync();
 
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
+                if (radios is null)
+                {
+                    WifiToggle.IsEnabled = false;
+                    BluetoothToggle.IsEnabled = false;
+                    return;
+                }
+
+                Radio? wifiRadio = radios.FirstOrDefault(radio => radio.Kind == RadioKind.WiFi);
+                Radio? bluetoothRadio = radios.FirstOrDefault(radio => radio.Kind == RadioKind.Bluetooth);
+
                 // WIFI
-                WifiToggle.IsEnabled = radios.Where(radio => radio.Kind == RadioKind.WiFi).Any();
-                WifiToggle.IsOn = radios.Where(radio => radio.Kind == RadioKind.WiFi && radio.State == RadioState.On).Any();
+                WifiToggle.IsEnabled = wifiRadio != null;
+                WifiToggle.IsOn = wifiRadio?.State == RadioState.On;
 
                 // Bluetooth
-                BluetoothToggle.IsEnabled = radios.Where(radio => radio.Kind == RadioKind.Bluetooth).Any();
-                BluetoothToggle.IsOn = radios.Where(radio => radio.Kind == RadioKind.Bluetooth && radio.State == RadioState.On).Any();
+                BluetoothToggle.IsEnabled = bluetoothRadio != null;
+                BluetoothToggle.IsOn = bluetoothRadio?.State == RadioState.On;
             });
         }).Start();
     }
@@ -163,7 +174,7 @@ public partial class QuickDevicePage : Page
 
         ComboBoxResolution.SelectedItem = resolution;
 
-        int screenFrequency = MultimediaManager.GetDesktopScreen().GetCurrentFrequency();
+        int screenFrequency = MultimediaManager.PrimaryDesktop.GetCurrentFrequency();
         foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
         {
             if (comboBoxItem.Tag is int frequency)
@@ -183,7 +194,7 @@ public partial class QuickDevicePage : Page
             return;
 
         ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
-        int screenFrequency = MultimediaManager.GetDesktopScreen().GetCurrentFrequency();
+        int screenFrequency = MultimediaManager.PrimaryDesktop.GetCurrentFrequency();
 
         ComboBoxFrequency.Items.Clear();
         foreach (int frequency in resolution.Frequencies.Keys)
@@ -223,7 +234,7 @@ public partial class QuickDevicePage : Page
         int frequency = (int)((ComboBoxItem)ComboBoxFrequency.SelectedItem).Tag;
 
         // update current screen resolution
-        DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
+        DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
 
         if (desktopScreen.devMode.dmPelsWidth == resolution.Width &&
             desktopScreen.devMode.dmPelsHeight == resolution.Height &&
@@ -237,7 +248,7 @@ public partial class QuickDevicePage : Page
     public void SetResolution(ScreenResolution resolution)
     {
         // update current screen resolution
-        MultimediaManager.SetResolution(resolution.Width, resolution.Height, MultimediaManager.GetDesktopScreen().GetCurrentFrequency(), resolution.BitsPerPel);
+        MultimediaManager.SetResolution(resolution.Width, resolution.Height, MultimediaManager.PrimaryDesktop.GetCurrentFrequency(), resolution.BitsPerPel);
     }
 
     private void WIFIToggle_Toggled(object sender, RoutedEventArgs e)

@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Settings"
     Title="{l:Static resx:Resources.SettingsPage_Settings}"
@@ -504,7 +504,47 @@
                             SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
                             <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationLeft}" />
                             <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationRight}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationMaximized}" />
                         </ComboBox>
+                    </Grid>
+                </Border>
+
+                <!--  Application backdrop  -->
+                <Border
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE790;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsScreen}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.SettingsPage_QuickToolsScreenDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="cB_QuickToolsScreen"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="cB_QuickToolsScreen_SelectionChanged" />
                     </Grid>
                 </Border>
 

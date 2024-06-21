@@ -127,17 +127,28 @@ public struct ScreenRotation
 public class DesktopScreen
 {
     public DisplayDevice devMode;
-    public Screen PrimaryScreen;
+    public Screen screen;
     public string DevicePath;
     public string FriendlyName;
+    public bool IsPrimary => screen.Primary;
+
     public List<ScreenResolution> screenResolutions = new();
     public List<ScreenDivider> screenDividers = new();
 
     private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = new();
 
-    public DesktopScreen(Screen primaryScreen)
+    public DesktopScreen(Screen screen)
     {
-        PrimaryScreen = primaryScreen;
+        this.screen = screen;
+
+        devMode = GetDisplay(screen.DeviceName);
+        FriendlyName = GetDisplayFriendlyName(screen.DeviceName);
+        DevicePath = GetDisplayPath(screen.DeviceName);
+    }
+
+    public override string ToString()
+    {
+        return FriendlyName; 
     }
 
     public bool HasResolution(ScreenResolution resolution)
@@ -145,13 +156,13 @@ public class DesktopScreen
         return screenResolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
     }
 
-    public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
+    public ScreenResolution GetResolution()
     {
         // todo: improve me
         // that's a dirty way to manage native portrait display or rotated display
-        ScreenResolution resolution = screenResolutions.FirstOrDefault(a => a.Width == dmPelsWidth && a.Height == dmPelsHeight);
+        ScreenResolution resolution = screenResolutions.FirstOrDefault(a => a.Width == devMode.dmPelsWidth && a.Height == devMode.dmPelsHeight);
         if (resolution is null)
-            resolution = screenResolutions.FirstOrDefault(a => a.Width == dmPelsHeight && a.Height == dmPelsWidth);
+            resolution = screenResolutions.FirstOrDefault(a => a.Width == devMode.dmPelsHeight && a.Height == devMode.dmPelsWidth);
 
         return resolution;
     }

@@ -3,16 +3,16 @@ using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.QuickPages;
 
-public partial class QuickSuspenderPage : Page
+public partial class QuickApplicationsPage : Page
 {
-    public QuickSuspenderPage(string Tag) : this()
+    public QuickApplicationsPage(string Tag) : this()
     {
         this.Tag = Tag;
     }
 
-    public QuickSuspenderPage()
+    public QuickApplicationsPage()
     {
-        DataContext = new QuickSuspenderPageViewModel();
+        DataContext = new QuickApplicationsPageViewModel();
         InitializeComponent();
     }
 }

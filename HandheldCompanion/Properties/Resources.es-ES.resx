@@ -329,10 +329,10 @@
     <value>Pulsa las teclas: Windows + Tab</value>
   </data>
   <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
-    <value>Toggle Suspender</value>
+    <value>Toggle Applications</value>
   </data>
   <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
-    <value>Suspender o reanudar la aplicación en primer plano</value>
+    <value>Applications o reanudar la aplicación en primer plano</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>Handheld Companion</value>
@@ -503,7 +503,7 @@
     <value>Reanudar</value>
   </data>
   <data name="ProcessEx_processSuspend" xml:space="preserve">
-    <value>Suspender</value>
+    <value>Applications</value>
   </data>
   <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Opciones adicionales</value>
@@ -2518,11 +2518,11 @@
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>Actions</value>
   </data>
-  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
-    <value>Suspend and resume apps</value>
+  <data name="QuickApplicationsPage_Desc" xml:space="preserve">
+    <value>Manage applications</value>
   </data>
-  <data name="QuickSuspenderPage_Title" xml:space="preserve">
-    <value>Suspender</value>
+  <data name="QuickApplicationsPage_Title" xml:space="preserve">
+    <value>Applications</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>Refresh rate</value>

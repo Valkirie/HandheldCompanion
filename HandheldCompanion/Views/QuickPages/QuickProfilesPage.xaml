@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickProfiles"
     Title="{l:Static resx:Resources.QuickProfilesPage_Title}"
@@ -18,33 +18,28 @@
 
     <ui:SimpleStackPanel Margin="0,6,0,6" Spacing="10">
 
-        <Grid>
-            <!--  Header  -->
-            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+        <!--  Header  -->
+        <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+            <DockPanel>
+                <Image
+                    Name="ProfileIcon"
+                    Width="24"
+                    Height="24"
+                    HorizontalAlignment="Center" />
 
-                <Grid>
-                    <DockPanel>
-                        <Image
-                            Name="ProfileIcon"
-                            Width="24"
-                            Height="24"
-                            HorizontalAlignment="Center" />
-
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock
-                                Name="ProcessName"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.QuickProfilesPage_Waiting}" />
-                            <TextBlock
-                                Name="ProcessPath"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
-                    </DockPanel>
-                </Grid>
-            </Border>
-        </Grid>
+                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                    <TextBlock
+                        Name="ProcessName"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="{l:Static resx:Resources.QuickProfilesPage_Waiting}" />
+                    <TextBlock
+                        Name="ProcessPath"
+                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        TextWrapping="Wrap" />
+                </ui:SimpleStackPanel>
+            </DockPanel>
+        </Border>
 
         <Grid Name="StackProfileToggle">
             <!--  Header  -->
@@ -109,8 +104,8 @@
             Visibility="Collapsed">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*" MinWidth="200" />
-                    <ColumnDefinition Width="5*" MinWidth="200" />
+                    <ColumnDefinition Width="5*" MinWidth="100" />
+                    <ColumnDefinition Width="5*" MinWidth="100" />
                 </Grid.ColumnDefinitions>
                 <DockPanel>
                     <ui:FontIcon
@@ -147,8 +142,8 @@
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" />
-                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel Margin="0,12,12,12">

@@ -2500,11 +2500,11 @@
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>快速動作</value>
   </data>
-  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
-    <value>暫停或恢復應用</value>
+  <data name="QuickApplicationsPage_Desc" xml:space="preserve">
+    <value>管理应用程序</value>
   </data>
-  <data name="QuickSuspenderPage_Title" xml:space="preserve">
-    <value>暫停器</value>
+  <data name="QuickApplicationsPage_Title" xml:space="preserve">
+    <value>应用</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>螢幕刷新率</value>

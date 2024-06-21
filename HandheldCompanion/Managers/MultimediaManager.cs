@@ -17,7 +17,9 @@ namespace HandheldCompanion.Managers;
 
 public static class MultimediaManager
 {
-    private static DesktopScreen desktopScreen;
+    public static Dictionary<string, DesktopScreen> AllScreens = new();
+    public static DesktopScreen PrimaryDesktop;
+
     private static ScreenRotation screenOrientation;
 
     private static readonly MMDeviceEnumerator DevEnum;
@@ -188,19 +190,15 @@ public static class MultimediaManager
 
     private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
-        // get primary screen
-        Screen PrimaryScreen = Screen.PrimaryScreen;
+        // temporary array to store all current screens
+        Dictionary<string, DesktopScreen> desktopScreens = new();
 
-        if (desktopScreen is null || desktopScreen.PrimaryScreen.DeviceName != PrimaryScreen.DeviceName)
+        foreach(Screen screen in Screen.AllScreens)
         {
-            // update current desktop screen
-            desktopScreen = new DesktopScreen(PrimaryScreen);
-            desktopScreen.devMode = GetDisplay(PrimaryScreen.DeviceName);
-            desktopScreen.FriendlyName = GetDisplayFriendlyName(PrimaryScreen.DeviceName);
-            desktopScreen.DevicePath = GetDisplayPath(PrimaryScreen.DeviceName);
+            DesktopScreen desktopScreen = new(screen);
 
             // pull resolutions details
-            List<DisplayDevice> resolutions = GetResolutions(desktopScreen.PrimaryScreen.DeviceName);
+            List<DisplayDevice> resolutions = GetResolutions(desktopScreen.screen.DeviceName);
             foreach (DisplayDevice mode in resolutions)
             {
                 ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
@@ -219,15 +217,42 @@ public static class MultimediaManager
             // sort resolutions
             desktopScreen.SortResolutions();
 
-            // raise event
-            PrimaryScreenChanged?.Invoke(desktopScreen);
-        }
-        else
-        {
-            // update current desktop resolution
-            desktopScreen.devMode = GetDisplay(desktopScreen.PrimaryScreen.DeviceName);
+            // add to temporary array
+            desktopScreens.Add(desktopScreen.FriendlyName, desktopScreen);
         }
 
+        // get refreshed primary screen (can't be null)
+        DesktopScreen newPrimary = desktopScreens.Values.Where(a => a.IsPrimary).FirstOrDefault();
+
+        // looks like we have a new primary screen
+        if (PrimaryDesktop is null || !PrimaryDesktop.FriendlyName.Equals(newPrimary.FriendlyName))
+        {
+            // raise event (New primary display)
+            PrimaryScreenChanged?.Invoke(newPrimary);
+        }
+
+        // set or update current primary
+        PrimaryDesktop = newPrimary;
+
+        // raise event (New screen detected)
+        foreach(DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.FriendlyName)))
+            ScreenConnected?.Invoke(desktop);
+
+        // raise event (New screen detected)
+        foreach (DesktopScreen desktop in AllScreens.Values.Where(a => !desktopScreens.ContainsKey(a.FriendlyName)))
+            ScreenDisconnected?.Invoke(desktop);
+
+        // clear array and transfer screens
+        AllScreens.Clear();
+        foreach (DesktopScreen desktop in desktopScreens.Values)
+            AllScreens.Add(desktop.FriendlyName, desktop);
+
+        // raise event (Display settings were updated)
+        ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
+        if (screenResolution is not null)
+            DisplaySettingsChanged?.Invoke(PrimaryDesktop, screenResolution);
+
+        /*
         ScreenRotation.Rotations oldOrientation = screenOrientation.rotation;
 
         if (!IsInitialized)
@@ -245,18 +270,9 @@ public static class MultimediaManager
         }
 
         // raise event
-        ScreenResolution screenResolution = desktopScreen.GetResolution(desktopScreen.devMode.dmPelsWidth, desktopScreen.devMode.dmPelsHeight);
-        if (screenResolution is not null)
-            DisplaySettingsChanged?.Invoke(desktopScreen, screenResolution);
-
-        // raise event
         if (oldOrientation != screenOrientation.rotation)
             DisplayOrientationChanged?.Invoke(screenOrientation);
-    }
-
-    public static DesktopScreen GetDesktopScreen()
-    {
-        return desktopScreen;
+        */
     }
 
     public static ScreenRotation GetScreenOrientation()
@@ -273,7 +289,7 @@ public static class MultimediaManager
         SystemEvents_DisplaySettingsChanged(null, null);
 
         // get native resolution
-        ScreenResolution nativeResolution = desktopScreen.screenResolutions.First();
+        ScreenResolution nativeResolution = PrimaryDesktop.screenResolutions.First();
 
         // get integer scaling dividers
         int idx = 1;
@@ -281,11 +297,11 @@ public static class MultimediaManager
         while (true)
         {
             int height = nativeResolution.Height / idx;
-            ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(r => r.Height == height);
+            ScreenResolution? dividedRes = PrimaryDesktop.screenResolutions.FirstOrDefault(r => r.Height == height);
             if (dividedRes is null)
                 break;
 
-            desktopScreen.screenDividers.Add(new(idx, dividedRes));
+            PrimaryDesktop.screenDividers.Add(new(idx, dividedRes));
             idx++;
         }
 
@@ -568,6 +584,12 @@ public static class MultimediaManager
 
     public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
     public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
+
+    public static event ScreenConnectedEventHandler ScreenConnected;
+    public delegate void ScreenConnectedEventHandler(DesktopScreen screen);
+
+    public static event ScreenDisconnectedEventHandler ScreenDisconnected;
+    public delegate void ScreenDisconnectedEventHandler(DesktopScreen screen);
 
     public static event DisplayOrientationChangedEventHandler DisplayOrientationChanged;
     public delegate void DisplayOrientationChangedEventHandler(ScreenRotation rotation);

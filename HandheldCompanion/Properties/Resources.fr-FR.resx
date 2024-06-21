@@ -310,7 +310,7 @@
     <value>Press this key: Windows + Tab</value>
   </data>
   <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
-    <value>Toggle Suspender</value>
+    <value>Toggle Applications</value>
   </data>
   <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
     <value>Suspend or resume the foreground application</value>
@@ -2510,11 +2510,11 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>Actions</value>
   </data>
-  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
-    <value>Suspend and resume apps</value>
+  <data name="QuickApplicationsPage_Desc" xml:space="preserve">
+    <value>Gérer les applications</value>
   </data>
-  <data name="QuickSuspenderPage_Title" xml:space="preserve">
-    <value>Suspender</value>
+  <data name="QuickApplicationsPage_Title" xml:space="preserve">
+    <value>Applications</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>Refresh rate</value>

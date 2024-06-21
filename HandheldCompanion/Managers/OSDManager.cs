@@ -169,8 +169,8 @@ public static class OSDManager
                     row1.entries.Add(FPSentry);
 
                     OverlayEntry GPUentry = new("GPU", "8040");
-                    AddElementIfNotNull(GPUentry, gpu.GetLoad(), "%");
-                    AddElementIfNotNull(GPUentry, gpu.GetPower(), "W");
+                    AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : null, "%");
+                    AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : null, "W");
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry CPUentry = new("CPU", "80FF");
@@ -205,9 +205,9 @@ public static class OSDManager
                     OverlayRow row6 = new();
 
                     OverlayEntry GPUentry = new("GPU", "8040", true);
-                    AddElementIfNotNull(GPUentry, gpu.GetLoad(), "%");
-                    AddElementIfNotNull(GPUentry, gpu.GetPower(), "W");
-                    AddElementIfNotNull(GPUentry, gpu.GetTemperature(), "C");
+                    AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : null, "%");
+                    AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : null, "W");
+                    AddElementIfNotNull(GPUentry, gpu.HasTemperature() ? gpu.GetTemperature() : null, "C");
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry CPUentry = new("CPU", "80FF", true);

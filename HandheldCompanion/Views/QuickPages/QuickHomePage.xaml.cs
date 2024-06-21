@@ -39,7 +39,8 @@ public partial class QuickHomePage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            t_CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
+            // deprecated
+            // t_CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
         });
     }
 
@@ -173,7 +174,8 @@ public partial class QuickHomePage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            t_CurrentProfile.Text = profile.ToString();
+            // deprecated
+            // t_CurrentProfile.Text = profile.ToString();
         });
     }
 
@@ -196,7 +198,9 @@ public partial class QuickHomePage : Page
                 case "OnScreenDisplayLevel":
                     {
                         var overlayLevel = Convert.ToInt16(value);
-                        t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
+
+                        // deprecated
+                        // t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
                     }
                     break;
             }

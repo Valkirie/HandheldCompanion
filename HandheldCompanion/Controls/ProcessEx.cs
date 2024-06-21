@@ -198,6 +198,9 @@ public class ProcessEx : IDisposable
                 break;
         }
 
+        var WindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
+        MainWindowTitle = string.IsNullOrEmpty(WindowTitle) ? Executable : WindowTitle;
+
         Refreshed?.Invoke(this, EventArgs.Empty);
     }
 

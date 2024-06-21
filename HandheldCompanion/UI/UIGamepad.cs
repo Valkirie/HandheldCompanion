@@ -106,6 +106,7 @@ namespace HandheldCompanion.Managers
 
             LostFocus?.Invoke(_currentWindow);
         }
+
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
             // already has focus
@@ -147,6 +148,9 @@ namespace HandheldCompanion.Managers
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
+            if (_gamepadPage == ((Frame)sender).Content)
+                return;
+
             // set rendering state
             _rendered = false;
 
@@ -181,15 +185,7 @@ namespace HandheldCompanion.Managers
                     case "layout":
                     case "SettingsMode0":
                     case "SettingsMode1":
-
-                    // quicktools
-                    case "quickhome":
-                    case "quicksettings":
-                    case "quickdevice":
                     case "quickperformance":
-                    case "quickprofiles":
-                    case "quicksuspender":
-                    case "quickoverlay":
                         _goingForward = true;
                         break;
                 }
@@ -468,6 +464,7 @@ namespace HandheldCompanion.Managers
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2))
                 {
+                    // hide dialog, if any
                     if (_currentWindow.currentDialog is not null)
                         _currentWindow.currentDialog.Hide();
 
@@ -494,13 +491,7 @@ namespace HandheldCompanion.Managers
                                     case "layout":
                                     case "SettingsMode0":
                                     case "SettingsMode1":
-                                    case "quickhome":
-                                    case "quicksettings":
-                                    case "quickdevice":
                                     case "quickperformance":
-                                    case "quickprofiles":
-                                    case "quicksuspender":
-                                    case "quickoverlay":
                                         {
                                             // set state
                                             _goingBack = true;
@@ -527,31 +518,24 @@ namespace HandheldCompanion.Managers
                                         break;
                                     case false:
                                         {
-                                            // restore previous NavigationViewItem
-                                            if (prevNavigation is not null)
-                                                Focus(prevNavigation);
-                                            else
+                                            switch (_gamepadPage.Tag)
                                             {
-                                                switch (_gamepadPage.Tag)
-                                                {
-                                                    // todo: shouldn't be hardcoded
-                                                    case "quickhome":
-                                                    case "quicksettings":
-                                                    case "quickdevice":
-                                                    case "quickperformance":
-                                                    case "quickprofiles":
-                                                    case "quicksuspender":
-                                                    case "quickoverlay":
-                                                        {
-                                                            // set state
-                                                            _goingBack = true;
+                                                // todo: shouldn't be hardcoded
+                                                case "quickperformance":
+                                                    {
+                                                        // set state
+                                                        _goingBack = true;
 
-                                                            // go back to previous page
-                                                            if (_gamepadFrame.CanGoBack)
-                                                                _gamepadFrame.GoBack();
-                                                        }
-                                                        break;
-                                                }
+                                                        // go back to previous page
+                                                        if (_gamepadFrame.CanGoBack)
+                                                            _gamepadFrame.GoBack();
+                                                    }
+                                                    break;
+                                                default:
+                                                    // restore previous NavigationViewItem
+                                                    if (prevNavigation is not null)
+                                                        Focus(prevNavigation);
+                                                    break;
                                             }
                                         }
                                         break;

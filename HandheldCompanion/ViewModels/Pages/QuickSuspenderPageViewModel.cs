@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class QuickSuspenderPageViewModel : BaseViewModel
+    public class QuickApplicationsPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProcessExViewModel> Processes { get; set; } = [];
 
-        public QuickSuspenderPageViewModel()
+        public QuickApplicationsPageViewModel()
         {
             ProcessManager.ProcessStarted += ProcessStarted;
             ProcessManager.ProcessStopped += ProcessStopped;

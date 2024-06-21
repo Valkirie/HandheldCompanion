@@ -17,15 +17,13 @@ namespace HandheldCompanion.Properties
     internal sealed partial class Settings : ApplicationSettingsBase
     {
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -1115,19 +1113,40 @@ namespace HandheldCompanion.Properties
                 this["LegionControllerGyroIndex"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool BatteryChargeLimit
-        {
-            get
-            {
+        public bool BatteryChargeLimit {
+            get {
                 return ((bool)(this["BatteryChargeLimit"]));
             }
-            set
-            {
+            set {
                 this["BatteryChargeLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("480")]
+        public double QuickToolsWidth {
+            get {
+                return ((double)(this["QuickToolsWidth"]));
+            }
+            set {
+                this["QuickToolsWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QuickToolsScreen {
+            get {
+                return ((string)(this["QuickToolsScreen"]));
+            }
+            set {
+                this["QuickToolsScreen"] = value;
             }
         }
     }

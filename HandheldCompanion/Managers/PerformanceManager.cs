@@ -68,7 +68,6 @@ public static class PerformanceManager
     private static double AutoTDPMax;
     private static double TDPMax;
     private static double TDPMin;
-    private static int AutoTDPProcessId;
     private static double AutoTDPTargetFPS;
     private static bool cpuWatchdogPendingStop;
     private static uint currentEPP = 50;
@@ -114,8 +113,6 @@ public static class PerformanceManager
         // manage events
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-        PlatformManager.RTSS.Hooked += RTSS_Hooked;
-        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
@@ -361,26 +358,15 @@ public static class PerformanceManager
         RequestGPUClock(255 * 50, immediate);
     }
 
-    private static void RTSS_Hooked(AppEntry appEntry)
-    {
-        AutoTDPProcessId = appEntry.ProcessId;
-    }
-
-    private static void RTSS_Unhooked(int processId)
-    {
-        AutoTDPProcessId = 0;
-    }
-
     private static void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        // We don't have any hooked process
-        if (AutoTDPProcessId == 0)
+        if (!PlatformManager.RTSS.HasHook())
             return;
 
         if (autoLock.TryEnter())
         {
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
-            double processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
+            double processValueFPS = PlatformManager.RTSS.GetFramerate(true);
 
             // Ensure realistic process values, prevent divide by 0
             processValueFPS = Math.Clamp(processValueFPS, 5, 500);

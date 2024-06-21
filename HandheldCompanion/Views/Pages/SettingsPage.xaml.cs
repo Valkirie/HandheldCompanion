@@ -5,13 +5,17 @@ using HandheldCompanion.Platforms;
 using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls.Helpers;
 using iNKORE.UI.WPF.Modern.Helpers.Styles;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using static HandheldCompanion.Managers.UpdateManager;
+using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -40,12 +44,55 @@ public partial class SettingsPage : Page
         // initialize manager(s)
         UpdateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        MultimediaManager.ScreenConnected += MultimediaManager_ScreenConnected;
+        MultimediaManager.ScreenDisconnected += MultimediaManager_ScreenDisconnected;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
         // force call
         // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void MultimediaManager_ScreenConnected(DesktopScreen screen)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            int idx = -1;
+            foreach (DesktopScreen desktopScreen in cB_QuickToolsScreen.Items.OfType<DesktopScreen>())
+            {
+                if (desktopScreen.FriendlyName.Equals(screen.FriendlyName))                    
+                    idx = cB_QuickToolsScreen.Items.IndexOf(desktopScreen);
+            }
+
+            if (idx != -1)
+                cB_QuickToolsScreen.Items[idx] = screen;
+            else
+                cB_QuickToolsScreen.Items.Add(screen);
+        });
+    }
+
+    private void MultimediaManager_ScreenDisconnected(DesktopScreen screen)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            // check if current target was disconnected
+            if (cB_QuickToolsScreen.SelectedItem is DesktopScreen targetScreen)
+                if (targetScreen.FriendlyName.Equals(screen.FriendlyName))
+                    cB_QuickToolsScreen.SelectedIndex = 0;
+
+            int idx = -1;
+            foreach (DesktopScreen desktopScreen in cB_QuickToolsScreen.Items.OfType<DesktopScreen>())
+            {
+                if (desktopScreen.FriendlyName.Equals(screen.FriendlyName))
+                    idx = cB_QuickToolsScreen.Items.IndexOf(desktopScreen);
+            }
+
+            if (idx != -1)
+                cB_QuickToolsScreen.Items.RemoveAt(idx);
+        });
     }
 
     public SettingsPage(string? Tag) : this()
@@ -161,6 +208,23 @@ public partial class SettingsPage : Page
                 case "UISounds":
                     Toggle_UISounds.IsEnabled = MultimediaManager.HasVolumeSupport();
                     Toggle_UISounds.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "QuickToolsScreen":
+                    {
+                        if (SettingsManager.IsInitialized)
+                            return;
+
+                        string FriendlyName = Convert.ToString(value);
+
+                        // Assuming MultimediaManager is initialized
+                        DesktopScreen? selectedScreen = cB_QuickToolsScreen.Items.OfType<DesktopScreen>()
+                        .FirstOrDefault(screen => screen.FriendlyName.Equals(FriendlyName));
+
+                        if (selectedScreen != null)
+                            cB_QuickToolsScreen.SelectedItem = selectedScreen;
+                        else
+                            cB_QuickToolsScreen.SelectedIndex = 0;
+                    }
                     break;
             }
         });
@@ -466,5 +530,14 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("UISounds", Toggle_UISounds.IsOn);
+    }
+
+    private void cB_QuickToolsScreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        if (cB_QuickToolsScreen.SelectedItem is DesktopScreen desktopScreen)
+            SettingsManager.SetProperty("QuickToolsScreen", desktopScreen.FriendlyName);
     }
 }
