@@ -209,6 +209,9 @@ public partial class SettingsPage : Page
                     Toggle_UISounds.IsEnabled = MultimediaManager.HasVolumeSupport();
                     Toggle_UISounds.IsOn = Convert.ToBoolean(value);
                     break;
+                case "TelemetryEnabled":
+                    Toggle_Telemetry.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "QuickToolsScreen":
                     {
                         if (SettingsManager.IsInitialized)
@@ -532,6 +535,14 @@ public partial class SettingsPage : Page
         SettingsManager.SetProperty("UISounds", Toggle_UISounds.IsOn);
     }
 
+    private void Toggle_Telemetry_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("TelemetryEnabled", Toggle_Telemetry.IsOn);
+    }
+    
     private void cB_QuickToolsScreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)

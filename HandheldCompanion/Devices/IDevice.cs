@@ -8,6 +8,7 @@ using HandheldCompanion.Utils;
 using HidLibrary;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -191,9 +192,11 @@ public abstract class IDevice
     public string ManufacturerName = string.Empty;
     public string ProductName = string.Empty;
     public string SystemName = string.Empty;
+    public string SystemModel = string.Empty;
     public string Version = string.Empty;
     public string Processor = string.Empty;
     public int NumberOfCores = 0;
+    public string DeviceType = "Handheld";
 
     public static IDevice GetCurrent()
     {
@@ -515,6 +518,16 @@ public abstract class IDevice
                 break;
         }
 
+        // update sentry device context
+        SentrySdk.ConfigureScope(scope =>
+        {
+            scope.Contexts.Device.Model = SystemModel;
+            scope.Contexts.Device.Manufacturer = ManufacturerName;
+            scope.Contexts.Device.Name = ProductName;
+            scope.Contexts.Device.CpuDescription = Processor;
+            scope.Contexts.Device.DeviceType = device is not null ? device.DeviceType : "Desktop";
+        });
+
         LogManager.LogInformation("{0} from {1}", ProductName, ManufacturerName);
 
         if (device is null)
@@ -523,10 +536,14 @@ public abstract class IDevice
             LogManager.LogWarning("Device not yet supported. The behavior of the application will be unpredictable");
         }
 
-        // get the actual handheld device
+        // update device details
         device.ManufacturerName = ManufacturerName;
         device.ProductName = ProductName;
+        device.SystemName = SystemName;
+        device.SystemModel = SystemModel;
+        device.Version = Version;
         device.Processor = Processor;
+        device.NumberOfCores = NumberOfCores;
 
         return device;
     }

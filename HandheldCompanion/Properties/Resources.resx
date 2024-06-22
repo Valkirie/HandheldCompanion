@@ -3030,6 +3030,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="PowerProfileOneXPlayerX1IntelBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
+  <data name="SettingsPage_Telemetry" xml:space="preserve">
+    <value>Telemetry</value>
+  </data>
+  <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
+    <value>Enabled telemetry data to be automatically be sent in case of a crash</value>
+  </data>
   <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
     <value>Initializing controller reconfiguration… Please wait.</value>
   </data>
