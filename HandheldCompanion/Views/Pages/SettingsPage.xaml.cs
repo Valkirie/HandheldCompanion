@@ -46,6 +46,7 @@ public partial class SettingsPage : Page
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.ScreenConnected += MultimediaManager_ScreenConnected;
         MultimediaManager.ScreenDisconnected += MultimediaManager_ScreenDisconnected;
+        MultimediaManager.Initialized += MultimediaManager_Initialized;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
@@ -92,6 +93,18 @@ public partial class SettingsPage : Page
 
             if (idx != -1)
                 cB_QuickToolsScreen.Items.RemoveAt(idx);
+        });
+    }
+
+    private void MultimediaManager_Initialized()
+    {
+        string QuickToolsScreen = SettingsManager.GetString("QuickToolsScreen");
+
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            if (string.IsNullOrEmpty(QuickToolsScreen))
+                cB_QuickToolsScreen.SelectedIndex = 0;
         });
     }
 
