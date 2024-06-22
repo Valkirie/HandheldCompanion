@@ -50,7 +50,7 @@ namespace HandheldCompanion.Managers
         // key: Page, store the latest control that had focus on this page
         private Dictionary<object, Control> prevControl = new();
         // key: Window, store which window has focus
-        private static Dictionary<Window, bool> _focused = new();
+        private static ConcurrentDictionary<Window, bool> _focused = new();
 
         public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
         {
@@ -108,6 +108,9 @@ namespace HandheldCompanion.Managers
                 if (window.Equals(_currentWindow))
                     continue;
 
+                if (_focused.TryGetValue(window, out isFocused) && !isFocused)
+                    continue;
+
                 // remove focus
                 _focused[window] = false;
 
@@ -147,6 +150,12 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 if (window.Visibility != Visibility.Visible)
+                    continue;
+
+                if (window.WindowState == WindowState.Minimized)
+                    continue;
+
+                if (_focused.TryGetValue(window, out isFocused) && isFocused)
                     continue;
 
                 // set focus
