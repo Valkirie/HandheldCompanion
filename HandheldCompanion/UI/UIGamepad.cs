@@ -140,6 +140,21 @@ namespace HandheldCompanion.Managers
 
             // raise event
             LostFocus?.Invoke(_currentWindow);
+
+            foreach (GamepadWindow window in _focused.Keys)
+            {
+                if (window.Equals(_currentWindow))
+                    continue;
+
+                if (window.Visibility != Visibility.Visible)
+                    continue;
+
+                // set focus
+                _focused[window] = true;
+
+                // raise event
+                GotFocus?.Invoke(window);
+            }
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
@@ -236,6 +251,10 @@ namespace HandheldCompanion.Managers
                 case "Slider":
                     ToolTipService.SetInitialShowDelay(control, 0);
                     break;
+                case "NavigationViewItem":
+                    // update navigation
+                    prevNavigation = (NavigationViewItem)control;
+                    break;
                 default:
                     ToolTipService.SetInitialShowDelay(control, 250);
                     break;
@@ -285,13 +304,6 @@ namespace HandheldCompanion.Managers
                                 // first start
                                 prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.controlElements);
                             }
-                        }
-                        break;
-
-                    case "NavigationViewItem":
-                        {
-                            // update navigation
-                            prevNavigation = (NavigationViewItem)controlFocused;
                         }
                         break;
 
