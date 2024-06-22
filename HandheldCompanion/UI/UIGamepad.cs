@@ -227,7 +227,7 @@ namespace HandheldCompanion.Managers
                 }
                 */
 
-                // clear history
+                // clear history on page swap
                 if (_gamepadPage is not null)
                     prevControl.Remove(_gamepadPage.Tag, out _);
 
@@ -305,6 +305,9 @@ namespace HandheldCompanion.Managers
                                 prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.controlElements);
                             }
                         }
+                        break;
+
+                    case "NavigationViewItem":
                         break;
 
                     default:
@@ -440,7 +443,7 @@ namespace HandheldCompanion.Managers
                                 // set state
                                 _goingForward = true;
 
-                                if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
+                                if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control) && control is not NavigationViewItem)
                                     Focus(control);
                                 else
                                 {
