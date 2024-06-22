@@ -9048,6 +9048,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Telemetry.
+        /// </summary>
+        public static string SettingsPage_Telemetry {
+            get {
+                return ResourceManager.GetString("SettingsPage_Telemetry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled telemetry data to be automatically be sent in case of a crash.
+        /// </summary>
+        public static string SettingsPage_TelemetryDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_TelemetryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dark.
         /// </summary>
         public static string SettingsPage_ThemeDark {

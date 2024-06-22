@@ -1128,6 +1128,16 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TelemetryApproved {
+            get {
+                return ((string)(this["TelemetryApproved"]));
+            }
+            set {
+                this["TelemetryApproved"] = value;
+            }
+        }
+        
         [global::System.Configuration.DefaultSettingValueAttribute("480")]
         public double QuickToolsWidth {
             get {
@@ -1140,6 +1150,16 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TelemetryEnabled {
+            get {
+                return ((bool)(this["TelemetryEnabled"]));
+            }
+            set {
+                this["TelemetryEnabled"] = value;
+            }
+        }
+        
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string QuickToolsScreen {
             get {

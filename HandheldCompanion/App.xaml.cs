@@ -124,7 +124,8 @@ public partial class App : Application
         Exception ex = (Exception)e.Exception;
 
         // send to sentry
-        if (SentrySdk.IsEnabled)
+        bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");
+        if (SentrySdk.IsEnabled && IsSentryEnabled)
             SentrySdk.CaptureException(ex);
 
         if (ex.InnerException != null)
@@ -138,7 +139,8 @@ public partial class App : Application
         Exception ex = (Exception)e.ExceptionObject;
 
         // send to sentry
-        if (SentrySdk.IsEnabled)
+        bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");
+        if (SentrySdk.IsEnabled && IsSentryEnabled)
             SentrySdk.CaptureException(ex);
 
         if (ex.InnerException != null)
@@ -152,7 +154,8 @@ public partial class App : Application
         Exception ex = (Exception)e.Exception;
 
         // send to sentry
-        if (SentrySdk.IsEnabled)
+        bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");
+        if (SentrySdk.IsEnabled && IsSentryEnabled)
             SentrySdk.CaptureException(ex);
 
         if (ex.InnerException != null)
