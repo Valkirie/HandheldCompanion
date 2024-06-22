@@ -116,6 +116,10 @@ namespace HandheldCompanion.Platforms
             float highestClock = 0;
             foreach (var sensor in cpu.Sensors)
             {
+                // May crash the app when Value is null, better to check first
+                if (sensor.Value is null)
+                    continue;
+                
                 switch (sensor.SensorType)
                 {
                     case SensorType.Load:
