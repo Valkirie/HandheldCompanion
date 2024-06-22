@@ -42,14 +42,15 @@ namespace HandheldCompanion.Managers
         private bool _goingForward;
 
         private bool _rendered;
-        private bool _focused;
 
         private ButtonState prevButtonState = new();
 
-        // key: Windows, value: NavigationViewItem
+        // store the latest NavigationViewItem that had focus on this window
         private Control prevNavigation;
-        // key: Page
-        private ConcurrentDictionary<object, Control> prevControl = new();
+        // key: Page, store the latest control that had focus on this page
+        private Dictionary<object, Control> prevControl = new();
+        // key: Window, store which window has focus
+        private static Dictionary<Window, bool> _focused = new();
 
         public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
         {
@@ -62,13 +63,12 @@ namespace HandheldCompanion.Managers
 
             //_currentWindow.IsVisibleChanged += _currentWindow_IsVisibleChanged;
 
-            _currentWindow.GotGamepadWindowFocus += _currentWindow_GotGamepadWindowFocus;
-            _currentWindow.LostGamepadWindowFocus += _currentWindow_LostGamepadWindowFocus;
+            _currentWindow.GotGamepadWindowFocus += (sender) => _currentWindow_GotFocus(sender, new RoutedEventArgs());
+            _currentWindow.LostGamepadWindowFocus += (sender) => _currentWindow_LostFocus(sender, new RoutedEventArgs());
             _currentWindow.ContentDialogOpened += _currentWindow_ContentDialogOpened;
             _currentWindow.ContentDialogClosed += _currentWindow_ContentDialogClosed;
-
-            _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
-            _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
+            _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, new RoutedEventArgs());
+            _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, new RoutedEventArgs());
 
             _gamepadFrame = contentFrame;
             _gamepadFrame.Navigated += ContentFrame_Navigated;
@@ -91,39 +91,35 @@ namespace HandheldCompanion.Managers
             Focus(control);
         }
 
-        private void _currentWindow_GotGamepadWindowFocus()
-        {
-            _focused = true;
-            GotFocus?.Invoke(_currentWindow);
-        }
-
-        private void _currentWindow_LostGamepadWindowFocus()
-        {
-            // halt timer
-            _gamepadTimer.Stop();
-
-            _focused = false;
-
-            LostFocus?.Invoke(_currentWindow);
-        }
-
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
             // already has focus
-            if (_focused)
+            if (_focused.TryGetValue(_currentWindow, out bool isFocused) && isFocused)
                 return;
 
             // set focus
-            _focused = true;
+            _focused[_currentWindow] = true;
 
             // raise event
             GotFocus?.Invoke(_currentWindow);
+
+            foreach (GamepadWindow window in _focused.Keys)
+            {
+                if (window.Equals(_currentWindow))
+                    continue;
+
+                // remove focus
+                _focused[window] = false;
+
+                // raise event
+                LostFocus?.Invoke(window);
+            }
         }
 
         private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
         {
             // doesn't have focus
-            if (!_focused)
+            if (_focused.TryGetValue(_currentWindow, out bool isFocused) && !isFocused)
                 return;
 
             // check if sender is part of current window
@@ -137,7 +133,7 @@ namespace HandheldCompanion.Managers
             }
 
             // unset focus
-            _focused = false;
+            _focused[_currentWindow] = false;
 
             // halt timer
             _gamepadTimer.Stop();
@@ -294,20 +290,8 @@ namespace HandheldCompanion.Managers
 
                     case "NavigationViewItem":
                         {
-                            switch (controlFocused.Name)
-                            {
-                                case "b_ServiceStart":
-                                case "b_ServiceStop":
-                                case "b_ServiceInstall":
-                                case "b_ServiceDelete":
-                                    break;
-                                default:
-                                    {
-                                        // update navigation
-                                        prevNavigation = (NavigationViewItem)controlFocused;
-                                    }
-                                    break;
-                            }
+                            // update navigation
+                            prevNavigation = (NavigationViewItem)controlFocused;
                         }
                         break;
 
@@ -348,7 +332,12 @@ namespace HandheldCompanion.Managers
 
         private void InputsUpdated(ControllerState controllerState)
         {
-            if (!_rendered || !_focused)
+            // skip if page hasn't yet rendered
+            if (!_rendered)
+                return;
+
+            // skip if page doesn't have focus
+            if (!_focused.TryGetValue(_currentWindow, out bool isFocused) || !isFocused)
                 return;
 
             // stop gamepad navigation when InputsManager is listening
@@ -478,10 +467,6 @@ namespace HandheldCompanion.Managers
                                 {
                                     default:
                                         {
-                                            //TODO: this sometimes happens. we need to handle this.
-                                            if (prevNavigation is null)
-                                                LogManager.LogInformation("prevNav is null");
-
                                             // restore previous NavigationViewItem
                                             Focus(prevNavigation);
                                         }
@@ -577,6 +562,8 @@ namespace HandheldCompanion.Managers
                     if (prevNavigation is not null)
                     {
                         elementType = prevNavigation.GetType().Name;
+                        focusedElement = prevNavigation;
+
                         direction = WPFUtils.Direction.Left;
                     }
                 }
@@ -585,6 +572,8 @@ namespace HandheldCompanion.Managers
                     if (prevNavigation is not null)
                     {
                         elementType = prevNavigation.GetType().Name;
+                        focusedElement = prevNavigation;
+
                         direction = WPFUtils.Direction.Right;
                     }
                 }

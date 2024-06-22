@@ -87,20 +87,20 @@ namespace HandheldCompanion.Views.Classes
 
         protected void InvokeGotGamepadWindowFocus()
         {
-            GotGamepadWindowFocus?.Invoke();
+            GotGamepadWindowFocus?.Invoke(this);
         }
 
         protected void InvokeLostGamepadWindowFocus()
         {
-            LostGamepadWindowFocus?.Invoke();
+            LostGamepadWindowFocus?.Invoke(this);
         }
 
         #region events
         public event GotGamepadWindowFocusEventHandler GotGamepadWindowFocus;
-        public delegate void GotGamepadWindowFocusEventHandler();
+        public delegate void GotGamepadWindowFocusEventHandler(object sender);
 
         public event LostGamepadWindowFocusEventHandler LostGamepadWindowFocus;
-        public delegate void LostGamepadWindowFocusEventHandler();
+        public delegate void LostGamepadWindowFocusEventHandler(object sender);
 
         public event ContentDialogOpenedEventHandler ContentDialogOpened;
         public delegate void ContentDialogOpenedEventHandler();
