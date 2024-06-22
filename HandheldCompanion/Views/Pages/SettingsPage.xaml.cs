@@ -6,6 +6,7 @@ using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls.Helpers;
 using iNKORE.UI.WPF.Modern.Helpers.Styles;
 using Microsoft.Win32;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -223,7 +224,14 @@ public partial class SettingsPage : Page
                     Toggle_UISounds.IsOn = Convert.ToBoolean(value);
                     break;
                 case "TelemetryEnabled":
-                    Toggle_Telemetry.IsOn = Convert.ToBoolean(value);
+                    {
+                        // send device details to sentry
+                        bool IsSentryEnabled = Convert.ToBoolean(value);
+                        Toggle_Telemetry.IsOn = IsSentryEnabled;
+
+                        if (SentrySdk.IsEnabled && IsSentryEnabled)
+                            SentrySdk.CaptureMessage("Telemetry enabled on the device");
+                    }
                     break;
                 case "QuickToolsScreen":
                     {

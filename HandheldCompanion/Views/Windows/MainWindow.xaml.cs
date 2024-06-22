@@ -166,11 +166,6 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
 
-        // send device details to sentry
-        bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");
-        if (SentrySdk.IsEnabled && IsSentryEnabled)
-            SentrySdk.CaptureMessage("App started on the device");
-
         if (FirstStart)
         {
             string currentDeviceType = CurrentDevice.GetType().Name;
