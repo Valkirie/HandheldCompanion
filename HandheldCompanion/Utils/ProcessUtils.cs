@@ -289,7 +289,7 @@ public static class ProcessUtils
     private static extern uint
         QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
     public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);

@@ -38,7 +38,22 @@ public class ProcessEx : IDisposable
 
 
     public ProcessThread MainThread { get; set; }
-    public IntPtr MainWindowHandle { get; set; }
+
+    private IntPtr _MainWindowHandle;
+    public IntPtr MainWindowHandle
+    {
+        get
+        {
+            return _MainWindowHandle;
+        }
+        set
+        {
+            _MainWindowHandle = value;
+
+            string WindowTitle = ProcessUtils.GetWindowTitle(value);
+            MainWindowTitle = string.IsNullOrEmpty(WindowTitle) ? Executable : WindowTitle;
+        }
+    }
 
     public ConcurrentList<int> Children = new();
 
@@ -198,8 +213,8 @@ public class ProcessEx : IDisposable
                 break;
         }
 
-        var WindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
-        MainWindowTitle = string.IsNullOrEmpty(WindowTitle) ? Executable : WindowTitle;
+        // update main window handle
+        MainWindowHandle = Process.MainWindowHandle;
 
         Refreshed?.Invoke(this, EventArgs.Empty);
     }
