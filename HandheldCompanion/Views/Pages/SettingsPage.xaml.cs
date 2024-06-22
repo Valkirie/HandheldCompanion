@@ -225,6 +225,7 @@ public partial class SettingsPage : Page
                     break;
                 case "TelemetryEnabled":
                     {
+                        // ignore if loading
                         if (!SettingsManager.IsInitialized)
                             return;
 
@@ -238,12 +239,8 @@ public partial class SettingsPage : Page
                     break;
                 case "QuickToolsScreen":
                     {
-                        if (SettingsManager.IsInitialized)
-                            return;
-
                         string FriendlyName = Convert.ToString(value);
 
-                        // Assuming MultimediaManager is initialized
                         DesktopScreen? selectedScreen = cB_QuickToolsScreen.Items.OfType<DesktopScreen>()
                         .FirstOrDefault(screen => screen.FriendlyName.Equals(FriendlyName));
 
