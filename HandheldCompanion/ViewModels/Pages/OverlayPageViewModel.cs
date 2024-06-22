@@ -347,7 +347,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private string _ProcessName;
+        private string _ProcessName = Properties.Resources.QuickProfilesPage_Waiting;
         public string ProcessName
         {
             get => _ProcessName;
