@@ -114,6 +114,7 @@ public class ROGAlly : IDevice
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
@@ -178,6 +179,8 @@ public class ROGAlly : IDevice
             new List<KeyCode> { KeyCode.F17 },
             false, ButtonFlags.OEM4
         ));
+
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     private byte[] flushBufferWriteChanges = new byte[64]
@@ -695,5 +698,37 @@ public class ROGAlly : IDevice
                 device.WriteFeatureData(data);
         }
 
+    }
+
+    public void SetBatteryChargeLimit(int chargeLimit)
+    {
+        if (!IsOpen)
+            return;
+
+        if (chargeLimit < 0 || chargeLimit > 100)
+            return;
+
+        asusACPI.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value)
+    {
+        switch (name)
+        {
+            case "BatteryChargeLimit":
+                {
+                    bool enabled = Convert.ToBoolean(value);
+                    switch (enabled)
+                    {
+                        case true:
+                            SetBatteryChargeLimit(80);
+                            break;
+                        case false:
+                            SetBatteryChargeLimit(100);
+                            break;
+                    }
+                }
+                break;
+        }
     }
 }

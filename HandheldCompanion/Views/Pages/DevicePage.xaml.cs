@@ -38,7 +38,7 @@ namespace HandheldCompanion.Views.Pages
             DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
             LEDBrightness.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
             StackSecondColor.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryChargeLimit.Visibility = IDevice.GetCurrent() is LegionGo || IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
+            BatteryChargeLimit.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimit) ? Visibility.Visible : Visibility.Collapsed;
 
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);

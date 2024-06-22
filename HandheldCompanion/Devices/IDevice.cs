@@ -32,6 +32,7 @@ public enum DeviceCapabilities : ushort
     DynamicLighting = 8,
     DynamicLightingBrightness = 16,
     DynamicLightingSecondLEDColor = 32,
+    BatteryChargeLimit = 64,
 }
 
 public struct ECDetails

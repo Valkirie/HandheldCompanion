@@ -164,6 +164,7 @@ public class LegionGo : IDevice
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;

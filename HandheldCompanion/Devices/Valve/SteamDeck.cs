@@ -74,6 +74,7 @@ public class SteamDeck : IDevice
 
         // Steam Controller Neptune
         Capabilities = DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
 
         // https://www.steamdeck.com/en/tech
         nTDP = new double[] { 10, 10, 15 };
