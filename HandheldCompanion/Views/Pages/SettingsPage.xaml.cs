@@ -225,6 +225,9 @@ public partial class SettingsPage : Page
                     break;
                 case "TelemetryEnabled":
                     {
+                        if (!SettingsManager.IsInitialized)
+                            return;
+
                         // send device details to sentry
                         bool IsSentryEnabled = Convert.ToBoolean(value);
                         Toggle_Telemetry.IsOn = IsSentryEnabled;
