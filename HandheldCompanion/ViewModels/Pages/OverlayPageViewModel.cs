@@ -196,7 +196,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private string _GPUName;
+        // localize me
+        private string _GPUName = "No GPU detected";
         public string GPUName
         {
             get => _GPUName;
@@ -488,11 +489,12 @@ namespace HandheldCompanion.ViewModels
 
         private void GPUManager_Hooked(GPU GPU)
         {
-            GPUName = GPU.adapterInformation.Details.Description;
+            // localize me
+            GPUName = GPU is not null ? GPU.adapterInformation.Details.Description : "No GPU detected";
 
-            HasGPUPower = GPU.HasPower();
-            HasGPUTemperature = GPU.HasTemperature();
-            HasGPULoad = GPU.HasLoad();
+            HasGPUPower = GPU is not null ? GPU.HasPower() : false;
+            HasGPUTemperature = GPU is not null ? GPU.HasTemperature() : false;
+            HasGPULoad = GPU is not null ? GPU.HasLoad() : false;
         }
 
         private void LibreHardwareMonitor_CPULoadChanged(float? value)
