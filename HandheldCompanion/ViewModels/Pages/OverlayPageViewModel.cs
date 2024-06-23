@@ -182,7 +182,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private string _CPUName;
+        // localize me
+        private string _CPUName = "No CPU detected";
         public string CPUName
         {
             get => _CPUName;
@@ -410,7 +411,8 @@ namespace HandheldCompanion.ViewModels
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
             // GPUManager is a synchronous manager, it started before this page was loaded, force raise an event
-            GPUManager_Hooked(GPUManager.GetCurrent());
+            if (GPUManager.IsInitialized && GPUManager.GetCurrent() is not null)
+                GPUManager_Hooked(GPUManager.GetCurrent());
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
