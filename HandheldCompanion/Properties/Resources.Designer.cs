@@ -3753,7 +3753,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Steam is already running and Steam Desktop Layout is overwritten by Handheld Companion, but this setting was disabled by the user.
+        ///   Looks up a localized string similar to Steam Desktop Layout overwrite was disabled while Steam was running. Please restart Steam to apply changes.
         /// </summary>
         public static string Hint_SteamNeptuneDesktopOverriddenDesc {
             get {
