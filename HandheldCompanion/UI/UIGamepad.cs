@@ -42,6 +42,7 @@ namespace HandheldCompanion.Managers
         private bool _goingForward;
 
         private bool _rendered;
+        private object _rendering = new();
 
         private ButtonState prevButtonState = new();
 
@@ -73,7 +74,7 @@ namespace HandheldCompanion.Managers
             _gamepadFrame = contentFrame;
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
-            _gamepadTimer = new Timer(250) { AutoReset = false };
+            _gamepadTimer = new Timer(25) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
 
             ControllerManager.InputsUpdated += InputsUpdated;
@@ -168,24 +169,27 @@ namespace HandheldCompanion.Managers
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (_gamepadPage == ((Frame)sender).Content)
-                return;
+            lock (_rendering)
+            {
+                // halt timer
+                _gamepadTimer.Stop();
 
-            // set rendering state
-            _rendered = false;
+                // set rendering state
+                _rendered = false;
 
-            // remove state
-            _goingForward = false;
+                // remove state
+                _goingForward = false;
 
-            // halt timer
-            _gamepadTimer.Stop();
+                // store current Frame and listen to render events
+                if (_gamepadPage != (Page)_gamepadFrame.Content)
+                {
+                    _gamepadFrame = (Frame)sender;
+                    _gamepadFrame.ContentRendered += _gamepadFrame_ContentRendered;
 
-            // store current Frame
-            _gamepadFrame = (Frame)sender;
-            _gamepadFrame.ContentRendered += _gamepadFrame_ContentRendered;
-
-            // store current Page
-            _gamepadPage = (Page)_gamepadFrame.Content;
+                    // store current Page
+                    _gamepadPage = (Page)_gamepadFrame.Content;
+                }
+            }
         }
 
         private void _gamepadFrame_ContentRendered(object? sender, EventArgs e)
@@ -196,6 +200,9 @@ namespace HandheldCompanion.Managers
 
         private void _gamepadFrame_PageRendered(object? sender, System.Timers.ElapsedEventArgs e)
         {
+            // stop listening for render events
+            _gamepadFrame.ContentRendered -= _gamepadFrame_ContentRendered;
+
             // UI thread (async)
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -210,31 +217,25 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                if (_goingBack && prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
+                if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
                 {
-                    Focus(control);
-
-                    // remove state
-                    _goingBack = false;
-                }
-                else if (_goingForward)
-                {
-                    if (prevControl.TryGetValue(_gamepadPage.Tag, out control))
+                    if (_goingBack)
+                    {
                         Focus(control);
-                    else
+
+                        // remove state
+                        _goingBack = false;
+                    }
+                    else if (_goingForward && control is not null)
+                    {
+                        Focus(control);
+                    }
+                    else if (_goingForward && control is null)
                     {
                         control = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
                         Focus(control);
                     }
                 }
-                /*
-                else if (prevNavigation is null && _currentWindow.IsVisible && _currentWindow.WindowState != WindowState.Minimized)
-                {
-                    NavigationViewItem currentNavigationViewItem = (NavigationViewItem)WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.elements);
-                    prevNavigation = currentNavigationViewItem;
-                    Focus(currentNavigationViewItem);
-                }
-                */
 
                 // clear history on page swap
                 if (_gamepadPage is not null)
