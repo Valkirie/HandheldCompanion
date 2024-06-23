@@ -78,16 +78,24 @@ public class Steam : IPlatform
     {
         ProcessManager.ProcessStarted -= ProcessManager_ProcessStarted;
 
-        // restore files even if Steam is still running
-        RestoreFiles();
+        if (HasDesktopProfileApplied())
+        {
+            // restore files even if Steam is still running
+            RestoreFiles();
+        }
 
         return base.Stop();
     }
 
     protected override void Process_Exited(object? sender, EventArgs e)
     {
-        LogManager.LogDebug("Steam stopped, restoring files");
-        RestoreFiles();
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        if (HasDesktopProfileApplied())
+        {
+            LogManager.LogDebug("Steam stopped, restoring files");
+            RestoreFiles();
+        }
     }
 
     public bool HasXboxDriversInstalled()
@@ -140,11 +148,41 @@ public class Steam : IPlatform
         if (!OnStartup && processEx.Executable == RunningName)
         {
             await Task.Delay(3000);
-            ReplaceFiles();
+
+            // Overwrite files only if setting is enabled.
+            if (SettingsManager.GetBoolean("OverrideSteamProfileOnStart"))
+            {
+                ReplaceFiles();
+            }
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // hook into current process
             if (Process is not null && !Process.HasExited)
                 Process.Exited += Process_Exited;
+        }
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value)
+    {
+        switch (name)
+        {
+            case "OverrideSteamProfileOnStart":
+
+                if (Convert.ToBoolean(value))
+                {
+                    if (HasDesktopProfileApplied())
+                    {
+                        // Steam profile applied, overwrite enabled
+                        ReplaceFiles();
+                    }
+                }
+                else if (!HasDesktopProfileApplied())
+                {
+                    // Steam profile overwritten, overwrite disabled
+                    RestoreFiles();
+                }
+                break;
         }
     }
 
