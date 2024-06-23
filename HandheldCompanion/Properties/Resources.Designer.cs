@@ -3744,11 +3744,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Steam Desktop Layout is overwritten.
+        /// </summary>
+        public static string Hint_SteamNeptuneDesktopOverridden {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktopOverridden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steam is already running and Steam Desktop Layout is overwritten by Handheld Companion, but this setting was disabled by the user.
+        /// </summary>
+        public static string Hint_SteamNeptuneDesktopOverriddenDesc {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktopOverriddenDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.
         /// </summary>
         public static string Hint_SteamNeptuneReadme {
             get {
                 return ResourceManager.GetString("Hint_SteamNeptuneReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should restart Steam, so that Steam Desktop Layout can be reset to defaults.
+        /// </summary>
+        public static string Hint_SteamNeptuneReadmeOverridden {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneReadmeOverridden", resourceCulture);
             }
         }
         
@@ -8144,6 +8171,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_OpenAppBackgroundDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_OpenAppBackgroundDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override Steam profiles at startup.
+        /// </summary>
+        public static string SettingsPage_OverrideSteamProfileOnStart {
+            get {
+                return ResourceManager.GetString("SettingsPage_OverrideSteamProfileOnStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Steam desktop and chord input profiles will be swapped for empty ones on application start.
+        /// </summary>
+        public static string SettingsPage_OverrideSteamProfileOnStartDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_OverrideSteamProfileOnStartDesc", resourceCulture);
             }
         }
         

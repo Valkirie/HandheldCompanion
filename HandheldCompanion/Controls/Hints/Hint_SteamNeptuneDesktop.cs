@@ -12,6 +12,7 @@ namespace HandheldCompanion.Controls.Hints
         {
             PlatformManager.Steam.Updated += Steam_Updated;
             PlatformManager.Initialized += PlatformManager_Initialized;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
@@ -24,7 +25,8 @@ namespace HandheldCompanion.Controls.Hints
         }
 
         private void Steam_Updated(PlatformStatus status)
-        {
+        {            
+            bool OverrideSteamProfileOnStart = SettingsManager.GetBoolean("OverrideSteamProfileOnStart");
             bool DesktopProfileApplied = PlatformManager.Steam.HasDesktopProfileApplied();
 
             // UI thread (async)
@@ -38,7 +40,24 @@ namespace HandheldCompanion.Controls.Hints
                         this.Visibility = Visibility.Collapsed;
                         break;
                     case PlatformStatus.Started:
-                        this.Visibility = DesktopProfileApplied ? Visibility.Visible : Visibility.Collapsed;
+
+                        if (OverrideSteamProfileOnStart)
+                        {
+                            this.HintTitle.Text = Properties.Resources.Hint_SteamNeptuneDesktop;
+                            this.HintDescription.Text = Properties.Resources.Hint_SteamNeptuneDesktopDesc;
+                            this.HintReadMe.Text = Properties.Resources.Hint_SteamNeptuneReadme;
+
+                            this.Visibility = DesktopProfileApplied ? Visibility.Visible : Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            this.HintTitle.Text = Properties.Resources.Hint_SteamNeptuneDesktopOverridden;
+                            this.HintDescription.Text = Properties.Resources.Hint_SteamNeptuneDesktopOverriddenDesc;
+                            this.HintReadMe.Text = Properties.Resources.Hint_SteamNeptuneReadmeOverridden;
+
+                            this.Visibility = !DesktopProfileApplied ? Visibility.Visible : Visibility.Collapsed;
+                        }
+
                         break;
                 }
             });
@@ -47,6 +66,16 @@ namespace HandheldCompanion.Controls.Hints
         private void PlatformManager_Initialized()
         {
             Steam_Updated(PlatformManager.Steam.Status);
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "OverrideSteamProfileOnStart":
+                    Steam_Updated(PlatformManager.Steam.Status);
+                    break;
+            }
         }
 
         protected override void HintActionButton_Click(object sender, RoutedEventArgs e)

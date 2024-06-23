@@ -3012,4 +3012,19 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_LegionBatteryChargeLimit_Desc" xml:space="preserve">
     <value>Sets the maximum charge level of the battery to 80%</value>
   </data>
+  <data name="SettingsPage_OverrideSteamProfileOnStart" xml:space="preserve">
+    <value>Override Steam profiles at startup</value>
+  </data>
+  <data name="SettingsPage_OverrideSteamProfileOnStartDesc" xml:space="preserve">
+    <value>Default Steam desktop and chord input profiles will be swapped for empty ones on application start</value>
+  </data>
+  <data name="Hint_SteamNeptuneDesktopOverridden" xml:space="preserve">
+    <value>Steam Desktop Layout is overwritten</value>
+  </data>
+  <data name="Hint_SteamNeptuneDesktopOverriddenDesc" xml:space="preserve">
+    <value>Steam is already running and Steam Desktop Layout is overwritten by Handheld Companion, but this setting was disabled by the user</value>
+  </data>
+  <data name="Hint_SteamNeptuneReadmeOverridden" xml:space="preserve">
+    <value>You should restart Steam, so that Steam Desktop Layout can be reset to defaults</value>
+  </data>
 </root>

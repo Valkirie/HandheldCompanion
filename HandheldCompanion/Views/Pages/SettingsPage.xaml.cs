@@ -116,6 +116,9 @@ public partial class SettingsPage : Page
                 case "DesktopProfileOnStart":
                     Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
                     break;
+                case "OverrideSteamProfileOnStart":
+                    Toggle_OverrideSteamProfileOnStart.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "NativeDisplayOrientation":
                     var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
 
@@ -205,6 +208,14 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
+    }
+
+    private void Toggle_OverrideSteamProfileOnStart_Toggled(object? sender, RoutedEventArgs? e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OverrideSteamProfileOnStart", Toggle_OverrideSteamProfileOnStart.IsOn);
     }
 
     private void Button_DetectNativeDisplayOrientation_Click(object sender, RoutedEventArgs? e)
