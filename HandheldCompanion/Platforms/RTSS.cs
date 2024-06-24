@@ -247,7 +247,7 @@ public class RTSS : IPlatform
     public void RefreshAppEntry()
     {
         // refresh appEntry
-        var processId = appEntry.ProcessId;
+        int processId = appEntry is not null ? appEntry.ProcessId : 0;
         appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == processId);
     }
 
