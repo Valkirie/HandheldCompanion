@@ -3,6 +3,10 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
+using HandheldCompanion.ViewModels.Commands;
+using WpfScreenHelper.Enum;
+using System.Reflection;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -10,8 +14,53 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<ProcessExViewModel> Processes { get; set; } = [];
 
+        public ICommand RadioButtonCheckedCommand { get; }
+
+        private WindowPositions _windowPositions = WindowPositions.Maximize;
+        public WindowPositions windowPositions
+        {
+            get
+            {
+                return _windowPositions;
+            }
+            set
+            {
+                if (value != _windowPositions)
+                {
+                    _windowPositions = value;
+                    OnPropertyChanged(nameof(windowPositions));
+                    OnPropertyChanged(nameof(BorderlessEnabled));
+                }
+            }
+        }
+
+        private bool _BorderlessEnabled = false;
+        public bool BorderlessEnabled
+        {
+            get
+            {
+                return windowPositions == WindowPositions.Maximize;
+            }
+        }
+
+        private bool _BorderlessToggle = false;
+        public bool BorderlessToggle
+        {
+            get => _BorderlessToggle;
+            set
+            {
+                if (value != _BorderlessToggle)
+                {
+                    _BorderlessToggle = value;
+                    OnPropertyChanged(nameof(BorderlessToggle));
+                }
+            }
+        }
+
         public QuickApplicationsPageViewModel()
         {
+            RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
+
             ProcessManager.ProcessStarted += ProcessStarted;
             ProcessManager.ProcessStopped += ProcessStopped;
 
@@ -25,6 +74,12 @@ namespace HandheldCompanion.ViewModels
             ProcessManager.ProcessStarted -= ProcessStarted;
             ProcessManager.ProcessStopped -= ProcessStopped;
             base.Dispose();
+        }
+
+        private void OnRadioButtonChecked(object parameter)
+        {
+            if (parameter is string paramString && int.TryParse(paramString, out int value))
+                windowPositions = (WindowPositions)value;
         }
 
         private void ProcessStopped(ProcessEx processEx)
@@ -42,7 +97,7 @@ namespace HandheldCompanion.ViewModels
             ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {
-                Processes.SafeAdd(new ProcessExViewModel(processEx));
+                Processes.SafeAdd(new ProcessExViewModel(processEx, this));
             }
             else
             {

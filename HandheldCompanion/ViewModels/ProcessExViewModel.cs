@@ -1,14 +1,22 @@
 ﻿using HandheldCompanion.Controls;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using WpfScreenHelper.Enum;
 
 namespace HandheldCompanion.ViewModels
 {
     public class ProcessExViewModel : BaseViewModel
     {
+        QuickApplicationsPageViewModel PageViewModel;
+
         private ProcessEx _process;
         public ProcessEx Process
         {
@@ -55,27 +63,44 @@ namespace HandheldCompanion.ViewModels
         public ICommand KillProcessCommand { get; private set; }
         public ICommand BringProcessCommand { get; private set; }
 
-        public ProcessExViewModel(ProcessEx process)
+        public ProcessExViewModel(ProcessEx process, QuickApplicationsPageViewModel pageViewModel)
         {
             Process = process;
+            PageViewModel = pageViewModel;
 
             KillProcessCommand = new DelegateCommand(() =>
             {
                 Process.Process?.Kill();
             });
 
-            BringProcessCommand = new DelegateCommand(() =>
+            BringProcessCommand = new DelegateCommand(async () =>
             {
+                OverlayQuickTools qtWindow = OverlayQuickTools.GetCurrent();
+
+                ContentDialogResult result = await qtWindow.applicationsPage.ProfileRenameDialog.ShowAsync();
+                switch(result)
+                {
+                    case ContentDialogResult.None:
+                        qtWindow.applicationsPage.ProfileRenameDialog.Hide();
+                        return;
+                }
+
                 // Get the screen where the reference window is located
-                var screen = System.Windows.Forms.Screen.FromHandle(OverlayQuickTools.GetCurrent().hwndSource.Handle);
+                Screen screen = Screen.FromHandle(qtWindow.hwndSource.Handle);
+                if (screen is null)
+                    return;
 
-                // Get the working area of the screen
-                var workingArea = screen.WorkingArea;
+                int style = WinAPI.GetWindowLong(Process.MainWindowHandle, WinAPI.GWL_STYLE);
+                if (PageViewModel.BorderlessEnabled && PageViewModel.BorderlessToggle)
+                {
+                    WinAPI.SetWindowLong(Process.MainWindowHandle, WinAPI.GWL_STYLE, (style & ~WinAPI.WS_BORDER & ~WinAPI.WS_CAPTION & ~WinAPI.WS_SYSMENU));
+                }
+                else if ((style & WinAPI.WS_BORDER) == 0 && (style & WinAPI.WS_CAPTION) == 0)
+                {
+                    WinAPI.SetWindowLong(Process.MainWindowHandle, WinAPI.GWL_STYLE, (style | WinAPI.WS_BORDER | WinAPI.WS_CAPTION | WinAPI.WS_SYSMENU));
+                }
 
-                // Move the window to the new screen and maximize it
-                ProcessUtils.ShowWindow(Process.MainWindowHandle, 9);
-                WinAPI.SetWindowPos(Process.MainWindowHandle, IntPtr.Zero, workingArea.X, workingArea.Y, workingArea.Width, workingArea.Height, WinAPI.SWP_SHOWWINDOW | WinAPI.SWP_FRAMECHANGED);
-                ProcessUtils.ShowWindow(Process.MainWindowHandle, 3);
+                WinAPI.MoveWindow(Process.MainWindowHandle, screen, PageViewModel.windowPositions);
             });
         }
 

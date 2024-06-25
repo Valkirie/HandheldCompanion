@@ -18,137 +18,266 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:ItemsRepeater ItemsSource="{Binding Processes}">
-        <ui:ItemsRepeater.ItemTemplate>
-            <DataTemplate>
-                <Expander
-                    Padding="20,12,12,12"
-                    HorizontalAlignment="Stretch"
-                    d:IsExpanded="True">
-                    <Expander.Header>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="24" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
+    <Grid>
+        <ui:ContentDialog
+            Name="ProfileRenameDialog"
+            CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
+            PrimaryButtonStyle="{DynamicResource AccentButtonStyle}"
+            PrimaryButtonText="Snap">
 
-                            <Image
-                                Grid.Column="0"
-                                Width="24"
-                                Height="24"
-                                Source="{Binding ProcessIcon}" />
-                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                <TextBlock
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding Title}"
-                                    TextWrapping="NoWrap" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{Binding Executable}"
-                                    TextWrapping="NoWrap" />
-                            </StackPanel>
-                        </Grid>
-                    </Expander.Header>
+            <ui:SimpleStackPanel Spacing="10">
+                <ui:SimpleStackPanel Spacing="6">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Snap layouts" />
 
-                    <Expander.Content>
-                        <ui:SimpleStackPanel Margin="0,-4,0,-4" Spacing="6">
-                            <!--  Suspend  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="0.2*" MinWidth="80" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Suspend process" />
-
-                                <ui:ToggleSwitch
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    IsOn="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-16,0,-16,0"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                Visibility="Collapsed" />
-
-                            <!--  FullScreenOptimization  -->
-                            <Grid IsEnabled="False" Visibility="Collapsed">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="0.2*" MinWidth="80" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Fullscreen optimizations" />
-
-                                <ui:ToggleSwitch
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    IsOn="{Binding FullScreenOptimization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-16,0,-16,0"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                Visibility="Collapsed" />
-
-                            <!--  HighDPIAware  -->
-                            <Grid IsEnabled="False" Visibility="Collapsed">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="0.2*" MinWidth="80" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="High DPI awareness" />
-
-                                <ui:ToggleSwitch
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    IsOn="{Binding HighDPIAware, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-
-                            <!--  Bring Process  -->
-                            <Grid Height="40">
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding BringProcessCommand}"
-                                    Content="Bring process"
-                                    Style="{DynamicResource AccentButtonStyle}" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-
-                            <!--  Kill Process  -->
-                            <Grid Height="40">
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding KillProcessCommand}"
-                                    Content="Kill process"
-                                    Style="{DynamicResource AccentButtonStyle}" />
-                            </Grid>
+                    <ui:SimpleStackPanel
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="6">
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                            <RadioButton
+                                Width="48"
+                                Height="70"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
+                                Command="{Binding RadioButtonCheckedCommand}"
+                                CommandParameter="1"
+                                GroupName="groupFoo"
+                                Style="{StaticResource {x:Type ToggleButton}}" />
+                            <RadioButton
+                                Width="48"
+                                Height="70"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
+                                Command="{Binding RadioButtonCheckedCommand}"
+                                CommandParameter="3"
+                                GroupName="groupFoo"
+                                Style="{StaticResource {x:Type ToggleButton}}" />
                         </ui:SimpleStackPanel>
-                    </Expander.Content>
-                </Expander>
-            </DataTemplate>
-        </ui:ItemsRepeater.ItemTemplate>
-    </ui:ItemsRepeater>
+
+                        <RadioButton
+                            Width="100"
+                            Height="70"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"
+                            Command="{Binding RadioButtonCheckedCommand}"
+                            CommandParameter="9"
+                            GroupName="groupFoo"
+                            IsChecked="True"
+                            Style="{StaticResource {x:Type ToggleButton}}" />
+                    </ui:SimpleStackPanel>
+
+                    <ui:SimpleStackPanel
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="6">
+                        <ui:SimpleStackPanel Orientation="Vertical" Spacing="4">
+                            <RadioButton
+                                Width="100"
+                                Height="38"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
+                                Command="{Binding RadioButtonCheckedCommand}"
+                                CommandParameter="2"
+                                GroupName="groupFoo"
+                                Style="{StaticResource {x:Type ToggleButton}}" />
+                            <RadioButton
+                                Width="100"
+                                Height="38"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
+                                Command="{Binding RadioButtonCheckedCommand}"
+                                CommandParameter="4"
+                                GroupName="groupFoo"
+                                Style="{StaticResource {x:Type ToggleButton}}" />
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Spacing="4">
+                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                <RadioButton
+                                    Width="48"
+                                    Height="38"
+                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    BorderThickness="1"
+                                    Command="{Binding RadioButtonCheckedCommand}"
+                                    CommandParameter="5"
+                                    GroupName="groupFoo"
+                                    Style="{StaticResource {x:Type ToggleButton}}" />
+                                <RadioButton
+                                    Width="48"
+                                    Height="38"
+                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    BorderThickness="1"
+                                    Command="{Binding RadioButtonCheckedCommand}"
+                                    CommandParameter="6"
+                                    GroupName="groupFoo"
+                                    Style="{StaticResource {x:Type ToggleButton}}" />
+                            </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                <RadioButton
+                                    Width="48"
+                                    Height="38"
+                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    BorderThickness="1"
+                                    Command="{Binding RadioButtonCheckedCommand}"
+                                    CommandParameter="8"
+                                    GroupName="groupFoo"
+                                    Style="{StaticResource {x:Type ToggleButton}}" />
+                                <RadioButton
+                                    Width="48"
+                                    Height="38"
+                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    BorderThickness="1"
+                                    Command="{Binding RadioButtonCheckedCommand}"
+                                    CommandParameter="7"
+                                    GroupName="groupFoo"
+                                    Style="{StaticResource {x:Type ToggleButton}}" />
+                            </ui:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+
+                <ui:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="6">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Options" />
+
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="Borderless" />
+
+                        <ui:ToggleSwitch
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            IsEnabled="{Binding BorderlessEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsOn="{Binding BorderlessToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </Grid>
+                </ui:SimpleStackPanel>
+            </ui:SimpleStackPanel>
+        </ui:ContentDialog>
+
+        <ui:ItemsRepeater ItemsSource="{Binding Processes}">
+            <ui:ItemsRepeater.ItemTemplate>
+                <DataTemplate>
+                    <Expander
+                        Padding="20,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        d:IsExpanded="True">
+                        <Expander.Header>
+                            <Grid Height="50">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="24" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image
+                                    Grid.Column="0"
+                                    Width="24"
+                                    Height="24"
+                                    Source="{Binding ProcessIcon}" />
+
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center">
+                                    <TextBlock
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding Title}"
+                                        TextWrapping="NoWrap" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{Binding Executable}"
+                                        TextWrapping="NoWrap" />
+                                </StackPanel>
+                            </Grid>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <ui:SimpleStackPanel Margin="0,-4,0,-4" Spacing="12">
+
+                                <!--  Suspend  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*" />
+                                        <ColumnDefinition MinWidth="120" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ui:SimpleStackPanel Spacing="6">
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Suspend" />
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Immediately suspend this application and its related processes." />
+                                    </ui:SimpleStackPanel>
+
+                                    <ToggleButton
+                                        Grid.Column="1"
+                                        Width="110"
+                                        HorizontalAlignment="Right"
+                                        Content="Suspend"
+                                        IsChecked="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+
+                                <!--  Bring  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*" />
+                                        <ColumnDefinition MinWidth="120" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ui:SimpleStackPanel Spacing="6">
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Snap windows" />
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Snap window to automatically resize and arrange it into layouts" />
+                                    </ui:SimpleStackPanel>
+
+                                    <Button
+                                        Grid.Column="1"
+                                        Width="110"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding BringProcessCommand}"
+                                        Content="Snap" />
+                                </Grid>
+
+                                <!--  Terminate  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*" />
+                                        <ColumnDefinition MinWidth="120" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ui:SimpleStackPanel Spacing="6">
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Terminate" />
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Immediately terminate this application and its related processes." />
+                                    </ui:SimpleStackPanel>
+
+                                    <Button
+                                        Grid.Column="1"
+                                        Width="110"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding KillProcessCommand}"
+                                        Content="Terminate" />
+                                </Grid>
+                            </ui:SimpleStackPanel>
+                        </Expander.Content>
+                    </Expander>
+                </DataTemplate>
+            </ui:ItemsRepeater.ItemTemplate>
+        </ui:ItemsRepeater>
+    </Grid>
 </Page>

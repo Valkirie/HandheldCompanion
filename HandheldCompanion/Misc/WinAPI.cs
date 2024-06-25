@@ -1,5 +1,13 @@
 ﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Interop;
+using WpfScreenHelper.Enum;
 using static PInvoke.Kernel32;
 using HANDLE = System.IntPtr;
 using LPVOID = System.IntPtr;
@@ -21,10 +29,21 @@ public static class WinAPI
     public const int WM_WINDOWPOSCHANGING = 0x0046;
     public const int WM_SYSCOMMAND = 0x0112;
 
+    public const int WS_VISIBLE = 0x10000000;
+    public const int WS_OVERLAPPED = 0x00000000;
+
     public const int SC_MOVE = 0xF010;
+    public const int SW_MAXIMIZE = 3;
 
     public static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
     public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+
+    public const int GWL_STYLE = -16;
+    public const int WS_POPUP = 0x800000;
+    public const int WS_BORDER = 0x00800000;
+    public const int WS_DLGFRAME = 0x00400000;
+    public const int WS_CAPTION = 0x00C00000;
+    public const int WS_SYSMENU = 0x00080000;
 
     public const int GWL_EXSTYLE = -20;
     public const int WS_EX_NOACTIVATE = 0x08000000;
@@ -108,25 +127,49 @@ public static class WinAPI
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+    
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool PrintWindow(IntPtr hwnd, IntPtr hdcBlt, uint nFlags);
 
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    [DllImport("user32.dll")]
     public static extern IntPtr GetActiveWindow();
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public struct RECT
     {
         public int Left;
         public int Top;
         public int Right;
         public int Bottom;
+
+        public RECT(int left, int top, int right, int bottom)
+        {
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
+        }
+
+        public RECT(Rectangle rect) : this(rect.Left, rect.Top, rect.Right, rect.Bottom)
+        {
+        }
+    }
+
+    public struct POINTSTRUCT
+    {
+        public int x;
+
+        public int y;
+
+        public POINTSTRUCT(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     public static int GetWindowProcessId(HANDLE hwnd)
@@ -139,5 +182,138 @@ public static class WinAPI
     public static HANDLE GetforegroundWindow()
     {
         return GetForegroundWindow();
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool MoveWindow(nint hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool ShowWindow(nint hWnd, int nCmdShow);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool IsProcessDPIAware();
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr MonitorFromRect(ref RECT lprc, MonitorOptions dwFlags);
+
+    [DllImport("shcore.dll", CharSet = CharSet.Auto)]
+    public static extern IntPtr GetDpiForMonitor([In] IntPtr hmonitor, [In] DpiType dpiType, out uint dpiX, out uint dpiY);
+
+    [DllImport("user32.dll", ExactSpelling = true)]
+    public static extern IntPtr MonitorFromPoint(POINTSTRUCT pt, MonitorDefault flags);
+
+    [DllImport("user32.dll")]
+    public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+    private const int CS_DROPSHADOW = 0x00020000;
+
+    [DllImport("user32.dll")]
+    public static extern int SetClassLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+    [DllImport("user32.dll")]
+    public static extern int GetClassLong(nint hWnd, int nIndex);
+
+    [DllImport("user32.dll")]
+    private static extern int GetDpiForWindow(nint hwnd);
+
+
+    [Flags]
+    public enum MonitorOptions : uint
+    {
+        MONITOR_DEFAULTTONULL = 0x00000000,
+        MONITOR_DEFAULTTOPRIMARY = 0x00000001,
+        MONITOR_DEFAULTTONEAREST = 0x00000002
+    }
+
+    public enum DpiType
+    {
+        EFFECTIVE,
+        ANGULAR,
+        RAW
+    }
+
+    public enum MonitorDefault
+    {
+        MONITOR_DEFAULTTONEAREST = 2,
+        MONITOR_DEFAULTTONULL = 0,
+        MONITOR_DEFAULTTOPRIMARY = 1
+    }
+
+    public static IntPtr GetScreenHandle(Screen screen)
+    {
+        RECT rect = new RECT(screen.Bounds);
+        IntPtr hMonitor = MonitorFromRect(ref rect, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+        return hMonitor;
+    }
+
+    public static void MoveWindow(nint hWnd, Screen targetScreen, WindowPositions position)
+    {
+        if (hWnd == IntPtr.Zero)
+            return;
+
+        // WpfScreenHelper.Screen WpfScreen = WpfScreenHelper.Screen.AllScreens.FirstOrDefault(s => s.DeviceName.Equals(targetScreen.DeviceName));
+        // IntPtr monitor = GetScreenHandle(targetScreen);
+        // double taskbarHeight = SystemParameters.MaximizedPrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight;
+        Rectangle workingArea = targetScreen.WorkingArea;
+
+        double newWidth = workingArea.Width;
+        double newHeight = workingArea.Height;
+        double newX = 0;
+        double newY = 0;
+
+        switch (position)
+        {
+            case WindowPositions.Left:
+                newWidth /= 2;
+                newX = workingArea.Left;
+                newY = workingArea.Top;
+                break;
+            case WindowPositions.Top:
+                newHeight /= 2;
+                newX = workingArea.Left;
+                newY = workingArea.Top;
+                break;
+            case WindowPositions.Right:
+                newWidth /= 2;
+                newX = workingArea.Right - newWidth;
+                newY = workingArea.Top;
+                break;
+            case WindowPositions.Bottom:
+                newHeight /= 2;
+                newX = workingArea.Left;
+                newY = workingArea.Top + newHeight;
+                break;
+            case WindowPositions.TopLeft:
+                newWidth /= 2;
+                newHeight /= 2;
+                newX = workingArea.Left;
+                newY = workingArea.Top;
+                break;
+            case WindowPositions.TopRight:
+                newWidth /= 2;
+                newHeight /= 2;
+                newX = workingArea.Right - newWidth;
+                newY = workingArea.Top;
+                break;
+            case WindowPositions.BottomRight:
+                newWidth /= 2;
+                newHeight /= 2;
+                newX = workingArea.Right - newWidth;
+                newY = workingArea.Bottom - newHeight;
+                break;
+            case WindowPositions.BottomLeft:
+                newWidth /= 2;
+                newHeight /= 2;
+                newX = workingArea.Left;
+                newY = workingArea.Bottom - newHeight;
+                break;
+            default:
+            case WindowPositions.Maximize:
+                ShowWindow(hWnd, 3);
+                return;
+        }
+
+        ShowWindow(hWnd, 9);
+        MoveWindow(hWnd, (int)newX, (int)newY, (int)newWidth, (int)newHeight, true);
     }
 }
