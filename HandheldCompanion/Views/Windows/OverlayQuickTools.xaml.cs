@@ -61,9 +61,6 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public HwndSource hwndSource;
 
-    private Dictionary<UIElement, CacheMode> cacheModes = new();
-    private Timer WM_PAINT_TIMER;
-
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
 
@@ -94,9 +91,6 @@ public partial class OverlayQuickTools : GamepadWindow
         clockUpdateTimer = new DispatcherTimer();
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
         clockUpdateTimer.Tick += UpdateTime;
-
-        WM_PAINT_TIMER = new(250) { AutoReset = false };
-        WM_PAINT_TIMER.Elapsed += WM_PAINT_TIMER_Tick;
 
         // create manager(s)
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -346,40 +340,9 @@ public partial class OverlayQuickTools : GamepadWindow
                     handled = true;
                 }
                 break;
-
-            case WM_PAINT:
-                {
-                    // Loop through all visual elements in the window
-                    foreach (var element in WPFUtils.FindVisualChildren<UIElement>(this))
-                    {
-                        if (element.CacheMode is not null)
-                        {
-                            // Store the previous CacheMode value
-                            cacheModes[element] = element.CacheMode.Clone();
-
-                            // Set the CacheMode to null
-                            element.CacheMode = null;
-                        }
-                    }
-
-                    WM_PAINT_TIMER.Stop();
-                    WM_PAINT_TIMER.Start();
-                }
-                break;
         }
 
         return IntPtr.Zero;
-    }
-
-    private void WM_PAINT_TIMER_Tick(object? sender, EventArgs e)
-    {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            // Set the CacheMode back to the previous value
-            foreach (UIElement element in cacheModes.Keys)
-                element.CacheMode = cacheModes[element];
-        });
     }
 
     private void HandleEsc(object sender, KeyEventArgs e)
