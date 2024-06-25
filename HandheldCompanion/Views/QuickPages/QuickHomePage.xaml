@@ -9,7 +9,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickHome"
     Title="{l:Static resx:Resources.QuickHomePage_Title}"
-    Margin="15,0,0,0"
+    Margin="15,0,0,6"
     d:Background="White"
     d:DesignHeight="1200"
     d:DesignWidth="640"
@@ -22,10 +22,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <ui:SimpleStackPanel
-            Margin="0,6,0,6"
-            VerticalAlignment="Top"
-            Spacing="6">
+        <ui:SimpleStackPanel VerticalAlignment="Top" Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_Title}" />
 
             <!--  Shortcuts  -->

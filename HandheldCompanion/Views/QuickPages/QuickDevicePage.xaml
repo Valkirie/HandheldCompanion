@@ -9,7 +9,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickDevice"
     Title="{l:Static resx:Resources.QuickDevicePage_Title}"
-    Margin="15,0,0,0"
+    Margin="15,0,0,6"
     d:Background="White"
     d:DesignHeight="1200"
     d:DesignWidth="640"
@@ -19,10 +19,7 @@
     <ui:SimpleStackPanel Spacing="24">
 
         <!--  Device settings  -->
-        <ui:SimpleStackPanel
-            Grid.Row="1"
-            Margin="0,6,0,6"
-            Spacing="6">
+        <ui:SimpleStackPanel Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Device settings" />
 
             <ui:SimpleStackPanel Name="DisplayStack" Spacing="6">
