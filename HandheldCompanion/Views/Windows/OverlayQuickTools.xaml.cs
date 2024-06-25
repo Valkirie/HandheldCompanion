@@ -359,9 +359,12 @@ public partial class OverlayQuickTools : GamepadWindow
                         LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
                     }
 
-                    // if we reah WMPaintTimer event, it means it's been at least 120ms since last WM_PAINT call, fixed !?
-                    WMPaintTimer.Stop();
-                    WMPaintTimer.Start();
+                    // if we reach WMPaintTimer event, it means it's been at least 120ms since last WM_PAINT call, fixed !?
+                    if (WMPaintPending)
+                    {
+                        WMPaintTimer.Stop();
+                        WMPaintTimer.Start();
+                    }
                 }
                 break;
         }
@@ -387,7 +390,7 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
-    private Timer WMPaintTimer = new(120) { AutoReset = false };
+    private Timer WMPaintTimer = new(100) { AutoReset = false };
     private Stopwatch WMPaintWatch = new();
     private bool WMPaintPending = false;
 
