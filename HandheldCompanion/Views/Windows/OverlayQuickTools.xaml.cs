@@ -343,23 +343,26 @@ public partial class OverlayQuickTools : GamepadWindow
 
             case WM_PAINT:
                 {
-                    // Stopwatch is used to figure out how long it's taking to draw this window
-                    if (!WMPaintWatch.IsRunning)
-                        WMPaintWatch.Start();
-                    
-                    // Stopwatch has started 100ms ago and we're still drawing !?
-                    if (WMPaintWatch.Elapsed.Milliseconds > 100 && !WMPaintPending)
+                    DateTime drawTime = DateTime.Now;
+
+                    double drawDiff = Math.Abs((prevDraw - drawTime).TotalMilliseconds);
+                    if (drawDiff < 200)
                     {
-                        // disable GPU acceleration
-                        RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+                        if (!WMPaintPending)
+                        {
+                            // disable GPU acceleration
+                            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-                        // set flag
-                        WMPaintPending = true;
+                            // set flag
+                            WMPaintPending = true;
 
-                        LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+                            LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+                        }
                     }
 
-                    // if we reach WMPaintTimer event, it means it's been at least 120ms since last WM_PAINT call, fixed !?
+                    // update previous drawing time
+                    prevDraw = drawTime;
+
                     if (WMPaintPending)
                     {
                         WMPaintTimer.Stop();
@@ -372,14 +375,12 @@ public partial class OverlayQuickTools : GamepadWindow
         return IntPtr.Zero;
     }
 
+    DateTime prevDraw = DateTime.MinValue;
+
     private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (WMPaintPending)
         {
-            // stop the clock
-            WMPaintWatch.Stop();
-            WMPaintWatch.Reset();
-
             // enable GPU acceleration
             RenderOptions.ProcessRenderMode = RenderMode.Default;
 
@@ -391,7 +392,6 @@ public partial class OverlayQuickTools : GamepadWindow
     }
 
     private Timer WMPaintTimer = new(100) { AutoReset = false };
-    private Stopwatch WMPaintWatch = new();
     private bool WMPaintPending = false;
 
     private void HandleEsc(object sender, KeyEventArgs e)
