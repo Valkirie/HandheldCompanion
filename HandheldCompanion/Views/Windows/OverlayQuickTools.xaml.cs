@@ -7,6 +7,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -91,6 +92,8 @@ public partial class OverlayQuickTools : GamepadWindow
         clockUpdateTimer = new DispatcherTimer();
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
         clockUpdateTimer.Tick += UpdateTime;
+
+        WMPaintTimer.Elapsed += WMPaintTimer_Elapsed;
 
         // create manager(s)
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -271,10 +274,7 @@ public partial class OverlayQuickTools : GamepadWindow
         hwndSource.AddHook(WndProc);
 
         if (hwndSource != null)
-        {
-            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-        }
     }
 
     private IntPtr prevWParam = new(0x0000000000000086);
@@ -340,10 +340,56 @@ public partial class OverlayQuickTools : GamepadWindow
                     handled = true;
                 }
                 break;
+
+            case WM_PAINT:
+                {
+                    // Stopwatch is used to figure out how long it's taking to draw this window
+                    if (!WMPaintWatch.IsRunning)
+                        WMPaintWatch.Start();
+                    
+                    // Stopwatch has started 100ms ago and we're still drawing !?
+                    if (WMPaintWatch.Elapsed.Milliseconds > 100 && !WMPaintPending)
+                    {
+                        // disable GPU acceleration
+                        RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+
+                        // set flag
+                        WMPaintPending = true;
+
+                        LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+                    }
+
+                    // if we reah WMPaintTimer event, it means it's been at least 120ms since last WM_PAINT call, fixed !?
+                    WMPaintTimer.Stop();
+                    WMPaintTimer.Start();
+                }
+                break;
         }
 
         return IntPtr.Zero;
     }
+
+    private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (WMPaintPending)
+        {
+            // stop the clock
+            WMPaintWatch.Stop();
+            WMPaintWatch.Reset();
+
+            // enable GPU acceleration
+            RenderOptions.ProcessRenderMode = RenderMode.Default;
+
+            // reset flag
+            WMPaintPending = false;
+
+            LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+        }
+    }
+
+    private Timer WMPaintTimer = new(120) { AutoReset = false };
+    private Stopwatch WMPaintWatch = new();
+    private bool WMPaintPending = false;
 
     private void HandleEsc(object sender, KeyEventArgs e)
     {
