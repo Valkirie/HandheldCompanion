@@ -523,8 +523,8 @@ public partial class MainWindow : GamepadWindow
         string TelemetryApproved = SettingsManager.GetString("TelemetryApproved");
         if (string.IsNullOrEmpty(TelemetryApproved))
         {
-            string Title = "Allow Usage Statistics Reporting";
-            string Content = "Do you authorize Handheld Companion (HC) to share information with its developers? If you authorize it, HC may collect data on its performance, feature usage and configuration, as well as data on your system's hardware and operating system.";
+            string Title = Properties.Resources.MainWindow_TelemetryTitle;
+            string Content = Properties.Resources.MainWindow_TelemetryText;
 
             MessageBoxResult result = MessageBox.Show(Content, Title, MessageBoxButton.YesNo);
             SettingsManager.SetProperty("TelemetryApproved", result == MessageBoxResult.Yes ? "True" : "False");

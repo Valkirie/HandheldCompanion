@@ -4960,6 +4960,28 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you authorize Handheld Companion to report information to the HC developers? 
+        ///
+        ///If authorized, HC will automatically upload crash reports including data on your system&apos;s hardware and operating system. No private or personally identifiable data is ever collected. 
+        ///
+        ///This information will allow us to improve the quality of the software and prioritize our efforts. It also helps us identify rare configurations that are causing bugs, performance and stability issues. This authorization is opt-in (default of [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string MainWindow_TelemetryText {
+            get {
+                return ResourceManager.GetString("MainWindow_TelemetryText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Telemetry.
+        /// </summary>
+        public static string MainWindow_TelemetryTitle {
+            get {
+                return ResourceManager.GetString("MainWindow_TelemetryTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toggle.
         /// </summary>
         public static string MainWindow_Toggle {

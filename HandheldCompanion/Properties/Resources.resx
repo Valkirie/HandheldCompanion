@@ -3219,4 +3219,16 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="SettingsPage_QuickToolsScreenDesc" xml:space="preserve">
     <value>The screen on which the interface will be displayed</value>
   </data>
+  <data name="MainWindow_TelemetryText" xml:space="preserve">
+    <value>Do you authorize Handheld Companion to report information to the HC developers? 
+
+If authorized, HC will automatically upload crash reports including data on your system's hardware and operating system. No private or personally identifiable data is ever collected. 
+
+This information will allow us to improve the quality of the software and prioritize our efforts. It also helps us identify rare configurations that are causing bugs, performance and stability issues. This authorization is opt-in (default off) and can be changed in the main settings at any time.
+
+Thank you for using HC and helping us make it better.</value>
+  </data>
+  <data name="MainWindow_TelemetryTitle" xml:space="preserve">
+    <value>Telemetry</value>
+  </data>
 </root>
