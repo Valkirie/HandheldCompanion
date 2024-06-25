@@ -3214,10 +3214,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Maximized</value>
   </data>
   <data name="SettingsPage_QuickToolsScreen" xml:space="preserve">
-    <value>Screen</value>
+    <value>Display</value>
   </data>
   <data name="SettingsPage_QuickToolsScreenDesc" xml:space="preserve">
-    <value>The screen on which the interface will be displayed</value>
+    <value>The display on which quicktools will be displayed</value>
   </data>
   <data name="MainWindow_TelemetryText" xml:space="preserve">
     <value>Do you authorize Handheld Companion to report information to the HC developers? 

@@ -8719,7 +8719,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Screen.
+        ///   Looks up a localized string similar to Display.
         /// </summary>
         public static string SettingsPage_QuickToolsScreen {
             get {
@@ -8728,7 +8728,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The screen on which the interface will be displayed.
+        ///   Looks up a localized string similar to The display on which quicktools will be displayed.
         /// </summary>
         public static string SettingsPage_QuickToolsScreenDesc {
             get {
