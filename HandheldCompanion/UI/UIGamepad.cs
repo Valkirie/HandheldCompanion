@@ -284,7 +284,7 @@ namespace HandheldCompanion.Managers
             control.BringIntoView();
         }
 
-        public Control FocusedElement(GamepadWindow window)
+        public Control GetFocusedElement()
         {
             IInputElement keyboardFocused = null;
 
@@ -293,12 +293,7 @@ namespace HandheldCompanion.Managers
                     keyboardFocused = Keyboard.FocusedElement;
 
             if (keyboardFocused is null)
-            {
-                if (window is not null)
-                    keyboardFocused = window;
-                else
-                    keyboardFocused = _currentWindow;
-            }
+                keyboardFocused = _currentWindow;
 
             if (keyboardFocused.Focusable)
             {
@@ -315,12 +310,12 @@ namespace HandheldCompanion.Managers
                             if (prevNavigation is not null)
                             {
                                 // a new page opened
-                                controlFocused = WPFUtils.GetTopLeftControl<Control>(window.controlElements);
+                                controlFocused = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
                             }
                             else
                             {
                                 // first start
-                                prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.controlElements);
+                                prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
                             }
                         }
                         break;
@@ -342,15 +337,10 @@ namespace HandheldCompanion.Managers
                     // pick the last known Control
                     return controlFocused;
                 }
-                else if (window is MainWindow)
+                else
                 {
-                    // pick the top left NavigationViewItem
-                    return WPFUtils.GetTopLeftControl<NavigationViewItem>(window.controlElements);
-                }
-                else if (window is OverlayQuickTools)
-                {
-                    // pick the top left Control
-                    return WPFUtils.GetTopLeftControl<Control>(window.controlElements);
+                    // pick nearest navigation element
+                    return WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
                 }
             }
 
@@ -421,7 +411,7 @@ namespace HandheldCompanion.Managers
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // get current focused element
-                Control focusedElement = FocusedElement(_currentWindow);
+                Control focusedElement = GetFocusedElement();
                 if (focusedElement is null)
                     return;
 
