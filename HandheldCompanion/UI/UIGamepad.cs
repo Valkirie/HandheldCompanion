@@ -80,14 +80,22 @@ namespace HandheldCompanion.Managers
             ControllerManager.InputsUpdated += InputsUpdated;
         }
 
-        private void _currentWindow_ContentDialogClosed()
+        private void _currentWindow_ContentDialogClosed(ContentDialog contentDialog)
         {
+            // set flag
+            HasDialogOpen = false;
+
             if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
                 Focus(control);
         }
 
-        private void _currentWindow_ContentDialogOpened()
+        private bool HasDialogOpen = false;
+
+        private void _currentWindow_ContentDialogOpened(ContentDialog contentDialog)
         {
+            // set flag
+            HasDialogOpen = true;
+
             Control control = _currentWindow.controlElements.OfType<Button>().FirstOrDefault();
             Focus(control);
         }
@@ -322,8 +330,8 @@ namespace HandheldCompanion.Managers
 
                     default:
                         {
-                            // store current control
-                            if (_gamepadPage is not null)
+                            // store current control if not part of a dialog
+                            if (_gamepadPage is not null && !HasDialogOpen)
                                 prevControl[_gamepadPage.Tag] = controlFocused;
                         }
                         break;
@@ -492,8 +500,10 @@ namespace HandheldCompanion.Managers
                                 {
                                     default:
                                         {
-                                            // restore previous NavigationViewItem
-                                            Focus(prevNavigation);
+                                            if (HasDialogOpen && prevControl.TryGetValue(_gamepadPage, out Control control))
+                                                Focus(control);
+                                            else
+                                                Focus(prevNavigation);
                                         }
                                         return;
 

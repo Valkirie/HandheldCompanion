@@ -70,7 +70,7 @@ namespace HandheldCompanion.Views.Classes
                     // get all Control(s)
                     controlElements = WPFUtils.GetElementsFromPopup<Control>(frameworkElements);
 
-                    ContentDialogOpened?.Invoke();
+                    ContentDialogOpened?.Invoke(currentDialog);
                 }
             }
             else if (dialog is null)
@@ -80,6 +80,7 @@ namespace HandheldCompanion.Views.Classes
 
                 if (currentDialog is not null)
                 {
+                    ContentDialogClosed?.Invoke(currentDialog);
                     currentDialog = null;
                 }
             }
@@ -103,10 +104,10 @@ namespace HandheldCompanion.Views.Classes
         public delegate void LostGamepadWindowFocusEventHandler(object sender);
 
         public event ContentDialogOpenedEventHandler ContentDialogOpened;
-        public delegate void ContentDialogOpenedEventHandler();
+        public delegate void ContentDialogOpenedEventHandler(ContentDialog contentDialog);
 
         public event ContentDialogClosedEventHandler ContentDialogClosed;
-        public delegate void ContentDialogClosedEventHandler();
+        public delegate void ContentDialogClosedEventHandler(ContentDialog contentDialog);
         #endregion
     }
 }
