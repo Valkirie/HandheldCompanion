@@ -175,6 +175,8 @@ public partial class QuickProfilesPage : Page
             StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
             GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+
+            CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
         });
     }
 

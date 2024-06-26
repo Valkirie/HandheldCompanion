@@ -142,8 +142,8 @@
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="0.2*" MinWidth="80" />
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="3*" MinWidth="120" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel Margin="0,12,12,12">
@@ -558,22 +558,41 @@
                     d:IsExpanded="true"
                     IsExpanded="False">
                     <Expander.Header>
-                        <DockPanel Margin="0,12,12,12">
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_GraphicsSettings}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ProfilesPage_GraphicsSettingsDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="3*" MinWidth="120" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE790;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_GraphicsSettings}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_GraphicsSettingsDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <TextBlock
+                                Name="CurrentDeviceName"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                d:Visibility="Visible"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{l:Static resx:Resources.PowerProfileDefaultName}"
+                                Visibility="Collapsed" />
+                        </Grid>
                     </Expander.Header>
 
                     <ui:SimpleStackPanel Margin="0,-10,0,-4" Spacing="6">
