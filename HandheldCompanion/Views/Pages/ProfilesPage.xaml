@@ -139,6 +139,7 @@
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
                         <ui:SimpleStackPanel Spacing="6">
+                            <!--  Path  -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" MinWidth="70" />
@@ -167,6 +168,37 @@
                                         BorderThickness="1"
                                         IsEnabled="False"
                                         IsReadOnly="True" />
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Arguments  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" MinWidth="70" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <DockPanel>
+                                    <ui:FontIcon
+                                        Height="40"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Glyph="&#xe712;" />
+                                    <TextBlock
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_ProfileArguments}" />
+                                </DockPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBox
+                                        Name="tB_ProfileArguments"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        BorderThickness="1"
+                                        TextChanged="tB_ProfileArguments_TextChanged" />
                                 </DockPanel>
                             </Grid>
 

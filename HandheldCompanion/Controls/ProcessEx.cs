@@ -36,7 +36,6 @@ public class ProcessEx : IDisposable
     public string Path { get; set; }
     public ImageSource ProcessIcon { get; private set; }
 
-
     public ProcessThread MainThread { get; set; }
 
     private IntPtr _MainWindowHandle;

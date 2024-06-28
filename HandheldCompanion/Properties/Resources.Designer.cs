@@ -6980,6 +6980,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arguments.
+        /// </summary>
+        public static string ProfilesPage_ProfileArguments {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileArguments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile details.
         /// </summary>
         public static string ProfilesPage_ProfileDetails {

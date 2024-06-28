@@ -458,6 +458,11 @@ public static class ProfileManager
         return GetDefault();
     }
 
+    public static List<Profile> GetProfiles()
+    {
+        return profiles.Values.ToList();
+    }
+
     private static void ProcessProfile(string fileName, bool imported = false)
     {
         Profile profile;

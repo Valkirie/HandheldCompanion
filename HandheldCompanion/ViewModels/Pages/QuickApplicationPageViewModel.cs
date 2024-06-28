@@ -13,6 +13,7 @@ namespace HandheldCompanion.ViewModels
     public class QuickApplicationsPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProcessExViewModel> Processes { get; set; } = [];
+        public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
 
         public ICommand RadioButtonCheckedCommand { get; }
 
@@ -67,12 +68,53 @@ namespace HandheldCompanion.ViewModels
             // get processes
             foreach (ProcessEx processEx in ProcessManager.GetProcesses())
                 ProcessStarted(processEx, true);
+
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Deleted += ProfileManager_Deleted;
+
+            // get profiles
+            foreach (Profile profile in ProfileManager.GetProfiles())
+                ProfileManager_Updated(profile, UpdateSource.Background, false);
+        }
+
+        private void ProfileManager_Deleted(Profile profile)
+        {
+            // ignore me
+            if (profile.Default)
+                return;
+
+            ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            if (foundProfile is not null)
+            {
+                Profiles.SafeRemove(foundProfile);
+                foundProfile.Dispose();
+            }
+        }
+
+        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+        {
+            // ignore me
+            if (profile.Default)
+                return;
+
+            ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            if (foundProfile is null)
+            {
+                Profiles.SafeAdd(new ProfileViewModel(profile, this));
+            }
+            else
+            {
+                foundProfile.Profile = profile;
+            }
         }
 
         public override void Dispose()
         {
             ProcessManager.ProcessStarted -= ProcessStarted;
             ProcessManager.ProcessStopped -= ProcessStopped;
+
+            ProfileManager.Updated -= ProfileManager_Updated;
+            ProfileManager.Deleted -= ProfileManager_Deleted;
             base.Dispose();
         }
 

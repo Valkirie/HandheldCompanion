@@ -89,8 +89,8 @@ public static class ProcessManager
 
     private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
     {
-        // avoid locking UI thread
-        new Thread(() => { ForegroundCallback(); }).Start();        
+        // Avoid locking UI thread by running the action in a task
+        Task.Run(() => ForegroundCallback());
     }
 
     private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
@@ -478,8 +478,12 @@ public static class ProcessManager
         Parallel.ForEach(Processes,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
             {
-                ProcessEx processEx = process.Value;
-                processEx.Refresh();
+                try
+                {
+                    ProcessEx processEx = process.Value;
+                    processEx.Refresh();
+                }
+                catch { }
             });
     }
 

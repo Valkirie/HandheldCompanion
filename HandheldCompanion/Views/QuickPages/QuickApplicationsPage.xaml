@@ -163,123 +163,192 @@
         </ui:ContentDialog>
 
         <ui:SimpleStackPanel Spacing="24">
-            <ui:ItemsRepeater ItemsSource="{Binding Processes}">
-                <ui:ItemsRepeater.ItemTemplate>
-                    <DataTemplate>
-                        <Expander
-                            Padding="20,12,12,12"
-                            HorizontalAlignment="Stretch"
-                            d:IsExpanded="True">
-                            <Expander.Header>
-                                <Grid Height="50">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="24" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quick start" />
 
-                                    <Image
-                                        Grid.Column="0"
-                                        Width="24"
-                                        Height="24"
-                                        Source="{Binding ProcessIcon}" />
+                <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:UniformGridLayout
+                            ItemsStretch="Fill"
+                            MaximumRowsOrColumns="6"
+                            MinColumnSpacing="6"
+                            MinRowSpacing="6"
+                            Orientation="Horizontal" />
+                    </ui:ItemsRepeater.Layout>
 
-                                    <StackPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        VerticalAlignment="Center">
+                    <ui:ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Button
+                                    Height="70"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Command="{Binding StartProcessCommand}"
+                                    IsEnabled="{Binding IsAvailable, UpdateSourceTrigger=PropertyChanged}">
+
+                                    <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+                                        <Image
+                                            Width="24"
+                                            Height="24"
+                                            Source="{Binding Icon, UpdateSourceTrigger=PropertyChanged}">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Opacity" Value="0.20" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+
                                         <TextBlock
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{Binding Title}"
-                                            TextWrapping="NoWrap" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{Binding Executable}"
-                                            TextWrapping="NoWrap" />
+                                            Width="110"
+                                            FontSize="12"
+                                            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap" />
                                     </StackPanel>
-                                </Grid>
-                            </Expander.Header>
+                                </Button>
 
-                            <Expander.Content>
-                                <ui:SimpleStackPanel Margin="0,-4,0,-4" Spacing="12">
+                                <!--
+                                <ui:FontIcon
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Foreground="{DynamicResource NavigationViewSelectionIndicatorForeground}"
+                                    Glyph="&#xe7e8;" />
+                                -->
+                            </Grid>
+                        </DataTemplate>
+                    </ui:ItemsRepeater.ItemTemplate>
+                </ui:ItemsRepeater>
+            </ui:SimpleStackPanel>
 
-                                    <!--  Suspend  -->
-                                    <Grid>
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Processes" />
+
+                <ui:ItemsRepeater ItemsSource="{Binding Processes}">
+                    <ui:ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Expander
+                                Padding="20,12,12,12"
+                                HorizontalAlignment="Stretch"
+                                d:IsExpanded="True">
+                                <Expander.Header>
+                                    <Grid Height="50">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="6*" />
-                                            <ColumnDefinition MinWidth="120" />
+                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="1*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <ui:SimpleStackPanel Spacing="6">
-                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Suspend" />
+                                        <Image
+                                            Grid.Column="0"
+                                            Width="24"
+                                            Height="24"
+                                            Source="{Binding Icon}" />
 
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Immediately suspend this application and its related processes." />
-                                        </ui:SimpleStackPanel>
-
-                                        <ToggleButton
+                                        <StackPanel
                                             Grid.Column="1"
-                                            Width="110"
-                                            HorizontalAlignment="Right"
-                                            Content="Suspend"
-                                            IsChecked="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Grid>
-
-                                    <!--  Bring  -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="6*" />
-                                            <ColumnDefinition MinWidth="120" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ui:SimpleStackPanel Spacing="6">
-                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Snap windows" />
-
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center">
                                             <TextBlock
-                                                VerticalAlignment="Center"
                                                 Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Snap window to automatically resize and arrange it into layouts" />
-                                        </ui:SimpleStackPanel>
-
-                                        <Button
-                                            Grid.Column="1"
-                                            Width="110"
-                                            HorizontalAlignment="Right"
-                                            Command="{Binding BringProcessCommand}"
-                                            Content="Snap" />
-                                    </Grid>
-
-                                    <!--  Terminate  -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="6*" />
-                                            <ColumnDefinition MinWidth="120" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ui:SimpleStackPanel Spacing="6">
-                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Terminate" />
-
+                                                Text="{Binding Title}"
+                                                TextWrapping="NoWrap" />
                                             <TextBlock
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Immediately terminate this application and its related processes." />
-                                        </ui:SimpleStackPanel>
-
-                                        <Button
-                                            Grid.Column="1"
-                                            Width="110"
-                                            HorizontalAlignment="Right"
-                                            Command="{Binding KillProcessCommand}"
-                                            Content="Terminate" />
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="{Binding Executable}"
+                                                TextWrapping="NoWrap" />
+                                        </StackPanel>
                                     </Grid>
-                                </ui:SimpleStackPanel>
-                            </Expander.Content>
-                        </Expander>
-                    </DataTemplate>
-                </ui:ItemsRepeater.ItemTemplate>
-            </ui:ItemsRepeater>
+                                </Expander.Header>
+
+                                <Expander.Content>
+                                    <ui:SimpleStackPanel Margin="0,-4,0,-4" Spacing="12">
+
+                                        <!--  Suspend  -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="6*" />
+                                                <ColumnDefinition MinWidth="120" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel Spacing="6">
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Suspend" />
+
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Immediately suspend this application and its related processes." />
+                                            </ui:SimpleStackPanel>
+
+                                            <ToggleButton
+                                                Grid.Column="1"
+                                                Width="110"
+                                                HorizontalAlignment="Right"
+                                                Content="Suspend"
+                                                IsChecked="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
+
+                                        <!--  Bring  -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="6*" />
+                                                <ColumnDefinition MinWidth="120" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel Spacing="6">
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Snap windows" />
+
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Snap window to automatically resize and arrange it into layouts" />
+                                            </ui:SimpleStackPanel>
+
+                                            <Button
+                                                Grid.Column="1"
+                                                Width="110"
+                                                HorizontalAlignment="Right"
+                                                Command="{Binding BringProcessCommand}"
+                                                Content="Snap" />
+                                        </Grid>
+
+                                        <!--  Terminate  -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="6*" />
+                                                <ColumnDefinition MinWidth="120" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel Spacing="6">
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Terminate" />
+
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Immediately terminate this application and its related processes." />
+                                            </ui:SimpleStackPanel>
+
+                                            <Button
+                                                Grid.Column="1"
+                                                Width="110"
+                                                HorizontalAlignment="Right"
+                                                Command="{Binding KillProcessCommand}"
+                                                Content="Terminate" />
+                                        </Grid>
+                                    </ui:SimpleStackPanel>
+                                </Expander.Content>
+                            </Expander>
+                        </DataTemplate>
+                    </ui:ItemsRepeater.ItemTemplate>
+                </ui:ItemsRepeater>
+            </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

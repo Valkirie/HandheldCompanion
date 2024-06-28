@@ -78,6 +78,15 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
 
+            <!--  Reduce Image opacity when disabled  -->
+            <Style TargetType="Image">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.20" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

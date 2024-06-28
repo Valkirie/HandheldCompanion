@@ -33,7 +33,7 @@ namespace HandheldCompanion.ViewModels
 
         public string Title => Process.MainWindowTitle;
 
-        public ImageSource ProcessIcon => Process.ProcessIcon;
+        public ImageSource Icon => Process.ProcessIcon;
 
         public bool IsSuspended
         {

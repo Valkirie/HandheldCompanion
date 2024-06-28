@@ -102,6 +102,9 @@ public static class WinAPI
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     public static extern HANDLE GetForegroundWindow();
 
+    [DllImport("user32.dll")]
+    public static extern bool SetForegroundWindow(nint hWnd);
+
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     public static extern int GetWindowThreadProcessId(
         HANDLE hWnd,

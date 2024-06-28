@@ -556,6 +556,7 @@ public partial class ProfilesPage : Page
                     // Profile info
                     tB_ProfileName.Text = selectedMainProfile.Name;
                     tB_ProfilePath.Text = selectedProfile.Path;
+                    tB_ProfileArguments.Text = selectedProfile.Arguments;
                     Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
                     // Global settings
@@ -1430,6 +1431,19 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.HighDPIAware = UseHighDPIAwareness.IsOn;
+        UpdateProfile();
+    }
+
+    private void tB_ProfileArguments_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.Arguments = tB_ProfileArguments.Text;
         UpdateProfile();
     }
 }
