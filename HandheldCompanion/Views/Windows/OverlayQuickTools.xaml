@@ -7,12 +7,13 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     Title="QuickTools"
     Width="450"
     MinWidth="450"
     MaxWidth="960"
     MaxHeight="960"
-    Margin="12"
+    Margin="0"
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.SystemBackdropType="Mica"
@@ -24,7 +25,7 @@
     ResizeMode="NoResize"
     ShowActivated="False"
     ShowInTaskbar="False"
-    Topmost="False"
+    Topmost="True"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
 

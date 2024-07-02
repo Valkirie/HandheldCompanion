@@ -156,8 +156,9 @@ public partial class OverlayQuickTools : GamepadWindow
         UpdateLocation();
     }
 
-    private const double _MaxWidth = 960;
+    private const double _Margin = 12;
     private const double _MaxHeight = 960;
+    private const double _MaxWidth = 960;
     private const WindowStyle _Style = WindowStyle.ToolWindow;
 
     private void UpdateLocation()
@@ -170,40 +171,41 @@ public partial class OverlayQuickTools : GamepadWindow
         DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.FriendlyName.Equals(FriendlyName)) ?? MultimediaManager.PrimaryDesktop;
 
         // Find the corresponding Screen object
-        Screen targerScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
+        Screen targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
 
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             // Common settings across cases 0 and 1
-            MaxWidth = (int)Math.Min(_MaxWidth, targerScreen.WpfBounds.Width);
-            MaxHeight = _MaxHeight;
+            MaxWidth = (int)Math.Min(_MaxWidth, targetScreen.WpfBounds.Width);
             Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("QuickToolsWidth"));
+            MaxHeight = Math.Min(targetScreen.WpfBounds.Height - _Margin * 2, _MaxHeight);
+            Height = MinHeight = MaxHeight;
             WindowStyle = _Style;
 
             switch (QuickToolsLocation)
             {
                 case 0: // Left
-                    this.SetWindowPosition(WindowPositions.BottomLeft, targerScreen);
-                    Left += Margin.Left;
+                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                    Left += _Margin;
                     break;
 
                 case 1: // Right
-                    this.SetWindowPosition(WindowPositions.BottomRight, targerScreen);
-                    Left -= Margin.Right;
+                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                    Left -= _Margin;
                     break;
 
                 case 2: // Maximized
+                    Top = 0;
                     MaxWidth = double.PositiveInfinity;
                     MaxHeight = double.PositiveInfinity;
                     WindowStyle = WindowStyle.None;
-                    this.SetWindowPosition(WindowPositions.Maximize, targerScreen);
+                    this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
                     return; // Early return for case 2
             }
 
             // Common operation for case 0 and 1 after switch
-            Top -= Margin.Top;
-            Height = MinHeight = Math.Min(MaxHeight, targerScreen.WpfBounds.Height - Margin.Top - Margin.Bottom);
+            Top = targetScreen.WpfBounds.Bottom - Height - _Margin;
         });
     }
 
