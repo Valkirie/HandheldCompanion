@@ -526,8 +526,9 @@ public partial class ProfilesPage : Page
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     // disable delete button if is default profile or any sub profile is running
-                    b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running); //TODO consider sub profiles pertaining to this main profile is running
-                                                                                                                                         // prevent user from renaming default profile
+                    //TODO consider sub profiles pertaining to this main profile is running
+                    b_DeleteProfile.IsEnabled = (selectedProfile.ErrorCode & (ProfileErrorCode.Default | ProfileErrorCode.Running)) == 0;
+                    // prevent user from renaming default profile
                     b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
                     // prevent user from disabling default profile
                     Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
