@@ -159,6 +159,9 @@ public static class MultimediaManager
 
         foreach(Screen screen in Screen.AllScreens)
         {
+            if (string.IsNullOrEmpty(screen.DeviceName))
+                continue;
+
             DesktopScreen desktopScreen = new(screen);
 
             // pull resolutions details
