@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HandheldCompanion.ViewModels.Controls
+﻿namespace HandheldCompanion.ViewModels.Controls
 {
     public class ComboBoxItemViewModel : BaseViewModel
     {

@@ -1,7 +1,3 @@
-using HandheldCompanion.Inputs;
-using System.Collections.Generic;
-using System.Windows.Media;
-using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
 
 public class AYANEOFlipKB : AYANEO.AYANEODeviceCEc

@@ -1,11 +1,8 @@
-﻿using HandheldCompanion.Actions;
-using HandheldCompanion.Commands.Functions;
-using HandheldCompanion.Commands.Functions.HC;
+﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Multimedia;
 using HandheldCompanion.Commands.Functions.Windows;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 
 namespace HandheldCompanion.Commands
 {

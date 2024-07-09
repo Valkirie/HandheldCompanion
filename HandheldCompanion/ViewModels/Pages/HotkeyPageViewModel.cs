@@ -1,16 +1,9 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using HandheldCompanion.ViewModels.Commands;
-using WpfScreenHelper.Enum;
-using System.Reflection;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.ViewModels.Controls;
-using HandheldCompanion.Commands;
-using System;
 
 namespace HandheldCompanion.ViewModels
 {

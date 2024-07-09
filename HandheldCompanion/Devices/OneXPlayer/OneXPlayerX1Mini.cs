@@ -1,13 +1,4 @@
-﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using WindowsInput.Events;
-using static HandheldCompanion.Utils.DeviceUtils;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX1Mini : OneXPlayerX1
 {

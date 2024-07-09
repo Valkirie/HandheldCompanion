@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Processors.Intel;
-using System.Threading;
 
 namespace HandheldCompanion.Processors;
 

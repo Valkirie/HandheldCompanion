@@ -4,13 +4,10 @@ using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
 using LiveCharts;
-using RTSSSharedMemoryNET;
 using System;
-using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
-using System.Xml.Linq;
 
 namespace HandheldCompanion.ViewModels
 {

@@ -1,5 +1,4 @@
-﻿using ABI.System.Collections.Generic;
-using HandheldCompanion.Commands;
+﻿using HandheldCompanion.Commands;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
@@ -7,22 +6,16 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Shapes;
-using System.Xml;
 using WindowsInput.Events;
 using static HandheldCompanion.Commands.ICommands;
-using static PInvoke.Kernel32;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HandheldCompanion.ViewModels
 {

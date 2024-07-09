@@ -2,7 +2,6 @@
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using System;
 using System.Runtime.InteropServices;
 using WindowsInput.Events;

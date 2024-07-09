@@ -9,7 +9,6 @@ using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using Sentry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

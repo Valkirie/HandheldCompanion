@@ -4,7 +4,6 @@ using LiveCharts;
 using LiveCharts.Defaults;
 using System;
 using System.Numerics;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 

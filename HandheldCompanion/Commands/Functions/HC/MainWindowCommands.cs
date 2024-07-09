@@ -1,12 +1,5 @@
-﻿using HandheldCompanion.Actions;
-using HandheldCompanion.Views;
-using HandheldCompanion.Views.Windows;
+﻿using HandheldCompanion.Views;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WindowsInput.Events;
 
 namespace HandheldCompanion.Commands.Functions.HC
 {

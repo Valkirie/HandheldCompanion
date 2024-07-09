@@ -7,7 +7,6 @@ using HandheldCompanion.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;

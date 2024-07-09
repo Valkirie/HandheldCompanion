@@ -1,5 +1,4 @@
 ﻿using Gma.System.MouseKeyHook;
-using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -4,7 +4,6 @@ using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;

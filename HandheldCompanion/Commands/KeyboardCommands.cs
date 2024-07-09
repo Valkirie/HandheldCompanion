@@ -1,14 +1,8 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
-using HandheldCompanion.Views.Windows;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Commands
 {

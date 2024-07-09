@@ -1,5 +1,8 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc.Threading.Tasks;
+using HandheldCompanion.Models;
+using HandheldCompanion.Sensors;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -9,9 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
-using HandheldCompanion.Misc.Threading.Tasks;
-using HandheldCompanion.Models;
-using HandheldCompanion.Sensors;
 
 namespace HandheldCompanion.Devices;
 

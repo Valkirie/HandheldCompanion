@@ -1,6 +1,7 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Models;
 using SharpDX;
 using SharpDX.Direct3D9;
 using System;
@@ -9,7 +10,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using HandheldCompanion.Models;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Timer = System.Timers.Timer;
 

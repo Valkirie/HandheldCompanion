@@ -1,15 +1,10 @@
 ﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
-using WpfScreenHelper.Enum;
 
 namespace HandheldCompanion.ViewModels
 {

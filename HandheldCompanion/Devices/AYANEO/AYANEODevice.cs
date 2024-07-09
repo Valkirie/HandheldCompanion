@@ -1,6 +1,4 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using System.Windows.Forms;
 
 namespace HandheldCompanion.Devices.AYANEO
 {

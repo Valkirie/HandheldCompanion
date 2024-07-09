@@ -1,13 +1,5 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Devices;
-using HandheldCompanion.Extensions;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.ViewModels;
-using iNKORE.UI.WPF.Modern.Controls;
-using System.Collections.ObjectModel;
+﻿using HandheldCompanion.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

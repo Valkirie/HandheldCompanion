@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using Sentry;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -8,8 +9,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Sentry;
-using Sentry.Profiling;
 using static HandheldCompanion.WinAPI;
 
 namespace HandheldCompanion;

@@ -6,8 +6,6 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using static HandheldCompanion.Utils.DeviceUtils;
 using SensorState = HandheldCompanion.Inputs.GyroState.SensorState;
