@@ -1,12 +1,15 @@
 ﻿using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 namespace HandheldCompanion.Misc;
 
 public class Dialog
 {
+    private static Dictionary<Window, Dialog> activeDialogs = new Dictionary<Window, Dialog>();
+
     private Window owner;
     private ContentDialog dialog;
 
@@ -41,6 +44,13 @@ public class Dialog
 
     public async Task<ContentDialogResult> ShowAsync()
     {
+        if (activeDialogs.ContainsKey(owner))
+        {
+            return ContentDialogResult.None; // A dialog is already shown for this window
+        }
+
+        activeDialogs[owner] = this;
+
         try
         {
             dialog.Title = this.Title;
@@ -53,13 +63,25 @@ public class Dialog
             ContentDialogResult result = await dialog.ShowAsync(owner);
             return result;
         }
-        catch { }
-
-        return ContentDialogResult.None;
+        catch
+        {
+            return ContentDialogResult.None;
+        }
+        finally
+        {
+            activeDialogs.Remove(owner);
+        }
     }
 
     public void Show()
     {
+        if (activeDialogs.ContainsKey(owner))
+        {
+            return; // A dialog is already shown for this window
+        }
+
+        activeDialogs[owner] = this;
+
         try
         {
             dialog.Title = this.Title;
@@ -71,13 +93,17 @@ public class Dialog
 
             dialog.ShowAsync(owner);
         }
-        catch { }
+        catch
+        {
+            activeDialogs.Remove(owner);
+        }
     }
 
     public void Hide()
     {
         CanClose = true;
         dialog.Hide();
+        activeDialogs.Remove(owner);
     }
 
     private void Dialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
