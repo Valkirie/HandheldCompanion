@@ -28,7 +28,7 @@ public class ROGAlly : IDevice
         { 168, ButtonFlags.OEM4 },
     };
 
-    private Dictionary<byte, HidDevice> hidDevices = new();
+    private Dictionary<byte, HidDevice> hidDevices = [];
     private AsusACPI asusACPI;
 
     private const byte INPUT_HID_ID = 0x5a;
@@ -158,25 +158,25 @@ public class ROGAlly : IDevice
         });
 
         OEMChords.Add(new KeyboardChord("CC",
-            new List<KeyCode>(), new List<KeyCode>(),
+            [], [],
             false, ButtonFlags.OEM1
         ));
 
         OEMChords.Add(new KeyboardChord("AC",
-            new List<KeyCode>(), new List<KeyCode>(),
+            [], [],
             false, ButtonFlags.OEM2
         ));
 
         // M1 and M2 do a repeating input when holding the button
         OEMChords.Add(new KeyboardChord("M1",
-            new List<KeyCode> { KeyCode.F18 },
-            new List<KeyCode> { KeyCode.F18 },
+            [KeyCode.F18],
+            [KeyCode.F18],
             false, ButtonFlags.OEM3
         ));
 
         OEMChords.Add(new KeyboardChord("M2",
-            new List<KeyCode> { KeyCode.F17 },
-            new List<KeyCode> { KeyCode.F17 },
+            [KeyCode.F17],
+            [KeyCode.F17],
             false, ButtonFlags.OEM4
         ));
 

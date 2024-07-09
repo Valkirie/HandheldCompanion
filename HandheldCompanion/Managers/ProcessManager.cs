@@ -303,7 +303,7 @@ public static class ProcessManager
             {
                 proc.EnableRaisingEvents = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // access denied
             }
@@ -349,7 +349,7 @@ public static class ProcessManager
 
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // process has too high elevation
         }

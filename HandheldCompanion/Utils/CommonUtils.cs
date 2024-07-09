@@ -28,7 +28,7 @@ public static class CommonUtils
 
     public static string RegexReplace(string inputRaw, string pattern, string replacement)
     {
-        List<string> outputRaw = new();
+        List<string> outputRaw = [];
         using (var reader = new StringReader(inputRaw))
         {
             string line;

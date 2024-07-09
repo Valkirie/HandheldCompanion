@@ -122,7 +122,7 @@ namespace HandheldCompanion.Utils
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

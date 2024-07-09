@@ -58,14 +58,15 @@ namespace steam_hidapi.net
             if (!_hidDevice.IsDeviceValid)
                 return null;
 
-            SCHapticPacket haptic = new SCHapticPacket();
-
-            haptic.packet_type = (byte)SCPacketType.SET_HAPTIC;
-            haptic.len = 0x07;
-            haptic.position = position;
-            haptic.amplitude = amplitude;
-            haptic.period = period;
-            haptic.count = count;
+            SCHapticPacket haptic = new SCHapticPacket
+            {
+                packet_type = (byte)SCPacketType.SET_HAPTIC,
+                len = 0x07,
+                position = position,
+                amplitude = amplitude,
+                period = period,
+                count = count
+            };
 
             byte[] data = haptic.ToBytes();
             return _hidDevice.RequestFeatureReport(data);

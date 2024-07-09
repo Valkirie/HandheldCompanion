@@ -54,7 +54,7 @@ public class ProcessEx : IDisposable
         }
     }
 
-    public ConcurrentList<int> Children = new();
+    public ConcurrentList<int> Children = [];
 
     public EventHandler Refreshed;
 
@@ -115,7 +115,7 @@ public class ProcessEx : IDisposable
                 {
                     if (key != null)
                     {
-                        List<string> values = new List<string> { "~" }; ;
+                        List<string> values = ["~"]; ;
                         string valueStr = (string)key.GetValue(Path);
 
                         if (!string.IsNullOrEmpty(valueStr))

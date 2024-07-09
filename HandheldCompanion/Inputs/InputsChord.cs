@@ -33,7 +33,7 @@ namespace HandheldCompanion.Inputs
         public InputsChord() { }
 
         public ButtonState ButtonState { get; set; } = new();
-        public List<InputsKey> KeyState { get; set; } = new();
+        public List<InputsKey> KeyState { get; set; } = [];
 
         private InputsChordType _chordType { get; set; } = InputsChordType.Click;
         public InputsChordType chordType

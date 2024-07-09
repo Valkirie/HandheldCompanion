@@ -40,23 +40,23 @@ namespace HandheldCompanion.Devices.AYANEO
             };
 
             this.OEMChords.Add(new KeyboardChord("Custom Key Big",
-                new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.F17 },
-                new List<KeyCode> { KeyCode.F17, KeyCode.LControl, KeyCode.LWin },
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F17],
+                [KeyCode.F17, KeyCode.LControl, KeyCode.LWin],
                 false, ButtonFlags.OEM1
             ));
             this.OEMChords.Add(new KeyboardChord("Custom Key Small",
-                new List<KeyCode> { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode> { KeyCode.D, KeyCode.LWin },
+                [KeyCode.LWin, KeyCode.D],
+                [KeyCode.D, KeyCode.LWin],
                 false, ButtonFlags.OEM2
             ));
             this.OEMChords.Add(new KeyboardChord("Custom Key Top Left",
-                new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.F15 },
-                new List<KeyCode> { KeyCode.F15, KeyCode.LControl, KeyCode.LWin },
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F15],
+                [KeyCode.F15, KeyCode.LControl, KeyCode.LWin],
                 false, ButtonFlags.OEM3
             ));
             this.OEMChords.Add(new KeyboardChord("Custom Key Top Right",
-                new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.F16 },
-                new List<KeyCode> { KeyCode.F16, KeyCode.LControl, KeyCode.LWin },
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F16],
+                [KeyCode.F16, KeyCode.LControl, KeyCode.LWin],
                 false, ButtonFlags.OEM4
             ));
         }
@@ -101,7 +101,7 @@ namespace HandheldCompanion.Devices.AYANEO
 
         public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)
         {
-            ushort address2 = BitConverter.ToUInt16(new byte[] { (byte)address, offset }, 0);
+            ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
             return base.ECRamDirectWrite(address2, this.ECDetails, data);
         }
 

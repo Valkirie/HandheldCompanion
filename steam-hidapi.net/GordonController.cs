@@ -18,8 +18,10 @@ namespace steam_hidapi.net
 
         public GordonController(ushort vid, ushort pid, short index) : base(vid, pid, index)
         {
-            _hidDevice = new HidDevice(_vid, _pid, 64, index);
-            _hidDevice.OnInputReceived = input => Task.Run(() => OnInputReceived(input));
+            _hidDevice = new HidDevice(_vid, _pid, 64, index)
+            {
+                OnInputReceived = input => Task.Run(() => OnInputReceived(input))
+            };
         }
 
         internal override void OnInputReceived(HidDeviceInputReceivedEventArgs e)

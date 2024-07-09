@@ -130,8 +130,10 @@ public partial class QuickProfilesPage : Page
             cB_Input.Items.Add(comboBoxItem);
         }
 
-        UpdateTimer = new Timer(UpdateInterval);
-        UpdateTimer.AutoReset = false;
+        UpdateTimer = new Timer(UpdateInterval)
+        {
+            AutoReset = false
+        };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // force call
@@ -358,10 +360,12 @@ public partial class QuickProfilesPage : Page
                 if (idx != 0)
                 {
                     // Create a separator
-                    Separator separator = new Separator();
-                    separator.Margin = new Thickness(-16, 0, -16, 0);
-                    separator.BorderBrush = (Brush)FindResource("SystemControlBackgroundChromeMediumBrush");
-                    separator.BorderThickness = new Thickness(0, 1, 0, 0);
+                    Separator separator = new Separator
+                    {
+                        Margin = new Thickness(-16, 0, -16, 0),
+                        BorderBrush = (Brush)FindResource("SystemControlBackgroundChromeMediumBrush"),
+                        BorderThickness = new Thickness(0, 1, 0, 0)
+                    };
                     ProfileStack.Children.Add(separator);
                 }
 
@@ -629,9 +633,11 @@ public partial class QuickProfilesPage : Page
             return;
 
         // create profile
-        selectedProfile = new Profile(currentProcess.Path);
-        selectedProfile.Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout;
-        selectedProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
+        selectedProfile = new Profile(currentProcess.Path)
+        {
+            Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout,
+            LayoutTitle = LayoutTemplate.DesktopLayout.Name
+        };
 
         // if an update is pending, execute it and stop timer
         if (UpdateTimer.Enabled)

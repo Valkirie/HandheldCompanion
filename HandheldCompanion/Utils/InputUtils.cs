@@ -215,8 +215,8 @@ public static class InputUtils
             return TriggerInput;
 
         // Convert deadzone percentage to 0 - 1 range
-        float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
-        float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+        float InnerDeadZone = InnerDeadzonePercentage / 100.0f;
+        float OuterDeadZone = OuterDeadzonePercentage / 100.0f;
 
         // Convert 0 - MaxValue range value input to -1 to 1
         float Trigger = Math.Abs(TriggerInput / MaxValue);
@@ -253,8 +253,8 @@ public static class InputUtils
         Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
 
         // Convert deadzone percentage to 0 - 1 range
-        float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
-        float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+        float InnerDeadZone = InnerDeadzonePercentage / 100.0f;
+        float OuterDeadZone = OuterDeadzonePercentage / 100.0f;
 
         // Joystick is either:
         // - Within inner deadzone, return 0

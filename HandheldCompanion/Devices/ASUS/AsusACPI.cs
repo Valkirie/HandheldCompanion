@@ -193,7 +193,6 @@ namespace HandheldCompanion.Devices.ASUS
 
             byte[] outBuffer = new byte[16];
             byte[] data = new byte[8];
-            bool result;
 
             data[0] = BitConverter.GetBytes(eventHandle.ToInt32())[0];
             data[1] = BitConverter.GetBytes(eventHandle.ToInt32())[1];
@@ -262,7 +261,7 @@ namespace HandheldCompanion.Devices.ASUS
             byte[] acpiBuf = new byte[8 + args.Length];
             byte[] outBuffer = new byte[16];
 
-            BitConverter.GetBytes((uint)MethodID).CopyTo(acpiBuf, 0);
+            BitConverter.GetBytes(MethodID).CopyTo(acpiBuf, 0);
             BitConverter.GetBytes((uint)args.Length).CopyTo(acpiBuf, 4);
             Array.Copy(args, 0, acpiBuf, 8, args.Length);
 
@@ -283,7 +282,7 @@ namespace HandheldCompanion.Devices.ASUS
         public int DeviceSet(uint DeviceID, int Status)
         {
             byte[] args = new byte[8];
-            BitConverter.GetBytes((uint)DeviceID).CopyTo(args, 0);
+            BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
             BitConverter.GetBytes((uint)Status).CopyTo(args, 4);
 
             byte[] status = CallMethod(DEVS, args);
@@ -295,7 +294,7 @@ namespace HandheldCompanion.Devices.ASUS
         public int DeviceSet(uint DeviceID, byte[] Params, string logName)
         {
             byte[] args = new byte[4 + Params.Length];
-            BitConverter.GetBytes((uint)DeviceID).CopyTo(args, 0);
+            BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
             Params.CopyTo(args, 4);
 
             byte[] status = CallMethod(DEVS, args);
@@ -307,7 +306,7 @@ namespace HandheldCompanion.Devices.ASUS
         public int DeviceGet(uint DeviceID)
         {
             byte[] args = new byte[8];
-            BitConverter.GetBytes((uint)DeviceID).CopyTo(args, 0);
+            BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
             byte[] status = CallMethod(DSTS, args);
 
             return BitConverter.ToInt32(status, 0) - 65536;
@@ -317,8 +316,8 @@ namespace HandheldCompanion.Devices.ASUS
         public byte[] DeviceGetBuffer(uint DeviceID, uint Status = 0)
         {
             byte[] args = new byte[8];
-            BitConverter.GetBytes((uint)DeviceID).CopyTo(args, 0);
-            BitConverter.GetBytes((uint)Status).CopyTo(args, 4);
+            BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
+            BitConverter.GetBytes(Status).CopyTo(args, 4);
 
             return CallMethod(DSTS, args);
         }
@@ -467,7 +466,7 @@ namespace HandheldCompanion.Devices.ASUS
         {
 
             byte[] setting = new byte[12];
-            setting[0] = (byte)0xB4;
+            setting[0] = 0xB4;
             setting[1] = (byte)mode;
             setting[2] = color.R;
             setting[3] = color.G;

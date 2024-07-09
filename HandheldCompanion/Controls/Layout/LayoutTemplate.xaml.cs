@@ -116,10 +116,10 @@ public partial class LayoutTemplate : UserControl, IComparable
 
             case "Gamepad (Nintendo)":
                 {
-                    Layout.ButtonLayout[ButtonFlags.B1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B2 } };
-                    Layout.ButtonLayout[ButtonFlags.B2] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B1 } };
-                    Layout.ButtonLayout[ButtonFlags.B3] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B4 } };
-                    Layout.ButtonLayout[ButtonFlags.B4] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B3 } };
+                    Layout.ButtonLayout[ButtonFlags.B1] = [new ButtonActions { Button = ButtonFlags.B2 }];
+                    Layout.ButtonLayout[ButtonFlags.B2] = [new ButtonActions { Button = ButtonFlags.B1 }];
+                    Layout.ButtonLayout[ButtonFlags.B3] = [new ButtonActions { Button = ButtonFlags.B4 }];
+                    Layout.ButtonLayout[ButtonFlags.B4] = [new ButtonActions { Button = ButtonFlags.B3 }];
                 }
                 break;
 

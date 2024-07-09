@@ -53,8 +53,10 @@ public static class DynamicLightingManager
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         IDevice.GetCurrent().PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
-        ambilightThread = new Thread(ambilightThreadLoop);
-        ambilightThread.IsBackground = true;
+        ambilightThread = new Thread(ambilightThreadLoop)
+        {
+            IsBackground = true
+        };
 
         DynamicLightingTimer = new(125)
         {
@@ -234,7 +236,7 @@ public static class DynamicLightingManager
                             IDevice.GetCurrent().SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
                         }
 
-                        ambilightThreadDelay = (int)((double)defaultThreadDelay / 100.0d * LEDSpeed);
+                        ambilightThreadDelay = (int)(defaultThreadDelay / 100.0d * LEDSpeed);
                     }
                     break;
                 case LEDLevel.LEDPreset:
@@ -317,8 +319,10 @@ public static class DynamicLightingManager
 
         ambilightThreadRunning = true;
 
-        ambilightThread = new Thread(ambilightThreadLoop);
-        ambilightThread.IsBackground = true;
+        ambilightThread = new Thread(ambilightThreadLoop)
+        {
+            IsBackground = true
+        };
         ambilightThread.Start();
     }
 
@@ -342,7 +346,7 @@ public static class DynamicLightingManager
         int squareGreenSum = 0;
         int squareBlueSum = 0;
 
-        List<Color> colorList = new List<Color>();
+        List<Color> colorList = [];
 
         // Count the number of red green and blue occurences in the grid, use step size
         for (int xO = 0; xO < squareSize; xO += squareStep)

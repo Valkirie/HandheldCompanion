@@ -56,14 +56,14 @@ public class GPDWin4_2024_8840U : IDevice
         // Configured chords in GPD app need unique characters otherwise this leads to a
         // "mixed" result when pressing both buttons at the same time
         OEMChords.Add(new KeyboardChord("Bottom button left",
-            new List<KeyCode> { KeyCode.F11, KeyCode.L },
-            new List<KeyCode> { KeyCode.F11, KeyCode.L },
+            [KeyCode.F11, KeyCode.L],
+            [KeyCode.F11, KeyCode.L],
             false, ButtonFlags.OEM2
         ));
 
         OEMChords.Add(new KeyboardChord("Bottom button right",
-            new List<KeyCode> { KeyCode.F12, KeyCode.R },
-            new List<KeyCode> { KeyCode.F12, KeyCode.R },
+            [KeyCode.F12, KeyCode.R],
+            [KeyCode.F12, KeyCode.R],
             false, ButtonFlags.OEM3
         ));
     }

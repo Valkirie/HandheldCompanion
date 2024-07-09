@@ -5,7 +5,6 @@ using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,10 +42,10 @@ public class NeptuneController : SteamController
     protected override void InitializeInputOutput()
     {
         // Additional controller specific source buttons/axes
-        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
-        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftStickTouch, ButtonFlags.RightStickTouch });
-        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+        SourceButtons.AddRange([ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5]);
+        SourceButtons.AddRange([ButtonFlags.LeftStickTouch, ButtonFlags.RightStickTouch]);
+        SourceButtons.AddRange([ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight]);
+        SourceButtons.AddRange([ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight]);
 
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);

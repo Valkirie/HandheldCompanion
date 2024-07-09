@@ -60,7 +60,7 @@ public static class ProcessUtils
 
     public static Dictionary<string, string> GetAppProperties(string filePath1)
     {
-        Dictionary<string, string> AppProperties = new();
+        Dictionary<string, string> AppProperties = [];
 
         var shellFile = ShellObject.FromParsingName(filePath1);
         foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public |
@@ -122,7 +122,7 @@ public static class ProcessUtils
         Process[] allProcesses = Process.GetProcesses();
 
         // Create a list to store the matching processes
-        List<Process> matchingProcesses = new List<Process>();
+        List<Process> matchingProcesses = [];
 
         // Loop through each process and check if its executable name matches the parameter
         foreach (Process process in allProcesses)

@@ -18,15 +18,15 @@ namespace HandheldCompanion.Managers;
 
 internal static class LayoutManager
 {
-    public static List<LayoutTemplate> Templates = new()
-    {
+    public static List<LayoutTemplate> Templates =
+    [
         LayoutTemplate.DefaultLayout,
         LayoutTemplate.DesktopLayout,
         LayoutTemplate.NintendoLayout,
         LayoutTemplate.KeyboardLayout,
         LayoutTemplate.GamepadMouseLayout,
         LayoutTemplate.GamepadJoystickLayout
-    };
+    ];
 
     private static bool updateLock;
     private static Layout currentLayout = new();
@@ -306,10 +306,11 @@ internal static class LayoutManager
 
         // clean output state, there should be no leaking of current controller state,
         // only buttons/axes mapped from the layout should be passed on
-        ControllerState outputState = new();
-
-        // except the main gyroscope state that's not re-mappable (6 values)
-        outputState.GyroState = controllerState.GyroState;
+        ControllerState outputState = new()
+        {
+            // except the main gyroscope state that's not re-mappable (6 values)
+            GyroState = controllerState.GyroState
+        };
 
         foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
         {
@@ -449,7 +450,7 @@ internal static class LayoutManager
                         AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
                         AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                        outputState.AxisState[OutAxisY] = (short)tAction.GetValue();
+                        outputState.AxisState[OutAxisY] = tAction.GetValue();
                     }
                     break;
 

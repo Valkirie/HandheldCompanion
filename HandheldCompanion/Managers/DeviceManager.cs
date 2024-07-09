@@ -131,7 +131,7 @@ public static class DeviceManager
     private static void RefreshXInput()
     {
         var deviceIndex = 0;
-        Dictionary<string, DateTimeOffset> devices = new();
+        Dictionary<string, DateTimeOffset> devices = [];
 
         while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId,
                    deviceIndex++))
@@ -153,7 +153,7 @@ public static class DeviceManager
     private static void RefreshDInput()
     {
         var deviceIndex = 0;
-        Dictionary<string, DateTimeOffset> devices = new();
+        Dictionary<string, DateTimeOffset> devices = [];
 
         while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId,
                    deviceIndex++))
@@ -672,7 +672,7 @@ public static class DeviceManager
         return XINPUT_LED_TO_PORT_MAP[ledState];
     }
 
-    private static Dictionary<Guid, AdapterInformation> displayAdapters = new();
+    private static Dictionary<Guid, AdapterInformation> displayAdapters = [];
     public static void RefreshDisplayAdapters(bool elapsed = false)
     {
         if (elapsed)
@@ -680,7 +680,7 @@ public static class DeviceManager
             // get the current list of adapters with Direct3D capabilities
             AdapterCollection adapters = new Direct3D().Adapters;
             List<Guid> adaptersGuids = adapters.Select(a => a.Details.DeviceIdentifier).ToList();
-            List<Guid> adaptersProcessed = new List<Guid>(); // keep track of processed adapter entries
+            List<Guid> adaptersProcessed = []; // keep track of processed adapter entries
 
             foreach (AdapterInformation adapterInformation in adapters)
             {

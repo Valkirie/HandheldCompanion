@@ -48,14 +48,14 @@ public class AynLoki : IDevice
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
 
         OEMChords.Add(new KeyboardChord("Guide",
-            new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
-            new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
+            [KeyCode.LButton, KeyCode.XButton2],
+            [KeyCode.LButton, KeyCode.XButton2],
             false, ButtonFlags.OEM1
         ));
 
         OEMChords.Add(new KeyboardChord("LCC",
-            new List<KeyCode> { KeyCode.LControl, KeyCode.LShift, KeyCode.LMenu, KeyCode.T },
-            new List<KeyCode> { KeyCode.T, KeyCode.LMenu, KeyCode.LShift, KeyCode.LControl },
+            [KeyCode.LControl, KeyCode.LShift, KeyCode.LMenu, KeyCode.T],
+            [KeyCode.T, KeyCode.LMenu, KeyCode.LShift, KeyCode.LControl],
             false, ButtonFlags.OEM2
         ));
     }
@@ -130,7 +130,6 @@ public class AynLoki : IDevice
         byte LED_Control_mode_Address = 0xB3;
         byte LED_Control_CompletedValue = 0x00;
         byte LED_Control_Save = 0xAA; // Update request
-        byte LED_Control_RGB_Idle = 0x55; // This is in Ayn example code, not used in HC.
 
         /*
         0x00, EC writes 0x00 to notify Host that the operation has been completed

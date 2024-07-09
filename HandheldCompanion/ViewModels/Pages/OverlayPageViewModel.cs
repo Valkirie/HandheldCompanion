@@ -321,7 +321,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private ChartValues<double> _framerateValues = new();
+        private ChartValues<double> _framerateValues = [];
         public ChartValues<double> FramerateValues
         {
             get { return _framerateValues; }

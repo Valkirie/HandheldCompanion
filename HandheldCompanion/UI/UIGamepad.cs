@@ -47,7 +47,7 @@ namespace HandheldCompanion.Managers
         // store the latest NavigationViewItem that had focus on this window
         private Control prevNavigation;
         // key: Page, store the latest control that had focus on this page
-        private Dictionary<object, Control> prevControl = new();
+        private Dictionary<object, Control> prevControl = [];
         // key: Window, store which window has focus
         private static ConcurrentDictionary<Window, bool> _focused = new();
 
@@ -674,7 +674,7 @@ namespace HandheldCompanion.Managers
                                 {
                                     case WPFUtils.Direction.Up:
                                     case WPFUtils.Direction.Down:
-                                        focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, new List<Type>() { typeof(NavigationViewItem) });
+                                        focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, [typeof(NavigationViewItem)]);
                                         Focus(focusedElement);
                                         return;
 
@@ -690,7 +690,7 @@ namespace HandheldCompanion.Managers
                     }
 
                     // default
-                    focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, new List<Type>() { typeof(NavigationViewItem) });
+                    focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, [typeof(NavigationViewItem)]);
                     Focus(focusedElement);
                 }
             });

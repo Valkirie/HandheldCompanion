@@ -47,11 +47,13 @@ namespace HandheldCompanion
 
         public object Clone()
         {
-            Hotkey hotkey = new(ButtonFlags);
-            hotkey.command = this.command.Clone() as ICommands;
-            hotkey.inputsChord = this.inputsChord.Clone() as InputsChord;
-            hotkey.IsPinned = this.IsPinned;
-            hotkey.IsInternal = this.IsInternal;
+            Hotkey hotkey = new(ButtonFlags)
+            {
+                command = this.command.Clone() as ICommands,
+                inputsChord = this.inputsChord.Clone() as InputsChord,
+                IsPinned = this.IsPinned,
+                IsInternal = this.IsInternal
+            };
 
             return hotkey;
         }

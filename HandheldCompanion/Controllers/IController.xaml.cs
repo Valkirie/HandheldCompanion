@@ -30,32 +30,32 @@ namespace HandheldCompanion.Controllers
     {
         // Buttons and axes we should be able to map to.
         // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
-        protected readonly List<ButtonFlags> TargetButtons = new()
-        {
+        protected readonly List<ButtonFlags> TargetButtons =
+        [
             ButtonFlags.None, ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
-        };
+        ];
 
-        protected readonly List<AxisLayoutFlags> TargetAxis = new()
-        {
+        protected readonly List<AxisLayoutFlags> TargetAxis =
+        [
             AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
-        };
+        ];
 
-        protected readonly List<AxisLayoutFlags> SourceAxis = new()
-        {
+        protected readonly List<AxisLayoutFlags> SourceAxis =
+        [
             // same as target, we assume all controllers have those axes
             AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2
-        };
+        ];
 
         // Buttons and axes all controllers have that we can map.
         // Additional ones can be added per controller.
-        protected readonly List<ButtonFlags> SourceButtons = new()
-        {
+        protected readonly List<ButtonFlags> SourceButtons =
+        [
             // same as target, we assume all controllers have those buttons
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
@@ -66,13 +66,13 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
             ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown, ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight,
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
-        };
+        ];
 
         protected FontFamily GlyphFontFamily = new("PromptFont");
         public static readonly string defaultGlyph = "\u2753";
         public ControllerCapabilities Capabilities = ControllerCapabilities.None;
-        protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
-        protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = new();
+        protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = [];
+        protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = [];
         protected FontFamily DefaultFontFamily = new("Segeo WP");
 
         public PnPDetails Details;

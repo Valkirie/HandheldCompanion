@@ -135,7 +135,7 @@ public static class OSDManager
 
     public static string Draw(int processId)
     {
-        Content = new List<string>();
+        Content = [];
         GPU gpu = GPUManager.GetCurrent();
         if (gpu is null)
             goto Exit;
@@ -529,7 +529,7 @@ public struct OverlayEntryElement
 
 public class OverlayEntry : IDisposable
 {
-    public List<OverlayEntryElement> elements = new();
+    public List<OverlayEntryElement> elements = [];
 
     public OverlayEntry(string name, string colorScheme = "", bool indent = false)
     {
@@ -550,7 +550,7 @@ public class OverlayEntry : IDisposable
 
 public class OverlayRow : IDisposable
 {
-    public List<OverlayEntry> entries = new();
+    public List<OverlayEntry> entries = [];
 
     public void Dispose()
     {
@@ -560,14 +560,14 @@ public class OverlayRow : IDisposable
 
     public override string ToString()
     {
-        List<string> rowStr = new();
+        List<string> rowStr = [];
 
         foreach (var entry in entries)
         {
             if (entry.elements is null || entry.elements.Count == 0)
                 continue;
 
-            List<string> entriesStr = new() { entry.Name };
+            List<string> entriesStr = [entry.Name];
 
             foreach (var element in entry.elements)
                 entriesStr.Add(element.ToString());

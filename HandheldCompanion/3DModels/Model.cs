@@ -17,8 +17,8 @@ public abstract class IModel
     public ConcurrentDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
     // Materials
-    public Dictionary<Model3DGroup, Material> DefaultMaterials = new();
-    public Dictionary<Model3DGroup, Material> HighlightMaterials = new();
+    public Dictionary<Model3DGroup, Material> DefaultMaterials = [];
+    public Dictionary<Model3DGroup, Material> HighlightMaterials = [];
     public float JoystickMaxAngleDeg;
 
     // Rotation Points
@@ -70,7 +70,7 @@ public abstract class IModel
             if (File.Exists(filename))
             {
                 var model = modelImporter.Load(filename);
-                ButtonMap.TryAdd(button, new List<Model3DGroup> { model });
+                ButtonMap.TryAdd(button, [model]);
 
                 switch (button)
                 {

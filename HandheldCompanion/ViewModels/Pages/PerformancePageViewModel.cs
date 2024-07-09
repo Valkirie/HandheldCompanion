@@ -440,7 +440,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems { get; } = new ObservableCollection<ProfilesPickerViewModel>();
+        public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems { get; } = [];
         public ICommand OpenModifyDialogCommand { get; private set; }
         public ICommand ConfirmModifyCommand { get; private set; }
         public ICommand CreatePresetCommand { get; private set; }

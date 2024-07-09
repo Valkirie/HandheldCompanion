@@ -132,10 +132,10 @@ public class DesktopScreen
     public string FriendlyName;
     public bool IsPrimary => screen.Primary;
 
-    public List<ScreenResolution> screenResolutions = new();
-    public List<ScreenDivider> screenDividers = new();
+    public List<ScreenResolution> screenResolutions = [];
+    public List<ScreenDivider> screenDividers = [];
 
-    private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = new();
+    private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = [];
 
     public DesktopScreen(Screen screen)
     {
@@ -186,7 +186,7 @@ public class DesktopScreen
 
         int lowestFPS = dmDisplayFrequency;
 
-        HashSet<int> fpsLimits = new();
+        HashSet<int> fpsLimits = [];
 
         // A loop to find the lowest possible fps limit option and limits from division
         do

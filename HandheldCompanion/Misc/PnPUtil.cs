@@ -51,7 +51,7 @@ namespace HandheldCompanion
         public static List<string> GetDevices(string className, string status = "/connected")
         {
             // A list of string to store the Instance ID values
-            List<string> instanceIDs = new List<string>();
+            List<string> instanceIDs = [];
 
             // A regular expression to match the Instance ID pattern
             Regex regex = new Regex(@"Instance ID:\s+(.*)");

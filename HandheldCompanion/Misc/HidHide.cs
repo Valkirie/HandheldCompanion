@@ -62,7 +62,7 @@ public static class HidHide
         {
         }
 
-        return new List<string>();
+        return [];
     }
 
     public static List<string> GetRegisteredDevices()
@@ -76,7 +76,7 @@ public static class HidHide
         {
         }
 
-        return new List<string>();
+        return [];
     }
 
     public static bool IsRegistered(string InstanceId)
@@ -151,8 +151,10 @@ public static class HidHide
     {
         try
         {
-            var service = new HidHideControlService();
-            service.IsActive = status;
+            var service = new HidHideControlService
+            {
+                IsActive = status
+            };
             LogManager.LogInformation("HideDevice IsActive: {0}", status);
         }
         catch
@@ -253,13 +255,13 @@ public static class HidHide
             string jsonString = process.StandardOutput.ReadToEnd().Trim();
 
             if (string.IsNullOrEmpty(jsonString))
-                return new();
+                return [];
 
             return JsonConvert.DeserializeObject<List<HidHideDevice>>(jsonString);
         }
         catch { }
 
-        return new();
+        return [];
     }
 
     public static HidHideDevice GetHidHideDevice(string deviceInstancePath)

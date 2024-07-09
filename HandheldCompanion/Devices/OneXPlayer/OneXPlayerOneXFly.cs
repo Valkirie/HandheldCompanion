@@ -66,20 +66,20 @@ public class OneXPlayerOneXFly : IDevice
         _pid = 0xB001;
 
         OEMChords.Add(new KeyboardChord("Turbo",
-            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
-            new List<KeyCode> { KeyCode.LMenu, KeyCode.LWin, KeyCode.LControl },
+            [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.LControl],
             false, ButtonFlags.OEM1
         ));
 
         OEMChords.Add(new KeyboardChord("Keyboard",
-            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
-            new List<KeyCode> { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM2
         ));
 
         OEMChords.Add(new KeyboardChord("Home",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
-            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            [KeyCode.LWin, KeyCode.D],
+            [KeyCode.LWin, KeyCode.D],
             false, ButtonFlags.OEM3
         ));
 

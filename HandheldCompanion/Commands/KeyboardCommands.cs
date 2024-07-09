@@ -64,16 +64,18 @@ namespace HandheldCompanion.Commands
 
         public override object Clone()
         {
-            KeyboardCommands commands = new();
-            commands.commandType = this.commandType;
-            commands.Name = this.Name;
-            commands.Description = this.Description;
-            commands.Glyph = this.Glyph;
-            commands.OnKeyUp = this.OnKeyUp;
-            commands.OnKeyDown = this.OnKeyDown;
+            KeyboardCommands commands = new()
+            {
+                commandType = this.commandType,
+                Name = this.Name,
+                Description = this.Description,
+                Glyph = this.Glyph,
+                OnKeyUp = this.OnKeyUp,
+                OnKeyDown = this.OnKeyDown,
 
-            // specific
-            commands.outputChord = this.outputChord.Clone() as InputsChord;
+                // specific
+                outputChord = this.outputChord.Clone() as InputsChord
+            };
 
             return commands;
         }

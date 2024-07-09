@@ -29,7 +29,7 @@ public struct AxisLayout
     };
 
     public AxisLayoutFlags flags = AxisLayoutFlags.None;
-    private SortedDictionary<char, AxisFlags> axis = new();
+    private SortedDictionary<char, AxisFlags> axis = [];
     public Vector2 vector = new();
 
     public AxisLayout(AxisLayoutFlags flags)

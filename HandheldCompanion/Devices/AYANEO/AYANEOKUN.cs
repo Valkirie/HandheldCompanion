@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using System.Collections.Generic;
 using System.Windows.Media;
 using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
@@ -22,13 +21,13 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
         this.Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
         this.OEMChords.Add(new KeyboardChord("T",
-            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18 },
-            new List<KeyCode> { KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey },
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],
+            [KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM5
         ));
         this.OEMChords.Add(new KeyboardChord("Guide",
-            new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
-            new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
+            [KeyCode.LButton, KeyCode.XButton2],
+            [KeyCode.LButton, KeyCode.XButton2],
             false, ButtonFlags.OEM6
         ));
 

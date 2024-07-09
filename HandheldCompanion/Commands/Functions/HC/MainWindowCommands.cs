@@ -32,13 +32,15 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override object Clone()
         {
-            MainWindowCommands commands = new();
-            commands.commandType = this.commandType;
-            commands.Name = this.Name;
-            commands.Description = this.Description;
-            commands.Glyph = this.Glyph;
-            commands.OnKeyUp = this.OnKeyUp;
-            commands.OnKeyDown = this.OnKeyDown;
+            MainWindowCommands commands = new()
+            {
+                commandType = this.commandType,
+                Name = this.Name,
+                Description = this.Description,
+                Glyph = this.Glyph,
+                OnKeyUp = this.OnKeyUp,
+                OnKeyDown = this.OnKeyDown
+            };
 
             return commands;
         }

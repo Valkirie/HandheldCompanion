@@ -29,29 +29,30 @@ namespace steam_hidapi.net
         }
         internal GordonControllerButtonState(GCInput input)
         {
-            _buttonState = new Dictionary<GordonControllerButton, bool>();
+            _buttonState = new Dictionary<GordonControllerButton, bool>
+            {
+                [GordonControllerButton.BtnA] = (input.buttons0 & (byte)GCButton0.BTN_A) == (byte)GCButton0.BTN_A,
+                [GordonControllerButton.BtnB] = (input.buttons0 & (byte)GCButton0.BTN_B) == (byte)GCButton0.BTN_B,
+                [GordonControllerButton.BtnX] = (input.buttons0 & (byte)GCButton0.BTN_X) == (byte)GCButton0.BTN_X,
+                [GordonControllerButton.BtnY] = (input.buttons0 & (byte)GCButton0.BTN_Y) == (byte)GCButton0.BTN_Y,
 
-            _buttonState[GordonControllerButton.BtnA] = (input.buttons0 & (byte)GCButton0.BTN_A) == (byte)GCButton0.BTN_A;
-            _buttonState[GordonControllerButton.BtnB] = (input.buttons0 & (byte)GCButton0.BTN_B) == (byte)GCButton0.BTN_B;
-            _buttonState[GordonControllerButton.BtnX] = (input.buttons0 & (byte)GCButton0.BTN_X) == (byte)GCButton0.BTN_X;
-            _buttonState[GordonControllerButton.BtnY] = (input.buttons0 & (byte)GCButton0.BTN_Y) == (byte)GCButton0.BTN_Y;
+                [GordonControllerButton.BtnL1] = (input.buttons0 & (byte)GCButton0.BTN_L1) == (byte)GCButton0.BTN_L1,
+                [GordonControllerButton.BtnL2] = (input.buttons0 & (byte)GCButton0.BTN_L2) == (byte)GCButton0.BTN_L2,
+                [GordonControllerButton.BtnR1] = (input.buttons0 & (byte)GCButton0.BTN_R1) == (byte)GCButton0.BTN_R1,
+                [GordonControllerButton.BtnR2] = (input.buttons0 & (byte)GCButton0.BTN_R2) == (byte)GCButton0.BTN_R2,
 
-            _buttonState[GordonControllerButton.BtnL1] = (input.buttons0 & (byte)GCButton0.BTN_L1) == (byte)GCButton0.BTN_L1;
-            _buttonState[GordonControllerButton.BtnL2] = (input.buttons0 & (byte)GCButton0.BTN_L2) == (byte)GCButton0.BTN_L2;
-            _buttonState[GordonControllerButton.BtnR1] = (input.buttons0 & (byte)GCButton0.BTN_R1) == (byte)GCButton0.BTN_R1;
-            _buttonState[GordonControllerButton.BtnR2] = (input.buttons0 & (byte)GCButton0.BTN_R2) == (byte)GCButton0.BTN_R2;
+                [GordonControllerButton.BtnDpadDown] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_DOWN) == (byte)GCButton1.BTN_DPAD_DOWN,
+                [GordonControllerButton.BtnDpadUp] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_UP) == (byte)GCButton1.BTN_DPAD_UP,
+                [GordonControllerButton.BtnDpadLeft] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_LEFT) == (byte)GCButton1.BTN_DPAD_LEFT,
+                [GordonControllerButton.BtnDpadRight] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_RIGHT) == (byte)GCButton1.BTN_DPAD_RIGHT,
 
-            _buttonState[GordonControllerButton.BtnDpadDown] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_DOWN) == (byte)GCButton1.BTN_DPAD_DOWN;
-            _buttonState[GordonControllerButton.BtnDpadUp] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_UP) == (byte)GCButton1.BTN_DPAD_UP;
-            _buttonState[GordonControllerButton.BtnDpadLeft] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_LEFT) == (byte)GCButton1.BTN_DPAD_LEFT;
-            _buttonState[GordonControllerButton.BtnDpadRight] = (input.buttons1 & (byte)GCButton1.BTN_DPAD_RIGHT) == (byte)GCButton1.BTN_DPAD_RIGHT;
+                [GordonControllerButton.BtnMenu] = (input.buttons1 & (byte)GCButton1.BTN_MENU) == (byte)GCButton1.BTN_MENU,
+                [GordonControllerButton.BtnSteam] = (input.buttons1 & (byte)GCButton1.BTN_STEAM) == (byte)GCButton1.BTN_STEAM,
+                [GordonControllerButton.BtnOptions] = (input.buttons1 & (byte)GCButton1.BTN_OPTIONS) == (byte)GCButton1.BTN_OPTIONS,
 
-            _buttonState[GordonControllerButton.BtnMenu] = (input.buttons1 & (byte)GCButton1.BTN_MENU) == (byte)GCButton1.BTN_MENU;
-            _buttonState[GordonControllerButton.BtnSteam] = (input.buttons1 & (byte)GCButton1.BTN_STEAM) == (byte)GCButton1.BTN_STEAM;
-            _buttonState[GordonControllerButton.BtnOptions] = (input.buttons1 & (byte)GCButton1.BTN_OPTIONS) == (byte)GCButton1.BTN_OPTIONS;
-
-            _buttonState[GordonControllerButton.BtnL4] = (input.buttons1 & (byte)GCButton1.BTN_L4) == (byte)GCButton1.BTN_L4;
-            _buttonState[GordonControllerButton.BtnR4] = (input.buttons2 & (byte)GCButton2.BTN_R4) == (byte)GCButton2.BTN_R4;
+                [GordonControllerButton.BtnL4] = (input.buttons1 & (byte)GCButton1.BTN_L4) == (byte)GCButton1.BTN_L4,
+                [GordonControllerButton.BtnR4] = (input.buttons2 & (byte)GCButton2.BTN_R4) == (byte)GCButton2.BTN_R4
+            };
 
             bool lpad_touched = (input.buttons2 & (byte)GCButton2.BTN_LPAD_TOUCH) == (byte)GCButton2.BTN_LPAD_TOUCH;
             bool lpad_and_joy = (input.buttons2 & (byte)GCButton2.BTN_LPAD_AND_JOY) == (byte)GCButton2.BTN_LPAD_AND_JOY;

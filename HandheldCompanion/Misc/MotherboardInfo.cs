@@ -30,7 +30,7 @@ public static class MotherboardInfo
     private static ManagementObjectCollection? computerCollection;
 
     private static object cacheLock = new();
-    private static Dictionary<string, object> cache = new();
+    private static Dictionary<string, object> cache = [];
 
     private static readonly string cacheDirectory;
     private const string fileName = "motherboard.json";

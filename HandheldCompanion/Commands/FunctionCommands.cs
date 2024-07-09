@@ -9,8 +9,8 @@ namespace HandheldCompanion.Commands
     [Serializable]
     public class FunctionCommands : ICommands
     {
-        public static List<object> Functions = new List<object>()
-        {
+        public static List<object> Functions =
+        [
             "Handheld Companion",
             typeof(QuickToolsCommands),
             typeof(MainWindowCommands),
@@ -30,7 +30,7 @@ namespace HandheldCompanion.Commands
             typeof(BrightnessDecrease),
             typeof(VolumeIncrease),
             typeof(VolumeDecrease),
-        };
+        ];
 
         public FunctionCommands()
         {

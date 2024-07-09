@@ -25,7 +25,7 @@ public static class ProfileManager
     public const string DefaultName = "Default";
 
     public static ConcurrentDictionary<string, Profile> profiles = new(StringComparer.InvariantCultureIgnoreCase);
-    public static List<Profile> subProfiles = new();
+    public static List<Profile> subProfiles = [];
 
     private static Profile currentProfile;
 
@@ -208,9 +208,11 @@ public static class ProfileManager
         if (currentProfile == null)
             return;
         // called using previousSubProfile/nextSubProfile hotkeys
-        List<Profile> subProfilesList = new();
-        subProfilesList.Add(GetProfileForSubProfile(currentProfile)); // adds main profile as sub profile
-        subProfilesList.AddRange(GetSubProfilesFromPath(currentProfile.Path, false).ToList()); // adds all sub profiles
+        List<Profile> subProfilesList =
+        [
+            GetProfileForSubProfile(currentProfile), // adds main profile as sub profile
+            .. GetSubProfilesFromPath(currentProfile.Path, false).ToList(), // adds all sub profiles
+        ];
 
         // if profile does not have sub profiles -> do nothing
         if (subProfilesList.Count <= 1)
@@ -589,8 +591,8 @@ public static class ProfileManager
             ApplyProfile(profile, UpdateSource.Serializer);
     }
 
-    private static List<string> pendingCreation = new();
-    private static List<string> pendingDeletion = new();
+    private static List<string> pendingCreation = [];
+    private static List<string> pendingDeletion = [];
 
     public static void DeleteProfile(Profile profile)
     {

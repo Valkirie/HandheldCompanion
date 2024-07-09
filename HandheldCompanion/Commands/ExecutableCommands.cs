@@ -29,9 +29,11 @@ namespace HandheldCompanion.Commands
             Task.Run(() =>
             {
                 // Create a new instance of ProcessStartInfo
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = this.Path;
-                startInfo.Arguments = this.Arguments;
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = this.Path,
+                    Arguments = this.Arguments
+                };
 
                 // Start the process with the startInfo configuration
                 Process process = new() { StartInfo = startInfo };
@@ -43,17 +45,19 @@ namespace HandheldCompanion.Commands
 
         public override object Clone()
         {
-            ExecutableCommands commands = new();
-            commands.commandType = this.commandType;
-            commands.Name = this.Name;
-            commands.Description = this.Description;
-            commands.Glyph = this.Glyph;
-            commands.OnKeyUp = this.OnKeyUp;
-            commands.OnKeyDown = this.OnKeyDown;
+            ExecutableCommands commands = new()
+            {
+                commandType = this.commandType,
+                Name = this.Name,
+                Description = this.Description,
+                Glyph = this.Glyph,
+                OnKeyUp = this.OnKeyUp,
+                OnKeyDown = this.OnKeyDown,
 
-            // specific
-            commands.Path = this.Path;
-            commands.Arguments = this.Arguments;
+                // specific
+                Path = this.Path,
+                Arguments = this.Arguments
+            };
 
             return commands;
         }

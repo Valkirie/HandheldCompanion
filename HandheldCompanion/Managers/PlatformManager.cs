@@ -57,8 +57,10 @@ public static class PlatformManager
         ProfileManager.Applied += ProfileManager_Applied;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
 
-        UpdateTimer = new Timer(UpdateInterval);
-        UpdateTimer.AutoReset = false;
+        UpdateTimer = new Timer(UpdateInterval)
+        {
+            AutoReset = false
+        };
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
         UpdateTimer.Start();
 

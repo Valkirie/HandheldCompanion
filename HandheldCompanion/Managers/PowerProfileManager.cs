@@ -15,7 +15,7 @@ namespace HandheldCompanion.Managers
     {
         private static PowerProfile currentProfile;
 
-        public static Dictionary<Guid, PowerProfile> profiles = new();
+        public static Dictionary<Guid, PowerProfile> profiles = [];
 
         private static string ProfilesPath;
 

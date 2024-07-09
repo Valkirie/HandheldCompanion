@@ -77,7 +77,7 @@ public partial class Profile : ICloneable, IComparable
     public bool MotionInvertVertical { get; set; } // if false, invert vertical axis
     public float MotionSensivityX { get; set; } = 1.0f;
     public float MotionSensivityY { get; set; } = 1.0f;
-    public SortedDictionary<double, double> MotionSensivityArray { get; set; } = new();
+    public SortedDictionary<double, double> MotionSensivityArray { get; set; } = [];
 
     // steering
     public float SteeringMaxAngle { get; set; } = 30.0f;

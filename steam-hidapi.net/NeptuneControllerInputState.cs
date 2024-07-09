@@ -27,44 +27,45 @@ namespace steam_hidapi.net
         }
         internal NeptuneControllerButtonState(NCInput input)
         {
-            _buttonState = new Dictionary<NeptuneControllerButton, bool>();
+            _buttonState = new Dictionary<NeptuneControllerButton, bool>
+            {
+                [NeptuneControllerButton.BtnA] = (input.buttons0 & (ushort)NCButton0.BTN_A) == (ushort)NCButton0.BTN_A,
+                [NeptuneControllerButton.BtnB] = (input.buttons0 & (ushort)NCButton0.BTN_B) == (ushort)NCButton0.BTN_B,
+                [NeptuneControllerButton.BtnX] = (input.buttons0 & (ushort)NCButton0.BTN_X) == (ushort)NCButton0.BTN_X,
+                [NeptuneControllerButton.BtnY] = (input.buttons0 & (ushort)NCButton0.BTN_Y) == (ushort)NCButton0.BTN_Y,
 
-            _buttonState[NeptuneControllerButton.BtnA] = (input.buttons0 & (ushort)NCButton0.BTN_A) == (ushort)NCButton0.BTN_A;
-            _buttonState[NeptuneControllerButton.BtnB] = (input.buttons0 & (ushort)NCButton0.BTN_B) == (ushort)NCButton0.BTN_B;
-            _buttonState[NeptuneControllerButton.BtnX] = (input.buttons0 & (ushort)NCButton0.BTN_X) == (ushort)NCButton0.BTN_X;
-            _buttonState[NeptuneControllerButton.BtnY] = (input.buttons0 & (ushort)NCButton0.BTN_Y) == (ushort)NCButton0.BTN_Y;
+                [NeptuneControllerButton.BtnL1] = (input.buttons0 & (ushort)NCButton0.BTN_L1) == (ushort)NCButton0.BTN_L1,
+                [NeptuneControllerButton.BtnL2] = (input.buttons0 & (ushort)NCButton0.BTN_L2) == (ushort)NCButton0.BTN_L2,
+                [NeptuneControllerButton.BtnR1] = (input.buttons0 & (ushort)NCButton0.BTN_R1) == (ushort)NCButton0.BTN_R1,
+                [NeptuneControllerButton.BtnR2] = (input.buttons0 & (ushort)NCButton0.BTN_R2) == (ushort)NCButton0.BTN_R2,
 
-            _buttonState[NeptuneControllerButton.BtnL1] = (input.buttons0 & (ushort)NCButton0.BTN_L1) == (ushort)NCButton0.BTN_L1;
-            _buttonState[NeptuneControllerButton.BtnL2] = (input.buttons0 & (ushort)NCButton0.BTN_L2) == (ushort)NCButton0.BTN_L2;
-            _buttonState[NeptuneControllerButton.BtnR1] = (input.buttons0 & (ushort)NCButton0.BTN_R1) == (ushort)NCButton0.BTN_R1;
-            _buttonState[NeptuneControllerButton.BtnR2] = (input.buttons0 & (ushort)NCButton0.BTN_R2) == (ushort)NCButton0.BTN_R2;
+                [NeptuneControllerButton.BtnDpadDown] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_DOWN) == (ushort)NCButton1.BTN_DPAD_DOWN,
+                [NeptuneControllerButton.BtnDpadUp] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_UP) == (ushort)NCButton1.BTN_DPAD_UP,
+                [NeptuneControllerButton.BtnDpadLeft] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_LEFT) == (ushort)NCButton1.BTN_DPAD_LEFT,
+                [NeptuneControllerButton.BtnDpadRight] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_RIGHT) == (ushort)NCButton1.BTN_DPAD_RIGHT,
 
-            _buttonState[NeptuneControllerButton.BtnDpadDown] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_DOWN) == (ushort)NCButton1.BTN_DPAD_DOWN;
-            _buttonState[NeptuneControllerButton.BtnDpadUp] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_UP) == (ushort)NCButton1.BTN_DPAD_UP;
-            _buttonState[NeptuneControllerButton.BtnDpadLeft] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_LEFT) == (ushort)NCButton1.BTN_DPAD_LEFT;
-            _buttonState[NeptuneControllerButton.BtnDpadRight] = (input.buttons1 & (ushort)NCButton1.BTN_DPAD_RIGHT) == (ushort)NCButton1.BTN_DPAD_RIGHT;
+                [NeptuneControllerButton.BtnMenu] = (input.buttons1 & (ushort)NCButton1.BTN_MENU) == (ushort)NCButton1.BTN_MENU,
+                [NeptuneControllerButton.BtnSteam] = (input.buttons1 & (ushort)NCButton1.BTN_STEAM) == (ushort)NCButton1.BTN_STEAM,
+                [NeptuneControllerButton.BtnOptions] = (input.buttons1 & (ushort)NCButton1.BTN_OPTIONS) == (ushort)NCButton1.BTN_OPTIONS,
 
-            _buttonState[NeptuneControllerButton.BtnMenu] = (input.buttons1 & (ushort)NCButton1.BTN_MENU) == (ushort)NCButton1.BTN_MENU;
-            _buttonState[NeptuneControllerButton.BtnSteam] = (input.buttons1 & (ushort)NCButton1.BTN_STEAM) == (ushort)NCButton1.BTN_STEAM;
-            _buttonState[NeptuneControllerButton.BtnOptions] = (input.buttons1 & (ushort)NCButton1.BTN_OPTIONS) == (ushort)NCButton1.BTN_OPTIONS;
+                [NeptuneControllerButton.BtnL5] = (input.buttons1 & (ushort)NCButton1.BTN_L5) == (ushort)NCButton1.BTN_L5,
+                [NeptuneControllerButton.BtnR5] = (input.buttons2 & (ushort)NCButton2.BTN_R5) == (ushort)NCButton2.BTN_R5,
 
-            _buttonState[NeptuneControllerButton.BtnL5] = (input.buttons1 & (ushort)NCButton1.BTN_L5) == (ushort)NCButton1.BTN_L5;
-            _buttonState[NeptuneControllerButton.BtnR5] = (input.buttons2 & (ushort)NCButton2.BTN_R5) == (ushort)NCButton2.BTN_R5;
+                [NeptuneControllerButton.BtnLPadPress] = (input.buttons2 & (ushort)NCButton2.BTN_LPAD_PRESS) == (ushort)NCButton2.BTN_LPAD_PRESS,
+                [NeptuneControllerButton.BtnRPadPress] = (input.buttons2 & (ushort)NCButton2.BTN_RPAD_PRESS) == (ushort)NCButton2.BTN_RPAD_PRESS,
+                [NeptuneControllerButton.BtnLPadTouch] = (input.buttons2 & (ushort)NCButton2.BTN_LPAD_TOUCH) == (ushort)NCButton2.BTN_LPAD_TOUCH,
+                [NeptuneControllerButton.BtnRPadTouch] = (input.buttons2 & (ushort)NCButton2.BTN_RPAD_TOUCH) == (ushort)NCButton2.BTN_RPAD_TOUCH,
 
-            _buttonState[NeptuneControllerButton.BtnLPadPress] = (input.buttons2 & (ushort)NCButton2.BTN_LPAD_PRESS) == (ushort)NCButton2.BTN_LPAD_PRESS;
-            _buttonState[NeptuneControllerButton.BtnRPadPress] = (input.buttons2 & (ushort)NCButton2.BTN_RPAD_PRESS) == (ushort)NCButton2.BTN_RPAD_PRESS;
-            _buttonState[NeptuneControllerButton.BtnLPadTouch] = (input.buttons2 & (ushort)NCButton2.BTN_LPAD_TOUCH) == (ushort)NCButton2.BTN_LPAD_TOUCH;
-            _buttonState[NeptuneControllerButton.BtnRPadTouch] = (input.buttons2 & (ushort)NCButton2.BTN_RPAD_TOUCH) == (ushort)NCButton2.BTN_RPAD_TOUCH;
+                [NeptuneControllerButton.BtnLStickPress] = (input.buttons2 & (ushort)NCButton2.BTN_LSTICK_PRESS) == (ushort)NCButton2.BTN_LSTICK_PRESS,
+                [NeptuneControllerButton.BtnRStickPress] = (input.buttons3 & (ushort)NCButton3.BTN_RSTICK_PRESS) == (ushort)NCButton3.BTN_RSTICK_PRESS,
+                [NeptuneControllerButton.BtnLStickTouch] = (input.buttons5 & (ushort)NCButton5.BTN_LSTICK_TOUCH) == (ushort)NCButton5.BTN_LSTICK_TOUCH,
+                [NeptuneControllerButton.BtnRStickTouch] = (input.buttons5 & (ushort)NCButton5.BTN_RSTICK_TOUCH) == (ushort)NCButton5.BTN_RSTICK_TOUCH,
 
-            _buttonState[NeptuneControllerButton.BtnLStickPress] = (input.buttons2 & (ushort)NCButton2.BTN_LSTICK_PRESS) == (ushort)NCButton2.BTN_LSTICK_PRESS;
-            _buttonState[NeptuneControllerButton.BtnRStickPress] = (input.buttons3 & (ushort)NCButton3.BTN_RSTICK_PRESS) == (ushort)NCButton3.BTN_RSTICK_PRESS;
-            _buttonState[NeptuneControllerButton.BtnLStickTouch] = (input.buttons5 & (ushort)NCButton5.BTN_LSTICK_TOUCH) == (ushort)NCButton5.BTN_LSTICK_TOUCH;
-            _buttonState[NeptuneControllerButton.BtnRStickTouch] = (input.buttons5 & (ushort)NCButton5.BTN_RSTICK_TOUCH) == (ushort)NCButton5.BTN_RSTICK_TOUCH;
+                [NeptuneControllerButton.BtnR4] = (input.buttons5 & (ushort)NCButton5.BTN_R4) == (ushort)NCButton5.BTN_R4,
+                [NeptuneControllerButton.BtnL4] = (input.buttons5 & (ushort)NCButton5.BTN_L4) == (ushort)NCButton5.BTN_L4,
 
-            _buttonState[NeptuneControllerButton.BtnR4] = (input.buttons5 & (ushort)NCButton5.BTN_R4) == (ushort)NCButton5.BTN_R4;
-            _buttonState[NeptuneControllerButton.BtnL4] = (input.buttons5 & (ushort)NCButton5.BTN_L4) == (ushort)NCButton5.BTN_L4;
-
-            _buttonState[NeptuneControllerButton.BtnQuickAccess] = (input.buttons6 & (ushort)NCButton6.BTN_QUICK_ACCESS) == (ushort)NCButton6.BTN_QUICK_ACCESS;
+                [NeptuneControllerButton.BtnQuickAccess] = (input.buttons6 & (ushort)NCButton6.BTN_QUICK_ACCESS) == (ushort)NCButton6.BTN_QUICK_ACCESS
+            };
         }
 
         public bool this[NeptuneControllerButton button]
@@ -99,36 +100,37 @@ namespace steam_hidapi.net
 
         internal NeptuneControllerAxesState(NCInput input)
         {
-            _axisState = new Dictionary<NeptuneControllerAxis, Int16>();
+            _axisState = new Dictionary<NeptuneControllerAxis, Int16>
+            {
+                [NeptuneControllerAxis.LeftStickX] = input.lthumb_x,
+                [NeptuneControllerAxis.LeftStickY] = input.lthumb_y,
+                [NeptuneControllerAxis.RightStickX] = input.rthumb_x,
+                [NeptuneControllerAxis.RightStickY] = input.rthumb_y,
 
-            _axisState[NeptuneControllerAxis.LeftStickX] = input.lthumb_x;
-            _axisState[NeptuneControllerAxis.LeftStickY] = input.lthumb_y;
-            _axisState[NeptuneControllerAxis.RightStickX] = input.rthumb_x;
-            _axisState[NeptuneControllerAxis.RightStickY] = input.rthumb_y;
+                [NeptuneControllerAxis.LeftPadX] = input.lpad_x,
+                [NeptuneControllerAxis.LeftPadY] = input.lpad_y,
+                [NeptuneControllerAxis.RightPadX] = input.rpad_x,
+                [NeptuneControllerAxis.RightPadY] = input.rpad_y,
 
-            _axisState[NeptuneControllerAxis.LeftPadX] = input.lpad_x;
-            _axisState[NeptuneControllerAxis.LeftPadY] = input.lpad_y;
-            _axisState[NeptuneControllerAxis.RightPadX] = input.rpad_x;
-            _axisState[NeptuneControllerAxis.RightPadY] = input.rpad_y;
+                [NeptuneControllerAxis.LeftPadPressure] = input.lpad_pressure,
+                [NeptuneControllerAxis.RightPadPressure] = input.rpad_pressure,
 
-            _axisState[NeptuneControllerAxis.LeftPadPressure] = input.lpad_pressure;
-            _axisState[NeptuneControllerAxis.RightPadPressure] = input.rpad_pressure;
+                [NeptuneControllerAxis.L2] = input.ltrig,
+                [NeptuneControllerAxis.R2] = input.rtrig,
 
-            _axisState[NeptuneControllerAxis.L2] = input.ltrig;
-            _axisState[NeptuneControllerAxis.R2] = input.rtrig;
+                [NeptuneControllerAxis.GyroAccelX] = input.accel_x,
+                [NeptuneControllerAxis.GyroAccelY] = input.accel_y,
+                [NeptuneControllerAxis.GyroAccelZ] = input.accel_z,
 
-            _axisState[NeptuneControllerAxis.GyroAccelX] = input.accel_x;
-            _axisState[NeptuneControllerAxis.GyroAccelY] = input.accel_y;
-            _axisState[NeptuneControllerAxis.GyroAccelZ] = input.accel_z;
+                [NeptuneControllerAxis.GyroYaw] = input.gyaw,
+                [NeptuneControllerAxis.GyroRoll] = input.groll,
+                [NeptuneControllerAxis.GyroPitch] = input.gpitch,
 
-            _axisState[NeptuneControllerAxis.GyroYaw] = input.gyaw;
-            _axisState[NeptuneControllerAxis.GyroRoll] = input.groll;
-            _axisState[NeptuneControllerAxis.GyroPitch] = input.gpitch;
-
-            _axisState[NeptuneControllerAxis.Q1] = input.q1;
-            _axisState[NeptuneControllerAxis.Q2] = input.q2;
-            _axisState[NeptuneControllerAxis.Q3] = input.q3;
-            _axisState[NeptuneControllerAxis.Q4] = input.q4;
+                [NeptuneControllerAxis.Q1] = input.q1,
+                [NeptuneControllerAxis.Q2] = input.q2,
+                [NeptuneControllerAxis.Q3] = input.q3,
+                [NeptuneControllerAxis.Q4] = input.q4
+            };
         }
 
         public Int16 this[NeptuneControllerAxis axis]

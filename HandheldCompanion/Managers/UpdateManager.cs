@@ -38,7 +38,7 @@ public static class UpdateManager
     private static DateTime lastchecked;
 
     private static UpdateStatus status;
-    private static readonly Dictionary<string, UpdateFile> updateFiles = new();
+    private static readonly Dictionary<string, UpdateFile> updateFiles = [];
     private static string url;
     private static readonly WebClient webClient;
     private static readonly string InstallPath;
@@ -60,8 +60,10 @@ public static class UpdateManager
         if (!Directory.Exists(InstallPath))
             Directory.CreateDirectory(InstallPath);
 
-        webClient = new WebClient();
-        webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+        webClient = new WebClient
+        {
+            CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore)
+        };
         ServicePointManager.Expect100Continue = true;
         webClient.Headers.Add("user-agent", "request");
 

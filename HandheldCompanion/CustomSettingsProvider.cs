@@ -44,7 +44,7 @@ namespace HandheldCompanion
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection collection)
         {
             // Create a collection to store the values
-            SettingsPropertyValueCollection values = new SettingsPropertyValueCollection();
+            SettingsPropertyValueCollection values = [];
 
             // Load the user.config file into an XmlDocument
             XmlDocument document = new XmlDocument();

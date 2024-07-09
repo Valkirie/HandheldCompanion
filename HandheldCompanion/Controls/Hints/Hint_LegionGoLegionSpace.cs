@@ -13,19 +13,19 @@ namespace HandheldCompanion.Controls.Hints
 {
     public class Hint_LegionGoLegionSpace : IHint
     {
-        private List<string> serviceNames = new()
-        {
+        private List<string> serviceNames =
+        [
             "DAService",
-        };
+        ];
 
-        private List<string> taskNames = new()
-        {
+        private List<string> taskNames =
+        [
             "LegionGoQuickSettings",
             "LegionSpace",
             "LSDaemon"
-        };
+        ];
 
-        private List<ServiceController> serviceControllers = new();
+        private List<ServiceController> serviceControllers = [];
         private Timer serviceTimer;
 
         public Hint_LegionGoLegionSpace() : base()

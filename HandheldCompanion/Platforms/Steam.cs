@@ -38,15 +38,15 @@ public class Steam : IPlatform
         RunningName = "steamwebhelper.exe";
 
         // store specific modules
-        Modules = new List<string>
-        {
+        Modules =
+        [
             "steam.exe",
             "steamwebhelper.exe",
             "gameoverlayrenderer.dll",
             "gameoverlayrenderer64.dll",
             "steamclient.dll",
             "steamclient64.dll"
-        };
+        ];
 
         // check if platform is installed
         InstallPath = RegistryUtils.GetString(@"SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath");
@@ -166,7 +166,7 @@ public class Steam : IPlatform
                 return value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
             }
 
-            return new HashSet<string>();
+            return [];
         }
         catch (DirectoryNotFoundException)
         {

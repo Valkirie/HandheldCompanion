@@ -39,7 +39,7 @@ public class SerialUSBIMU
         }
     };
 
-    public static List<string> SerialPortNamesInUse { get; set; } = new List<string>(); // COM ports in use
+    public static List<string> SerialPortNamesInUse { get; set; } = []; // COM ports in use
 
     private Vector3 AccelerationG; // accelerometer
     private Vector3 AngularVelocityDeg; // gyrometer

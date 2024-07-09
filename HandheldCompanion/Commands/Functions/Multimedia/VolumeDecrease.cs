@@ -23,13 +23,15 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
 
         public override object Clone()
         {
-            VolumeDecrease commands = new();
-            commands.commandType = commandType;
-            commands.Name = Name;
-            commands.Description = Description;
-            commands.Glyph = Glyph;
-            commands.OnKeyUp = OnKeyUp;
-            commands.OnKeyDown = OnKeyDown;
+            VolumeDecrease commands = new()
+            {
+                commandType = commandType,
+                Name = Name,
+                Description = Description,
+                Glyph = Glyph,
+                OnKeyUp = OnKeyUp,
+                OnKeyDown = OnKeyDown
+            };
 
             return commands;
         }

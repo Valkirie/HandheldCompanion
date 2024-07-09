@@ -31,7 +31,7 @@ namespace IKriv.Wpf
 #endif
         IValueConverter
     {
-        Dictionary<string, IExpression> _storedExpressions = new Dictionary<string, IExpression>();
+        Dictionary<string, IExpression> _storedExpressions = [];
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

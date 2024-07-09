@@ -160,20 +160,21 @@ public static class XInputPlus
 
     public static void InjectXInputPlus(Process targetProcess, bool x64bit)
     {
-        XInputPlusLoaderSetting setting = new XInputPlusLoaderSetting();
-
-        setting.LoaderDLL32 = XInputPlus_Injectorx86;
-        setting.LoaderDLL64 = XInputPlus_Injectorx64;
-        setting.XInputDLL32 = XInputPlus_XInputx86;
-        setting.DInputDLL32 = XInputPlus_DInputx86;                         // unused
-        setting.DInput8DLL32 = XInputPlus_DInput8x86;                       // unused
-        setting.XInputDLL64 = XInputPlus_XInputx64;
-        setting.DInputDLL64 = XInputPlus_DInputx64;                         // unused
-        setting.DInput8DLL64 = XInputPlus_DInput8x64;                       // unused
-        setting.TargetProgram = "";                                         // Internal use
-        setting.LoaderDir = XInputPlus_InjectorDir;                         // "XInputPlus.ini" in this folder is used
-        setting.HookChildProcess = false;
-        setting.Launched = false;                                           // Internal use
+        XInputPlusLoaderSetting setting = new XInputPlusLoaderSetting
+        {
+            LoaderDLL32 = XInputPlus_Injectorx86,
+            LoaderDLL64 = XInputPlus_Injectorx64,
+            XInputDLL32 = XInputPlus_XInputx86,
+            DInputDLL32 = XInputPlus_DInputx86,                         // unused
+            DInput8DLL32 = XInputPlus_DInput8x86,                       // unused
+            XInputDLL64 = XInputPlus_XInputx64,
+            DInputDLL64 = XInputPlus_DInputx64,                         // unused
+            DInput8DLL64 = XInputPlus_DInput8x64,                       // unused
+            TargetProgram = "",                                         // Internal use
+            LoaderDir = XInputPlus_InjectorDir,                         // "XInputPlus.ini" in this folder is used
+            HookChildProcess = false,
+            Launched = false                                           // Internal use
+        };
 
         // Write Unmanaged Struct to MemoryMappedFile
         using (MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen("XInputPlusLoader", Marshal.SizeOf(typeof(XInputPlusLoaderSetting))))
@@ -367,7 +368,7 @@ public static class XInputPlus
                 return false;
 
             // prepare index array
-            List<int> userIndex = new() { 1, 2, 3, 4 };
+            List<int> userIndex = [1, 2, 3, 4];
 
             // prepare IniFile
             try

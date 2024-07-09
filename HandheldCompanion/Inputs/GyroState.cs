@@ -6,8 +6,8 @@ namespace HandheldCompanion.Inputs
 {
     public class GyroState : ICloneable
     {
-        public Dictionary<SensorState, Vector3> Accelerometer = new();
-        public Dictionary<SensorState, Vector3> Gyroscope = new();
+        public Dictionary<SensorState, Vector3> Accelerometer = [];
+        public Dictionary<SensorState, Vector3> Gyroscope = [];
 
         public const byte SENSOR_MAX = 4;
         public enum SensorState

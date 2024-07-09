@@ -66,8 +66,10 @@ public static class ControllerManager
 
     static ControllerManager()
     {
-        watchdogThread = new Thread(watchdogThreadLoop);
-        watchdogThread.IsBackground = true;
+        watchdogThread = new Thread(watchdogThreadLoop)
+        {
+            IsBackground = true
+        };
     }
 
     public static Task Start()
@@ -253,8 +255,10 @@ public static class ControllerManager
                                 {
                                     watchdogThreadRunning = true;
 
-                                    watchdogThread = new Thread(watchdogThreadLoop);
-                                    watchdogThread.IsBackground = true;
+                                    watchdogThread = new Thread(watchdogThreadLoop)
+                                    {
+                                        IsBackground = true
+                                    };
                                     watchdogThread.Start();
                                 }
                             }
@@ -624,7 +628,7 @@ public static class ControllerManager
         while (watchdogThreadRunning)
         {
             // monitoring unexpected slot changes
-            HashSet<byte> UserIndexes = new();
+            HashSet<byte> UserIndexes = [];
             bool XInputDrunk = false;
 
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
@@ -969,7 +973,7 @@ public static class ControllerManager
         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
 
         if (deviceInstanceIds is null)
-            deviceInstanceIds = new();
+            deviceInstanceIds = [];
 
         try
         {

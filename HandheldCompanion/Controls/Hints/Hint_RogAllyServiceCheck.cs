@@ -12,14 +12,14 @@ namespace HandheldCompanion.Controls.Hints
 {
     public class Hint_RogAllyServiceCheck : IHint
     {
-        private List<string> serviceNames = new()
-        {
+        private List<string> serviceNames =
+        [
             "ArmouryCrateSEService",
             "AsusAppService",
             "ArmouryCrateControlInterface",
-        };
+        ];
 
-        private List<ServiceController> serviceControllers = new();
+        private List<ServiceController> serviceControllers = [];
         private Timer serviceTimer;
 
         public Hint_RogAllyServiceCheck() : base()

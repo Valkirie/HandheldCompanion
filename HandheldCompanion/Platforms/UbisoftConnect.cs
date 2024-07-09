@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Utils;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -16,15 +15,15 @@ public class UbisoftConnect : IPlatform
         ExecutableName = RunningName = "UbisoftConnect.exe";
 
         // store specific modules
-        Modules = new List<string>
-        {
+        Modules =
+        [
             "UbisoftConnect.exe",
             "UbisoftExtension.exe",
             "UbisoftGameLauncher.exe",
             "UbisoftGameLauncher64.exe",
             "uplay_r1_loader64.dll",
             "uplay_r164.dll"
-        };
+        ];
 
         // check if platform is installed
         InstallPath = RegistryUtils.GetString(@"SOFTWARE\WOW6432Node\Ubisoft\Launcher", "InstallDir");

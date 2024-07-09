@@ -40,13 +40,15 @@ namespace HandheldCompanion.Commands.Functions.Windows
 
         public override object Clone()
         {
-            OnScreenKeyboardLegacyCommands commands = new();
-            commands.commandType = commandType;
-            commands.Name = Name;
-            commands.Description = Description;
-            commands.Glyph = Glyph;
-            commands.OnKeyUp = OnKeyUp;
-            commands.OnKeyDown = OnKeyDown;
+            OnScreenKeyboardLegacyCommands commands = new()
+            {
+                commandType = commandType,
+                Name = Name,
+                Description = Description,
+                Glyph = Glyph,
+                OnKeyUp = OnKeyUp,
+                OnKeyDown = OnKeyDown
+            };
 
             return commands;
         }

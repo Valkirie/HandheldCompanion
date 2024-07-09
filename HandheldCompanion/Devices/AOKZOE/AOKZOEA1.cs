@@ -65,43 +65,43 @@ public class AOKZOEA1 : IDevice
 
         // Home
         OEMChords.Add(new KeyboardChord("Home",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
-            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            [KeyCode.LWin, KeyCode.D],
+            [KeyCode.LWin, KeyCode.D],
             false, ButtonFlags.OEM1
         ));
 
         // Home (long press 1.5s)
         OEMChords.Add(new KeyboardChord("Home, Long-press",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.G },
-            new List<KeyCode> { KeyCode.LWin, KeyCode.G },
+            [KeyCode.LWin, KeyCode.G],
+            [KeyCode.LWin, KeyCode.G],
             false, ButtonFlags.OEM6
         ));
 
         // Keyboard
         OEMChords.Add(new KeyboardChord("Keyboard",
-            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
-            new List<KeyCode> { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM2
         ));
 
         // Turbo
         OEMChords.Add(new KeyboardChord("Turbo",
-            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
-            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+            [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
             false, ButtonFlags.OEM3
         ));
 
         // Home + Keyboard
         OEMChords.Add(new KeyboardChord("Home + Keyboard",
-            new List<KeyCode> { KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete },
-            new List<KeyCode> { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt },
+            [KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete],
+            [KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt],
             false, ButtonFlags.OEM4
         ));
 
         // Home + Turbo
         OEMChords.Add(new KeyboardChord("Home + Turbo",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.Snapshot },
-            new List<KeyCode> { KeyCode.Snapshot, KeyCode.LWin },
+            [KeyCode.LWin, KeyCode.Snapshot],
+            [KeyCode.Snapshot, KeyCode.LWin],
             false, ButtonFlags.OEM5
         ));
     }

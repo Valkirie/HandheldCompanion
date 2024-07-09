@@ -4,7 +4,6 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Utils;
 using RTSSSharedMemoryNET;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -41,10 +40,10 @@ public class RTSS : IPlatform
         ExecutableName = RunningName = "RTSS.exe";
 
         // store specific modules
-        Modules = new List<string>
-        {
+        Modules =
+        [
             "RTSSHooks64.dll"
-        };
+        ];
 
         // check if platform is installed
         InstallPath = RegistryUtils.GetString(@"SOFTWARE\WOW6432Node\Unwinder\RTSS", "InstallDir");

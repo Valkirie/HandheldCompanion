@@ -51,7 +51,7 @@ public abstract class IPlatform : IDisposable
     protected bool KeepAlive;
     protected int MaxTentative = 3;
 
-    protected List<string> Modules = new();
+    protected List<string> Modules = [];
     protected string Name;
 
     public PlatformType PlatformType;
@@ -362,7 +362,7 @@ public abstract class IPlatform : IDisposable
             // Steam was installed, but got removed
             return false;
         }
-        catch (IOException e)
+        catch (IOException)
         {
             LogManager.LogError("Couldn't locate {0} configuration file", PlatformType);
             return false;
@@ -384,7 +384,7 @@ public abstract class IPlatform : IDisposable
             File.Move(origPath, configPath, true);
             return true;
         }
-        catch (FileNotFoundException e)
+        catch (FileNotFoundException)
         {
             // File was not found (which is valid as it might be before first start of the application)
             LogManager.LogError("Couldn't locate {0} configuration file", PlatformType);
@@ -403,7 +403,7 @@ public abstract class IPlatform : IDisposable
         {
             return false;
         }
-        catch (IOException e)
+        catch (IOException)
         {
             LogManager.LogError("Failed to overwrite {0} configuration file", PlatformType);
             return false;
@@ -444,7 +444,7 @@ public abstract class IPlatform : IDisposable
             // Steam was installed, but got removed
             return false;
         }
-        catch (IOException e)
+        catch (IOException)
         {
             LogManager.LogError("Failed to overwrite {0} configuration file", PlatformType);
             return false;

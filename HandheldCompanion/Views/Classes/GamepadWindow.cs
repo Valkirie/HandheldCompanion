@@ -12,8 +12,8 @@ namespace HandheldCompanion.Views.Classes
 {
     public class GamepadWindow : Window
     {
-        public List<Control> controlElements = new();
-        public List<FrameworkElement> frameworkElements = new();
+        public List<Control> controlElements = [];
+        public List<FrameworkElement> frameworkElements = [];
 
         public ContentDialog currentDialog;
         protected UIGamepad gamepadFocusManager;

@@ -17,7 +17,7 @@ namespace HandheldCompanion.Managers;
 
 public static class MultimediaManager
 {
-    public static Dictionary<string, DesktopScreen> AllScreens = new();
+    public static Dictionary<string, DesktopScreen> AllScreens = [];
     public static DesktopScreen PrimaryDesktop;
 
     private static ScreenRotation screenOrientation;
@@ -155,7 +155,7 @@ public static class MultimediaManager
     private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
         // temporary array to store all current screens
-        Dictionary<string, DesktopScreen> desktopScreens = new();
+        Dictionary<string, DesktopScreen> desktopScreens = [];
 
         foreach(Screen screen in Screen.AllScreens)
         {
@@ -296,12 +296,14 @@ public static class MultimediaManager
             return false;
 
         bool ret = false;
-        DisplayDevice dm = new DisplayDevice();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
-        dm.dmPelsWidth = width;
-        dm.dmPelsHeight = height;
-        dm.dmDisplayFrequency = displayFrequency;
-        dm.dmFields = DisplayDevice.DM_PELSWIDTH | DisplayDevice.DM_PELSHEIGHT | DisplayDevice.DM_DISPLAYFREQUENCY;
+        DisplayDevice dm = new DisplayDevice
+        {
+            dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice)),
+            dmPelsWidth = width,
+            dmPelsHeight = height,
+            dmDisplayFrequency = displayFrequency,
+            dmFields = DisplayDevice.DM_PELSWIDTH | DisplayDevice.DM_PELSHEIGHT | DisplayDevice.DM_DISPLAYFREQUENCY
+        };
 
         long RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
         if (RetVal == 0)
@@ -319,13 +321,15 @@ public static class MultimediaManager
             return false;
 
         bool ret = false;
-        DisplayDevice dm = new DisplayDevice();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
-        dm.dmPelsWidth = width;
-        dm.dmPelsHeight = height;
-        dm.dmDisplayFrequency = displayFrequency;
-        dm.dmBitsPerPel = bitsPerPel;
-        dm.dmFields = DisplayDevice.DM_PELSWIDTH | DisplayDevice.DM_PELSHEIGHT | DisplayDevice.DM_DISPLAYFREQUENCY;
+        DisplayDevice dm = new DisplayDevice
+        {
+            dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice)),
+            dmPelsWidth = width,
+            dmPelsHeight = height,
+            dmDisplayFrequency = displayFrequency,
+            dmBitsPerPel = bitsPerPel,
+            dmFields = DisplayDevice.DM_PELSWIDTH | DisplayDevice.DM_PELSHEIGHT | DisplayDevice.DM_DISPLAYFREQUENCY
+        };
 
         long RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
         if (RetVal == 0)
@@ -339,17 +343,21 @@ public static class MultimediaManager
 
     public static DisplayDevice GetDisplay(string DeviceName)
     {
-        DisplayDevice dm = new DisplayDevice();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
+        DisplayDevice dm = new DisplayDevice
+        {
+            dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice))
+        };
         EnumDisplaySettings(DeviceName, -1, ref dm);
         return dm;
     }
 
     public static List<DisplayDevice> GetResolutions(string DeviceName)
     {
-        List<DisplayDevice> allMode = new List<DisplayDevice>();
-        DisplayDevice dm = new DisplayDevice();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
+        List<DisplayDevice> allMode = [];
+        DisplayDevice dm = new DisplayDevice
+        {
+            dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice))
+        };
         int index = 0;
         while (EnumDisplaySettings(DeviceName, index, ref dm))
         {

@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
 
@@ -21,20 +20,20 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         OEMChords.Clear();
 
         OEMChords.Add(new KeyboardChord("Orange",
-            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
-            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+            [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
             false, ButtonFlags.OEM1
         ));
 
         OEMChords.Add(new KeyboardChord("Keyboard",
-            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
-            new List<KeyCode> { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM2
         ));
 
         OEMChords.Add(new KeyboardChord("Function",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
-            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            [KeyCode.LWin, KeyCode.D],
+            [KeyCode.LWin, KeyCode.D],
             false, ButtonFlags.OEM3
         ));
     }

@@ -29,7 +29,7 @@ public static class SettingsManager
 
     public delegate void SettingValueChangedEventHandler(string name, object value);
 
-    private static readonly Dictionary<string, object> Settings = new();
+    private static readonly Dictionary<string, object> Settings = [];
 
     static SettingsManager()
     {
@@ -128,7 +128,7 @@ public static class SettingsManager
 
     public static SortedDictionary<string, object> GetProperties()
     {
-        SortedDictionary<string, object> result = new();
+        SortedDictionary<string, object> result = [];
 
         foreach (SettingsProperty property in Properties.Settings.Default.Properties)
             result.Add(property.Name, GetProperty(property.Name));

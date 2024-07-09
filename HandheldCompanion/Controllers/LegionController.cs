@@ -56,7 +56,7 @@ namespace HandheldCompanion.Controllers
         private const byte LCONTROLLER_STATE_IDX = 11;
         private const byte RCONTROLLER_STATE_IDX = 12;
 
-        private HashSet<int> READY_STATES = new HashSet<int>() { 25, 60 };
+        private HashSet<int> READY_STATES = [25, 60];
 
         private Thread dataThread;
         private bool dataThreadRunning;

@@ -72,7 +72,7 @@ public abstract class IDevice
     private static IDevice device;
 
     protected ushort _vid, _pid;
-    public Dictionary<byte, HidDevice> hidDevices = new();
+    public Dictionary<byte, HidDevice> hidDevices = [];
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()
@@ -117,7 +117,7 @@ public abstract class IDevice
     public double Tjmax = 95;
 
     // power profile(s)
-    public List<PowerProfile> DevicePowerProfiles = new List<PowerProfile>();
+    public List<PowerProfile> DevicePowerProfiles = [];
 
     public List<double[]> fanPresets = new()
     {
@@ -128,7 +128,7 @@ public abstract class IDevice
     };
 
     // trigger specific settings
-    public List<KeyboardChord> OEMChords = new();
+    public List<KeyboardChord> OEMChords = [];
 
     // UI
     protected FontFamily GlyphFontFamily = new("PromptFont");
@@ -856,12 +856,12 @@ public abstract class IDevice
 
     protected void ResumeDevices()
     {
-        List<string> successes = new();
+        List<string> successes = [];
 
         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
 
         if (deviceInstanceIds is null)
-            deviceInstanceIds = new();
+            deviceInstanceIds = [];
 
         foreach (string InstanceId in deviceInstanceIds)
         {
@@ -883,7 +883,7 @@ public abstract class IDevice
             StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
 
             if (deviceInstanceIds is null)
-                deviceInstanceIds = new();
+                deviceInstanceIds = [];
 
             if (!deviceInstanceIds.Contains(pnPDevice.InstanceId))
                 deviceInstanceIds.Add(pnPDevice.InstanceId);

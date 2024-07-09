@@ -16,7 +16,7 @@ namespace HandheldCompanion
         Present = 2,
         AllClasses = 4,
         Profile = 8,
-        DeviceInterface = (int)0x10
+        DeviceInterface = 0x10
     }
 
     internal enum DiFunction
@@ -30,38 +30,38 @@ namespace HandheldCompanion
         FoundDevice = 7,
         SelectClassDrivers = 8,
         ValidateClassDrivers = 9,
-        InstallClassDrivers = (int)0xa,
-        CalcDiskSpace = (int)0xb,
-        DestroyPrivateData = (int)0xc,
-        ValidateDriver = (int)0xd,
-        Detect = (int)0xf,
-        InstallWizard = (int)0x10,
-        DestroyWizardData = (int)0x11,
-        PropertyChange = (int)0x12,
-        EnableClass = (int)0x13,
-        DetectVerify = (int)0x14,
-        InstallDeviceFiles = (int)0x15,
-        UnRemove = (int)0x16,
-        SelectBestCompatDrv = (int)0x17,
-        AllowInstall = (int)0x18,
-        RegisterDevice = (int)0x19,
-        NewDeviceWizardPreSelect = (int)0x1a,
-        NewDeviceWizardSelect = (int)0x1b,
-        NewDeviceWizardPreAnalyze = (int)0x1c,
-        NewDeviceWizardPostAnalyze = (int)0x1d,
-        NewDeviceWizardFinishInstall = (int)0x1e,
-        Unused1 = (int)0x1f,
-        InstallInterfaces = (int)0x20,
-        DetectCancel = (int)0x21,
-        RegisterCoInstallers = (int)0x22,
-        AddPropertyPageAdvanced = (int)0x23,
-        AddPropertyPageBasic = (int)0x24,
-        Reserved1 = (int)0x25,
-        Troubleshooter = (int)0x26,
-        PowerMessageWake = (int)0x27,
-        AddRemotePropertyPageAdvanced = (int)0x28,
-        UpdateDriverUI = (int)0x29,
-        Reserved2 = (int)0x30
+        InstallClassDrivers = 0xa,
+        CalcDiskSpace = 0xb,
+        DestroyPrivateData = 0xc,
+        ValidateDriver = 0xd,
+        Detect = 0xf,
+        InstallWizard = 0x10,
+        DestroyWizardData = 0x11,
+        PropertyChange = 0x12,
+        EnableClass = 0x13,
+        DetectVerify = 0x14,
+        InstallDeviceFiles = 0x15,
+        UnRemove = 0x16,
+        SelectBestCompatDrv = 0x17,
+        AllowInstall = 0x18,
+        RegisterDevice = 0x19,
+        NewDeviceWizardPreSelect = 0x1a,
+        NewDeviceWizardSelect = 0x1b,
+        NewDeviceWizardPreAnalyze = 0x1c,
+        NewDeviceWizardPostAnalyze = 0x1d,
+        NewDeviceWizardFinishInstall = 0x1e,
+        Unused1 = 0x1f,
+        InstallInterfaces = 0x20,
+        DetectCancel = 0x21,
+        RegisterCoInstallers = 0x22,
+        AddPropertyPageAdvanced = 0x23,
+        AddPropertyPageBasic = 0x24,
+        Reserved1 = 0x25,
+        Troubleshooter = 0x26,
+        PowerMessageWake = 0x27,
+        AddRemotePropertyPageAdvanced = 0x28,
+        UpdateDriverUI = 0x29,
+        Reserved2 = 0x30
     }
 
     internal enum StateChangeAction
@@ -302,7 +302,7 @@ ref PropertyChangeParameters classInstallParams, int classInstallParamsSize);
 
         private static DeviceInfoData[] GetDeviceInfoData(SafeDeviceInfoSetHandle handle)
         {
-            List<DeviceInfoData> data = new List<DeviceInfoData>();
+            List<DeviceInfoData> data = [];
             DeviceInfoData did = new DeviceInfoData();
             int didSize = Marshal.SizeOf(did);
             did.Size = didSize;
@@ -311,8 +311,10 @@ ref PropertyChangeParameters classInstallParams, int classInstallParamsSize);
             {
                 data.Add(did);
                 index += 1;
-                did = new DeviceInfoData();
-                did.Size = didSize;
+                did = new DeviceInfoData
+                {
+                    Size = didSize
+                };
             }
             return data.ToArray();
         }
@@ -345,12 +347,14 @@ ref PropertyChangeParameters classInstallParams, int classInstallParamsSize);
         // enable/disable...
         private static void EnableDevice(SafeDeviceInfoSetHandle handle, DeviceInfoData diData, bool enable)
         {
-            PropertyChangeParameters @params = new PropertyChangeParameters();
-            // The size is just the size of the header, but we've flattened the structure.
-            // The header comprises the first two fields, both integer.
-            @params.Size = 8;
-            @params.DiFunction = DiFunction.PropertyChange;
-            @params.Scope = Scopes.Global;
+            PropertyChangeParameters @params = new PropertyChangeParameters
+            {
+                // The size is just the size of the header, but we've flattened the structure.
+                // The header comprises the first two fields, both integer.
+                Size = 8,
+                DiFunction = DiFunction.PropertyChange,
+                Scope = Scopes.Global
+            };
             if (enable)
             {
                 @params.StateChange = StateChangeAction.Enable;

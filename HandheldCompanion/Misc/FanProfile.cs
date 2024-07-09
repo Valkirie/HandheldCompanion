@@ -28,7 +28,7 @@ namespace HandheldCompanion.Misc
         public FanProfile()
         {
             // Initialize the average temperature to zero
-            this.avgTemp = new();
+            this.avgTemp = [];
         }
 
         // A public constructor that takes an array of fan speed values as a parameter

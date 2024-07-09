@@ -87,7 +87,7 @@ namespace HandheldCompanion.Misc
         public int OEMPowerMode { get; set; } = 0xFF;
         public Guid OSPowerMode { get; set; } = Managers.OSPowerMode.BetterPerformance;
 
-        private Dictionary<Page, UIElement> uIElements = new();
+        private Dictionary<Page, UIElement> uIElements = [];
 
         public PowerProfile()
         { }
@@ -143,17 +143,19 @@ namespace HandheldCompanion.Misc
             public UIElement(PowerProfile powerProfile, Page page)
             {
                 // Create a button
-                button = new Button();
-                button.Height = 66;
-                button.Margin = new Thickness(-16);
-                button.Padding = new Thickness(50, 12, 12, 12);
-                button.HorizontalAlignment = HorizontalAlignment.Stretch;
-                button.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-                button.Background = Brushes.Transparent;
-                button.BorderBrush = Brushes.Transparent;
+                button = new Button
+                {
+                    Height = 66,
+                    Margin = new Thickness(-16),
+                    Padding = new Thickness(50, 12, 12, 12),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Background = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
 
-                // Stored current profile, might be useful
-                button.Tag = powerProfile;
+                    // Stored current profile, might be useful
+                    Tag = powerProfile
+                };
 
                 // Create a grid
                 grid = new Grid();
@@ -172,20 +174,28 @@ namespace HandheldCompanion.Misc
                 grid.ColumnDefinitions.Add(colDef2);
 
                 // Create a dock panel
-                dockPanel = new DockPanel();
-                dockPanel.HorizontalAlignment = HorizontalAlignment.Left;
+                dockPanel = new DockPanel
+                {
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
 
                 // Create a radio buttons
-                radioButtons = new RadioButtons();
-                radioButtons.HorizontalAlignment = HorizontalAlignment.Center;
+                radioButtons = new RadioButtons
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
 
                 // Create a radio button
-                radioButton = new RadioButton();
-                radioButton.GroupName = $"PowerProfile{page.Name}";
+                radioButton = new RadioButton
+                {
+                    GroupName = $"PowerProfile{page.Name}"
+                };
 
                 // Create a simple stack panel
-                simpleStackPanel = new();
-                simpleStackPanel.Margin = new Thickness(0, -10, 0, 0);
+                simpleStackPanel = new()
+                {
+                    Margin = new Thickness(0, -10, 0, 0)
+                };
 
                 // Create a text block for the controller layout
                 textBlock1.Style = (Style)Application.Current.Resources["BodyTextBlockStyle"];
@@ -211,12 +221,14 @@ namespace HandheldCompanion.Misc
                 dockPanel.Children.Add(radioButtons);
 
                 // Create a font icon
-                FontIcon fontIcon = new FontIcon();
-                fontIcon.Margin = new Thickness(0, 0, 7, 0);
-                fontIcon.HorizontalAlignment = HorizontalAlignment.Right;
-                fontIcon.FontSize = 12;
-                fontIcon.Glyph = "\uE974";
-                fontIcon.FontFamily = new("Segoe Fluent Icons");
+                FontIcon fontIcon = new FontIcon
+                {
+                    Margin = new Thickness(0, 0, 7, 0),
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    FontSize = 12,
+                    Glyph = "\uE974",
+                    FontFamily = new("Segoe Fluent Icons")
+                };
                 Grid.SetColumn(fontIcon, 1);
 
                 // Add the dock panel and the font icon to the grid

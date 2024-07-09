@@ -64,7 +64,7 @@ public static class InputsManager
     private static IKeyboardMouseEvents m_GlobalHook;
 
     private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };
-    private static readonly List<KeyboardChord> successkeyChords = new();
+    private static readonly List<KeyboardChord> successkeyChords = [];
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
@@ -85,12 +85,16 @@ public static class InputsManager
         BufferFlushTimer = new PrecisionTimer();
         BufferFlushTimer.SetInterval(new Action(ReleaseKeyboardBuffer), TIME_FLUSH, false, 0, TimerMode.OneShot, true);
 
-        InputsChordHoldTimer = new Timer(TIME_LONG);
-        InputsChordHoldTimer.AutoReset = false;
+        InputsChordHoldTimer = new Timer(TIME_LONG)
+        {
+            AutoReset = false
+        };
         InputsChordHoldTimer.Elapsed += (sender, e) => InputsChordHold_Elapsed();
 
-        ListenerTimer = new Timer(TIME_EXPIRED);
-        ListenerTimer.AutoReset = false;
+        ListenerTimer = new Timer(TIME_EXPIRED)
+        {
+            AutoReset = false
+        };
         ListenerTimer.Elapsed += (sender, e) => ExpiredListening();
     }
 
@@ -590,9 +594,11 @@ public static class InputsManager
 
         if (CheckForSequence(IsKeyDown, IsKeyUp))
         {
-            successChord = new();
-            successChord.ButtonState = currentChord.ButtonState.Clone() as ButtonState;
-            successChord.chordType = currentChord.chordType;
+            successChord = new()
+            {
+                ButtonState = currentChord.ButtonState.Clone() as ButtonState,
+                chordType = currentChord.chordType
+            };
         }
 
         if ((buttonState.IsEmpty() || !successChord.ButtonState.IsEmpty()) && IsKeyUp)
@@ -651,7 +657,7 @@ public static class InputsManager
         ListenerTimer.Stop();
 
         // the below logic is here to make sure every KeyDown has an equivalent KeyUp
-        List<InputsKey> missingOutputs = new();
+        List<InputsKey> missingOutputs = [];
 
         foreach (InputsKey inputsKey in currentChord.KeyState.Where(k => k.IsKeyDown))
         {

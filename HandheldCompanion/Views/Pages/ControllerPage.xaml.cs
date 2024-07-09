@@ -48,7 +48,7 @@ public partial class ControllerPage : Page
         Application.Current.Dispatcher.Invoke(() =>
         {
             // disable emulated controller combobox if profile is not default or set to default controller
-            if (!profile.Default && (HIDmode)profile.HID != HIDmode.NotSelected)
+            if (!profile.Default && profile.HID != HIDmode.NotSelected)
             {
                 cB_HidMode.IsEnabled = false;
                 HintsHIDManagedByProfile.Visibility = Visibility.Visible;
@@ -329,7 +329,7 @@ public partial class ControllerPage : Page
 
         // only change HIDmode setting if current profile is default or set to default controller
         var currentProfile = ProfileManager.GetCurrent();
-        if (currentProfile.Default || (HIDmode)currentProfile.HID == HIDmode.NotSelected)
+        if (currentProfile.Default || currentProfile.HID == HIDmode.NotSelected)
         {
             SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }

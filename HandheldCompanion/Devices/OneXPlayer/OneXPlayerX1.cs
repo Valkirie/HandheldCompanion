@@ -69,8 +69,8 @@ public class OneXPlayerX1 : IDevice
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.LEDPreset;
 
-        LEDPresets = new List<LEDPreset>()
-        {
+        LEDPresets =
+        [
             new ("LEDPreset_OneXPlayerX1_Preset01", "onexplayer/preset01.png", 0x0D),
             new ("LEDPreset_OneXPlayerX1_Preset02", "onexplayer/preset02.png", 0x03),
             new ("LEDPreset_OneXPlayerX1_Preset03", "onexplayer/preset03.png", 0x0B),
@@ -82,7 +82,7 @@ public class OneXPlayerX1 : IDevice
             new ("LEDPreset_OneXPlayerX1_Preset09", "onexplayer/preset09.png", 0x1E3),
             new ("LEDPreset_OneXPlayerX1_Preset10", "onexplayer/preset10.png", 0x01),
             new ("LEDPreset_OneXPlayerX1_Preset11", "onexplayer/preset11.png", 0x08),
-        };
+        ];
 
         ECDetails = new ECDetails
         {
@@ -95,8 +95,8 @@ public class OneXPlayerX1 : IDevice
         };
 
         OEMChords.Add(new KeyboardChord("Turbo",
-            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu },
-            new List<KeyCode> { KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey },
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM1
             ));
         

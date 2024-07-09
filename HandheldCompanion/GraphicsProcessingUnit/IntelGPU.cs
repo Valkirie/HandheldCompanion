@@ -173,8 +173,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // pull telemetry once
             TelemetryData = GetTelemetry();
 
-            TelemetryTimer = new Timer(TelemetryInterval);
-            TelemetryTimer.AutoReset = true;
+            TelemetryTimer = new Timer(TelemetryInterval)
+            {
+                AutoReset = true
+            };
             TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
         }
 

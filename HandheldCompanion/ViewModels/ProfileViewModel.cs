@@ -81,9 +81,11 @@ namespace HandheldCompanion.ViewModels
                 dialog.Show();
 
                 // Create a new instance of ProcessStartInfo
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = profile.Path;
-                startInfo.Arguments = profile.Arguments;
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = profile.Path,
+                    Arguments = profile.Arguments
+                };
 
                 Process process = new() { StartInfo = startInfo };
 

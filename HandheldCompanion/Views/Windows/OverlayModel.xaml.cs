@@ -33,7 +33,7 @@ public partial class OverlayModel : OverlayWindow
     private Vector3D DiffAngle = new(0, 0, 0);
     private static MadgwickAHRS madgwickAHRS;
 
-    private static IEnumerable<ButtonFlags> resetFlags = new List<ButtonFlags>() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4 };
+    private static IEnumerable<ButtonFlags> resetFlags = [ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4];
 
     public bool FaceCamera = false;
     public Vector3D FaceCameraObjectAlignment;
@@ -66,8 +66,10 @@ public partial class OverlayModel : OverlayWindow
         ResetModelPose();
 
         // initialize timers
-        UpdateTimer = new Timer(33);
-        UpdateTimer.AutoReset = true;
+        UpdateTimer = new Timer(33)
+        {
+            AutoReset = true
+        };
         UpdateTimer.Elapsed += DrawModel;
 
         UpdateModel();
@@ -318,7 +320,7 @@ public partial class OverlayModel : OverlayWindow
             if (MotionActivated)
             {
                 // Start by setting the model pose based on the device's orientation adjusted by the desired angle from the UI
-                modelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)RestingPitchAngleDeg;
+                modelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.Z) - RestingPitchAngleDeg;
 
                 // If the model should face the camera, further adjust by the camera object's alignment.
                 if (FaceCamera)
@@ -329,7 +331,7 @@ public partial class OverlayModel : OverlayWindow
             else
             {
                 // If motion is not activated, set the model's pose to the desired UI pitch angle directly
-                modelPoseXDeg = (float)RestingPitchAngleDeg;
+                modelPoseXDeg = RestingPitchAngleDeg;
             }
 
             // Rotate shoulder buttons based on modelPoseXDeg
@@ -525,21 +527,23 @@ public partial class OverlayModel : OverlayWindow
 
         // Upward visibility rotation vector and angle
         var ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderButtonsAngleDeg);
-        var TransformShoulder = new RotateTransform3D(ax3d);
-
-        // Define rotation point shoulder buttons
-        TransformShoulder.CenterX = UpwardVisibilityRotationPoint.X;
-        TransformShoulder.CenterY = UpwardVisibilityRotationPoint.Y;
-        TransformShoulder.CenterZ = UpwardVisibilityRotationPoint.Z;
+        var TransformShoulder = new RotateTransform3D(ax3d)
+        {
+            // Define rotation point shoulder buttons
+            CenterX = UpwardVisibilityRotationPoint.X,
+            CenterY = UpwardVisibilityRotationPoint.Y,
+            CenterZ = UpwardVisibilityRotationPoint.Z
+        };
 
         // Trigger vector and angle
         ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderTriggerAngleDeg);
-        var TransformTriggerPosition = new RotateTransform3D(ax3d);
-
-        // Define rotation point trigger
-        TransformTriggerPosition.CenterX = ShoulderTriggerRotationPoint.X;
-        TransformTriggerPosition.CenterY = ShoulderTriggerRotationPoint.Y;
-        TransformTriggerPosition.CenterZ = ShoulderTriggerRotationPoint.Z;
+        var TransformTriggerPosition = new RotateTransform3D(ax3d)
+        {
+            // Define rotation point trigger
+            CenterX = ShoulderTriggerRotationPoint.X,
+            CenterY = ShoulderTriggerRotationPoint.Y,
+            CenterZ = ShoulderTriggerRotationPoint.Z
+        };
 
         // Transform trigger
         // Trigger first, then visibility transform

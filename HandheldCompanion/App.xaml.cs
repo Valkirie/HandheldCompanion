@@ -124,7 +124,7 @@ public partial class App : Application
 
     private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
-        Exception ex = (Exception)e.Exception;
+        Exception ex = e.Exception;
 
         // send to sentry
         bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");
@@ -154,7 +154,7 @@ public partial class App : Application
 
     private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        Exception ex = (Exception)e.Exception;
+        Exception ex = e.Exception;
 
         // send to sentry
         bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");

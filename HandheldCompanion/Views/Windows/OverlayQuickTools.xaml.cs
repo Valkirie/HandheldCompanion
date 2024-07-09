@@ -66,7 +66,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public HwndSource hwndSource;
 
     // page vars
-    private readonly Dictionary<string, Page> _pages = new();
+    private readonly Dictionary<string, Page> _pages = [];
 
     private bool AutoHide;
     private bool isClosing;
@@ -92,8 +92,10 @@ public partial class OverlayQuickTools : GamepadWindow
 
         PreviewKeyDown += HandleEsc;
 
-        clockUpdateTimer = new DispatcherTimer();
-        clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
+        clockUpdateTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(500)
+        };
         clockUpdateTimer.Tick += UpdateTime;
 
         WMPaintTimer.Elapsed += WMPaintTimer_Elapsed;

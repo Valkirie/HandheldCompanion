@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Utils;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -14,12 +13,12 @@ public class GOGGalaxy : IPlatform
         ExecutableName = RunningName = "GalaxyClient.exe";
 
         // store specific modules
-        Modules = new List<string>
-        {
+        Modules =
+        [
             "Galaxy.dll",
             "GalaxyClient.exe",
             "GalaxyClientService.exe"
-        };
+        ];
 
         // check if platform is installed
         InstallPath = RegistryUtils.GetString(@"SOFTWARE\WOW6432Node\GOG.com\GalaxyClient\paths", "client");

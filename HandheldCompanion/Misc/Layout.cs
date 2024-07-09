@@ -11,9 +11,9 @@ namespace HandheldCompanion;
 [Serializable]
 public partial class Layout : ICloneable, IDisposable
 {
-    public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = new();
-    public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
-    public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = new();
+    public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = [];
+    public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = [];
+    public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = [];
 
     public bool IsDefaultLayout { get; set; }
 
@@ -37,20 +37,20 @@ public partial class Layout : ICloneable, IDisposable
             if (!controller.GetTargetButtons().Contains(button))
                 continue;
 
-            ButtonLayout[button] = new List<IActions>() { new ButtonActions() { Button = button } };
+            ButtonLayout[button] = [new ButtonActions() { Button = button }];
         }
 
         // ButtonLayout[ButtonFlags.OEM1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.Special } };
-        ButtonLayout[ButtonFlags.LeftPadClickUp] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadUp } };
-        ButtonLayout[ButtonFlags.LeftPadClickDown] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadDown } };
-        ButtonLayout[ButtonFlags.LeftPadClickLeft] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadLeft } };
-        ButtonLayout[ButtonFlags.LeftPadClickRight] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadRight } };
+        ButtonLayout[ButtonFlags.LeftPadClickUp] = [new ButtonActions { Button = ButtonFlags.DPadUp }];
+        ButtonLayout[ButtonFlags.LeftPadClickDown] = [new ButtonActions { Button = ButtonFlags.DPadDown }];
+        ButtonLayout[ButtonFlags.LeftPadClickLeft] = [new ButtonActions { Button = ButtonFlags.DPadLeft }];
+        ButtonLayout[ButtonFlags.LeftPadClickRight] = [new ButtonActions { Button = ButtonFlags.DPadRight }];
 
         // DualShock4
-        ButtonLayout[ButtonFlags.LeftPadTouch] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.LeftPadTouch } };
-        ButtonLayout[ButtonFlags.LeftPadClick] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.LeftPadClick } };
-        ButtonLayout[ButtonFlags.RightPadTouch] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.RightPadTouch } };
-        ButtonLayout[ButtonFlags.RightPadClick] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.RightPadClick } };
+        ButtonLayout[ButtonFlags.LeftPadTouch] = [new ButtonActions { Button = ButtonFlags.LeftPadTouch }];
+        ButtonLayout[ButtonFlags.LeftPadClick] = [new ButtonActions { Button = ButtonFlags.LeftPadClick }];
+        ButtonLayout[ButtonFlags.RightPadTouch] = [new ButtonActions { Button = ButtonFlags.RightPadTouch }];
+        ButtonLayout[ButtonFlags.RightPadClick] = [new ButtonActions { Button = ButtonFlags.RightPadClick }];
 
         // generic axis mapping
         foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))

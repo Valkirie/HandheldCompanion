@@ -12,12 +12,12 @@ namespace HandheldCompanion.Controls.Hints
 {
     public class Hint_MSIClawCenter : IHint
     {
-        private List<string> serviceNames = new()
-        {
+        private List<string> serviceNames =
+        [
             "ArmouryCrateSEService",
             "AsusAppService",
             "ArmouryCrateControlInterface",
-        };
+        ];
 
         private Timer watcherTimer;
         private const string TaskName = "MSI_Center_M_Server";

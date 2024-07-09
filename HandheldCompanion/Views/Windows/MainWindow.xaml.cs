@@ -43,7 +43,7 @@ public partial class MainWindow : GamepadWindow
     private static IDevice CurrentDevice;
 
     // page vars
-    private static readonly Dictionary<string, Page> _pages = new();
+    private static readonly Dictionary<string, Page> _pages = [];
 
     public static ControllerPage controllerPage;
     public static DevicePage devicePage;
@@ -342,8 +342,10 @@ public partial class MainWindow : GamepadWindow
     {
         tag ??= string.Concat(name.Where(c => !char.IsWhiteSpace(c)));
 
-        var menuItemMainWindow = new ToolStripMenuItem(name);
-        menuItemMainWindow.Tag = tag;
+        var menuItemMainWindow = new ToolStripMenuItem(name)
+        {
+            Tag = tag
+        };
         menuItemMainWindow.Click += MenuItem_Click;
         notifyIcon.ContextMenuStrip.Items.Add(menuItemMainWindow);
     }
@@ -793,7 +795,7 @@ public partial class MainWindow : GamepadWindow
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;
 
-            navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title };
+            navView.Header = new TextBlock() { Text = ((Page)e.Content).Title };
         }
     }
 

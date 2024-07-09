@@ -6,7 +6,6 @@ using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -40,9 +39,9 @@ namespace HandheldCompanion.Controllers
         protected override void InitializeInputOutput()
         {
             // Additional controller specific source buttons/axes
-            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4 });
-            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+            SourceButtons.AddRange([ButtonFlags.L4, ButtonFlags.R4]);
+            SourceButtons.AddRange([ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight]);
+            SourceButtons.AddRange([ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight]);
 
             SourceAxis.Add(AxisLayoutFlags.LeftPad);
             SourceAxis.Add(AxisLayoutFlags.RightPad);
@@ -115,8 +114,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.L2Full] = L2 > Gamepad.TriggerThreshold * 8;
             Inputs.ButtonState[ButtonFlags.R2Full] = R2 > Gamepad.TriggerThreshold * 8;
 
-            Inputs.AxisState[AxisFlags.L2] = (short)L2;
-            Inputs.AxisState[AxisFlags.R2] = (short)R2;
+            Inputs.AxisState[AxisFlags.L2] = L2;
+            Inputs.AxisState[AxisFlags.R2] = R2;
 
             Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[GordonControllerButton.BtnL1];
             Inputs.ButtonState[ButtonFlags.R1] = input.State.ButtonState[GordonControllerButton.BtnR1];
