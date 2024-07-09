@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
@@ -98,22 +99,29 @@ namespace HandheldCompanion.Controls.Hints
                 // Disable services
                 foreach (ServiceController serviceController in serviceControllers)
                 {
-                    // Disable service from doing anything anymore
-                    ServiceUtils.ChangeStartMode(serviceController, ServiceStartMode.Disabled, out string error);
-
-                    // Stop tasks related to service
-                    foreach (string taskName in taskNames)
+                    try
                     {
-                        var taskProcess = Process.GetProcessesByName(taskName).FirstOrDefault();
-                        if (taskProcess != null && !taskProcess.HasExited)
-                        {
-                            taskProcess.Kill();
-                        }
-                    }
+                        // Disable service from doing anything anymore
+                        ServiceUtils.ChangeStartMode(serviceController, ServiceStartMode.Disabled, out string error);
 
-                    // Stop running service
-                    if (serviceController.Status == ServiceControllerStatus.Running)
-                        serviceController.Stop();
+                        // Stop tasks related to service
+                        foreach (string taskName in taskNames)
+                        {
+                            var taskProcess = Process.GetProcessesByName(taskName).FirstOrDefault();
+                            if (taskProcess != null && !taskProcess.HasExited)
+                            {
+                                taskProcess.Kill();
+                            }
+                        }
+
+                        // Stop running service
+                        if (serviceController.Status == ServiceControllerStatus.Running)
+                            serviceController.Stop();
+                    }
+                    catch
+                    {
+                        LogManager.LogError("Failed to disable service: {0}", serviceController.ServiceName);
+                    }
                 }
             });
         }
