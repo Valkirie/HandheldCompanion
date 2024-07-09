@@ -25,20 +25,20 @@ public class GPDWinMax2 : IDevice
         };
 
         // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.
-        OEMChords.Add(new DeviceChord("Menu",
+        OEMChords.Add(new KeyboardChord("Menu",
             new List<KeyCode> { KeyCode.LButton | KeyCode.XButton2 },
             new List<KeyCode> { KeyCode.LButton | KeyCode.XButton2 },
             true, ButtonFlags.OEM1
         ));
 
         // note, need to manually configured in GPD app
-        OEMChords.Add(new DeviceChord("Bottom button left",
+        OEMChords.Add(new KeyboardChord("Bottom button left",
             new List<KeyCode> { KeyCode.F11, KeyCode.L },
             new List<KeyCode> { KeyCode.F11, KeyCode.L },
             false, ButtonFlags.OEM2
         ));
 
-        OEMChords.Add(new DeviceChord("Bottom button right",
+        OEMChords.Add(new KeyboardChord("Bottom button right",
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             false, ButtonFlags.OEM3

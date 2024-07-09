@@ -51,7 +51,7 @@ namespace HandheldCompanion.Devices
 
             // Choose OEM2 due to presense of physical Xbox Guide button
             // Dirty implementation, below chords get spammed 2-3x by device
-            OEMChords.Add(new DeviceChord("Turbo",
+            OEMChords.Add(new KeyboardChord("Turbo",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.LMenu, KeyCode.LControl },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.LMenu, KeyCode.LControl },
                 false, ButtonFlags.OEM2

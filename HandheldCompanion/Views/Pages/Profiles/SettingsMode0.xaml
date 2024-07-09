@@ -3,21 +3,23 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.SettingsMode0_AdditionalSettings}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SettingsMode0ViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="12">
+        <ikw:SimpleStackPanel Spacing="12">
 
             <!--  World space options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CameraOptions}" />
 
                 <!--  Sensivity X  -->
@@ -39,14 +41,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECE7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_SensitivityX}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode0_SensitivityXDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -100,14 +102,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECE7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_SensitivityY}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode0_SensitivityYDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -154,19 +156,19 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE710;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_AimingDownSights}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode0_AimingDownSightsDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
                     </Expander.Header>
 
                     <Expander.Content>
-                        <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -216,8 +218,8 @@
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="6*" MinWidth="200" />
-                                    <ColumnDefinition Width="4*" MinWidth="120" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
@@ -227,13 +229,100 @@
                                         Text="{l:Static resx:Resources.SettingsMode0_AimingDownSightsActivation}" />
                                 </StackPanel>
 
-                                <ui:SimpleStackPanel
-                                    Name="UMC_Activator"
+                                <!--  Motion activator  -->
+                                <ui:ItemsRepeater
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
-                                    Spacing="6" />
+                                    ItemsSource="{Binding HotkeysList}">
+                                    <ui:ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="10*" />
+                                                    <ColumnDefinition Width="45" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ToggleButton
+                                                    Height="41"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Command="{Binding DefineButtonCommand}"
+                                                    IsChecked="{Binding IsListening, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                        <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
+                                                            <ui:ItemsRepeater.Style>
+                                                                <Style TargetType="ui:ItemsRepeater">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
+                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding ButtonGlyphs.Count}">
+                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </ui:ItemsRepeater.Style>
+
+                                                            <ui:ItemsRepeater.Layout>
+                                                                <ui:UniformGridLayout
+                                                                    ItemsJustification="Center"
+                                                                    ItemsStretch="Uniform"
+                                                                    MaximumRowsOrColumns="10"
+                                                                    MinColumnSpacing="3"
+                                                                    Orientation="Horizontal" />
+                                                            </ui:ItemsRepeater.Layout>
+
+                                                            <ui:ItemsRepeater.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <ui:FontIcon
+                                                                        FontFamily="PromptFont"
+                                                                        FontSize="24"
+                                                                        Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                </DataTemplate>
+                                                            </ui:ItemsRepeater.ItemTemplate>
+                                                        </ui:ItemsRepeater>
+
+                                                        <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding KeyboardChord}" Value="">
+                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding KeyboardChord}">
+                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Foreground="{DynamicResource NavigationViewSelectionIndicatorForeground}"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="{Binding InputsChordType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </ikw:SimpleStackPanel>
+                                                </ToggleButton>
+
+                                                <Button
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Command="{Binding EraseButtonCommand}">
+                                                    <ui:FontIcon
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                        Glyph="&#xe75c;" />
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ui:ItemsRepeater.ItemTemplate>
+                                </ui:ItemsRepeater>
                             </Grid>
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </Expander.Content>
                 </Expander>
 
@@ -249,19 +338,19 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE759;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_FlickStick}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode0_FlickStickDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
                     </Expander.Header>
 
                     <Expander.Content>
-                        <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="9*" MinWidth="200" />
@@ -382,13 +471,13 @@
                                         Value="10" />
                                 </DockPanel>
                             </Grid>
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </Expander.Content>
                 </Expander>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Custom response curve  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CustomResponseCurve}" />
 
                 <Border
@@ -397,7 +486,7 @@
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
-                        <ui:SimpleStackPanel
+                        <ikw:SimpleStackPanel
                             HorizontalAlignment="Center"
                             Background="{DynamicResource ExpanderHeaderBackground}"
                             Orientation="Horizontal"
@@ -411,9 +500,9 @@
                                     </TransformGroup>
                                 </Label.LayoutTransform>
                             </Label>
-                            <ui:SimpleStackPanel Orientation="Vertical" Spacing="12">
+                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="12">
                                 <Label HorizontalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseIntensity}" />
-                                <ui:SimpleStackPanel
+                                <ikw:SimpleStackPanel
                                     Name="StackCurve"
                                     Width="480"
                                     Height="400"
@@ -421,7 +510,7 @@
                                     MouseMove="StackCurve_MouseMove"
                                     Orientation="Horizontal"
                                     Spacing="2">
-                                    <ui:SimpleStackPanel.Background>
+                                    <ikw:SimpleStackPanel.Background>
                                         <DrawingBrush
                                             TileMode="Tile"
                                             Viewport="40,40,40,40"
@@ -437,9 +526,9 @@
                                                 </GeometryDrawing>
                                             </DrawingBrush.Drawing>
                                         </DrawingBrush>
-                                    </ui:SimpleStackPanel.Background>
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel
+                                    </ikw:SimpleStackPanel.Background>
+                                </ikw:SimpleStackPanel>
+                                <ikw:SimpleStackPanel
                                     Name="StackIndicator"
                                     Height="10"
                                     Orientation="Horizontal" />
@@ -466,7 +555,7 @@
                                         Click="Button_Click_2"
                                         Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetPrecise}" />
                                 </Grid>
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                             <Label VerticalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
                                 <Label.LayoutTransform>
                                     <TransformGroup>
@@ -475,10 +564,10 @@
                                     </TransformGroup>
                                 </Label.LayoutTransform>
                             </Label>
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

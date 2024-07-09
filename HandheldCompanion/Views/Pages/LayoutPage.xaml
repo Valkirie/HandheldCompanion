@@ -6,7 +6,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Name="Layout"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
     d:Background="White"
@@ -87,9 +87,9 @@
 
         <!--  Padding is set to NavView OpenPaneLength  -->
         <Grid Name="MainGrid" Margin="20">
-            <ui:SimpleStackPanel Spacing="10">
+            <ikw:SimpleStackPanel Spacing="10">
                 <!--  Profile picker  -->
-                <ui:SimpleStackPanel
+                <ikw:SimpleStackPanel
                     Name="LayoutPickerPanel"
                     d:Visibility="Visible"
                     Spacing="12">
@@ -115,7 +115,7 @@
                             IsEnabled="false" />
                     </ComboBox>
 
-                    <ui:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                    <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
 
                         <Grid>
                             <CheckBox
@@ -125,7 +125,7 @@
                                 IsChecked="True"
                                 Unchecked="CheckBoxDeviceLayouts_Checked" />
 
-                            <ui:SimpleStackPanel
+                            <ikw:SimpleStackPanel
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal"
                                 Spacing="6">
@@ -146,10 +146,10 @@
                                             AreOpenCloseAnimationsEnabled="True"
                                             Opening="Flyout_Opening"
                                             Placement="Left">
-                                            <ui:SimpleStackPanel Width="400" Spacing="24">
+                                            <ikw:SimpleStackPanel Width="400" Spacing="24">
                                                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.LayoutPage_ExportLayout}" />
 
-                                                <ui:SimpleStackPanel Spacing="6">
+                                                <ikw:SimpleStackPanel Spacing="6">
                                                     <TextBox
                                                         Name="LayoutTitle"
                                                         HorizontalAlignment="Stretch"
@@ -195,12 +195,12 @@
                                                             Click="LayoutCancelButton_Click"
                                                             Content="{l:Static resx:Resources.LayoutPage_Cancel}" />
                                                     </Grid>
-                                                </ui:SimpleStackPanel>
-                                            </ui:SimpleStackPanel>
+                                                </ikw:SimpleStackPanel>
+                                            </ikw:SimpleStackPanel>
                                         </ui:Flyout>
                                     </ui:FlyoutService.Flyout>
                                 </Button>
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </Grid>
 
                         <CheckBox
@@ -208,7 +208,7 @@
                             Checked="CheckBoxDefaultLayout_Checked"
                             Content="{l:Static resx:Resources.LayoutPage_SetAsDefault}"
                             Unchecked="CheckBoxDefaultLayout_Checked" />
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
 
                     <!--  Separator  -->
                     <Separator
@@ -216,13 +216,13 @@
                         BorderThickness="0,1,0,0"
                         Opacity="0.25" />
 
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
 
                 <ui:Frame
                     Name="ContentFrame"
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                     HorizontalAlignment="Left" />
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
         </Grid>
     </ui:NavigationView>
 </Page>

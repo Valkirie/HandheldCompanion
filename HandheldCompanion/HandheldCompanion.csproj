@@ -180,6 +180,7 @@
     <PackageReference Include="Fastenshtein" Version="1.0.0.9" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.25.0" />
+    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.30" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4-pre286" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.1" />
@@ -2338,15 +2339,6 @@
     </Reference>
     <Reference Include="HidLibrary">
       <HintPath>..\Resources\HidLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="iNKORE.UI.WPF">
-      <HintPath>..\Resources\iNKORE.UI.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="iNKORE.UI.WPF.Modern">
-      <HintPath>..\Resources\Inkore.UI.WPF.Modern.dll</HintPath>
-    </Reference>
-    <Reference Include="iNKORE.UI.WPF.Modern.Controls">
-      <HintPath>..\Resources\Inkore.UI.WPF.Modern.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler">
       <HintPath>..\Resources\Microsoft.Win32.TaskScheduler.dll</HintPath>

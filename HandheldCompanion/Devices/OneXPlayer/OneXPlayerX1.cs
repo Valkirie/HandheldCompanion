@@ -94,7 +94,7 @@ public class OneXPlayerX1 : IDevice
             FanValueMax = 184
         };
 
-        OEMChords.Add(new DeviceChord("Turbo",
+        OEMChords.Add(new KeyboardChord("Turbo",
             new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu },
             new List<KeyCode> { KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM1

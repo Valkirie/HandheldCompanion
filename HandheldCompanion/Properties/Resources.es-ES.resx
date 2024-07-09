@@ -121,20 +121,20 @@
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="chord_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\controller_base\chord_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="empty_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AboutPage_About" xml:space="preserve">
     <value>Acerca de</value>
@@ -232,106 +232,106 @@
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>Cambiar intensidad de vibración del mando</value>
   </data>
-  <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
+  <data name="Hotkey_decreaseTDP" xml:space="preserve">
     <value>Reducir el límite de potencia térmica (TDP)</value>
   </data>
-  <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
+  <data name="Hotkey_decreaseTDPDesc" xml:space="preserve">
     <value>Disminuya el TDP del sistema o del perfil actualmente aplicado en 1W</value>
   </data>
-  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
+  <data name="Hotkey_fallbackInput" xml:space="preserve">
     <value>Presione para definir el gatillo</value>
   </data>
-  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+  <data name="Hotkey_fallbackOutput" xml:space="preserve">
     <value>Presione para definir la salida del teclado</value>
   </data>
-  <data name="InputsHotkey_increaseTDP" xml:space="preserve">
+  <data name="Hotkey_increaseTDP" xml:space="preserve">
     <value>Aumentar el límite de potencia térmica (TDP)</value>
   </data>
-  <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
+  <data name="Hotkey_increaseTDPDesc" xml:space="preserve">
     <value>Aumente el TDP del sistema o del perfil actualmente aplicado en 1W</value>
   </data>
-  <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
+  <data name="Hotkey_overlayGamepad" xml:space="preserve">
     <value>Controlador de pantalla 3D</value>
   </data>
-  <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
+  <data name="Hotkey_overlayGamepadDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido 3D presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
+  <data name="Hotkey_overlayTrackpads" xml:space="preserve">
     <value>Mostrar trackpads virtuales</value>
   </data>
-  <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
+  <data name="Hotkey_overlayTrackpadsDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_quickTools" xml:space="preserve">
+  <data name="Hotkey_quickTools" xml:space="preserve">
     <value>Abrir ventana de herramientas rápidas</value>
   </data>
-  <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
+  <data name="Hotkey_quickToolsDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
+  <data name="Hotkey_Custom" xml:space="preserve">
     <value>Acceso directo personalizado</value>
   </data>
-  <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
+  <data name="Hotkey_CustomDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
+  <data name="Hotkey_Desktop" xml:space="preserve">
     <value>Mostrar y ocultar el escritorio</value>
   </data>
-  <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
+  <data name="Hotkey_DesktopDesc" xml:space="preserve">
     <value>Presiona esta tecla: Windows + D</value>
   </data>
-  <data name="InputsHotkey_shortcutESC" xml:space="preserve">
+  <data name="Hotkey_ESC" xml:space="preserve">
     <value>Esc</value>
   </data>
-  <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
+  <data name="Hotkey_ESCDesc" xml:space="preserve">
     <value>Presiona la tecla: Esc</value>
   </data>
-  <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
+  <data name="Hotkey_Expand" xml:space="preserve">
     <value>Cambia entre ventana y pantalla completa</value>
   </data>
-  <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
+  <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>Presiona la tecla: Enter</value>
   </data>
-  <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
+  <data name="Hotkey_Guide" xml:space="preserve">
     <value>Boton Guia o Boton PS</value>
   </data>
-  <data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
+  <data name="Hotkey_GuideDesc" xml:space="preserve">
     <value>Simular boton Xbox Guia o boton Sony PS</value>
   </data>
-  <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
+  <data name="Hotkey_Keyboard" xml:space="preserve">
     <value>Mostrar teclado</value>
   </data>
-  <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
+  <data name="Hotkey_KeyboardDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+  <data name="Hotkey_KillApp" xml:space="preserve">
     <value>Forzar el cierre de la aplicación</value>
   </data>
-  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
+  <data name="Hotkey_KillAppDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
+  <data name="Hotkey_Mainwindow" xml:space="preserve">
     <value>Mostrar y ocultar la menú principal</value>
   </data>
-  <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
+  <data name="Hotkey_MainwindowDesc" xml:space="preserve">
     <value>Cambie la tecla de acceso rápido presionando un botón o una tecla especial</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
+  <data name="Hotkey_TaskManager" xml:space="preserve">
     <value>Abrir administrador de tareas</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
+  <data name="Hotkey_TaskManagerDesc" xml:space="preserve">
     <value>Presiona las teclas: Ctrl + Shift + Esc</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
+  <data name="Hotkey_Taskview" xml:space="preserve">
     <value>Abrir vista de tareas</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
+  <data name="Hotkey_TaskviewDesc" xml:space="preserve">
     <value>Pulsa las teclas: Windows + Tab</value>
   </data>
-  <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
+  <data name="Hotkey_suspendResumeTask" xml:space="preserve">
     <value>Toggle Applications</value>
   </data>
-  <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
+  <data name="Hotkey_suspendResumeTaskDesc" xml:space="preserve">
     <value>Applications o reanudar la aplicación en primer plano</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
@@ -1108,56 +1108,53 @@
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>Vibración del mando cuando esta conectado</value>
   </data>
-  <data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
     <value>Diseño de escritorio</value>
   </data>
-  <data name="InputsHotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
     <value>Cambiar el diseño del controlador de escritorio</value>
   </data>
-  <data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
+  <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>Mostrar Centro de acción</value>
   </data>
-  <data name="InputsHotkey_shortcutControlCenterDesc" xml:space="preserve">
+  <data name="Hotkey_ControlCenterDesc" xml:space="preserve">
     <value>Mostrar y ocultar Centro de acción de Windows</value>
   </data>
   <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
     <value>Disposicion del mando</value>
   </data>
-  <data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
+  <data name="Hotkey_QuietModeToggled" xml:space="preserve">
     <value>Anulación del ventilador</value>
   </data>
-  <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
+  <data name="Hotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>Establezca el ciclo de trabajo del ventilador en un valor definido por el usuario</value>
   </data>
-  <data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
-    <value>Visualización en pantalla</value>
-  </data>
-  <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
+  <data name="Hotkey_OnScreenDisplayDesc" xml:space="preserve">
     <value>Habilitar soporte de visualización en pantalla</value>
   </data>
-  <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
+  <data name="Hotkey_decreaseBrightness" xml:space="preserve">
     <value>Reducir el brillo</value>
   </data>
-  <data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
-    <value>Reducir el brillo de la pantalla actual en un 5%</value>
+  <data name="Hotkey_decreaseBrightnessDesc" xml:space="preserve">
+    <value>Reducir el brillo de la pantalla actual en un 2%</value>
   </data>
-  <data name="InputsHotkey_decreaseVolume" xml:space="preserve">
+  <data name="Hotkey_decreaseVolume" xml:space="preserve">
     <value>Reducir volumen</value>
   </data>
-  <data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
-    <value>Reducir el volumen del sistema en un 5%</value>
+  <data name="Hotkey_decreaseVolumeDesc" xml:space="preserve">
+    <value>Reducir el volumen del sistema en un 2%</value>
   </data>
-  <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
+  <data name="Hotkey_increaseBrightness" xml:space="preserve">
     <value>Aumentar brillo</value>
   </data>
-  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
-    <value>Aumentar el brillo de la pantalla actual en un 5%</value>
+  <data name="Hotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>Aumentar el brillo de la pantalla actual en un 2%</value>
   </data>
-  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
+  <data name="Hotkey_increaseVolume" xml:space="preserve">
     <value>Aumentar volumen</value>
   </data>
-  <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
-    <value>Aumentar volumen actual en un 5%</value>
+  <data name="Hotkey_increaseVolumeDesc" xml:space="preserve">
+    <value>Aumentar volumen actual en un 2%</value>
   </data>
   <data name="ProfilesPage_AutoTDP" xml:space="preserve">
     <value>TDP Automático</value>
@@ -1198,10 +1195,10 @@
   <data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
     <value>Limite de FPS para aplicaciones 3D</value>
   </data>
-  <data name="InputsHotkey_shortcutPrintScreen" xml:space="preserve">
+  <data name="Hotkey_PrintScreen" xml:space="preserve">
     <value>Abra la herramienta Recortes</value>
   </data>
-  <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
+  <data name="Hotkey_PrintScreenDesc" xml:space="preserve">
     <value>Presiona las teclas: Windows + Shift</value>
   </data>
   <data name="MainWindow_navHotkeys" xml:space="preserve">
@@ -2590,10 +2587,10 @@
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Make this the default layout</value>
   </data>
-  <data name="InputsHotkey_shortcutChangeHIDMode" xml:space="preserve">
+  <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>Toggle emulated controller type</value>
   </data>
-  <data name="InputsHotkey_shortcutChangeHIDModeDesc" xml:space="preserve">
+  <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
     <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
@@ -2683,16 +2680,16 @@
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Select a sub profile to apply</value>
   </data>
-  <data name="InputsHotkey_nextSubProfile" xml:space="preserve">
+  <data name="Hotkey_nextSubProfile" xml:space="preserve">
     <value>Select next sub profile</value>
   </data>
-  <data name="InputsHotkey_nextSubProfileDesc" xml:space="preserve">
+  <data name="Hotkey_nextSubProfileDesc" xml:space="preserve">
     <value>Apply next sub profile for the current game</value>
   </data>
-  <data name="InputsHotkey_previousSubProfile" xml:space="preserve">
+  <data name="Hotkey_previousSubProfile" xml:space="preserve">
     <value>Select previous sub profile</value>
   </data>
-  <data name="InputsHotkey_previousSubProfileDesc" xml:space="preserve">
+  <data name="Hotkey_previousSubProfileDesc" xml:space="preserve">
     <value>Apply previous sub profile for the current game</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
@@ -2788,10 +2785,10 @@
   <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
     <value>Right</value>
   </data>
-  <data name="InputsHotkey_OnScreenDisplayToggle" xml:space="preserve">
+  <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>On Screen Overlay</value>
   </data>
-  <data name="InputsHotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
+  <data name="Hotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
     <value>Toggle on screen overlay</value>
   </data>
   <data name="ProfilesPage_GPUScaling" xml:space="preserve">

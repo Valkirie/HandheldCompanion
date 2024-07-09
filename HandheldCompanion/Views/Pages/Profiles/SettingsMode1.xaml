@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Title="{l:Static resx:Resources.SettingsMode1_AdditionalSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -16,10 +16,10 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="12">
+        <ikw:SimpleStackPanel Spacing="12">
 
             <!--  Joystick steering preview  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_JoystickSteeringPreview}" />
 
                 <!--  Steering Visuals  -->
@@ -114,9 +114,9 @@
 
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_JoystickSteeringOptions}" />
 
                 <!--  Steering angle  -->
@@ -138,14 +138,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECE7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_MaxSteeringAngle}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode1_MaxSteeringAngleDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -198,14 +198,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECE7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_SteeringLinearity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode1_SteeringLinearityDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -258,14 +258,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECE7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_Deadzone}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsMode1_DeadzoneDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -295,7 +295,7 @@
                         </DockPanel>
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

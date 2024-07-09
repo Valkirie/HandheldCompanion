@@ -23,11 +23,11 @@ namespace HandheldCompanion.ViewModels
             get => _process;
             set
             {
-                if (value != _process)
-                {
-                    UpdateProcess(_process, value);
-                    OnPropertyChanged(nameof(Process));
-                }
+                // todo: we need to check if _hotkey != value but this will return false because this is a pointer
+                // I've implemented all required Clone() functions but not sure where to call them
+
+                UpdateProcess(_process, value);
+                OnPropertyChanged(nameof(Process));
             }
         }
 

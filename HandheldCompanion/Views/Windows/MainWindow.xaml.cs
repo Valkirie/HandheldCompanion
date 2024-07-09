@@ -27,7 +27,6 @@ using System.Windows.Interop;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.UI.ViewManagement;
-using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -201,7 +200,6 @@ public partial class MainWindow : GamepadWindow
         }), DispatcherPriority.Background); // Lower priority
 
         // manage events
-        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
         SystemManager.SystemStatusChanged += OnSystemStatusChanged;
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
@@ -459,26 +457,6 @@ public partial class MainWindow : GamepadWindow
     {
         // todo: improve me
         CurrentDevice.PullSensors();
-    }
-
-    private void InputsManager_TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown,
-        bool IsKeyUp)
-    {
-        switch (listener)
-        {
-            case "quickTools":
-                overlayquickTools.ToggleVisibility();
-                break;
-            case "overlayGamepad":
-                overlayModel.ToggleVisibility();
-                break;
-            case "overlayTrackpads":
-                overlayTrackpad.ToggleVisibility();
-                break;
-            case "shortcutMainwindow":
-                SwapWindowState();
-                break;
-        }
     }
 
     private void MenuItem_Click(object? sender, EventArgs e)

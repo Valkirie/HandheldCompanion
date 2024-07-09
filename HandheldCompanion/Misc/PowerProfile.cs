@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using iNKORE.UI.WPF.Controls;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;

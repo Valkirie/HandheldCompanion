@@ -9,6 +9,8 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
+using iNKORE.UI.WPF.Controls;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using WindowsInput.Native;
 using Page = System.Windows.Controls.Page;
 using Separator = System.Windows.Controls.Separator;
 using Timer = System.Timers.Timer;
@@ -38,7 +41,9 @@ public partial class QuickProfilesPage : Page
     private CrossThreadLock foregroundLock = new();
     private CrossThreadLock graphicLock = new();
 
-    private Hotkey GyroHotkey = new(61);
+    private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_ACTIVATION_QP;
+    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true };
+
     private Profile realProfile;
 
     public QuickProfilesPage(string Tag) : this()
@@ -48,6 +53,7 @@ public partial class QuickProfilesPage : Page
 
     public QuickProfilesPage()
     {
+        DataContext = new QuickProfilesPageViewModel();
         InitializeComponent();
 
         // manage events
@@ -58,8 +64,7 @@ public partial class QuickProfilesPage : Page
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        HotkeysManager.HotkeyCreated += TriggerCreated;
-        InputsManager.TriggerUpdated += TriggerUpdated;
+        HotkeysManager.Updated += HotkeysManager_Updated;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Hooked += GPUManager_Hooked;
         GPUManager.Unhooked += GPUManager_Unhooked;
@@ -134,6 +139,9 @@ public partial class QuickProfilesPage : Page
 
         // force call
         RTSS_Updated(PlatformManager.RTSS.Status);
+
+        // store hotkey to manager
+        HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
     }
 
     private void MultimediaManager_Initialized()
@@ -497,9 +505,8 @@ public partial class QuickProfilesPage : Page
                         SliderSensitivityX.Value = selectedProfile.MotionSensivityX;
                         SliderSensitivityY.Value = selectedProfile.MotionSensivityY;
 
-                        // todo: improve me ?
-                        GyroHotkey.inputsChord.State = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
-                        GyroHotkey.DrawInput();
+                        GyroHotkey.inputsChord.ButtonState = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
+                        HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
                     }
 
                     // Framerate limit
@@ -690,7 +697,8 @@ public partial class QuickProfilesPage : Page
                     }
 
                     ((AxisActions)gyroActions).Axis = motionOuput == MotionOutput.LeftStick ? AxisLayoutFlags.LeftStick : AxisLayoutFlags.RightStick;
-                    ((AxisActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState;
+
+                    ((AxisActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState;
                 }
                 break;
 
@@ -707,7 +715,7 @@ public partial class QuickProfilesPage : Page
                         };
                     }
 
-                    ((MouseActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState;
+                    ((MouseActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState;
                 }
                 break;
         }
@@ -781,26 +789,7 @@ public partial class QuickProfilesPage : Page
         UpdateProfile();
     }
 
-    private void TriggerCreated(Hotkey hotkey)
-    {
-        switch (hotkey.inputsHotkey.Listener)
-        {
-            case "shortcutProfilesPage@@":
-                {
-                    var hotkeyBorder = hotkey.GetControl();
-                    if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                        return;
-
-                    // pull hotkey
-                    GyroHotkey = hotkey;
-
-                    UMC_Activator.Children.Add(hotkeyBorder);
-                }
-                break;
-        }
-    }
-
-    private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
+    private void HotkeysManager_Updated(Hotkey hotkey)
     {
         if (selectedProfile is null)
             return;
@@ -808,13 +797,14 @@ public partial class QuickProfilesPage : Page
         if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
             return;
 
-        switch (listener)
-        {
-            case "shortcutProfilesPage@@":
-                ((GyroActions)currentAction).MotionTrigger = inputs.State.Clone() as ButtonState;
-                UpdateProfile();
-                break;
-        }
+        if (hotkey.ButtonFlags != gyroButtonFlags)
+            return;
+
+        // update gyro hotkey
+        GyroHotkey = hotkey;
+
+        ((GyroActions)currentAction).MotionTrigger = hotkey.inputsChord.ButtonState.Clone() as ButtonState;
+        UpdateProfile();
     }
 
     private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)

@@ -56,69 +56,69 @@ public class XInputController : IController
 
     public virtual void UpdateInputs(long ticks, float delta, bool commit)
     {
+        // update secret state
+        XInputGetStateSecret14(UserIndex, out State);
+
+        Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
+
         // skip if controller isn't connected
-        if (!IsConnected())
-            return;
-
-        try
+        if (IsConnected())
         {
-            // update gamepad state
-            Gamepad = Controller.GetState().Gamepad;
+            try
+            {
+                // update gamepad state
+                Gamepad = Controller.GetState().Gamepad;
 
-            // update secret state
-            XInputGetStateSecret14(UserIndex, out State);
+                Inputs.ButtonState[ButtonFlags.B1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
+                Inputs.ButtonState[ButtonFlags.B2] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.B);
+                Inputs.ButtonState[ButtonFlags.B3] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.X);
+                Inputs.ButtonState[ButtonFlags.B4] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y);
 
-            Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
+                Inputs.ButtonState[ButtonFlags.Start] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
+                Inputs.ButtonState[ButtonFlags.Back] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
 
-            Inputs.ButtonState[ButtonFlags.B1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
-            Inputs.ButtonState[ButtonFlags.B2] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.B);
-            Inputs.ButtonState[ButtonFlags.B3] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.X);
-            Inputs.ButtonState[ButtonFlags.B4] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y);
+                Inputs.ButtonState[ButtonFlags.L2Soft] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
+                Inputs.ButtonState[ButtonFlags.R2Soft] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.Start] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
-            Inputs.ButtonState[ButtonFlags.Back] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
+                Inputs.ButtonState[ButtonFlags.L2Full] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
+                Inputs.ButtonState[ButtonFlags.R2Full] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
 
-            Inputs.ButtonState[ButtonFlags.L2Soft] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
-            Inputs.ButtonState[ButtonFlags.R2Soft] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
+                Inputs.ButtonState[ButtonFlags.LeftStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
+                Inputs.ButtonState[ButtonFlags.RightStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
 
-            Inputs.ButtonState[ButtonFlags.L2Full] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
-            Inputs.ButtonState[ButtonFlags.R2Full] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
+                Inputs.ButtonState[ButtonFlags.L1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
+                Inputs.ButtonState[ButtonFlags.R1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 
-            Inputs.ButtonState[ButtonFlags.LeftStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
-            Inputs.ButtonState[ButtonFlags.RightStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
+                Inputs.ButtonState[ButtonFlags.DPadUp] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp);
+                Inputs.ButtonState[ButtonFlags.DPadDown] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
+                Inputs.ButtonState[ButtonFlags.DPadLeft] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft);
+                Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
 
-            Inputs.ButtonState[ButtonFlags.L1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
-            Inputs.ButtonState[ButtonFlags.R1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
+                // Left Stick
+                Inputs.ButtonState[ButtonFlags.LeftStickLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.LeftStickRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.LeftStickDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.LeftStickUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
 
-            Inputs.ButtonState[ButtonFlags.DPadUp] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp);
-            Inputs.ButtonState[ButtonFlags.DPadDown] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
-            Inputs.ButtonState[ButtonFlags.DPadLeft] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft);
-            Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
+                Inputs.AxisState[AxisFlags.LeftStickX] = Gamepad.LeftThumbX;
+                Inputs.AxisState[AxisFlags.LeftStickY] = Gamepad.LeftThumbY;
 
-            // Left Stick
-            Inputs.ButtonState[ButtonFlags.LeftStickLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
+                // Right Stick
+                Inputs.ButtonState[ButtonFlags.RightStickLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.RightStickRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.RightStickDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.RightStickUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
 
-            Inputs.AxisState[AxisFlags.LeftStickX] = Gamepad.LeftThumbX;
-            Inputs.AxisState[AxisFlags.LeftStickY] = Gamepad.LeftThumbY;
+                Inputs.AxisState[AxisFlags.RightStickX] = Gamepad.RightThumbX;
+                Inputs.AxisState[AxisFlags.RightStickY] = Gamepad.RightThumbY;
 
-            // Right Stick
-            Inputs.ButtonState[ButtonFlags.RightStickLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightStickRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightStickDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightStickUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
+                Inputs.ButtonState[ButtonFlags.Special] = State.wButtons.HasFlag(XInputStateButtons.Xbox);
 
-            Inputs.AxisState[AxisFlags.RightStickX] = Gamepad.RightThumbX;
-            Inputs.AxisState[AxisFlags.RightStickY] = Gamepad.RightThumbY;
-
-            Inputs.ButtonState[ButtonFlags.Special] = State.wButtons.HasFlag(XInputStateButtons.Xbox);
-
-            Inputs.AxisState[AxisFlags.L2] = Gamepad.LeftTrigger;
-            Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
+                Inputs.AxisState[AxisFlags.L2] = Gamepad.LeftTrigger;
+                Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
+            }
+            catch { }
         }
-        catch { }
 
         if (commit)
             base.UpdateInputs(ticks, delta);

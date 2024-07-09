@@ -4,12 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     d:Background="White"
     d:DesignWidth="120"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Name="MainPanel" Spacing="6">
+    <ikw:SimpleStackPanel Name="MainPanel" Spacing="6">
         <Button Name="QuickButton" HorizontalAlignment="Stretch">
             <ui:FontIcon Name="QuickIcon" Height="40" />
         </Button>
@@ -20,5 +20,5 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             TextAlignment="Center"
             TextWrapping="Wrap" />
-    </ui:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </UserControl>

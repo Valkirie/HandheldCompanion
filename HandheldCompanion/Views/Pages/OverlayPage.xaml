@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Name="Overlay"
     Title="{l:Static resx:Resources.OverlayPage_Overlay}"
     d:Background="Black"
@@ -18,10 +18,10 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="24">
 
             <!--  OSD options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="On-screen display options" />
 
                 <!--  On-screen display update rate  -->
@@ -43,14 +43,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE823;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OverlayDisplayUpdateRate}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_OverlayDisplayUpdateRateDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -102,14 +102,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE78B;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_OverlayDisplayLevelDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -131,7 +131,7 @@
                 </Border>
 
                 <!--  Custom Settings  -->
-                <ui:SimpleStackPanel Name="StackCustomSettings" Spacing="6">
+                <ikw:SimpleStackPanel Name="StackCustomSettings" Spacing="6">
 
                     <Border
                         Padding="15,12,12,12"
@@ -145,14 +145,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_TimeLevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_TimeLevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -182,14 +182,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_FPSLevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_FPSLevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -219,14 +219,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_CPULevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_CPULevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -256,14 +256,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_RAMLevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_RAMLevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -293,14 +293,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_GPULevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_GPULevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -330,14 +330,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_VRAMLevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_VRAMLevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -367,14 +367,14 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_BATTLevel}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{l:Static resx:Resources.OverlayPage_BATTLevelDesc}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
                             </DockPanel>
 
                             <ComboBox
@@ -391,11 +391,11 @@
                             </ComboBox>
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
-            </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Controller options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_ControllerOptions}" />
 
                 <!--  Controller model  -->
@@ -417,14 +417,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xF158;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OverlayModel}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_OverlayModelDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -465,25 +465,25 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE80A;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Alignment}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_AlignmentDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <Grid
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             HorizontalAlignment="Left">
-                            <ui:SimpleStackPanel
+                            <ikw:SimpleStackPanel
                                 Name="OverlayControllerAlignment"
                                 HorizontalAlignment="Right"
                                 Spacing="6">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -499,8 +499,8 @@
                                         Height="50"
                                         Click="ControllerAlignment_Click"
                                         Tag="2" />
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                </ikw:SimpleStackPanel>
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -516,8 +516,8 @@
                                         Height="50"
                                         Click="ControllerAlignment_Click"
                                         Tag="5" />
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                </ikw:SimpleStackPanel>
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -533,8 +533,8 @@
                                         Height="50"
                                         Click="ControllerAlignment_Click"
                                         Tag="8" />
-                                </ui:SimpleStackPanel>
-                            </ui:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </Grid>
                     </Grid>
                 </Border>
@@ -558,14 +558,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECC6;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Size}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_SizeDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -617,14 +617,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE75C;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Opacity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_OpacityControllerDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -677,14 +677,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Color}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_ColorDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -718,14 +718,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE11C;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_AlwaysOnTop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_AlwaysOnTopDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -756,14 +756,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xED3D;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_CameraAnglePitch}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_CameraAnglePitchDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -816,14 +816,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE895;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_MotionActivated}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_MotionActivatedDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -855,14 +855,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE89E;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_FaceCamera}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_FaceCameraDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -885,19 +885,19 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE8B4;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_RenderSettings}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_RenderSettingsDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
                     </Expander.Header>
 
                     <Expander.Content>
-                        <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
 
                             <!--  Framerate  -->
                             <Grid>
@@ -974,13 +974,13 @@
                                     Style="{DynamicResource InvertedToggleSwitchStyle}"
                                     Toggled="Toggle_RenderAA_Toggled" />
                             </Grid>
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </Expander.Content>
                 </Expander>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Trackpads options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
 
                 <!--  Controller Alignment  -->
@@ -1002,18 +1002,18 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE80A;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Alignment}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_AlignmentTrackpadDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <Grid Grid.Column="1" Margin="12,0,0,0">
-                            <ui:SimpleStackPanel
+                            <ikw:SimpleStackPanel
                                 Name="OverlayTrackpadsAlignment"
                                 HorizontalAlignment="Right"
                                 Spacing="6">
@@ -1032,7 +1032,7 @@
                                     Height="50"
                                     Click="TrackpadsAlignment_Click"
                                     Tag="2" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </Grid>
                     </Grid>
                 </Border>
@@ -1056,14 +1056,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xECC6;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Size}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_SizeOverlayDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -1115,14 +1115,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE75C;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Opacity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.OverlayPage_OpacityTrackpadDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -1155,7 +1155,7 @@
                         </DockPanel>
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

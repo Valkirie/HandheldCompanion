@@ -22,22 +22,22 @@ public class AYANEOAIR : AYANEO.AYANEODeviceCEc
         this.AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
 
         this.OEMChords.Clear();
-        this.OEMChords.Add(new DeviceChord("Custom Key Big",
+        this.OEMChords.Add(new KeyboardChord("Custom Key Big",
             new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
             new List<KeyCode> { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM1
         ));
-        this.OEMChords.Add(new DeviceChord("Custom Key Small",
+        this.OEMChords.Add(new KeyboardChord("Custom Key Small",
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             false, ButtonFlags.OEM2
         ));
-        this.OEMChords.Add(new DeviceChord("Custom Key Top Left",
+        this.OEMChords.Add(new KeyboardChord("Custom Key Top Left",
             new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
             new List<KeyCode> { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM3
         ));
-        this.OEMChords.Add(new DeviceChord("Custom Key Top Right",
+        this.OEMChords.Add(new KeyboardChord("Custom Key Top Right",
             new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
             new List<KeyCode> { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM4

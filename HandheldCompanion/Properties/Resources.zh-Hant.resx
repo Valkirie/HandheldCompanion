@@ -213,106 +213,106 @@
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>改變手柄震動強度</value>
   </data>
-  <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
+  <data name="Hotkey_decreaseTDP" xml:space="preserve">
     <value>降低TDP</value>
   </data>
-  <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
+  <data name="Hotkey_decreaseTDPDesc" xml:space="preserve">
     <value>將系統或當前的預設配置TDP降低1W</value>
   </data>
-  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
+  <data name="Hotkey_fallbackInput" xml:space="preserve">
     <value>點擊設置觸發方式</value>
   </data>
-  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+  <data name="Hotkey_fallbackOutput" xml:space="preserve">
     <value>點擊設置輸出指令</value>
   </data>
-  <data name="InputsHotkey_increaseTDP" xml:space="preserve">
+  <data name="Hotkey_increaseTDP" xml:space="preserve">
     <value>增加TDP</value>
   </data>
-  <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
+  <data name="Hotkey_increaseTDPDesc" xml:space="preserve">
     <value>將系統或當前的預設配置TDP增加1W</value>
   </data>
-  <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
+  <data name="Hotkey_overlayGamepad" xml:space="preserve">
     <value>3D手柄覆蓋窗</value>
   </data>
-  <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
+  <data name="Hotkey_overlayGamepadDesc" xml:space="preserve">
     <value>顯示/隱藏3D手柄預覽覆蓋窗</value>
   </data>
-  <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
+  <data name="Hotkey_overlayTrackpads" xml:space="preserve">
     <value>虛擬觸控板</value>
   </data>
-  <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
+  <data name="Hotkey_overlayTrackpadsDesc" xml:space="preserve">
     <value>顯示/隱藏虛擬觸控板</value>
   </data>
-  <data name="InputsHotkey_quickTools" xml:space="preserve">
+  <data name="Hotkey_quickTools" xml:space="preserve">
     <value>工具窗口</value>
   </data>
-  <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
+  <data name="Hotkey_quickToolsDesc" xml:space="preserve">
     <value>顯示/隱藏工具窗口</value>
   </data>
-  <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
+  <data name="Hotkey_Custom" xml:space="preserve">
     <value>自定義快捷方式</value>
   </data>
-  <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
+  <data name="Hotkey_CustomDesc" xml:space="preserve">
     <value>自定義配置觸發方式與輸出指令</value>
   </data>
-  <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
+  <data name="Hotkey_Desktop" xml:space="preserve">
     <value>顯示/隱藏桌面</value>
   </data>
-  <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
+  <data name="Hotkey_DesktopDesc" xml:space="preserve">
     <value>輸出指令：Win + D</value>
   </data>
-  <data name="InputsHotkey_shortcutESC" xml:space="preserve">
+  <data name="Hotkey_ESC" xml:space="preserve">
     <value>退出</value>
   </data>
-  <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
+  <data name="Hotkey_ESCDesc" xml:space="preserve">
     <value>輸出指令：Esc</value>
   </data>
-  <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
+  <data name="Hotkey_Expand" xml:space="preserve">
     <value>切換窗口/全屏模式</value>
   </data>
-  <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
+  <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>輸出指令：Alt + Enter</value>
   </data>
-  <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
+  <data name="Hotkey_Guide" xml:space="preserve">
     <value>XBOX/PS 按鍵</value>
   </data>
-  <data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
+  <data name="Hotkey_GuideDesc" xml:space="preserve">
     <value>模擬Xbox菜單鍵或者索尼PS鍵</value>
   </data>
-  <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
+  <data name="Hotkey_Keyboard" xml:space="preserve">
     <value>虛擬鍵盤</value>
   </data>
-  <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
+  <data name="Hotkey_KeyboardDesc" xml:space="preserve">
     <value>顯示/隱藏虛擬鍵盤</value>
   </data>
-  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+  <data name="Hotkey_KillApp" xml:space="preserve">
     <value>強制停止</value>
   </data>
-  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
+  <data name="Hotkey_KillAppDesc" xml:space="preserve">
     <value>輸出指令：Alt + F4</value>
   </data>
-  <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
+  <data name="Hotkey_Mainwindow" xml:space="preserve">
     <value>掌機伴侶主窗口</value>
   </data>
-  <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
+  <data name="Hotkey_MainwindowDesc" xml:space="preserve">
     <value>顯示/隱藏掌機伴侶主窗口</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
+  <data name="Hotkey_TaskManager" xml:space="preserve">
     <value>任務管理器</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
+  <data name="Hotkey_TaskManagerDesc" xml:space="preserve">
     <value>輸出指令：Ctrl + Shift + Esc</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
+  <data name="Hotkey_Taskview" xml:space="preserve">
     <value>任務視圖</value>
   </data>
-  <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
+  <data name="Hotkey_TaskviewDesc" xml:space="preserve">
     <value>輸出指令：Win + Tab</value>
   </data>
-  <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
+  <data name="Hotkey_suspendResumeTask" xml:space="preserve">
     <value>暫停任務</value>
   </data>
-  <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
+  <data name="Hotkey_suspendResumeTaskDesc" xml:space="preserve">
     <value>暫停或繼續前台任務</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
@@ -1090,56 +1090,53 @@
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>手柄連接時實體手柄震動提示</value>
   </data>
-  <data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
     <value>桌面布局</value>
   </data>
-  <data name="InputsHotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
     <value>激活桌面布局</value>
   </data>
-  <data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
+  <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>操作中心</value>
   </data>
-  <data name="InputsHotkey_shortcutControlCenterDesc" xml:space="preserve">
+  <data name="Hotkey_ControlCenterDesc" xml:space="preserve">
     <value>顯示Windows操作中心</value>
   </data>
   <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
     <value>手柄布局</value>
   </data>
-  <data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
+  <data name="Hotkey_QuietModeToggled" xml:space="preserve">
     <value>風扇轉速</value>
   </data>
-  <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
+  <data name="Hotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>將風扇轉速設置為手動配置風扇轉速</value>
   </data>
-  <data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
-    <value>監控覆蓋窗</value>
-  </data>
-  <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
+  <data name="Hotkey_OnScreenDisplayDesc" xml:space="preserve">
     <value>顯示/隱藏性能監控覆蓋窗</value>
   </data>
-  <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
+  <data name="Hotkey_decreaseBrightness" xml:space="preserve">
     <value>降低亮度</value>
   </data>
-  <data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
-    <value>降低5%亮度</value>
+  <data name="Hotkey_decreaseBrightnessDesc" xml:space="preserve">
+    <value>降低2%亮度</value>
   </data>
-  <data name="InputsHotkey_decreaseVolume" xml:space="preserve">
+  <data name="Hotkey_decreaseVolume" xml:space="preserve">
     <value>降低音量</value>
   </data>
-  <data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
-    <value>降低5%音量</value>
+  <data name="Hotkey_decreaseVolumeDesc" xml:space="preserve">
+    <value>降低2%音量</value>
   </data>
-  <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
+  <data name="Hotkey_increaseBrightness" xml:space="preserve">
     <value>增加亮度</value>
   </data>
-  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
-    <value>增加5%亮度</value>
+  <data name="Hotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>增加2%亮度</value>
   </data>
-  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
+  <data name="Hotkey_increaseVolume" xml:space="preserve">
     <value>增加音量</value>
   </data>
-  <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
-    <value>增加5%音量</value>
+  <data name="Hotkey_increaseVolumeDesc" xml:space="preserve">
+    <value>增加2%音量</value>
   </data>
   <data name="ProfilesPage_AutoTDP" xml:space="preserve">
     <value>自動TDP</value>
@@ -1180,10 +1177,10 @@
   <data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
     <value>限制程序的最大幀率</value>
   </data>
-  <data name="InputsHotkey_shortcutPrintScreen" xml:space="preserve">
+  <data name="Hotkey_PrintScreen" xml:space="preserve">
     <value>截圖工具</value>
   </data>
-  <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
+  <data name="Hotkey_PrintScreenDesc" xml:space="preserve">
     <value>輸出指令：Windows + Shift + S</value>
   </data>
   <data name="MainWindow_navHotkeys" xml:space="preserve">
@@ -2572,10 +2569,10 @@
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Make this the default layout</value>
   </data>
-  <data name="InputsHotkey_shortcutChangeHIDMode" xml:space="preserve">
+  <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>切換虛擬手柄類型</value>
   </data>
-  <data name="InputsHotkey_shortcutChangeHIDModeDesc" xml:space="preserve">
+  <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
     <value>於Xbox 360虛擬手柄及Dualshock 4虛擬手柄間切換</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
@@ -2665,16 +2662,16 @@
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Select a sub profile to apply</value>
   </data>
-  <data name="InputsHotkey_nextSubProfile" xml:space="preserve">
+  <data name="Hotkey_nextSubProfile" xml:space="preserve">
     <value>Select next sub profile</value>
   </data>
-  <data name="InputsHotkey_nextSubProfileDesc" xml:space="preserve">
+  <data name="Hotkey_nextSubProfileDesc" xml:space="preserve">
     <value>Apply next sub profile for the current game</value>
   </data>
-  <data name="InputsHotkey_previousSubProfile" xml:space="preserve">
+  <data name="Hotkey_previousSubProfile" xml:space="preserve">
     <value>Select previous sub profile</value>
   </data>
-  <data name="InputsHotkey_previousSubProfileDesc" xml:space="preserve">
+  <data name="Hotkey_previousSubProfileDesc" xml:space="preserve">
     <value>Apply previous sub profile for the current game</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
@@ -2770,10 +2767,10 @@
   <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
     <value>靠右</value>
   </data>
-  <data name="InputsHotkey_OnScreenDisplayToggle" xml:space="preserve">
+  <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>On Screen Overlay</value>
   </data>
-  <data name="InputsHotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
+  <data name="Hotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
     <value>Toggle on screen overlay</value>
   </data>
   <data name="ProfilesPage_GPUScaling" xml:space="preserve">
@@ -2896,6 +2893,12 @@
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
+  <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
+    <value>預設效果</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_PresetsSelection" xml:space="preserve">
+    <value>選擇效果</value>
+  </data>
   <data name="LEDPreset_OneXPlayerX1_Preset01" xml:space="preserve">
     <value>怪獸初醒</value>
   </data>
@@ -2928,11 +2931,5 @@
   </data>
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>冬日暖陽</value>
-  </data>
-  <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
-    <value>預設效果</value>
-  </data>
-  <data name="DevicePage_DynamicLighting_PresetsSelection" xml:space="preserve">
-    <value>選擇效果</value>
   </data>
 </root>

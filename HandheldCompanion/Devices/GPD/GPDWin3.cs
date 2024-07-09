@@ -18,13 +18,13 @@ public class GPDWin3 : IDevice
         CpuClock = 5000;
 
         // note, need to manually configured in GPD app
-        OEMChords.Add(new DeviceChord("Bottom button left",
+        OEMChords.Add(new KeyboardChord("Bottom button left",
             new List<KeyCode> { KeyCode.F11, KeyCode.L },
             new List<KeyCode> { KeyCode.F11, KeyCode.L },
             false, ButtonFlags.OEM1
         ));
 
-        OEMChords.Add(new DeviceChord("Bottom button right",
+        OEMChords.Add(new KeyboardChord("Bottom button right",
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             false, ButtonFlags.OEM2

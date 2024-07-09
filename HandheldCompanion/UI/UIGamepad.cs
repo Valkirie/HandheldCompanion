@@ -425,19 +425,18 @@ namespace HandheldCompanion.Managers
 
                 if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1))
                 {
-                    // lazy
-                    // todo: implement proper RoutedEvent call
                     switch (elementType)
                     {
                         case "Button":
                         case "RepeatButton":
+                        case "ToggleButton":
                             WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
                             break;
                         case "ToggleSwitch":
                             ((ToggleSwitch)focusedElement).IsOn = !((ToggleSwitch)focusedElement).IsOn;
                             break;
-                        case "ToggleButton":
-                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
+                        case "RadioButton":
+                            ((RadioButton)focusedElement).IsChecked = !((RadioButton)focusedElement).IsChecked;
                             break;
                         case "CheckBox":
                             ((CheckBox)focusedElement).IsChecked = !((CheckBox)focusedElement).IsChecked;

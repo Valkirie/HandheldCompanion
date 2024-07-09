@@ -1,0 +1,58 @@
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Views;
+using HandheldCompanion.Views.Windows;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HandheldCompanion.Commands.Functions.HC
+{
+    [Serializable]
+    public class QuickToolsCommands : FunctionCommands
+    {
+        public QuickToolsCommands()
+        {
+            base.Name = Properties.Resources.Hotkey_quickTools;
+            base.Description = Properties.Resources.Hotkey_quickToolsDesc;
+            base.Glyph = "\uEC7A";
+            base.OnKeyUp = true;
+
+            OverlayQuickTools.GetCurrent().IsVisibleChanged += IsVisibleChanged;
+        }
+
+        private void IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            base.Execute(OnKeyDown, OnKeyUp);
+        }
+
+        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        {
+            OverlayQuickTools.GetCurrent().ToggleVisibility();
+
+            base.Execute(IsKeyDown, IsKeyUp);
+        }
+
+        public override bool IsToggled => OverlayQuickTools.GetCurrent().Visibility == System.Windows.Visibility.Visible;
+
+        public override object Clone()
+        {
+            QuickToolsCommands commands = new();
+            commands.commandType = this.commandType;
+            commands.Name = this.Name;
+            commands.Description = this.Description;
+            commands.Glyph = this.Glyph;
+            commands.OnKeyUp = this.OnKeyUp;
+            commands.OnKeyDown = this.OnKeyDown;
+
+            return commands;
+        }
+
+        public override void Dispose()
+        {
+            OverlayQuickTools.GetCurrent().IsVisibleChanged -= IsVisibleChanged;
+            base.Dispose();
+        }
+    }
+}

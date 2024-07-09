@@ -8,8 +8,8 @@ namespace HandheldCompanion;
 [StructLayout(LayoutKind.Sequential)]
 public class PnPDetails
 {
-    public string deviceInstanceId;
-    public string baseContainerDeviceInstanceId;
+    public string deviceInstanceId = string.Empty;
+    public string baseContainerDeviceInstanceId = string.Empty;
 
     public bool isGaming;
     public bool isHooked;
@@ -21,12 +21,12 @@ public class PnPDetails
     public bool isBluetooth => EnumeratorName.Equals("BTHENUM");
     public bool isUSB => EnumeratorName.Equals("USB");
 
-    public string devicePath;
-    public string baseContainerDevicePath;
+    public string devicePath = string.Empty;
+    public string baseContainerDevicePath = string.Empty;
 
-    public string Name;
-    public string SymLink;
-    public string EnumeratorName;
+    public string Name = string.Empty;
+    public string SymLink = string.Empty;
+    public string EnumeratorName = string.Empty;
     public DateTimeOffset FirstInstallDate;
 
     public ushort ProductID;

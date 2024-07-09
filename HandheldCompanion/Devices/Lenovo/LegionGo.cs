@@ -212,12 +212,12 @@ public class LegionGo : IDevice
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        OEMChords.Add(new DeviceChord("LegionR",
+        OEMChords.Add(new KeyboardChord("LegionR",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
         ));
 
-        OEMChords.Add(new DeviceChord("LegionL",
+        OEMChords.Add(new KeyboardChord("LegionL",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM2
         ));

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:GyroPageViewModel}"
@@ -15,9 +15,9 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
         <!--  GYROSCOPE  -->
         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="GYROSCOPE" />
         <ui:ItemsRepeater ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings}" />
-    </ui:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </local:ILayoutPage>

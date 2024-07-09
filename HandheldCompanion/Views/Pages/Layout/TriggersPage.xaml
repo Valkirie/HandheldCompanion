@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:TriggersPageViewModel}"
@@ -15,9 +15,9 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRIGGER BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left_Button}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftTriggerMappings}">
@@ -29,9 +29,9 @@
             <!--  LEFT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding LeftTriggerAxisMappings}" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT TRIGGER BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Right_Button}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightTriggerMappings}">
@@ -43,7 +43,7 @@
             <!--  RIGHT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Right}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding RightTriggerAxisMappings}" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-    </ui:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </local:ILayoutPage>

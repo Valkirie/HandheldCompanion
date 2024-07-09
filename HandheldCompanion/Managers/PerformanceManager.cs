@@ -114,7 +114,6 @@ public static class PerformanceManager
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
-        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
         currentCoreCount = MotherboardInfo.NumberOfCores;
     }
@@ -134,39 +133,6 @@ public static class PerformanceManager
                     TDPMax = Convert.ToDouble(value);
                     if (AutoTDPMax == 0d) AutoTDPMax = TDPMax;
                     AutoTDP = (TDPMax + TDPMin) / 2.0d;
-                }
-                break;
-        }
-    }
-
-    private static void HotkeysManager_CommandExecuted(string listener)
-    {
-        PowerProfile powerProfile = PowerProfileManager.GetCurrent();
-        if (powerProfile is null)
-            return;
-
-        switch (listener)
-        {
-            case "increaseTDP":
-                {
-                    if (powerProfile.TDPOverrideEnabled)
-                        return;
-
-                    for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
-                        powerProfile.TDPOverrideValues[idx] = Math.Min(TDPMax, powerProfile.TDPOverrideValues[idx] + 1);
-
-                    PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
-                }
-                break;
-            case "decreaseTDP":
-                {
-                    if (powerProfile.TDPOverrideEnabled)
-                        return;
-
-                    for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
-                        powerProfile.TDPOverrideValues[idx] = Math.Max(TDPMin, powerProfile.TDPOverrideValues[idx] - 1);
-
-                    PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
                 }
                 break;
         }

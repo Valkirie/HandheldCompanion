@@ -57,7 +57,6 @@ public partial class OverlayModel : OverlayWindow
     public OverlayModel()
     {
         InitializeComponent();
-        this._hotkeyId = 1;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -185,7 +184,7 @@ public partial class OverlayModel : OverlayWindow
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
                     UpdateTimer.Start();
-                    Show();
+                    try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
             }
         });

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using System;
 using System.Linq;
 using System.Threading;
@@ -20,9 +21,6 @@ public partial class QuickHomePage : Page
     public QuickHomePage(string Tag) : this()
     {
         this.Tag = Tag;
-
-        HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
-        HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
         MultimediaManager.VolumeNotification += SystemManager_VolumeNotification;
         MultimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
@@ -46,28 +44,8 @@ public partial class QuickHomePage : Page
 
     public QuickHomePage()
     {
+        DataContext = new QuickHomePageViewModel();
         InitializeComponent();
-    }
-
-    private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
-    {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() => { UpdatePins(); });
-    }
-
-    private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
-    {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() => { UpdatePins(); });
-    }
-
-    private void UpdatePins()
-    {
-        // todo, implement quick hotkey order
-        QuickHotkeys.Children.Clear();
-
-        foreach (var hotkey in HotkeysManager.Hotkeys.Values.Where(item => item.IsPinned))
-            QuickHotkeys.Children.Add(hotkey.GetPin());
     }
 
     private void QuickButton_Click(object sender, RoutedEventArgs e)

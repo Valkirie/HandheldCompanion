@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -17,7 +17,7 @@
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-        <ui:SimpleStackPanel Spacing="12">
+        <ikw:SimpleStackPanel Spacing="12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -37,13 +37,13 @@
                         VerticalAlignment="Center"
                         Glyph="&#xECF1;" />
 
-                    <ui:SimpleStackPanel
+                    <ikw:SimpleStackPanel
                         Margin="12,0,0,0"
                         VerticalAlignment="Center"
                         Spacing="2">
                         <TextBlock Name="ControllerName" Style="{StaticResource BodyTextBlockStyle}" />
 
-                        <ui:SimpleStackPanel
+                        <ikw:SimpleStackPanel
                             Name="UserIndexPanel"
                             HorizontalAlignment="Left"
                             Orientation="Horizontal"
@@ -98,8 +98,8 @@
                                 Height="12"
                                 Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                 CornerRadius="2" />
-                        </ui:SimpleStackPanel>
-                    </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </DockPanel>
 
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">
@@ -140,6 +140,6 @@
                 TextAlignment="Center"
                 TextWrapping="Wrap"
                 Visibility="Collapsed" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Border>
 </UserControl>

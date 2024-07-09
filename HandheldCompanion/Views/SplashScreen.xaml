@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Width="450"
     Height="450"
     ui:ThemeManager.IsThemeAware="True"
@@ -41,7 +41,7 @@
             <Grid />
         </Grid>
 
-        <ui:SimpleStackPanel
+        <ikw:SimpleStackPanel
             Margin="10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom">
@@ -54,6 +54,6 @@
                 Width="125"
                 Height="50"
                 Source="/HandheldCompanion;component/Resources/droix.png" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </common:OverlayWindow>

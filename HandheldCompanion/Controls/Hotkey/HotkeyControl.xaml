@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     d:Background="White"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -40,7 +40,7 @@
                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                         Glyph="&#xE713;" />
 
-                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock
                             Name="HotkeyName"
                             Style="{StaticResource BodyTextBlockStyle}"
@@ -59,10 +59,10 @@
                             Style="{StaticResource CaptionTextBlockStyle}"
                             Text="Desc"
                             TextWrapping="Wrap" />
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </DockPanel>
 
-                <ui:SimpleStackPanel
+                <ikw:SimpleStackPanel
                     Name="HotkeyButtons"
                     Grid.Column="1"
                     HorizontalAlignment="Stretch"
@@ -74,8 +74,8 @@
                         MinWidth="200"
                         Margin="0,0,10,0"
                         HorizontalAlignment="Stretch"
-                        Content="{l:Static resx:Resources.InputsHotkey_fallbackInput}"
-                        ToolTip="{l:Static resx:Resources.InputsHotkey_fallbackInput}" />
+                        Content="{l:Static resx:Resources.Hotkey_fallbackInput}"
+                        ToolTip="{l:Static resx:Resources.Hotkey_fallbackInput}" />
                     <Button
                         Name="HotkeyOutput"
                         Height="40"
@@ -83,10 +83,10 @@
                         Margin="0,0,10,0"
                         HorizontalAlignment="Stretch"
                         d:Visibility="Visible"
-                        Content="{l:Static resx:Resources.InputsHotkey_fallbackOutput}"
-                        ToolTip="{l:Static resx:Resources.InputsHotkey_fallbackOutput}"
+                        Content="{l:Static resx:Resources.Hotkey_fallbackOutput}"
+                        ToolTip="{l:Static resx:Resources.Hotkey_fallbackOutput}"
                         Visibility="Collapsed" />
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
 
                 <Button
                     Name="HotkeyErase"

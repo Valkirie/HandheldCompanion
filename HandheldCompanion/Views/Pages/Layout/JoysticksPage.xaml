@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:JoysticksPageViewModel}"
@@ -15,8 +15,8 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT JOYSTICK BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Left_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftThumbMappings}">
@@ -28,9 +28,9 @@
             <!--  LEFT JOYSTICK  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Left}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding LeftThumbAxisMappings}" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT JOYSTICK BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Right_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightThumbMappings}">
@@ -42,6 +42,6 @@
             <!--  RIGHT JOYSTICK  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Right}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding RightThumbAxisMappings}" />
-        </ui:SimpleStackPanel>
-    </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </local:ILayoutPage>

@@ -1,0 +1,56 @@
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using HandheldCompanion.Views.Windows;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HandheldCompanion.Commands.Functions.HC
+{
+    [Serializable]
+    public class ChangeHIDMode : FunctionCommands
+    {
+        public ChangeHIDMode()
+        {
+            base.Name = Properties.Resources.Hotkey_ChangeHIDMode;
+            base.Description = Properties.Resources.Hotkey_ChangeHIDModeDesc;
+            base.Glyph = "\ue7fc";
+            base.OnKeyUp = true;
+        }
+
+        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        {
+            HIDmode currentHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+            switch (currentHIDmode)
+            {
+                case HIDmode.Xbox360Controller:
+                    SettingsManager.SetProperty("HIDmode", (int)HIDmode.DualShock4Controller);
+                    break;
+                case HIDmode.DualShock4Controller:
+                    SettingsManager.SetProperty("HIDmode", (int)HIDmode.Xbox360Controller);
+                    break;
+                default:
+                    break;
+            }
+
+            base.Execute(IsKeyDown, IsKeyUp);
+        }
+
+        public override object Clone()
+        {
+            ChangeHIDMode commands = new();
+            commands.commandType = this.commandType;
+            commands.Name = this.Name;
+            commands.Description = this.Description;
+            commands.Glyph = this.Glyph;
+            commands.OnKeyUp = this.OnKeyUp;
+            commands.OnKeyDown = this.OnKeyDown;
+
+            return commands;
+        }
+    }
+}

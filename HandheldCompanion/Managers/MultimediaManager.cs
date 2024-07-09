@@ -56,7 +56,6 @@ public static class MultimediaManager
         // manage events
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
     }
 
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
@@ -108,41 +107,6 @@ public static class MultimediaManager
                     // Though the real orientation didn't change, raise event because the interpretation of it changed
                     if (oldOrientation != screenOrientation.rotation)
                         DisplayOrientationChanged?.Invoke(screenOrientation);
-                }
-                break;
-        }
-    }
-
-    private static void HotkeysManager_CommandExecuted(string listener)
-    {
-        switch (listener)
-        {
-            case "increaseBrightness":
-                {
-                    int stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
-                    int brightness = stepRoundDn * 5 + 5;
-                    SetBrightness(brightness);
-                }
-                break;
-            case "decreaseBrightness":
-                {
-                    int stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
-                    int brightness = stepRoundUp * 5 - 5;
-                    SetBrightness(brightness);
-                }
-                break;
-            case "increaseVolume":
-                {
-                    int stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
-                    int volume = stepRoundDn * 5 + 5;
-                    SetVolume(volume);
-                }
-                break;
-            case "decreaseVolume":
-                {
-                    int stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
-                    int volume = stepRoundUp * 5 - 5;
-                    SetVolume(volume);
                 }
                 break;
         }
@@ -452,6 +416,34 @@ public static class MultimediaManager
         catch
         {
         }
+    }
+
+    public static void IncreaseBrightness()
+    {
+        int stepRoundDn = (int)Math.Floor(GetBrightness() / 2.0d);
+        int brightness = stepRoundDn * 2 + 2;
+        SetBrightness(brightness);
+    }
+
+    public static void DecreaseBrightness()
+    {
+        int stepRoundUp = (int)Math.Ceiling(GetBrightness() / 2.0d);
+        int brightness = stepRoundUp * 2 - 2;
+        SetBrightness(brightness);
+    }
+
+    public static void IncreaseVolume()
+    {
+        int stepRoundDn = (int)Math.Ceiling(Math.Round(GetVolume() / 2.0d));
+        int volume = stepRoundDn * 2 + 2;
+        SetVolume(volume);
+    }
+
+    public static void DecreaseVolume()
+    {
+        int stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 2.0d));
+        int volume = stepRoundUp * 2 - 2;
+        SetVolume(volume);
     }
 
     public static short GetBrightness()

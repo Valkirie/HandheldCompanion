@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     d:Background="White"
     d:DesignHeight="80"
     d:DesignWidth="800"
@@ -30,7 +30,7 @@
                     Style="{StaticResource BaseTextBlockStyle}">
                     Name
                 </TextBlock>
-                <ui:SimpleStackPanel
+                <ikw:SimpleStackPanel
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="6">
@@ -46,7 +46,7 @@
                         Margin="5,0,5,0">
                         Author
                     </TextBlock>
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
             </Grid>
             <TextBlock
                 Name="_Description"

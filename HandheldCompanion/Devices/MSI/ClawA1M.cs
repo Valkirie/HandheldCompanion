@@ -141,22 +141,22 @@ public class ClawA1M : IDevice
             TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d }
         });
 
-        OEMChords.Add(new DeviceChord("CLAW",
+        OEMChords.Add(new KeyboardChord("CLAW",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
         ));
 
-        OEMChords.Add(new DeviceChord("QS",
+        OEMChords.Add(new KeyboardChord("QS",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM2
         ));
 
-        OEMChords.Add(new DeviceChord("M1",             // unimplemented
+        OEMChords.Add(new KeyboardChord("M1",             // unimplemented
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM3
         ));
 
-        OEMChords.Add(new DeviceChord("M2",             // unimplemented
+        OEMChords.Add(new KeyboardChord("M2",             // unimplemented
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM4
         ));

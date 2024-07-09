@@ -8,7 +8,10 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
+using WindowsInput.Native;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -231,10 +234,11 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private Hotkey _gyroHotkey;
-        public object? HotkeyContent => _gyroHotkey?.GetControl();
-
         public List<MotionInputViewModel> MotionInputItems { get; private set; } = [];
+        public ObservableCollection<HotkeyViewModel> HotkeysList { get; set; } = [];
+
+        private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_ACTIVATION;
+        private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true };
 
         public GyroMappingViewModel(AxisLayoutFlags layoutFlag) : base(layoutFlag)
         {
@@ -246,36 +250,60 @@ namespace HandheldCompanion.ViewModels
                     Description = EnumUtils.GetDescriptionFromEnumValue(mode)
                 });
             }
-            _gyroHotkey = HotkeysManager.Hotkeys.Values.First(item => item.inputsHotkey.Listener.Equals("shortcutProfilesPage@"));
 
-            InputsManager.TriggerUpdated += InputsManager_TriggerUpdated;
+            HotkeysManager.Updated += HotkeysManager_Updated;
+            InputsManager.StartedListening += InputsManager_StartedListening;
+            InputsManager.StoppedListening += InputsManager_StoppedListening;
+
+            // store hotkey to manager
+            HotkeysList.SafeAdd(new HotkeyViewModel(GyroHotkey));
+            HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
         }
 
-        public override void Dispose()
-        {
-            InputsManager.TriggerUpdated -= InputsManager_TriggerUpdated;
-            base.Dispose();
-        }
-
-        private void InputsManager_TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
+        private void HotkeysManager_Updated(Hotkey hotkey)
         {
             if (Action is not GyroActions gyroAction)
                 return;
 
-            switch (listener)
-            {
-                case "shortcutProfilesPage@":
-                    {
-                        gyroAction.MotionTrigger = inputs.State.Clone() as ButtonState;
+            if (hotkey.ButtonFlags != gyroButtonFlags)
+                return;
 
-                        // update hotkey UI
-                        _gyroHotkey.inputsChord.State = gyroAction.MotionTrigger.Clone() as ButtonState;
-                        _gyroHotkey.DrawInput();
-                    }
-                    break;
-            }
+            gyroAction.MotionTrigger = hotkey.inputsChord.ButtonState.Clone() as ButtonState;
+            GyroHotkey.inputsChord.ButtonState = gyroAction.MotionTrigger.Clone() as ButtonState;
+
+            // update gyro hotkey
+            GyroHotkey = hotkey;
+
+            // update hotkey UI
+            HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+            if (foundHotkey is null)
+                HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
+            else
+                foundHotkey.Hotkey = hotkey;
 
             Update();
+        }
+
+        private void InputsManager_StartedListening(ButtonFlags buttonFlags)
+        {
+            HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
+            if (hotkeyViewModel != null)
+                hotkeyViewModel.SetListening(true);
+        }
+
+        private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
+        {
+            HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
+            if (hotkeyViewModel != null)
+                hotkeyViewModel.SetListening(false);
+        }
+
+        public override void Dispose()
+        {
+            HotkeysManager.Updated -= HotkeysManager_Updated;
+            InputsManager.StartedListening -= InputsManager_StartedListening;
+            InputsManager.StoppedListening -= InputsManager_StoppedListening;
+            base.Dispose();
         }
 
         protected override void UpdateController(IController controller)
@@ -309,7 +337,7 @@ namespace HandheldCompanion.ViewModels
                     {
                         Axis = GyroActions.DefaultAxisLayoutFlags,
                         AxisAntiDeadZone = GyroActions.DefaultAxisAntiDeadZone,
-                        MotionTrigger = _gyroHotkey.inputsChord.State.Clone() as ButtonState
+                        MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState
                     };
                 }
 
@@ -347,7 +375,7 @@ namespace HandheldCompanion.ViewModels
                         MouseType = GyroActions.DefaultMouseActionsType,
                         Sensivity = GyroActions.DefaultSensivity,
                         Deadzone = GyroActions.DefaultDeadzone,
-                        MotionTrigger = _gyroHotkey.inputsChord.State.Clone() as ButtonState
+                        MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState
                     };
                 }
 
@@ -412,8 +440,13 @@ namespace HandheldCompanion.ViewModels
         {
             if (layout.GyroLayout.TryGetValue((AxisLayoutFlags)Value, out var newAction))
             {
-                _gyroHotkey.inputsChord.State = ((GyroActions)newAction).MotionTrigger.Clone() as ButtonState;
-                _gyroHotkey.DrawInput();
+                GyroHotkey.inputsChord.ButtonState = ((GyroActions)newAction).MotionTrigger.Clone() as ButtonState;
+
+                // update hotkey UI
+                HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == GyroHotkey.ButtonFlags);
+                if (foundHotkey is not null)
+                    foundHotkey.Hotkey = GyroHotkey;
+
                 SetAction(newAction, false);
             }
             else

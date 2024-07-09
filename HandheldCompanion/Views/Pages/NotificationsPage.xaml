@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Name="About"
     Title="{l:Static resx:Resources.MainWindow_navNotifications}"
     d:Background="White"
@@ -18,7 +18,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Margin="20" Spacing="6">
+    <ikw:SimpleStackPanel Margin="20" Spacing="6">
 
         <!--  WARNING: Nothing to see here  -->
         <Border
@@ -39,7 +39,7 @@
                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                         Glyph="&#xe7ed;" />
 
-                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock
                             Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                             Style="{StaticResource BodyTextBlockStyle}"
@@ -49,11 +49,11 @@
                             Style="{StaticResource CaptionTextBlockStyle}"
                             Text="{l:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
                             TextWrapping="Wrap" />
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </DockPanel>
             </Grid>
         </Border>
-        <ui:SimpleStackPanel Name="Notifications" Spacing="6">
+        <ikw:SimpleStackPanel Name="Notifications" Spacing="6">
             <hints:Hint_LegionGoLegionSpace d:Visibility="Visible" />
             <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
             <hints:Hint_MSIClawCenter d:Visibility="Visible" />
@@ -61,6 +61,6 @@
             <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
             <hints:Hint_CoreIsolationCheck d:Visibility="Visible" />
             <hints:Hint_AMD_IntegerScalingCheck d:Visibility="Visible" />
-        </ui:SimpleStackPanel>
-    </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </Page>

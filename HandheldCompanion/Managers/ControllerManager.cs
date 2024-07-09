@@ -42,8 +42,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly XInputController? emptyXInput = new();
-    private static readonly DS4Controller? emptyDS4 = new();
+    private static readonly XInputController? emptyXInput = new() { Details = new() { isVirtual = true } };
+    private static readonly DS4Controller? emptyDS4 = new() { Details = new() { isVirtual = true } };
 
     private static IController? targetController;
     private static FocusedWindow focusedWindows = FocusedWindow.None;
@@ -103,9 +103,7 @@ public static class ControllerManager
         IsInitialized = true;
         Initialized?.Invoke();
 
-        // summon an empty controller, used to feed Layout UI
-        // todo: improve me
-        ControllerSelected?.Invoke(GetEmulatedController());
+        HasTargetController();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
 
@@ -556,7 +554,7 @@ public static class ControllerManager
         // new controller logic
         if (DeviceManager.IsInitialized)
         {
-            if (controller.IsPhysical() && targetController is null)
+            if (controller.IsPhysical() && (targetController is null || targetController.IsVirtual()))
                 SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
 
             if (targetController is not null)
@@ -604,7 +602,10 @@ public static class ControllerManager
 
             // unplug controller, if needed
             if (WasTarget)
+            {
                 ClearTargetController();
+                HasTargetController();
+            }
             else
                 controller.Unplug();
 
@@ -813,7 +814,7 @@ public static class ControllerManager
         // new controller logic
         if (DeviceManager.IsInitialized)
         {
-            if (controller.IsPhysical() && targetController is null)
+            if (controller.IsPhysical() && (targetController is null || targetController.IsVirtual()))
                 SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
 
             if (targetController is not null)
@@ -865,7 +866,10 @@ public static class ControllerManager
 
             // controller is current target
             if (WasTarget)
+            {
                 ClearTargetController();
+                HasTargetController();
+            }
             else
                 controller.Unplug();
         }
@@ -874,6 +878,14 @@ public static class ControllerManager
 
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
+    }
+
+    private static void HasTargetController()
+    {
+        // summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/oem chords
+        // todo: improve me
+        Controllers[string.Empty] = GetEmulatedController();
+        SetTargetController(string.Empty, false);
     }
 
     private static void ClearTargetController()
@@ -900,9 +912,6 @@ public static class ControllerManager
         {
             // look for new controller
             if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-                return;
-
-            if (controller.IsVirtual())
                 return;
 
             // clear current target

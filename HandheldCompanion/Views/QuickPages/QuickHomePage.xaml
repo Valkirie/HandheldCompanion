@@ -6,11 +6,13 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickHome"
     Title="{l:Static resx:Resources.QuickHomePage_Title}"
     Margin="15,0,0,6"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:QuickHomePageViewModel}"
     d:DesignHeight="1200"
     d:DesignWidth="640"
     KeepAlive="True"
@@ -22,23 +24,53 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <ui:SimpleStackPanel VerticalAlignment="Top" Spacing="6">
+        <ikw:SimpleStackPanel VerticalAlignment="Top" Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_Title}" />
 
             <!--  Shortcuts  -->
-            <UniformGrid
-                Name="QuickHotkeys"
-                VerticalAlignment="Top"
-                Columns="4">
-                <UniformGrid.Resources>
-                    <Style TargetType="{x:Type ui:SimpleStackPanel}">
-                        <Setter Property="Margin" Value="3" />
-                    </Style>
-                </UniformGrid.Resources>
-            </UniformGrid>
-        </ui:SimpleStackPanel>
+            <ui:ItemsRepeater ItemsSource="{Binding HotkeysList}">
+                <ui:ItemsRepeater.Layout>
+                    <ui:UniformGridLayout
+                        ItemsStretch="Fill"
+                        MaximumRowsOrColumns="4"
+                        MinColumnSpacing="6"
+                        MinRowSpacing="6"
+                        Orientation="Horizontal" />
+                </ui:ItemsRepeater.Layout>
 
-        <ui:SimpleStackPanel
+                <ui:ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ToggleButton
+                                Height="70"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Command="{Binding ExecuteCommand}"
+                                IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
+                                <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+                                    <ui:FontIcon
+                                        Width="24"
+                                        Height="24"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <TextBlock
+                                        Width="110"
+                                        FontSize="12"
+                                        Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </Grid>
+                    </DataTemplate>
+                </ui:ItemsRepeater.ItemTemplate>
+            </ui:ItemsRepeater>
+        </ikw:SimpleStackPanel>
+
+        <ikw:SimpleStackPanel
             Grid.Row="1"
             VerticalAlignment="Bottom"
             Spacing="12">
@@ -50,7 +82,7 @@
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Glyph="&#xE706;" />
 
-                <ui:SimpleStackPanel
+                <ikw:SimpleStackPanel
                     Margin="12,0,0,0"
                     VerticalAlignment="Center"
                     ScrollViewer.PanningMode="HorizontalOnly">
@@ -70,7 +102,7 @@
                         TickFrequency="1"
                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         ValueChanged="SliderBrightness_ValueChanged" />
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
             </DockPanel>
 
             <DockPanel>
@@ -81,7 +113,7 @@
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Glyph="&#xE767;" />
 
-                <ui:SimpleStackPanel
+                <ikw:SimpleStackPanel
                     Margin="12,0,0,0"
                     VerticalAlignment="Center"
                     ScrollViewer.PanningMode="HorizontalOnly">
@@ -100,8 +132,8 @@
                         TickFrequency="1"
                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         ValueChanged="SliderVolume_ValueChanged" />
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
             </DockPanel>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

@@ -16,6 +16,7 @@ using Windows.UI.ViewManagement;
 using HandheldCompanion.Models;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
+using iNKORE.UI.WPF.Controls;
 
 namespace HandheldCompanion.Views.Pages
 {

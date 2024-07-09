@@ -42,46 +42,46 @@ public class DS4Controller : JSController
 
     public override void UpdateInputs(long ticks, float delta)
     {
-        // skip if controller isn't connected
-        if (!IsConnected())
-            return;
-
         base.UpdateState(delta);
 
-        // Left Pad
-        Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(UserIndex);
-        Inputs.ButtonState[ButtonFlags.LeftPadClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
-
-        if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+        // skip if controller isn't connected
+        if (IsConnected())
         {
-            float joyShockX0 = JslGetTouchX(UserIndex);
-            float joyShockY0 = JslGetTouchY(UserIndex);
+            // Left Pad
+            Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(UserIndex);
+            Inputs.ButtonState[ButtonFlags.LeftPadClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
 
-            Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(joyShockX0, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(joyShockY0, 0.0f, 1.0f, short.MaxValue, short.MinValue);
-        }
-        else
-        {
-            Inputs.AxisState[AxisFlags.LeftPadX] = 0;
-            Inputs.AxisState[AxisFlags.LeftPadY] = 0;
-        }
+            if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+            {
+                float joyShockX0 = JslGetTouchX(UserIndex);
+                float joyShockY0 = JslGetTouchY(UserIndex);
 
-        // Right Pad
-        Inputs.ButtonState[ButtonFlags.RightPadTouch] = JslGetTouchDown(UserIndex, true);
-        Inputs.ButtonState[ButtonFlags.RightPadClick] = Inputs.ButtonState[ButtonFlags.LeftPadClick] && Inputs.ButtonState[ButtonFlags.RightPadTouch];
+                Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(joyShockX0, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(joyShockY0, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+            }
+            else
+            {
+                Inputs.AxisState[AxisFlags.LeftPadX] = 0;
+                Inputs.AxisState[AxisFlags.LeftPadY] = 0;
+            }
 
-        if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
-        {
-            float joyShockX1 = JslGetTouchX(UserIndex, true);
-            float joyShockY1 = JslGetTouchY(UserIndex, true);
+            // Right Pad
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = JslGetTouchDown(UserIndex, true);
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = Inputs.ButtonState[ButtonFlags.LeftPadClick] && Inputs.ButtonState[ButtonFlags.RightPadTouch];
 
-            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(joyShockX1, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(joyShockY1, 0.0f, 1.0f, short.MaxValue, short.MinValue);
-        }
-        else
-        {
-            Inputs.AxisState[AxisFlags.RightPadX] = 0;
-            Inputs.AxisState[AxisFlags.RightPadY] = 0;
+            if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
+            {
+                float joyShockX1 = JslGetTouchX(UserIndex, true);
+                float joyShockY1 = JslGetTouchY(UserIndex, true);
+
+                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(joyShockX1, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(joyShockY1, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+            }
+            else
+            {
+                Inputs.AxisState[AxisFlags.RightPadX] = 0;
+                Inputs.AxisState[AxisFlags.RightPadY] = 0;
+            }
         }
 
         base.UpdateInputs(ticks, delta);

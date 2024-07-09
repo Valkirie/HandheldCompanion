@@ -6,7 +6,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Name="QuickDevice"
     Title="{l:Static resx:Resources.QuickDevicePage_Title}"
     Margin="15,0,0,6"
@@ -16,13 +16,13 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="24">
+    <ikw:SimpleStackPanel Spacing="24">
 
         <!--  Device settings  -->
-        <ui:SimpleStackPanel Spacing="6">
+        <ikw:SimpleStackPanel Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Device settings" />
 
-            <ui:SimpleStackPanel Name="DisplayStack" Spacing="6">
+            <ikw:SimpleStackPanel Name="DisplayStack" Spacing="6">
                 <Border
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
@@ -43,17 +43,17 @@
                             <ui:FontIcon
                                 Height="40"
                                 HorizontalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE799;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_DisplayResolution}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.QuickSettingsPage_DisplayResolutionDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -64,7 +64,7 @@
                             IsReadOnly="True"
                             SelectionChanged="ComboBoxResolution_SelectionChanged" />
 
-                        <ui:SimpleStackPanel
+                        <ikw:SimpleStackPanel
                             Name="ResolutionOverrideStack"
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
@@ -82,7 +82,7 @@
                                 Style="{StaticResource CaptionTextBlockStyle}"
                                 Text="{l:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
                                 TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </Grid>
                 </Border>
 
@@ -104,14 +104,14 @@
                                 FontFamily="Segoe UI Symbol"
                                 Glyph="&#xE2CB;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_DisplayFrequency}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.QuickSettingsPage_DisplayFrequencyDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -123,7 +123,7 @@
                             SelectionChanged="ComboBoxFrequency_SelectionChanged" />
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <Border
                 Padding="15,12,12,12"
@@ -143,12 +143,12 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xE701;" />
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
                                 Text="Wifi" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </DockPanel>
 
                     <ui:ToggleSwitch
@@ -179,12 +179,12 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xE702;" />
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
                                 Text="Bluetooth" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </DockPanel>
 
                     <ui:ToggleSwitch
@@ -215,12 +215,12 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xf08c;" />
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
                                 Text="Night light" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </DockPanel>
 
                     <ui:ToggleSwitch
@@ -232,10 +232,10 @@
                         Toggled="NightLightToggle_Toggled" />
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
         <!--  Dynamic lighting settings  -->
-        <ui:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
+        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Dynamic lighting settings" />
 
             <!--  Use Dynamic lighting  -->
@@ -257,9 +257,9 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xE781;" />
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use dynamic lighting on my device" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </DockPanel>
 
                     <ui:ToggleSwitch
@@ -270,10 +270,10 @@
                         Toggled="UseDynamicLightingToggle_Toggled" />
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
         <!--  Device settings  -->
-        <ui:SimpleStackPanel
+        <ikw:SimpleStackPanel
             Name="LegionGoPanel"
             Grid.Row="1"
             d:Visibility="Visible"
@@ -299,14 +299,14 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xE7BC;" />
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_FullFanSpeedText}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
                                 Text="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
                                 TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </DockPanel>
 
                     <ui:ToggleSwitch
@@ -317,7 +317,7 @@
                         Toggled="Toggle_cFFanSpeed_Toggled" />
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-    </ui:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </Page>

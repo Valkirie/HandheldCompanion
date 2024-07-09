@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
@@ -16,6 +18,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.System.Power;
@@ -60,6 +63,8 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WS_EX_NOACTIVATE = 0x08000000;
     const int GWL_EXSTYLE = -20;
 
+    private CrossThreadLock Sliding = new();
+
     public HwndSource hwndSource;
 
     // page vars
@@ -97,9 +102,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // create manager(s)
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
-
         MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         // create pages
         homePage = new("quickhome");
@@ -147,6 +152,16 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            QTLB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
+            QTRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
+        });
+    }
+
     private void SystemManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // ignore if we're not ready yet
@@ -160,6 +175,9 @@ public partial class OverlayQuickTools : GamepadWindow
     private const double _MaxHeight = 960;
     private const double _MaxWidth = 960;
     private const WindowStyle _Style = WindowStyle.ToolWindow;
+    private double _Top = 0;
+    private double _Left = 0;
+    private Screen targetScreen;
 
     private void UpdateLocation()
     {
@@ -171,10 +189,10 @@ public partial class OverlayQuickTools : GamepadWindow
         DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.FriendlyName.Equals(FriendlyName)) ?? MultimediaManager.PrimaryDesktop;
 
         // Find the corresponding Screen object
-        Screen targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
+        targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.Invoke((Delegate)(() =>
         {
             // Common settings across cases 0 and 1
             MaxWidth = (int)Math.Min(_MaxWidth, targetScreen.WpfBounds.Width);
@@ -205,8 +223,9 @@ public partial class OverlayQuickTools : GamepadWindow
             }
 
             // Common operation for case 0 and 1 after switch
-            Top = targetScreen.WpfBounds.Bottom - Height - _Margin;
-        });
+            _Top = Top = targetScreen.WpfBounds.Bottom - Height - _Margin;
+            _Left = Left;
+        }));
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)
@@ -345,6 +364,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
             case WM_PAINT:
                 {
+                    if (Sliding.IsEntered())
+                        break;
+
                     DateTime drawTime = DateTime.Now;
 
                     double drawDiff = Math.Abs((prevDraw - drawTime).TotalMilliseconds);
@@ -411,25 +433,84 @@ public partial class OverlayQuickTools : GamepadWindow
             {
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
-                    Show();
-                    Focus();
+                    {
+                        try
+                        {
+                            Show();
+                            SlideIn();
+                            Focus();
 
-                    if (hwndSource != null)
-                        WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                            if (hwndSource != null)
+                                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
 
-                    InvokeGotGamepadWindowFocus();
+                            InvokeGotGamepadWindowFocus();
 
-                    clockUpdateTimer.Start();
+                            clockUpdateTimer.Start();
+                        }
+                        catch { }
+                    }
                     break;
                 case Visibility.Visible:
-                    Hide();
+                    {
+                        SlideOut();
 
-                    InvokeLostGamepadWindowFocus();
+                        InvokeLostGamepadWindowFocus();
 
-                    clockUpdateTimer.Stop();
+                        clockUpdateTimer.Stop();
+                    }
                     break;
             }
         });
+    }
+
+    private void SlideIn()
+    {
+        // set lock
+        if (Sliding.TryEnter())
+        {
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = targetScreen.WpfBounds.Height,
+                To = _Top,
+                Duration = TimeSpan.FromSeconds(0.17),
+                AccelerationRatio = 0.25,
+                DecelerationRatio = 0.75,
+            };
+
+            animation.Completed += (s, e) =>
+            {
+                // release lock
+                Sliding.Exit();
+            };
+
+            this.BeginAnimation(Window.TopProperty, animation);
+        }
+    }
+
+    private void SlideOut()
+    {
+        // set lock
+        if (Sliding.TryEnter())
+        {
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = _Top,
+                To = targetScreen.WpfBounds.Height,
+                Duration = TimeSpan.FromSeconds(0.17),
+                AccelerationRatio = 0.75,
+                DecelerationRatio = 0.25,
+            };
+
+            animation.Completed += (s, e) =>
+            {
+                this.Hide();
+
+                // release lock
+                Sliding.Exit();
+            };
+
+            this.BeginAnimation(Window.TopProperty, animation);
+        }
     }
 
     private void Window_Closing(object sender, CancelEventArgs e)
@@ -471,12 +552,6 @@ public partial class OverlayQuickTools : GamepadWindow
             {
                 default:
                     preNavItemTag = navItemTag;
-                    break;
-                case "shortcutKeyboard":
-                case "shortcutDesktop":
-                case "shortcutESC":
-                case "shortcutExpand":
-                    HotkeysManager.TriggerRaised(navItemTag, null, 0, false, true);
                     break;
             }
 

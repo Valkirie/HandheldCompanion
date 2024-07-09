@@ -2,9 +2,14 @@
     x:Class="HandheldCompanion.Views.Pages.HotkeysPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Hotkeys"
     Title="Hotkeys"
     d:Background="White"
@@ -15,6 +20,421 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Name="HotkeysPanel" Spacing="24" />
+        <ikw:SimpleStackPanel Name="HotkeysPanel" Spacing="24" />
+
+        <ikw:SimpleStackPanel Spacing="6">
+            <Button
+                Height="33"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Command="{Binding CreateHotkeyCommand}"
+                FontSize="14"
+                Style="{StaticResource AccentButtonStyle}">
+
+                <DockPanel>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+
+                    <TextBlock
+                        Margin="12,0,0,0"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Create new hotkey" />
+                </DockPanel>
+            </Button>
+
+            <ui:ItemsRepeater ItemsSource="{Binding HotkeysList}">
+                <ui:ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Expander HorizontalAlignment="Stretch">
+                            <Expander.Header>
+                                <Grid Margin="0,12,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="5*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <DockPanel HorizontalAlignment="Stretch">
+                                        <ui:FontIcon
+                                            Width="16"
+                                            HorizontalAlignment="Center"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="{Binding Description, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                TextWrapping="Wrap" />
+                                        </ikw:SimpleStackPanel>
+                                    </DockPanel>
+
+                                    <StackPanel
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+
+                                        <ToggleButton
+                                            Width="300"
+                                            VerticalAlignment="Stretch"
+                                            Command="{Binding DefineButtonCommand}"
+                                            IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
+                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
+                                                    <ui:ItemsRepeater.Style>
+                                                        <Style TargetType="ui:ItemsRepeater">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding ButtonGlyphs.Count}">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ui:ItemsRepeater.Style>
+
+                                                    <ui:ItemsRepeater.Layout>
+                                                        <ui:UniformGridLayout
+                                                            ItemsJustification="Center"
+                                                            ItemsStretch="Uniform"
+                                                            MaximumRowsOrColumns="10"
+                                                            MinColumnSpacing="3"
+                                                            Orientation="Horizontal" />
+                                                    </ui:ItemsRepeater.Layout>
+
+                                                    <ui:ItemsRepeater.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <ui:FontIcon
+                                                                FontFamily="PromptFont"
+                                                                FontSize="20"
+                                                                Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </DataTemplate>
+                                                    </ui:ItemsRepeater.ItemTemplate>
+                                                </ui:ItemsRepeater>
+
+                                                <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding KeyboardChord}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding KeyboardChord}">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{Binding InputsChordType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </ikw:SimpleStackPanel>
+                                        </ToggleButton>
+
+                                        <ToggleButton
+                                            Margin="6,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Command="{Binding PinButtonCommand}"
+                                            IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ui:FontIcon
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}">
+                                                <ui:FontIcon.Style>
+                                                    <Style TargetType="{x:Type ui:FontIcon}">
+                                                        <Setter Property="Glyph" Value="&#xe718;" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPinned}" Value="True">
+                                                                <Setter Property="Glyph" Value="&#xe77a;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ui:FontIcon.Style>
+                                            </ui:FontIcon>
+                                        </ToggleButton>
+
+                                        <Button
+                                            Margin="6,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Command="{Binding EraseButtonCommand}">
+                                            <ui:FontIcon
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Glyph="&#xe75c;" />
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Expander.Header>
+
+                            <Expander.Content>
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+
+                                    <!--  ICommand  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Command type" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="Define to type of command your hotkey will execute"
+                                                TextWrapping="Wrap" />
+                                        </ikw:SimpleStackPanel>
+
+                                        <ComboBox
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            SelectedIndex="{Binding CommandTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_None}" ToolTip="{l:Static resx:Resources.Hotkey_NoneDesc}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Function}" ToolTip="{l:Static resx:Resources.Hotkey_FunctionDesc}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Keystrokes}" ToolTip="{l:Static resx:Resources.Hotkey_KeystrokesDesc}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Executable}" ToolTip="{l:Static resx:Resources.Hotkey_ExecutableDesc}" />
+                                        </ComboBox>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0"
+                                        Visibility="{Binding CommandTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3}" />
+
+                                    <!--  Function  -->
+                                    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding CommandTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Function" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Define the function to trigger"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <ComboBox
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                ItemsSource="{Binding FunctionItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedIndex="{Binding FunctionIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBox.Resources>
+                                                    <converters:SeparatorConverter x:Key="SeparatorConverter" />
+                                                </ComboBox.Resources>
+                                                <ComboBox.ItemContainerStyle>
+                                                    <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
+                                                        <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                                                    </Style>
+                                                </ComboBox.ItemContainerStyle>
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ContentPresenter>
+                                                            <ContentPresenter.Content>
+                                                                <MultiBinding Converter="{StaticResource SeparatorConverter}">
+                                                                    <Binding Path="Text" />
+                                                                    <Binding Path="IsEnabled" />
+                                                                </MultiBinding>
+                                                            </ContentPresenter.Content>
+                                                        </ContentPresenter>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                        </Grid>
+                                    </ikw:SimpleStackPanel>
+
+                                    <!--  Key strokes  -->
+                                    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding CommandTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Output" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Define the output key strokes"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <Grid Grid.Column="1" Margin="12,0,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="10*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ToggleButton
+                                                    Grid.Column="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Command="{Binding DefineOutputCommand}"
+                                                    IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
+                                                    <TextBlock
+                                                        VerticalAlignment="Center"
+                                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                                        Text="{Binding KeyboardOutputChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Press to define hotkey output'}" />
+                                                </ToggleButton>
+
+                                                <Button
+                                                    Grid.Column="1"
+                                                    Margin="3,0,0,0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Command="{Binding EraseOutputButtonCommand}">
+                                                    <ui:FontIcon
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                        Glyph="&#xe75c;" />
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+
+                                        <!--  Separator  -->
+                                        <Separator
+                                            Margin="-46,0,-16,0"
+                                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                            BorderThickness="0,1,0,0" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Command name" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Define the hotkey custom name"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <TextBox
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding CustomName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
+                                    </ikw:SimpleStackPanel>
+
+                                    <!--  Executable  -->
+                                    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding CommandTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Target" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Define the target executable"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <TextBox
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Left"
+                                                IsReadOnly="True"
+                                                Text="{Binding ExecutablePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Press to define hotkey output'}">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                        <i:InvokeCommandAction Command="{Binding TextBoxClickCommand}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBox>
+                                        </Grid>
+
+                                        <!--  Separator  -->
+                                        <Separator
+                                            Margin="-46,0,-16,0"
+                                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                            BorderThickness="0,1,0,0" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Arguments" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="This parameter can be adjusted to modify the behavior of an executable during execution"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <TextBox
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding ExecutableArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                TextAlignment="Left" />
+                                        </Grid>
+                                    </ikw:SimpleStackPanel>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DeleteHotkeyCommand}"
+                                            Content="Delete hotkey"
+                                            Style="{StaticResource AccentButtonStyle}" />
+                                    </Grid>
+                                </ikw:SimpleStackPanel>
+                            </Expander.Content>
+                        </Expander>
+                    </DataTemplate>
+                </ui:ItemsRepeater.ItemTemplate>
+            </ui:ItemsRepeater>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

@@ -7,7 +7,7 @@
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Performance"
     Title="{l:Static resx:Resources.PerformancePage_Device}"
@@ -19,8 +19,8 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="24">
-            <ui:SimpleStackPanel Spacing="6">
+        <ikw:SimpleStackPanel Spacing="24">
+            <ikw:SimpleStackPanel Spacing="6">
                 <!--  Power profile picker  -->
                 <Border
                     Padding="15,12,12,12"
@@ -41,14 +41,14 @@
                                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                 Glyph="&#xE7EE;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.PowerProfilesPage_PresetSelection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.PowerProfilesPage_PresetSelectionDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <Grid Grid.Column="1" Margin="12,0,0,0">
@@ -138,23 +138,23 @@
                                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                 Glyph="&#xe7ba;" />
                         </Grid>
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                 Style="{StaticResource BodyTextBlockStyle}"
                                 Text="{Binding Warning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
                     </DockPanel>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <ui:ContentDialog
                 Name="PowerProfileSettingsDialog"
                 CloseButtonText="{l:Static resx:Resources.PerformangePage_Preset_Cancel}"
                 PrimaryButtonCommand="{Binding ConfirmModifyCommand}"
                 PrimaryButtonText="{l:Static resx:Resources.PerformangePage_Preset_Rename}">
-                <ui:SimpleStackPanel Spacing="6">
+                <ikw:SimpleStackPanel Spacing="6">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.PerformangePage_Preset_Name}" />
                     <TextBox
                         HorizontalAlignment="Stretch"
@@ -168,11 +168,11 @@
                         VerticalAlignment="Center"
                         Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                         Text="{Binding ModifyPresetDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
             </ui:ContentDialog>
 
             <!--  Power settings  -->
-            <ui:SimpleStackPanel
+            <ikw:SimpleStackPanel
                 Margin="0,-20,0,0"
                 IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 Spacing="6">
@@ -184,7 +184,7 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <ui:SimpleStackPanel Name="StackProfileCPUCore" Spacing="6">
+                    <ikw:SimpleStackPanel Name="StackProfileCPUCore" Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
@@ -245,7 +245,7 @@
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding CPUCoreCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
 
                 <!--  Thermal Power (TDP) Limit  -->
@@ -254,7 +254,7 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <ui:SimpleStackPanel IsEnabled="{Binding SupportsTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+                    <ikw:SimpleStackPanel IsEnabled="{Binding SupportsTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
@@ -318,7 +318,7 @@
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding TDPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
 
                 <!--  Auto TDP  -->
@@ -327,7 +327,7 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <ui:SimpleStackPanel IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+                    <ikw:SimpleStackPanel IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
@@ -387,7 +387,7 @@
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding AutoTDPRequestedFPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
 
                 <!--  Processor energy performance preference policy  -->
@@ -396,7 +396,7 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <ui:SimpleStackPanel Spacing="6">
+                    <ikw:SimpleStackPanel Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
@@ -432,7 +432,7 @@
                         <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <ui:SimpleStackPanel
+                            <ikw:SimpleStackPanel
                                 Margin="0,0,0,0"
                                 VerticalAlignment="Center"
                                 ScrollViewer.PanningMode="HorizontalOnly">
@@ -464,9 +464,9 @@
                                         HorizontalAlignment="Right"
                                         Text="{l:Static resx:Resources.ProfilesPage_GPU}" />
                                 </Grid>
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
 
                 <!--  Manual CPU Clock Control  -->
@@ -475,7 +475,7 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <ui:SimpleStackPanel Spacing="6">
+                    <ikw:SimpleStackPanel Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
@@ -536,7 +536,7 @@
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding CPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
 
                 <!--  Manual GPU Clock Control  -->
@@ -545,7 +545,7 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <ui:SimpleStackPanel IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+                    <ikw:SimpleStackPanel IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
@@ -606,7 +606,7 @@
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding GPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
 
                 <!--  CPU Boost  -->
@@ -699,10 +699,10 @@
                         </DockPanel>
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Fan settings  -->
-            <ui:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+            <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
 
                 <!--  Fan mode  -->
@@ -755,7 +755,7 @@
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding FanMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ikw:SimpleStackPanel Spacing="12">
                         <lvc:CartesianChart
                             Name="lvc"
                             Height="400"
@@ -839,9 +839,9 @@
                                 Command="{Binding FanPresetTurboCommand}"
                                 Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Aggressive}" />
                         </Grid>
-                    </ui:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
                 </Border>
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

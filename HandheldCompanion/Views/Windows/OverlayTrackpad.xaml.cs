@@ -27,7 +27,6 @@ public partial class OverlayTrackpad : OverlayWindow
     public OverlayTrackpad()
     {
         InitializeComponent();
-        this._hotkeyId = 2;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 

@@ -12,7 +12,6 @@ public class OverlayWindow : Window
 {
     public HorizontalAlignment _HorizontalAlignment;
     public VerticalAlignment _VerticalAlignment;
-    protected ushort _hotkeyId;
 
     private const int WM_MOUSEACTIVATE = 0x0021;
     private const int MA_NOACTIVATE = 0x0003;
@@ -38,11 +37,7 @@ public class OverlayWindow : Window
 
     private void OverlayWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-        if (_hotkeyId == 0)
-            return;
-
-        if (HotkeysManager.Hotkeys.TryGetValue(_hotkeyId, out Hotkey hotkey))
-            hotkey.SetToggle(this.Visibility == Visibility.Visible ? true : false);
+        // TODO, IMPLEMENT ME
     }
 
     public new HorizontalAlignment HorizontalAlignment
@@ -146,7 +141,7 @@ public class OverlayWindow : Window
                     break;
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
-                    Show();
+                    try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
             }
         });

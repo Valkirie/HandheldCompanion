@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:math="http://hexinnovation.com/math"
     xmlns:presets="clr-namespace:HandheldCompanion.Presets"
@@ -71,6 +72,8 @@
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
             <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
             <converters:IsNullConverter x:Key="IsNullConverter" />
+            <converters:StringEmptyConverter x:Key="StringEmptyConverter" />
+            <converters:SeparatorConverter x:Key="SeparatorConverter" />
 
             <math:MathConverter x:Key="Math" />
 

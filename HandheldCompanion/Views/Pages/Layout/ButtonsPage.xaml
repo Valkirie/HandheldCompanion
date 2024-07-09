@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonsPageViewModel}"
@@ -15,57 +15,57 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
         <!--  A,B,X,Y  -->
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsABXYEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsABXYEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_ABXY}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ABXYStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
         <!--  BUMPERS  -->
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsBUMPERSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsBUMPERSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Bumpers}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BUMPERSStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
         <!--  BACK GRIPS  -->
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsBACKGRIPSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsBACKGRIPSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Back_Grips}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BACKGRIPSStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
         <!--  MENU  -->
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsMENUEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsMENUEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Menu}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding MENUStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
         <!--  OEM  -->
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsOEMEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsOEMEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_OEM}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding OEMStacks}">
                 <ui:ItemsRepeater.Layout>
                     <ui:StackLayout Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-    </ui:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </local:ILayoutPage>

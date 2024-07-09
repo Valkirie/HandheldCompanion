@@ -21,12 +21,12 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
         // device specific capacities
         this.Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
-        this.OEMChords.Add(new DeviceChord("T",
+        this.OEMChords.Add(new KeyboardChord("T",
             new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18 },
             new List<KeyCode> { KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM5
         ));
-        this.OEMChords.Add(new DeviceChord("Guide",
+        this.OEMChords.Add(new KeyboardChord("Guide",
             new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
             new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
             false, ButtonFlags.OEM6

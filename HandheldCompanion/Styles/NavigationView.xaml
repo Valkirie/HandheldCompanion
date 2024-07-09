@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:local="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:primitives="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">

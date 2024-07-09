@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DataContext="{d:DesignInstance Type=viewmodels:TrackpadsPageViewModel}"
@@ -15,9 +15,9 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRACKPAD BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftButtonsMappings}">
@@ -29,9 +29,9 @@
             <!--  LEFT TRACKPAD  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT TRACKPAD BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightButtonsMappings}">
@@ -43,7 +43,7 @@
             <!--  RIGHT TRACKPAD  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding RightAxisMappings}" />
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
 
-    </ui:SimpleStackPanel>
+    </ikw:SimpleStackPanel>
 </local:ILayoutPage>

@@ -47,13 +47,13 @@ public class AynLoki : IDevice
         Capabilities |= DeviceCapabilities.DynamicLighting;
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
 
-        OEMChords.Add(new DeviceChord("Guide",
+        OEMChords.Add(new KeyboardChord("Guide",
             new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
             new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
             false, ButtonFlags.OEM1
         ));
 
-        OEMChords.Add(new DeviceChord("LCC",
+        OEMChords.Add(new KeyboardChord("LCC",
             new List<KeyCode> { KeyCode.LControl, KeyCode.LShift, KeyCode.LMenu, KeyCode.T },
             new List<KeyCode> { KeyCode.T, KeyCode.LMenu, KeyCode.LShift, KeyCode.LControl },
             false, ButtonFlags.OEM2

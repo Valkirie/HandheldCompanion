@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Title="QuickTools"
     Width="450"
     MinWidth="450"
@@ -68,7 +68,12 @@
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE760;" />
+                        <ui:FontIcon
+                            Name="QTLB"
+                            Margin="-6,0,0,0"
+                            FontFamily="PromptFont"
+                            FontSize="22"
+                            Glyph="&#x2198;" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
@@ -129,7 +134,12 @@
 
                 <ui:NavigationViewItem IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE761;" />
+                        <ui:FontIcon
+                            Name="QTRB"
+                            Margin="-6,0,0,0"
+                            FontFamily="PromptFont"
+                            FontSize="22"
+                            Glyph="&#x2199;" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>

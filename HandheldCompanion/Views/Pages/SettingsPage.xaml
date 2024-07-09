@@ -6,7 +6,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     Name="Settings"
     Title="{l:Static resx:Resources.SettingsPage_Settings}"
     d:Background="White"
@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="24">
 
             <!--  Update manager  -->
             <Grid>
@@ -50,7 +50,7 @@
                     </Grid>
                 </Grid>
 
-                <ui:SimpleStackPanel
+                <ikw:SimpleStackPanel
                     Grid.Column="1"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
@@ -71,7 +71,7 @@
                         Margin="0,0,10,0"
                         IsIndeterminate="True"
                         Visibility="Collapsed" />
-                </ui:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
 
                 <Button
                     Name="B_CheckUpdate"
@@ -91,10 +91,10 @@
                 Visibility="Collapsed" />
 
             <!--  Update(s)  -->
-            <ui:SimpleStackPanel Name="CurrentUpdates" Spacing="6" />
+            <ikw:SimpleStackPanel Name="CurrentUpdates" Spacing="6" />
 
             <!--  General options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_GeneralOptions}" />
 
                 <!--  Auto-start application  -->
@@ -116,14 +116,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xED35;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AutoStartApp}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_AutoStartAppDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -154,14 +154,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xEE40;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_OpenAppBackground}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -192,14 +192,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE921;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_CloseMinimizes}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_CloseMinimizesDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -230,14 +230,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xEA6C;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStart}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStartDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -268,14 +268,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE1CA;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NativeDisplayOrientation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_NativeDisplayOrientationDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel
@@ -319,14 +319,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AppTheme}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_AppThemeDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -362,14 +362,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Backdrop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_BackdropDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -405,14 +405,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xF2B7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AppLanguage}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_AppLanguageDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -443,14 +443,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xe7f5;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_UISounds}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_UISoundsDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -481,14 +481,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xEC05;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Telemetry}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_TelemetryDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -500,10 +500,10 @@
                         </Grid>
                 </Border>
 
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
 
                 <!--  Quicktools position  -->
@@ -525,14 +525,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE8A7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -568,14 +568,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsScreen}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_QuickToolsScreenDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -607,14 +607,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Backdrop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox
@@ -652,14 +652,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xED1A;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -670,10 +670,10 @@
                             Toggled="Toggle_QuicktoolsAutoHide_Toggled" />
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Notification options  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NotificationOptions}" />
 
                 <!--  Toast notification  -->
@@ -695,14 +695,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xE7E7;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ToastNotification}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_ToastNotificationDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -713,10 +713,10 @@
                             Toggled="Toggle_Notification_Toggled" />
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
             <!--  Third-party applications  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
 
                 <!--  RTSS  -->
@@ -738,14 +738,14 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xEA6C;" />
 
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}"
                                     TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
+                            </ikw:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:ToggleSwitch
@@ -756,8 +756,8 @@
                             Toggled="Toggle_RTSS_Toggled" />
                     </Grid>
                 </Border>
-            </ui:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
 
-        </ui:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
     </Grid>
 </Page>

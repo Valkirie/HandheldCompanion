@@ -157,24 +157,24 @@ public class ROGAlly : IDevice
             TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d }
         });
 
-        OEMChords.Add(new DeviceChord("CC",
+        OEMChords.Add(new KeyboardChord("CC",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
         ));
 
-        OEMChords.Add(new DeviceChord("AC",
+        OEMChords.Add(new KeyboardChord("AC",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM2
         ));
 
         // M1 and M2 do a repeating input when holding the button
-        OEMChords.Add(new DeviceChord("M1",
+        OEMChords.Add(new KeyboardChord("M1",
             new List<KeyCode> { KeyCode.F18 },
             new List<KeyCode> { KeyCode.F18 },
             false, ButtonFlags.OEM3
         ));
 
-        OEMChords.Add(new DeviceChord("M2",
+        OEMChords.Add(new KeyboardChord("M2",
             new List<KeyCode> { KeyCode.F17 },
             new List<KeyCode> { KeyCode.F17 },
             false, ButtonFlags.OEM4

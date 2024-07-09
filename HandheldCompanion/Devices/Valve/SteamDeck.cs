@@ -84,7 +84,7 @@ public class SteamDeck : IDevice
         GfxClock = new double[] { 200, 2500 };
         CpuClock = 3500;
 
-        OEMChords.Add(new DeviceChord("...",
+        OEMChords.Add(new KeyboardChord("...",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
         ));

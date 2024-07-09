@@ -1998,6 +1998,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click.
+        /// </summary>
+        public static string Enum_InputsChordType_Click {
+            get {
+                return ResourceManager.GetString("Enum_InputsChordType_Click", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Long.
+        /// </summary>
+        public static string Enum_InputsChordType_Long {
+            get {
+                return ResourceManager.GetString("Enum_InputsChordType_Long", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to define hotkey input.
+        /// </summary>
+        public static string Enum_InputsChordType_None {
+            get {
+                return ResourceManager.GetString("Enum_InputsChordType_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom.
         /// </summary>
         public static string Enum_InputsHotkeyType_Custom {
@@ -3888,6 +3915,672 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Summon windows Action center.
+        /// </summary>
+        public static string Hotkey_ActionCenter {
+            get {
+                return ResourceManager.GetString("Hotkey_ActionCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle action center.
+        /// </summary>
+        public static string Hotkey_ActionCenterDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ActionCenterDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle emulated controller type.
+        /// </summary>
+        public static string Hotkey_ChangeHIDMode {
+            get {
+                return ResourceManager.GetString("Hotkey_ChangeHIDMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 emulated controllers.
+        /// </summary>
+        public static string Hotkey_ChangeHIDModeDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ChangeHIDModeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display Action center.
+        /// </summary>
+        public static string Hotkey_ControlCenter {
+            get {
+                return ResourceManager.GetString("Hotkey_ControlCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display and hide Windows Action center.
+        /// </summary>
+        public static string Hotkey_ControlCenterDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ControlCenterDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom shortcut.
+        /// </summary>
+        public static string Hotkey_Custom {
+            get {
+                return ResourceManager.GetString("Hotkey_Custom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_CustomDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_CustomDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease brightness.
+        /// </summary>
+        public static string Hotkey_decreaseBrightness {
+            get {
+                return ResourceManager.GetString("Hotkey_decreaseBrightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease the current display brightness by 2%.
+        /// </summary>
+        public static string Hotkey_decreaseBrightnessDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_decreaseBrightnessDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease thermal power limit (TDP).
+        /// </summary>
+        public static string Hotkey_decreaseTDP {
+            get {
+                return ResourceManager.GetString("Hotkey_decreaseTDP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease system or currently applied profile TDP by one watt.
+        /// </summary>
+        public static string Hotkey_decreaseTDPDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_decreaseTDPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease volume.
+        /// </summary>
+        public static string Hotkey_decreaseVolume {
+            get {
+                return ResourceManager.GetString("Hotkey_decreaseVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease the system volume by 2%.
+        /// </summary>
+        public static string Hotkey_decreaseVolumeDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_decreaseVolumeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display and hide the desktop.
+        /// </summary>
+        public static string Hotkey_Desktop {
+            get {
+                return ResourceManager.GetString("Hotkey_Desktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Windows + D.
+        /// </summary>
+        public static string Hotkey_DesktopDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_DesktopDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desktop layout.
+        /// </summary>
+        public static string Hotkey_DesktopLayoutEnabled {
+            get {
+                return ResourceManager.GetString("Hotkey_DesktopLayoutEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Desktop controller layout.
+        /// </summary>
+        public static string Hotkey_DesktopLayoutEnabledDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_DesktopLayoutEnabledDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Escape.
+        /// </summary>
+        public static string Hotkey_ESC {
+            get {
+                return ResourceManager.GetString("Hotkey_ESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Escape.
+        /// </summary>
+        public static string Hotkey_ESCDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ESCDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executable.
+        /// </summary>
+        public static string Hotkey_Executable {
+            get {
+                return ResourceManager.GetString("Hotkey_Executable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Execute an application with specified arguments.
+        /// </summary>
+        public static string Hotkey_ExecutableDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ExecutableDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switches between window and full screen.
+        /// </summary>
+        public static string Hotkey_Expand {
+            get {
+                return ResourceManager.GetString("Hotkey_Expand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Alt + Enter.
+        /// </summary>
+        public static string Hotkey_ExpandDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ExpandDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to define trigger.
+        /// </summary>
+        public static string Hotkey_fallbackInput {
+            get {
+                return ResourceManager.GetString("Hotkey_fallbackInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to define keyboard output.
+        /// </summary>
+        public static string Hotkey_fallbackOutput {
+            get {
+                return ResourceManager.GetString("Hotkey_fallbackOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Function.
+        /// </summary>
+        public static string Hotkey_Function {
+            get {
+                return ResourceManager.GetString("Hotkey_Function", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_FunctionDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_FunctionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guide or PS button.
+        /// </summary>
+        public static string Hotkey_Guide {
+            get {
+                return ResourceManager.GetString("Hotkey_Guide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simulate a Xbox Guide or Sony PS button input.
+        /// </summary>
+        public static string Hotkey_GuideDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_GuideDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase brightness.
+        /// </summary>
+        public static string Hotkey_increaseBrightness {
+            get {
+                return ResourceManager.GetString("Hotkey_increaseBrightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase the current display brightness by 2%.
+        /// </summary>
+        public static string Hotkey_increaseBrightnessDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_increaseBrightnessDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase thermal power limit (TDP).
+        /// </summary>
+        public static string Hotkey_increaseTDP {
+            get {
+                return ResourceManager.GetString("Hotkey_increaseTDP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase system or currently applied profile TDP by one watt.
+        /// </summary>
+        public static string Hotkey_increaseTDPDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_increaseTDPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase volume.
+        /// </summary>
+        public static string Hotkey_increaseVolume {
+            get {
+                return ResourceManager.GetString("Hotkey_increaseVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase the system volume by 2%.
+        /// </summary>
+        public static string Hotkey_increaseVolumeDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_increaseVolumeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display touch keyboard.
+        /// </summary>
+        public static string Hotkey_Keyboard {
+            get {
+                return ResourceManager.GetString("Hotkey_Keyboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_KeyboardDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_KeyboardDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display touch keyboard (Legacy).
+        /// </summary>
+        public static string Hotkey_KeyboardLegacy {
+            get {
+                return ResourceManager.GetString("Hotkey_KeyboardLegacy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_KeyboardLegacyDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_KeyboardLegacyDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key strokes.
+        /// </summary>
+        public static string Hotkey_Keystrokes {
+            get {
+                return ResourceManager.GetString("Hotkey_Keystrokes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send a customized sequence of keyboard inputs.
+        /// </summary>
+        public static string Hotkey_KeystrokesDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_KeystrokesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force application shutdown.
+        /// </summary>
+        public static string Hotkey_KillApp {
+            get {
+                return ResourceManager.GetString("Hotkey_KillApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_KillAppDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_KillAppDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display and hide main window.
+        /// </summary>
+        public static string Hotkey_Mainwindow {
+            get {
+                return ResourceManager.GetString("Hotkey_Mainwindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_MainwindowDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_MainwindowDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select next sub profile.
+        /// </summary>
+        public static string Hotkey_nextSubProfile {
+            get {
+                return ResourceManager.GetString("Hotkey_nextSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply next sub profile for the current game.
+        /// </summary>
+        public static string Hotkey_nextSubProfileDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_nextSubProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string Hotkey_None {
+            get {
+                return ResourceManager.GetString("Hotkey_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_NoneDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_NoneDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On-screen display.
+        /// </summary>
+        public static string Hotkey_OnScreenDisplay {
+            get {
+                return ResourceManager.GetString("Hotkey_OnScreenDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable on-screen display support.
+        /// </summary>
+        public static string Hotkey_OnScreenDisplayDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_OnScreenDisplayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On Screen Overlay.
+        /// </summary>
+        public static string Hotkey_OnScreenDisplayToggle {
+            get {
+                return ResourceManager.GetString("Hotkey_OnScreenDisplayToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle on screen overlay.
+        /// </summary>
+        public static string Hotkey_OnScreenDisplayToggleDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_OnScreenDisplayToggleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display 3D controller.
+        /// </summary>
+        public static string Hotkey_overlayGamepad {
+            get {
+                return ResourceManager.GetString("Hotkey_overlayGamepad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change 3D hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_overlayGamepadDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_overlayGamepadDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display virtual trackpads.
+        /// </summary>
+        public static string Hotkey_overlayTrackpads {
+            get {
+                return ResourceManager.GetString("Hotkey_overlayTrackpads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_overlayTrackpadsDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_overlayTrackpadsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select previous sub profile.
+        /// </summary>
+        public static string Hotkey_previousSubProfile {
+            get {
+                return ResourceManager.GetString("Hotkey_previousSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply previous sub profile for the current game.
+        /// </summary>
+        public static string Hotkey_previousSubProfileDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_previousSubProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Snipping tool.
+        /// </summary>
+        public static string Hotkey_PrintScreen {
+            get {
+                return ResourceManager.GetString("Hotkey_PrintScreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Windows + Shift + S.
+        /// </summary>
+        public static string Hotkey_PrintScreenDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_PrintScreenDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summon quick tools window.
+        /// </summary>
+        public static string Hotkey_quickTools {
+            get {
+                return ResourceManager.GetString("Hotkey_quickTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_quickToolsDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_quickToolsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fan override.
+        /// </summary>
+        public static string Hotkey_QuietModeToggled {
+            get {
+                return ResourceManager.GetString("Hotkey_QuietModeToggled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set the fan duty cycle to user-defined value.
+        /// </summary>
+        public static string Hotkey_QuietModeToggledDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_QuietModeToggledDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summon windows settings.
+        /// </summary>
+        public static string Hotkey_Settings {
+            get {
+                return ResourceManager.GetString("Hotkey_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string Hotkey_SettingsDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_SettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Applications.
+        /// </summary>
+        public static string Hotkey_suspendResumeTask {
+            get {
+                return ResourceManager.GetString("Hotkey_suspendResumeTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend or resume the foreground application.
+        /// </summary>
+        public static string Hotkey_suspendResumeTaskDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_suspendResumeTaskDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Task Manager.
+        /// </summary>
+        public static string Hotkey_TaskManager {
+            get {
+                return ResourceManager.GetString("Hotkey_TaskManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Ctrl + Shift + Esc.
+        /// </summary>
+        public static string Hotkey_TaskManagerDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_TaskManagerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Task view.
+        /// </summary>
+        public static string Hotkey_Taskview {
+            get {
+                return ResourceManager.GetString("Hotkey_Taskview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Windows + Tab.
+        /// </summary>
+        public static string Hotkey_TaskviewDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_TaskviewDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap icon {
@@ -3903,546 +4596,6 @@ namespace HandheldCompanion.Properties {
         public static string IController_ControllerIndex {
             get {
                 return ResourceManager.GetString("IController_ControllerIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decrease brightness.
-        /// </summary>
-        public static string InputsHotkey_decreaseBrightness {
-            get {
-                return ResourceManager.GetString("InputsHotkey_decreaseBrightness", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decrease the current display brightness by 5%.
-        /// </summary>
-        public static string InputsHotkey_decreaseBrightnessDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_decreaseBrightnessDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decrease thermal power limit (TDP).
-        /// </summary>
-        public static string InputsHotkey_decreaseTDP {
-            get {
-                return ResourceManager.GetString("InputsHotkey_decreaseTDP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decrease system or currently applied profile TDP by one watt.
-        /// </summary>
-        public static string InputsHotkey_decreaseTDPDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_decreaseTDPDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decrease volume.
-        /// </summary>
-        public static string InputsHotkey_decreaseVolume {
-            get {
-                return ResourceManager.GetString("InputsHotkey_decreaseVolume", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decrease the system volume by 5%.
-        /// </summary>
-        public static string InputsHotkey_decreaseVolumeDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_decreaseVolumeDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Desktop layout.
-        /// </summary>
-        public static string InputsHotkey_DesktopLayoutEnabled {
-            get {
-                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle Desktop controller layout.
-        /// </summary>
-        public static string InputsHotkey_DesktopLayoutEnabledDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabledDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press to define trigger.
-        /// </summary>
-        public static string InputsHotkey_fallbackInput {
-            get {
-                return ResourceManager.GetString("InputsHotkey_fallbackInput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press to define keyboard output.
-        /// </summary>
-        public static string InputsHotkey_fallbackOutput {
-            get {
-                return ResourceManager.GetString("InputsHotkey_fallbackOutput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Increase brightness.
-        /// </summary>
-        public static string InputsHotkey_increaseBrightness {
-            get {
-                return ResourceManager.GetString("InputsHotkey_increaseBrightness", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Increase the current display brightness by 5%.
-        /// </summary>
-        public static string InputsHotkey_increaseBrightnessDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_increaseBrightnessDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Increase thermal power limit (TDP).
-        /// </summary>
-        public static string InputsHotkey_increaseTDP {
-            get {
-                return ResourceManager.GetString("InputsHotkey_increaseTDP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Increase system or currently applied profile TDP by one watt.
-        /// </summary>
-        public static string InputsHotkey_increaseTDPDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_increaseTDPDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Increase volume.
-        /// </summary>
-        public static string InputsHotkey_increaseVolume {
-            get {
-                return ResourceManager.GetString("InputsHotkey_increaseVolume", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Increase the system volume by 5%.
-        /// </summary>
-        public static string InputsHotkey_increaseVolumeDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_increaseVolumeDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select next sub profile.
-        /// </summary>
-        public static string InputsHotkey_nextSubProfile {
-            get {
-                return ResourceManager.GetString("InputsHotkey_nextSubProfile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Apply next sub profile for the current game.
-        /// </summary>
-        public static string InputsHotkey_nextSubProfileDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_nextSubProfileDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to On-screen display.
-        /// </summary>
-        public static string InputsHotkey_OnScreenDisplay {
-            get {
-                return ResourceManager.GetString("InputsHotkey_OnScreenDisplay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable on-screen display support.
-        /// </summary>
-        public static string InputsHotkey_OnScreenDisplayDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to On Screen Overlay.
-        /// </summary>
-        public static string InputsHotkey_OnScreenDisplayToggle {
-            get {
-                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle on screen overlay.
-        /// </summary>
-        public static string InputsHotkey_OnScreenDisplayToggleDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggleDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display 3D controller.
-        /// </summary>
-        public static string InputsHotkey_overlayGamepad {
-            get {
-                return ResourceManager.GetString("InputsHotkey_overlayGamepad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change 3D hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_overlayGamepadDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_overlayGamepadDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display virtual trackpads.
-        /// </summary>
-        public static string InputsHotkey_overlayTrackpads {
-            get {
-                return ResourceManager.GetString("InputsHotkey_overlayTrackpads", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_overlayTrackpadsDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_overlayTrackpadsDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select previous sub profile.
-        /// </summary>
-        public static string InputsHotkey_previousSubProfile {
-            get {
-                return ResourceManager.GetString("InputsHotkey_previousSubProfile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Apply previous sub profile for the current game.
-        /// </summary>
-        public static string InputsHotkey_previousSubProfileDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_previousSubProfileDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Summon quick tools window.
-        /// </summary>
-        public static string InputsHotkey_quickTools {
-            get {
-                return ResourceManager.GetString("InputsHotkey_quickTools", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_quickToolsDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_quickToolsDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fan override.
-        /// </summary>
-        public static string InputsHotkey_QuietModeToggled {
-            get {
-                return ResourceManager.GetString("InputsHotkey_QuietModeToggled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set the fan duty cycle to user-defined value.
-        /// </summary>
-        public static string InputsHotkey_QuietModeToggledDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_QuietModeToggledDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle emulated controller type.
-        /// </summary>
-        public static string InputsHotkey_shortcutChangeHIDMode {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDMode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 emulated controllers.
-        /// </summary>
-        public static string InputsHotkey_shortcutChangeHIDModeDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDModeDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display Action center.
-        /// </summary>
-        public static string InputsHotkey_shortcutControlCenter {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutControlCenter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display and hide Windows Action center.
-        /// </summary>
-        public static string InputsHotkey_shortcutControlCenterDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutControlCenterDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom shortcut.
-        /// </summary>
-        public static string InputsHotkey_shortcutCustom {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutCustom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_shortcutCustomDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutCustomDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display and hide the desktop.
-        /// </summary>
-        public static string InputsHotkey_shortcutDesktop {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutDesktop", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press this key: Windows + D.
-        /// </summary>
-        public static string InputsHotkey_shortcutDesktopDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutDesktopDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Escape.
-        /// </summary>
-        public static string InputsHotkey_shortcutESC {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutESC", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press this key: Escape.
-        /// </summary>
-        public static string InputsHotkey_shortcutESCDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutESCDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Switches between window and full screen.
-        /// </summary>
-        public static string InputsHotkey_shortcutExpand {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutExpand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press this key: Alt + Enter.
-        /// </summary>
-        public static string InputsHotkey_shortcutExpandDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutExpandDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Guide or PS button.
-        /// </summary>
-        public static string InputsHotkey_shortcutGuide {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutGuide", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Simulate a Xbox Guide or Sony PS button input.
-        /// </summary>
-        public static string InputsHotkey_shortcutGuideDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutGuideDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display touch keyboard.
-        /// </summary>
-        public static string InputsHotkey_shortcutKeyboard {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutKeyboard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_shortcutKeyboardDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutKeyboardDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Force application shutdown.
-        /// </summary>
-        public static string InputsHotkey_shortcutKillApp {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutKillApp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_shortcutKillAppDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutKillAppDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display and hide main window.
-        /// </summary>
-        public static string InputsHotkey_shortcutMainwindow {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutMainwindow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
-        /// </summary>
-        public static string InputsHotkey_shortcutMainwindowDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutMainwindowDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Snipping tool.
-        /// </summary>
-        public static string InputsHotkey_shortcutPrintScreen {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutPrintScreen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press this key: Windows + Shift + S.
-        /// </summary>
-        public static string InputsHotkey_shortcutPrintScreenDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutPrintScreenDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Task Manager.
-        /// </summary>
-        public static string InputsHotkey_shortcutTaskManager {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutTaskManager", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press this key: Ctrl + Shift + Esc.
-        /// </summary>
-        public static string InputsHotkey_shortcutTaskManagerDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutTaskManagerDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Task view.
-        /// </summary>
-        public static string InputsHotkey_shortcutTaskview {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutTaskview", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press this key: Windows + Tab.
-        /// </summary>
-        public static string InputsHotkey_shortcutTaskviewDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_shortcutTaskviewDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle Applications.
-        /// </summary>
-        public static string InputsHotkey_suspendResumeTask {
-            get {
-                return ResourceManager.GetString("InputsHotkey_suspendResumeTask", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Suspend or resume the foreground application.
-        /// </summary>
-        public static string InputsHotkey_suspendResumeTaskDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_suspendResumeTaskDesc", resourceCulture);
             }
         }
         
