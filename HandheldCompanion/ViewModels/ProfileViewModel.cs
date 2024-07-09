@@ -69,6 +69,19 @@ namespace HandheldCompanion.ViewModels
 
             StartProcessCommand = new DelegateCommand(async () =>
             {
+                if (!File.Exists(profile.Path))
+                {
+                    // localize me
+                    new Dialog(OverlayQuickTools.GetCurrent())
+                    {
+                        Title = "Quick start",
+                        Content = "The system cannot find the file specified.",
+                        CanClose = true
+                    }.Show();
+
+                    return;
+                }
+
                 // localize me
                 Dialog dialog = new Dialog(OverlayQuickTools.GetCurrent())
                 {
