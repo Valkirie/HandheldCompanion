@@ -202,7 +202,7 @@ public static class XInputPlus
             // using rundll32.exe because we can't load a 32 bit library in a 64 bit application
             string args = $"\"{XInputInjectorDLL}\",HookProcess {targetProcess.Id}";
             Process p = Process.Start("rundll32.exe", args);
-            p.WaitForExit();
+            p.WaitForExit(TimeSpan.FromSeconds(3));
         }
     }
 

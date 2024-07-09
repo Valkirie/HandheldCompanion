@@ -26,7 +26,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
                 {
                     // Kill the existing osk.exe process
                     existingOskProcess.Kill();
-                    existingOskProcess.WaitForExit();
+                    existingOskProcess.WaitForExit(TimeSpan.FromSeconds(3));
                 }
                 else
                 {
