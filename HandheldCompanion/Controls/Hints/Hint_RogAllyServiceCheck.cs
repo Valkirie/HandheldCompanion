@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
@@ -91,10 +92,18 @@ namespace HandheldCompanion.Controls.Hints
             {
                 foreach (ServiceController serviceController in serviceControllers)
                 {
-                    if (serviceController.Status == ServiceControllerStatus.Running)
-                        serviceController.Stop();
-                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                    ServiceUtils.ChangeStartMode(serviceController, ServiceStartMode.Disabled, out _);
+                    try
+                    {
+                        if (serviceController.Status == ServiceControllerStatus.Running)
+                            serviceController.Stop();
+
+                        serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                        ServiceUtils.ChangeStartMode(serviceController, ServiceStartMode.Disabled, out _);
+                    }
+                    catch
+                    {
+                        LogManager.LogError("Failed to disable service: {0}", serviceController.ServiceName);
+                    }
                 }
             });
         }
