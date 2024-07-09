@@ -434,10 +434,22 @@ namespace HandheldCompanion.Managers
                             ((ToggleSwitch)focusedElement).IsOn = !((ToggleSwitch)focusedElement).IsOn;
                             break;
                         case "RadioButton":
-                            ((RadioButton)focusedElement).IsChecked = !((RadioButton)focusedElement).IsChecked;
+                            {
+                                RadioButton radioButton = focusedElement as RadioButton;
+                                radioButton.IsChecked = !radioButton.IsChecked;
+
+                                if (radioButton.Command is not null)
+                                    radioButton.Command.Execute(radioButton.CommandParameter);
+                            }
                             break;
                         case "CheckBox":
-                            ((CheckBox)focusedElement).IsChecked = !((CheckBox)focusedElement).IsChecked;
+                            {
+                                CheckBox checkBox = focusedElement as CheckBox;
+                                checkBox.IsChecked = !checkBox.IsChecked;
+
+                                if (checkBox.Command is not null)
+                                    checkBox.Command.Execute(checkBox.CommandParameter);
+                            }
                             break;
 
                         case "NavigationViewItem":
