@@ -33,11 +33,25 @@ namespace HandheldCompanion
             base.Initialize(ApplicationName, config);
 
             // Get the path from the config parameter, or use a default value
-            string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
-            UserConfigPath = Path.Combine(SettingsPath, UserConfigFileName);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string applicationDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            string SettingsPath = Path.Combine(myDocumentsPath, "HandheldCompanion");
+            UserConfigPath = Path.Combine(myDocumentsPath, "HandheldCompanion", UserConfigFileName);
 
             if (!Directory.Exists(SettingsPath))
                 Directory.CreateDirectory(SettingsPath);
+
+            // temporary, pull previous settings, if any
+            string previousPath = Path.Combine(applicationDataPath, ApplicationName, UserConfigFileName);
+
+            if (File.Exists(previousPath))
+            {
+                if (!File.Exists(UserConfigPath))
+                    File.Move(previousPath, UserConfigPath);
+                else
+                    File.Delete(previousPath);
+            }
         }
 
         // Override the GetPropertyValues method to read the settings from the user.config file
