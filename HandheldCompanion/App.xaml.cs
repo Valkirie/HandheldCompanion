@@ -42,8 +42,12 @@ public partial class App : Application
         var CurrentAssembly = Assembly.GetExecutingAssembly();
         var fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
-        // set environment variables
-        Environment.SetEnvironmentVariable("APP_BASE_DIRECTORY", AppContext.BaseDirectory);
+        // Get the MyDocuments folder path
+        string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string logDirectory = System.IO.Path.Combine(myDocumentsPath, "HandheldCompanion", "logs");
+
+        // Set the LOG_PATH environment variable
+        Environment.SetEnvironmentVariable("LOG_PATH", logDirectory);
 
         // initialize log
         LogManager.Initialize("HandheldCompanion");
