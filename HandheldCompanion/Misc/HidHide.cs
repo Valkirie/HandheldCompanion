@@ -106,15 +106,20 @@ public static class HidHide
         }
         catch
         {
+            LogManager.LogError("Failed to UnregisterApplication({0}), HidHideControlService is unreachable", fileName);
+
             if (process is null)
                 return false;
 
             process.StartInfo.Arguments = $"--app-unreg \"{fileName}\"";
             process.Start();
-            process.WaitForExit();
-            process.StandardOutput.ReadToEnd();
+            bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
+            if (success)
+            {
+                process.StandardOutput.ReadToEnd(); // todo: parse result
+                LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
+            }
         }
 
         return true;
@@ -133,15 +138,20 @@ public static class HidHide
         }
         catch
         {
+            LogManager.LogError("Failed to RegisterApplication({0}), HidHideControlService is unreachable", fileName);
+
             if (process is null)
                 return false;
 
             process.StartInfo.Arguments = $"--app-reg \"{fileName}\"";
             process.Start();
-            process.WaitForExit();
-            process.StandardOutput.ReadToEnd();
+            bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+            if (success)
+            {
+                process.StandardOutput.ReadToEnd(); // todo: parse result
+                LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+            }
         }
 
         return true;
@@ -159,6 +169,8 @@ public static class HidHide
         }
         catch
         {
+            LogManager.LogError("Failed to SetCloaking({0}), HidHideControlService is unreachable", status);
+
             if (process is null)
                 return false;
 
@@ -172,10 +184,13 @@ public static class HidHide
                     break;
             }
             process.Start();
-            process.WaitForExit();
-            process.StandardOutput.ReadToEnd();
+            bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            LogManager.LogInformation("HideDevice SetCloaking: {0}", status);
+            if (success)
+            {
+                process.StandardOutput.ReadToEnd(); // todo: parse result
+                LogManager.LogInformation("HideDevice SetCloaking: {0}", status);
+            }
         }
 
         return true;
@@ -197,15 +212,20 @@ public static class HidHide
         }
         catch
         {
+            LogManager.LogError("Failed to UnhidePath({0}), HidHideControlService is unreachable", deviceInstancePath);
+
             if (process is null)
                 return false;
 
             process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
             process.Start();
-            process.WaitForExit();
-            process.StandardOutput.ReadToEnd();
+            bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+            if (success)
+            {
+                process.StandardOutput.ReadToEnd(); // todo: parse result
+                LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+            }
         }
 
         return true;
@@ -227,15 +247,20 @@ public static class HidHide
         }
         catch
         {
+            LogManager.LogError("Failed to HidePath({0}), HidHideControlService is unreachable", deviceInstancePath);
+
             if (process is null)
                 return false;
 
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
             process.Start();
-            process.WaitForExit();
-            process.StandardOutput.ReadToEnd();
+            bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+            if (success)
+            {
+                process.StandardOutput.ReadToEnd(); // todo: parse result
+                LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+            }
         }
 
         return true;
@@ -251,13 +276,16 @@ public static class HidHide
             // using --dev-gaming sometimes doesn't report controllers or have empty BaseContainerDeviceInstancePath
             process.StartInfo.Arguments = $"--dev-all";
             process.Start();
-            process.WaitForExit(TimeSpan.FromSeconds(3));
-            string jsonString = process.StandardOutput.ReadToEnd().Trim();
+            bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (string.IsNullOrEmpty(jsonString))
-                return [];
+            if (success)
+            {
+                string jsonString = process.StandardOutput.ReadToEnd().Trim();
+                if (string.IsNullOrEmpty(jsonString))
+                    return [];
 
-            return JsonConvert.DeserializeObject<List<HidHideDevice>>(jsonString);
+                return JsonConvert.DeserializeObject<List<HidHideDevice>>(jsonString);
+            }
         }
         catch { }
 
