@@ -58,61 +58,128 @@ public class LegionGo : IDevice
         GpuCurrentTemperature = 0x05050000
     }
 
-    private Task<bool> GetFanFullSpeedAsync() =>
-        WMI.CallAsync("root\\WMI",
-            $"SELECT * FROM LENOVO_OTHER_METHOD",
-            "GetFeatureValue",
-            new() { { "IDs", (int)CapabilityID.FanFullSpeed } },
-            pdc => Convert.ToInt32(pdc["Value"].Value) == 1);
+    private async Task<bool> GetFanFullSpeedAsync()
+    {
+        try
+        {
+            return await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_OTHER_METHOD",
+                "GetFeatureValue",
+                new() { { "IDs", (int)CapabilityID.FanFullSpeed } },
+                pdc => Convert.ToInt32(pdc["Value"].Value) == 1);
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in GetFanFullSpeedAsync: {0}", ex.Message);
+            return false; // or some default value
+        }
+    }
 
-    public Task SetFanFullSpeedAsync(bool enabled) =>
-        WMI.CallAsync("root\\WMI",
-            $"SELECT * FROM LENOVO_OTHER_METHOD",
-            "SetFeatureValue",
-            new()
-            {
+    public async Task SetFanFullSpeedAsync(bool enabled)
+    {
+        try
+        {
+            await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_OTHER_METHOD",
+                "SetFeatureValue",
+                new()
+                {
                 { "IDs", (int)CapabilityID.FanFullSpeed },
                 { "value", enabled ? 1 : 0 },
-            });
+                });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in SetFanFullSpeedAsync: {0}", ex.Message);
+        }
+    }
 
-    private Task SetFanTable(FanTable fanTable) => WMI.CallAsync("root\\WMI",
-        $"SELECT * FROM LENOVO_FAN_METHOD",
-        "Fan_Set_Table",
-        new() { { "FanTable", fanTable.GetBytes() } });
+    private async Task SetFanTable(FanTable fanTable)
+    {
+        try
+        {
+            await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_FAN_METHOD",
+                "Fan_Set_Table",
+                new() { { "FanTable", fanTable.GetBytes() } });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in SetFanTable: {0}", ex.Message);
+        }
+    }
 
-    public static Task<int> GetSmartFanModeAsync() => WMI.CallAsync("root\\WMI",
-        $"SELECT * FROM LENOVO_GAMEZONE_DATA",
-        "GetSmartFanMode",
-        [],
-        pdc => Convert.ToInt32(pdc["Data"].Value));
+    public static async Task<int> GetSmartFanModeAsync()
+    {
+        try
+        {
+            return await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_GAMEZONE_DATA",
+                "GetSmartFanMode",
+                new(),
+                pdc => Convert.ToInt32(pdc["Data"].Value));
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in GetSmartFanModeAsync: {0}", ex.Message);
+            return -1; // or some default value
+        }
+    }
 
-    private Task SetSmartFanMode(int fanMode) => WMI.CallAsync("root\\WMI",
-        $"SELECT * FROM LENOVO_GAMEZONE_DATA",
-        "SetSmartFanMode",
-        new() { { "Data", fanMode } });
+    private async Task SetSmartFanMode(int fanMode)
+    {
+        try
+        {
+            await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_GAMEZONE_DATA",
+                "SetSmartFanMode",
+                new() { { "Data", fanMode } });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in SetSmartFanMode: {0}", ex.Message);
+        }
+    }
 
-    public Task SetCPUPowerLimit(CapabilityID capabilityID, int limit) =>
-        WMI.CallAsync("root\\WMI",
-            $"SELECT * FROM LENOVO_OTHER_METHOD",
-            "SetFeatureValue",
-            new()
-            {
+    public async Task SetCPUPowerLimit(CapabilityID capabilityID, int limit)
+    {
+        try
+        {
+            await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_OTHER_METHOD",
+                "SetFeatureValue",
+                new()
+                {
                 { "IDs", (int)capabilityID },
                 { "value", limit },
-            });
+                });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in SetCPUPowerLimit: {0}", ex.Message);
+        }
+    }
 
     // InstantBootAc (0x03010001) controls the 80% power charge limit.
     // https://github.com/aarron-lee/LegionGoRemapper/blob/ab823f2042fc857cca856687a385a033d68c58bf/py_modules/legion_space.py#L138
-    public Task SetBatteryChargeLimit(bool enabled) =>
-        WMI.CallAsync("root\\WMI",
-            $"SELECT * FROM LENOVO_OTHER_METHOD",
-            "SetFeatureValue",
-            new()
-            {
+    public async Task SetBatteryChargeLimit(bool enabled)
+    {
+        try
+        {
+            await WMI.CallAsync("root\\WMI",
+                $"SELECT * FROM LENOVO_OTHER_METHOD",
+                "SetFeatureValue",
+                new()
+                {
                 { "IDs", (int)CapabilityID.InstantBootAc },
                 { "value", enabled ? 1 : 0 },
-            });
-
+                });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in SetBatteryChargeLimit: {0}", ex.Message);
+        }
+    }
 
     public const byte INPUT_HID_ID = 0x04;
 
