@@ -25,8 +25,8 @@ namespace HandheldCompanion.Commands
         [JsonIgnore] public bool OnKeyUp = false;
         [JsonIgnore] public Hotkey Hotkey;
 
-        [JsonIgnore] public string Name = "Missing name";
-        [JsonIgnore] public string Description = "Missing description";
+        [JsonIgnore] public string Name = "Empty hotkey";
+        [JsonIgnore] public string Description = "Please pick a command type";
         [JsonIgnore] public string Glyph = "\ue895";
 
         public CommandType commandType;
