@@ -228,8 +228,13 @@ public static class InputsManager
         bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
         bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
 
-        if (Injected || InjectedLL)
-            return;
+        if ((Injected || InjectedLL))
+        {
+            if (!(IsListening && currentChord.chordTarget == InputsChordTarget.Output))
+            {
+                return;
+            }
+        }
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
 
@@ -694,6 +699,7 @@ public static class InputsManager
 
         // set variable
         currentButtonFlags = ButtonFlags.None;
+        currentChord = new();
     }
 
     private static void ExpiredListening()
