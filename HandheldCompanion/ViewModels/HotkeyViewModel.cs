@@ -119,10 +119,22 @@ namespace HandheldCompanion.ViewModels
         private bool _IsListening = false;
         public bool IsListening => _IsListening;
 
-        public void SetListening(bool listening)
+        private bool _IsListeningOutput = false;
+        public bool IsListeningOutput => _IsListeningOutput;
+
+        public void SetListening(bool listening, InputsChordTarget chordTarget)
         {
-            _IsListening = listening;
-            OnPropertyChanged(nameof(IsListening));
+            switch(chordTarget)
+            {
+                case InputsChordTarget.Input:
+                    _IsListening = listening;
+                    OnPropertyChanged(nameof(IsListening));
+                    break;
+                case InputsChordTarget.Output:
+                    _IsListeningOutput = listening;
+                    OnPropertyChanged(nameof(IsListeningOutput));
+                    break;
+            }
         }
 
         private string _KeyboardChord = string.Empty;

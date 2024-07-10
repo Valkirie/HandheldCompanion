@@ -22,7 +22,7 @@ public static class InputsManager
     public delegate void InitializedEventHandler();
     public static event InitializedEventHandler Initialized;
 
-    public delegate void StartedListeningEventHandler(ButtonFlags buttonFlags);
+    public delegate void StartedListeningEventHandler(ButtonFlags buttonFlags, InputsChordTarget chordTarget);
     public static event StartedListeningEventHandler StartedListening;
 
     public delegate void StoppedListeningEventHandler(ButtonFlags buttonFlags, InputsChord storedChord);
@@ -644,7 +644,7 @@ public static class InputsManager
         };
 
         // raise event
-        StartedListening?.Invoke(buttonFlags);
+        StartedListening?.Invoke(buttonFlags, chordTarget);
 
         ListenerTimer.Start();
     }

@@ -5,10 +5,11 @@
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Hotkeys"
     Title="Hotkeys"
@@ -47,7 +48,7 @@
                     <DataTemplate>
                         <Expander HorizontalAlignment="Stretch">
                             <Expander.Header>
-                                <Grid Margin="0,12,0,12">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" />
                                         <ColumnDefinition Width="5*" />
@@ -137,6 +138,18 @@
                                             </ikw:SimpleStackPanel>
                                         </ToggleButton>
 
+                                        <Button
+                                            Margin="6,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Command="{Binding EraseButtonCommand}">
+                                            <ui:FontIcon
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Glyph="&#xe75c;" />
+                                        </Button>
+
                                         <ToggleButton
                                             Margin="6,0,0,0"
                                             HorizontalAlignment="Right"
@@ -159,18 +172,6 @@
                                                 </ui:FontIcon.Style>
                                             </ui:FontIcon>
                                         </ToggleButton>
-
-                                        <Button
-                                            Margin="6,0,0,0"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Stretch"
-                                            Command="{Binding EraseButtonCommand}">
-                                            <ui:FontIcon
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                                Glyph="&#xe75c;" />
-                                        </Button>
                                     </StackPanel>
                                 </Grid>
                             </Expander.Header>
@@ -291,7 +292,7 @@
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
                                                     Command="{Binding DefineOutputCommand}"
-                                                    IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    IsChecked="{Binding IsListeningOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                                                     <TextBlock
                                                         VerticalAlignment="Center"
@@ -368,7 +369,7 @@
                                                 VerticalAlignment="Center"
                                                 HorizontalContentAlignment="Left"
                                                 IsReadOnly="True"
-                                                Text="{Binding ExecutablePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Press to define hotkey output'}">
+                                                Text="{Binding ExecutablePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Press to select an executable'}">
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                                                         <i:InvokeCommandAction Command="{Binding TextBoxClickCommand}" />
