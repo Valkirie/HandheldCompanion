@@ -252,20 +252,18 @@ public static class InputsManager
                 if (currentChord.chordTarget != InputsChordTarget.Output)
                     CheckForSequence(args.IsKeyDown, args.IsKeyUp);
             }
-            else
+
+            foreach (KeyboardChord? chord in successkeyChords.ToList())
             {
-                foreach(KeyboardChord? chord in successkeyChords.ToList())
-                {
-                    foreach (KeyCode keyCode in chord.chords[args.IsKeyUp])
-                        BufferKeys[args.IsKeyDown].Add(new KeyEventArgsExt((Keys)keyCode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, false, args.Flags));
+                foreach (KeyCode keyCode in chord.chords[args.IsKeyUp])
+                    BufferKeys[args.IsKeyDown].Add(new KeyEventArgsExt((Keys)keyCode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, false, args.Flags));
 
-                    // calls current controller (if connected)
-                    IController controller = ControllerManager.GetTargetController();
-                    controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
+                // calls current controller (if connected)
+                IController controller = ControllerManager.GetTargetController();
+                controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
 
-                    // remove chord
-                    successkeyChords.Remove(chord);
-                }
+                // remove chord
+                successkeyChords.Remove(chord);
             }
         }
         else if (args.IsKeyDown)
@@ -299,11 +297,8 @@ public static class InputsManager
             InputsChordHoldTimer.Start();
 
             // reset listener timer
-            if (IsListening)
-            {
-                ListenerTimer.Stop();
-                ListenerTimer.Start();
-            }
+            ListenerTimer.Stop();
+            ListenerTimer.Start();
 
             // update previous key
             prevKeyEvent = args;
@@ -388,8 +383,7 @@ public static class InputsManager
                             KeyIndexOEM[args.IsKeyDown] = 0;
 
                             // store successful hotkey
-                            if (!successkeyChords.Contains(chord))
-                                successkeyChords.Add(chord);
+                            successkeyChords.Add(chord);
 
                             // clear buffer
                             BufferKeys[args.IsKeyDown].Clear();
@@ -422,8 +416,7 @@ public static class InputsManager
                                 KeyIndexHotkey[args.IsKeyDown] = 0;
 
                                 // store successful hotkey
-                                if (!successkeyChords.Contains(chord))
-                                    successkeyChords.Add(chord);
+                                successkeyChords.Add(chord);
 
                                 IController controller = ControllerManager.GetTargetController();
                                 controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
