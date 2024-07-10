@@ -64,7 +64,7 @@ public static class InputsManager
     private static IKeyboardMouseEvents m_GlobalHook;
 
     private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };
-    private static KeyboardChord successkeyChord;
+    private static readonly List<KeyboardChord> successkeyChords = new();
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
@@ -75,8 +75,9 @@ public static class InputsManager
     private static bool IsKeyUp;
 
     /*
-     * InputsManager v3
-     * Note: I'd like to modify the InputSimulator library to extend its capacities and ModifiedKeyDown and ModifiedKeyUp
+     * InputsManager v4
+     * Note: Here be dragons. Thou art forewarned
+     * Todo: Modify the InputSimulator library to extend its capacities with ModifiedKeyDown and ModifiedKeyUp
      *       https://github.com/GregsStack/InputSimulatorStandard
      */
 
@@ -253,17 +254,17 @@ public static class InputsManager
             }
             else
             {
-                if (successkeyChord is not null)
+                foreach(KeyboardChord? chord in successkeyChords.ToList())
                 {
-                    foreach (KeyCode keyCode in successkeyChord.chords[args.IsKeyUp])
+                    foreach (KeyCode keyCode in chord.chords[args.IsKeyUp])
                         BufferKeys[args.IsKeyDown].Add(new KeyEventArgsExt((Keys)keyCode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, false, args.Flags));
 
                     // calls current controller (if connected)
                     IController controller = ControllerManager.GetTargetController();
-                    controller?.InjectState(successkeyChord.state, args.IsKeyDown, args.IsKeyUp);
+                    controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
 
-                    // clear chord
-                    successkeyChord = null;
+                    // remove chord
+                    successkeyChords.Remove(chord);
                 }
             }
         }
@@ -273,7 +274,7 @@ public static class InputsManager
             if (BufferKeys[args.IsKeyDown].Any(key => key.KeyValue == args.KeyValue && key.IsKeyUp == args.IsKeyUp && key.IsKeyDown == args.IsKeyDown))
             {
                 // check if key is used in a chord, suppress it
-                if (successkeyChord.chords[args.IsKeyDown].Contains((KeyCode)args.KeyCode))
+                if (successkeyChords.Any(chord => chord.chords[args.IsKeyDown].Contains((KeyCode)args.KeyCode)))
                     args.SuppressKeyPress = true;
 
                 goto Done;
@@ -387,7 +388,8 @@ public static class InputsManager
                             KeyIndexOEM[args.IsKeyDown] = 0;
 
                             // store successful hotkey
-                            successkeyChord = chord;
+                            if (!successkeyChords.Contains(chord))
+                                successkeyChords.Add(chord);
 
                             // clear buffer
                             BufferKeys[args.IsKeyDown].Clear();
@@ -420,7 +422,8 @@ public static class InputsManager
                                 KeyIndexHotkey[args.IsKeyDown] = 0;
 
                                 // store successful hotkey
-                                successkeyChord = chord;
+                                if (!successkeyChords.Contains(chord))
+                                    successkeyChords.Add(chord);
 
                                 IController controller = ControllerManager.GetTargetController();
                                 controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
@@ -650,7 +653,6 @@ public static class InputsManager
         };
         successChord = new();
         bufferChord = new();
-        successkeyChord = null;
 
         // raise event
         StartedListening?.Invoke(buttonFlags, chordTarget);
@@ -709,7 +711,6 @@ public static class InputsManager
         currentChord = new();
         successChord = new();
         bufferChord = new();
-        successkeyChord = null;
     }
 
     private static void ExpiredListening()
