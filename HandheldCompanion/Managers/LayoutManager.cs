@@ -240,6 +240,13 @@ internal static class LayoutManager
     {
         switch (name)
         {
+            case "DesktopProfileOnStart":
+                {
+                    if (!SettingsManager.IsInitialized)
+                        SettingsManager.SetProperty("DesktopLayoutEnabled", value, false, true);
+                }
+                break;
+
             case "DesktopLayoutEnabled":
                 {
                     switch (Convert.ToBoolean(value))

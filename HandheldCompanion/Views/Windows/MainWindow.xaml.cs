@@ -363,13 +363,6 @@ public partial class MainWindow : GamepadWindow
             case "ToastEnable":
                 ToastManager.IsEnabled = Convert.ToBoolean(value);
                 break;
-            case "DesktopProfileOnStart":
-                if (SettingsManager.IsInitialized)
-                    break;
-
-                var DesktopLayout = Convert.ToBoolean(value);
-                SettingsManager.SetProperty("DesktopLayoutEnabled", DesktopLayout, false, true);
-                break;
             case "TelemetryApproved":
 
                 // If the input is null or empty, return false or handle as needed
