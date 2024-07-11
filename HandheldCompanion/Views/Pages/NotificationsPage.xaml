@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hints="clr-namespace:HandheldCompanion.Controls.Hints"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:l="clr-namespace:HandheldCompanion.Localization"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="About"
     Title="{l:Static resx:Resources.MainWindow_navNotifications}"
     d:Background="White"
@@ -57,7 +58,7 @@
             <hints:Hint_LegionGoLegionSpace d:Visibility="Visible" />
             <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
             <hints:Hint_MSIClawCenter d:Visibility="Visible" />
-            <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
+            <hints:Hint_SteamInput d:Visibility="Visible" />
             <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
             <hints:Hint_CoreIsolationCheck d:Visibility="Visible" />
             <hints:Hint_AMD_IntegerScalingCheck d:Visibility="Visible" />

@@ -322,16 +322,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] chord_neptune {
-            get {
-                object obj = ResourceManager.GetObject("chord_neptune", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
         public static string Controller_Connect {
@@ -1336,16 +1326,6 @@ namespace HandheldCompanion.Properties {
         public static string DPadPage_DPad {
             get {
                 return ResourceManager.GetString("DPadPage_DPad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] empty_neptune {
-            get {
-                object obj = ResourceManager.GetObject("empty_neptune", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         
@@ -3852,38 +3832,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart Steam.
+        ///   Looks up a localized string similar to Steam Input is enabled.
         /// </summary>
-        public static string Hint_SteamNeptuneAction {
+        public static string Hint_SteamInput {
             get {
-                return ResourceManager.GetString("Hint_SteamNeptuneAction", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamInput", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Steam Desktop Layout is applied.
+        ///   Looks up a localized string similar to Disable Steam Input.
         /// </summary>
-        public static string Hint_SteamNeptuneDesktop {
+        public static string Hint_SteamInputAction {
             get {
-                return ResourceManager.GetString("Hint_SteamNeptuneDesktop", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamInputAction", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Steam is already running and Steam Desktop Layout is applied. This may result in double input.
+        ///   Looks up a localized string similar to Steam is already running and Steam Input is activated, which may lead to unexpected behavior.
         /// </summary>
-        public static string Hint_SteamNeptuneDesktopDesc {
+        public static string Hint_SteamInputDesc {
             get {
-                return ResourceManager.GetString("Hint_SteamNeptuneDesktopDesc", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamInputDesc", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.
+        ///   Looks up a localized string similar to Handheld Companion will disable Steam Input and restart Steam.
         /// </summary>
-        public static string Hint_SteamNeptuneReadme {
+        public static string Hint_SteamInputReadme {
             get {
-                return ResourceManager.GetString("Hint_SteamNeptuneReadme", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamInputReadme", resourceCulture);
             }
         }
         

@@ -276,14 +276,17 @@ public static class ProcessManager
             ForegroundChanged?.Invoke(null, foregroundProcess);
         }
 
-        Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
+        bool success = Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
 
         // raise event
-        ProcessStopped?.Invoke(processEx);
+        if (success)
+        {
+            ProcessStopped?.Invoke(processEx);
 
-        LogManager.LogDebug("Process halted: {0}", processEx.Executable);
+            LogManager.LogDebug("Process halted: {0}", processEx.Executable);
 
-        processEx.Dispose();
+            processEx.Dispose();
+        }
     }
 
     private static bool CreateProcess(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)

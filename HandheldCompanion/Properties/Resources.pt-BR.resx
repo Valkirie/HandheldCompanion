@@ -124,12 +124,6 @@
   <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="chord_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\controller_base\chord_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="empty_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\XInputPlus\x64\XInput1_3.dl_;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -2367,13 +2361,13 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Selecionar</value>
   </data>
-  <data name="Hint_SteamNeptuneReadme" xml:space="preserve">
+  <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>Você deve reiniciar o Steam, então o Handheld Companion poderá automaticamente ajustar o Layout de Área de Trabalho Steam e prevenir entrada duplicada</value>
   </data>
-  <data name="Hint_SteamNeptuneDesktopDesc" xml:space="preserve">
+  <data name="Hint_SteamInputDesc" xml:space="preserve">
     <value>Steam já está em execução e o Layout de Área de Trabalho Steam está aplicado. Isto pode resultar em entrada duplicada</value>
   </data>
-  <data name="Hint_SteamNeptuneDesktop" xml:space="preserve">
+  <data name="Hint_SteamInput" xml:space="preserve">
     <value>Layout de Área de Trabalho Steam está aplicado</value>
   </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
@@ -2646,7 +2640,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Desabilitar serviços ASUS</value>
   </data>
-  <data name="Hint_SteamNeptuneAction" xml:space="preserve">
+  <data name="Hint_SteamInputAction" xml:space="preserve">
     <value>Reiniciar Steam</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">

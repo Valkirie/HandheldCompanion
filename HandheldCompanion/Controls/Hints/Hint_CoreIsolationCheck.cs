@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -61,7 +62,7 @@ namespace HandheldCompanion.Controls.Hints
             // UI thread (async)
             Application.Current.Dispatcher.Invoke(() =>
             {
-                this.Visibility = HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable ? Visibility.Visible : Visibility.Collapsed;
+                this.Visibility = Processor.GetCurrent() is IntelProcessor && (HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable) ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 

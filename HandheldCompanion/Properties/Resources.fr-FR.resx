@@ -2351,15 +2351,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
-  <data name="Hint_SteamNeptuneReadme" xml:space="preserve">
-    <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input</value>
-  </data>
-  <data name="Hint_SteamNeptuneDesktopDesc" xml:space="preserve">
-    <value>Steam is already running and Steam Desktop Layout is applied. This may result in double input</value>
-  </data>
-  <data name="Hint_SteamNeptuneDesktop" xml:space="preserve">
-    <value>Steam Desktop Layout is applied</value>
-  </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
   </data>
@@ -2629,9 +2620,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Disable ASUS services</value>
-  </data>
-  <data name="Hint_SteamNeptuneAction" xml:space="preserve">
-    <value>Restart Steam</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
     <value>Notifications</value>

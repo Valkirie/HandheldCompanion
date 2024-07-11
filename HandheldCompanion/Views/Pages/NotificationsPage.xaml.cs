@@ -28,7 +28,7 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
-            timer = new(1000);
+            timer = new(150) { AutoReset = false };
             timer.Elapsed += Timer_Elapsed;
         }
 

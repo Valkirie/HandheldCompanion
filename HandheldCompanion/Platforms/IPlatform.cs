@@ -177,6 +177,11 @@ public abstract class IPlatform : IDisposable
         Updated?.Invoke(status);
     }
 
+    protected void SettingsValueChaned(string name, object value)
+    {
+        SettingValueChanged?.Invoke(name, Convert.ToString(value));
+    }
+
     public string GetName()
     {
         return Name;
@@ -379,7 +384,13 @@ public abstract class IPlatform : IDisposable
 
             var origPath = $"{configPath}.orig";
             if (!File.Exists(origPath))
-                return false;
+                return false; 
+            
+            FileAttributes attr = File.GetAttributes(configPath);
+
+            // unset read-only
+            attr = attr & ~FileAttributes.ReadOnly;
+            File.SetAttributes(configPath, attr);
 
             File.Move(origPath, configPath, true);
             return true;
@@ -429,6 +440,13 @@ public abstract class IPlatform : IDisposable
             }
 
             File.WriteAllBytes(configPath, content);
+
+            FileAttributes attr = File.GetAttributes(configPath);
+
+            // set read-only
+            attr = attr | FileAttributes.ReadOnly;
+            File.SetAttributes(configPath, attr);
+
             return true;
         }
         catch (UnauthorizedAccessException)
@@ -449,11 +467,6 @@ public abstract class IPlatform : IDisposable
             LogManager.LogError("Failed to overwrite {0} configuration file", PlatformType);
             return false;
         }
-    }
-
-    protected void SystemWatcher_Changed(string name, object value)
-    {
-        SettingValueChanged?.Invoke(name, Convert.ToString(value));
     }
 
     #region events
