@@ -3,6 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -243,9 +244,11 @@ namespace HandheldCompanion.Managers
                     }
                 }
 
+                /*
                 // clear history on page swap
                 if (_gamepadPage is not null)
                     prevControl.Remove(_gamepadPage.Tag, out _);
+                */
 
                 // set rendering state
                 _rendered = true;
@@ -634,6 +637,34 @@ namespace HandheldCompanion.Managers
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickDown))
                 {
                     _currentScrollViewer?.ScrollToVerticalOffset(_currentScrollViewer.VerticalOffset + 50);
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.Back))
+                {
+                    if (_currentWindow is MainWindow mainWindow)
+                    {
+                        switch(mainWindow.navView.IsPaneOpen)
+                        {
+                            case false:
+                                if (prevNavigation is not null)
+                                    Focus(prevNavigation);
+                                break;
+                            case true:
+                                {
+                                    if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control) && control is not NavigationViewItem)
+                                        Focus(control);
+                                    else
+                                    {
+                                        // get the nearest non-navigation control
+                                        focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
+                                        Focus(focusedElement);
+                                    }
+                                }
+                                break;
+                        }
+
+                        mainWindow.navView.IsPaneOpen = !mainWindow.navView.IsPaneOpen;
+                        return;
+                    }
                 }
 
                 // navigation

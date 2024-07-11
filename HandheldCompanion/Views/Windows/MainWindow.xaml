@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{l:Static resx:Resources.MainWindow_HandheldCompanion}"
     Width="1280"
     Height="720"
@@ -38,7 +39,9 @@
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"
         OpenPaneLength="160"
+        PaneClosed="navView_PaneClosed"
         PaneDisplayMode="Left"
+        PaneOpened="navView_PaneOpened"
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="Always">
 
@@ -134,7 +137,7 @@
                                 Glyph="&#xF136;" />
                             <ui:FontIcon
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="20"
+                                FontWeight="Black"
                                 Foreground="White"
                                 Glyph="&#xF13C;" />
                         </Grid>
@@ -157,7 +160,6 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*" />
-                    <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
 
                 <Grid>
@@ -176,11 +178,13 @@
                 </Grid>
 
                 <!--  GAMEPAD AREA  -->
-                <Grid
-                    Grid.Row="1"
-                    Margin="20,0,20,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
+                <Border
+                    Margin="30"
+                    Padding="6,2,9,2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Background="{DynamicResource NavigationViewDefaultPaneBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <ikw:SimpleStackPanel
                         HorizontalAlignment="Right"
@@ -188,23 +192,27 @@
                         Orientation="Horizontal"
                         Spacing="6">
 
-                        <!--  Toggle  -->
-                        <ikw:SimpleStackPanel
-                            Name="GamepadUIToggle"
-                            Orientation="Horizontal"
-                            Spacing="2"
-                            Visibility="Collapsed">
-                            <ui:FontIcon
-                                Name="GamepadUIToggleIcon"
-                                Height="40"
-                                VerticalAlignment="Center"
-                                FontFamily="PromptFont"
-                                FontSize="28" />
+                        <!--  More options  -->
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                            <Grid>
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="18"
+                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                    Glyph="&#xe91f;" />
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="PromptFont"
+                                    FontSize="28"
+                                    Glyph="&#x21fb;" />
+                            </Grid>
                             <TextBlock
-                                Name="GamepadUIToggleDesc"
+                                Name="PaneText"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}" />
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="Open navigation" />
                         </ikw:SimpleStackPanel>
 
                         <!--  Select  -->
@@ -213,12 +221,19 @@
                             Orientation="Horizontal"
                             Spacing="2"
                             Visibility="Collapsed">
-                            <ui:FontIcon
-                                Name="GamepadUISelectIcon"
-                                Height="40"
-                                VerticalAlignment="Center"
-                                FontFamily="PromptFont"
-                                FontSize="28" />
+                            <Grid>
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="18"
+                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                    Glyph="&#xe91f;" />
+                                <ui:FontIcon
+                                    Name="GamepadUISelectIcon"
+                                    VerticalAlignment="Center"
+                                    FontFamily="PromptFont"
+                                    FontSize="28" />
+                            </Grid>
                             <TextBlock
                                 Name="GamepadUISelectDesc"
                                 VerticalAlignment="Center"
@@ -232,20 +247,53 @@
                             Orientation="Horizontal"
                             Spacing="2"
                             Visibility="Collapsed">
-                            <ui:FontIcon
-                                Name="GamepadUIBackIcon"
-                                Height="40"
-                                VerticalAlignment="Center"
-                                FontFamily="PromptFont"
-                                FontSize="28" />
+                            <Grid>
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="18"
+                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                    Glyph="&#xe91f;" />
+                                <ui:FontIcon
+                                    Name="GamepadUIBackIcon"
+                                    VerticalAlignment="Center"
+                                    FontFamily="PromptFont"
+                                    FontSize="28" />
+                            </Grid>
                             <TextBlock
                                 Name="GamepadUIBackDesc"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource BodyTextBlockStyle}" />
                         </ikw:SimpleStackPanel>
+
+                        <!--  Toggle  -->
+                        <ikw:SimpleStackPanel
+                            Name="GamepadUIToggle"
+                            Orientation="Horizontal"
+                            Spacing="2"
+                            Visibility="Collapsed">
+                            <Grid>
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="18"
+                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                    Glyph="&#xe91f;" />
+                                <ui:FontIcon
+                                    Name="GamepadUIToggleIcon"
+                                    VerticalAlignment="Center"
+                                    FontFamily="PromptFont"
+                                    FontSize="28" />
+                            </Grid>
+                            <TextBlock
+                                Name="GamepadUIToggleDesc"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
-                </Grid>
+                </Border>
             </Grid>
         </ui:NavigationView.Content>
     </ui:NavigationView>

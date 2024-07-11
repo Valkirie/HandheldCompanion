@@ -773,6 +773,18 @@ public partial class MainWindow : GamepadWindow
         return true;
     }
 
+    private void navView_PaneOpened(NavigationView sender, object args)
+    {
+        // todo: localize me
+        PaneText.Text = "Close navigation";
+    }
+
+    private void navView_PaneClosed(NavigationView sender, object args)
+    {
+        // todo: localize me
+        PaneText.Text = "Open navigation";
+    }
+
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
         navView.IsBackEnabled = ContentFrame.CanGoBack;
