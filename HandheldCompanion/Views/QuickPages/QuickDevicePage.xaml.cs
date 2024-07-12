@@ -28,8 +28,9 @@ public partial class QuickDevicePage : Page
     {
         InitializeComponent();
 
-        MultimediaManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
-        MultimediaManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
+        MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        MultimediaManager.Initialized += MultimediaManager_Initialized;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
@@ -60,20 +61,10 @@ public partial class QuickDevicePage : Page
         if (profile.IntegerScalingEnabled)
         {
             DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
-            var profileResolution = desktopScreen?.screenDividers.FirstOrDefault(d => d.divider == profile.IntegerScalingDivider);
+
+            ScreenDivider? profileResolution = desktopScreen?.screenDividers.FirstOrDefault(d => d.divider == profile.IntegerScalingDivider);
             if (profileResolution is not null)
-            {
                 SetResolution(profileResolution.resolution);
-            }
-        }
-        else
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                // Revert back to resolution in device settings
-                SetResolution();
-            });
         }
 
         // UI thread (async)
@@ -82,7 +73,6 @@ public partial class QuickDevicePage : Page
             var canChangeDisplay = !profile.IntegerScalingEnabled;
             DisplayStack.IsEnabled = canChangeDisplay;
             ResolutionOverrideStack.Visibility = canChangeDisplay ? Visibility.Collapsed : Visibility.Visible;
-
         });
     }
 
@@ -91,12 +81,14 @@ public partial class QuickDevicePage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            SetResolution();
-
             if (profile.IntegerScalingEnabled)
             {
                 DisplayStack.IsEnabled = true;
                 ResolutionOverrideStack.Visibility = Visibility.Collapsed;
+
+                // restore default resolution
+                if (profile.IntegerScalingDivider != 1)
+                    SetResolution();
             }
         });
     }
@@ -158,34 +150,50 @@ public partial class QuickDevicePage : Page
         }).Start();
     }
 
-    private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
+    private void MultimediaManager_Initialized()
     {
-        ComboBoxResolution.Items.Clear();
-        foreach (ScreenResolution resolution in screen.screenResolutions)
-            ComboBoxResolution.Items.Add(resolution);
+        // do something
     }
 
-    private void DesktopManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
+    private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            ComboBoxResolution.Items.Clear();
+            foreach (ScreenResolution resolution in screen.screenResolutions)
+                ComboBoxResolution.Items.Add(resolution);
+        });
+    }
+
+    private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // We don't want to change the combobox when it's changed from profile integer scaling
-        var currentProfile = ProfileManager.GetCurrent();
-        if (ComboBoxResolution.SelectedItem is not null && currentProfile is not null && currentProfile.IntegerScalingEnabled)
-            return;
-
-        ComboBoxResolution.SelectedItem = resolution;
-
-        int screenFrequency = MultimediaManager.PrimaryDesktop.GetCurrentFrequency();
-        foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
+        Profile? currentProfile = ProfileManager.GetCurrent();
+        if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
         {
-            if (comboBoxItem.Tag is int frequency)
+            ProfileManager_Applied(currentProfile, UpdateSource.Background);
+            return;
+        }
+
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            ComboBoxResolution.SelectedItem = resolution;
+
+            int screenFrequency = MultimediaManager.PrimaryDesktop.GetCurrentFrequency();
+            foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
             {
-                if (frequency == screenFrequency)
+                if (comboBoxItem.Tag is int frequency)
                 {
-                    ComboBoxFrequency.SelectedItem = comboBoxItem;
-                    break;
+                    if (frequency == screenFrequency)
+                    {
+                        ComboBoxFrequency.SelectedItem = comboBoxItem;
+                        break;
+                    }
                 }
             }
-        }
+        });
     }
 
     private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)

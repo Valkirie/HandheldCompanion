@@ -3,10 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickDevice"
     Title="{l:Static resx:Resources.QuickDevicePage_Title}"
     Margin="15,0,0,6"
@@ -63,26 +64,6 @@
                             HorizontalAlignment="Stretch"
                             IsReadOnly="True"
                             SelectionChanged="ComboBoxResolution_SelectionChanged" />
-
-                        <ikw:SimpleStackPanel
-                            Name="ResolutionOverrideStack"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="2"
-                            Margin="20,6,0,0"
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal">
-                            <ui:FontIcon
-                                Height="20"
-                                Margin="10,0"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe7ba;" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{l:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
-                                TextWrapping="Wrap" />
-                        </ikw:SimpleStackPanel>
                     </Grid>
                 </Border>
 
@@ -124,6 +105,34 @@
                     </Grid>
                 </Border>
             </ikw:SimpleStackPanel>
+
+            <Border
+                Name="ResolutionOverrideStack"
+                Padding="15,12,12,12"
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <ikw:SimpleStackPanel
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="20,6,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+                    <ui:FontIcon
+                        Height="20"
+                        Margin="10,0"
+                        HorizontalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                        Glyph="&#xe7ba;" />
+                    <TextBlock
+                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{l:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
+                        TextWrapping="Wrap" />
+                </ikw:SimpleStackPanel>
+            </Border>
 
             <Border
                 Padding="15,12,12,12"
