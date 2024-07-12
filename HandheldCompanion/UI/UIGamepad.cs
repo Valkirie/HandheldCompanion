@@ -76,6 +76,9 @@ namespace HandheldCompanion.Managers
             _gamepadTimer = new Timer(25) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
 
+            // store top left navigation view item
+            prevNavigation = WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
+
             ControllerManager.InputsUpdated += InputsUpdated;
         }
 
@@ -274,6 +277,8 @@ namespace HandheldCompanion.Managers
                     // update navigation
                     prevNavigation = (NavigationViewItem)control;
                     break;
+                case "ContentDialog":
+                    return;
                 default:
                     ToolTipService.SetInitialShowDelay(control, 250);
                     break;
@@ -308,16 +313,9 @@ namespace HandheldCompanion.Managers
                     case "OverlayQuickTools":
                     case "TouchScrollViewer":
                         {
+                            // a new page opened
                             if (prevNavigation is not null)
-                            {
-                                // a new page opened
-                                controlFocused = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
-                            }
-                            else
-                            {
-                                // first start
-                                prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
-                            }
+                                controlFocused = prevNavigation;
                         }
                         break;
 
