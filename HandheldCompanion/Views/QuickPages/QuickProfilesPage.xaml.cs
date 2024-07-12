@@ -256,9 +256,6 @@ public partial class QuickProfilesPage : Page
 
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
-        if (selectedProfile is null)
-            return;
-
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread (async)
@@ -269,7 +266,8 @@ public partial class QuickProfilesPage : Page
             foreach (ScreenFramelimit frameLimit in frameLimits)
                 cB_Framerate.Items.Add(frameLimit);
 
-            cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+            if (selectedProfile is not null)
+                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
         });
     }
 
