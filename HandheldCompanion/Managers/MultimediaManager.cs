@@ -182,7 +182,24 @@ public static class MultimediaManager
             }
 
             // sort resolutions
-            desktopScreen.SortResolutions();
+            desktopScreen.screenResolutions.Sort();
+
+            // get native resolution
+            ScreenResolution nativeResolution = desktopScreen.screenResolutions.First();
+
+            // get integer scaling dividers
+            int idx = 1;
+
+            while (true)
+            {
+                int height = nativeResolution.Height / idx;
+                ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(r => r.Height == height);
+                if (dividedRes is null)
+                    break;
+
+                desktopScreen.screenDividers.Add(new(idx, dividedRes));
+                idx++;
+            }
 
             // add to temporary array
             desktopScreens.Add(desktopScreen.DevicePath, desktopScreen);
@@ -254,23 +271,6 @@ public static class MultimediaManager
 
         // force trigger events
         SystemEvents_DisplaySettingsChanged(null, null);
-
-        // get native resolution
-        ScreenResolution nativeResolution = PrimaryDesktop.screenResolutions.First();
-
-        // get integer scaling dividers
-        int idx = 1;
-
-        while (true)
-        {
-            int height = nativeResolution.Height / idx;
-            ScreenResolution? dividedRes = PrimaryDesktop.screenResolutions.FirstOrDefault(r => r.Height == height);
-            if (dividedRes is null)
-                break;
-
-            PrimaryDesktop.screenDividers.Add(new(idx, dividedRes));
-            idx++;
-        }
 
         IsInitialized = true;
         Initialized?.Invoke();

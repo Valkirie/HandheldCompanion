@@ -210,6 +210,7 @@ public partial class MainWindow : GamepadWindow
         // start static managers in sequence
         SplashScreen.LoadingSequence.Text = "Initializing managers...";
         GPUManager.Start();
+        MultimediaManager.Start();
         PowerProfileManager.Start();
         ProfileManager.Start();
         ControllerManager.Start();
@@ -219,7 +220,6 @@ public partial class MainWindow : GamepadWindow
         LayoutManager.Start();
         SystemManager.Start();
         DynamicLightingManager.Start();
-        MultimediaManager.Start();
         VirtualManager.Start();
         InputsManager.Start();
         SensorsManager.Start();

@@ -198,7 +198,8 @@ public partial class ProfilesPage : Page
             foreach (ScreenFramelimit frameLimit in frameLimits)
                 cB_Framerate.Items.Add(frameLimit);
 
-            cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+            if (selectedProfile is not null)
+                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
         });
     }
 

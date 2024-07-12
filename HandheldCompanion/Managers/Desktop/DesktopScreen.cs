@@ -6,7 +6,7 @@ using static HandheldCompanion.Managers.MultimediaManager;
 
 namespace HandheldCompanion.Managers.Desktop;
 
-public class ScreenResolution
+public class ScreenResolution : IComparable<ScreenResolution>
 {
     public SortedList<int, int> Frequencies;
     public int Height;
@@ -24,6 +24,36 @@ public class ScreenResolution
     public override string ToString()
     {
         return $"{Width} x {Height}";
+    }
+
+    public int CompareTo(ScreenResolution other)
+    {
+        if (other == null) return 1;
+
+        // First compare widths
+        int widthComparison = Width.CompareTo(other.Width);
+        if (widthComparison != 0)
+        {
+            return -widthComparison;
+        }
+
+        // If widths are equal, compare heights
+        return -Height.CompareTo(other.Height);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is ScreenResolution other)
+        {
+            return Width == other.Width && Height == other.Height;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        // Combine Width and Height into a single hash code
+        return HashCode.Combine(Width, Height);
     }
 }
 
@@ -251,10 +281,5 @@ public class DesktopScreen
             return num;
 
         return num + 1;
-    }
-
-    public void SortResolutions()
-    {
-        screenResolutions = screenResolutions.OrderByDescending(a => a.Width).ThenByDescending(b => b.Height).ToList();
     }
 }
