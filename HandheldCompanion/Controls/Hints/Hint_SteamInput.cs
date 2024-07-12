@@ -10,7 +10,6 @@ namespace HandheldCompanion.Controls.Hints
         public Hint_SteamInput() : base()
         {
             PlatformManager.Steam.SettingValueChanged += Steam_SettingValueChanged;
-            PlatformManager.Initialized += PlatformManager_Initialized;
 
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
@@ -43,11 +42,6 @@ namespace HandheldCompanion.Controls.Hints
                     }
                 }
             });
-        }
-
-        private void PlatformManager_Initialized()
-        {
-            Steam_SettingValueChanged("UseSteamControllerConfig", PlatformManager.Steam.GetUseSteamControllerConfigValue());
         }
 
         protected override void HintActionButton_Click(object sender, RoutedEventArgs e)
