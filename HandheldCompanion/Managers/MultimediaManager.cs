@@ -185,14 +185,14 @@ public static class MultimediaManager
             desktopScreen.SortResolutions();
 
             // add to temporary array
-            desktopScreens.Add(desktopScreen.FriendlyName, desktopScreen);
+            desktopScreens.Add(desktopScreen.DevicePath, desktopScreen);
         }
 
         // get refreshed primary screen (can't be null)
         DesktopScreen newPrimary = desktopScreens.Values.Where(a => a.IsPrimary).FirstOrDefault();
 
         // looks like we have a new primary screen
-        if (PrimaryDesktop is null || !PrimaryDesktop.FriendlyName.Equals(newPrimary.FriendlyName))
+        if (PrimaryDesktop is null || !PrimaryDesktop.DevicePath.Equals(newPrimary.DevicePath))
         {
             // raise event (New primary display)
             PrimaryScreenChanged?.Invoke(newPrimary);
@@ -202,17 +202,17 @@ public static class MultimediaManager
         PrimaryDesktop = newPrimary;
 
         // raise event (New screen detected)
-        foreach(DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.FriendlyName)))
+        foreach(DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
             ScreenConnected?.Invoke(desktop);
 
         // raise event (New screen detected)
-        foreach (DesktopScreen desktop in AllScreens.Values.Where(a => !desktopScreens.ContainsKey(a.FriendlyName)))
+        foreach (DesktopScreen desktop in AllScreens.Values.Where(a => !desktopScreens.ContainsKey(a.DevicePath)))
             ScreenDisconnected?.Invoke(desktop);
 
         // clear array and transfer screens
         AllScreens.Clear();
         foreach (DesktopScreen desktop in desktopScreens.Values)
-            AllScreens.Add(desktop.FriendlyName, desktop);
+            AllScreens.Add(desktop.DevicePath, desktop);
 
         // raise event (Display settings were updated)
         ScreenResolution screenResolution = PrimaryDesktop.GetResolution();

@@ -70,6 +70,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private bool AutoHide;
     private bool isClosing;
+
     private readonly DispatcherTimer clockUpdateTimer;
 
     public QuickHomePage homePage;
@@ -183,16 +184,16 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         // pull quicktools settings
         int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
-        string FriendlyName = SettingsManager.GetString("QuickToolsScreen");
+        string DevicePath = SettingsManager.GetString("QuickToolsScreen");
 
         // Attempt to find the screen with the specified friendly name
-        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.FriendlyName.Equals(FriendlyName)) ?? MultimediaManager.PrimaryDesktop;
+        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath)) ?? MultimediaManager.PrimaryDesktop;
 
         // Find the corresponding Screen object
         targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
 
         // UI thread
-        Application.Current.Dispatcher.Invoke((Delegate)(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // Common settings across cases 0 and 1
             MaxWidth = (int)Math.Min(_MaxWidth, targetScreen.WpfBounds.Width);
@@ -203,34 +204,54 @@ public partial class OverlayQuickTools : GamepadWindow
 
             switch (QuickToolsLocation)
             {
+                case 2: // Maximized
+                    MaxWidth = double.PositiveInfinity;
+                    MaxHeight = double.PositiveInfinity;
+                    WindowStyle = WindowStyle.None;
+                    break;
+            }
+        });
+
+        switch (QuickToolsLocation)
+        {
+            case 0: // Left
+                this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                break;
+
+            case 1: // Right
+                this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                break;
+
+            case 2: // Maximized
+                this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
+                break;
+        }
+
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            switch (QuickToolsLocation)
+            {
                 case 0: // Left
-                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                    Top -= _Margin;
                     Left += _Margin;
                     break;
 
                 case 1: // Right
-                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                    Top -= _Margin;
                     Left -= _Margin;
                     break;
-
-                case 2: // Maximized
-                    Top = 0;
-                    MaxWidth = double.PositiveInfinity;
-                    MaxHeight = double.PositiveInfinity;
-                    WindowStyle = WindowStyle.None;
-                    this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
-                    return; // Early return for case 2
             }
+        });
 
-            // Common operation for case 0 and 1 after switch
-            _Top = Top = targetScreen.WpfBounds.Bottom - Height - _Margin;
-            _Left = Left;
-        }));
+        // used by SlideIn/SlideOut
+        _Top = Top;
+        _Left = Left;
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             var BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
@@ -436,8 +457,8 @@ public partial class OverlayQuickTools : GamepadWindow
                     {
                         try
                         {
-                            Show();
-                            SlideIn();
+                            try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
+                            //SlideIn();
                             Focus();
 
                             if (hwndSource != null)
@@ -452,7 +473,8 @@ public partial class OverlayQuickTools : GamepadWindow
                     break;
                 case Visibility.Visible:
                     {
-                        SlideOut();
+                        Hide();
+                        //SlideOut();
 
                         InvokeLostGamepadWindowFocus();
 

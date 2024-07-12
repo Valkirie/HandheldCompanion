@@ -61,7 +61,7 @@ public partial class SettingsPage : Page
             int idx = -1;
             foreach (DesktopScreen desktopScreen in cB_QuickToolsScreen.Items.OfType<DesktopScreen>())
             {
-                if (desktopScreen.FriendlyName.Equals(screen.FriendlyName))                    
+                if (desktopScreen.DevicePath.Equals(screen.DevicePath))                    
                     idx = cB_QuickToolsScreen.Items.IndexOf(desktopScreen);
             }
 
@@ -79,13 +79,13 @@ public partial class SettingsPage : Page
         {
             // check if current target was disconnected
             if (cB_QuickToolsScreen.SelectedItem is DesktopScreen targetScreen)
-                if (targetScreen.FriendlyName.Equals(screen.FriendlyName))
+                if (targetScreen.DevicePath.Equals(screen.DevicePath))
                     cB_QuickToolsScreen.SelectedIndex = 0;
 
             int idx = -1;
             foreach (DesktopScreen desktopScreen in cB_QuickToolsScreen.Items.OfType<DesktopScreen>())
             {
-                if (desktopScreen.FriendlyName.Equals(screen.FriendlyName))
+                if (desktopScreen.DevicePath.Equals(screen.DevicePath))
                     idx = cB_QuickToolsScreen.Items.IndexOf(desktopScreen);
             }
 
@@ -236,10 +236,10 @@ public partial class SettingsPage : Page
                     break;
                 case "QuickToolsScreen":
                     {
-                        string FriendlyName = Convert.ToString(value);
+                        string DevicePath = Convert.ToString(value);
 
                         DesktopScreen? selectedScreen = cB_QuickToolsScreen.Items.OfType<DesktopScreen>()
-                        .FirstOrDefault(screen => screen.FriendlyName.Equals(FriendlyName));
+                        .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath));
 
                         if (selectedScreen != null)
                             cB_QuickToolsScreen.SelectedItem = selectedScreen;
@@ -567,6 +567,6 @@ public partial class SettingsPage : Page
             return;
 
         if (cB_QuickToolsScreen.SelectedItem is DesktopScreen desktopScreen)
-            SettingsManager.SetProperty("QuickToolsScreen", desktopScreen.FriendlyName);
+            SettingsManager.SetProperty("QuickToolsScreen", desktopScreen.DevicePath);
     }
 }
