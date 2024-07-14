@@ -537,12 +537,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
-        switch(WindowStyle)
-        {
-            case WindowStyle.ToolWindow:
-                SettingsManager.SetProperty("QuickToolsWidth", ActualWidth);
-                break;
-        }
+        // position and size settings
+        SettingsManager.SetProperty("QuickToolsWidth", ActualWidth);
 
         e.Cancel = !isClosing;
 
