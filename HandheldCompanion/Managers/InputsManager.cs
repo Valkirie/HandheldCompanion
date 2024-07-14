@@ -124,6 +124,9 @@ public static class InputsManager
             {
                 // compare ordered enumerable
                 List<KeyCode> chord_keys = OEMChord.GetChord(IsKeyDown);
+                if (chord_keys.Count == 0)
+                    continue;
+
                 existsCheck = chord_keys.All(x => chord.Any(y => x == y));
 
                 if (existsCheck)
@@ -230,12 +233,8 @@ public static class InputsManager
         bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
 
         if ((Injected || InjectedLL))
-        {
-            if (!(IsListening && currentChord.chordTarget == InputsChordTarget.Output))
-            {
+            if (IsListening && currentChord.chordTarget != InputsChordTarget.Output)
                 return;
-            }
-        }
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
 
@@ -375,6 +374,8 @@ public static class InputsManager
                     {
                         // compare ordered enumerable
                         List<KeyCode> chord_keys = chord.GetChord(args.IsKeyDown);
+                        if (chord_keys.Count == 0)
+                            continue;
 
                         bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
                         if (existsCheck)
@@ -408,6 +409,8 @@ public static class InputsManager
 
                             // compare ordered enumerable
                             List<KeyCode> chord_keys = hotkey.keyChord.GetChord(args.IsKeyDown);
+                            if (chord_keys.Count == 0)
+                                continue;
 
                             bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
                             if (existsCheck)
