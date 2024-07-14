@@ -57,6 +57,7 @@ namespace HandheldCompanion.Managers
             // set current window
             _currentWindow = gamepadWindow;
             _currentScrollViewer = _currentWindow.GetScrollViewer(_currentWindow);
+
             _currentWindow.GotFocus += _currentWindow_GotFocus;
             _currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
             _currentWindow.LostFocus += _currentWindow_LostFocus;
@@ -75,9 +76,6 @@ namespace HandheldCompanion.Managers
 
             _gamepadTimer = new Timer(25) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
-
-            // store top left navigation view item
-            prevNavigation = WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
 
             ControllerManager.InputsUpdated += InputsUpdated;
         }
@@ -216,6 +214,10 @@ namespace HandheldCompanion.Managers
             // UI thread (async)
             Application.Current.Dispatcher.Invoke(() =>
             {
+                // store top left navigation view item
+                if (prevNavigation is null)
+                    prevNavigation = WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
+
                 // specific-cases
                 switch (_gamepadPage.Tag)
                 {
@@ -636,7 +638,7 @@ namespace HandheldCompanion.Managers
                 {
                     _currentScrollViewer?.ScrollToVerticalOffset(_currentScrollViewer.VerticalOffset + 50);
                 }
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.Back))
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.Start))
                 {
                     if (_currentWindow is MainWindow mainWindow)
                     {
