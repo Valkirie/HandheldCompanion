@@ -596,6 +596,9 @@ namespace HandheldCompanion.Managers
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1))
                 {
+                    if (_currentWindow.currentDialog is not null)
+                        return;
+
                     if (prevNavigation is not null)
                     {
                         elementType = prevNavigation.GetType().Name;
@@ -606,6 +609,9 @@ namespace HandheldCompanion.Managers
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1))
                 {
+                    if (_currentWindow.currentDialog is not null)
+                        return;
+
                     if (prevNavigation is not null)
                     {
                         elementType = prevNavigation.GetType().Name;
