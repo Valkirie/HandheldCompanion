@@ -22,7 +22,6 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     Closing="Window_Closing"
     Loaded="Window_Loaded"
-    ResizeMode="NoResize"
     ShowActivated="False"
     ShowInTaskbar="False"
     Topmost="True"
