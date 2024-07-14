@@ -60,7 +60,7 @@ public static class WPFUtils
     public static Control GetTopLeftControl<T>(List<Control> controls) where T : Control
     {
         // filter list
-        controls = controls.Where(c => c is T).ToList();
+        controls = controls.Where(c => c is T && c.IsEnabled).ToList();
 
         // If no controls are found, return null
         if (controls == null || controls.Count == 0)
