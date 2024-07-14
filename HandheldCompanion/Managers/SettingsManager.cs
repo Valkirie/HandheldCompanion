@@ -21,6 +21,11 @@ public static class Settings
     public static readonly string OnScreenDisplayRAMLevel = "OnScreenDisplayRAMLevel";
     public static readonly string OnScreenDisplayVRAMLevel = "OnScreenDisplayVRAMLevel";
     public static readonly string OnScreenDisplayBATTLevel = "OnScreenDisplayBATTLevel";
+
+    /// <summary>
+    /// First version that implemented the new hotkey manager
+    /// </summary>
+    public static readonly string VersionHotkeyManager = "0.21.5.0";
 }
 
 public static class SettingsManager

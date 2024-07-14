@@ -98,9 +98,6 @@
     <Setting Name="MainWindowPrevState" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="FirstStart" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="MainWindowBackdrop" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
@@ -289,6 +286,9 @@
     </Setting>
     <Setting Name="QuickToolsScreen" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.0.0.0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -89,9 +89,9 @@ public partial class MainWindow : GamepadWindow
         // initialize splash screen
         SplashScreen = new SplashScreen();
 
-        // get first start
-        bool FirstStart = SettingsManager.GetBoolean("FirstStart");
-
+        // get last version
+        Version LastVersion = Version.Parse(SettingsManager.GetString("LastVersion"));
+        bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
         if (FirstStart)
         {
 #if !DEBUG
@@ -246,6 +246,9 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
+
+        // update LastVersion
+        SettingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
