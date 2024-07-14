@@ -1,10 +1,14 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Devices.Lenovo
 {
-    // Define the C extern functions and structures
     public class SapientiaUsb
     {
+        private static readonly object _lock = new object();
+
+        // Define the C extern functions and structures
+
         //leftGyroState rightGyroState 0 关闭陀螺仪 1开启陀螺仪
         public delegate void GyroStateCbFunc(int leftGyroState, int rightGyroState);
         //陀螺仪数据回调函数 leftGyroX左陀螺仪X leftGyroY 左陀螺仪Y rightGyroX 右陀螺仪X rightGyroY 右陀螺仪Y
@@ -14,184 +18,436 @@ namespace HandheldCompanion.Devices.Lenovo
         [StructLayout(LayoutKind.Sequential)]
         public struct GyroSensorStatus
         {
-            /* 
-                gyro_timestamp: 陀螺仪时间戳(0 - 255)
-            */
             public uint gyro_timestamp;
-            /*
-                g_sensor_ax: 陀螺仪角速度 X 轴
-            */
             public int g_sensor_ax;
-            /*
-                g_sensor_ay: 陀螺仪角速度 Y 轴        
-            */
             public int g_sensor_ay;
-            /*
-                g_sensor_az: 陀螺仪角速度 Z 轴        
-            */
             public int g_sensor_az;
-            /*
-                g_sensor_gx: 陀螺仪重力加速度 X 轴
-            */
             public int g_sensor_gx;
-            /*
-               g_sensor_gy: 陀螺仪重力加速度 Y 轴
-           */
             public int g_sensor_gy;
-            /*
-               g_sensor_gz: 陀螺仪重力加速度 Z 轴
-           */
             public int g_sensor_gz;
         };
 
-        // 陀螺仪传感器状态回调 left_gyro: 左陀螺仪传感器数据 right_gyro: 右陀螺仪传感器数据
         public delegate void GyroSensorStatusCbFunc(GyroSensorStatus left_gyro, GyroSensorStatus right_gyro);
 
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern void Init();
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "Init")]
+        private static extern void InitInternal();
 
-        //释放DLL线程和内存
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern void FreeSapientiaUsb();
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "FreeSapientiaUsb")]
+        private static extern void FreeSapientiaUsbInternal();
 
-        //0.正常, 1.发送数据失败 2。接收数据失败 3.连接手柄失败
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetLastErr();
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetLastErr")]
+        private static extern int GetLastErrInternal();
 
-        //mode：1.XBOX 模式（默认）2.Nintendo 模式 XBOX 模式与 Nintendo 模式的区别仅 ABXY 按键布局不同
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetGamePadMode(int modeType);
-        //获取手柄工作模式 mode：1.XBOX 模式（默认）2.Nintendo 模式
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetGamePadMode();
-        //获取左陀螺仪状态  status：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetLeftGyroStatus();
-        //设置左陀螺仪状态  status：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetLeftGyroStatus(int status);
-        //获取右陀螺仪状态  status：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetRightGyroStatus();
-        //设置右陀螺仪状态  status：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetRightGyroStatus(int status);
-        //iGyro: 3：Gamepad_L，4：Gamepad_R      sSetLinkStateBackFunctatus：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetGyroState(int iGyro, int value);
-        //设置陀螺仪回调函数
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetGyroStateCbFunc(GyroStateCbFunc cbFunc);
-        //获取陀螺仪模式
-        //return Mode：0：disable，1：attached，2：detached
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetGyroMode();
-        //获取螺仪模式状态  Mode：0：disable，1：attached，2：detached  device: 1：RX，2：Dongle
-        //return  GyroStatus：0：disable，1：As Left Joystick；2：As Right Joystick
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetGyroModeStatus(int mode, int gyroIndex);
-        //设置螺仪模式状态  Mode：0：disable，1：attached; 2：detached 
-        //  device: 1：RX，2：Dongle;
-        //  GyroIndex：1：左陀螺仪，2：右陀螺仪;
-        //  GyroStatus：0：disable，1：As Left Joystick；2：As Right Joystick
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int SetGyroModeStatus(int mode, int gyroIndex, int gyroStatus);
-        //陀螺仪数据回调函数
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetGyroDataBackFunc(GyroDataBackFunc BackFunc);
-        //设置陀螺仪传感器数据回调函数
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetGyroSensorStatusBackFunc(GyroSensorStatusCbFunc BackFunc);
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGamePadMode")]
+        private static extern bool SetGamePadModeInternal(int modeType);
 
-        //获取灯效开关 1.开启 0.关闭  //device 3:左手柄 4:右手柄
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetLlightingEffectEnable(int device);
-        //设置灯效开关 1.开启 0.关闭 //device 3:左手柄 4:右手柄
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetLightingEnable(int device, bool iswitch);
-        // 获取当前灯效配置 //device  3:左手柄 4:右手柄
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern LightionProfile GetCurrentLightProfile(int device);
-        //设置当前灯效配置 //device 3:左手柄 4:右手柄
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetLightingEffectProfileID(int device, LightionProfile lightPro);
-        //获取灯效配置页 profile: 1：Lighting Profile 01;2：Lighting Profile 02;3：Lighting Profile 03
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetQuickLightingEffect(int device);
-        //获取快捷灯效开关 return 1.开 0.关 -1.未获取成功
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetQuickLightingEffectEnable(int device);
-        //快捷设置灯效开关 //device 3:左手柄 4:右手柄  //index:快捷设置灯效配置页 profile: 1：Lighting Profile 01;2：Lighting Profile 02;3：Lighting Profile 03
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetQuickLightingEffectEnable(int device, bool enable);
-        //设置灯效配置页 device: 3为左手柄 4为右手柄 index 为 profile: 1：Lighting Profile 01; 2：Lighting Profile 02; 3：Lighting Profile 03
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetQuickLightingEffect(int device, int index);
-        //获取触摸板状态 tatus：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetTouchPadStatus();
-        //获取触摸板状态    status：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetTrackpadStatus(int device);
-        //设置触摸板状态 status：0:关，1:开
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetTouchPadStatus(int iSwitch);
-        //恢复出厂设置 device: 1：RX，2：Dongle; 3:左手柄 4:右手柄
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetDeviceDefault(int device);
-        //手柄版本信息
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern VERSION getUSBVerify(int device);
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetGamePadMode")]
+        private static extern int GetGamePadModeInternal();
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct VERSION
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetLeftGyroStatus")]
+        private static extern int GetLeftGyroStatusInternal();
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetLeftGyroStatus")]
+        private static extern bool SetLeftGyroStatusInternal(int status);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetRightGyroStatus")]
+        private static extern int GetRightGyroStatusInternal();
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetRightGyroStatus")]
+        private static extern bool SetRightGyroStatusInternal(int status);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGyroState")]
+        private static extern bool SetGyroStateInternal(int iGyro, int value);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGyroStateCbFunc")]
+        private static extern bool SetGyroStateCbFuncInternal(GyroStateCbFunc cbFunc);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetGyroMode")]
+        private static extern int GetGyroModeInternal();
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetGyroModeStatus")]
+        private static extern int GetGyroModeStatusInternal(int mode, int gyroIndex);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGyroModeStatus")]
+        private static extern int SetGyroModeStatusInternal(int mode, int gyroIndex, int gyroStatus);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGyroDataBackFunc")]
+        private static extern bool SetGyroDataBackFuncInternal(GyroDataBackFunc BackFunc);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGyroSensorStatusBackFunc")]
+        private static extern bool SetGyroSensorStatusBackFuncInternal(GyroSensorStatusCbFunc BackFunc);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetLlightingEffectEnable")]
+        private static extern int GetLlightingEffectEnableInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetLightingEnable")]
+        private static extern bool SetLightingEnableInternal(int device, bool iswitch);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetCurrentLightProfile")]
+        private static extern LightionProfile GetCurrentLightProfileInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetLightingEffectProfileID")]
+        private static extern bool SetLightingEffectProfileIDInternal(int device, LightionProfile lightPro);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetQuickLightingEffect")]
+        private static extern int GetQuickLightingEffectInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetQuickLightingEffectEnable")]
+        private static extern int GetQuickLightingEffectEnableInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetQuickLightingEffectEnable")]
+        private static extern bool SetQuickLightingEffectEnableInternal(int device, bool enable);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetQuickLightingEffect")]
+        private static extern bool SetQuickLightingEffectInternal(int device, int index);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetTouchPadStatus")]
+        private static extern int GetTouchPadStatusInternal();
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetTrackpadStatus")]
+        private static extern int GetTrackpadStatusInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetTouchPadStatus")]
+        private static extern bool SetTouchPadStatusInternal(int iSwitch);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetDeviceDefault")]
+        private static extern bool SetDeviceDefaultInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "getUSBVerify")]
+        private static extern VERSION getUSBVerifyInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetStickCustomCurve")]
+        private static extern LegionJoystickCurveProfile GetStickCustomCurveInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetStickCustomCurve")]
+        private static extern bool SetStickCustomCurveInternal(int device, LegionJoystickCurveProfile curveProfile);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetStickCustomDeadzone")]
+        private static extern int GetStickCustomDeadzoneInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetStickCustomDeadzone")]
+        private static extern bool SetStickCustomDeadzoneInternal(int device, int deadzone);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetGyroSensorDataOnorOff")]
+        private static extern bool SetGyroSensorDataOnorOffInternal(int device, int status);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetTriggerDeadzoneAndMargin")]
+        private static extern LegionTriggerDeadzone GetTriggerDeadzoneAndMarginInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetTriggerDeadzoneAndMargin")]
+        private static extern bool SetTriggerDeadzoneAndMarginInternal(int device, LegionTriggerDeadzone deadzone);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "GetAutoSleepTime")]
+        private static extern int GetAutoSleepTimeInternal(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "SetAutoSleepTime")]
+        private static extern bool SetAutoSleepTimeInternal(int device, int autosleeptime);
+
+        // Thread-safe wrapper methods
+
+        public static void Init()
         {
-            public int verPro;
-            public int verCMD;
-            public int verFir;
-            public int verHard;
-
-            public VERSION(int verPro, int verCMD, int verFir, int verHard)
+            lock (_lock)
             {
-                this.verPro = verPro;
-                this.verCMD = verCMD;
-                this.verFir = verFir;
-                this.verHard = verHard;
+                InitInternal();
             }
         }
 
-        // Below are converted by @MSeys
+        public static void FreeSapientiaUsb()
+        {
+            lock (_lock)
+            {
+                FreeSapientiaUsbInternal();
+            }
+        }
 
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern LegionJoystickCurveProfile GetStickCustomCurve(int device);
+        public static int GetLastErr()
+        {
+            lock (_lock)
+            {
+                return GetLastErrInternal();
+            }
+        }
 
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetStickCustomCurve(int device, LegionJoystickCurveProfile curveProfile);
+        public static bool SetGamePadMode(int modeType)
+        {
+            lock (_lock)
+            {
+                return SetGamePadModeInternal(modeType);
+            }
+        }
 
-        // Deadzone Range is 0-99 (LS shows 1%-100%)
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetStickCustomDeadzone(int device);
+        public static int GetGamePadMode()
+        {
+            lock (_lock)
+            {
+                return GetGamePadModeInternal();
+            }
+        }
 
-        // Deadzone Range is 0-99 (LS shows 1%-100%)
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetStickCustomDeadzone(int device, int deadzone);
+        public static int GetLeftGyroStatus()
+        {
+            lock (_lock)
+            {
+                return GetLeftGyroStatusInternal();
+            }
+        }
 
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetGyroSensorDataOnorOff(int device, int status);
+        public static bool SetLeftGyroStatus(int status)
+        {
+            lock (_lock)
+            {
+                return SetLeftGyroStatusInternal(status);
+            }
+        }
 
-        // Range is 0-99 on Deadzone and Margin
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern LegionTriggerDeadzone GetTriggerDeadzoneAndMargin(int device);
+        public static int GetRightGyroStatus()
+        {
+            lock (_lock)
+            {
+                return GetRightGyroStatusInternal();
+            }
+        }
 
-        // Range is 0-99 on Deadzone and Margin
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetTriggerDeadzoneAndMargin(int device, LegionTriggerDeadzone deadzone);
+        public static bool SetRightGyroStatus(int status)
+        {
+            lock (_lock)
+            {
+                return SetRightGyroStatusInternal(status);
+            }
+        }
 
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetAutoSleepTime(int device);
+        public static bool SetGyroState(int iGyro, int value)
+        {
+            lock (_lock)
+            {
+                return SetGyroStateInternal(iGyro, value);
+            }
+        }
 
-        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool SetAutoSleepTime(int device, int autosleeptime);
+        public static bool SetGyroStateCbFunc(GyroStateCbFunc cbFunc)
+        {
+            lock (_lock)
+            {
+                return SetGyroStateCbFuncInternal(cbFunc);
+            }
+        }
+
+        public static int GetGyroMode()
+        {
+            lock (_lock)
+            {
+                return GetGyroModeInternal();
+            }
+        }
+
+        public static int GetGyroModeStatus(int mode, int gyroIndex)
+        {
+            lock (_lock)
+            {
+                return GetGyroModeStatusInternal(mode, gyroIndex);
+            }
+        }
+
+        public static int SetGyroModeStatus(int mode, int gyroIndex, int gyroStatus)
+        {
+            lock (_lock)
+            {
+                return SetGyroModeStatusInternal(mode, gyroIndex, gyroStatus);
+            }
+        }
+
+        public static bool SetGyroDataBackFunc(GyroDataBackFunc BackFunc)
+        {
+            lock (_lock)
+            {
+                return SetGyroDataBackFuncInternal(BackFunc);
+            }
+        }
+
+        public static bool SetGyroSensorStatusBackFunc(GyroSensorStatusCbFunc BackFunc)
+        {
+            lock (_lock)
+            {
+                return SetGyroSensorStatusBackFuncInternal(BackFunc);
+            }
+        }
+
+        public static int GetLlightingEffectEnable(int device)
+        {
+            lock (_lock)
+            {
+                return GetLlightingEffectEnableInternal(device);
+            }
+        }
+
+        public static bool SetLightingEnable(int device, bool iswitch)
+        {
+            lock (_lock)
+            {
+                return SetLightingEnableInternal(device, iswitch);
+            }
+        }
+
+        public static LightionProfile GetCurrentLightProfile(int device)
+        {
+            lock (_lock)
+            {
+                return GetCurrentLightProfileInternal(device);
+            }
+        }
+
+        public static bool SetLightingEffectProfileID(int device, LightionProfile lightPro)
+        {
+            lock (_lock)
+            {
+                return SetLightingEffectProfileIDInternal(device, lightPro);
+            }
+        }
+
+        public static int GetQuickLightingEffect(int device)
+        {
+            lock (_lock)
+            {
+                return GetQuickLightingEffectInternal(device);
+            }
+        }
+
+        public static int GetQuickLightingEffectEnable(int device)
+        {
+            lock (_lock)
+            {
+                return GetQuickLightingEffectEnableInternal(device);
+            }
+        }
+
+        public static bool SetQuickLightingEffectEnable(int device, bool enable)
+        {
+            lock (_lock)
+            {
+                return SetQuickLightingEffectEnableInternal(device, enable);
+            }
+        }
+
+        public static bool SetQuickLightingEffect(int device, int index)
+        {
+            lock (_lock)
+            {
+                return SetQuickLightingEffectInternal(device, index);
+            }
+        }
+
+        public static int GetTouchPadStatus()
+        {
+            lock (_lock)
+            {
+                return GetTouchPadStatusInternal();
+            }
+        }
+
+        public static int GetTrackpadStatus(int device)
+        {
+            lock (_lock)
+            {
+                return GetTrackpadStatusInternal(device);
+            }
+        }
+
+        public static bool SetTouchPadStatus(int iSwitch)
+        {
+            lock (_lock)
+            {
+                return SetTouchPadStatusInternal(iSwitch);
+            }
+        }
+
+        public static bool SetDeviceDefault(int device)
+        {
+            lock (_lock)
+            {
+                return SetDeviceDefaultInternal(device);
+            }
+        }
+
+        public static VERSION getUSBVerify(int device)
+        {
+            lock (_lock)
+            {
+                return getUSBVerifyInternal(device);
+            }
+        }
+
+        public static LegionJoystickCurveProfile GetStickCustomCurve(int device)
+        {
+            lock (_lock)
+            {
+                return GetStickCustomCurveInternal(device);
+            }
+        }
+
+        public static bool SetStickCustomCurve(int device, LegionJoystickCurveProfile curveProfile)
+        {
+            lock (_lock)
+            {
+                return SetStickCustomCurveInternal(device, curveProfile);
+            }
+        }
+
+        public static int GetStickCustomDeadzone(int device)
+        {
+            lock (_lock)
+            {
+                return GetStickCustomDeadzoneInternal(device);
+            }
+        }
+
+        public static bool SetStickCustomDeadzone(int device, int deadzone)
+        {
+            lock (_lock)
+            {
+                return SetStickCustomDeadzoneInternal(device, deadzone);
+            }
+        }
+
+        public static bool SetGyroSensorDataOnorOff(int device, int status)
+        {
+            lock (_lock)
+            {
+                return SetGyroSensorDataOnorOffInternal(device, status);
+            }
+        }
+
+        public static LegionTriggerDeadzone GetTriggerDeadzoneAndMargin(int device)
+        {
+            lock (_lock)
+            {
+                return GetTriggerDeadzoneAndMarginInternal(device);
+            }
+        }
+
+        public static bool SetTriggerDeadzoneAndMargin(int device, LegionTriggerDeadzone deadzone)
+        {
+            lock (_lock)
+            {
+                return SetTriggerDeadzoneAndMarginInternal(device, deadzone);
+            }
+        }
+
+        public static int GetAutoSleepTime(int device)
+        {
+            lock (_lock)
+            {
+                return GetAutoSleepTimeInternal(device);
+            }
+        }
+
+        public static bool SetAutoSleepTime(int device, int autosleeptime)
+        {
+            lock (_lock)
+            {
+                return SetAutoSleepTimeInternal(device, autosleeptime);
+            }
+        }
 
         //导出类
         [StructLayout(LayoutKind.Sequential)]
@@ -243,5 +499,22 @@ namespace HandheldCompanion.Devices.Lenovo
                 Margin = 5;
             }
         };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct VERSION
+        {
+            public int verPro;
+            public int verCMD;
+            public int verFir;
+            public int verHard;
+
+            public VERSION(int verPro, int verCMD, int verFir, int verHard)
+            {
+                this.verPro = verPro;
+                this.verCMD = verCMD;
+                this.verFir = verFir;
+                this.verHard = verHard;
+            }
+        }
     }
 }
