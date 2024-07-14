@@ -94,7 +94,7 @@ public static class WPFUtils
     public static Control GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
     {
         // Filter list based on requested type
-        controls = controls.Where(c => c is T).ToList();
+        controls = controls.Where(c => c is T && c.IsEnabled).ToList();
 
         // Filter based on exclusion type list
         if (typesToIgnore is not null)
