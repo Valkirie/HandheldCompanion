@@ -5,9 +5,9 @@ using System;
 namespace HandheldCompanion.Commands.Functions.HC
 {
     [Serializable]
-    public class ChangeHIDMode : FunctionCommands
+    public class HIDModeCommands : FunctionCommands
     {
-        public ChangeHIDMode()
+        public HIDModeCommands()
         {
             base.Name = Properties.Resources.Hotkey_ChangeHIDMode;
             base.Description = Properties.Resources.Hotkey_ChangeHIDModeDesc;
@@ -35,7 +35,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override object Clone()
         {
-            ChangeHIDMode commands = new()
+            HIDModeCommands commands = new()
             {
                 commandType = this.commandType,
                 Name = this.Name,

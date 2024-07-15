@@ -2664,18 +2664,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Select a sub profile to apply</value>
   </data>
-  <data name="Hotkey_nextSubProfile" xml:space="preserve">
-    <value>Select next sub profile</value>
-  </data>
-  <data name="Hotkey_nextSubProfileDesc" xml:space="preserve">
-    <value>Apply next sub profile for the current game</value>
-  </data>
-  <data name="Hotkey_previousSubProfile" xml:space="preserve">
-    <value>Select previous sub profile</value>
-  </data>
-  <data name="Hotkey_previousSubProfileDesc" xml:space="preserve">
-    <value>Apply previous sub profile for the current game</value>
-  </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Sets the fan to max speed</value>
   </data>

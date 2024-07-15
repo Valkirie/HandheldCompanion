@@ -3967,6 +3967,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cycle sub profiles.
+        /// </summary>
+        public static string Hotkey_CycleSubProfile {
+            get {
+                return ResourceManager.GetString("Hotkey_CycleSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cycle through the sub profiles for the current game.
+        /// </summary>
+        public static string Hotkey_CycleSubProfileDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_CycleSubProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decrease brightness.
         /// </summary>
         public static string Hotkey_decreaseBrightness {
@@ -4309,24 +4327,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select next sub profile.
-        /// </summary>
-        public static string Hotkey_nextSubProfile {
-            get {
-                return ResourceManager.GetString("Hotkey_nextSubProfile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Apply next sub profile for the current game.
-        /// </summary>
-        public static string Hotkey_nextSubProfileDesc {
-            get {
-                return ResourceManager.GetString("Hotkey_nextSubProfileDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
         public static string Hotkey_None {
@@ -4413,24 +4413,6 @@ namespace HandheldCompanion.Properties {
         public static string Hotkey_overlayTrackpadsDesc {
             get {
                 return ResourceManager.GetString("Hotkey_overlayTrackpadsDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select previous sub profile.
-        /// </summary>
-        public static string Hotkey_previousSubProfile {
-            get {
-                return ResourceManager.GetString("Hotkey_previousSubProfile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Apply previous sub profile for the current game.
-        /// </summary>
-        public static string Hotkey_previousSubProfileDesc {
-            get {
-                return ResourceManager.GetString("Hotkey_previousSubProfileDesc", resourceCulture);
             }
         }
         

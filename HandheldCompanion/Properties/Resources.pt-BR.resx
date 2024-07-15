@@ -2682,18 +2682,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Selecionar um sub perfil para aplicar</value>
   </data>
-  <data name="Hotkey_nextSubProfile" xml:space="preserve">
-    <value>Selecionar o próximo sub perfil</value>
-  </data>
-  <data name="Hotkey_nextSubProfileDesc" xml:space="preserve">
-    <value>Aplicar o próximo sub perfil para o jogo/aplicação atual</value>
-  </data>
-  <data name="Hotkey_previousSubProfile" xml:space="preserve">
-    <value>Selecionar o sub perfil anterior</value>
-  </data>
-  <data name="Hotkey_previousSubProfileDesc" xml:space="preserve">
-    <value>Aplicar o sub perfil anterior para o jogo/aplicação atual</value>
-  </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Define a ventoinha para maior velocidade</value>
   </data>
@@ -2912,5 +2900,8 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  </data>
+  <data name="ProfilesPage_NewSubProfile" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>

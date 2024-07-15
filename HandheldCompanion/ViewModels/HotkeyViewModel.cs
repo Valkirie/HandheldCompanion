@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Commands;
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
@@ -39,6 +40,7 @@ namespace HandheldCompanion.ViewModels
                 OnPropertyChanged(nameof(Hotkey));
                 OnPropertyChanged(nameof(IsPinned));
                 OnPropertyChanged(nameof(CommandTypeIndex));
+                OnPropertyChanged(nameof(Command));
 
                 if (Hotkey.command is FunctionCommands functionCommands)
                     OnPropertyChanged(nameof(FunctionIndex));
@@ -48,6 +50,28 @@ namespace HandheldCompanion.ViewModels
 
                 DrawChords();
                 DrawNameAndDescription();
+            }
+        }
+
+        public ICommands Command => Hotkey.command;
+
+        // CycleSubProfile
+        public int CyclingDirection
+        {
+            get
+            {
+                return Hotkey.command is CycleSubProfileCommands cycleSubProfileCommands ? cycleSubProfileCommands.CycleIndex : 0;
+            }
+            set
+            {
+                if (value != CyclingDirection)
+                {
+                    if (Hotkey.command is CycleSubProfileCommands cycleSubProfileCommands)
+                        cycleSubProfileCommands.CycleIndex = value;
+
+                    OnPropertyChanged(nameof(CyclingDirection));
+                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                }
             }
         }
 
@@ -75,6 +99,7 @@ namespace HandheldCompanion.ViewModels
                 if (value != Hotkey.Name)
                 {
                     Hotkey.Name = value;
+                    OnPropertyChanged(nameof(CustomName));
                     HotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             }
@@ -236,34 +261,40 @@ namespace HandheldCompanion.ViewModels
 
         private void DrawNameAndDescription()
         {
-            switch (Hotkey.command.commandType)
+            if (Hotkey.command.commandType == CommandType.Function)
             {
-                case CommandType.Executable:
+                // do something
+            }
+            else if (Hotkey.command.commandType == CommandType.Executable)
+            {
+                if (Hotkey.command is ExecutableCommands executableCommands)
+                {
+                    if (File.Exists(executableCommands.Path))
                     {
-                        if (Hotkey.command is ExecutableCommands executableCommands)
-                        {
-                            if (File.Exists(executableCommands.Path))
-                            {
-                                Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(executableCommands.Path);
-                                string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-                                string Executable = System.IO.Path.GetFileName(executableCommands.Path);
-                                Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
-                            }
-                            else
-                            {
-                                Name = Hotkey.command.Name;
-                            }
-                            Description = Hotkey.command.Description;
-                        }
+                        Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(executableCommands.Path);
+                        string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
+                        string Executable = System.IO.Path.GetFileName(executableCommands.Path);
+                        Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
                     }
-                    break;
+                    else
+                    {
+                        Name = Hotkey.command.Name;
+                    }
 
-                default:
-                    Name = string.IsNullOrEmpty(CustomName) ? Hotkey.command.Name : CustomName;
                     Description = Hotkey.command.Description;
-                    break;
+
+                    goto Success;
+                }
+            }
+            else if (Hotkey.command.commandType == CommandType.Keyboard)
+            {
+                // do something
             }
 
+            Name = string.IsNullOrEmpty(CustomName) ? Hotkey.command.Name : CustomName;
+            Description = Hotkey.command.Description;
+
+        Success:
             OnPropertyChanged(nameof(Glyph));
         }
 
@@ -277,9 +308,6 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != CommandTypeIndex)
                 {
-                    // clear custom name
-                    CustomName = string.Empty;
-
                     switch ((CommandType)value)
                     {
                         case CommandType.None:
@@ -297,6 +325,9 @@ namespace HandheldCompanion.ViewModels
                             Hotkey.command = new ExecutableCommands();
                             break;
                     }
+
+                    // reset custom name
+                    CustomName = Hotkey.command.Name;
 
                     OnPropertyChanged(nameof(CommandTypeIndex));
                     HotkeysManager.UpdateOrCreateHotkey(Hotkey);
@@ -318,11 +349,11 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != FunctionIndex)
                 {
-                    // clear custom name
-                    CustomName = string.Empty;
-
                     Type typeToCreate = (Type)FunctionCommands.Functions[value];
                     Hotkey.command = Activator.CreateInstance(typeToCreate) as ICommands;
+
+                    // reset custom name
+                    CustomName = Hotkey.command.Name;
 
                     OnPropertyChanged(nameof(FunctionIndex));
                     HotkeysManager.UpdateOrCreateHotkey(Hotkey);

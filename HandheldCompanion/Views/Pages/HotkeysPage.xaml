@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.HotkeysPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commands="clr-namespace:HandheldCompanion.Commands.Functions.HC"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -212,6 +213,35 @@
                                     <Separator
                                         Margin="-46,0,-16,0"
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Command name" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="Define the hotkey custom name"
+                                                TextWrapping="Wrap" />
+                                        </ikw:SimpleStackPanel>
+
+                                        <TextBox
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding CustomName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0"
                                         Visibility="{Binding CommandTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3}" />
 
@@ -261,6 +291,41 @@
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
                                         </Grid>
+
+                                        <!--  CycleSubProfileCommands  -->
+                                        <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type commands:CycleSubProfileCommands}}">
+                                            <!--  Separator  -->
+                                            <Separator
+                                                Margin="-46,0,-16,0"
+                                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                BorderThickness="0,1,0,0" />
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="5*" />
+                                                    <ColumnDefinition Width="5*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Direction" />
+                                                    <TextBlock
+                                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                                        Text="Define the sub profile cycling direction"
+                                                        TextWrapping="Wrap" />
+                                                </ikw:SimpleStackPanel>
+
+                                                <ComboBox
+                                                    Grid.Column="1"
+                                                    Margin="12,0,0,0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    SelectedIndex="{Binding CyclingDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <ComboBoxItem Content="Previous" />
+                                                    <ComboBoxItem Content="Next" />
+                                                </ComboBox>
+                                            </Grid>
+                                        </ikw:SimpleStackPanel>
                                     </ikw:SimpleStackPanel>
 
                                     <!--  Key strokes  -->
@@ -313,35 +378,6 @@
                                                         Glyph="&#xe75c;" />
                                                 </Button>
                                             </Grid>
-                                        </Grid>
-
-                                        <!--  Separator  -->
-                                        <Separator
-                                            Margin="-46,0,-16,0"
-                                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                            BorderThickness="0,1,0,0" />
-
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" />
-                                                <ColumnDefinition Width="5*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Command name" />
-                                                <TextBlock
-                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Define the hotkey custom name"
-                                                    TextWrapping="Wrap" />
-                                            </ikw:SimpleStackPanel>
-
-                                            <TextBox
-                                                Grid.Column="1"
-                                                Margin="12,0,0,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding CustomName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                         </Grid>
                                     </ikw:SimpleStackPanel>
 
