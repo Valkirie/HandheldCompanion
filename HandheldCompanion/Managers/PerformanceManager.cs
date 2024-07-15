@@ -512,8 +512,8 @@ public static class PerformanceManager
                         continue;
                 }
 
-                var ReadTDP = CurrentTDP[idx];
-
+                // todo: find a way to read TDP limits
+                double ReadTDP = CurrentTDP[idx];
                 if (ReadTDP != 0)
                     cpuWatchdog.Interval = INTERVAL_DEFAULT;
                 else
@@ -523,6 +523,8 @@ public static class PerformanceManager
                 if (ReadTDP != TDP)
                 {
                     processor.SetTDPLimit(type, TDP);
+
+                    // update TDP limits (temporary)
                     CurrentTDP[idx] = TDP;
                 }
 
@@ -539,8 +541,7 @@ public static class PerformanceManager
                 int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
 
                 // only request an update if current limit is different than stored
-                if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow ||
-                    CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
+                if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
                     ((IntelProcessor)processor).SetMSRLimit(TDPslow, TDPfast);
                 else
                     MSRdone = true;
@@ -850,6 +851,15 @@ public static class PerformanceManager
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has started", "PerformanceManager");
+    }
+
+    public static void Resume(bool OS)
+    {
+        foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
+        {
+            int idx = (int)type;
+            CurrentTDP[idx] = 0;
+        }
     }
 
     public static Processor GetProcessor() => processor;

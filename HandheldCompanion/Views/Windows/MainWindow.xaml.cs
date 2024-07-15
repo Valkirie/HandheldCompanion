@@ -540,6 +540,7 @@ public partial class MainWindow : GamepadWindow
                         VirtualManager.Resume(true);
                         SensorsManager.Resume(true);
                         GPUManager.Start();
+                        PerformanceManager.Resume(true);
 
                         // resume platform(s)
                         PlatformManager.LibreHardwareMonitor.Start();
