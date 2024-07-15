@@ -844,6 +844,7 @@ public partial class ProfilesPage : Page
         {
             case UpdateSource.ProfilesPage:
             case UpdateSource.ProfilesPageUpdateOnly:
+                cB_Profiles.SelectedItem = profile;
                 return;
             case UpdateSource.QuickProfilesPage:
                 {
@@ -1300,8 +1301,6 @@ public partial class ProfilesPage : Page
         // change it in 
         int ind = cB_Profiles.Items.IndexOf(selectedMainProfile);
         cB_Profiles.Items[ind] = selectedMainProfile;
-        cB_Profiles.Items.Refresh();
-        cB_Profiles.SelectedIndex = ind;
 
         SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
     }

@@ -172,6 +172,8 @@
                         <ui:UniformGridLayout
                             ItemsStretch="Fill"
                             MaximumRowsOrColumns="6"
+                            MinColumnSpacing="3"
+                            MinRowSpacing="3"
                             Orientation="Horizontal" />
                     </ui:ItemsRepeater.Layout>
 
@@ -188,6 +190,7 @@
                                 IsEnabled="{Binding IsAvailable, UpdateSourceTrigger=PropertyChanged}">
 
                                 <ikw:SimpleStackPanel
+                                    Margin="0,6,0,0"
                                     HorizontalAlignment="Stretch"
                                     Orientation="Vertical"
                                     Spacing="3">
@@ -207,9 +210,12 @@
                                     </Image>
 
                                     <TextBlock
+                                        Height="40"
+                                        HorizontalAlignment="Center"
                                         FontSize="12"
                                         Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                                         TextAlignment="Center"
+                                        TextTrimming="CharacterEllipsis"
                                         TextWrapping="Wrap" />
                                 </ikw:SimpleStackPanel>
                             </Button>
