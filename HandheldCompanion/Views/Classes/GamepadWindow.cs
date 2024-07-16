@@ -51,7 +51,7 @@ namespace HandheldCompanion.Views.Classes
 
         private void OnLayoutUpdated(object? sender, EventArgs e)
         {
-            if (!this.IsActive || this.Visibility != Visibility.Visible)
+            if (this.Visibility != Visibility.Visible)
                 return;
 
             // get all FrameworkElement(s)

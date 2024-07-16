@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -41,22 +42,26 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int SC_MOVE = 0xF010;
     private readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
-    const UInt32 SWP_NOSIZE = 0x0001;
-    const UInt32 SWP_NOMOVE = 0x0002;
-    const UInt32 SWP_NOACTIVATE = 0x0010;
-    const UInt32 SWP_NOZORDER = 0x0004;
+    private const int SWP_NOSIZE = 0x0001;
+    private const int SWP_NOMOVE = 0x0002;
+    private const int SWP_NOACTIVATE = 0x0010;
+    private const int SWP_NOZORDER = 0x0004;
 
     // Define the Win32 API constants and functions
-    const int WM_PAINT = 0x000F;
-    const int WM_ACTIVATEAPP = 0x001C;
-    const int WM_ACTIVATE = 0x0006;
-    const int WM_SETFOCUS = 0x0007;
-    const int WM_KILLFOCUS = 0x0008;
-    const int WM_NCACTIVATE = 0x0086;
-    const int WM_SYSCOMMAND = 0x0112;
-    const int WM_WINDOWPOSCHANGING = 0x0046;
-    const int WM_SHOWWINDOW = 0x0018;
-    const int WM_MOUSEACTIVATE = 0x0021;
+    private const int WM_PAINT = 0x000F;
+    private const int WM_ACTIVATEAPP = 0x001C;
+    private const int WM_ACTIVATE = 0x0006;
+    private const int WM_SETFOCUS = 0x0007;
+    private const int WM_KILLFOCUS = 0x0008;
+    private const int WM_NCACTIVATE = 0x0086;
+    private const int WM_SYSCOMMAND = 0x0112;
+    private const int WM_WINDOWPOSCHANGING = 0x0046;
+    private const int WM_SHOWWINDOW = 0x0018;
+    private const int WM_MOUSEACTIVATE = 0x0021;
+    private const int MA_NOACTIVATE = 0x0003;
+    private const int WM_NCHITTEST = 0x0084;
+    private const int HTCAPTION = 0x02;
+    private const int MA_NOACTIVATEANDEAT = 4;
 
     const int WS_EX_NOACTIVATE = 0x08000000;
     const int GWL_EXSTYLE = -20;
@@ -86,6 +91,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public OverlayQuickTools()
     {
         InitializeComponent();
+
         CurrentWindow = this;
 
         // used by gamepad navigation
@@ -117,6 +123,27 @@ public partial class OverlayQuickTools : GamepadWindow
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickApplicationsPage", applicationsPage);
+    }
+
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        IntPtr hwnd = new WindowInteropHelper(this).Handle;
+
+        // Get the HwndSource from the handle
+        hwndSource = HwndSource.FromHwnd(hwnd);
+        hwndSource.AddHook(WndProc);
+
+        /*
+        int exStyle = (int)WinAPI.GetWindowLong(hwnd, GWL_EXSTYLE);
+        exStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;     
+        WinAPI.SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+        */
+
+        WinAPI.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
     }
 
     public void LoadPages_MVVM()
@@ -311,77 +338,51 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
-
-        hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-        hwndSource.AddHook(WndProc);
-
-        if (hwndSource != null)
-            WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
     }
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    
+    private const int WA_ACTIVE = 1;
+    private const int WA_CLICKACTIVE = 2;
+    private const int WA_INACTIVE = 0;
+    private static readonly IntPtr HWND_TOP = new IntPtr(0);
+    private const uint SWP_FRAMECHANGED = 0x0020;
 
     private IntPtr prevWParam = new(0x0000000000000086);
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
         {
-            case WM_SYSCOMMAND:
-                {
-                    var command = wParam.ToInt32() & 0xfff0;
-                    if (command == SC_MOVE) handled = true;
-                }
-                break;
-
-            case WM_SETFOCUS:
-                {
-                    if (hwndSource != null)
-                        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-                    handled = true;
-                }
-                break;
-
-            case WM_NCACTIVATE:
-                {
-                    // prevent window from loosing its fancy style
-                    if (wParam == 0 && (lParam == 0))
-                    {
-                        if (prevWParam != new IntPtr(0x0000000000000086))
-                            if (AutoHide && Visibility == Visibility.Visible)
-                                ToggleVisibility();
-                        handled = true;
-                    }
-
-                    if (wParam == 1)
-                    {
-                        handled = true;
-                    }
-
-                    prevWParam = wParam;
-                }
-                break;
-
             case WM_ACTIVATEAPP:
-                {
-                    if (wParam == 0)
-                    {
-                        if (hwndSource != null)
-                            WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
-                    }
-                }
+                handled = true;
                 break;
 
             case WM_ACTIVATE:
-                {
-                    // WA_INACTIVE
-                    if (wParam == 0)
-                        handled = true;
-                }
+                handled = true;
+                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                break;
+
+            case WM_SETFOCUS:
+                // Prevent the window from receiving focus
+                handled = true;
                 break;
 
             case WM_MOUSEACTIVATE:
-                {
+                handled = true;
+                return new IntPtr(MA_NOACTIVATE);
+
+            case WM_NCACTIVATE:
+                if (((int)wParam & 0xFFFF) == 0)
                     handled = true;
-                }
                 break;
+
+            case WM_NCHITTEST:
+                // This message is sent to determine the location of the cursor
+                // It helps in identifying which part of the window was clicked.
+                // Returning HTCLIENT will keep the window from being activated
+                handled = true;
+                return new IntPtr(1); // HTCLIENT
 
             case WM_PAINT:
                 {

@@ -314,7 +314,7 @@ namespace HandheldCompanion.Managers
             if (FocusedElement is null)
                 FocusedElement = _currentWindow;
 
-            if (FocusedElement.Focusable)
+            if (FocusedElement.Focusable && FocusedElement is Control)
             {
                 Control controlFocused = (Control)FocusedElement;
 
@@ -585,6 +585,27 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
+                                switch (_gamepadPage.Tag)
+                                {
+                                    // todo: shouldn't be hardcoded
+                                    case "layout":
+                                    case "SettingsMode0":
+                                    case "SettingsMode1":
+                                    case "quickperformance":
+                                        {
+                                            // set state
+                                            _goingBack = true;
+
+                                            // play sound
+                                            UISounds.PlayOggFile(UISounds.Collapse);
+
+                                            // go back to previous page
+                                            if (_gamepadFrame.CanGoBack)
+                                                _gamepadFrame.GoBack();
+                                        }
+                                        return;
+                                }
+
                                 if (_currentWindow is OverlayQuickTools)
                                     WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.ESCAPE);
                             }
