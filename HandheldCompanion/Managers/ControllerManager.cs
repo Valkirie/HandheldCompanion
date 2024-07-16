@@ -157,17 +157,16 @@ public static class ControllerManager
         Quicktools
     }
 
-    private static void GamepadFocusManager_LostFocus(Control control)
+    private static void GamepadFocusManager_LostFocus(string Name)
     {
-        GamepadWindow gamepadWindow = (GamepadWindow)control;
-
-        switch (gamepadWindow.Title)
+        switch (Name)
         {
+            default:
+            case "MainWindow":
+                focusedWindows &= ~FocusedWindow.MainWindow;
+                break;
             case "QuickTools":
                 focusedWindows &= ~FocusedWindow.Quicktools;
-                break;
-            default:
-                focusedWindows &= ~FocusedWindow.MainWindow;
                 break;
         }
 
@@ -175,16 +174,16 @@ public static class ControllerManager
         CheckControllerScenario();
     }
 
-    private static void GamepadFocusManager_GotFocus(Control control)
+    private static void GamepadFocusManager_GotFocus(string Name)
     {
-        GamepadWindow gamepadWindow = (GamepadWindow)control;
-        switch (gamepadWindow.Title)
+        switch (Name)
         {
+            default:
+            case "MainWindow":
+                focusedWindows |= FocusedWindow.MainWindow;
+                break;
             case "QuickTools":
                 focusedWindows |= FocusedWindow.Quicktools;
-                break;
-            default:
-                focusedWindows |= FocusedWindow.MainWindow;
                 break;
         }
 

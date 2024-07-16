@@ -25,13 +25,15 @@ namespace HandheldCompanion.Managers
     {
         #region events
         public static event GotFocusEventHandler GotFocus;
-        public delegate void GotFocusEventHandler(Control control);
+        public delegate void GotFocusEventHandler(string Name);
 
         public static event LostFocusEventHandler LostFocus;
-        public delegate void LostFocusEventHandler(Control control);
+        public delegate void LostFocusEventHandler(string Name);
         #endregion
 
         private GamepadWindow _currentWindow;
+        private string _currentName = string.Empty;
+
         private ScrollViewer _currentScrollViewer;
         private Frame _gamepadFrame;
         private Page _gamepadPage;
@@ -50,12 +52,14 @@ namespace HandheldCompanion.Managers
         // key: Page, store the latest control that had focus on this page
         private Dictionary<object, Control> prevControl = [];
         // key: Window, store which window has focus
-        private static ConcurrentDictionary<Window, bool> _focused = new();
+        private static ConcurrentDictionary<string, bool> _focused = new();
 
         public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
         {
             // set current window
             _currentWindow = gamepadWindow;
+            _currentName = gamepadWindow.Tag.ToString();
+
             _currentScrollViewer = _currentWindow.GetScrollViewer(_currentWindow);
 
             _currentWindow.GotFocus += _currentWindow_GotFocus;
@@ -103,18 +107,18 @@ namespace HandheldCompanion.Managers
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
             // already has focus
-            if (_focused.TryGetValue(_currentWindow, out bool isFocused) && isFocused)
+            if (_focused.TryGetValue(_currentName, out bool isFocused) && isFocused)
                 return;
 
             // set focus
-            _focused[_currentWindow] = true;
+            _focused[_currentName] = true;
 
             // raise event
-            GotFocus?.Invoke(_currentWindow);
+            GotFocus?.Invoke(_currentName);
 
-            foreach (GamepadWindow window in _focused.Keys)
+            foreach (string window in _focused.Keys)
             {
-                if (window.Equals(_currentWindow))
+                if (window.Equals(_currentName))
                     continue;
 
                 if (_focused.TryGetValue(window, out isFocused) && !isFocused)
@@ -131,7 +135,7 @@ namespace HandheldCompanion.Managers
         private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
         {
             // doesn't have focus
-            if (_focused.TryGetValue(_currentWindow, out bool isFocused) && !isFocused)
+            if (_focused.TryGetValue(_currentName, out bool isFocused) && !isFocused)
                 return;
 
             // check if sender is part of current window
@@ -145,23 +149,35 @@ namespace HandheldCompanion.Managers
             }
 
             // unset focus
-            _focused[_currentWindow] = false;
+            _focused[_currentName] = false;
 
             // halt timer
             _gamepadTimer.Stop();
 
             // raise event
-            LostFocus?.Invoke(_currentWindow);
+            LostFocus?.Invoke(_currentName);
 
-            foreach (GamepadWindow window in _focused.Keys)
+            foreach (string window in _focused.Keys)
             {
-                if (window.Equals(_currentWindow))
+                if (window.Equals(_currentName))
                     continue;
 
-                if (window.Visibility != Visibility.Visible)
+                GamepadWindow gamepadWindow;
+                switch(window)
+                {
+                    default:
+                    case "Main":
+                        gamepadWindow = MainWindow.GetCurrent();
+                        break;
+                    case "QuickTools":
+                        gamepadWindow = OverlayQuickTools.GetCurrent();
+                        break;
+                }
+
+                if (gamepadWindow.Visibility != Visibility.Visible)
                     continue;
 
-                if (window.WindowState == WindowState.Minimized)
+                if (gamepadWindow.WindowState == WindowState.Minimized)
                     continue;
 
                 if (_focused.TryGetValue(window, out isFocused) && isFocused)
@@ -287,25 +303,20 @@ namespace HandheldCompanion.Managers
             }
 
             // set focus to control
-            Keyboard.Focus(control);
-            control.Focus();
+            FocusManager.SetFocusedElement(_currentWindow, control);
             control.BringIntoView();
         }
 
         public Control GetFocusedElement()
         {
-            IInputElement keyboardFocused = null;
+            IInputElement FocusedElement = FocusManager.GetFocusedElement(_currentWindow);
 
-            if (Keyboard.FocusedElement is not null)
-                if (Keyboard.FocusedElement.GetType().IsSubclassOf(typeof(Control)))
-                    keyboardFocused = Keyboard.FocusedElement;
+            if (FocusedElement is null)
+                FocusedElement = _currentWindow;
 
-            if (keyboardFocused is null)
-                keyboardFocused = _currentWindow;
-
-            if (keyboardFocused.Focusable)
+            if (FocusedElement.Focusable)
             {
-                Control controlFocused = (Control)keyboardFocused;
+                Control controlFocused = (Control)FocusedElement;
 
                 string keyboardType = controlFocused.GetType().Name;
 
@@ -361,7 +372,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // skip if page doesn't have focus
-            if (!_focused.TryGetValue(_currentWindow, out bool isFocused) || !isFocused)
+            if (!_focused.TryGetValue(_currentName, out bool isFocused) || !isFocused)
                 return;
 
             // stop gamepad navigation when InputsManager is listening
