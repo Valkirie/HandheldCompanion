@@ -80,7 +80,7 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
 
-        protected GamepadMotion gamepadMotion;
+        protected GamepadMotion gamepadMotion = new(string.Empty, CalibrationMode.Manual);
 
         protected double VibrationStrength = 1.0d;
         private byte _UserIndex = 255;
