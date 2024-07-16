@@ -45,6 +45,18 @@
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="Always">
 
+        <ui:NavigationView.HeaderTemplate>
+            <DataTemplate>
+                <TextBlock Margin="-36,-24,0,0" Text="{Binding Text}" />
+            </DataTemplate>
+        </ui:NavigationView.HeaderTemplate>
+
+        <FrameworkElement.Resources>
+            <SolidColorBrush x:Key="{x:Static ui:ThemeKeys.NavigationViewContentBackgroundKey}" Color="Transparent" />
+            <SolidColorBrush x:Key="{x:Static ui:ThemeKeys.ExpanderHeaderBorderBrushKey}" Color="Transparent" />
+            <Thickness x:Key="NavigationViewContentGridBorderThickness">0,0,0,0</Thickness>
+        </FrameworkElement.Resources>
+
         <ui:NavigationView.MenuItems>
             <!--  Game icon  -->
             <ui:NavigationViewItem
@@ -157,7 +169,7 @@
         </ui:NavigationView.FooterMenuItems>
 
         <ui:NavigationView.Content>
-            <Grid>
+            <Grid Margin="0,-24,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*" />
                 </Grid.RowDefinitions>
