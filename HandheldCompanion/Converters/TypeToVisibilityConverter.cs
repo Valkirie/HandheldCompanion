@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Data;
 using System.Windows;
+using System.Windows.Data;
 
 namespace HandheldCompanion.Converters
 {

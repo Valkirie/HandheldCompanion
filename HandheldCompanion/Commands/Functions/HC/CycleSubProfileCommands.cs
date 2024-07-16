@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 using System;
 
 namespace HandheldCompanion.Commands.Functions.HC

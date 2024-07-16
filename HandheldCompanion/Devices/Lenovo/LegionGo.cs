@@ -116,7 +116,7 @@ public class LegionGo : IDevice
             return await WMI.CallAsync("root\\WMI",
                 $"SELECT * FROM LENOVO_GAMEZONE_DATA",
                 "GetSmartFanMode",
-                new(),
+                [],
                 pdc => Convert.ToInt32(pdc["Data"].Value));
         }
         catch (Exception ex)

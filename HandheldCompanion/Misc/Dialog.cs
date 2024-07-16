@@ -8,7 +8,7 @@ namespace HandheldCompanion.Misc;
 
 public class Dialog
 {
-    private static Dictionary<Window, Dialog> activeDialogs = new Dictionary<Window, Dialog>();
+    private static Dictionary<Window, Dialog> activeDialogs = [];
 
     private Window owner;
     private ContentDialog dialog;

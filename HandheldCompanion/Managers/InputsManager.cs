@@ -64,7 +64,7 @@ public static class InputsManager
     private static IKeyboardMouseEvents m_GlobalHook;
 
     private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };
-    private static readonly List<KeyboardChord> successkeyChords = new();
+    private static readonly List<KeyboardChord> successkeyChords = [];
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };

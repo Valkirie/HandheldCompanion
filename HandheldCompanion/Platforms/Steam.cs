@@ -1,16 +1,12 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
