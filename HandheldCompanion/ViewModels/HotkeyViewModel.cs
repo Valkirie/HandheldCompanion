@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -55,6 +56,20 @@ namespace HandheldCompanion.ViewModels
 
         public ICommands Command => Hotkey.command;
 
+        private bool _IsExecuted;
+        public bool IsExecuted
+        {
+            get => _IsExecuted;
+            set
+            {
+                if (_IsExecuted != value)
+                {
+                    _IsExecuted = value;
+                    OnPropertyChanged(nameof(IsExecuted));
+                }
+            }
+        }
+
         // CycleSubProfile
         public int CyclingDirection
         {
@@ -78,6 +93,13 @@ namespace HandheldCompanion.ViewModels
         private void Command_Executed(ICommands command)
         {
             OnPropertyChanged(nameof(IsToggled));
+            IsExecuted = true;
+
+            // Optionally reset IsBlinking after a delay
+            Task.Delay(125).ContinueWith(_ =>
+            {
+                IsExecuted = false;
+            });
         }
 
         public override void Dispose()

@@ -83,6 +83,28 @@
                                             Command="{Binding DefineButtonCommand}"
                                             IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
+                                            <ToggleButton.Resources>
+                                                <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsExecuted}" Value="True">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation
+                                                                            AutoReverse="True"
+                                                                            RepeatBehavior="1x"
+                                                                            Storyboard.TargetProperty="Opacity"
+                                                                            From="1.0"
+                                                                            To="0.0"
+                                                                            Duration="0:0:0.125" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ToggleButton.Resources>
+
                                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                 <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
                                                     <ui:ItemsRepeater.Style>
