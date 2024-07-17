@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WpfScreenHelper.Enum;
@@ -11,6 +12,9 @@ namespace HandheldCompanion.Commands.Functions.Windows
     [Serializable]
     public class OnScreenKeyboardLegacyCommands : FunctionCommands
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindow(string className, string windowTitle);
+
         public int KeyboardPosition = 0;
 
         public OnScreenKeyboardLegacyCommands()
