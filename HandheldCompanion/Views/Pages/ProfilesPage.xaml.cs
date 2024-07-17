@@ -844,7 +844,11 @@ public partial class ProfilesPage : Page
         {
             case UpdateSource.ProfilesPage:
             case UpdateSource.ProfilesPageUpdateOnly:
-                cB_Profiles.SelectedItem = profile;
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    cB_Profiles.SelectedItem = profile;
+                });
                 return;
             case UpdateSource.QuickProfilesPage:
                 {
