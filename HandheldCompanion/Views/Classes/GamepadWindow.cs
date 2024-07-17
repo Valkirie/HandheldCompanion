@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
+using WpfScreenHelper;
 
 namespace HandheldCompanion.Views.Classes
 {
@@ -18,9 +20,19 @@ namespace HandheldCompanion.Views.Classes
         public ContentDialog currentDialog;
         protected UIGamepad gamepadFocusManager;
 
+        protected HwndSource hwndSource;
+
         public GamepadWindow()
         {
             LayoutUpdated += OnLayoutUpdated;
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+            hwndSource = HwndSource.FromHwnd(hwnd);
+
+            base.OnSourceInitialized(e);
         }
 
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
@@ -33,6 +45,11 @@ namespace HandheldCompanion.Views.Classes
                 controlElements.Remove((Control)visualRemoved);
 
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+        }
+
+        public bool IsPrimary()
+        {
+            return Screen.FromHandle(hwndSource.Handle).Primary;
         }
 
         public ScrollViewer GetScrollViewer(DependencyObject depObj)

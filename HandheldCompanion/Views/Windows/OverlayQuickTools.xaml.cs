@@ -68,8 +68,6 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private CrossThreadLock Sliding = new();
 
-    public HwndSource hwndSource;
-
     // page vars
     private readonly Dictionary<string, Page> _pages = [];
 
@@ -131,10 +129,6 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         base.OnSourceInitialized(e);
 
-        IntPtr hwnd = new WindowInteropHelper(this).Handle;
-
-        // Get the HwndSource from the handle
-        hwndSource = HwndSource.FromHwnd(hwnd);
         hwndSource.AddHook(WndProc);
 
         /*
@@ -143,7 +137,7 @@ public partial class OverlayQuickTools : GamepadWindow
         WinAPI.SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
         */
 
-        WinAPI.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
+        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
     }
 
     public void LoadPages_MVVM()
@@ -460,8 +454,8 @@ public partial class OverlayQuickTools : GamepadWindow
                         try
                         {
                             try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
-                            //SlideIn();
-                            Focus();
+                            // SlideIn();
+                            // Focus();
 
                             if (hwndSource != null)
                                 WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
@@ -642,6 +636,11 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         var timeFormat = CultureInfo.InstalledUICulture.DateTimeFormat.ShortTimePattern;
         Time.Text = DateTime.Now.ToString(timeFormat);
+    }
+
+    internal nint GetHandle()
+    {
+        return hwndSource.Handle;
     }
 
     #endregion

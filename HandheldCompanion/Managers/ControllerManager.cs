@@ -212,24 +212,20 @@ public static class ControllerManager
 
     private static void CheckControllerScenario()
     {
+        // set flag
         ControllerMuted = false;
 
         // platform specific scenarios
         if (foregroundProcess?.Platform == PlatformType.Steam)
         {
-            // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
             // Controller specific scenarios
-            if (targetController is SteamController)
-            {
-                SteamController steamController = (SteamController)targetController;
-                if (steamController.IsVirtualMuted())
-                    ControllerMuted = true;
-            }
+            // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
+            if (targetController is SteamController steamController)
+                ControllerMuted = steamController.IsVirtualMuted();
         }
 
         // either main window or quicktools are focused
-        if (focusedWindows != FocusedWindow.None)
-            ControllerMuted = true;
+        ControllerMuted = focusedWindows != FocusedWindow.None;
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value)

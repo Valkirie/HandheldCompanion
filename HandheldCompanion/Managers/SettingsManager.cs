@@ -121,7 +121,7 @@ public static class SettingsManager
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);
         }
-        catch (Exception ex) { }
+        catch (Exception) { }
     }
 
     private static bool PropertyExists(string name)

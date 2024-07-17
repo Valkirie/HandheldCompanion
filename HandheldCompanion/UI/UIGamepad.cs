@@ -111,24 +111,27 @@ namespace HandheldCompanion.Managers
                 return;
 
             // set focus
-            _focused[_currentName] = true;
+            _focused[_currentName] = _currentWindow.IsPrimary();
 
             // raise event
-            GotFocus?.Invoke(_currentName);
-
-            foreach (string window in _focused.Keys)
+            if (_focused[_currentName])
             {
-                if (window.Equals(_currentName))
-                    continue;
+                GotFocus?.Invoke(_currentName);
 
-                if (_focused.TryGetValue(window, out isFocused) && !isFocused)
-                    continue;
+                foreach (string window in _focused.Keys)
+                {
+                    if (window.Equals(_currentName))
+                        continue;
 
-                // remove focus
-                _focused[window] = false;
+                    if (_focused.TryGetValue(window, out isFocused) && !isFocused)
+                        continue;
 
-                // raise event
-                LostFocus?.Invoke(window);
+                    // remove focus
+                    _focused[window] = false;
+
+                    // raise event
+                    LostFocus?.Invoke(window);
+                }
             }
         }
 
@@ -184,10 +187,11 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 // set focus
-                _focused[window] = true;
+                _focused[window] = gamepadWindow.IsPrimary();
 
                 // raise event
-                GotFocus?.Invoke(window);
+                if (_focused[window])
+                    GotFocus?.Invoke(window);
             }
         }
 

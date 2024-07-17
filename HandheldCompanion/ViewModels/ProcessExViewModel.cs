@@ -81,7 +81,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // Get the screen where the reference window is located
-                Screen screen = Screen.FromHandle(qtWindow.hwndSource.Handle);
+                Screen screen = Screen.FromHandle(qtWindow.GetHandle());
                 if (screen is null)
                     return;
 
