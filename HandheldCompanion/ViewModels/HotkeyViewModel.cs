@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Commands;
 using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
@@ -235,91 +236,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void DrawChords()
-        {
-            foreach (GlyphViewModel glyphViewModel in ButtonGlyphs.ToList())
-                ButtonGlyphs.SafeRemove(glyphViewModel);
-
-            IController? controller = ControllerManager.GetTargetController();
-            if (controller is null)
-                controller = ControllerManager.GetEmulatedController();
-
-            foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
-            {
-                string glyphString = string.Empty;
-
-                switch (buttonFlags)
-                {
-                    case ButtonFlags.OEM1:
-                    case ButtonFlags.OEM2:
-                    case ButtonFlags.OEM3:
-                    case ButtonFlags.OEM4:
-                    case ButtonFlags.OEM5:
-                    case ButtonFlags.OEM6:
-                    case ButtonFlags.OEM7:
-                    case ButtonFlags.OEM8:
-                    case ButtonFlags.OEM9:
-                    case ButtonFlags.OEM10:
-                        glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
-                        break;
-                    default:
-                        glyphString = controller.GetGlyph(buttonFlags);
-                        break;
-                }
-
-                ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString));
-            }
-
-            switch (Hotkey.command.commandType)
-            {
-                case CommandType.Keyboard:
-                    if (Hotkey.command is KeyboardCommands keyboardCommands)
-                        KeyboardOutputChord = string.Join(",", keyboardCommands.outputChord.KeyState.Where(key => key.IsKeyDown).Select(key => (KeyCode)key.KeyValue));
-                    break;
-            }
-            KeyboardChord = string.Join(",", Hotkey.inputsChord.KeyState.Where(key => key.IsKeyDown).Select(key => (KeyCode)key.KeyValue));
-            InputsChordType = EnumUtils.GetDescriptionFromEnumValue(Hotkey.inputsChord.chordType);
-        }
-
-        private void DrawNameAndDescription()
-        {
-            if (Hotkey.command.commandType == CommandType.Function)
-            {
-                // do something
-            }
-            else if (Hotkey.command.commandType == CommandType.Executable)
-            {
-                if (Hotkey.command is ExecutableCommands executableCommands)
-                {
-                    if (File.Exists(executableCommands.Path))
-                    {
-                        Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(executableCommands.Path);
-                        string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-                        string Executable = System.IO.Path.GetFileName(executableCommands.Path);
-                        Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
-                    }
-                    else
-                    {
-                        Name = Hotkey.command.Name;
-                    }
-
-                    Description = Hotkey.command.Description;
-
-                    goto Success;
-                }
-            }
-            else if (Hotkey.command.commandType == CommandType.Keyboard)
-            {
-                // do something
-            }
-
-            Name = string.IsNullOrEmpty(CustomName) ? Hotkey.command.Name : CustomName;
-            Description = Hotkey.command.Description;
-
-        Success:
-            OnPropertyChanged(nameof(Glyph));
-        }
-
         public int CommandTypeIndex
         {
             get
@@ -428,6 +344,24 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int OnScreenKeyboardLegacyPosition
+        {
+            get
+            {
+                if (Hotkey.command is OnScreenKeyboardLegacyCommands keyboardCommands)
+                    return keyboardCommands.KeyboardPosition;
+                return 0;
+            }
+            set
+            {
+                if (Hotkey.command is OnScreenKeyboardLegacyCommands keyboardCommands)
+                {
+                    keyboardCommands.KeyboardPosition = value;
+                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                }
+            }
+        }
+
         public bool IsToggled => Hotkey.command.IsToggled;
 
         public ICommand DefineButtonCommand { get; private set; }
@@ -524,6 +458,91 @@ namespace HandheldCompanion.ViewModels
                     HotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             });
+        }
+
+        private void DrawChords()
+        {
+            foreach (GlyphViewModel glyphViewModel in ButtonGlyphs.ToList())
+                ButtonGlyphs.SafeRemove(glyphViewModel);
+
+            IController? controller = ControllerManager.GetTargetController();
+            if (controller is null)
+                controller = ControllerManager.GetEmulatedController();
+
+            foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
+            {
+                string glyphString = string.Empty;
+
+                switch (buttonFlags)
+                {
+                    case ButtonFlags.OEM1:
+                    case ButtonFlags.OEM2:
+                    case ButtonFlags.OEM3:
+                    case ButtonFlags.OEM4:
+                    case ButtonFlags.OEM5:
+                    case ButtonFlags.OEM6:
+                    case ButtonFlags.OEM7:
+                    case ButtonFlags.OEM8:
+                    case ButtonFlags.OEM9:
+                    case ButtonFlags.OEM10:
+                        glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
+                        break;
+                    default:
+                        glyphString = controller.GetGlyph(buttonFlags);
+                        break;
+                }
+
+                ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString));
+            }
+
+            switch (Hotkey.command.commandType)
+            {
+                case CommandType.Keyboard:
+                    if (Hotkey.command is KeyboardCommands keyboardCommands)
+                        KeyboardOutputChord = string.Join(",", keyboardCommands.outputChord.KeyState.Where(key => key.IsKeyDown).Select(key => (KeyCode)key.KeyValue));
+                    break;
+            }
+            KeyboardChord = string.Join(",", Hotkey.inputsChord.KeyState.Where(key => key.IsKeyDown).Select(key => (KeyCode)key.KeyValue));
+            InputsChordType = EnumUtils.GetDescriptionFromEnumValue(Hotkey.inputsChord.chordType);
+        }
+
+        private void DrawNameAndDescription()
+        {
+            if (Hotkey.command.commandType == CommandType.Function)
+            {
+                // do something
+            }
+            else if (Hotkey.command.commandType == CommandType.Executable)
+            {
+                if (Hotkey.command is ExecutableCommands executableCommands)
+                {
+                    if (File.Exists(executableCommands.Path))
+                    {
+                        Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(executableCommands.Path);
+                        string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
+                        string Executable = System.IO.Path.GetFileName(executableCommands.Path);
+                        Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
+                    }
+                    else
+                    {
+                        Name = Hotkey.command.Name;
+                    }
+
+                    Description = Hotkey.command.Description;
+
+                    goto Success;
+                }
+            }
+            else if (Hotkey.command.commandType == CommandType.Keyboard)
+            {
+                // do something
+            }
+
+            Name = string.IsNullOrEmpty(CustomName) ? Hotkey.command.Name : CustomName;
+            Description = Hotkey.command.Description;
+
+        Success:
+            OnPropertyChanged(nameof(Glyph));
         }
     }
 }

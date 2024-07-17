@@ -1,13 +1,18 @@
-﻿using System;
+﻿using HandheldCompanion.Views.Windows;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using WpfScreenHelper.Enum;
 
 namespace HandheldCompanion.Commands.Functions.Windows
 {
     [Serializable]
     public class OnScreenKeyboardLegacyCommands : FunctionCommands
     {
+        public int KeyboardPosition = 0;
+
         public OnScreenKeyboardLegacyCommands()
         {
             Name = Properties.Resources.Hotkey_KeyboardLegacy;
@@ -18,7 +23,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 // Check if there is any existing osk.exe process
                 Process? existingOskProcess = Process.GetProcessesByName("osk").FirstOrDefault();
@@ -31,7 +36,26 @@ namespace HandheldCompanion.Commands.Functions.Windows
                 else
                 {
                     // Start a new osk.exe process
-                    Process.Start(new ProcessStartInfo("osk.exe") { UseShellExecute = true });
+                    Process OSK = Process.Start(new ProcessStartInfo("osk.exe") { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Minimized });
+                    await Task.Delay(200);
+
+                    // Find the OSK window. 
+                    IntPtr hwndOSK = FindWindow("OSKMainClass", null);
+
+                    Screen screen = Screen.FromHandle(OverlayQuickTools.GetCurrent().hwndSource.Handle);
+
+                    switch(KeyboardPosition)
+                    {
+                        case 0:     // Bottom
+                            WinAPI.MoveWindow(hwndOSK, screen, WindowPositions.Bottom);
+                            break;
+                        case 1:     // Maximize
+                            WinAPI.MoveWindow(hwndOSK, screen, WindowPositions.Maximize);
+
+                            int style = WinAPI.GetWindowLong(hwndOSK, WinAPI.GWL_STYLE);
+                            WinAPI.SetWindowLong(hwndOSK, WinAPI.GWL_STYLE, (style & ~WinAPI.WS_BORDER & ~WinAPI.WS_CAPTION & ~WinAPI.WS_SYSMENU));
+                            break;
+                    }
                 }
             });
 
@@ -42,12 +66,13 @@ namespace HandheldCompanion.Commands.Functions.Windows
         {
             OnScreenKeyboardLegacyCommands commands = new()
             {
-                commandType = commandType,
-                Name = Name,
-                Description = Description,
-                Glyph = Glyph,
-                OnKeyUp = OnKeyUp,
-                OnKeyDown = OnKeyDown
+                commandType = this.commandType,
+                Name = this.Name,
+                Description = this.Description,
+                Glyph = this.Glyph,
+                OnKeyUp = this.OnKeyUp,
+                OnKeyDown = this.OnKeyDown,
+                KeyboardPosition = this.KeyboardPosition,
             };
 
             return commands;

@@ -20,7 +20,7 @@ namespace HandheldCompanion.Views.Classes
         public ContentDialog currentDialog;
         protected UIGamepad gamepadFocusManager;
 
-        protected HwndSource hwndSource;
+        public HwndSource hwndSource;
 
         public GamepadWindow()
         {
@@ -47,9 +47,14 @@ namespace HandheldCompanion.Views.Classes
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
         }
 
+        public Screen GetScreen()
+        {
+            return Screen.FromHandle(hwndSource.Handle);
+        }
+
         public bool IsPrimary()
         {
-            return Screen.FromHandle(hwndSource.Handle).Primary;
+            return GetScreen().Primary;
         }
 
         public ScrollViewer GetScrollViewer(DependencyObject depObj)

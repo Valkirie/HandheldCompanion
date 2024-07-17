@@ -2,7 +2,8 @@
     x:Class="HandheldCompanion.Views.Pages.HotkeysPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:commands="clr-namespace:HandheldCompanion.Commands.Functions.HC"
+    xmlns:cmdHC="clr-namespace:HandheldCompanion.Commands.Functions.HC"
+    xmlns:cmdWIN="clr-namespace:HandheldCompanion.Commands.Functions.Windows"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -314,8 +315,43 @@
                                             </ComboBox>
                                         </Grid>
 
+                                        <!--  OnScreenKeyboardLegacyCommands  -->
+                                        <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdWIN:OnScreenKeyboardLegacyCommands}}">
+                                            <!--  Separator  -->
+                                            <Separator
+                                                Margin="-46,0,-16,0"
+                                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                BorderThickness="0,1,0,0" />
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="5*" />
+                                                    <ColumnDefinition Width="5*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Position" />
+                                                    <TextBlock
+                                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                                        Text="Define legacy virtual keyboard position"
+                                                        TextWrapping="Wrap" />
+                                                </ikw:SimpleStackPanel>
+
+                                                <ComboBox
+                                                    Grid.Column="1"
+                                                    Margin="12,0,0,0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    SelectedIndex="{Binding OnScreenKeyboardLegacyPosition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <ComboBoxItem Content="Bottom" />
+                                                    <ComboBoxItem Content="Maximize" />
+                                                </ComboBox>
+                                            </Grid>
+                                        </ikw:SimpleStackPanel>
+
                                         <!--  CycleSubProfileCommands  -->
-                                        <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type commands:CycleSubProfileCommands}}">
+                                        <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:CycleSubProfileCommands}}">
                                             <!--  Separator  -->
                                             <Separator
                                                 Margin="-46,0,-16,0"
