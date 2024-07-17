@@ -173,7 +173,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 case "QuickToolsAutoHide":
                     AutoHide = Convert.ToBoolean(value);
                     break;
-                case "QuickToolsScreen":
+                case "QuickToolsDevicePath":
                     UpdateLocation();
                     break;
             }
@@ -211,10 +211,11 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         // pull quicktools settings
         int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
-        string DevicePath = SettingsManager.GetString("QuickToolsScreen");
+        string DevicePath = SettingsManager.GetString("QuickToolsDevicePath");
+        string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
 
         // Attempt to find the screen with the specified friendly name
-        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath)) ?? MultimediaManager.PrimaryDesktop;
+        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.FriendlyName.Equals(DeviceName)) ?? MultimediaManager.PrimaryDesktop;
 
         // Find the corresponding Screen object
         targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));

@@ -307,11 +307,15 @@ public static class WinAPI
                 break;
             default:
             case WindowPositions.Maximize:
-                ShowWindow(hWnd, 3);
-                return;
+                newX = workingArea.Left;
+                newY = workingArea.Top;
+                break;
         }
 
         ShowWindow(hWnd, 9);
         MoveWindow(hWnd, (int)newX, (int)newY, (int)newWidth, (int)newHeight, true);
+
+        if (position == WindowPositions.Maximize)
+            ShowWindow(hWnd, 3);
     }
 }

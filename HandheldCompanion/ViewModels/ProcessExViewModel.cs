@@ -85,6 +85,8 @@ namespace HandheldCompanion.ViewModels
                 if (screen is null)
                     return;
 
+                WinAPI.MoveWindow(Process.MainWindowHandle, screen, PageViewModel.windowPositions);
+
                 int style = WinAPI.GetWindowLong(Process.MainWindowHandle, WinAPI.GWL_STYLE);
                 if (PageViewModel.BorderlessEnabled && PageViewModel.BorderlessToggle)
                 {
@@ -94,8 +96,6 @@ namespace HandheldCompanion.ViewModels
                 {
                     WinAPI.SetWindowLong(Process.MainWindowHandle, WinAPI.GWL_STYLE, (style | WinAPI.WS_BORDER | WinAPI.WS_CAPTION | WinAPI.WS_SYSMENU));
                 }
-
-                WinAPI.MoveWindow(Process.MainWindowHandle, screen, PageViewModel.windowPositions);
             });
         }
 

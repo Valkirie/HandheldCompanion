@@ -60,16 +60,16 @@ public partial class SettingsPage : Page
         Application.Current.Dispatcher.Invoke(() =>
         {
             int idx = -1;
-            foreach (DesktopScreen desktopScreen in cB_QuickToolsScreen.Items.OfType<DesktopScreen>())
+            foreach (DesktopScreen desktopScreen in cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>())
             {
                 if (desktopScreen.DevicePath.Equals(screen.DevicePath))                    
-                    idx = cB_QuickToolsScreen.Items.IndexOf(desktopScreen);
+                    idx = cB_QuickToolsDevicePath.Items.IndexOf(desktopScreen);
             }
 
             if (idx != -1)
-                cB_QuickToolsScreen.Items[idx] = screen;
+                cB_QuickToolsDevicePath.Items[idx] = screen;
             else
-                cB_QuickToolsScreen.Items.Add(screen);
+                cB_QuickToolsDevicePath.Items.Add(screen);
         });
     }
 
@@ -79,31 +79,31 @@ public partial class SettingsPage : Page
         Application.Current.Dispatcher.Invoke(() =>
         {
             // check if current target was disconnected
-            if (cB_QuickToolsScreen.SelectedItem is DesktopScreen targetScreen)
+            if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen targetScreen)
                 if (targetScreen.DevicePath.Equals(screen.DevicePath))
-                    cB_QuickToolsScreen.SelectedIndex = 0;
+                    cB_QuickToolsDevicePath.SelectedIndex = 0;
 
             int idx = -1;
-            foreach (DesktopScreen desktopScreen in cB_QuickToolsScreen.Items.OfType<DesktopScreen>())
+            foreach (DesktopScreen desktopScreen in cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>())
             {
                 if (desktopScreen.DevicePath.Equals(screen.DevicePath))
-                    idx = cB_QuickToolsScreen.Items.IndexOf(desktopScreen);
+                    idx = cB_QuickToolsDevicePath.Items.IndexOf(desktopScreen);
             }
 
             if (idx != -1)
-                cB_QuickToolsScreen.Items.RemoveAt(idx);
+                cB_QuickToolsDevicePath.Items.RemoveAt(idx);
         });
     }
 
     private void MultimediaManager_Initialized()
     {
-        string QuickToolsScreen = SettingsManager.GetString("QuickToolsScreen");
+        string QuickToolsDevicePath = SettingsManager.GetString("QuickToolsDevicePath");
 
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            if (string.IsNullOrEmpty(QuickToolsScreen))
-                cB_QuickToolsScreen.SelectedIndex = 0;
+            if (string.IsNullOrEmpty(QuickToolsDevicePath))
+                cB_QuickToolsDevicePath.SelectedIndex = 0;
         });
     }
 
@@ -235,17 +235,18 @@ public partial class SettingsPage : Page
                             SentrySdk.CaptureMessage("Telemetry enabled on the device");
                     }
                     break;
-                case "QuickToolsScreen":
+                case "QuickToolsDevicePath":
                     {
                         string DevicePath = Convert.ToString(value);
+                        string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
 
-                        DesktopScreen? selectedScreen = cB_QuickToolsScreen.Items.OfType<DesktopScreen>()
-                        .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath));
+                        DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
+                        .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.FriendlyName.Equals(DeviceName));
 
                         if (selectedScreen != null)
-                            cB_QuickToolsScreen.SelectedItem = selectedScreen;
+                            cB_QuickToolsDevicePath.SelectedItem = selectedScreen;
                         else
-                            cB_QuickToolsScreen.SelectedIndex = 0;
+                            cB_QuickToolsDevicePath.SelectedIndex = 0;
                     }
                     break;
             }
@@ -572,12 +573,15 @@ public partial class SettingsPage : Page
         SettingsManager.SetProperty("TelemetryEnabled", Toggle_Telemetry.IsOn);
     }
     
-    private void cB_QuickToolsScreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void cB_QuickToolsDevicePath_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)
             return;
 
-        if (cB_QuickToolsScreen.SelectedItem is DesktopScreen desktopScreen)
-            SettingsManager.SetProperty("QuickToolsScreen", desktopScreen.DevicePath);
+        if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen desktopScreen)
+        {
+            SettingsManager.SetProperty("QuickToolsDevicePath", desktopScreen.DevicePath);
+            SettingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.FriendlyName);
+        }
     }
 }

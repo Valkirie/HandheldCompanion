@@ -8845,18 +8845,18 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Display.
         /// </summary>
-        public static string SettingsPage_QuickToolsScreen {
+        public static string SettingsPage_QuickToolsDevicePath {
             get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsScreen", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_QuickToolsDevicePath", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The display on which quicktools will be displayed.
         /// </summary>
-        public static string SettingsPage_QuickToolsScreenDesc {
+        public static string SettingsPage_QuickToolsDevicePathDesc {
             get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsScreenDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_QuickToolsDevicePathDesc", resourceCulture);
             }
         }
         

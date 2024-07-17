@@ -1153,12 +1153,12 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QuickToolsScreen {
+        public string QuickToolsDevicePath {
             get {
-                return ((string)(this["QuickToolsScreen"]));
+                return ((string)(this["QuickToolsDevicePath"]));
             }
             set {
-                this["QuickToolsScreen"] = value;
+                this["QuickToolsDevicePath"] = value;
             }
         }
         
@@ -1171,6 +1171,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["LastVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QuickToolsDeviceName {
+            get {
+                return ((string)(this["QuickToolsDeviceName"]));
+            }
+            set {
+                this["QuickToolsDeviceName"] = value;
             }
         }
     }

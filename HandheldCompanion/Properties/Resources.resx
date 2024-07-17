@@ -3198,10 +3198,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="SettingsPage_QuickToolsWindowLocationMaximized" xml:space="preserve">
     <value>Maximized</value>
   </data>
-  <data name="SettingsPage_QuickToolsScreen" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsDevicePath" xml:space="preserve">
     <value>Display</value>
   </data>
-  <data name="SettingsPage_QuickToolsScreenDesc" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
     <value>The display on which quicktools will be displayed</value>
   </data>
   <data name="MainWindow_TelemetryText" xml:space="preserve">

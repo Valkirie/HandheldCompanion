@@ -166,16 +166,16 @@ public partial class MainWindow : GamepadWindow
 
         if (FirstStart)
         {
-            string currentDeviceType = CurrentDevice.GetType().Name;
-            switch (currentDeviceType)
+            if (CurrentDevice is SteamDeck steamDeck)
             {
-                case "SteamDeck":
-                    {
-                        // prevent Steam Deck controller from being hidden by default
-                        if (FirstStart)
-                            SettingsManager.SetProperty("HIDcloakonconnect", false);
-                    }
-                    break;
+                // prevent Steam Deck controller from being hidden by default
+                SettingsManager.SetProperty("HIDcloakonconnect", false);
+            }
+            else if (CurrentDevice is AYANEOFlipDS flipDS)
+            {
+                // set Quicktools to Maximize on bottom screen
+                SettingsManager.SetProperty("QuickToolsLocation", 2);
+                SettingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
             }
 
             SettingsManager.SetProperty("FirstStart", false);
