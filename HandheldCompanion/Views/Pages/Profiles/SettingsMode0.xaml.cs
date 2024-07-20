@@ -11,7 +11,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Pages.Profiles;
 
@@ -77,11 +76,13 @@ public partial class SettingsMode0 : Page
                             MaxHeight = StackCurve.Height,
                             Height = height,
                             VerticalAlignment = VerticalAlignment.Bottom,
-                            Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
                             BorderThickness = new Thickness(0),
-                            BorderBrush = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"],
                             IsEnabled = false // prevent the control from being clickable
                         };
+
+                        // Bind the Stroke property to a dynamic resource
+                        thumb.SetResourceReference(Thumb.BackgroundProperty, "SystemControlHighlightAltListAccentLowBrush");
+                        thumb.SetResourceReference(Thumb.BorderBrushProperty, "SystemControlHighlightAltListAccentHighBrush");
 
                         StackCurve.Children.Add(thumb);
                     }
@@ -162,29 +163,31 @@ public partial class SettingsMode0 : Page
         if (ProfilesPage.selectedProfile is null)
             return;
 
-        Control Thumb = null;
+        Control thumb = null;
 
         foreach (Control control in StackCurve.Children)
         {
             var position = e.GetPosition(control);
             var dist_x = Math.Abs(position.X);
 
-            control.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"];
+            // Bind the Stroke property to a dynamic resource
+            control.SetResourceReference(BackgroundProperty, "SystemControlHighlightAltListAccentLowBrush");
 
             if (dist_x <= control.Width)
-                Thumb = control;
+                thumb = control;
         }
 
-        if (Thumb is null)
+        if (thumb is null)
             return;
 
-        Thumb.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"];
+        // Bind the Stroke property to a dynamic resource
+        thumb.SetResourceReference(Thumb.BackgroundProperty, "SystemControlHighlightAltListAccentHighBrush");
 
         if (e.LeftButton == MouseButtonState.Pressed)
         {
-            var x = (double)Thumb.Tag;
-            Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
-            ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+            var x = (double)thumb.Tag;
+            thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
+            ProfilesPage.selectedProfile.MotionSensivityArray[x] = thumb.Height / StackCurve.Height;
             ProfilesPage.UpdateProfile();
         }
     }

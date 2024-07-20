@@ -244,6 +244,15 @@ public static class WinAPI
         return hMonitor;
     }
 
+    public static void MakeBorderless(nint hWnd, bool borderless)
+    {
+        int style = GetWindowLong(hWnd, GWL_STYLE);
+        if (borderless)
+            SetWindowLong(hWnd, GWL_STYLE, (style & ~WS_BORDER & ~WS_CAPTION & ~WS_SYSMENU));
+        else
+            SetWindowLong(hWnd, GWL_STYLE, (style | WS_BORDER | WS_CAPTION | WS_SYSMENU));
+    }
+
     public static void MoveWindow(nint hWnd, Screen targetScreen, WindowPositions position)
     {
         if (hWnd == IntPtr.Zero)

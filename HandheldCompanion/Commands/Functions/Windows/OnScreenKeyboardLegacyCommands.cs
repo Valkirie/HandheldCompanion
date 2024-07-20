@@ -35,12 +35,11 @@ namespace HandheldCompanion.Commands.Functions.Windows
                 {
                     // Kill the existing osk.exe process
                     existingOskProcess.Kill();
-                    existingOskProcess.WaitForExit(TimeSpan.FromSeconds(3));
                 }
                 else
                 {
                     // Start a new osk.exe process
-                    Process OSK = Process.Start(new ProcessStartInfo("osk.exe") { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Minimized });
+                    Process OSK = Process.Start(new ProcessStartInfo("osk.exe") { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
                     await Task.Delay(200);
 
                     // Find the OSK window. 
@@ -55,9 +54,6 @@ namespace HandheldCompanion.Commands.Functions.Windows
                             break;
                         case 1:     // Maximize
                             WinAPI.MoveWindow(hwndOSK, screen, WindowPositions.Maximize);
-
-                            int style = WinAPI.GetWindowLong(hwndOSK, WinAPI.GWL_STYLE);
-                            WinAPI.SetWindowLong(hwndOSK, WinAPI.GWL_STYLE, (style & ~WinAPI.WS_BORDER & ~WinAPI.WS_CAPTION & ~WinAPI.WS_SYSMENU));
                             break;
                     }
                 }

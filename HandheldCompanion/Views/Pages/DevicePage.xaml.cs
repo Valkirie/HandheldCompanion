@@ -515,9 +515,9 @@ namespace HandheldCompanion.Views.Pages
             foreach (SimpleStackPanel panel in Grid_SensorPlacementVisualisation.Children)
                 foreach (Button button in panel.Children)
                     if (int.Parse((string)button.Tag) == SensorPlacement)
-                        button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                        button.SetResourceReference(BackgroundProperty, "SystemControlForegroundAccentBrush");
                     else
-                        button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+                        button.SetResourceReference(BackgroundProperty, "SystemControlHighlightAltBaseLowBrush");
         }
 
         private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, RoutedEventArgs? e)

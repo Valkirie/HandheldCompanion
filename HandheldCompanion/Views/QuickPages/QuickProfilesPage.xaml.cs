@@ -801,6 +801,10 @@ public partial class QuickProfilesPage : Page
         if (hotkey.ButtonFlags != gyroButtonFlags)
             return;
 
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
         // update gyro hotkey
         GyroHotkey = hotkey;
 

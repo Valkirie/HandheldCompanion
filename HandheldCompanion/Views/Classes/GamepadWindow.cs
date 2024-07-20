@@ -1,11 +1,13 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Windows.Media;
 using WpfScreenHelper;
@@ -45,6 +47,35 @@ namespace HandheldCompanion.Views.Classes
                 controlElements.Remove((Control)visualRemoved);
 
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+        }
+
+        private AdornerLayer _adornerLayer;
+        private HighlightAdorner _highlightAdorner;
+
+        public void SetFocusedElement(Control focusedControl)
+        {
+            if (this is MainWindow)
+                // force display keyboard focus rectangle
+                WPFUtils.MakeFocusVisible(this);
+            else if (this is OverlayQuickTools)
+            {
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (_highlightAdorner != null)
+                    {
+                        _adornerLayer.Remove(_highlightAdorner);
+                        _highlightAdorner = null;
+                    }
+
+                    _adornerLayer = AdornerLayer.GetAdornerLayer(focusedControl);
+                    if (_adornerLayer != null)
+                    {
+                        _highlightAdorner = new HighlightAdorner(focusedControl);
+                        _adornerLayer.Add(_highlightAdorner);
+                    }
+                });
+            }
         }
 
         public Screen GetScreen()

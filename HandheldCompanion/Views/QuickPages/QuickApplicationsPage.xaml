@@ -21,7 +21,7 @@
 
     <Grid>
         <ui:ContentDialog
-            Name="ProfileRenameDialog"
+            Name="SnapDialog"
             CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
             PrimaryButtonStyle="{DynamicResource AccentButtonStyle}"
             PrimaryButtonText="Snap">
@@ -228,17 +228,29 @@
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Processes" />
 
                 <ui:ItemsRepeater ItemsSource="{Binding Processes}">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:UniformGridLayout
+                            ItemsStretch="Fill"
+                            MaximumRowsOrColumns="1"
+                            MinColumnSpacing="3"
+                            MinItemWidth="200"
+                            MinRowSpacing="3"
+                            Orientation="Horizontal" />
+                    </ui:ItemsRepeater.Layout>
+
                     <ui:ItemsRepeater.ItemTemplate>
                         <DataTemplate>
-                            <Expander
-                                Padding="20,12,12,12"
-                                HorizontalAlignment="Stretch"
-                                d:IsExpanded="True">
-                                <Expander.Header>
-                                    <Grid Height="50">
+                            <Border
+                                Padding="15,12,12,12"
+                                Background="{DynamicResource ExpanderHeaderBackground}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                                <ikw:SimpleStackPanel Spacing="6">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="24" />
-                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="8*" />
+                                            <ColumnDefinition MinWidth="168" />
                                         </Grid.ColumnDefinitions>
 
                                         <Image
@@ -261,89 +273,76 @@
                                                 Text="{Binding Executable}"
                                                 TextWrapping="NoWrap" />
                                         </StackPanel>
-                                    </Grid>
-                                </Expander.Header>
 
-                                <Expander.Content>
-                                    <ikw:SimpleStackPanel Margin="0,-4,0,-4" Spacing="12">
-
-                                        <!--  Suspend  -->
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="6*" />
-                                                <ColumnDefinition MinWidth="120" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <ikw:SimpleStackPanel Spacing="6">
-                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Suspend" />
-
-                                                <TextBlock
-                                                    VerticalAlignment="Center"
-                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Immediately suspend this application and its related processes." />
-                                            </ikw:SimpleStackPanel>
-
+                                        <ikw:SimpleStackPanel
+                                            Grid.Column="2"
+                                            Margin="6,0,0,0"
+                                            Orientation="Horizontal"
+                                            Spacing="3">
                                             <ToggleButton
-                                                Grid.Column="1"
-                                                Width="110"
-                                                HorizontalAlignment="Right"
-                                                Content="Suspend"
-                                                IsChecked="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                IsChecked="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                        <!--  Bring  -->
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="6*" />
-                                                <ColumnDefinition MinWidth="120" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <ikw:SimpleStackPanel Spacing="6">
-                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Snap windows" />
-
-                                                <TextBlock
-                                                    VerticalAlignment="Center"
-                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Snap window to automatically resize and arrange it into layouts" />
-                                            </ikw:SimpleStackPanel>
+                                                <ToggleButton.Style>
+                                                    <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSuspended}" Value="True">
+                                                                <Setter Property="ToolTip" Value="Resume application" />
+                                                                <Setter Property="Content" Value="&#xe768;" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsSuspended}" Value="False">
+                                                                <Setter Property="ToolTip" Value="Suspend application" />
+                                                                <Setter Property="Content" Value="&#xe769;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ToggleButton.Style>
+                                            </ToggleButton>
 
                                             <Button
-                                                Grid.Column="1"
-                                                Width="110"
-                                                HorizontalAlignment="Right"
-                                                Command="{Binding BringProcessCommand}"
-                                                Content="Snap" />
-                                        </Grid>
-
-                                        <!--  Terminate  -->
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="6*" />
-                                                <ColumnDefinition MinWidth="120" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <ikw:SimpleStackPanel Spacing="6">
-                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Terminate" />
-
-                                                <TextBlock
-                                                    VerticalAlignment="Center"
-                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Immediately terminate this application and its related processes." />
-                                            </ikw:SimpleStackPanel>
-
-                                            <Button
-                                                Grid.Column="1"
-                                                Width="110"
-                                                HorizontalAlignment="Right"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
                                                 Command="{Binding KillProcessCommand}"
-                                                Content="Terminate" />
-                                        </Grid>
-                                    </ikw:SimpleStackPanel>
-                                </Expander.Content>
-                            </Expander>
+                                                Content="&#xe711;"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                ToolTip="Terminate application" />
+
+                                            <Button
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Command="{Binding BringProcessCommand}"
+                                                Content="&#xe7c4;"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                ToolTip="Snap application window" />
+
+                                            <Button
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Command="{Binding SwapScreenCommand}"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                IsEnabled="{Binding HasTwoScreen, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="True">
+                                                                <Setter Property="ToolTip" Value="Swap to secondary screen" />
+                                                                <Setter Property="Content" Value="&#xe8a7;" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="False">
+                                                                <Setter Property="ToolTip" Value="Swap to primary screen" />
+                                                                <Setter Property="Content" Value="&#xe78b;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </ikw:SimpleStackPanel>
+                                    </Grid>
+                                </ikw:SimpleStackPanel>
+                            </Border>
                         </DataTemplate>
                     </ui:ItemsRepeater.ItemTemplate>
                 </ui:ItemsRepeater>

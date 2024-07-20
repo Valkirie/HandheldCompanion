@@ -131,11 +131,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
         hwndSource.AddHook(WndProc);
 
-        /*
-        int exStyle = (int)WinAPI.GetWindowLong(hwnd, GWL_EXSTYLE);
+        int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
         exStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;     
-        WinAPI.SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
-        */
+        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle);
 
         WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
     }
@@ -349,35 +347,17 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         switch (msg)
         {
-            case WM_ACTIVATEAPP:
-                handled = true;
+            case WM_SYSCOMMAND:
+                {
+                    var command = wParam.ToInt32() & 0xfff0;
+                    if (command == SC_MOVE) handled = true;
+                }
                 break;
 
             case WM_ACTIVATE:
                 handled = true;
                 WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
                 break;
-
-            case WM_SETFOCUS:
-                // Prevent the window from receiving focus
-                handled = true;
-                break;
-
-            case WM_MOUSEACTIVATE:
-                handled = true;
-                return new IntPtr(MA_NOACTIVATE);
-
-            case WM_NCACTIVATE:
-                if (((int)wParam & 0xFFFF) == 0)
-                    handled = true;
-                break;
-
-            case WM_NCHITTEST:
-                // This message is sent to determine the location of the cursor
-                // It helps in identifying which part of the window was clicked.
-                // Returning HTCLIENT will keep the window from being activated
-                handled = true;
-                return new IntPtr(1); // HTCLIENT
 
             case WM_PAINT:
                 {
@@ -469,7 +449,7 @@ public partial class OverlayQuickTools : GamepadWindow
                     break;
                 case Visibility.Visible:
                     {
-                        Hide();
+                        try { Hide(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                         //SlideOut();
 
                         InvokeLostGamepadWindowFocus();

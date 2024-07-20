@@ -450,13 +450,24 @@ public static class ProcessManager
 
             foreach (ProcessThread thread in process.Threads)
             {
-                if (thread.ThreadState != ThreadState.Running)
-                    continue;
-
-                if (thread.StartTime < startTime)
+                try
                 {
-                    startTime = thread.StartTime;
-                    mainThread = thread;
+                    if (thread.ThreadState != ThreadState.Running)
+                        continue;
+
+                    if (thread.StartTime < startTime)
+                    {
+                        startTime = thread.StartTime;
+                        mainThread = thread;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // This exception occurs if the thread has exited
+                }
+                catch (Exception)
+                {
+                    // Handle other exceptions
                 }
             }
 
@@ -469,7 +480,7 @@ public static class ProcessManager
         }
         catch (InvalidOperationException)
         {
-            // thread has exited
+            // This exception occurs if the thread has exited
         }
 
         return mainThread;
