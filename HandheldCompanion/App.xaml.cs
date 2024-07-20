@@ -156,6 +156,10 @@ public partial class App : Application
     {
         Exception ex = e.Exception;
 
+        // dirty: filter ItemsRepeater DesiredSize is NaN
+        if (ex.Message.Contains("ItemsRepeater"))
+            goto Handled;
+
         // send to sentry
         bool IsSentryEnabled = SettingsManager.GetBoolean("TelemetryEnabled");
         if (SentrySdk.IsEnabled && IsSentryEnabled)
@@ -163,10 +167,11 @@ public partial class App : Application
 
         if (ex.InnerException != null)
             LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
-
-        LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
+        else
+            LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
 
         // If you want to avoid the application from crashing:
+        Handled:
         e.Handled = true;
     }
 
