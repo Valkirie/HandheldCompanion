@@ -11,7 +11,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
         {
             Name = Properties.Resources.Hotkey_KillApp;
             Description = Properties.Resources.Hotkey_KillAppDesc;
-            Glyph = "\ue71a";
+            Glyph = "\uE8BB";
             OnKeyUp = true;
         }
 
