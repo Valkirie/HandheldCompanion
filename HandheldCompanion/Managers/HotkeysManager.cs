@@ -10,6 +10,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using HandheldCompanion.Commands.Functions.Multimedia;
+using Newtonsoft.Json.Linq;
 
 namespace HandheldCompanion.Managers;
 
@@ -96,18 +99,44 @@ public static class HotkeysManager
 
     private static void ProcessHotkey(string fileName)
     {
-        Hotkey hotkey = null;
-        try
+        Hotkey? hotkey = null;
+
+        // Check json filename, if it is not a number (as ButtonFlags), it is the old format
+        var regex = new Regex(@"(\d+)\.json", RegexOptions.IgnoreCase);
+        var match = regex.Match(fileName);
+
+        if (!match.Success)
         {
-            var outputraw = File.ReadAllText(fileName);
-            hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings
+            try
             {
-                TypeNameHandling = TypeNameHandling.All
-            });
+                hotkey = MigrateHotkey(fileName);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Could not migrate old hotkey {0}. {1}", fileName, ex.Message);
+                return;
+            }
+
+            if (hotkey is null)
+            {
+                LogManager.LogError("Could not migrate old hotkey {0}.", fileName);
+                return;
+            }
         }
-        catch (Exception ex)
+        else
         {
-            LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
+            try
+            {
+                var outputraw = File.ReadAllText(fileName);
+                hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
+            }
         }
 
         if (hotkey is null)
@@ -121,6 +150,122 @@ public static class HotkeysManager
 
         hotkeys[hotkey.ButtonFlags] = hotkey;
         Updated?.Invoke(hotkey);
+    }
+
+    private static Hotkey? MigrateHotkey(string fileName)
+    {
+        var json = File.ReadAllText(fileName);
+        JObject? dictionary = JObject.Parse(json);
+
+        if (!dictionary.ContainsKey("hotkeyId"))
+        {
+            return null;
+        }
+
+        ushort hotkeyId = (ushort)dictionary["hotkeyId"];
+
+        ICommands command = new EmptyCommands();
+
+        // This hotkey is from old format, need migrate to new hotkey
+        if (hotkeyId > 0)
+        {
+            switch (hotkeyId)
+            {
+                case 01:
+                    command = new OverlayGamepadCommands();
+                    break;
+                case 02:
+                    command = new OverlayTrackpadCommands();
+                    break;
+                case 03:
+                    // "OnScreenDisplayToggle"
+                    break;
+                case 10:
+                    command = new QuickToolsCommands();
+                    break;
+                case 11:
+                    // "increaseTDP"
+                    break;
+                case 12:
+                    // "decreaseTDP"
+                    break;
+                case 13:
+                    // "suspendResumeTask"
+                    break;
+                case 20:
+                    command = new OnScreenKeyboardCommands();
+                    break;
+                //case 21-28:
+                // "shortcutDesktop", "shortcutESC", "shortcutExpand", "shortcutTaskView", "shortcutTaskManager", "shortcutKillApp", "shortcutControlCenter", "shortcutPrintScreen"
+                //break;
+                case 30:
+                    command = new MainWindowCommands();
+                    break;
+                case 31:
+                    command = new DesktopLayoutCommands();
+                    break;
+                case 32:
+                    command = new HIDModeCommands();
+                    break;
+                case 33:
+                case 34:
+                    command = new CycleSubProfileCommands();
+                    break;
+                case 41:
+                    command = new BrightnessIncrease();
+                    break;
+                case 42:
+                    command = new BrightnessDecrease();
+                    break;
+                case 43:
+                    command = new VolumeIncrease();
+                    break;
+                case 44:
+                    command = new VolumeDecrease();
+                    break;
+            }
+
+            // Check if the above switch is handled, migrate to new hotkey and delete old file
+            if (command is not EmptyCommands)
+            {
+                Hotkey hotkey = new Hotkey();
+                hotkey.command = command;
+
+                // Migrate InputsType
+                var oldInputsType = (int)dictionary["inputsChord"]["InputsType"];
+                if (Enum.TryParse(oldInputsType.ToString(), out InputsChordType oldType))
+                {
+                    hotkey.inputsChord.chordType = oldType;
+                }
+
+                // Migrate Old State
+                var oldState = (JObject)dictionary["inputsChord"]["State"]["State"];
+                foreach (var keyValuePair in oldState)
+                {
+                    if (Enum.TryParse(keyValuePair.Key, out ButtonFlags flag))
+                    {
+                        hotkey.inputsChord.ButtonState.State[flag] = (bool)keyValuePair.Value;
+                    }
+                }
+
+                // Common ButtonFlags check
+                if (CheckAvailableButtonFlag(hotkey.ButtonFlags))
+                    hotkey.ButtonFlags = GetAvailableButtonFlag();
+
+                if (hotkey.ButtonFlags == ButtonFlags.None)
+                    return null;
+
+                // Delete the old file
+                File.Delete(fileName);
+
+                // Save new hotkey json
+                SerializeHotkey(hotkey);
+
+                return hotkey;
+            }
+        }
+
+        return null;
     }
 
     private static bool CheckAvailableButtonFlag(ButtonFlags buttonFlags)
