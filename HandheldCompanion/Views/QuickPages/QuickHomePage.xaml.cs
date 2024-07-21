@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using System;
@@ -91,7 +92,8 @@ public partial class QuickHomePage : Page
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    SliderBrightness.Value = brightness;
+                    if (SliderBrightness.Value != (int)brightness)
+                        SliderBrightness.Value = (int)brightness;
                 });
             }
             finally
@@ -111,7 +113,9 @@ public partial class QuickHomePage : Page
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     UpdateVolumeIcon(volume);
-                    SliderVolume.Value = Math.Round(volume);
+
+                    if (SliderVolume.Value != (int)volume)
+                        SliderVolume.Value = (int)volume;
                 });
             }
             finally
@@ -130,7 +134,8 @@ public partial class QuickHomePage : Page
         if (brightnessLock.IsEntered())
             return;
 
-        MultimediaManager.SetBrightness(SliderBrightness.Value);
+        lock (brightnessLock)
+            MultimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -142,7 +147,8 @@ public partial class QuickHomePage : Page
         if (volumeLock.IsEntered())
             return;
 
-        MultimediaManager.SetVolume(SliderVolume.Value);
+        lock (volumeLock)
+            MultimediaManager.SetVolume(SliderVolume.Value);
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
