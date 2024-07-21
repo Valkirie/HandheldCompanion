@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Commands.ICommands;
 
@@ -24,7 +25,7 @@ namespace HandheldCompanion.ViewModels
 {
     public class HotkeyViewModel : BaseViewModel
     {
-        public ObservableCollection<GlyphViewModel> ButtonGlyphs { get; set; } = [];
+        public ObservableCollection<FontIconViewModel> ButtonGlyphs { get; set; } = [];
         public ObservableCollection<ComboBoxItemViewModel> FunctionItems { get; set; } = [];
 
         private Hotkey _Hotkey;
@@ -462,8 +463,8 @@ namespace HandheldCompanion.ViewModels
 
         private void DrawChords()
         {
-            foreach (GlyphViewModel glyphViewModel in ButtonGlyphs.ToList())
-                ButtonGlyphs.SafeRemove(glyphViewModel);
+            foreach (FontIconViewModel FontIconViewModel in ButtonGlyphs.ToList())
+                ButtonGlyphs.SafeRemove(FontIconViewModel);
 
             IController? controller = ControllerManager.GetTargetController();
             if (controller is null)
@@ -472,6 +473,7 @@ namespace HandheldCompanion.ViewModels
             foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
             {
                 string glyphString = string.Empty;
+                Brush glyphColor = controller.GetGlyphColor(buttonFlags);
 
                 switch (buttonFlags)
                 {
@@ -492,7 +494,7 @@ namespace HandheldCompanion.ViewModels
                         break;
                 }
 
-                ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString));
+                ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString, glyphColor));
             }
 
             switch (Hotkey.command.commandType)

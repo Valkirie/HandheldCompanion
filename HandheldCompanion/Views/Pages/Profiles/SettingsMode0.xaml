@@ -300,8 +300,19 @@
                                                                 <DataTemplate>
                                                                     <ui:FontIcon
                                                                         FontFamily="PromptFont"
-                                                                        FontSize="24"
-                                                                        Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                        FontSize="20"
+                                                                        Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                                        <ui:FontIcon.Style>
+                                                                            <Style TargetType="ui:FontIcon">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Null}">
+                                                                                        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                                <Setter Property="Foreground" Value="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                            </Style>
+                                                                        </ui:FontIcon.Style>
+                                                                    </ui:FontIcon>
                                                                 </DataTemplate>
                                                             </ui:ItemsRepeater.ItemTemplate>
                                                         </ui:ItemsRepeater>
