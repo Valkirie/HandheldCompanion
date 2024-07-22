@@ -255,7 +255,8 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            if (Toggle_cTDP.IsOn)
+            bool enabled = Toggle_cTDP.IsOn;
+            if (enabled)
             {
                 // todo: translate me
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
@@ -280,7 +281,7 @@ namespace HandheldCompanion.Views.Pages
                 }
             }
 
-            SettingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
+            SettingsManager.SetProperty("ConfigurableTDPOverride", enabled);
             SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
         }

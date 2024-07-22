@@ -1185,5 +1185,29 @@ namespace HandheldCompanion.Properties
                 this["QuickToolsDeviceName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AYANEOFlipScreenEnabled {
+            get {
+                return ((bool)(this["AYANEOFlipScreenEnabled"]));
+            }
+            set {
+                this["AYANEOFlipScreenEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double AYANEOFlipScreenBrightness {
+            get {
+                return ((double)(this["AYANEOFlipScreenBrightness"]));
+            }
+            set {
+                this["AYANEOFlipScreenBrightness"] = value;
+            }
+        }
     }
 }

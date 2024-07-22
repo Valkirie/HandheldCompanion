@@ -2,6 +2,7 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,11 @@ public partial class QuickDevicePage : Page
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
 
+        // Device specific
         LegionGoPanel.Visibility = IDevice.GetCurrent() is LegionGo ? Visibility.Visible : Visibility.Collapsed;
+        AYANEOFlipDSPanel.Visibility = IDevice.GetCurrent() is AYANEOFlipDS ? Visibility.Visible : Visibility.Collapsed;
+
+        // Capabilities specific
         DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
 
         NightLightToggle.IsEnabled = NightLight.Supported;
@@ -111,6 +116,12 @@ public partial class QuickDevicePage : Page
             {
                 case "LEDSettingsEnabled":
                     UseDynamicLightingToggle.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "AYANEOFlipScreenEnabled":
+                    Toggle_AYANEOFlipScreen.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "AYANEOFlipScreenBrightness":
+                    Slider_AYANEOFlipScreenBrightness.Value = Convert.ToDouble(value);
                     break;
             }
         });
@@ -284,7 +295,7 @@ public partial class QuickDevicePage : Page
         radioTimer.Stop();
     }
 
-    private void Toggle_cFFanSpeed_Toggled(object sender, RoutedEventArgs e)
+    private void Toggle_LegionGoFanOverride_Toggled(object sender, RoutedEventArgs e)
     {
         if (IDevice.GetCurrent() is LegionGo device)
         {
@@ -296,5 +307,52 @@ public partial class QuickDevicePage : Page
     private void NightLightToggle_Toggled(object sender, RoutedEventArgs e)
     {
         NightLight.Enabled = NightLightToggle.IsOn;
+    }
+
+    private async void Toggle_AYANEOFlipScreen_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        bool enabled = Toggle_AYANEOFlipScreen.IsOn;
+        if (!enabled)
+        {
+            // todo: translate me
+            Task<ContentDialogResult> dialogTask = new Dialog(OverlayQuickTools.GetCurrent())
+            {
+                Title = "Warning",
+                Content = "To reactivate the lower screen, press the dual screen button on your device.",
+                CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+            }.ShowAsync();
+
+            await dialogTask; // sync call
+
+            switch (dialogTask.Result)
+            {
+                case ContentDialogResult.Primary:
+                    break;
+
+                default:
+                case ContentDialogResult.None:
+                    // restore previous state
+                    Toggle_AYANEOFlipScreen.IsOn = true;
+                    return;
+            }
+
+            SettingsManager.SetProperty("AYANEOFlipScreenEnabled", enabled);
+        }
+    }
+
+    private void Slider_AYANEOFlipScreenBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        var value = Slider_AYANEOFlipScreenBrightness.Value;
+        if (double.IsNaN(value))
+            return;
+
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("AYANEOFlipScreenBrightness", value);
     }
 }

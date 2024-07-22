@@ -282,51 +282,123 @@
         </ikw:SimpleStackPanel>
 
         <!--  Device settings  -->
-        <ikw:SimpleStackPanel
-            Name="LegionGoPanel"
-            Grid.Row="1"
-            d:Visibility="Visible"
-            Spacing="6"
-            Visibility="Collapsed">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Lenovo Legion Go settings" />
+        <ikw:SimpleStackPanel Grid.Row="1" Spacing="6">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <!--  AYANEO Flip DS  -->
+            <ikw:SimpleStackPanel
+                Name="AYANEOFlipDSPanel"
+                d:Visibility="Visible"
+                Spacing="6"
+                Visibility="Collapsed">
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE7BC;" />
+                    <ikw:SimpleStackPanel Spacing="6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200" />
+                                <ColumnDefinition MinWidth="100" />
+                            </Grid.ColumnDefinitions>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE8A7;" />
 
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_FullFanSpeedText}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
-                                TextWrapping="Wrap" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Enable second display" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
 
-                    <ui:ToggleSwitch
-                        Name="Toggle_cFFanSpeed"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="Toggle_cFFanSpeed_Toggled" />
-                </Grid>
-            </Border>
+                            <ui:ToggleSwitch
+                                Name="Toggle_AYANEOFlipScreen"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_AYANEOFlipScreen_Toggled" />
+                        </Grid>
+
+                        <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                        <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Slider_AYANEOFlipScreenBrightness, Mode=OneWay}" />
+                            <Slider
+                                Name="Slider_AYANEOFlipScreenBrightness"
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="100"
+                                Minimum="10"
+                                SmallChange="1"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="Slider_AYANEOFlipScreenBrightness_ValueChanged" />
+                        </DockPanel>
+                    </ikw:SimpleStackPanel>
+                </Border>
+            </ikw:SimpleStackPanel>
+
+            <!--  Lenovo Legion Go  -->
+            <ikw:SimpleStackPanel
+                Name="LegionGoPanel"
+                d:Visibility="Visible"
+                Spacing="6"
+                Visibility="Collapsed">
+
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE7BC;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_FullFanSpeedText}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_LegionGoFanOverride"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_LegionGoFanOverride_Toggled" />
+                    </Grid>
+                </Border>
+            </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
-
     </ikw:SimpleStackPanel>
 </Page>

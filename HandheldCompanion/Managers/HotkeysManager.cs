@@ -196,8 +196,5 @@ public static class HotkeysManager
     public static event UpdatedEventHandler Updated;
     public delegate void UpdatedEventHandler(Hotkey hotkey);
 
-    public static event TriggeredEventHandler Triggered;
-    public delegate void TriggeredEventHandler(Hotkey hotkey);
-
     #endregion
 }

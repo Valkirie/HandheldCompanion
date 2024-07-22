@@ -970,6 +970,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device settings.
+        /// </summary>
+        public static string DevicePage_DeviceSettings {
+            get {
+                return ResourceManager.GetString("DevicePage_DeviceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use dynamic lighting on my device.
         /// </summary>
         public static string DevicePage_DynamicLightDesc {
@@ -1245,15 +1254,6 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_Lenovo_ControllerTriggerMargin {
             get {
                 return ResourceManager.GetString("DevicePage_Lenovo_ControllerTriggerMargin", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lenovo Legion Go settings.
-        /// </summary>
-        public static string DevicePage_Lenovo_Settings {
-            get {
-                return ResourceManager.GetString("DevicePage_Lenovo_Settings", resourceCulture);
             }
         }
         
@@ -8834,15 +8834,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Quicktools options.
-        /// </summary>
-        public static string SettingsPage_QuickToolsOptions {
-            get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Display.
         /// </summary>
         public static string SettingsPage_QuickToolsDevicePath {
@@ -8857,6 +8848,15 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_QuickToolsDevicePathDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_QuickToolsDevicePathDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quicktools options.
+        /// </summary>
+        public static string SettingsPage_QuickToolsOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsOptions", resourceCulture);
             }
         }
         

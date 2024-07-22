@@ -908,548 +908,551 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
-            <!--  legion go device settings  -->
-            <ikw:SimpleStackPanel
-                Name="LegionGoPanel"
-                Grid.Row="1"
-                d:Visibility="Visible"
-                Spacing="6"
-                Visibility="Collapsed">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_Settings}" />
+            <!--  Device settings  -->
+            <ikw:SimpleStackPanel Grid.Row="1" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
-                <Border
-                    Name="TouchpadPassthrough"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                <!--  Lenovo Legion Go  -->
+                <ikw:SimpleStackPanel
+                    Name="LegionGoPanel"
+                    d:Visibility="Visible"
+                    Spacing="6"
+                    Visibility="Collapsed">
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
+                    <Border
+                        Name="TouchpadPassthrough"
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe772;" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8*" MinWidth="200" />
+                                <ColumnDefinition Width="2*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
 
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe772;" />
 
-                        <ui:ToggleSwitch
-                            Name="Toggle_TouchpadPassthrough"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_TouchpadPassthrough_Toggled" />
-                    </Grid>
-                </Border>
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
 
-                <Border
-                    Name="GyroController"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                            <ui:ToggleSwitch
+                                Name="Toggle_TouchpadPassthrough"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_TouchpadPassthrough_Toggled" />
+                        </Grid>
+                    </Border>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
+                    <Border
+                        Name="GyroController"
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE950;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorSelection}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="ComboBox_GyroController"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectionChanged="ComboBox_GyroController_SelectionChanged">
-                            <ComboBoxItem Content="Left controller" />
-                            <ComboBoxItem Content="Right controller" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
-
-                <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
-                    <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5*" MinWidth="200" />
                                 <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <DockPanel Margin="0,12,12,12">
+                            <DockPanel>
                                 <ui:FontIcon
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE7FC;" />
+                                    Glyph="&#xE950;" />
 
                                 <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorSelection}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
+                                        Text="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
                                         TextWrapping="Wrap" />
                                 </ikw:SimpleStackPanel>
                             </DockPanel>
+
+                            <ComboBox
+                                Name="ComboBox_GyroController"
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                SelectionChanged="ComboBox_GyroController_SelectionChanged">
+                                <ComboBoxItem Content="Left controller" />
+                                <ComboBoxItem Content="Right controller" />
+                            </ComboBox>
                         </Grid>
-                    </Expander.Header>
+                    </Border>
 
-                    <Expander.Content>
-                        <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
+                    <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
 
-                            <!--  Left Joycon Sleep Time  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+                                <DockPanel Margin="0,12,12,12">
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xE7FC;" />
 
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
+                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
+                                            TextWrapping="Wrap" />
+                                    </ikw:SimpleStackPanel>
+                                </DockPanel>
+                            </Grid>
+                        </Expander.Header>
 
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
+                        <Expander.Content>
+                            <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
 
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
+                                <!--  Left Joycon Sleep Time  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
                                             VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} min, ElementName=SliderLeftAutoSleepTime, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderLeftAutoSleepTime"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="60"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderLeftAutoSleepTime_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
 
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-                            </ikw:SimpleStackPanel>
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} min, ElementName=SliderLeftAutoSleepTime, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderLeftAutoSleepTime"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="60"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderLeftAutoSleepTime_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
 
-                            <!--  Left Joystick deadzone  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftJoystickDeadzone, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderLeftJoystickDeadzone"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="100"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-                            </ikw:SimpleStackPanel>
-
-                            <!--  Left Trigger deadzone  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftTriggerDeadzone, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderLeftTriggerDeadzone"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="{Binding ElementName=SliderLeftTriggerMargin, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderLeftTriggerDeadzone_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-                            </ikw:SimpleStackPanel>
-
-                            <!--  Left Trigger margin  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftTriggerMargin, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderLeftTriggerMargin"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="{Binding ElementName=SliderLeftTriggerDeadzone, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderLeftTriggerMargin_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-                            </ikw:SimpleStackPanel>
-
-                        </ikw:SimpleStackPanel>
-                    </Expander.Content>
-                </Expander>
-
-                <!--  Right Joycon  -->
-
-                <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
-                    <Expander.Header>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel Margin="0,12,12,12">
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE7FC;" />
-
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
-                                        TextWrapping="Wrap" />
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
                                 </ikw:SimpleStackPanel>
-                            </DockPanel>
-                        </Grid>
-                    </Expander.Header>
 
-                    <Expander.Content>
-                        <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
+                                <!--  Left Joystick deadzone  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
 
-                            <!--  Right Joycon Sleep Time  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
 
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
+                                        <TextBlock
                                             VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} min, ElementName=SliderRightAutoSleepTime, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderRightAutoSleepTime"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="60"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderRightAutoSleepTime_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
 
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftJoystickDeadzone, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderLeftJoystickDeadzone"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="100"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  Left Trigger deadzone  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
+
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftTriggerDeadzone, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderLeftTriggerDeadzone"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="{Binding ElementName=SliderLeftTriggerMargin, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderLeftTriggerDeadzone_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  Left Trigger margin  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
+
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftTriggerMargin, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderLeftTriggerMargin"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="{Binding ElementName=SliderLeftTriggerDeadzone, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderLeftTriggerMargin_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
                             </ikw:SimpleStackPanel>
+                        </Expander.Content>
+                    </Expander>
 
-                            <!--  Right Joystick deadzone  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+                    <!--  Right Joycon  -->
 
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
+                    <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
 
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
+                                <DockPanel Margin="0,12,12,12">
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xE7FC;" />
 
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
+                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
+                                            TextWrapping="Wrap" />
+                                    </ikw:SimpleStackPanel>
+                                </DockPanel>
+                            </Grid>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
+
+                                <!--  Right Joycon Sleep Time  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
                                             VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightJoystickDeadzone, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderRightJoystickDeadzone"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="100"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
 
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} min, ElementName=SliderRightAutoSleepTime, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderRightAutoSleepTime"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="60"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderRightAutoSleepTime_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  Right Joystick deadzone  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
+
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightJoystickDeadzone, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderRightJoystickDeadzone"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="100"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  Right Trigger deadzone  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
+
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightTriggerDeadzone, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderRightTriggerDeadzone"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="{Binding ElementName=SliderRightTriggerMargin, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderRightTriggerDeadzone_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  Trigger margin  -->
+                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
+
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightTriggerMargin, Mode=OneWay}" />
+                                            <Slider
+                                                Name="SliderRightTriggerMargin"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="{Binding ElementName=SliderRightTriggerDeadzone, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
+                                                Minimum="1"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderRightTriggerMargin_ValueChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ikw:SimpleStackPanel>
+
                             </ikw:SimpleStackPanel>
-
-                            <!--  Right Trigger deadzone  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightTriggerDeadzone, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderRightTriggerDeadzone"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="{Binding ElementName=SliderRightTriggerMargin, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderRightTriggerDeadzone_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-                            </ikw:SimpleStackPanel>
-
-                            <!--  Trigger margin  -->
-                            <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBox
-                                            Height="32"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightTriggerMargin, Mode=OneWay}" />
-                                        <Slider
-                                            Name="SliderRightTriggerMargin"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="{Binding ElementName=SliderRightTriggerDeadzone, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                            Minimum="1"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="SliderRightTriggerMargin_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-                            </ikw:SimpleStackPanel>
-
-                        </ikw:SimpleStackPanel>
-                    </Expander.Content>
-                </Expander>
+                        </Expander.Content>
+                    </Expander>
+                </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

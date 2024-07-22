@@ -2901,8 +2901,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Trigger Margin</value>
   </data>
-  <data name="DevicePage_Lenovo_Settings" xml:space="preserve">
-    <value>Lenovo Legion Go settings</value>
+  <data name="DevicePage_DeviceSettings" xml:space="preserve">
+    <value>Device settings</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
