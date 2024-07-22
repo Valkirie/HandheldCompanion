@@ -248,7 +248,22 @@ public static class ProcessUtils
                     return;
 
                 uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
+
+                // try and get the process
                 _realProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
+
+                // failed to retrieve process
+                if (_realProcess is null)
+                {
+                    // use Levenshtein to find the process with closest name
+                    Process process = ProcessUtils.FindProcessByWindowName(hWnd);
+                    if (process is not null)
+                        processId = (uint)process.Id;
+
+                    // try and get the process (once more)
+                    _realProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
+                }
+
                 if (_realProcess is null)
                     return;
 

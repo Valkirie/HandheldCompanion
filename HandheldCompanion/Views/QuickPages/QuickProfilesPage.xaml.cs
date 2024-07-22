@@ -559,7 +559,6 @@ public partial class QuickProfilesPage : Page
                 // get path
                 string path = currentProcess != null ? currentProcess.Path : string.Empty;
                 ImageSource imageSource = currentProcess != null ? currentProcess.ProcessIcon : null;
-                nint handle = currentProcess != null ? currentProcess.MainWindowHandle : IntPtr.Zero;
 
                 // update real profile
                 realProfile = ProfileManager.GetProfileFromPath(path, true);
@@ -570,16 +569,7 @@ public partial class QuickProfilesPage : Page
                     ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
                     ProfileIcon.Source = imageSource;
 
-                    if (handle != IntPtr.Zero)
-                    {
-                        // string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
-
-                        ProfileToggle.IsEnabled = true;
-                        ProcessName.Text = currentProcess.Executable;
-                        ProcessPath.Text = currentProcess.Path;
-                        SubProfilesBorder.Visibility = Visibility.Visible;
-                    }
-                    else
+                    if (processEx is null)
                     {
                         ProfileIcon.Source = null;
 
@@ -587,6 +577,13 @@ public partial class QuickProfilesPage : Page
                         ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
                         ProcessPath.Text = string.Empty;
                         SubProfilesBorder.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        ProfileToggle.IsEnabled = true;
+                        ProcessName.Text = currentProcess.Executable;
+                        ProcessPath.Text = currentProcess.Path;
+                        SubProfilesBorder.Visibility = Visibility.Visible;
                     }
                 });
             }
@@ -627,7 +624,7 @@ public partial class QuickProfilesPage : Page
 
     private void CreateProfile()
     {
-        if (currentProcess is null || currentProcess == ProcessManager.Empty)
+        if (currentProcess is null)
             return;
 
         // create profile

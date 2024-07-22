@@ -1,10 +1,9 @@
 using HandheldCompanion.Controls;
-using HandheldCompanion.Platforms;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,6 @@ using System.Windows.Automation;
 using Windows.System.Diagnostics;
 using static HandheldCompanion.Controls.ProcessEx;
 using static HandheldCompanion.WinAPI;
-using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -57,14 +55,6 @@ public static class ProcessManager
 
     private static bool IsInitialized;
 
-    public static readonly ProcessEx Empty = new()
-    {
-        Path = string.Empty,
-        Executable = string.Empty,
-        Platform = PlatformType.Windows,
-        Filter = ProcessFilter.Ignored
-    };
-
     static ProcessManager()
     {
         // hook: on window opened
@@ -96,29 +86,62 @@ public static class ProcessManager
     {
         try
         {
-            if (sender is AutomationElement element)
+            if (sender is AutomationElement senderElement)
             {
-                var processInfo = new ProcessUtils.FindHostedProcess(element.Current.NativeWindowHandle)._realProcess;
-                if (processInfo is null)
-                    return;
+                int processId = 0;
 
-                CreateProcess((int)processInfo.ProcessId, element.Current.NativeWindowHandle);
+                try
+                {
+                    processId = senderElement.Current.ProcessId;
+                }
+                catch
+                {
+                    // Automation failed to retrieve process id
+                }
+
+                // is this a hosted process
+                ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(senderElement.Current.NativeWindowHandle)._realProcess;
+                if (processInfo != null)
+                    processId = (int)processInfo.ProcessId;
+
+                // skip if we couldn't find a process id
+                if (processId == 0)
+                    return;
+                
+                // create process
+                CreateOrUpdateProcess(processId, senderElement);
+
+                WindowElement windowElement = new(processId, senderElement);
+                windowElement.Closed += (sender) =>
+                {
+                    if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
+                        processEx.DetachWindow((int)sender._hwnd);
+                };
             }
         }
-        catch
-        {
-        }
+        catch { }
     }
 
     private static bool OnWindowDiscovered(IntPtr hWnd, int lparam)
     {
         if (IsWindowVisible((int)hWnd))
         {
-            var processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-            if (processInfo is null)
+            AutomationElement element = AutomationElement.FromHandle(hWnd);
+            if (element is null)
+                return false;
+            
+            int processId = element.Current.NativeWindowHandle;
+
+            ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
+            if (processInfo != null)
+                processId = (int)processInfo.ProcessId;
+
+            // skip if we couldn't find a process id
+            if (processId == 0)
                 return false;
 
-            CreateProcess((int)processInfo.ProcessId, (int)hWnd, true);
+            // create process
+            CreateOrUpdateProcess(processId, element, true);
         }
 
         return true;
@@ -189,27 +212,32 @@ public static class ProcessManager
     private static void ForegroundCallback()
     {
         IntPtr hWnd = GetforegroundWindow();
-        if (foregroundWindow == hWnd)
+
+        // skip if this window is already in foreground
+        if (foregroundWindow == hWnd || hWnd == IntPtr.Zero)
+            return;
+
+        AutomationElement element = AutomationElement.FromHandle(hWnd);
+        if (element is null)
             return;
 
         int processId = 0;
+
+        try
+        {
+            processId = element.Current.ProcessId;
+        }
+        catch
+        { 
+            // Automation failed to retrieve process id
+        }
 
         // update current foreground window
         foregroundWindow = hWnd;
 
         ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
         if (processInfo is not null)
-        {
             processId = (int)processInfo.ProcessId;
-        }
-        else
-        {
-            // we couldn't find the hosted process
-            // use Levenshtein to find the process with closest name
-            Process process = ProcessUtils.FindProcessByWindowName(hWnd);
-            if (process is not null)
-                processId = process.Id;
-        }
 
         // failed to retrieve process
         if (processId == 0)
@@ -218,11 +246,7 @@ public static class ProcessManager
         try
         {
             if (!Processes.TryGetValue(processId, out ProcessEx process))
-            {
-                if (!CreateProcess(processId, (int)hWnd))
-                    return;
-                process = Processes[processId];
-            }
+                return;
 
             ProcessEx prevProcess = foregroundProcess;
 
@@ -239,7 +263,7 @@ public static class ProcessManager
                 // update foreground process
                 default:
                     foregroundProcess = process;
-                    foregroundProcess.MainWindowHandle = hWnd;
+                    foregroundProcess.Refresh();
                     break;
             }
 
@@ -289,17 +313,18 @@ public static class ProcessManager
         }
     }
 
-    private static bool CreateProcess(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)
+    private static bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
     {
         try
         {
             // process has exited on arrival
-            Process proc = Process.GetProcessById(ProcessID);
+            Process proc = Process.GetProcessById(processID);
             if (proc.HasExited)
                 return false;
 
-            if (Processes.ContainsKey(proc.Id))
-                return true;
+            // process already exist, add new window
+            if (Processes.TryGetValue(proc.Id, out ProcessEx processEx))
+                processEx.AttachWindow(automationElement);
 
             // hook exited event
             try
@@ -317,31 +342,28 @@ public static class ProcessManager
             if (string.IsNullOrEmpty(path))
                 return false;
 
-            string exec = Path.GetFileName(path);
-            IntPtr hWnd = NativeWindowHandle != 0 ? NativeWindowHandle : proc.MainWindowHandle;
-
             // get filter
+            string exec = Path.GetFileName(path);
             ProcessFilter filter = GetFilter(exec, path);
-
+            
+            // create process 
             // UI thread (synchronous)
-            ProcessEx processEx = null;
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                // create process
-                processEx = new ProcessEx(proc, path, exec, filter);
-            });
+            Application.Current.Dispatcher.Invoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
 
             if (processEx is null)
                 return false;
 
-            processEx.MainWindowHandle = hWnd;
-            processEx.MainThread = GetMainThread(proc);
-            if (processEx.MainThread is not null)
-                processEx.MainThread.Disposed += (sender, e) => processEx.MainThreadDisposed();
+            // attach current window
+            processEx.AttachWindow(automationElement);
+
+            // get the proper platform
             processEx.Platform = PlatformManager.GetPlatform(proc);
 
-            Processes.TryAdd(ProcessID, processEx);
+            // add to dictionary
+            Processes.TryAdd(processID, processEx);
 
+            // todo: move me to event listeners
+            // we might want to treat this information differently depending on the location
             if (processEx.Filter != ProcessFilter.Allowed)
                 return true;
 
@@ -431,59 +453,12 @@ public static class ProcessManager
             case "searchhost.exe":
             case "shellexperiencehost.exe":
             case "startmenuexperiencehost.exe":
+            case "textinputhost.exe":
                 return ProcessFilter.Desktop;
 
             default:
                 return ProcessFilter.Allowed;
         }
-    }
-
-    public static ProcessThread GetMainThread(Process process)
-    {
-        ProcessThread mainThread = null;
-        var startTime = DateTime.MaxValue;
-
-        try
-        {
-            if (process.Threads is null || process.Threads.Count == 0)
-                return null;
-
-            foreach (ProcessThread thread in process.Threads)
-            {
-                try
-                {
-                    if (thread.ThreadState != ThreadState.Running)
-                        continue;
-
-                    if (thread.StartTime < startTime)
-                    {
-                        startTime = thread.StartTime;
-                        mainThread = thread;
-                    }
-                }
-                catch (InvalidOperationException)
-                {
-                    // This exception occurs if the thread has exited
-                }
-                catch (Exception)
-                {
-                    // Handle other exceptions
-                }
-            }
-
-            if (mainThread is null)
-                mainThread = process.Threads[0];
-        }
-        catch (Win32Exception)
-        {
-            // Access if denied
-        }
-        catch (InvalidOperationException)
-        {
-            // This exception occurs if the thread has exited
-        }
-
-        return mainThread;
     }
 
     private static void ProcessWatcher_Elapsed()
@@ -519,7 +494,10 @@ public static class ProcessManager
             });
 
         Task.Delay(500);
-        ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Restored);
+
+        // restore process windows
+        foreach(ProcessWindow processWindow in processEx.processWindows.Values)
+            ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
     }
 
     public static void SuspendProcess(ProcessEx processEx)
@@ -528,7 +506,10 @@ public static class ProcessManager
         if (processEx.Process.HasExited)
             return;
 
-        ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Hide);
+        // hide process windows
+        foreach (ProcessWindow processWindow in processEx.processWindows.Values)
+            ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
+
         Task.Delay(500);
 
         ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
@@ -568,19 +549,15 @@ public static class ProcessManager
     #region events
 
     public static event ForegroundChangedEventHandler ForegroundChanged;
-
     public delegate void ForegroundChangedEventHandler(ProcessEx? processEx, ProcessEx? backgroundEx);
 
     public static event ProcessStartedEventHandler ProcessStarted;
-
     public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool OnStartup);
 
     public static event ProcessStoppedEventHandler ProcessStopped;
-
     public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
     public static event InitializedEventHandler Initialized;
-
     public delegate void InitializedEventHandler();
 
     #endregion

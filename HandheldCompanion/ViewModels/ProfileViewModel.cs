@@ -75,8 +75,7 @@ namespace HandheldCompanion.ViewModels
                     new Dialog(OverlayQuickTools.GetCurrent())
                     {
                         Title = "Quick start",
-                        Content = "The system cannot find the file specified.",
-                        CanClose = true
+                        Content = "The system cannot find the file specified."
                     }.Show();
 
                     return;

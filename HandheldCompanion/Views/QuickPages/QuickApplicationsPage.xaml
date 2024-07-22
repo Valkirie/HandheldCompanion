@@ -229,13 +229,7 @@
 
                 <ui:ItemsRepeater ItemsSource="{Binding Processes}">
                     <ui:ItemsRepeater.Layout>
-                        <ui:UniformGridLayout
-                            ItemsStretch="Fill"
-                            MaximumRowsOrColumns="1"
-                            MinColumnSpacing="3"
-                            MinItemWidth="200"
-                            MinRowSpacing="3"
-                            Orientation="Horizontal" />
+                        <ui:StackLayout Spacing="6" />
                     </ui:ItemsRepeater.Layout>
 
                     <ui:ItemsRepeater.ItemTemplate>
@@ -264,22 +258,21 @@
                                             Margin="12,0,0,0"
                                             VerticalAlignment="Center">
                                             <TextBlock
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{Binding Title}"
-                                                TextWrapping="NoWrap" />
-                                            <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
                                                 Text="{Binding Executable}"
                                                 TextWrapping="NoWrap" />
                                         </StackPanel>
 
                                         <ikw:SimpleStackPanel
                                             Grid.Column="2"
-                                            Margin="6,0,0,0"
+                                            Margin="6,0,12,0"
+                                            HorizontalAlignment="Right"
                                             Orientation="Horizontal"
-                                            Spacing="3">
+                                            Spacing="6">
+
                                             <ToggleButton
+                                                Height="32"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -302,45 +295,82 @@
                                             </ToggleButton>
 
                                             <Button
+                                                Height="32"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 Command="{Binding KillProcessCommand}"
                                                 Content="&#xe711;"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                                 ToolTip="Terminate application" />
-
-                                            <Button
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Command="{Binding BringProcessCommand}"
-                                                Content="&#xe7c4;"
-                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                                ToolTip="Snap application window" />
-
-                                            <Button
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Command="{Binding SwapScreenCommand}"
-                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                                IsEnabled="{Binding HasTwoScreen, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
-                                                <Button.Style>
-                                                    <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="True">
-                                                                <Setter Property="ToolTip" Value="Swap to secondary screen" />
-                                                                <Setter Property="Content" Value="&#xe8a7;" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="False">
-                                                                <Setter Property="ToolTip" Value="Swap to primary screen" />
-                                                                <Setter Property="Content" Value="&#xe78b;" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Button.Style>
-                                            </Button>
                                         </ikw:SimpleStackPanel>
                                     </Grid>
+
+                                    <ui:ItemsRepeater ItemsSource="{Binding ProcessWindows}">
+                                        <ui:ItemsRepeater.Layout>
+                                            <ui:StackLayout Spacing="6" />
+                                        </ui:ItemsRepeater.Layout>
+
+                                        <ui:ItemsRepeater.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border
+                                                    Padding="15,12,12,12"
+                                                    Background="{DynamicResource ExpanderHeaderBackground}"
+                                                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition MinWidth="168" />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                            TextWrapping="NoWrap" />
+
+                                                        <ikw:SimpleStackPanel
+                                                            Grid.Column="1"
+                                                            HorizontalAlignment="Right"
+                                                            Orientation="Horizontal"
+                                                            Spacing="6">
+
+                                                            <Button
+                                                                Height="32"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Stretch"
+                                                                Command="{Binding BringProcessCommand}"
+                                                                Content="&#xe7c4;"
+                                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                                ToolTip="Snap application window" />
+
+                                                            <Button
+                                                                Height="32"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Stretch"
+                                                                Command="{Binding SwapScreenCommand}"
+                                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                                IsEnabled="{Binding HasTwoScreen, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                                <Button.Style>
+                                                                    <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="True">
+                                                                                <Setter Property="ToolTip" Value="Swap to secondary screen" />
+                                                                                <Setter Property="Content" Value="&#xe8a7;" />
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="False">
+                                                                                <Setter Property="ToolTip" Value="Swap to primary screen" />
+                                                                                <Setter Property="Content" Value="&#xe78b;" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Style>
+                                                            </Button>
+                                                        </ikw:SimpleStackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ui:ItemsRepeater.ItemTemplate>
+                                    </ui:ItemsRepeater>
                                 </ikw:SimpleStackPanel>
                             </Border>
                         </DataTemplate>

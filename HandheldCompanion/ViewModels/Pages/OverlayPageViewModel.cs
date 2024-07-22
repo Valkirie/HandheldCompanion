@@ -416,21 +416,20 @@ namespace HandheldCompanion.ViewModels
         {
             // get path
             string path = processEx != null ? processEx.Path : string.Empty;
-            nint handle = processEx != null ? processEx.MainWindowHandle : IntPtr.Zero;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
                 ProcessIcon = processEx != null ? processEx.ProcessIcon : null;
 
-                if (handle != IntPtr.Zero)
-                {
-                    ProcessName = processEx.Executable;
-                    ProcessPath = processEx.Path;
-                }
-                else
+                if (processEx is null)
                 {
                     ProcessName = Properties.Resources.QuickProfilesPage_Waiting;
                     ProcessPath = string.Empty;
+                }
+                else
+                {
+                    ProcessName = processEx.Executable;
+                    ProcessPath = processEx.Path;
                 }
             });
         }

@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using System;
@@ -92,8 +91,8 @@ public partial class QuickHomePage : Page
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    if (SliderBrightness.Value != (int)brightness)
-                        SliderBrightness.Value = (int)brightness;
+                    if (SliderBrightness.Value != brightness)
+                        SliderBrightness.Value = brightness;
                 });
             }
             finally

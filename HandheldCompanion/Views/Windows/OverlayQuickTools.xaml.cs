@@ -63,8 +63,12 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int HTCAPTION = 0x02;
     private const int MA_NOACTIVATEANDEAT = 4;
 
-    const int WS_EX_NOACTIVATE = 0x08000000;
-    const int GWL_EXSTYLE = -20;
+    private const int WS_EX_NOACTIVATE = 0x08000000;
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+    private const int WS_SIZEBOX = 0x00040000;
+
+    private const int GWL_STYLE = -16;
+    private const int GWL_EXSTYLE = -20;
 
     private CrossThreadLock Sliding = new();
 
@@ -123,8 +127,6 @@ public partial class OverlayQuickTools : GamepadWindow
         _pages.Add("QuickApplicationsPage", applicationsPage);
     }
 
-    private const int WS_EX_TOOLWINDOW = 0x00000080;
-
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
@@ -132,8 +134,14 @@ public partial class OverlayQuickTools : GamepadWindow
         hwndSource.AddHook(WndProc);
 
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
-        exStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;     
+        exStyle |= WS_EX_NOACTIVATE;
         WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle);
+
+        /*
+        int Style = WinAPI.GetWindowLong(hwndSource.Handle, GWL_STYLE);
+        exStyle &= ~WS_SIZEBOX;
+        WinAPI.SetWindowLong(hwndSource.Handle, GWL_STYLE, Style);
+        */
 
         WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
     }

@@ -3,14 +3,48 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Automation;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controls;
+
+public class ProcessWindow
+{
+    public AutomationElement Element;
+    public readonly int Hwnd;
+    public string Name;
+
+    public EventHandler Refreshed;
+
+    public ProcessWindow(AutomationElement element, bool isPrimary)
+    {
+        this.Element = element;
+
+        this.Hwnd = element.Current.NativeWindowHandle;
+        this.Name = element.Current.Name;
+    }
+
+    public void Refresh()
+    {
+        try
+        {
+            Element = AutomationElement.FromHandle(this.Hwnd);
+            Name = Element.Current.Name;
+
+            Refreshed?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception)
+        {
+        }
+    }
+}
 
 public class ProcessEx : IDisposable
 {
@@ -23,10 +57,10 @@ public class ProcessEx : IDisposable
         Desktop = 4
     }
 
-    private const string AppCompatRegistry = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
-    public static string RunAsAdminRegistryValue = "RUNASADMIN";
-    public static string DisabledMaximizedWindowedValue = "DISABLEDXMAXIMIZEDWINDOWEDMODE";
-    public static string HighDPIAwareValue = "HIGHDPIAWARE";
+    public const string AppCompatRegistry = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
+    public const string RunAsAdminRegistryValue = "RUNASADMIN";
+    public const string DisabledMaximizedWindowedValue = "DISABLEDXMAXIMIZEDWINDOWEDMODE";
+    public const string HighDPIAwareValue = "HIGHDPIAWARE";
 
     public Process Process { get; private set; }
     public int ProcessId { get; private set; }
@@ -37,22 +71,7 @@ public class ProcessEx : IDisposable
     public ImageSource ProcessIcon { get; private set; }
 
     public ProcessThread MainThread { get; set; }
-
-    private IntPtr _MainWindowHandle;
-    public IntPtr MainWindowHandle
-    {
-        get
-        {
-            return _MainWindowHandle;
-        }
-        set
-        {
-            _MainWindowHandle = value;
-
-            string WindowTitle = ProcessUtils.GetWindowTitle(value);
-            MainWindowTitle = string.IsNullOrEmpty(WindowTitle) ? Executable : WindowTitle;
-        }
-    }
+    public ConcurrentDictionary<int, ProcessWindow> processWindows { get; private set; } = new();
 
     public ConcurrentList<int> Children = [];
 
@@ -60,81 +79,62 @@ public class ProcessEx : IDisposable
 
     private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
 
-    public ProcessEx() { }
+    private static object registryLock = new();
+
+    public event WindowAttachedEventHandler WindowAttached;
+    public delegate void WindowAttachedEventHandler(ProcessWindow processWindow);
+
+    public event WindowDetachedEventHandler WindowDetached;
+    public delegate void WindowDetachedEventHandler(ProcessWindow processWindow);
+
     public ProcessEx(Process process, string path, string executable, ProcessFilter filter)
     {
         Process = process;
         ProcessId = process.Id;
         Path = path;
         Executable = executable;
-        MainWindowTitle = path;
         Filter = filter;
 
-        if (!string.IsNullOrEmpty(Path) && File.Exists(Path))
+        // get main thread
+        MainThread = GetMainThread(process);
+
+        // update main thread when disposed
+        if (MainThread is not null)
+            MainThread.Disposed += (sender, e) => { MainThread = GetMainThread(Process); };
+
+        // get executable icon
+        if (File.Exists(Path))
         {
-            var icon = Icon.ExtractAssociatedIcon(Path);
-            if (icon is not null)
-            {
-                ProcessIcon = icon.ToImageSource();
-            }
+            Icon? icon = Icon.ExtractAssociatedIcon(Path);
+            ProcessIcon = icon?.ToImageSource();
         }
     }
 
-    public static string GetAppCompatFlags(string Path)
+    public void AttachWindow(AutomationElement automationElement, bool primary = false)
     {
-        if (string.IsNullOrEmpty(Path))
-            return string.Empty;
+        int hwnd = automationElement.Current.NativeWindowHandle;
 
-        lock (registryLock)
+        if (!processWindows.TryGetValue(hwnd, out var window))
         {
-            try
-            {
-                using (var key = Registry.CurrentUser.OpenSubKey(AppCompatRegistry))
-                {
-                    string valueStr = (string)key?.GetValue(Path);
-                    return valueStr;
-                }
-            }
-            catch { }
+            // create new window object
+            window = new(automationElement, primary);
+
+            // update window
+            processWindows[hwnd] = window;
         }
 
-        return string.Empty;
-    }
-
-    private static object registryLock = new();
-    public static void SetAppCompatFlag(string Path, string Flag, bool value)
-    {
-        if (string.IsNullOrEmpty(Path))
+        if (string.IsNullOrEmpty(window.Name))
             return;
 
-        lock (registryLock)
-        {
-            try
-            {
-                using (var key = Registry.CurrentUser.CreateSubKey(AppCompatRegistry, RegistryKeyPermissionCheck.ReadWriteSubTree))
-                {
-                    if (key != null)
-                    {
-                        List<string> values = ["~"]; ;
-                        string valueStr = (string)key.GetValue(Path);
+        // raise event
+        WindowAttached?.Invoke(window);
+    }
 
-                        if (!string.IsNullOrEmpty(valueStr))
-                            values = valueStr.Split(' ').ToList();
-
-                        values.Remove(Flag);
-
-                        if (value)
-                            values.Add(Flag);
-
-                            if (values.Count == 1 && values[0] == "~" && !string.IsNullOrEmpty(valueStr))
-                                key.DeleteValue(Path);
-                            else
-                                key.SetValue(Path, string.Join(" ", values), RegistryValueKind.String);
-                    }
-                }
-            }
-            catch { }
-        }
+    public void DetachWindow(int hwnd)
+    {
+        // raise event
+        if (processWindows.TryRemove(hwnd, out ProcessWindow processWindow))
+            WindowDetached?.Invoke(processWindow);
     }
 
     public bool FullScreenOptimization
@@ -156,8 +156,6 @@ public class ProcessEx : IDisposable
                 && valueStr.Split(' ').Any(s => s == HighDPIAwareValue);
         }
     }
-
-    public string MainWindowTitle { get; private set; }
 
     public string Executable { get; set; }
 
@@ -212,9 +210,11 @@ public class ProcessEx : IDisposable
                 break;
         }
 
-        // update main window handle
-        MainWindowHandle = Process.MainWindowHandle;
+        // refresh attached windows
+        foreach (ProcessWindow processWindow in processWindows.Values)
+            processWindow.Refresh();
 
+        // raise event
         Refreshed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -232,6 +232,110 @@ public class ProcessEx : IDisposable
             Children.Add(pid);
     }
 
+    public static string GetAppCompatFlags(string Path)
+    {
+        if (string.IsNullOrEmpty(Path))
+            return string.Empty;
+
+        lock (registryLock)
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey(AppCompatRegistry))
+                {
+                    string valueStr = (string)key?.GetValue(Path);
+                    return valueStr;
+                }
+            }
+            catch { }
+        }
+
+        return string.Empty;
+    }
+
+    public static void SetAppCompatFlag(string Path, string Flag, bool value)
+    {
+        if (string.IsNullOrEmpty(Path))
+            return;
+
+        lock (registryLock)
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.CreateSubKey(AppCompatRegistry, RegistryKeyPermissionCheck.ReadWriteSubTree))
+                {
+                    if (key != null)
+                    {
+                        List<string> values = ["~"]; ;
+                        string valueStr = (string)key.GetValue(Path);
+
+                        if (!string.IsNullOrEmpty(valueStr))
+                            values = valueStr.Split(' ').ToList();
+
+                        values.Remove(Flag);
+
+                        if (value)
+                            values.Add(Flag);
+
+                        if (values.Count == 1 && values[0] == "~" && !string.IsNullOrEmpty(valueStr))
+                            key.DeleteValue(Path);
+                        else
+                            key.SetValue(Path, string.Join(" ", values), RegistryValueKind.String);
+                    }
+                }
+            }
+            catch { }
+        }
+    }
+
+    private static ProcessThread GetMainThread(Process process)
+    {
+        ProcessThread mainThread = null;
+        var startTime = DateTime.MaxValue;
+
+        try
+        {
+            if (process.Threads is null || process.Threads.Count == 0)
+                return null;
+
+            foreach (ProcessThread thread in process.Threads)
+            {
+                try
+                {
+                    if (thread.ThreadState != ThreadState.Running)
+                        continue;
+
+                    if (thread.StartTime < startTime)
+                    {
+                        startTime = thread.StartTime;
+                        mainThread = thread;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // This exception occurs if the thread has exited
+                }
+                catch (Exception)
+                {
+                    // Handle other exceptions
+                }
+            }
+
+            if (mainThread is null)
+                mainThread = process.Threads[0];
+        }
+        catch (Win32Exception)
+        {
+            // Access if denied
+        }
+        catch (InvalidOperationException)
+        {
+            // This exception occurs if the thread has exited
+        }
+
+        return mainThread;
+    }
+
     public void Dispose()
     {
         Process?.Dispose();
@@ -239,10 +343,5 @@ public class ProcessEx : IDisposable
         Children.Dispose();
 
         GC.SuppressFinalize(this); //now, the finalizer won't be called
-    }
-
-    internal void MainThreadDisposed()
-    {
-        MainThread = ProcessManager.GetMainThread(Process);
     }
 }

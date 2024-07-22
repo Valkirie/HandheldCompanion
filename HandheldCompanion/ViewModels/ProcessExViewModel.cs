@@ -1,12 +1,12 @@
 ﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -14,7 +14,9 @@ namespace HandheldCompanion.ViewModels
 {
     public class ProcessExViewModel : BaseViewModel
     {
-        QuickApplicationsPageViewModel PageViewModel;
+        public QuickApplicationsPageViewModel PageViewModel;
+
+        public ObservableCollection<ProcessWindowViewModel> ProcessWindows { get; set; } = [];
 
         private ProcessEx _process;
         public ProcessEx Process
@@ -29,8 +31,6 @@ namespace HandheldCompanion.ViewModels
                 OnPropertyChanged(nameof(Process));
             }
         }
-
-        public string Title => Process.MainWindowTitle;
 
         public ImageSource Icon => Process.ProcessIcon;
 
@@ -60,30 +60,28 @@ namespace HandheldCompanion.ViewModels
             set { } // empty set to allow binding to ToggleSwitch.IsOn
         }
 
-        public bool HasTwoScreen => Screen.AllScreens.Length > 1;
-        private Screen CurrentScreen = Screen.PrimaryScreen;
-        public bool IsPrimaryScreen => CurrentScreen.Primary;
-
         public ICommand KillProcessCommand { get; private set; }
-        public ICommand BringProcessCommand { get; private set; }
-        public ICommand SwapScreenCommand { get; private set; }
 
         public ProcessExViewModel(ProcessEx process, QuickApplicationsPageViewModel pageViewModel)
         {
             Process = process;
-            PageViewModel = pageViewModel;
+            Process.WindowAttached += Process_WindowAttached;
+            Process.WindowDetached += Process_WindowDetached;
 
-            MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+            foreach(ProcessWindow processWindow in Process.processWindows.Values)
+                Process_WindowAttached(processWindow);
+
+            PageViewModel = pageViewModel;
 
             KillProcessCommand = new DelegateCommand(async () =>
             {
                 Dialog dialog = new Dialog(OverlayQuickTools.GetCurrent())
                 {
                     Title = "Terminate application",
-                    Content = string.Format("Do you want to end the application '{0}'?", Title),
+                    Content = string.Format("Do you want to end the application '{0}'?", Executable),
                     DefaultButton = ContentDialogButton.Close,
                     CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
-                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes,
                 };
 
                 Task<ContentDialogResult> dialogTask = dialog.ShowAsync();
@@ -99,54 +97,35 @@ namespace HandheldCompanion.ViewModels
                         break;
                 }
             });
-
-            BringProcessCommand = new DelegateCommand(async () =>
-            {
-                OverlayQuickTools qtWindow = OverlayQuickTools.GetCurrent();
-                
-                ContentDialogResult result = await qtWindow.applicationsPage.SnapDialog.ShowAsync(qtWindow);
-                switch(result)
-                {
-                    case ContentDialogResult.None:
-                        qtWindow.applicationsPage.SnapDialog.Hide();
-                        return;
-                }
-
-                // Get the screen where the reference window is located
-                Screen screen = Screen.FromHandle(Process.MainWindowHandle);
-                if (screen is null)
-                    return;
-
-                WinAPI.MoveWindow(Process.MainWindowHandle, screen, PageViewModel.windowPositions);
-                WinAPI.MakeBorderless(Process.MainWindowHandle, PageViewModel.BorderlessEnabled && PageViewModel.BorderlessToggle);
-                WinAPI.SetForegroundWindow(Process.MainWindowHandle);
-            });
-
-            SwapScreenCommand = new DelegateCommand(async () =>
-            {
-                Screen screen = Screen.AllScreens.Where(screen => screen.DeviceName != CurrentScreen.DeviceName).FirstOrDefault();
-                WinAPI.MoveWindow(Process.MainWindowHandle, screen, WpfScreenHelper.Enum.WindowPositions.Maximize);
-                WinAPI.SetForegroundWindow(Process.MainWindowHandle);
-
-                OnPropertyChanged(nameof(IsPrimaryScreen));
-            });
         }
 
-        private void MultimediaManager_DisplaySettingsChanged(Managers.Desktop.DesktopScreen screen, Managers.Desktop.ScreenResolution resolution)
+        private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            // update current screen
-            CurrentScreen = Screen.FromHandle(Process.MainWindowHandle);
+            ProcessWindowViewModel? foundWindow = ProcessWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            if (foundWindow is null)
+            {
+                ProcessWindows.SafeAdd(new ProcessWindowViewModel(processWindow, this));
+            }
+            else
+            {
+                foundWindow.ProcessWindow = processWindow;
+            }
+        }
 
-            OnPropertyChanged(nameof(IsPrimaryScreen));
-            OnPropertyChanged(nameof(HasTwoScreen));
+        private void Process_WindowDetached(ProcessWindow processWindow)
+        {
+            ProcessWindowViewModel? foundWindow = ProcessWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            if (foundWindow is not null)
+            {
+                ProcessWindows.SafeRemove(foundWindow);
+                foundWindow.Dispose();
+            }
         }
 
         private void UpdateProcess(ProcessEx oldProcess, ProcessEx newProcess)
         {
             if (oldProcess is not null)
-            {
                 oldProcess.Refreshed -= ProcessRefreshed;
-            }
 
             newProcess.Refreshed += ProcessRefreshed;
 
@@ -159,11 +138,6 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsSuspended));
             OnPropertyChanged(nameof(FullScreenOptimization));
             OnPropertyChanged(nameof(HighDPIAware));
-            OnPropertyChanged(nameof(Title));
-
-            // update current screen
-            CurrentScreen = Screen.FromHandle(Process.MainWindowHandle);
-            OnPropertyChanged(nameof(IsPrimaryScreen));
         }
 
         public override void Dispose()

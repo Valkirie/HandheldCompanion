@@ -20,14 +20,14 @@
         IsPanEnabled="False"
         IsRotationEnabled="False"
         RenderOptions.EdgeMode="Aliased"
+        ShowCameraInfo="False"
         ShowViewCube="False"
-        ZoomExtentsWhenLoaded="True"
-        ShowCameraInfo="False">
+        ZoomExtentsWhenLoaded="True">
 
         <!--  Lighting  -->
         <HelixToolkit:SunLight />
-        <HelixToolkit:DirectionalHeadLight Position="-90,0,0" Brightness="0.35"/>
-        
+        <HelixToolkit:DirectionalHeadLight Brightness="0.35" Position="-90,0,0" />
+
         <!--  3D Content  -->
         <ModelVisual3D x:Name="ModelVisual3D" />
 

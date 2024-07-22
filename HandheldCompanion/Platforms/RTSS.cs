@@ -151,7 +151,7 @@ public class RTSS : IPlatform
 
     private async void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
-        if (processEx is null || processEx == ProcessManager.Empty)
+        if (processEx is null)
             return;
 
         // hook new process

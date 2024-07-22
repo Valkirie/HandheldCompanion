@@ -3,10 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Settings"
     Title="{l:Static resx:Resources.SettingsPage_Settings}"
     d:Background="White"
@@ -464,9 +465,9 @@
 
                 <!--  Telemetry  -->
                 <Border
-                     Padding="15,12,12,12"
-                     Background="{DynamicResource ExpanderHeaderBackground}"
-                     CornerRadius="{DynamicResource ControlCornerRadius}">
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -497,7 +498,7 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_Telemetry_Toggled" />
-                        </Grid>
+                    </Grid>
                 </Border>
 
             </ikw:SimpleStackPanel>

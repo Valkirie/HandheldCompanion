@@ -53,6 +53,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
                             WinAPI.MoveWindow(hwndOSK, screen, WindowPositions.Bottom);
                             break;
                         case 1:     // Maximize
+                            WinAPI.MakeBorderless(hwndOSK, true);
                             WinAPI.MoveWindow(hwndOSK, screen, WindowPositions.Maximize);
                             break;
                     }
