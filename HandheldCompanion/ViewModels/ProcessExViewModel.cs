@@ -68,7 +68,7 @@ namespace HandheldCompanion.ViewModels
             Process.WindowAttached += Process_WindowAttached;
             Process.WindowDetached += Process_WindowDetached;
 
-            foreach (ProcessWindow processWindow in Process.processWindows.Values)
+            foreach (ProcessWindow processWindow in Process.ProcessWindows.Values)
             {
                 if (string.IsNullOrEmpty(processWindow.Name))
                     continue;

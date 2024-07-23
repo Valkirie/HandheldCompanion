@@ -80,11 +80,11 @@ public class ProcessEx : IDisposable
     public ImageSource ProcessIcon { get; private set; }
 
     public ProcessThread MainThread { get; set; }
-    public ConcurrentDictionary<int, ProcessWindow> processWindows { get; private set; } = new();
 
     public ConcurrentList<int> Children = [];
 
     public EventHandler Refreshed;
+    public ConcurrentDictionary<int, ProcessWindow> ProcessWindows { get; private set; } = new();
 
     private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
 
