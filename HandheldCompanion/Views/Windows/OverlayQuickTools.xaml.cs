@@ -362,6 +362,17 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
+            case 161:
+            case 164:
+            case 167:
+            case 171:
+            case 513:
+            case 516:
+            case 519:
+            case 523:
+                WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
+                break;
+
             case WM_ACTIVATE:
                 handled = true;
                 WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
