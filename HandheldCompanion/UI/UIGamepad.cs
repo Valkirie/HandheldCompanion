@@ -520,6 +520,10 @@ namespace HandheldCompanion.Managers
                                 Expander.IsExpanded = !Expander.IsExpanded;
                             }
                         }
+                        else if (toggleButton is RadioButton radioButton)
+                        {
+                            toggleButton.IsChecked = !toggleButton.IsChecked;
+                        }
                         else if (toggleButton.Command is not null)
                         {
                             // toggle state is managed by the command
