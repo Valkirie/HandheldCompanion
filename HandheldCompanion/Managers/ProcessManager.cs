@@ -315,65 +315,68 @@ public static class ProcessManager
             if (proc.HasExited)
                 return false;
 
-            // process already exist, add new window
-            if (Processes.TryGetValue(proc.Id, out ProcessEx processEx))
+            if (!Processes.TryGetValue(proc.Id, out ProcessEx processEx))
             {
+                // hook exited event
+                try
+                {
+                    proc.EnableRaisingEvents = true;
+                }
+                catch (Exception)
+                {
+                    // access denied
+                }
+                proc.Exited += ProcessHalted;
+
+                // check process path
+                string path = ProcessUtils.GetPathToApp(proc.Id);
+                if (string.IsNullOrEmpty(path))
+                    return false;
+
+                // get filter
+                string exec = Path.GetFileName(path);
+                ProcessFilter filter = GetFilter(exec, path);
+
+                // create process 
+                // UI thread (synchronous)
+                Application.Current.Dispatcher.Invoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
+
+                if (processEx is null)
+                    return false;
+
+                // attach current window
                 processEx.AttachWindow(automationElement);
-                return true;
+
+                // get the proper platform
+                processEx.Platform = PlatformManager.GetPlatform(proc);
+
+                // add to dictionary
+                Processes.TryAdd(processID, processEx);
+
+                // todo: move me to event listeners
+                // we might want to treat this information differently depending on the location
+                if (processEx.Filter != ProcessFilter.Allowed)
+                    return true;
+
+                // raise event
+                ProcessStarted?.Invoke(processEx, OnStartup);
+
+                LogManager.LogDebug("Process detected: {0}", processEx.Executable);
+            }
+            else
+            {
+                // process already exist
+                // attach current window
+                processEx.AttachWindow(automationElement);
             }
 
+            // listen for window closed event
             WindowElement windowElement = new(processID, automationElement);
             windowElement.Closed += (sender) =>
             {
                 if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
                     processEx.DetachWindow((int)sender._hwnd);
             };
-
-            // hook exited event
-            try
-            {
-                proc.EnableRaisingEvents = true;
-            }
-            catch (Exception)
-            {
-                // access denied
-            }
-            proc.Exited += ProcessHalted;
-
-            // check process path
-            string path = ProcessUtils.GetPathToApp(proc.Id);
-            if (string.IsNullOrEmpty(path))
-                return false;
-
-            // get filter
-            string exec = Path.GetFileName(path);
-            ProcessFilter filter = GetFilter(exec, path);
-            
-            // create process 
-            // UI thread (synchronous)
-            Application.Current.Dispatcher.Invoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
-
-            if (processEx is null)
-                return false;
-
-            // attach current window
-            processEx.AttachWindow(automationElement);
-
-            // get the proper platform
-            processEx.Platform = PlatformManager.GetPlatform(proc);
-
-            // add to dictionary
-            Processes.TryAdd(processID, processEx);
-
-            // todo: move me to event listeners
-            // we might want to treat this information differently depending on the location
-            if (processEx.Filter != ProcessFilter.Allowed)
-                return true;
-
-            // raise event
-            ProcessStarted?.Invoke(processEx, OnStartup);
-
-            LogManager.LogDebug("Process detected: {0}", processEx.Executable);
 
             return true;
         }
