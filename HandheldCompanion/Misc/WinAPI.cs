@@ -33,12 +33,13 @@ public static class WinAPI
     public static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
     public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
-    public const int GWL_STYLE = -16;
-    public const int WS_POPUP = 0x800000;
-    public const int WS_BORDER = 0x00800000;
-    public const int WS_DLGFRAME = 0x00400000;
-    public const int WS_CAPTION = 0x00C00000;
-    public const int WS_SYSMENU = 0x00080000;
+    private const int GWL_STYLE = -16;
+    private const int WS_BORDER = 0x00800000;
+    private const int WS_CAPTION = 0x00C00000;
+    private const int WS_SYSMENU = 0x00080000;
+    private const int WS_THICKFRAME = 0x00040000;
+    private const int WS_MINIMIZEBOX = 0x00020000;
+    private const int WS_MAXIMIZEBOX = 0x00010000;
 
     public const int GWL_EXSTYLE = -20;
     public const int WS_EX_NOACTIVATE = 0x08000000;
@@ -244,13 +245,22 @@ public static class WinAPI
         return hMonitor;
     }
 
-    public static void MakeBorderless(nint hWnd, bool borderless)
+    public static void MakeBorderless(nint hWnd, bool IsBorderless)
     {
-        int style = GetWindowLong(hWnd, GWL_STYLE);
-        if (borderless)
-            SetWindowLong(hWnd, GWL_STYLE, (style & ~WS_BORDER & ~WS_CAPTION & ~WS_SYSMENU));
+        int currentStyle = GetWindowLong(hWnd, GWL_STYLE);
+
+        if (IsBorderless)
+        {
+            // Remove the border, caption, and system menu styles
+            int newStyle = currentStyle & ~(WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+            SetWindowLong(hWnd, GWL_STYLE, newStyle);
+        }
         else
-            SetWindowLong(hWnd, GWL_STYLE, (style | WS_BORDER | WS_CAPTION | WS_SYSMENU));
+        {
+            // Restore the border, caption, and system menu styles
+            int newStyle = currentStyle | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+            SetWindowLong(hWnd, GWL_STYLE, newStyle);
+        }
     }
 
     public static void MoveWindow(nint hWnd, Screen targetScreen, WindowPositions position)
