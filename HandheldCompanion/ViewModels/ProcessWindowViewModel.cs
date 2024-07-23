@@ -90,5 +90,13 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(Name));
             OnPropertyChanged(nameof(IsPrimaryScreen));
         }
+
+        public override void Dispose()
+        {
+            if (ProcessWindow is not null)
+                ProcessWindow.Refreshed -= ProcessRefreshed;
+
+            base.Dispose();
+        }
     }
 }

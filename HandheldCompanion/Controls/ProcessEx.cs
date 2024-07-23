@@ -25,10 +25,8 @@ public class ProcessWindow
 
     public ProcessWindow(AutomationElement element, bool isPrimary)
     {
-        this.Element = element;
-
         this.Hwnd = element.Current.NativeWindowHandle;
-        this.Name = element.Current.Name;
+        Refresh();
     }
 
     public void Refresh()
@@ -36,8 +34,19 @@ public class ProcessWindow
         try
         {
             Element = AutomationElement.FromHandle(this.Hwnd);
-            Name = Element.Current.Name;
 
+            if (!string.IsNullOrEmpty(Element.Current.Name))
+                Name = Element.Current.Name;
+            else
+            {
+                // backup method
+                string title = ProcessUtils.GetWindowTitle(Hwnd);
+                if (string.IsNullOrEmpty(title))
+                    return;
+
+                Name = title;
+            }
+            
             Refreshed?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception)
