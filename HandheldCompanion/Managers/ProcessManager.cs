@@ -110,13 +110,6 @@ public static class ProcessManager
                 
                 // create process
                 CreateOrUpdateProcess(processId, senderElement);
-
-                WindowElement windowElement = new(processId, senderElement);
-                windowElement.Closed += (sender) =>
-                {
-                    if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
-                        processEx.DetachWindow((int)sender._hwnd);
-                };
             }
         }
         catch { }
@@ -326,6 +319,13 @@ public static class ProcessManager
             if (Processes.TryGetValue(proc.Id, out ProcessEx processEx))
                 processEx.AttachWindow(automationElement);
 
+            WindowElement windowElement = new(processID, automationElement);
+            windowElement.Closed += (sender) =>
+            {
+                if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
+                    processEx.DetachWindow((int)sender._hwnd);
+            };
+
             // hook exited event
             try
             {
@@ -486,7 +486,7 @@ public static class ProcessManager
         // refresh child processes list (most likely useless, a suspended process shouldn't have new child processes)
         processEx.RefreshChildProcesses();
 
-        Parallel.ForEach(processEx.Children,
+        Parallel.ForEach(processEx.ChildrenProcessIds,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
@@ -496,7 +496,7 @@ public static class ProcessManager
         Task.Delay(500);
 
         // restore process windows
-        foreach(ProcessWindow processWindow in processEx.processWindows.Values)
+        foreach(ProcessWindow processWindow in processEx.ProcessWindows.Values)
             ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
     }
 
@@ -507,7 +507,7 @@ public static class ProcessManager
             return;
 
         // hide process windows
-        foreach (ProcessWindow processWindow in processEx.processWindows.Values)
+        foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
             ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
 
         Task.Delay(500);
@@ -517,7 +517,7 @@ public static class ProcessManager
         // refresh child processes list
         processEx.RefreshChildProcesses();
 
-        Parallel.ForEach(processEx.Children,
+        Parallel.ForEach(processEx.ChildrenProcessIds,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
