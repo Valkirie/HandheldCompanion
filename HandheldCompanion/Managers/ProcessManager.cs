@@ -317,7 +317,10 @@ public static class ProcessManager
 
             // process already exist, add new window
             if (Processes.TryGetValue(proc.Id, out ProcessEx processEx))
+            {
                 processEx.AttachWindow(automationElement);
+                return true;
+            }
 
             WindowElement windowElement = new(processID, automationElement);
             windowElement.Closed += (sender) =>
