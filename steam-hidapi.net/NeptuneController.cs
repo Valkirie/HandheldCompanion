@@ -24,6 +24,9 @@ namespace steam_hidapi.net
 
         internal override void OnInputReceived(HidDeviceInputReceivedEventArgs e)
         {
+            if (!_hidDevice.IsDeviceValid || !_active)
+                return;
+
             // this should always be so
             if ((e.Buffer[0] != 1) || (e.Buffer[1] != 0))
                 return;
@@ -84,7 +87,7 @@ namespace steam_hidapi.net
 
         public byte[] SetHaptic2(SCHapticMotor position, NCHapticStyle style, sbyte intensity)
         {
-            if (!_hidDevice.IsDeviceValid)
+            if (!_hidDevice.IsDeviceValid || !_active)
                 return null;
 
             NCHapticPacket2 haptic = new NCHapticPacket2

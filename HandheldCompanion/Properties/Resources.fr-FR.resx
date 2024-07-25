@@ -1041,12 +1041,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="WarningElevated" xml:space="preserve">
     <value>Exécutez cet outil en tant qu'administrateur pour déverrouiller ces paramètres</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>Mute virtual controller</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Mute virtual controller on steam related applications</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Controller settings</value>
   </data>

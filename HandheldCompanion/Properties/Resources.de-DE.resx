@@ -1047,12 +1047,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="WarningElevated" xml:space="preserve">
     <value>Führen Sie dieses Tool als Administrator aus, um diese Einstellungen freizugeben</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>Virtuellen Controller stummschalten</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Viertuellen Controller in Steam-Applikationen stummschalten</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Controller-Einstellungen</value>
   </data>

@@ -289,18 +289,29 @@ public class NeptuneController : SteamController
 
     public override void Hide(bool powerCycle = true)
     {
-        Close();
-        base.Hide(powerCycle);
-        if (!powerCycle)
-            Open();
+        lock (hidlock)
+        {
+            Close();
+            base.Hide(powerCycle);
+            if (!powerCycle)
+                Open();
+        }
     }
 
     public override void Unhide(bool powerCycle = true)
     {
-        Close();
-        base.Unhide(powerCycle);
-        if (!powerCycle)
-            Open();
+        // you shouldn't unhide the controller if steam mode is set to: exclusive
+        bool IsExclusiveMode = SettingsManager.GetBoolean("SteamControllerMode");
+        if (IsExclusiveMode)
+            return;
+
+        lock (hidlock)
+        {
+            Close();
+            base.Unhide(powerCycle);
+            if (!powerCycle)
+                Open();
+        }
     }
 
     public override void Plug()

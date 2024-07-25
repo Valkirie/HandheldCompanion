@@ -1045,12 +1045,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>Ejecute esta herramienta como administrador para desbloquear esta configuración</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>Silenciar controlador virtual</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Silenciar el controlador virtual en aplicaciones relacionadas con Steam</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Opciones del mando</value>
   </data>

@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -26,6 +27,8 @@ public partial class ControllerPage : Page
     public ControllerPage()
     {
         InitializeComponent();
+
+        SteamDeckPanel.Visibility = IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
 
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -85,8 +88,8 @@ public partial class ControllerPage : Page
                 case "DesktopLayoutEnabled":
                     Toggle_DesktopLayout.IsOn = Convert.ToBoolean(value);
                     break;
-                case "SteamControllerMute":
-                    Toggle_SCMuteController.IsOn = Convert.ToBoolean(value);
+                case "SteamControllerMode":
+                    cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
                     ControllerRefresh();
                     break;
                 case "HIDmode":
@@ -283,7 +286,6 @@ public partial class ControllerPage : Page
         bool hasPhysical = ControllerManager.HasPhysicalController();
         bool hasVirtual = ControllerManager.HasVirtualController();
         bool hasTarget = targetController != null;
-        bool isMuted = SettingsManager.GetBoolean("SteamControllerMute");
 
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
@@ -293,9 +295,6 @@ public partial class ControllerPage : Page
 
             bool isPlugged = hasTarget;
             bool isHidden = hasTarget && targetController.IsHidden();
-            bool isSteam = hasTarget && (targetController is NeptuneController || targetController is GordonController);
-
-            MuteVirtualController.Visibility = targetController is SteamController ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
@@ -305,17 +304,12 @@ public partial class ControllerPage : Page
             VirtualDevices.Visibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
             WarningNoVirtual.Visibility = isHidden && !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
 
-            // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
-            bool neptunehidden = isHidden && isSteam && isMuted;
-            HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
-
             // hint: Has physical controller not hidden, and virtual controller
-            bool notmuted = !isHidden && hasVirtual && (!isSteam || (isSteam && !isMuted));
+            bool notmuted = !isHidden && hasVirtual;
             HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
 
             Hints.Visibility = (HintsNoPhysicalConnected.Visibility == Visibility.Visible ||
                                 HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
-                                HintsNeptuneHidden.Visibility == Visibility.Visible ||
                                 HintsNotMuted.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
         });
     }
@@ -375,14 +369,6 @@ public partial class ControllerPage : Page
         SettingsManager.SetProperty("VibrationStrength", value);
     }
 
-    private void Toggle_SCMuteController_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("SteamControllerMute", Toggle_SCMuteController.IsOn);
-    }
-
     private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)
@@ -426,5 +412,13 @@ public partial class ControllerPage : Page
     private void Expander_Expanded(object sender, RoutedEventArgs e)
     {
         ((Expander)sender).BringIntoView();
+    }
+
+    private void cB_SCModeController_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("SteamControllerMode", Convert.ToBoolean(cB_SCModeController.SelectedIndex));
     }
 }

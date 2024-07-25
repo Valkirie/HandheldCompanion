@@ -120,7 +120,7 @@ namespace steam_hidapi.net
         {
             if (_hidDevice.IsDeviceValid)
                 _hidDevice.EndRead();
-            _hidDevice.Dispose();
+            _hidDevice.Close();
         }
     }
 }

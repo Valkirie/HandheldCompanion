@@ -107,19 +107,26 @@ namespace hidapi
 
             ThrowIfDeviceInvalid();
 
-            byte[] request_full = new byte[_inputBufferLen + 1];
-            Array.Copy(request, 0, request_full, 1, request.Length);
-            byte[] response = new byte[_inputBufferLen + 1];
+            lock (_lock)
+            {
+                byte[] request_full = new byte[_inputBufferLen + 1];
+                Array.Copy(request, 0, request_full, 1, request.Length);
+                byte[] response = new byte[_inputBufferLen + 1];
 
-            int err = HidApiNative.hid_send_feature_report(_deviceHandle, request_full, (uint)(_inputBufferLen + 1));
-            if (err < 0)
-                throw new Exception($"Could not send report to hid device. Error: {err}");
+                int err = HidApiNative.hid_send_feature_report(_deviceHandle, request_full, (uint)(_inputBufferLen + 1));
+                /*
+                if (err < 0)
+                    throw new Exception($"Could not send report to hid device. Error: {err}");
+                */
 
-            err = HidApiNative.hid_get_feature_report(_deviceHandle, response, (uint)(_inputBufferLen + 1));
-            if (err < 0)
-                throw new Exception($"Could not get report from hid device. Error: {err}");
+                err = HidApiNative.hid_get_feature_report(_deviceHandle, response, (uint)(_inputBufferLen + 1));
+                /*
+                if (err < 0)
+                    throw new Exception($"Could not get report from hid device. Error: {err}");
+                */
 
-            return response;
+                return response;
+            }
         }
 
         public Task WriteAsync(byte[] data) => Task.Run(() => Write(data));
@@ -129,12 +136,16 @@ namespace hidapi
                 throw new ArgumentException("Data length is greater than input buffer length.");
 
             ThrowIfDeviceInvalid();
-            byte[] buffer = new byte[_inputBufferLen];
-            Array.Copy(data, buffer, data.Length);
 
-            int err = HidApiNative.hid_write(_deviceHandle, buffer, (uint)buffer.Length);
-            if (err < 0)
-                throw new Exception($"Failed to write to HID device. Error: {err}");
+            lock (_lock)
+            {
+                byte[] buffer = new byte[_inputBufferLen];
+                Array.Copy(data, buffer, data.Length);
+
+                int err = HidApiNative.hid_write(_deviceHandle, buffer, (uint)buffer.Length);
+                if (err < 0)
+                    throw new Exception($"Failed to write to HID device. Error: {err}");
+            }
         }
 
         private void ReadLoop()

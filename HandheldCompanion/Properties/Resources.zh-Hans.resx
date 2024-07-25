@@ -1033,12 +1033,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>以管理员身份运行此工具以更改这些设置</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>禁用虚拟手柄</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>对Steam相关程序禁用虚拟手柄</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>手柄设置</value>
   </data>

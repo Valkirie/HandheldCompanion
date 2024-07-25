@@ -781,20 +781,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mute virtual controller.
+        ///   Looks up a localized string similar to Steam controller mode.
         /// </summary>
-        public static string ControllerPage_SteamControllerMute {
+        public static string ControllerPage_SteamControllerMode {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamControllerMute", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_SteamControllerMode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mute virtual controller on steam related applications.
+        ///   Looks up a localized string similar to Change the Steam controller mode: Exclusive mode or Hybrid mode. Exclusive mode will ensure all inputs are managed by Handheld Companion (HC). Hybrid mode will let Steam manage inputs from Steam applications and HC manage inputs from other applications..
         /// </summary>
-        public static string ControllerPage_SteamControllerMuteDesc {
+        public static string ControllerPage_SteamControllerModeDesc {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamControllerMuteDesc", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_SteamControllerModeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exclusive.
+        /// </summary>
+        public static string ControllerPage_SteamControllerModeExclusive {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamControllerModeExclusive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hybrid.
+        /// </summary>
+        public static string ControllerPage_SteamControllerModeHybrid {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamControllerModeHybrid", resourceCulture);
             }
         }
         

@@ -1046,12 +1046,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>これらの設定のロックを解除するには、管理者としてこのツールを実行してください</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>仮想コントローラーをミュートします</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Steam 関連アプリケーションの仮想コントローラーをミュートします</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>コントローラー設定</value>
   </data>

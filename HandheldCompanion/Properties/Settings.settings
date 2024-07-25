@@ -122,8 +122,8 @@
     <Setting Name="OverlayControllerMotion" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SteamControllerMute" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="SteamControllerMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HIDcloakonconnect" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

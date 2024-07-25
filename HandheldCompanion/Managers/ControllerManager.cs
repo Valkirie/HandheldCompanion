@@ -20,11 +20,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Timers;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
 using DeviceType = SharpDX.DirectInput.DeviceType;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
@@ -52,6 +54,8 @@ public static class ControllerManager
     private static object targetLock = new object();
     public static ControllerManagerStatus managerStatus = ControllerManagerStatus.Pending;
 
+    private static Timer scenarioTimer = new(1000) { AutoReset = true };
+
     public static bool IsInitialized;
 
     public enum ControllerManagerStatus
@@ -68,6 +72,9 @@ public static class ControllerManager
         {
             IsBackground = true
         };
+
+        // prepare timer
+        scenarioTimer.Elapsed += ScenarioTimer_Elapsed;
     }
 
     public static Task Start()
@@ -77,7 +84,6 @@ public static class ControllerManager
 
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
-
         DeviceManager.HidDeviceArrived += HidDeviceArrived;
         DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
@@ -96,6 +102,9 @@ public static class ControllerManager
         IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
+        // enable timer
+        scenarioTimer.Start();
 
         // enable HidHide
         HidHide.SetCloaking(true);
@@ -127,6 +136,9 @@ public static class ControllerManager
         DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
 
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        // stop timer
+        scenarioTimer.Stop();
 
         // uncloak on close, if requested
         if (SettingsManager.GetBoolean("HIDuncloakonclose"))
@@ -210,22 +222,68 @@ public static class ControllerManager
         targetController?.InjectButton(button, true, false);
     }
 
-    private static void CheckControllerScenario()
+    private static void ScenarioTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         // set flag
         ControllerMuted = false;
 
-        // platform specific scenarios
-        if (foregroundProcess?.Platform == PlatformType.Steam)
+        // Steam Deck specific scenario
+        if (IDevice.GetCurrent() is SteamDeck steamDeck)
         {
-            // Controller specific scenarios
-            // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-            if (targetController is SteamController steamController)
-                ControllerMuted = steamController.IsVirtualMuted();
+            bool IsExclusiveMode = SettingsManager.GetBoolean("SteamControllerMode");
+
+            // Making sure current controller is embedded
+            if (targetController is NeptuneController neptuneController)
+            {
+                // We're busy, come back later
+                if (neptuneController.IsBusy)
+                    return;
+
+                if (IsExclusiveMode)
+                {
+                    // mode: exclusive
+                    // hide embedded controller
+                    if (!neptuneController.IsHidden())
+                        neptuneController.Hide();
+                }
+                else
+                {
+                    // mode: hybrid
+                    if (foregroundProcess?.Platform == PlatformType.Steam)
+                    {
+                        // application is either steam or a steam game
+                        // restore embedded controller and mute virtual controller
+                        if (neptuneController.IsHidden())
+                            neptuneController.Unhide();
+
+                        // set flag
+                        ControllerMuted = true;
+                    }
+                    else
+                    {
+                        // application is not steam related
+                        // hide embbeded controller
+                        if (!neptuneController.IsHidden())
+                            neptuneController.Hide();
+                    }
+                }
+
+                // halt timer
+                scenarioTimer.Stop();
+            }
         }
 
         // either main window or quicktools are focused
-        ControllerMuted = focusedWindows != FocusedWindow.None;
+        // set flag
+        if (focusedWindows != FocusedWindow.None)
+            ControllerMuted = true;
+    }
+
+    private static void CheckControllerScenario()
+    {
+        // reset timer
+        scenarioTimer.Stop();
+        scenarioTimer.Start();
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -277,6 +335,10 @@ public static class ControllerManager
 
             case "SensorSelection":
                 sensorSelection = (SensorFamily)Convert.ToInt32(value);
+                break;
+
+            case "SteamControllerMode":
+                CheckControllerScenario();
                 break;
         }
     }

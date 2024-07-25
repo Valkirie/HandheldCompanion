@@ -168,8 +168,7 @@ public partial class MainWindow : GamepadWindow
         {
             if (CurrentDevice is SteamDeck steamDeck)
             {
-                // prevent Steam Deck controller from being hidden by default
-                SettingsManager.SetProperty("HIDcloakonconnect", false);
+                // do something
             }
             else if (CurrentDevice is AYANEOFlipDS flipDS)
             {

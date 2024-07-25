@@ -94,39 +94,6 @@
                     <TextBlock Text="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileAction}" TextWrapping="Wrap" />
                 </Expander>
 
-                <!--  Has hidden Neptune controller but virtual controller is muted  -->
-                <Expander
-                    Name="HintsNeptuneHidden"
-                    Padding="15,12,12,12"
-                    HorizontalAlignment="Stretch"
-                    d:Visibility="Visible"
-                    Visibility="Collapsed">
-
-                    <Expander.Header>
-                        <DockPanel Margin="0,12,12,12">
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Glyph="&#xe7ba;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_PhysicalControllerHiddenWarning}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_PhysicalControllerHiddenDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-                    </Expander.Header>
-                    <TextBlock Text="{l:Static resx:Resources.ControllerPage_PhysicalControllerHiddenAction}" TextWrapping="Wrap" />
-                </Expander>
-
                 <!--  Physical controller is not hidden and virtual controller detected  -->
                 <Expander
                     Name="HintsNotMuted"
@@ -463,6 +430,53 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
+
+            <!--  Physical controller settings  -->
+            <ikw:SimpleStackPanel Name="SteamDeckPanel" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Steam Deck settings" />
+
+                <!--  Mute virtual controller (Steam Deck)  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE789;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_SteamControllerMode}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.ControllerPage_SteamControllerModeDesc}"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="cB_SCModeController"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="cB_SCModeController_SelectionChanged">
+                            <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_SteamControllerModeHybrid}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_SteamControllerModeExclusive}" />
+                        </ComboBox>
+                    </Grid>
+                </Border>
+            </ikw:SimpleStackPanel>
+
             <!--  Physical controller settings  -->
             <ikw:SimpleStackPanel Name="DeviceSpecificPanel" Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_PhysicalDeviceSettings}" />
@@ -502,45 +516,6 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_Vibrate_Toggled" />
-                    </Grid>
-                </Border>
-
-                <!--  Mute virtual controller (Steam Deck)  -->
-                <Border
-                    Name="MuteVirtualController"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE789;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_SteamControllerMute}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_SteamControllerMuteDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_SCMuteController"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_SCMuteController_Toggled" />
                     </Grid>
                 </Border>
 

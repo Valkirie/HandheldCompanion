@@ -1053,12 +1053,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="WarningElevated" xml:space="preserve">
     <value>Execute esta ferramenta como um Administrador para destravar estas configurações</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>Silenciar controle virtual</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Silenciar controle virutal em aplicações relacionadas ao Steam</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Configurações de controle</value>
   </data>

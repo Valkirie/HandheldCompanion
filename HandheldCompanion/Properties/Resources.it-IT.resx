@@ -1045,12 +1045,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>Esegui questo strumento come amministratore per sbloccare queste impostazioni</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>Silenzia il controller virtuale</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Silenzia il controller virtuale nelle applicazioni correlate a Steam</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Impostazioni del controller</value>
   </data>

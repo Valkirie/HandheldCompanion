@@ -119,22 +119,29 @@ public static class ProcessManager
     {
         if (IsWindowVisible((int)hWnd))
         {
-            AutomationElement element = AutomationElement.FromHandle(hWnd);
-            if (element is null)
-                return false;
-            
-            int processId = element.Current.NativeWindowHandle;
+            try
+            {
+                AutomationElement element = AutomationElement.FromHandle(hWnd);
+                if (element is null)
+                    return false;
 
-            ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-            if (processInfo != null)
-                processId = (int)processInfo.ProcessId;
+                int processId = element.Current.NativeWindowHandle;
 
-            // skip if we couldn't find a process id
-            if (processId == 0)
-                return false;
+                ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
+                if (processInfo != null)
+                    processId = (int)processInfo.ProcessId;
 
-            // create process
-            CreateOrUpdateProcess(processId, element, true);
+                // skip if we couldn't find a process id
+                if (processId == 0)
+                    return false;
+
+                // create process
+                CreateOrUpdateProcess(processId, element, true);
+            }
+            catch
+            {
+                // timeout
+            }
         }
 
         return true;

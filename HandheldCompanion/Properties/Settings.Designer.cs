@@ -506,13 +506,13 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SteamControllerMute {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SteamControllerMode {
             get {
-                return ((bool)(this["SteamControllerMute"]));
+                return ((bool)(this["SteamControllerMode"]));
             }
             set {
-                this["SteamControllerMute"] = value;
+                this["SteamControllerMode"] = value;
             }
         }
         

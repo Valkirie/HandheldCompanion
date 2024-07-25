@@ -1033,12 +1033,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>Запустите от имени администратора чтобы разблокировать эти настройки</value>
   </data>
-  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
-    <value>Приостановить виртуальные контроллер</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
-    <value>Временно отключает виртуальный контрллер в Steam приложених</value>
-  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Настройки контроллера</value>
   </data>
