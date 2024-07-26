@@ -18,6 +18,9 @@ namespace HandheldCompanion.Commands
         public delegate void ExecutedEventHandler(ICommands command);
         public event ExecutedEventHandler Executed;
 
+        public delegate void UpdatedEventHandler(ICommands command);
+        public event UpdatedEventHandler Updated;
+
         protected object Value;
         protected object prevValue;
 
@@ -29,6 +32,26 @@ namespace HandheldCompanion.Commands
         [JsonIgnore] public string Description = "Please pick a command type";
         [JsonIgnore] public string Glyph = "\ue895";
 
+        [JsonIgnore] private string _LiveGlyph = string.Empty;
+        [JsonIgnore]
+        public string LiveGlyph
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_LiveGlyph))
+                    return Glyph;
+
+                return _LiveGlyph;
+            }
+            set
+            {
+                if (value != _LiveGlyph)
+                    _LiveGlyph = value;
+            }
+        }
+
+        [JsonIgnore] public string FontFamily = "Segoe Fluent Icons";
+
         public CommandType commandType;
 
         public ICommands() { }
@@ -38,7 +61,13 @@ namespace HandheldCompanion.Commands
             Executed?.Invoke(this);
         }
 
+        public virtual void Update()
+        {
+            Updated?.Invoke(this);
+        }
+
         [JsonIgnore] public virtual bool IsToggled => false;
+        [JsonIgnore] public bool IsEnabled = true;
 
         public virtual object Clone()
         {

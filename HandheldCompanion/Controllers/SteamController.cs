@@ -1,7 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using steam_hidapi.net.Hid;
-using System;
 
 namespace HandheldCompanion.Controllers
 {

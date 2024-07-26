@@ -39,6 +39,7 @@ namespace HandheldCompanion.ViewModels
 
                 _Hotkey = value;
                 _Hotkey.command.Executed += Command_Executed;
+                _Hotkey.command.Updated += Command_Updated;
 
                 OnPropertyChanged(nameof(Hotkey));
                 OnPropertyChanged(nameof(IsPinned));
@@ -104,13 +105,22 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
+        private void Command_Updated(ICommands command)
+        {
+            OnPropertyChanged(nameof(LiveGlyph));
+            OnPropertyChanged(nameof(IsEnabled));
+        }
+
         public override void Dispose()
         {
             _Hotkey.command.Executed -= Command_Executed;
+            _Hotkey.command.Updated -= Command_Updated;
             base.Dispose();
         }
 
         public string Glyph => Hotkey.command.Glyph;
+        public string LiveGlyph => Hotkey.command.LiveGlyph;
+        public string FontFamily => Hotkey.command.FontFamily;
 
         public string CustomName
         {
@@ -364,6 +374,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool IsToggled => Hotkey.command.IsToggled;
+        public bool IsEnabled => Hotkey.command.IsEnabled;
 
         public ICommand DefineButtonCommand { get; private set; }
         public ICommand PinButtonCommand { get; private set; }
@@ -544,6 +555,7 @@ namespace HandheldCompanion.ViewModels
             Description = Hotkey.command.Description;
 
         Success:
+            OnPropertyChanged(nameof(FontFamily));
             OnPropertyChanged(nameof(Glyph));
         }
     }

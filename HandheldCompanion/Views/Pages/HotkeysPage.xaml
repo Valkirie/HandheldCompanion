@@ -60,7 +60,7 @@
                                         <ui:FontIcon
                                             Width="16"
                                             HorizontalAlignment="Center"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            FontFamily="{Binding FontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                         <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
