@@ -236,6 +236,8 @@ public partial class ControllerPage : Page
                                 Toggle_ControllerManagement.IsOn = true;
                                 break;
                         }
+
+                        dialog.Hide();
                     }
                     break;
             }
@@ -293,20 +295,19 @@ public partial class ControllerPage : Page
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
-            bool isPlugged = hasTarget;
-            bool isHidden = hasTarget && targetController.IsHidden();
+            bool isPlugged = hasPhysical && hasTarget;
+            bool isHidden = targetController.IsHidden();
 
             // hint: Has physical controller, but is not connected
-            HintsNoPhysicalConnected.Visibility =
-                hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
+            HintsNoPhysicalConnected.Visibility = hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (not Neptune) hidden, but no virtual controller
             VirtualDevices.Visibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
             WarningNoVirtual.Visibility = isHidden && !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller not hidden, and virtual controller
-            bool notmuted = !isHidden && hasVirtual;
-            HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
+            bool hasDualInput = isPlugged && !isHidden && hasVirtual;
+            HintsNotMuted.Visibility = hasDualInput ? Visibility.Visible : Visibility.Collapsed;
 
             Hints.Visibility = (HintsNoPhysicalConnected.Visibility == Visibility.Visible ||
                                 HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
