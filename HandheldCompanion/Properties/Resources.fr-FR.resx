@@ -1345,7 +1345,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>You might want to hide your physical controller or mute your virtual controller.</value>
   </data>
   <data name="ControllerPage_PhysicalControllerNotHiddenDesc" xml:space="preserve">
-    <value>Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games.</value>
+    <value>Your physical controller is not hidden, yet you have a connected virtual controller. You might encounter double inputs in games.</value>
   </data>
   <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
     <value>Physical controller is not hidden</value>

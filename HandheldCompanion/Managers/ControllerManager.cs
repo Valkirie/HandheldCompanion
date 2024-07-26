@@ -42,8 +42,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly XInputController? emptyXInput = new() { Details = new() { isVirtual = true } };
-    private static readonly DS4Controller? emptyDS4 = new() { Details = new() { isVirtual = true } };
+    private static readonly XInputController? emptyXInput = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
+    private static readonly DS4Controller? emptyDS4 = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
 
     private static IController? targetController;
     private static FocusedWindow focusedWindows = FocusedWindow.None;
@@ -1128,12 +1128,12 @@ public static class ControllerManager
 
     public static IEnumerable<IController> GetPhysicalControllers()
     {
-        return Controllers.Values.Where(a => !a.IsVirtual()).ToList();
+        return Controllers.Values.Where(a => !a.IsVirtual() && !a.isPlaceholder).ToList();
     }
 
     public static IEnumerable<IController> GetVirtualControllers()
     {
-        return Controllers.Values.Where(a => a.IsVirtual()).ToList();
+        return Controllers.Values.Where(a => a.IsVirtual() && !a.isPlaceholder).ToList();
     }
 
     public static XInputController GetControllerFromSlot(UserIndex userIndex = 0, bool physical = true)

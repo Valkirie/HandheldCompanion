@@ -718,7 +718,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games..
+        ///   Looks up a localized string similar to Your physical controller is not hidden, yet you have a connected virtual controller. You might encounter double inputs in games..
         /// </summary>
         public static string ControllerPage_PhysicalControllerNotHiddenDesc {
             get {

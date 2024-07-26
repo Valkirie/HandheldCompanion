@@ -94,6 +94,7 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsReady => true;
         public virtual bool IsWireless => false;
+        public bool isPlaceholder;
 
         public bool IsBusy
         {
