@@ -438,32 +438,10 @@ public partial class OverlayQuickTools : GamepadWindow
             {
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
-                    {
-                        try
-                        {
-                            try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
-                            // SlideIn();
-                            // Focus();
-
-                            if (hwndSource != null)
-                                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
-
-                            InvokeGotGamepadWindowFocus();
-
-                            clockUpdateTimer.Start();
-                        }
-                        catch { }
-                    }
+                    try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
                 case Visibility.Visible:
-                    {
-                        try { Hide(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
-                        //SlideOut();
-
-                        InvokeLostGamepadWindowFocus();
-
-                        clockUpdateTimer.Stop();
-                    }
+                    try { Hide(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
             }
         });
@@ -516,6 +494,23 @@ public partial class OverlayQuickTools : GamepadWindow
             };
 
             this.BeginAnimation(Window.TopProperty, animation);
+        }
+    }
+
+    private void GamepadWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        switch (Visibility)
+        {
+            case Visibility.Collapsed:
+            case Visibility.Hidden:
+                InvokeLostGamepadWindowFocus();
+                clockUpdateTimer.Stop();
+                break;
+            case Visibility.Visible:
+                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                InvokeGotGamepadWindowFocus();
+                clockUpdateTimer.Start();
+                break;
         }
     }
 
