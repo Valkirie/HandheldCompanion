@@ -209,7 +209,7 @@ public static class ProcessManager
         return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
-    private static void ForegroundCallback()
+    private static async void ForegroundCallback()
     {
         IntPtr hWnd = GetforegroundWindow();
 
@@ -245,6 +245,10 @@ public static class ProcessManager
 
         try
         {
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout && !Processes.ContainsKey(processId))
+                await Task.Delay(200);
+
             if (!Processes.TryGetValue(processId, out ProcessEx process))
                 return;
 
