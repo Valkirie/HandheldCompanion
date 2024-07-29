@@ -101,33 +101,45 @@ public static class HotkeysManager
     {
         Hotkey? hotkey = null;
 
-        // Check json filename, if it is not a number (as ButtonFlags), it is the old format
-        var regex = new Regex(@"(\d+)\.json", RegexOptions.IgnoreCase);
-        var match = regex.Match(fileName);
+        string json = File.ReadAllText(fileName);
+        JObject? dictionary = JObject.Parse(json);
 
-        if (!match.Success)
+        Version version = new();
+        if (dictionary.ContainsKey("Version"))
+            version = Version.Parse((string)dictionary["Version"]);
+
+        // this is the first version where we added the Version field to Hotkey
+        if (version <= Version.Parse("0.21.5.2"))
         {
-            try
+            // this goes back to 0.21.4.1
+            if (dictionary.ContainsKey("hotkeyId"))
             {
-                hotkey = MigrateHotkey(fileName);
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not migrate old hotkey {0}. {1}", fileName, ex.Message);
-                return;
-            }
+                try
+                {
+                    hotkey = MigrateFrom0_21_4_1(fileName, dictionary);
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Could not migrate old hotkey {0}. {1}", fileName, ex.Message);
+                    return;
+                }
 
-            if (hotkey is null)
-            {
-                LogManager.LogError("Could not migrate old hotkey {0}.", fileName);
-                return;
+                if (hotkey is null)
+                {
+                    LogManager.LogError("Could not migrate old hotkey {0}.", fileName);
+                    return;
+                }
             }
+            else if (dictionary.ContainsKey("ButtonFlags"))
+            {
+                // this is 0.21.5.1
+            }            
         }
         else
         {
             try
             {
-                var outputraw = File.ReadAllText(fileName);
+                string outputraw = File.ReadAllText(fileName);
                 hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
@@ -152,21 +164,12 @@ public static class HotkeysManager
         Updated?.Invoke(hotkey);
     }
 
-    private static Hotkey? MigrateHotkey(string fileName)
+    private static Hotkey? MigrateFrom0_21_4_1(string fileName, JObject? dictionary)
     {
-        var json = File.ReadAllText(fileName);
-        JObject? dictionary = JObject.Parse(json);
-
-        if (!dictionary.ContainsKey("hotkeyId"))
-        {
-            return null;
-        }
-
-        ushort hotkeyId = (ushort)dictionary["hotkeyId"];
-
         ICommands command = new EmptyCommands();
 
         // This hotkey is from old format, need migrate to new hotkey
+        ushort hotkeyId = (ushort)dictionary["hotkeyId"];
         if (hotkeyId > 0)
         {
             switch (hotkeyId)
@@ -301,8 +304,12 @@ public static class HotkeysManager
 
     public static void SerializeHotkey(Hotkey hotkey)
     {
-        var hotkeyPath = Path.Combine(HotkeysPath, $"{hotkey.ButtonFlags}.json");
-        var jsonString = JsonConvert.SerializeObject(hotkey, Formatting.Indented, new JsonSerializerSettings
+        string hotkeyPath = Path.Combine(HotkeysPath, $"{hotkey.ButtonFlags}.json");
+
+        // update profile version to current build
+        hotkey.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
+
+        string jsonString = JsonConvert.SerializeObject(hotkey, Formatting.Indented, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All
         });

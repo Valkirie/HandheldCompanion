@@ -21,6 +21,7 @@ namespace HandheldCompanion
         public bool IsInternal { get; set; } = false;
 
         public string Name { get; set; } = string.Empty;
+        public Version Version { get; set; } = new();
 
         [JsonIgnore]
         public KeyboardChord keyChord
