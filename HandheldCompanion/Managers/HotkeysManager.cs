@@ -250,6 +250,10 @@ public static class HotkeysManager
                         hotkey.inputsChord.ButtonState.State[flag] = (bool)keyValuePair.Value;
                     }
                 }
+                
+                // Migrate IsPinned
+                var isPinned = (bool)dictionary["IsPinned"];
+                hotkey.IsPinned = isPinned;
 
                 // Common ButtonFlags check
                 if (CheckAvailableButtonFlag(hotkey.ButtonFlags))
