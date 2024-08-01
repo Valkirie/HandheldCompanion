@@ -512,6 +512,70 @@
                                                 Text="{Binding ExecutableArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 TextAlignment="Left" />
                                         </Grid>
+
+                                        <!--  Separator  -->
+                                        <Separator
+                                            Margin="-46,0,-16,0"
+                                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                            BorderThickness="0,1,0,0" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Window Style" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Specifies how a new window should appear when the system starts a process"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <ComboBox
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectedIndex="{Binding ExecutableWindowStyle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>Normal</ComboBoxItem>
+                                                <ComboBoxItem>Hidden</ComboBoxItem>
+                                                <ComboBoxItem>Minimized</ComboBoxItem>
+                                                <ComboBoxItem>Maximized</ComboBoxItem>
+                                            </ComboBox>
+                                        </Grid>
+
+                                        <!--  Separator  -->
+                                        <Separator
+                                            Margin="-46,0,-16,0"
+                                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                            BorderThickness="0,1,0,0" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Run as administrator" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Specifies if the application should start with adminstrator elevation"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <ui:ToggleSwitch
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                IsOn="{Binding ExecutableRunAs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                                        </Grid>
                                     </ikw:SimpleStackPanel>
 
                                     <!--  Separator  -->

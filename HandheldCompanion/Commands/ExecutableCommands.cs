@@ -10,6 +10,8 @@ namespace HandheldCompanion.Commands
     {
         public string Path { get; set; } = string.Empty;
         public string Arguments { get; set; } = string.Empty;
+        public ProcessWindowStyle windowStyle { get; set; } = ProcessWindowStyle.Normal;
+        public bool RunAs { get; set; } = false;
 
         public ExecutableCommands()
         {
@@ -32,7 +34,10 @@ namespace HandheldCompanion.Commands
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = this.Path,
-                    Arguments = this.Arguments
+                    Arguments = this.Arguments,
+                    WindowStyle = windowStyle,
+                    UseShellExecute = true,
+                    Verb = RunAs ? "runas" : string.Empty,
                 };
 
                 // Start the process with the startInfo configuration

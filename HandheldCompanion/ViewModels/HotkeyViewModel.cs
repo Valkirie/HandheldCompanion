@@ -11,6 +11,7 @@ using HandheldCompanion.ViewModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -351,6 +352,48 @@ namespace HandheldCompanion.ViewModels
                 {
                     executableCommand.Arguments = value;
                     HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+
+                    // OnPropertyChanged(nameof(ExecutableArguments));
+                }
+            }
+        }
+
+        public int ExecutableWindowStyle
+        {
+            get
+            {
+                if (Hotkey.command is ExecutableCommands executableCommand)
+                    return (int)executableCommand.windowStyle;
+                return 0;
+            }
+            set
+            {
+                if (Hotkey.command is ExecutableCommands executableCommand)
+                {
+                    executableCommand.windowStyle = (ProcessWindowStyle)value;
+                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+
+                    // OnPropertyChanged(nameof(ExecutableWindowStyle));
+                }
+            }
+        }
+
+        public bool ExecutableRunAs
+        {
+            get
+            {
+                if (Hotkey.command is ExecutableCommands executableCommand)
+                    return executableCommand.RunAs;
+                return false;
+            }
+            set
+            {
+                if (Hotkey.command is ExecutableCommands executableCommand)
+                {
+                    executableCommand.RunAs = value;
+                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+
+                    // OnPropertyChanged(nameof(ExecutableRunAs));
                 }
             }
         }
