@@ -118,18 +118,23 @@ public static class MultimediaManager
         BrightnessNotification?.Invoke(brightness);
     }
 
+    public static string GetDisplayName(string input)
+    {
+        int index = input.LastIndexOf('\\');
+        if (index >= 0 && index < input.Length - 1)
+        {
+            return input.Substring(index + 1);
+        }
+        return string.Empty; // Or handle this case as needed
+    }
+
     public static string GetDisplayFriendlyName(string DeviceName)
     {
-        string friendlyName = string.Empty;
+        string friendlyName = GetDisplayName(DeviceName);
 
         Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
-        if (PrimaryDisplay is not null)
-        {
-            string DevicePath = PrimaryDisplay.DevicePath;
-            PathDisplayTarget? PrimaryTarget = GetDisplayTarget(DevicePath);
-            if (PrimaryTarget is not null)
-                friendlyName = PrimaryTarget.FriendlyName;
-        }
+        if (PrimaryDisplay is not null && !string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
+            friendlyName = PrimaryDisplay.DeviceName;
 
         return friendlyName;
     }
