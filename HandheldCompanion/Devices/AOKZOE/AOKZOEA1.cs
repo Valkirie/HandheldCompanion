@@ -13,7 +13,20 @@ namespace HandheldCompanion.Devices;
 
 public class AOKZOEA1 : IDevice
 {
+    private enum FanControlMode
+    {
+        Manual = 0x01,
+        Automatic = 0x00,
+        Reset = 0x4C
+    }
+
+    // Define the ACPI memory address for fan control mode
+    byte ACPI_FanMode_Address = 0x4A;
+    // Fan control PWM value
+    byte ACPI_FanPWMDutyCycle_Address = 0x4B;
+
     HidDevice hidDevice;
+
     public AOKZOEA1()
     {
         // device specific settings
@@ -60,7 +73,7 @@ public class AOKZOEA1 : IDevice
             AddressStatusCommandPort = 0x4E, // 78
             AddressDataPort = 0x4F,     // 79
             FanValueMin = 0,
-            FanValueMax = 184
+            FanValueMax = 255
         };
 
         // Home
@@ -129,6 +142,35 @@ public class AOKZOEA1 : IDevice
         base.Close();
     }
 
+    public override void SetFanControl(bool enable, int mode)
+    {
+        if (!IsOpen)
+            return;
+
+        // Determine the fan control mode based enable
+        byte controlValue = enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic;
+
+        // Update the fan control mode
+        if (!enable)
+            ECRAMWrite(ACPI_FanPWMDutyCycle_Address, (byte)FanControlMode.Reset);
+        ECRAMWrite(ACPI_FanMode_Address, controlValue);
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (!IsOpen)
+            return;
+
+        // Convert 0-100 percentage to range
+        byte fanSpeedSetpoint = (byte)(percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin);
+
+        // Ensure the value is within the valid range
+        fanSpeedSetpoint = Math.Min((byte)ECDetails.FanValueMax, Math.Max((byte)ECDetails.FanValueMin, fanSpeedSetpoint));
+
+        // Set the requested fan speed
+        ECRAMWrite(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
+    }
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
@@ -143,6 +185,7 @@ public class AOKZOEA1 : IDevice
 
         return base.GetGlyph(button);
     }
+
     public override bool IsReady()
     {
         // Prepare list for all HID devices
