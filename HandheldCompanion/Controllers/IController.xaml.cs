@@ -666,13 +666,14 @@ namespace HandheldCompanion.Controllers
                 case AxisFlags.RightStickY:
                     return "\u21F5";
 
-                // Todo, need dedicated icons
                 case AxisFlags.LeftPadX:
+                    return "\u226A";
                 case AxisFlags.LeftPadY:
-                    return "\u2264";
+                    return "\u226B";
                 case AxisFlags.RightPadX:
+                    return "\u226C";
                 case AxisFlags.RightPadY:
-                    return "\u2265";
+                    return "\u226D";
             }
 
             return defaultGlyph;
