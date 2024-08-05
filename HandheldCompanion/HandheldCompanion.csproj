@@ -124,22 +124,22 @@
   </ItemGroup>
 
   <ItemGroup>
-	<Resource Include="Resources\device_aya_flip_ds.png" />
-	<Resource Include="Resources\device_aya_flip_kb.png" />
-	<Resource Include="Resources\device_aya_kun.png" />
-    <Resource Include="Resources\device_aya_slide.png" />
-    <Resource Include="Resources\device_cncdan_nucdeck.png" />
-    <Resource Include="Resources\device_gpd_winmini.png" />
-    <Resource Include="Resources\device_legion_go.png" />
+	<Resource Include="Resources\DeviceImages\device_aya_flip_ds.png" />
+	<Resource Include="Resources\DeviceImages\device_aya_flip_kb.png" />
+	<Resource Include="Resources\DeviceImages\device_aya_kun.png" />
+    <Resource Include="Resources\DeviceImages\device_aya_slide.png" />
+    <Resource Include="Resources\DeviceImages\device_cncdan_nucdeck.png" />
+    <Resource Include="Resources\DeviceImages\device_gpd_winmini.png" />
+    <Resource Include="Resources\DeviceImages\device_legion_go.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\controller_2_0.png" />
-    <Resource Include="Resources\device_aokzoe_a1.png" />
-    <Resource Include="Resources\device_aya_2.png" />
-    <Resource Include="Resources\device_aya_air.png" />
-    <Resource Include="Resources\device_ayn_loki.png" />
-    <Resource Include="Resources\device_generic.png" />
+    <Resource Include="Resources\DeviceImages\device_aokzoe_a1.png" />
+    <Resource Include="Resources\DeviceImages\device_aya_2.png" />
+    <Resource Include="Resources\DeviceImages\device_aya_air.png" />
+    <Resource Include="Resources\DeviceImages\device_ayn_loki.png" />
+    <Resource Include="Resources\DeviceImages\device_generic.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -147,19 +147,19 @@
     <Resource Include="Resources\controller_0_0.png" />
     <Resource Include="Resources\controller_1_1.png" />
     <Resource Include="Resources\controller_1_0.png" />
-    <Resource Include="Resources\device_aya_2021.png" />
-    <Resource Include="Resources\device_aya_next.png" />
-    <Resource Include="Resources\device_gpd3.png" />
-    <Resource Include="Resources\device_gpd4.png" />
-    <Resource Include="Resources\device_gpd_win2.png" />
-    <Resource Include="Resources\device_gpd_winmax2.png" />
-    <Resource Include="Resources\device_msi_claw.png" />
-    <Resource Include="Resources\device_onexplayer_2.png" />
-    <Resource Include="Resources\device_onexplayer_mini.png" />
-    <Resource Include="Resources\device_onexplayer_onexfly.png" />
-    <Resource Include="Resources\device_onexplayer_x1.png" />
-    <Resource Include="Resources\device_rog_ally.png" />
-    <Resource Include="Resources\device_valve_jupiter.png" />
+    <Resource Include="Resources\DeviceImages\device_aya_2021.png" />
+    <Resource Include="Resources\DeviceImages\device_aya_next.png" />
+    <Resource Include="Resources\DeviceImages\device_gpd3.png" />
+    <Resource Include="Resources\DeviceImages\device_gpd4.png" />
+    <Resource Include="Resources\DeviceImages\device_gpd_win2.png" />
+    <Resource Include="Resources\DeviceImages\device_gpd_winmax2.png" />
+    <Resource Include="Resources\DeviceImages\device_msi_claw.png" />
+    <Resource Include="Resources\DeviceImages\device_onexplayer_2.png" />
+    <Resource Include="Resources\DeviceImages\device_onexplayer_mini.png" />
+    <Resource Include="Resources\DeviceImages\device_onexplayer_onexfly.png" />
+    <Resource Include="Resources\DeviceImages\device_onexplayer_x1.png" />
+    <Resource Include="Resources\DeviceImages\device_rog_ally.png" />
+    <Resource Include="Resources\DeviceImages\device_valve_jupiter.png" />
     <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
     <Resource Include="Resources\led_presets\onexplayer\preset01.png" />

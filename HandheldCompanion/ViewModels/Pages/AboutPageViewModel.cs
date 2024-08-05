@@ -22,7 +22,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsUnsupportedDevice => IDevice.GetCurrent() is DefaultDevice;
 
-        public BitmapImage DeviceImage => new(new Uri($"pack://application:,,,/Resources/{IDevice.GetCurrent().ProductIllustration}.png"));
+        public BitmapImage DeviceImage => new(new Uri($"pack://application:,,,/Resources/DeviceImages/{IDevice.GetCurrent().ProductIllustration}.png"));
 
         public AboutPageViewModel()
         {
