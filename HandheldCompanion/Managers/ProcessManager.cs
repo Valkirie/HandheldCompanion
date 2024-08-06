@@ -232,9 +232,6 @@ public static class ProcessManager
             // Automation failed to retrieve process id
         }
 
-        // update current foreground window
-        foregroundWindow = hWnd;
-
         ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
         if (processInfo is not null)
             processId = (int)processInfo.ProcessId;
@@ -245,11 +242,14 @@ public static class ProcessManager
 
         try
         {
+            if (!Processes.TryGetValue(processId, out ProcessEx process))
+                CreateOrUpdateProcess(processId, element);
+
             DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
             while (DateTime.Now < timeout && !Processes.ContainsKey(processId))
                 await Task.Delay(200);
 
-            if (!Processes.TryGetValue(processId, out ProcessEx process))
+            if (!Processes.ContainsKey(processId))
                 return;
 
             ProcessEx prevProcess = foregroundProcess;
@@ -282,6 +282,9 @@ public static class ProcessManager
 
             // raise event
             ForegroundChanged?.Invoke(foregroundProcess, prevProcess);
+
+            // update current foreground window
+            foregroundWindow = hWnd;
         }
         catch
         {

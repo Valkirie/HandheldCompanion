@@ -256,7 +256,7 @@ public static class ProcessUtils
                 if (_realProcess is null)
                 {
                     // use Levenshtein to find the process with closest name
-                    Process process = ProcessUtils.FindProcessByWindowName(hWnd);
+                    Process process = FindProcessByWindowName(hWnd);                    
                     if (process is not null)
                         processId = (uint)process.Id;
 
