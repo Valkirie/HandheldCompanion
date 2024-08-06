@@ -48,7 +48,7 @@
 #define NewDotNetVersion "8.0.1"
 #define NewDirectXVersion "9.29.1974"
 #define NewViGemVersion "1.22.0.0"
-#define NewHidHideVersion "1.5.212"
+#define NewHidHideVersion "1.5.230"
 ; RTSS 7.3.6
 #define NewRtssVersion "7.3.5.28010"
 
@@ -59,7 +59,7 @@
 #define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/ca725693-6de7-4a4d-b8a4-4390b0387c66/ce13f2f016152d9b5f2d3c6537cc415b/windowsdesktop-runtime-8.0.1-win-x86.exe"
 
 #define DirectXDownloadLink "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
-#define HidHideDownloadLink "https://github.com/nefarius/HidHide/releases/download/v1.5.212.0/HidHide_1.5.212_x64.exe"
+#define HidHideDownloadLink "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define ViGemDownloadLink "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define RtssDownloadLink "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup736.exe"
 
@@ -707,7 +707,7 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
-  Dependency_Add_With_Version('HidHide_1.5.212_x64.exe', '{#NewHidHideVersion}', regGetInstalledVersion('{#HidHideName}'),
+  Dependency_Add_With_Version('HidHide_1.5.230_x64.exe', '{#NewHidHideVersion}', regGetInstalledVersion('{#HidHideName}'),
     '/quiet /norestart',
     '{#HidHideName}',
     '{#HidHideDownloadLink}',
