@@ -296,7 +296,9 @@ public partial class ControllerPage : Page
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
             bool isPlugged = hasPhysical && hasTarget;
-            bool isHidden = targetController.IsHidden();
+            bool isHidden = false;
+            if (targetController is not null)
+                isHidden = targetController.IsHidden();
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility = hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;

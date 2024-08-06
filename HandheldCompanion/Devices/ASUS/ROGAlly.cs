@@ -28,8 +28,7 @@ public class ROGAlly : IDevice
         { 168, ButtonFlags.OEM4 },
     };
 
-    private Dictionary<byte, HidDevice> hidDevices = [];
-    private AsusACPI asusACPI;
+    private AsusACPI? asusACPI;
 
     private const byte INPUT_HID_ID = 0x5a;
     private const byte AURA_HID_ID = 0x5d;
@@ -389,16 +388,23 @@ public class ROGAlly : IDevice
             }
         }
 
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+        try
         {
-            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+            {
+                PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+                string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+                PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+                Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+                string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
-            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+                return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+            }
+        }
+        catch (ArgumentException)
+        {
+            return false;
         }
 
         return false;
@@ -422,7 +428,7 @@ public class ROGAlly : IDevice
         switch (enable)
         {
             case false:
-                asusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
+                asusACPI?.DeviceSet(AsusACPI.PerformanceMode, mode);
                 return;
         }
     }
@@ -432,8 +438,8 @@ public class ROGAlly : IDevice
         if (!IsOpen)
             return;
 
-        asusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
-        asusACPI.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
+        asusACPI?.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
+        asusACPI?.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
     }
 
     public override float ReadFanDuty()
@@ -441,9 +447,15 @@ public class ROGAlly : IDevice
         if (!IsOpen)
             return 100.0f;
 
-        int cpuFan = asusACPI.DeviceGet(AsusACPI.CPU_Fan);
-        int gpuFan = asusACPI.DeviceGet(AsusACPI.GPU_Fan);
-        return (cpuFan + gpuFan) / 2 * 100;
+        if (asusACPI is not null)
+        {
+            int cpuFan = asusACPI.DeviceGet(AsusACPI.CPU_Fan);
+            int gpuFan = asusACPI.DeviceGet(AsusACPI.GPU_Fan);
+
+            return (cpuFan + gpuFan) / 2 * 100;
+        }
+
+        return 100.0f;
     }
 
     public override void SetKeyPressDelay(HIDmode controllerMode)
@@ -708,7 +720,7 @@ public class ROGAlly : IDevice
         if (chargeLimit < 0 || chargeLimit > 100)
             return;
 
-        asusACPI.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
+        asusACPI?.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)

@@ -125,6 +125,9 @@ namespace HandheldCompanion.ViewModels
 
         private void ProcessStopped(ProcessEx processEx)
         {
+            if (processEx is null)
+                return;
+
             ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is not null)
             {
@@ -135,6 +138,9 @@ namespace HandheldCompanion.ViewModels
 
         private void ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
+            if (processEx is null)
+                return;
+
             ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {

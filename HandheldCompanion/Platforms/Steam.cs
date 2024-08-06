@@ -128,18 +128,26 @@ public class Steam : IPlatform
 
     public int GetUseSteamControllerConfigValue()
     {
-        // get settings content
-        string content = File.ReadAllText(SettingsPath);
-
-        string pattern = @"""apps""\s*\{.*?""413080""\s*\{.*?""UseSteamControllerConfig""\s*""(\d+)""";
-        Match match = Regex.Match(content, pattern, RegexOptions.Singleline);
-
-        if (match.Success)
+        try
         {
-            return int.Parse(match.Groups[1].Value);
-        }
+            // get settings content
+            string content = File.ReadAllText(SettingsPath);
 
-        return 0;
+            string pattern = @"""apps""\s*\{.*?""413080""\s*\{.*?""UseSteamControllerConfig""\s*""(\d+)""";
+            Match match = Regex.Match(content, pattern, RegexOptions.Singleline);
+
+            if (match.Success)
+            {
+                return int.Parse(match.Groups[1].Value);
+            }
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading file {SettingsPath}: {ex.Message}");
+            return 0;
+        }
     }
 
     public bool SetUseSteamControllerConfigValue(int newValue)

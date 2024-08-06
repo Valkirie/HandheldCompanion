@@ -616,12 +616,8 @@ public static class ControllerManager
             if (controller.IsPhysical() && (targetController is null || targetController.IsVirtual()))
                 SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
 
-            if (targetController is not null)
-            {
-                Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-                Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
-                targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
-            }
+            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+            targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
         }
     }
 
@@ -876,22 +872,8 @@ public static class ControllerManager
             if (controller.IsPhysical() && (targetController is null || targetController.IsVirtual()))
                 SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
 
-            if (targetController is not null)
-            {
-                Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-                Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
-                targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
-
-                string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-                switch (ManufacturerName)
-                {
-                    case "AOKZOE":
-                    case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
-                    case "ONE-NETBOOK":
-                        targetController.Rumble();
-                        break;
-                }
-            }
+            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+            targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
         }
     }
 
