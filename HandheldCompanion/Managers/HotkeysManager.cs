@@ -198,8 +198,11 @@ public static class HotkeysManager
                 case 20:
                     command = new OnScreenKeyboardCommands();
                     break;
+                case 26:
+                    command = new KillForegroundCommands();
+                    break;
                 //case 21-28:
-                // "shortcutDesktop", "shortcutESC", "shortcutExpand", "shortcutTaskView", "shortcutTaskManager", "shortcutKillApp", "shortcutControlCenter", "shortcutPrintScreen"
+                // "shortcutDesktop", "shortcutESC", "shortcutExpand", "shortcutTaskView", "shortcutTaskManager", "shortcutControlCenter", "shortcutPrintScreen"
                 //break;
                 case 30:
                     command = new MainWindowCommands();
