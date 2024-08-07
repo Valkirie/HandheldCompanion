@@ -515,7 +515,7 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
-        private void DrawChords()
+        public void DrawChords()
         {
             foreach (FontIconViewModel FontIconViewModel in ButtonGlyphs.ToList())
                 ButtonGlyphs.SafeRemove(FontIconViewModel);

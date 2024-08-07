@@ -21,10 +21,19 @@ namespace HandheldCompanion.ViewModels
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
 
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
             CreateHotkeyCommand = new DelegateCommand(async () =>
             {
                 HotkeysManager.UpdateOrCreateHotkey(new Hotkey());
             });
+        }
+
+        private void ControllerManager_ControllerSelected(Controllers.IController Controller)
+        {
+            // (re)draw chords on controller update
+            foreach(HotkeyViewModel hotkeyViewModel in HotkeysList)
+                hotkeyViewModel.DrawChords();
         }
 
         private void HotkeysManager_Initialized()
