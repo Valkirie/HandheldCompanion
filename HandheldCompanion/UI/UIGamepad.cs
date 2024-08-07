@@ -37,7 +37,9 @@ namespace HandheldCompanion.Managers
         private ScrollViewer _currentScrollViewer;
         private Frame _gamepadFrame;
         private Page _gamepadPage;
+
         private Timer _gamepadTimer;
+        private Timer tooltipTimer;
 
         private bool _goingBack;
         private bool _goingForward;
@@ -82,6 +84,9 @@ namespace HandheldCompanion.Managers
 
             _gamepadTimer = new Timer(25) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
+
+            tooltipTimer = new Timer(2000) { AutoReset = false };
+            tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
             ControllerManager.InputsUpdated += InputsUpdated;
         }
@@ -296,6 +301,15 @@ namespace HandheldCompanion.Managers
             IsOpen = false // Start with tooltip hidden
         };
 
+        private void TooltipTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                tooltip.IsOpen = false;
+            });
+        }
+
         public void Focus(Control control, Control parent = null, bool force = false)
         {
             if (control is null)
@@ -312,6 +326,10 @@ namespace HandheldCompanion.Managers
 
                 // change target
                 tooltip.PlacementTarget = control;
+
+                // (re)start timer
+                tooltipTimer.Stop();
+                tooltipTimer.Start();
             }
 
             if (control.ToolTip is not null)
@@ -470,7 +488,7 @@ namespace HandheldCompanion.Managers
                 prevButtonState = controllerState.ButtonState.Clone() as ButtonState;
             }
 
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // get current focused element
