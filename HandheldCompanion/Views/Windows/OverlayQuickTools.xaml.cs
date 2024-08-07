@@ -125,6 +125,9 @@ public partial class OverlayQuickTools : GamepadWindow
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickApplicationsPage", applicationsPage);
+
+        // load gamepad navigation manager
+        gamepadFocusManager = new(this, ContentFrame);
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -337,8 +340,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // load gamepad navigation maanger
-        gamepadFocusManager = new(this, ContentFrame);
+        // do something
     }
 
     [DllImport("user32.dll")]
