@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Views.Pages;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -139,6 +140,24 @@ public static class MultimediaManager
         return friendlyName;
     }
 
+    public static string GetAdapterFriendlyName(string DeviceName)
+    {
+        string friendlyName = string.Empty;
+
+        Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
+        if (PrimaryDisplay is not null)
+        {
+            if (!string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
+                friendlyName = PrimaryDisplay.DeviceName;
+
+            PathDisplayTarget? PrimaryTarget = GetDisplayTarget(PrimaryDisplay.DevicePath);
+            if (PrimaryTarget is not null)
+                friendlyName = PrimaryTarget.FriendlyName;
+        }
+
+        return friendlyName;
+    }
+
     public static string GetDisplayPath(string DeviceName)
     {
         string DevicePath = string.Empty;
@@ -152,8 +171,7 @@ public static class MultimediaManager
 
     private static PathDisplayTarget? GetDisplayTarget(string DevicePath)
     {
-        PathDisplayTarget PrimaryTarget;
-        PrimaryTarget = PathDisplayTarget.GetDisplayTargets().Where(target => target.DevicePath.Equals(DevicePath)).FirstOrDefault();
+        PathDisplayTarget PrimaryTarget = PathDisplayTarget.GetDisplayTargets().Where(target => target.DevicePath.Equals(DevicePath)).FirstOrDefault();
         return PrimaryTarget;
     }
 
