@@ -874,6 +874,16 @@ public static class ControllerManager
 
             Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
             targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+
+            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            switch (ManufacturerName)
+            {
+                case "AOKZOE":
+                case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
+                case "ONE-NETBOOK":
+                    targetController?.Rumble();
+                    break;
+            }
         }
     }
 
