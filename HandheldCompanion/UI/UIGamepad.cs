@@ -39,7 +39,15 @@ namespace HandheldCompanion.Managers
         private Page _gamepadPage;
 
         private Timer _gamepadTimer;
-        private Timer tooltipTimer;
+
+        // tooltip
+        private static Timer tooltipTimer;
+        private static ToolTip tooltip = new ToolTip
+        {
+            Content = "This is a tooltip!",
+            Placement = PlacementMode.Top,
+            IsOpen = false // Start with tooltip hidden
+        };
 
         private bool _goingBack;
         private bool _goingForward;
@@ -292,14 +300,6 @@ namespace HandheldCompanion.Managers
 
         private Control forcedFocus;
         private Control parentFocus;
-
-        // Create a ToolTip
-        private ToolTip tooltip = new ToolTip
-        {
-            Content = "This is a tooltip!",
-            Placement = PlacementMode.Top,
-            IsOpen = false // Start with tooltip hidden
-        };
 
         private void TooltipTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
