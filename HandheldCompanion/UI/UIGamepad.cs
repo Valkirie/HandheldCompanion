@@ -607,8 +607,9 @@ namespace HandheldCompanion.Managers
 
                         // get currently selected control 
                         int idx = comboBox.SelectedIndex;
+                        if (idx != -1)
+                            focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
 
-                        focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
                         Focus(focusedElement, comboBox, true);
                         return;
                     }
@@ -859,7 +860,7 @@ namespace HandheldCompanion.Managers
                                 ComboBox comboBox = (ComboBox)focusedElement;
                                 int idx = comboBox.SelectedIndex;
 
-                                if (comboBox.IsDropDownOpen)
+                                if (comboBox.IsDropDownOpen && idx != -1)
                                 {
                                     focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
                                     Focus(focusedElement, comboBox, true);
