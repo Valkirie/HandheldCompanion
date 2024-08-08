@@ -242,16 +242,13 @@ public static class ProcessManager
 
         try
         {
-            if (!Processes.TryGetValue(processId, out ProcessEx process))
-                CreateOrUpdateProcess(processId, element);
-
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-            while (DateTime.Now < timeout && !Processes.ContainsKey(processId))
-                await Task.Delay(200);
-
             if (!Processes.ContainsKey(processId))
-                return;
+                if (!CreateOrUpdateProcess(processId, element))
+                    return;
 
+            if (!Processes.TryGetValue(processId, out ProcessEx process))
+                return;
+            
             ProcessEx prevProcess = foregroundProcess;
 
             // filter based on current process status
