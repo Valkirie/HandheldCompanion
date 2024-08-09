@@ -7,6 +7,7 @@ using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using System;
+using System.Threading;
 
 namespace HandheldCompanion.Targets
 {
@@ -38,8 +39,12 @@ namespace HandheldCompanion.Targets
             }
             catch (Exception ex)
             {
-                virtualController?.Disconnect();
                 LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
+
+                // give controller manager enough time to mount the controller
+                Thread.Sleep(2000);
+
+                virtualController?.Disconnect();
                 return false;
             }
         }
