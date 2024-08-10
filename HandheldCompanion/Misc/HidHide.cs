@@ -112,10 +112,10 @@ public static class HidHide
                 return false;
 
             process.StartInfo.Arguments = $"--app-unreg \"{fileName}\"";
-            process.Start();
+            bool started = process.Start();
             bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (success)
+            if (started && success)
             {
                 process.StandardOutput.ReadToEnd(); // todo: parse result
                 LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
@@ -144,10 +144,10 @@ public static class HidHide
                 return false;
 
             process.StartInfo.Arguments = $"--app-reg \"{fileName}\"";
-            process.Start();
+            bool started = process.Start();
             bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (success)
+            if (started && success)
             {
                 process.StandardOutput.ReadToEnd(); // todo: parse result
                 LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
@@ -183,10 +183,10 @@ public static class HidHide
                     process.StartInfo.Arguments = $"--cloak-off";
                     break;
             }
-            process.Start();
+            bool started = process.Start();
             bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (success)
+            if (started && success)
             {
                 process.StandardOutput.ReadToEnd(); // todo: parse result
                 LogManager.LogInformation("HideDevice SetCloaking: {0}", status);
@@ -218,10 +218,10 @@ public static class HidHide
                 return false;
 
             process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
-            process.Start();
+            bool started = process.Start();
             bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (success)
+            if (started && success)
             {
                 process.StandardOutput.ReadToEnd(); // todo: parse result
                 LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
@@ -253,10 +253,10 @@ public static class HidHide
                 return false;
 
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
-            process.Start();
+            bool started = process.Start();
             bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (success)
+            if (started && success)
             {
                 process.StandardOutput.ReadToEnd(); // todo: parse result
                 LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
@@ -275,10 +275,10 @@ public static class HidHide
 
             // using --dev-gaming sometimes doesn't report controllers or have empty BaseContainerDeviceInstancePath
             process.StartInfo.Arguments = $"--dev-all";
-            process.Start();
+            bool started = process.Start();
             bool success = process.WaitForExit(TimeSpan.FromSeconds(3));
 
-            if (success)
+            if (started && success)
             {
                 string jsonString = process.StandardOutput.ReadToEnd().Trim();
                 if (string.IsNullOrEmpty(jsonString))
