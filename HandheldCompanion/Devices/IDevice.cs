@@ -292,9 +292,10 @@ public abstract class IDevice
                             device = new AYANEONEXT();
                             break;
                         case "NEXT Lite":
-                            device = Processor.Contains("4500U")
-                                ? new AYANEONEXTLite4500U()
-                                : new AYANEONEXTLite();
+                            device = new AYANEONEXTLite();
+                            break;
+                        case "AB02L":
+                            device = new AYANEONEXTLite4500U()
                             break;
                         case "AYANEO 2":
                         case "GEEK":
