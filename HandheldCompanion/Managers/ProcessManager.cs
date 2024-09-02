@@ -494,7 +494,7 @@ public static class ProcessManager
             });
     }
 
-    public static void ResumeProcess(ProcessEx processEx)
+    public static async void ResumeProcess(ProcessEx processEx)
     {
         // process has exited
         if (processEx.Process.HasExited)
@@ -512,14 +512,14 @@ public static class ProcessManager
                 ProcessUtils.NtResumeProcess(process.Handle);
             });
 
-        Task.Delay(500);
+        await Task.Delay(500);
 
         // restore process windows
-        foreach(ProcessWindow processWindow in processEx.ProcessWindows.Values)
+        foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
             ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
     }
 
-    public static void SuspendProcess(ProcessEx processEx)
+    public static async void SuspendProcess(ProcessEx processEx)
     {
         // process has exited
         if (processEx.Process.HasExited)
@@ -529,7 +529,7 @@ public static class ProcessManager
         foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
             ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
 
-        Task.Delay(500);
+        await Task.Delay(500);
 
         ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
 
