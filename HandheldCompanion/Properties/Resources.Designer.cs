@@ -6123,6 +6123,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Power premium.
+        /// </summary>
+        public static string PowerProfileMinisforumV3BestPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileMinisforumV3BestPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 28W TDP.
+        /// </summary>
+        public static string PowerProfileMinisforumV3BestPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileMinisforumV3BestPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power save.
+        /// </summary>
+        public static string PowerProfileMinisforumV3BetterBattery {
+            get {
+                return ResourceManager.GetString("PowerProfileMinisforumV3BetterBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15W TDP.
+        /// </summary>
+        public static string PowerProfileMinisforumV3BetterBatteryDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileMinisforumV3BetterBatteryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power balance.
+        /// </summary>
+        public static string PowerProfileMinisforumV3BetterPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileMinisforumV3BetterPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 22W TDP.
+        /// </summary>
+        public static string PowerProfileMinisforumV3BetterPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileMinisforumV3BetterPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extreme Performance.
         /// </summary>
         public static string PowerProfileMSIClawBestPerformance {

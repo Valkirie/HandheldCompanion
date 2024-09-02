@@ -62,6 +62,7 @@
     <None Remove="Resources\controller_1_0.png" />
     <None Remove="Resources\controller_1_1.png" />
     <None Remove="Resources\controller_2_0.png" />
+    <None Remove="Resources\DeviceImages\device_minisforum_v3.png" />
     <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2.png" />
     <None Remove="Resources\device_aya_2021.png" />
@@ -153,6 +154,7 @@
     <Resource Include="Resources\DeviceImages\device_gpd4.png" />
     <Resource Include="Resources\DeviceImages\device_gpd_win2.png" />
     <Resource Include="Resources\DeviceImages\device_gpd_winmax2.png" />
+    <Resource Include="Resources\DeviceImages\device_minisforum_v3.png" />
     <Resource Include="Resources\DeviceImages\device_msi_claw.png" />
     <Resource Include="Resources\DeviceImages\device_onexplayer_2.png" />
     <Resource Include="Resources\DeviceImages\device_onexplayer_mini.png" />

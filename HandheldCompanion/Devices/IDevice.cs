@@ -213,6 +213,17 @@ public abstract class IDevice
 
         switch (ManufacturerName)
         {
+            case "SHENZHEN MEIGAO ELECTRONIC EQUIPMENT CO.,LTD":
+                {
+                    switch (ProductName)
+                    {
+                        case "HPPAC":
+                            device = new MinisforumV3();
+                            break;
+                    }
+                }
+                break;
+
             case "AYN":
                 {
                     switch (ProductName)
