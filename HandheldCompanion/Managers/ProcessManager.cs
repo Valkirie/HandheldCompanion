@@ -217,14 +217,14 @@ public static class ProcessManager
         if (foregroundWindow == hWnd || hWnd == IntPtr.Zero)
             return;
 
-        AutomationElement element = AutomationElement.FromHandle(hWnd);
-        if (element is null)
-            return;
-
         int processId = 0;
 
         try
         {
+            AutomationElement element = AutomationElement.FromHandle(hWnd);
+            if (element is null)
+                return;
+
             processId = element.Current.ProcessId;
         }
         catch
