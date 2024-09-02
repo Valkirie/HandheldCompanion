@@ -19,8 +19,13 @@ namespace HandheldCompanion.Commands.Functions.Windows
         {
             // get current foreground process
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
-            if (fProcess != null)
-                fProcess.Process.Kill();
+
+            // kill if is alive
+            try
+            {
+                fProcess?.Process?.Kill();
+            }
+            catch { }
 
             base.Execute(IsKeyDown, IsKeyUp);
         }
