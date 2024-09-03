@@ -26,6 +26,22 @@ public class MinisforumV3 : IDevice
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'Y' },
+            { 'Y', 'X' },
+            { 'Z', 'Z' }
+        };
+
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'Y' },
+            { 'Y', 'X' },
+            { 'Z', 'Z' }
+        };
+
         // device specific capacities
         Capabilities |= DeviceCapabilities.None;
 
