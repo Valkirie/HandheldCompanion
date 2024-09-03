@@ -1,9 +1,8 @@
-﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Management;
 using System.Security.Principal;
+using HandheldCompanion.Managers;
+using Microsoft.Win32;
 
 namespace HandheldCompanion.Utils
 {
@@ -32,15 +31,29 @@ namespace HandheldCompanion.Utils
         private readonly string _value;
         private ManagementEventWatcher? _eventWatcher;
         private readonly WqlEventQuery _query;
+        private bool _disposed;
 
         public RegistryWatcher(WatchedRegistry watchedRegistry, string key, string value)
         {
             _key = key;
             _value = value;
 
-            WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
+            _registry = watchedRegistry switch
+            {
+                WatchedRegistry.LocalMachine => Registry.LocalMachine,
+                WatchedRegistry.CurrentUser => Registry.CurrentUser,
+                _ => throw new ArgumentException("This part of registry is not implemented")
+            };
 
+            if (!RegistryKeyExists(_registry, _key, _value))
+            {
+                LogManager.LogError("Registry key '{0}' or value '{1}' does not exist.", key, value);
+                return;
+            }
+
+            WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
             string keyPath = _key.Replace("\\", "\\\\");
+
             string queryString = watchedRegistry switch
             {
                 WatchedRegistry.LocalMachine =>
@@ -57,23 +70,35 @@ namespace HandheldCompanion.Utils
             };
 
             _query = new WqlEventQuery(queryString);
+        }
 
-            _registry = watchedRegistry switch
+        private static bool RegistryKeyExists(RegistryKey baseKey, string subKey, string valueName)
+        {
+            try
             {
-                WatchedRegistry.LocalMachine => Registry.LocalMachine,
-                WatchedRegistry.CurrentUser => Registry.CurrentUser,
-                _ => throw new ArgumentException("This part of registry is not implemented")
-            };
+                using RegistryKey? key = baseKey.OpenSubKey(subKey);
+                return key?.GetValue(valueName) != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void StartWatching(bool sendData = true)
         {
+            if (_query is null)
+                return;
+
             try
             {
-                ManagementScope scope = new ManagementScope("\\\\.\\root\\default");
-                _eventWatcher = new ManagementEventWatcher(scope, _query);
-                _eventWatcher.EventArrived += KeyWatcherOnEventArrived;
-                _eventWatcher.Start();
+                if (_eventWatcher is null)
+                {
+                    ManagementScope scope = new ManagementScope("\\\\.\\root\\default");
+                    _eventWatcher = new ManagementEventWatcher(scope, _query);
+                    _eventWatcher.EventArrived += KeyWatcherOnEventArrived;
+                    _eventWatcher.Start();
+                }
 
                 if (sendData)
                     SendData();
@@ -86,7 +111,12 @@ namespace HandheldCompanion.Utils
 
         public void StopWatching()
         {
-            if (_eventWatcher == null)
+            DisposeEventWatcher();
+        }
+
+        private void DisposeEventWatcher()
+        {
+            if (_eventWatcher is null)
                 return;
 
             _eventWatcher.EventArrived -= KeyWatcherOnEventArrived;
@@ -102,14 +132,26 @@ namespace HandheldCompanion.Utils
 
         private void SendData()
         {
-            using var key = _registry.OpenSubKey(_key);
-            var data = key?.GetValue(_value);
-            RegistryChanged?.Invoke(this, new RegistryChangedEventArgs(data));
+            try
+            {
+                using RegistryKey? key = _registry.OpenSubKey(_key);
+                object? data = key?.GetValue(_value);
+                RegistryChanged?.Invoke(this, new RegistryChangedEventArgs(data));
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Error in RegistryWatcher.SendData: {0}", ex.Message);
+            }
         }
 
         public void Dispose()
         {
-            StopWatching();
+            if (_disposed)
+                return;
+
+            DisposeEventWatcher();
+            _disposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 }
