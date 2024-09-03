@@ -2573,7 +2573,7 @@
     <value>模擬XBOX 360手柄</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>The emulated controller to be used when this profile is active</value>
+    <value>該設定檔啟用時所使用的模擬手柄類型</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>Controller management</value>
@@ -2606,7 +2606,7 @@
     <value>Disable ASUS services</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
-    <value>Notifications</value>
+    <value>通知</value>
   </data>
   <data name="NotificationsPage_NothingToSee" xml:space="preserve">
     <value>No notifications yet</value>
@@ -2898,5 +2898,30 @@
   </data>
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>冬日暖陽</value>
+  </data>
+  </data>
+    <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
+    <value>限制CPU所使用的核心數量</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
+    <value>CPU最大數量</value>
+  </data>
+  <data name="PerformancePage_FanMode_Title" xml:space="preserve">
+    <value>風扇模式</value>
+  </data>
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
+    <value>修改該設定檔的風扇模式</value>
+  </data>
+  <data name="ProfilesPage_ProfileArguments" xml:space="preserve">
+    <value>參數</value>
+  </data>
+  <data name="ProfilesPage_SubProfiles" xml:space="preserve">
+    <value>子設定檔</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Desc" xml:space="preserve">
+    <value>改變圖形設定</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Title" xml:space="preserve">
+    <value>圖形設定</value>
   </data>
 </root>
