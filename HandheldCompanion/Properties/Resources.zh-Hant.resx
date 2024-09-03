@@ -2465,7 +2465,7 @@
     <value>裝置</value>
   </data>
   <data name="QuickHomePage_Title" xml:space="preserve">
-    <value>Home</value>
+    <value>主頁</value>
   </data>
   <data name="QuickPerformancePage_Title" xml:space="preserve">
     <value>效能</value>
@@ -2483,10 +2483,10 @@
     <value>快速動作</value>
   </data>
   <data name="QuickApplicationsPage_Desc" xml:space="preserve">
-    <value>管理应用程序</value>
+    <value>管理應用程序</value>
   </data>
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
-    <value>应用</value>
+    <value>應用</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>螢幕刷新率</value>
@@ -2636,13 +2636,13 @@
     <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
   </data>
   <data name="ProfilesPage_SubProfiles" xml:space="preserve">
-    <value>Sub Profiles</value>
+    <value>子設定檔</value>
   </data>
   <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Add different profiles to the same game</value>
   </data>
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
-    <value>Select a sub profile to apply</value>
+    <value>啟用子設定檔</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Sets the fan to max speed</value>
