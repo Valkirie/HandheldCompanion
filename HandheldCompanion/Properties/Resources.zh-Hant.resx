@@ -2900,7 +2900,7 @@
     <value>冬日暖陽</value>
   </data>
   </data>
-    <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
+  <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
     <value>限制CPU所使用的核心數量</value>
   </data>
   <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
