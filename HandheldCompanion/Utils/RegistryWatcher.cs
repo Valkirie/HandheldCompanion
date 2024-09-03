@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using Microsoft.Win32;
 using System;
 using System.Management;
 using System.Security.Principal;
@@ -36,9 +38,10 @@ namespace HandheldCompanion.Utils
             _key = key;
             _value = value;
 
-            var currentUser = WindowsIdentity.GetCurrent();
-            var keyPath = _key.Replace("\\", "\\\\");
-            var queryString = watchedRegistry switch
+            WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
+
+            string keyPath = _key.Replace("\\", "\\\\");
+            string queryString = watchedRegistry switch
             {
                 WatchedRegistry.LocalMachine =>
                     $"SELECT * FROM RegistryValueChangeEvent " +
@@ -52,7 +55,9 @@ namespace HandheldCompanion.Utils
                     $"ValueName='{_value}'",
                 _ => throw new ArgumentOutOfRangeException(nameof(watchedRegistry), watchedRegistry, "This part of registry is not implemented")
             };
+
             _query = new WqlEventQuery(queryString);
+
             _registry = watchedRegistry switch
             {
                 WatchedRegistry.LocalMachine => Registry.LocalMachine,
@@ -61,22 +66,29 @@ namespace HandheldCompanion.Utils
             };
         }
 
-        public void StartWatching()
+        public void StartWatching(bool sendData = true)
         {
-            var scope = new ManagementScope("\\\\.\\root\\default");
-            _eventWatcher = new ManagementEventWatcher(scope, _query);
-            _eventWatcher.EventArrived += KeyWatcherOnEventArrived;
-            _eventWatcher.Start();
+            try
+            {
+                ManagementScope scope = new ManagementScope("\\\\.\\root\\default");
+                _eventWatcher = new ManagementEventWatcher(scope, _query);
+                _eventWatcher.EventArrived += KeyWatcherOnEventArrived;
+                _eventWatcher.Start();
 
-            SendData();
+                if (sendData)
+                    SendData();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Error in RegistryWatcher.StartWatching: {0}", ex.Message);
+            }
         }
 
         public void StopWatching()
         {
             if (_eventWatcher == null)
-            {
                 return;
-            }
+
             _eventWatcher.EventArrived -= KeyWatcherOnEventArrived;
             _eventWatcher.Stop();
             _eventWatcher.Dispose();
