@@ -42,6 +42,7 @@ namespace HandheldCompanion.Managers
             if (GPU is AMDGPU)
             {
                 ((AMDGPU)GPU).RSRStateChanged += CurrentGPU_RSRStateChanged;
+                ((AMDGPU)GPU).AFMFStateChanged += CurrentGPU_AFMFStateChanged;
             }
             else if (GPU is IntelGPU)
             {
@@ -55,25 +56,26 @@ namespace HandheldCompanion.Managers
                 Hooked?.Invoke(GPU);
         }
 
-        private static void GPUDisconnect(GPU gpu)
+        private static void GPUDisconnect(GPU GPU)
         {
-            if (currentGPU == gpu)
-                Unhooked?.Invoke(gpu);
+            if (currentGPU == GPU)
+                Unhooked?.Invoke(GPU);
 
-            gpu.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
-            gpu.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
-            gpu.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
+            GPU.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
+            GPU.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
+            GPU.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
 
-            if (gpu is AMDGPU)
+            if (GPU is AMDGPU)
             {
-                ((AMDGPU)gpu).RSRStateChanged -= CurrentGPU_RSRStateChanged;
+                ((AMDGPU)GPU).RSRStateChanged -= CurrentGPU_RSRStateChanged;
+                ((AMDGPU)GPU).AFMFStateChanged -= CurrentGPU_AFMFStateChanged;
             }
-            else if (gpu is IntelGPU)
+            else if (GPU is IntelGPU)
             {
                 // do something
             }
 
-            gpu.Stop();
+            GPU.Stop();
         }
 
         private static async void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -158,6 +160,19 @@ namespace HandheldCompanion.Managers
                 amdGPU.SetRSR(profile.RSREnabled);
             if (Sharpness != profile.RSRSharpness)
                 amdGPU.SetRSRSharpness(profile.RSRSharpness);
+        }
+
+        private static void CurrentGPU_AFMFStateChanged(bool Supported, bool Enabled)
+        {
+            if (!IsInitialized)
+                return;
+
+            // todo: use ProfileMager events
+            Profile profile = ProfileManager.GetCurrent();
+            AMDGPU amdGPU = (AMDGPU)currentGPU;
+
+            if (Enabled != profile.AFMFEnabled)
+                amdGPU.SetAFMF(profile.AFMFEnabled);
         }
 
         private static void CurrentGPU_IntegerScalingChanged(bool Supported, bool Enabled)
@@ -291,7 +306,7 @@ namespace HandheldCompanion.Managers
                     currentGPU.SetGPUScaling(false);
                 }
 
-                // apply profile RSR
+                // apply profile RSR / AFMF
                 if (currentGPU is AMDGPU amdGPU)
                 {
                     if (profile.RSREnabled)
@@ -305,6 +320,16 @@ namespace HandheldCompanion.Managers
                     else if (amdGPU.GetRSR())
                     {
                         amdGPU.SetRSR(false);
+                    }
+
+                    if (profile.AFMFEnabled)
+                    {
+                        if (!amdGPU.GetAFMF())
+                            amdGPU.SetAFMF(true);
+                    }
+                    else if (amdGPU.GetAFMF())
+                    {
+                        amdGPU.SetAFMF(false);
                     }
                 }
 

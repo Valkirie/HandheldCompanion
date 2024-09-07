@@ -6420,6 +6420,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AMD Fluid Motion Frames.
+        /// </summary>
+        public static string ProfilesPage_AFMF {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AFMF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enhance performance by utilizing frame generation technology to increase FPS beyond the in-game limit, resulting in a smoother experience.
+        /// </summary>
+        public static string ProfilesPage_AFMFDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AFMFDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Anti-deadzone.
         /// </summary>
         public static string ProfilesPage_AntiDeadzone {

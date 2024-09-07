@@ -853,6 +853,45 @@
                             Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                             Visibility="{Binding ElementName=StackProfileRSR, Path=Visibility}" />
 
+                        <!--  AFMF (AMD)  -->
+                        <ikw:SimpleStackPanel
+                            Name="StackProfileAFMF"
+                            d:Background="Red"
+                            d:Visibility="Visible"
+                            Spacing="6"
+                            Visibility="Collapsed">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_AFMF}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_AFMFDesc}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+
+                                <ui:ToggleSwitch
+                                    Name="AFMFToggle"
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="AFMFToggle_Toggled" />
+                            </Grid>
+                        </ikw:SimpleStackPanel>
+
+                        <!--  Separator  -->
+                        <Separator
+                            Margin="-16,0,-16,0"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                            Visibility="{Binding ElementName=StackProfileAFMF, Path=Visibility}" />
+
                         <!--  Integer Scaling  -->
                         <ikw:SimpleStackPanel Name="StackProfileIS" Spacing="6">
                             <Grid>

@@ -3297,4 +3297,10 @@ Thank you for using HC and helping us make it better.</value>
   <data name="PowerProfileMinisforumV3BetterPerformanceDesc" xml:space="preserve">
     <value>22W TDP</value>
   </data>
+  <data name="ProfilesPage_AFMF" xml:space="preserve">
+    <value>AMD Fluid Motion Frames</value>
+  </data>
+  <data name="ProfilesPage_AFMFDesc" xml:space="preserve">
+    <value>Enhance performance by utilizing frame generation technology to increase FPS beyond the in-game limit, resulting in a smoother experience</value>
+  </data>
 </root>

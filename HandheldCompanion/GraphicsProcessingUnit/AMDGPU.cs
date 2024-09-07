@@ -15,11 +15,17 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         #region events
         public event RSRStateChangedEventHandler RSRStateChanged;
         public delegate void RSRStateChangedEventHandler(bool Supported, bool Enabled, int Sharpness);
+
+        public event AFMFStateChangedEventHandler AFMFStateChanged;
+        public delegate void AFMFStateChangedEventHandler(bool Supported, bool Enabled);
         #endregion
 
         private bool prevRSRSupport = false;
         private bool prevRSR = false;
         private int prevRSRSharpness = -1;
+
+        private bool prevAFMFSupport = false;
+        private bool prevAFMF = false;
 
         protected new AdlxTelemetryData TelemetryData = new();
 
@@ -61,6 +67,22 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 return false;
 
             return Execute(ADLXBackend.GetRSR, false);
+        }
+
+        public bool HasAFMFSupport()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(ADLXBackend.HasAFMFSupport, false);
+        }
+
+        public bool GetAFMF()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(ADLXBackend.GetAFMF, false);
         }
 
         public int GetRSRSharpness()
@@ -143,6 +165,17 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             }
 
             return Execute(() => ADLXBackend.SetRSR(enable), false);
+        }
+
+        public bool SetAFMF(bool enable)
+        {
+            if (!IsInitialized)
+                return false;
+
+            // mutually exclusive ?
+            // TODO
+
+            return Execute(() => ADLXBackend.SetAFMF(enable), false);
         }
 
         public override bool SetImageSharpeningSharpness(int sharpness)
@@ -373,7 +406,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
                     try
                     {
-                        // get rsr
+                        // get RSR
                         bool RSRSupport = false;
                         bool RSR = false;
                         int RSRSharpness = GetRSRSharpness();
@@ -394,6 +427,31 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                             prevRSRSupport = RSRSupport;
                             prevRSR = RSR;
                             prevRSRSharpness = RSRSharpness;
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        // get AFMF
+                        bool AFMFSupport = false;
+                        bool AFMF = false;
+
+                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(2));
+                        while (DateTime.Now < timeout && !AFMFSupport)
+                        {
+                            AFMFSupport = HasAFMFSupport();
+                            Thread.Sleep(250);
+                        }
+                        AFMF = GetAFMF();
+
+                        if (AFMFSupport != prevAFMFSupport || AFMF != prevAFMF)
+                        {
+                            // raise event
+                            AFMFStateChanged?.Invoke(AFMFSupport, AFMF);
+
+                            prevAFMFSupport = AFMFSupport;
+                            prevAFMF = AFMF;
                         }
                     }
                     catch { }

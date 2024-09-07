@@ -49,6 +49,15 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected static object telemetryLock = new();
         public static object functionLock = new();
 
+        public enum UpdateGraphicsSettingsSource
+        {
+            GPUScaling,
+            RadeonSuperResolution,
+            RadeonImageSharpening,
+            IntegerScaling,
+            AFMF,
+        }
+
         protected T Execute<T>(Func<T> func, T defaultValue)
         {
             if (!halting && GPUManager.IsInitialized)
