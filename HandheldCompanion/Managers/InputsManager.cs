@@ -35,7 +35,7 @@ public static class InputsManager
     private const short TIME_FLUSH = 5;             // default interval between buffer flush
     private const short TIME_FLUSH_EXTENDED = 150;  // extended buffer flush interval when expecting another chord key
     private const short TIME_FLUSH_HUMAN = 35;      // default interval between buffer flush when typing
-    private const short TIME_FLUSH_HOTKEY = 500;    // extended buffer flush interval when expecting another chord key
+    private const short TIME_FLUSH_HOTKEY = 150;    // extended buffer flush interval when expecting another chord key
     private const short TIME_NEXT = 500;            // default interval before submitting output keys used in combo
     private const short TIME_LONG = 600;            // default interval between two inputs from a chord
                                                     // default interval before considering a chord as hold
@@ -444,6 +444,10 @@ public static class InputsManager
                 }
             }
         }
+        else if (BufferKeys[true].Count != 0)
+        {
+            BufferKeys[false].Add(args);
+        }
 
     Done:
         BufferFlushTimer.Start();
@@ -451,6 +455,7 @@ public static class InputsManager
 
     private static void ReleaseKeyboardBuffer()
     {
+        /*
         // Checking if we're missing KeyUp(s)
         List<KeyEventArgsExt> pressedKeys = BufferKeys[true];
         List<KeyEventArgsExt> releasedKeys = BufferKeys[false];
@@ -464,6 +469,7 @@ public static class InputsManager
         // Add missing keys
         // This may have side effects, but they will certainly be much less harmful than a stuck key
         BufferKeys[false].AddRange(pressedButNotReleased);
+        */
 
         // Send all key inputs
         foreach (bool IsKeyDown in new[] { true, false })
