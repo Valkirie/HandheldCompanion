@@ -60,7 +60,7 @@ namespace HandheldCompanion.ViewModels
                     _selectedPreset = value;
 
                     // page-specific behaviors
-                    switch(IsQuickTools)
+                    switch (IsQuickTools)
                     {
                         case false:
                             _selectedPresetIndex = ProfilePickerItems.IndexOf(ProfilePickerItems.First(p => p.LinkedPresetId == _selectedPreset.Guid));
@@ -595,7 +595,7 @@ namespace HandheldCompanion.ViewModels
                     var index = ProfilePickerItems.IndexOf(preset.IsDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
                     ProfilePickerItems.Insert(index, new ProfilesPickerViewModel { Text = preset.Name, LinkedPresetId = preset.Guid });
                 }
-                
+
                 // Reset Index to Default, 1 item before _userPresetsPickerVM
                 _selectedPresetIndex = ProfilePickerItems.IndexOf(_userPresetsPickerVM) - 1;
 

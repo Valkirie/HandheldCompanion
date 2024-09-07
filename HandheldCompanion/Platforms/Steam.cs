@@ -91,7 +91,7 @@ public class Steam : IPlatform
             IncludeSubdirectories = true,
         };
 
-        SteamActiveUserFileWatcher.Changed += (sender,e) => ActiveFileWatch_Changed();
+        SteamActiveUserFileWatcher.Changed += (sender, e) => ActiveFileWatch_Changed();
         ActiveFileWatch_Changed();
     }
 
@@ -161,7 +161,8 @@ public class Steam : IPlatform
             string pattern = @"""apps""\s*\{.*?""413080""\s*\{.*?""UseSteamControllerConfig""\s*""(\d+)""";
 
             // Replace the matched value with the new value
-            string updatedContent = Regex.Replace(content, pattern, m => {
+            string updatedContent = Regex.Replace(content, pattern, m =>
+            {
                 return m.Value.Replace(m.Groups[1].Value, newValue.ToString());
             }, RegexOptions.Singleline);
 

@@ -107,7 +107,7 @@ public static class ProcessManager
                 // skip if we couldn't find a process id
                 if (processId == 0)
                     return;
-                
+
                 // create process
                 CreateOrUpdateProcess(processId, senderElement);
             }
@@ -250,7 +250,7 @@ public static class ProcessManager
 
             if (!Processes.TryGetValue(processId, out ProcessEx process))
                 return;
-            
+
             ProcessEx prevProcess = foregroundProcess;
 
             // filter based on current process status

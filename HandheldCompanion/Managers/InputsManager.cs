@@ -193,7 +193,7 @@ public static class InputsManager
         }
         else
         {
-            switch(IsKeyDown)
+            switch (IsKeyDown)
             {
                 case true:
                     {
@@ -556,12 +556,12 @@ public static class InputsManager
             return;
 
         // half-press should be removed if full-press is also present
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.L2Full,             ButtonFlags.L2Soft);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.R2Full,             ButtonFlags.R2Soft);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.LeftStickClick,     ButtonFlags.LeftStickTouch);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.RightStickClick,    ButtonFlags.RightStickTouch);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.LeftPadClick,       ButtonFlags.LeftPadTouch);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.RightPadClick,      ButtonFlags.RightPadTouch);
+        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.L2Full, ButtonFlags.L2Soft);
+        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.R2Full, ButtonFlags.R2Soft);
+        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.LeftStickClick, ButtonFlags.LeftStickTouch);
+        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.RightStickClick, ButtonFlags.RightStickTouch);
+        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch);
+        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch);
 
         // reset hold timer
         InputsChordHoldTimer.Stop();

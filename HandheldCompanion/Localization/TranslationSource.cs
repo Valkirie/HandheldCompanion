@@ -31,9 +31,9 @@ public class TranslationSource : INotifyPropertyChanged
             if (!currentCulture.Equals(value))
             {
                 currentCulture = value;
-                
+
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
-                
+
                 CultureInfo.CurrentCulture = value;
                 CultureInfo.CurrentUICulture = value;
                 Thread.CurrentThread.CurrentCulture = value;

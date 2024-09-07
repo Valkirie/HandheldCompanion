@@ -40,7 +40,7 @@ namespace HandheldCompanion.Targets
                 virtualController.Connect();
                 return base.Connect();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
 

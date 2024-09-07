@@ -1,13 +1,6 @@
-﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HidLibrary;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
+﻿using HandheldCompanion.Managers;
 using System.Collections.Generic;
-using System.Management;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Devices;
 

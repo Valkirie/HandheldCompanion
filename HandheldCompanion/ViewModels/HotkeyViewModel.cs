@@ -184,7 +184,7 @@ namespace HandheldCompanion.ViewModels
 
         public void SetListening(bool listening, InputsChordTarget chordTarget)
         {
-            switch(chordTarget)
+            switch (chordTarget)
             {
                 case InputsChordTarget.Input:
                     _IsListening = listening;

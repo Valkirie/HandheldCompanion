@@ -28,9 +28,9 @@ public class OneXPlayerX1 : IDevice
     public StopBits SerialPortStopBits = StopBits.Two;
 
     public int TaskDelay = 200;
-    
+
     private readonly SerialQueue _queue = new SerialQueue();
-    
+
     // Local Values for LED Values
     private bool LEDEnabled;
     private int LEDBrightness;
@@ -38,13 +38,13 @@ public class OneXPlayerX1 : IDevice
     private Color LEDControllerColor;
     private Color LEDBackColor;
     private LEDPreset? LEDPreset;
-    
+
     public OneXPlayerX1()
     {
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX1";
-        
+
         GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
@@ -60,7 +60,7 @@ public class OneXPlayerX1 : IDevice
             { 'Y', 'Z' },
             { 'Z', 'Y' },
         };
-        
+
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
@@ -99,7 +99,7 @@ public class OneXPlayerX1 : IDevice
             [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM1
             ));
-        
+
         LEDEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
         LEDBrightness = SettingsManager.GetInt("LEDBrightness");
         LEDCurrentLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
@@ -126,15 +126,15 @@ public class OneXPlayerX1 : IDevice
         var success = base.Open();
         if (!success)
             return false;
-        
+
         if (EnableSerialPort)
         {
             var devices = GetSerialDevices();
-            
+
             USBDeviceInfo deviceInfo = devices.FirstOrDefault(a => a.Name.Contains(SerialPortDeviceName));
-            
+
             var SerialPortName = Regex.Match(deviceInfo.Name, "COM\\d+").Value;
-            
+
             // Add the serial port name to be excluded for other instances
             SerialUSBIMU.SerialPortNamesInUse.Add(SerialPortName);
 
@@ -163,7 +163,7 @@ public class OneXPlayerX1 : IDevice
         {
             _serialPort.Close();
         }
-        
+
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
         ECRamDirectWrite(0x4EB, ECDetails, 0x00);
         base.Close();
@@ -195,7 +195,7 @@ public class OneXPlayerX1 : IDevice
 
         return true;
     }
-    
+
     public override bool SetLedBrightness(int brightness)
     {
         if (LEDBrightness != brightness)
@@ -240,7 +240,7 @@ public class OneXPlayerX1 : IDevice
         byte[] LEDOptionBack = { 0xFE, 0x00, 0x00 };
         byte[] rgbDataController = { 0x00 };
         byte[] rgbDataBack = { 0x00 };
-        
+
         // X1 RGB seems better than OneXFly
         Color ledColorController = mainColor;
         Color ledColorBack = secondaryColor;
@@ -249,7 +249,7 @@ public class OneXPlayerX1 : IDevice
         rgbDataBack = Enumerable.Repeat(new[] { ledColorBack.R, ledColorBack.G, ledColorBack.B }, 18)
             .SelectMany(colorBytes => colorBytes)
             .ToArray();
-        
+
         // Perform functions and command build-up based on LED level
         switch (level)
         {
@@ -259,7 +259,7 @@ public class OneXPlayerX1 : IDevice
                     .Repeat(new[] { ledColorController.R, ledColorController.G, ledColorController.B }, 18)
                     .SelectMany(colorBytes => colorBytes)
                     .ToArray();
-                
+
                 break;
         }
 
@@ -271,7 +271,7 @@ public class OneXPlayerX1 : IDevice
         if (LEDControllerColor != mainColor || LEDCurrentLevel != level)
         {
             WriteToSerialPort(msgController);
-            
+
             LEDControllerColor = mainColor;
             LEDCurrentLevel = level;
         }
@@ -284,7 +284,7 @@ public class OneXPlayerX1 : IDevice
             LEDBackColor = secondaryColor;
             LEDCurrentLevel = level;
         }
-        
+
         return true;
     }
 
@@ -297,7 +297,7 @@ public class OneXPlayerX1 : IDevice
             byte[] LEDOptionContoller = { (byte)preset.Value, 0x00, 0x00 };
             byte[] rgbDataController;
             byte[] msgController;
-            
+
             if (preset.Value == 0x1E3)
             {
                 // OXP Class Special Format
@@ -311,16 +311,16 @@ public class OneXPlayerX1 : IDevice
                 rgbDataController = Enumerable.Repeat((byte)0x00, 54).ToArray();
                 msgController = prefix.Concat(positionController).Concat(LEDOptionContoller).Concat(rgbDataController).Concat(new byte[] { 0x00, 0x00, 0x3F, 0xFD }).ToArray();
             }
-            
+
             if (preset != LEDPreset)
             {
                 WriteToSerialPort(msgController);
             }
-            
+
             LEDPreset = preset;
 
         }
-        
+
         return true;
     }
 

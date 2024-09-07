@@ -32,7 +32,7 @@ namespace HandheldCompanion.ViewModels
         private void ControllerManager_ControllerSelected(Controllers.IController Controller)
         {
             // (re)draw chords on controller update
-            foreach(HotkeyViewModel hotkeyViewModel in HotkeysList)
+            foreach (HotkeyViewModel hotkeyViewModel in HotkeysList)
                 hotkeyViewModel.DrawChords();
         }
 

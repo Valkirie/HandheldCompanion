@@ -62,7 +62,7 @@ public partial class SettingsPage : Page
             int idx = -1;
             foreach (DesktopScreen desktopScreen in cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>())
             {
-                if (desktopScreen.DevicePath.Equals(screen.DevicePath))                    
+                if (desktopScreen.DevicePath.Equals(screen.DevicePath))
                     idx = cB_QuickToolsDevicePath.Items.IndexOf(desktopScreen);
             }
 
@@ -427,7 +427,7 @@ public partial class SettingsPage : Page
         SettingsManager.SetProperty("CurrentCulture", culture.Name);
 
         Localization.TranslationSource.Instance.CurrentCulture = CultureInfo.GetCultureInfo(culture.Name);
-        
+
         NavigationService?.Refresh();
     }
 
@@ -450,7 +450,7 @@ public partial class SettingsPage : Page
         ThemeManager.SetRequestedTheme(MainWindow.GetCurrent(), elementTheme);
         ThemeManager.SetRequestedTheme(OverlayQuickTools.GetCurrent(), elementTheme);
 
-        switch(elementTheme)
+        switch (elementTheme)
         {
             case ElementTheme.Default:
                 ThemeManager.Current.ApplicationTheme = null;
@@ -468,7 +468,7 @@ public partial class SettingsPage : Page
 
         SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
     }
-    
+
     private void cB_QuickToolsBackdrop_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
     {
         if (cB_QuickToolsBackdrop.SelectedIndex == -1)
@@ -572,7 +572,7 @@ public partial class SettingsPage : Page
 
         SettingsManager.SetProperty("TelemetryEnabled", Toggle_Telemetry.IsOn);
     }
-    
+
     private void cB_QuickToolsDevicePath_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)

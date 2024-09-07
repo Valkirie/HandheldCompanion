@@ -178,7 +178,7 @@ public class DesktopScreen
 
     public override string ToString()
     {
-        return FriendlyName; 
+        return FriendlyName;
     }
 
     public bool HasResolution(ScreenResolution resolution)

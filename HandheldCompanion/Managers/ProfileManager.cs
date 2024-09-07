@@ -261,7 +261,7 @@ public static class ProfileManager
         if (announce)
         {
             string announcement = string.Empty;
-            switch(profile.IsSubProfile)
+            switch (profile.IsSubProfile)
             {
                 case false:
                     announcement = $"Profile {profile.Name} applied";

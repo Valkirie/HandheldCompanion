@@ -10,4 +10,4 @@ public class StaticExtension : Binding
         Source = TranslationSource.Instance;
     }
 }
-    
+

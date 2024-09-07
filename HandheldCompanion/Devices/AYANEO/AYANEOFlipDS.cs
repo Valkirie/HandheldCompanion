@@ -56,7 +56,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
             case "AYANEOFlipScreenEnabled":
                 {
                     bool enabled = Convert.ToBoolean(value);
-                    switch(enabled)
+                    switch (enabled)
                     {
                         case true:
                             short brightness = (short)SettingsManager.GetDouble("AYANEOFlipScreenBrightness");

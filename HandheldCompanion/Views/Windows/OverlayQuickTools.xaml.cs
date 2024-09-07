@@ -345,7 +345,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     [DllImport("user32.dll")]
     private static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-    
+
     private const int WA_ACTIVE = 1;
     private const int WA_CLICKACTIVE = 2;
     private const int WA_INACTIVE = 0;

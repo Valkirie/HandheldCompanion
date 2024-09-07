@@ -511,7 +511,7 @@ public abstract class IDevice
                                     case "83E1":
                                         device = new LegionGo();
                                         break;
-                                }    
+                                }
                             }
                             break;
                     }

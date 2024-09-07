@@ -28,7 +28,7 @@ namespace HandheldCompanion.Misc.Threading.Tasks
     {
         // To Manage thread synchronization
         SpinLock _spinLock = new(false);
-        
+
         // Maintains a weak reference to the last executed Task
         readonly WeakReference<Task?> _lastTask = new(null);
 

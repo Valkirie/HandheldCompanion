@@ -180,19 +180,19 @@ public partial class App : Application
         string url = SentryConfig.DSN_URL;
 
         if (!string.IsNullOrEmpty(url))
-        {            
+        {
             SentrySdk.Init(options =>
             {
                 // Tells which project in Sentry to send events to:
                 options.Dsn = url;
 
-                #if DEBUG
+#if DEBUG
                 // When configuring for the first time, to see what the SDK is doing:
                 options.Debug = true;
-                #else
+#else
                 options.Debug = false;
-                #endif
-                
+#endif
+
                 // Enable Global Mode since this is a client app
                 options.IsGlobalModeEnabled = true;
             });

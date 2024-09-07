@@ -177,7 +177,8 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDPresetIndex":
                         int presetIndex = Convert.ToInt32(value);
-                        if (presetIndex < IDevice.GetCurrent().LEDPresets.Count) {
+                        if (presetIndex < IDevice.GetCurrent().LEDPresets.Count)
+                        {
                             LedPresetsComboBox.SelectedIndex = presetIndex;
                         }
                         break;
@@ -361,7 +362,7 @@ namespace HandheldCompanion.Views.Pages
 
             SettingsManager.SetProperty("LEDSettingsLevel", level);
         }
-        
+
         private void LEDOEMPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded)

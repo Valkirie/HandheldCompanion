@@ -46,7 +46,7 @@ public class ProcessWindow
 
                 Name = title;
             }
-            
+
             Refreshed?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception)

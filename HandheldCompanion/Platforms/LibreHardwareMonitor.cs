@@ -49,7 +49,7 @@ namespace HandheldCompanion.Platforms
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case "OnScreenDisplayRefreshRate":
                     updateInterval = Convert.ToInt32(value);
@@ -119,7 +119,7 @@ namespace HandheldCompanion.Platforms
                 // May crash the app when Value is null, better to check first
                 if (sensor.Value is null)
                     continue;
-                
+
                 switch (sensor.SensorType)
                 {
                     case SensorType.Load:

@@ -20,7 +20,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case SettingsName:
                     base.Execute(OnKeyDown, OnKeyUp);

@@ -159,7 +159,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             {
                 if (GetIntegerScaling())
                     SetIntegerScaling(false);
-                
+
                 if (GetImageSharpening())
                     SetImageSharpening(false);
             }

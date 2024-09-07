@@ -12,7 +12,7 @@ public class OneXPlayerX1Intel : OneXPlayerX1
         cTDP = new double[] { 6, 35 };
         GfxClock = new double[] { 100, 2250 };
         CpuClock = 4800;
-        
+
         // Power Saving
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
         {
@@ -36,7 +36,7 @@ public class OneXPlayerX1Intel : OneXPlayerX1
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
         });
-        
+
         // Max Performance
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
         {

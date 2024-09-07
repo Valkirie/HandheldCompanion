@@ -223,7 +223,7 @@ public partial class ControllerPage : Page
                         dialog.DefaultButton = ContentDialogButton.Close;
                         dialog.CloseButtonText = Properties.Resources.ControllerPage_Close;
                         dialog.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
-                        
+
                         dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Failed;
 
                         Task<ContentDialogResult> dialogTask = dialog.ShowAsync();

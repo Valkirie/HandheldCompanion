@@ -47,7 +47,7 @@ namespace HandheldCompanion.Controls.Hints
         protected override void HintActionButton_Click(object sender, RoutedEventArgs e)
         {
             Task.Run(async () =>
-            {                
+            {
                 // halt steam and wait
                 PlatformManager.Steam.StopProcess();
                 while (PlatformManager.Steam.IsRunning)

@@ -1229,7 +1229,7 @@ public partial class ProfilesPage : Page
     {
         if (selectedProfile is null)
             return;
-        
+
         // prevent update loop
         if (profileLock.IsEntered())
             return;

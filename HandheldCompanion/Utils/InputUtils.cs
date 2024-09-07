@@ -101,7 +101,7 @@ public static class InputUtils
         return newMin + (newMax - newMin) * proportion;
     }
 
-        public static byte NormalizeXboxInput(float input)
+    public static byte NormalizeXboxInput(float input)
     {
         input = Math.Clamp(input, short.MinValue, short.MaxValue);
         float output = input / ushort.MaxValue * byte.MaxValue + (byte.MaxValue / 2.0f);

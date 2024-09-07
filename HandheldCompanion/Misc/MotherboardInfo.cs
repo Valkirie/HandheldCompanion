@@ -388,7 +388,7 @@ public static class MotherboardInfo
                     return true;
                 }
             }
-            
+
             return false;
         }
     }

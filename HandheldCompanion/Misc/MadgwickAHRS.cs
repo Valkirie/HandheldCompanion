@@ -18,7 +18,7 @@ namespace HandheldCompanion;
 
 public class MadgwickAHRS
 {
-    public MadgwickAHRS(float samplePeriod) : this(samplePeriod, 1f) {}
+    public MadgwickAHRS(float samplePeriod) : this(samplePeriod, 1f) { }
 
     // Sample period
     // Beta, algorithm gain beta.

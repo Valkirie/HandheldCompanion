@@ -1,18 +1,17 @@
 ﻿using HandheldCompanion.Commands;
 using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Commands.Functions.Multimedia;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using HandheldCompanion.Commands.Functions.Multimedia;
-using Newtonsoft.Json.Linq;
 
 namespace HandheldCompanion.Managers;
 
@@ -41,7 +40,7 @@ public static class HotkeysManager
         {
             if (hotkeys.TryGetValue(buttonFlags, out Hotkey hotkey))
             {
-                switch(storedChord.chordTarget)
+                switch (storedChord.chordTarget)
                 {
                     case InputsChordTarget.Input:
                         hotkey.inputsChord = storedChord.Clone() as InputsChord;
@@ -133,7 +132,7 @@ public static class HotkeysManager
             else if (dictionary.ContainsKey("ButtonFlags"))
             {
                 // this is 0.21.5.1
-            }            
+            }
         }
         else
         {
@@ -253,7 +252,7 @@ public static class HotkeysManager
                         hotkey.inputsChord.ButtonState.State[flag] = (bool)keyValuePair.Value;
                     }
                 }
-                
+
                 // Migrate IsPinned
                 var isPinned = (bool)dictionary["IsPinned"];
                 hotkey.IsPinned = isPinned;

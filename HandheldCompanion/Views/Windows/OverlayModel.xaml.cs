@@ -47,13 +47,13 @@ public partial class OverlayModel : OverlayWindow
 
     private float ShoulderButtonsAngleDegLeftPrev;
     private float ShoulderButtonsAngleDegRightPrev;
-    
+
     private float ShoulderTriggerAngleLeftPrev;
     private float ShoulderTriggerAngleRightPrev;
 
     private float TriggerAngleShoulderLeft;
     private float TriggerAngleShoulderRight;
-        
+
     public OverlayModel()
     {
         InitializeComponent();
@@ -224,12 +224,12 @@ public partial class OverlayModel : OverlayWindow
         gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
 
         madgwickAHRS.UpdateReport(
-            -InputUtils.deg2rad(gyroX), 
-            InputUtils.deg2rad(gyroY), 
+            -InputUtils.deg2rad(gyroX),
+            InputUtils.deg2rad(gyroY),
             -InputUtils.deg2rad(gyroZ),
             -accelX,
             accelY,
-            -accelZ, 
+            -accelZ,
             gamepadMotion.deltaTime
             );
 
@@ -299,8 +299,8 @@ public partial class OverlayModel : OverlayWindow
 
                 var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.Y);
                 DeviceRotateTransformFaceCameraY = new RotateTransform3D(Ax3DFaceCameraY);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);                
-                
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);
+
                 var Ax3DFaceCameraZ = new AxisAngleRotation3D(new Vector3D(0, 1, 0), -FaceCameraObjectAlignment.Z);
                 DeviceRotateTransformFaceCameraZ = new RotateTransform3D(Ax3DFaceCameraZ);
                 Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);

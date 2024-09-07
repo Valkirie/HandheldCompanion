@@ -47,7 +47,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
 
                     Screen screen = Screen.FromHandle(OverlayQuickTools.GetCurrent().hwndSource.Handle);
 
-                    switch(KeyboardPosition)
+                    switch (KeyboardPosition)
                     {
                         case 0:     // Bottom
                             WinAPI.MoveWindow(hwndOSK, screen, WindowPositions.Bottom);

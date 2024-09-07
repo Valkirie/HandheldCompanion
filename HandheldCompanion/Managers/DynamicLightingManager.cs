@@ -196,7 +196,7 @@ public static class DynamicLightingManager
             Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
             Color LEDSecondColor = SettingsManager.GetColor("LEDSecondColor");
             bool useSecondColor = SettingsManager.GetBoolean("LEDUseSecondColor");
-            
+
             // Get Preset
             int LEDPresetIndex = SettingsManager.GetInt("LEDPresetIndex");
             List<LEDPreset> presets = IDevice.GetCurrent().LEDPresets;

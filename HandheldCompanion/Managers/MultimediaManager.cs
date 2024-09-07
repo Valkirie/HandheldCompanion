@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views.Pages;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -180,7 +179,7 @@ public static class MultimediaManager
         // temporary array to store all current screens
         Dictionary<string, DesktopScreen> desktopScreens = [];
 
-        foreach(Screen screen in Screen.AllScreens)
+        foreach (Screen screen in Screen.AllScreens)
         {
             if (string.IsNullOrEmpty(screen.DeviceName))
                 continue;
@@ -242,7 +241,7 @@ public static class MultimediaManager
         PrimaryDesktop = newPrimary;
 
         // raise event (New screen detected)
-        foreach(DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
+        foreach (DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
             ScreenConnected?.Invoke(desktop);
 
         // raise event (New screen detected)

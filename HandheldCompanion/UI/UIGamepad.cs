@@ -81,7 +81,7 @@ namespace HandheldCompanion.Managers
                 quickTools.GotGamepadWindowFocus += (sender) => _currentWindow_GotFocus(sender, new RoutedEventArgs());
                 quickTools.LostGamepadWindowFocus += (sender) => _currentWindow_LostFocus(sender, new RoutedEventArgs());
             }
-            
+
             _currentWindow.ContentDialogOpened += _currentWindow_ContentDialogOpened;
             _currentWindow.ContentDialogClosed += _currentWindow_ContentDialogClosed;
             _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, new RoutedEventArgs());
@@ -181,7 +181,7 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 GamepadWindow gamepadWindow;
-                switch(window)
+                switch (window)
                 {
                     default:
                     case "Main":
@@ -372,7 +372,7 @@ namespace HandheldCompanion.Managers
         public Control GetFocusedElement()
         {
             IInputElement FocusedElement = forcedFocus is not null ? forcedFocus : FocusManager.GetFocusedElement(_currentWindow);
-            
+
             DependencyObject commonAncestor = VisualTreeHelperExtensions.FindCommonAncestor((DependencyObject)FocusedElement, _currentWindow);
             if (commonAncestor is null && forcedFocus is null)
             {

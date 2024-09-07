@@ -193,7 +193,7 @@ namespace HandheldCompanion.Managers
 
         private static void ControllerManager_StatusChanged(ControllerManagerStatus status, int attempts)
         {
-            switch(status)
+            switch (status)
             {
                 // busy or pending
                 case ControllerManagerStatus.Pending:

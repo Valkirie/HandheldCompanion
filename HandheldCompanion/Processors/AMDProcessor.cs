@@ -78,7 +78,7 @@ public class AMDProcessor : Processor
             // device specific: Lenovo Legion Go
             if (IDevice.GetCurrent() is LegionGo legion)
             {
-                switch(type)
+                switch (type)
                 {
                     case PowerType.Fast:
                         legion.SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)limit);
