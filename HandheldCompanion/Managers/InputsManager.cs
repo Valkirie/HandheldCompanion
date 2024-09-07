@@ -451,6 +451,21 @@ public static class InputsManager
 
     private static void ReleaseKeyboardBuffer()
     {
+        // Checking if we're missing KeyUp(s)
+        List<KeyEventArgsExt> pressedKeys = BufferKeys[true];
+        List<KeyEventArgsExt> releasedKeys = BufferKeys[false];
+
+        // Find keys that were pressed but not released
+        List<KeyEventArgsExt> pressedButNotReleased = pressedKeys
+            .Where(pressed => !releasedKeys.Any(released => released.KeyValue == pressed.KeyValue))
+            .OrderBy(pressed => pressed.Timestamp)
+            .ToList();
+
+        // Add missing keys
+        // This may have side effects, but they will certainly be much less harmful than a stuck key
+        BufferKeys[false].AddRange(pressedButNotReleased);
+
+        // Send all key inputs
         foreach (bool IsKeyDown in new[] { true, false })
         {
             if (BufferKeys[IsKeyDown].Count == 0)
