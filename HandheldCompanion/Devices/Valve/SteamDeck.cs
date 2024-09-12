@@ -54,9 +54,10 @@ public class SteamDeck : IDevice
         new DeviceVersion() { Firmware = 0xB030, BoardID = 0x6, PDCS = 0 /* 0x2B */, BatteryTempLE = false },
         new DeviceVersion() { Firmware = 0xB030, BoardID = 0xA, PDCS = 0 /* 0x2B */, BatteryTempLE = false, MaxBatteryCharge = true },
         // Steam Deck - OLED version
+        new DeviceVersion() { Firmware = 0x1010, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
         new DeviceVersion() { Firmware = 0x1030, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true },
         new DeviceVersion() { Firmware = 0x1050, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
-        new DeviceVersion() { Firmware = 0x1010, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
+        new DeviceVersion() { Firmware = 0x1090, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
     };
 
     public bool BatteryTempLE { get; set; }
@@ -71,8 +72,15 @@ public class SteamDeck : IDevice
         ProductModel = "SteamDeck";
 
         // Steam Controller Neptune
-        Capabilities = DeviceCapabilities.FanControl;
-        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        // We need to check if firmware is supported
+        Open();
+
+        if (IsSupported)
+        {
+            bool maxBatteryCharge = SupportedDevice?.MaxBatteryCharge ?? false;
+            Capabilities |= DeviceCapabilities.FanControl;
+            Capabilities |= maxBatteryCharge ? DeviceCapabilities.BatteryChargeLimit : DeviceCapabilities.None;
+        }
 
         // https://www.steamdeck.com/en/tech
         nTDP = new double[] { 10, 10, 15 };
@@ -106,12 +114,12 @@ public class SteamDeck : IDevice
     public static byte PDCS { get; private set; }
 
     public override bool IsOpen => inpOut is not null;
-    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault((v) => v.IsSupported(FirmwareVersion, BoardID, PDCS));
-    public override bool IsSupported => SupportedDevice is not null;
+    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault(version => version.IsSupported(FirmwareVersion, BoardID, PDCS));
+    public override bool IsSupported => SupportedDevice is not null && SupportedDevice?.Firmware != 0;
 
     public override bool Open()
     {
-        if (inpOut != null)
+        if (IsOpen)
             return true;
 
         try
