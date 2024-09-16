@@ -121,7 +121,7 @@
     <value>关于</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion - “掌机伴侣“ 是一个集多种功能（虚拟手柄、体感控制、性能监控、悬浮窗等）于一体，来改善玩家掌机游戏体验的工具。掌机伴侣依赖于ViGEmBus驱动和ViGEmClient库，以及内核态的HidHide过滤驱动。体感算法基于Jibbsmart的研究成果和GyroWiki上公开的信息。</value>
+    <value>Handheld Companion - “掌机伴侣” 是一个集多种功能（虚拟手柄、体感控制、性能监控、悬浮窗等）于一体，来改善玩家掌机游戏体验的工具。掌机伴侣依赖于ViGEmBus驱动和ViGEmClient库，以及内核态的HidHide过滤驱动。体感算法基于Jibbsmart的研究成果和GyroWiki上公开的信息。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速度计</value>
@@ -145,7 +145,7 @@
     <value>倾斜计</value>
   </data>
   <data name="AboutPage_NotApplicable" xml:space="preserve">
-    <value>N/A</value>
+    <value>不适用</value>
   </data>
   <data name="AboutPage_RelatedLinks" xml:space="preserve">
     <value>相关链接</value>
@@ -490,7 +490,7 @@
     <value>额外选项</value>
   </data>
   <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
-    <value>ADS(Aiming down sights) 灵敏度</value>
+    <value>ADS(瞄准器) 灵敏度</value>
   </data>
   <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
     <value>启动按键</value>
@@ -854,7 +854,7 @@
     <value>语言</value>
   </data>
   <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
-    <value>程序语音</value>
+    <value>程序语言</value>
   </data>
   <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
     <value>需要重启</value>
@@ -956,7 +956,7 @@
     <value>外置传感器反向</value>
   </data>
   <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
-    <value>外置传感器面向方向相反，可能是C口转接器的原因</value>
+    <value>外置传感器面向方向相反，可能是USB-C转接器的原因</value>
   </data>
   <data name="SettingsPage_SensorSelection" xml:space="preserve">
     <value>传感器</value>
@@ -1304,10 +1304,10 @@
     <value>非游戏手柄布局</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerAction" xml:space="preserve">
-    <value>或许你应该先连接一个手柄。</value>
+    <value>或许你应该先连接一个手柄，单击手柄旁的“连接”</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDesc" xml:space="preserve">
-    <value>没有连接到实体手柄。掌机伴侣没办法处理任何输入请求</value>
+    <value>没有连接到实体手柄。掌机伴侣无法收到任何输入请求</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
     <value>请确保你连接了支持 XInput 或者 DInput 的设备</value>
@@ -1322,7 +1322,7 @@
     <value>实体手柄已被隐藏，并且没有可用的虚拟手柄配置，程序可能无法收到任何输入命令</value>
   </data>
   <data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
-    <value>没检测到虚拟手柄</value>
+    <value>没有检测到虚拟手柄</value>
   </data>
   <data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
     <value>请启用虚拟手柄，或者解除实体手柄的隐藏</value>
@@ -1346,7 +1346,7 @@
     <value>HD震动</value>
   </data>
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
-    <value>使用高清震动功能可能会占用更多CPU资源</value>
+    <value>使用震动功能可能会占用更多CPU资源</value>
   </data>
   <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>控制器设置</value>
@@ -1490,7 +1490,7 @@
     <value>CPU</value>
   </data>
   <data name="ProfilesPage_EPP" xml:space="preserve">
-    <value>EPP</value>
+    <value>处理器能源性能首选项（EPP）</value>
   </data>
   <data name="ProfilesPage_EPPBalance" xml:space="preserve">
     <value>CPU/GPU电源平衡分配</value>
@@ -2030,7 +2030,7 @@
     <value>X</value>
   </data>
   <data name="Enum_ProController_ButtonFlags_Back" xml:space="preserve">
-    <value>减</value>
+    <value>-</value>
   </data>
   <data name="Enum_ProController_ButtonFlags_L1" xml:space="preserve">
     <value>L</value>
@@ -2045,7 +2045,7 @@
     <value>Capture</value>
   </data>
   <data name="Enum_ProController_ButtonFlags_Start" xml:space="preserve">
-    <value>加</value>
+    <value>+</value>
   </data>
   <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
     <value>单指滑动</value>
@@ -2132,7 +2132,7 @@
     <value>C</value>
   </data>
   <data name="Enum_KeyFlags_Comma" xml:space="preserve">
-    <value>逗号</value>
+    <value>，</value>
   </data>
   <data name="Enum_KeyFlags_Control" xml:space="preserve">
     <value>Ctrl</value>
@@ -2153,7 +2153,7 @@
     <value>回车</value>
   </data>
   <data name="Enum_KeyFlags_Equal" xml:space="preserve">
-    <value>等号</value>
+    <value>=</value>
   </data>
   <data name="Enum_KeyFlags_Escape" xml:space="preserve">
     <value>ESC</value>
@@ -2201,7 +2201,7 @@
     <value>G</value>
   </data>
   <data name="Enum_KeyFlags_Grave" xml:space="preserve">
-    <value>坟墓</value>
+    <value>~</value>
   </data>
   <data name="Enum_KeyFlags_H" xml:space="preserve">
     <value>H</value>
@@ -2213,7 +2213,7 @@
     <value>I</value>
   </data>
   <data name="Enum_KeyFlags_Insert" xml:space="preserve">
-    <value>插入</value>
+    <value>Insert</value>
   </data>
   <data name="Enum_KeyFlags_J" xml:space="preserve">
     <value>J</value>
@@ -2228,7 +2228,7 @@
     <value>M</value>
   </data>
   <data name="Enum_KeyFlags_Minus" xml:space="preserve">
-    <value>减</value>
+    <value>-</value>
   </data>
   <data name="Enum_KeyFlags_N" xml:space="preserve">
     <value>N</value>
@@ -2240,10 +2240,10 @@
     <value>P</value>
   </data>
   <data name="Enum_KeyFlags_Pause" xml:space="preserve">
-    <value>暂停</value>
+    <value>Pause</value>
   </data>
   <data name="Enum_KeyFlags_Period" xml:space="preserve">
-    <value>周期</value>
+    <value>。</value>
   </data>
   <data name="Enum_KeyFlags_Q" xml:space="preserve">
     <value>Q</value>
@@ -2255,13 +2255,13 @@
     <value>S</value>
   </data>
   <data name="Enum_KeyFlags_Semicolon" xml:space="preserve">
-    <value>分号</value>
+    <value>；</value>
   </data>
   <data name="Enum_KeyFlags_Shift" xml:space="preserve">
     <value>Shift</value>
   </data>
   <data name="Enum_KeyFlags_Slash" xml:space="preserve">
-    <value>斜杠</value>
+    <value>/</value>
   </data>
   <data name="Enum_KeyFlags_Space" xml:space="preserve">
     <value>空格</value>
@@ -2330,10 +2330,10 @@
     <value>选择</value>
   </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
-    <value>您可能希望卸载Steam Xbox手柄增强驱动</value>
+    <value>您可能需要卸载Steam Xbox手柄增强驱动</value>
   </data>
   <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
-    <value>Steam Xbox手柄增强驱动已安装，正在破坏HidHide隐藏/显示物理手柄的功能</value>
+    <value>Steam Xbox手柄增强驱动已安装，破坏了HidHide隐藏/显示物理手柄的功能</value>
   </data>
   <data name="Hint_SteamXboxDrivers" xml:space="preserve">
     <value>Steam Xbox手柄增强驱动已安装</value>
@@ -2345,7 +2345,7 @@
     <value>设备</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>请关闭手柄，然后按住“向导”按钮重新打开，以完成配对</value>
+    <value>请关闭手柄，然后按住“Guide”按钮重新打开，以完成配对</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>灯光效果</value>
@@ -2372,10 +2372,10 @@
     <value>无</value>
   </data>
   <data name="DevicePage_AmbilightVerticalBlackBarDetection" xml:space="preserve">
-    <value>氛围灯竖直黑条探测</value>
+    <value>氛围灯黑条探测</value>
   </data>
   <data name="DevicePage_AmbilightVerticalBlackBarDetectionDesc" xml:space="preserve">
-    <value>4:3宽高比游戏或视频的竖直黑条检测</value>
+    <value>适用于4:3宽高比游戏或视频的竖直黑条检测</value>
   </data>
   <data name="DevicePage_DynamicLighting_Breathing" xml:space="preserve">
     <value>呼吸</value>
@@ -2423,7 +2423,7 @@
     <value> Mhz</value>
   </data>
   <data name="PowerProfileDefaultDescription" xml:space="preserve">
-    <value>默认功率和风扇速度以实现最佳性能、温度、噪音和电池寿命。</value>
+    <value>默认功率和风扇速度以实现最佳性能、温度、噪音和电池寿命</value>
   </data>
   <data name="PowerProfileDefaultName" xml:space="preserve">
     <value>Default</value>
@@ -2435,19 +2435,19 @@
     <value>手动模式: {0}</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
-    <value>Balances performance, temperature and acoustic for any scenario.</value>
+    <value>平衡性能、温度和声学效果</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformance" xml:space="preserve">
-    <value>ROG Ally - Performance</value>
+    <value>ROG Ally - 性能</value>
   </data>
   <data name="PowerProfileROGAllyBetterBatteryDesc" xml:space="preserve">
-    <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
+    <value>限制 CPU 和 GPU 能力，但保持安静的噪音水平</value>
   </data>
   <data name="PowerProfileROGAllyBetterBattery" xml:space="preserve">
-    <value>ROG Ally - Silent</value>
+    <value>ROG Ally - 静音</value>
   </data>
   <data name="PowerProfileROGAllyBestPerformanceDesc" xml:space="preserve">
-    <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
+    <value>最大限度地提高 CPU 和 GPU 的功率，以实现高性能游戏和工作，同时最大限度地利用风扇的气流</value>
   </data>
   <data name="PowerProfileROGAllyBestPerformance" xml:space="preserve">
     <value>ROG Ally - Turbo</value>
@@ -2531,13 +2531,13 @@
     <value>LegionL</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_B6" xml:space="preserve">
-    <value>Mouse wheel click</value>
+    <value>鼠标滚轮单击</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_B7" xml:space="preserve">
-    <value>Mouse wheel up</value>
+    <value>鼠标滚轮向上</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_B8" xml:space="preserve">
-    <value>Mouse wheel down</value>
+    <value>鼠标滚轮向下</value>
   </data>
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>游戏手柄: {0}</value>
@@ -2588,16 +2588,16 @@
     <value>重试</value>
   </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
-    <value>ASUS services are running</value>
+    <value>ASUS 服务正在运行</value>
   </data>
   <data name="Hint_RogAllyServiceCheckReadme" xml:space="preserve">
-    <value>You should disable ASUS services, so that the application can run smoothly and without any conflicts</value>
+    <value>您应该禁用 ASUS 服务，以便应用程序可以平稳运行且没有任何冲突</value>
   </data>
   <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
-    <value>ASUS services are already running on your device. This may interfere with the application</value>
+    <value>ASUS 服务已在您的设备上运行。这可能会干扰应用程序</value>
   </data>
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
-    <value>Disable ASUS services</value>
+    <value>禁用 ASUS 服务</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
     <value>通知</value>
@@ -2627,7 +2627,7 @@
     <value>您的系统核心隔离功能已打开，因此TDP读写和风扇控制可能已禁用</value>
   </data>
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
-    <value>您可能希望关闭核心隔离并重新启动系统以启用TDP操作</value>
+    <value>您可能需要关闭核心隔离并重新启动系统以启用TDP操作</value>
   </data>
   <data name="ProfilesPage_SubProfiles" xml:space="preserve">
     <value>子配置文件</value>
@@ -2642,7 +2642,7 @@
     <value>将风扇设置为最大转速</value>
   </data>
   <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
-    <value>风扇最大转速超控</value>
+    <value>覆写风扇最大转速</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
     <value>整数缩放不可用</value>
@@ -2663,40 +2663,40 @@
     <value>悬浮窗</value>
   </data>
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
-    <value>这是默认的设备预设，无法编辑。这些与设备原始软件提供的预设相当</value>
+    <value>这是默认的设备预设，无法编辑。这些相当于设备预装软件提供的预设</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quiet</value>
+    <value>Legion Go - 安静</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
-    <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
+    <value>预设类似于联想的安静模式，TDP 限制：8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanced</value>
+    <value>Legion Go - 平衡</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
-    <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
+    <value>预设类似于联想的平衡模式，TDP 限制：15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Performance</value>
+    <value>Legion Go - 性能</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
-    <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
+    <value>预设类似于联想的性能模式，TDP 限制：20W</value>
   </data>
   <data name="ProfilesPage_DefaultProfile" xml:space="preserve">
-    <value>这是默认预设，您无法在此预设上修改风扇曲线。</value>
+    <value>这是默认预设，您无法在此预设上修改风扇曲线</value>
   </data>
   <data name="Hint_LegionGoServices" xml:space="preserve">
-    <value>Legion Space Tasks and Services are active</value>
+    <value>Legion Space 服务处于活动状态</value>
   </data>
   <data name="Hint_LegionGoServicesAction" xml:space="preserve">
-    <value>Disable Legion Space</value>
+    <value>禁用 Legion Space</value>
   </data>
   <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
-    <value>Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application.</value>
+    <value>Legion Space 服务已在您的设备上处于活动状态。这可能会导致应用程序出现兼容性问题</value>
   </data>
   <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
-    <value>You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors</value>
+    <value>您应该禁用 Legion Space 服务，以便应用程序可以正常运行且没有任何错误</value>
   </data>
   <data name="DevicePage_UseSecondColor" xml:space="preserve">
     <value>使用第二种颜色</value>
@@ -2753,7 +2753,7 @@
     <value>整数缩放</value>
   </data>
   <data name="ProfilesPage_ISDesc" xml:space="preserve">
-    <value>将每个像素乘以一个整数来提高分辨率</value>
+    <value>将每个像素放大整数倍来提高分辨率</value>
   </data>
   <data name="ProfilesPage_ResolutionScale" xml:space="preserve">
     <value>分辨率比例</value>
@@ -2786,7 +2786,7 @@
     <value>锐化效果</value>
   </data>
   <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
-    <value>1/1仅支持独占全屏模式。</value>
+    <value>1/1仅支持独占全屏模式</value>
   </data>
   <data name="SettingsPage_UISounds" xml:space="preserve">
     <value>启用UI声音</value>
@@ -2828,40 +2828,40 @@
     <value>更改虚拟手柄类型</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
-    <value>Auto Sleep Time</value>
+    <value>自动休眠时间</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
-    <value>Joystick Deadzone</value>
+    <value>摇杆死区</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
-    <value>Left Legion Controller</value>
+    <value>左侧控制器</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
-    <value>Change settings for the left legion controller</value>
+    <value>调整左控制器的设置</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
-    <value>Right Legion Controller</value>
+    <value>右侧控制器</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
-    <value>Change settings for the right legion controller</value>
+    <value>调整右控制器的设置</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
-    <value>Trigger Deadzone</value>
+    <value>扳机死区</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
-    <value>Trigger Margin</value>
+    <value>扳机虚位</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>啊哦，您的设备似乎还没有被支持。软件可能不会正常运行</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Double tap</value>
+    <value>两次轻触</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClickDown" xml:space="preserve">
-    <value>Hold</value>
+    <value>长按</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Touch</value>
+    <value>触摸</value>
   </data>
   <data name="Enum_Input_LocalSpace" xml:space="preserve">
     <value>Local space</value>
@@ -2876,7 +2876,7 @@
     <value>传感器校准</value>
   </data>
   <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
-    <value>将校准您的设备IMU传感器</value>
+    <value>将校准您设备上的IMU传感器</value>
   </data>
   <data name="OverlayPage_DualShock4Controller" xml:space="preserve">
     <value>DualShock 4</value>
@@ -2891,34 +2891,34 @@
     <value>Auto</value>
   </data>
   <data name="Hint_MSIClawCenterCheck" xml:space="preserve">
-    <value>MSI Center is running</value>
+    <value>MSI Center 正在运行</value>
   </data>
   <data name="Hint_MSIClawCenterCheckAction" xml:space="preserve">
-    <value>Disable MSI Center</value>
+    <value>禁用 MSI Center</value>
   </data>
   <data name="Hint_MSIClawCenterCheckDesc" xml:space="preserve">
-    <value>MSI Center is running on your device. This may interfere with the application</value>
+    <value>您的设备上正在运行MSI Center。这可能会干扰应用程序</value>
   </data>
   <data name="Hint_MSIClawCenterCheckReadme" xml:space="preserve">
-    <value>You should disable MSI Center, so that the application can run smoothly and without any conflicts</value>
+    <value>您应该禁用MSI中心，以便应用程序可以顺利运行，没有任何冲突</value>
   </data>
   <data name="PowerProfileMSIClawBestPerformance" xml:space="preserve">
-    <value>Extreme Performance</value>
+    <value>极致性能</value>
   </data>
   <data name="PowerProfileMSIClawBestPerformanceDesc" xml:space="preserve">
-    <value>The best system performance for multi-tasking and heavy duty.</value>
+    <value>适用于多任务或重负载的最佳系统性能</value>
   </data>
   <data name="PowerProfileMSIClawBetterBattery" xml:space="preserve">
-    <value>Super Battery</value>
+    <value>极致续航</value>
   </data>
   <data name="PowerProfileMSIClawBetterBatteryDesc" xml:space="preserve">
-    <value>The longest possible battery life.</value>
+    <value>最长的续航时间</value>
   </data>
   <data name="PowerProfileMSIClawBetterPerformance" xml:space="preserve">
-    <value>Balanced</value>
+    <value>平衡</value>
   </data>
   <data name="PowerProfileMSIClawBetterPerformanceDesc" xml:space="preserve">
-    <value>The best system settings that MSI recommends.</value>
+    <value>MSI建议的最佳系统设置</value>
   </data>
   <data name="Enum_InputsHotkeyType_Profiles" xml:space="preserve">
     <value>简介</value>
@@ -2945,22 +2945,22 @@
     <value>通过将电池的最大充电水平设置为80%来延长电池寿命</value>
   </data>
   <data name="PowerProfileOneXPlayerX1IntelBestPerformance" xml:space="preserve">
-    <value>Super Performance</value>
+    <value>极致性能</value>
   </data>
   <data name="PowerProfileOneXPlayerX1IntelBestPerformanceDesc" xml:space="preserve">
-    <value>The optimum performance for Intel Core Ultra.</value>
+    <value>英特尔酷睿Ultra的最佳性能</value>
   </data>
   <data name="PowerProfileOneXPlayerX1IntelBetterBattery" xml:space="preserve">
-    <value>Efficiency</value>
+    <value>能效</value>
   </data>
   <data name="PowerProfileOneXPlayerX1IntelBetterBatteryDesc" xml:space="preserve">
-    <value>Lowest TDP for long battery life.</value>
+    <value>最低TDP以延长电池续航</value>
   </data>
   <data name="PowerProfileOneXPlayerX1IntelBetterPerformance" xml:space="preserve">
-    <value>Performance</value>
+    <value>性能</value>
   </data>
   <data name="PowerProfileOneXPlayerX1IntelBetterPerformanceDesc" xml:space="preserve">
-    <value>Balances performance, temperature and acoustic for any scenario.</value>
+    <value>平衡性能，温度和声学效果</value>
   </data>
   <data name="SettingsPage_Telemetry" xml:space="preserve">
     <value>遥测</value>
@@ -2969,13 +2969,13 @@
     <value>启用遥测数据，以便在故障时自动发送</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>正在初始化手柄重新配置…请稍候</value>
+    <value>正在初始化手柄重新配置，请稍候…</value>
   </data>
   <data name="ControllerPage_ControllerManagment_Attempting" xml:space="preserve">
     <value>正在尝试重新排序手柄，请稍候…</value>
   </data>
   <data name="ControllerPage_ControllerManagment_Done" xml:space="preserve">
-    <value>手柄重新排序完成。感谢耐心等待</value>
+    <value>手柄重新排序完成。感谢您的耐心等待</value>
   </data>
   <data name="ControllerPage_ControllerManagment_Failed" xml:space="preserve">
     <value>我们未能重新排序您的手柄。为了获得最高兼容性，我们建议您重新启动掌机伴侣</value>
@@ -3149,16 +3149,16 @@
     <value>显示</value>
   </data>
   <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
-    <value>显示快速工具的显示器</value>
+    <value>显示快速窗口的显示器</value>
   </data>
   <data name="MainWindow_TelemetryText" xml:space="preserve">
-    <value>您是否授权掌机伴侣Handheld Companion向HC开发人员报告信息？
+    <value>您是否授权掌机伴侣向开发人员报告信息？
 
-如果获得授权，HC将自动上传崩溃报告，包括系统硬件和操作系统的数据。从未收集过任何私人或个人身份数据。
+如果获得授权，掌机伴侣将自动上传崩溃报告，其中包括系统硬件和操作系统的数据。但不包含任何隐私或个人身份数据。
 
-这些信息将使我们能够提高软件的质量，并优先考虑我们的工作。它还帮助我们识别导致错误、性能和稳定性问题的罕见配置。此授权是选择加入（默认关闭），可以随时在主设置中更改。
+这些信息将使我们能够提高软件的质量并使我们确定工作的优先顺序。它还帮助我们识别导致错误、性能和稳定性问题的罕见配置。此授权是选择性的（默认关闭），可以随时在主菜单中更改。
 
-感谢您使用HC并帮助我们做得更好。</value>
+感谢您使用掌机伴侣并帮助我们做得更好。</value>
   </data>
   <data name="MainWindow_TelemetryTitle" xml:space="preserve">
     <value>遥测</value>
@@ -3200,13 +3200,13 @@
     <value>按下按钮或特殊键以更改快捷键</value>
   </data>
   <data name="Hotkey_ActionCenter" xml:space="preserve">
-    <value>召唤Windows操作中心</value>
+    <value>打开Windows操作中心</value>
   </data>
   <data name="Hotkey_ActionCenterDesc" xml:space="preserve">
-    <value>切换操作中心</value>
+    <value>显示/隐藏操作中心</value>
   </data>
   <data name="Hotkey_Settings" xml:space="preserve">
-    <value>召唤Windows设置</value>
+    <value>打开Windows设置</value>
   </data>
   <data name="Hotkey_SettingsDesc" xml:space="preserve">
     <value>按下按钮或特殊键以更改快捷键</value>
