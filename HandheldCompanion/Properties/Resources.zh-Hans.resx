@@ -1346,7 +1346,7 @@
     <value>HD震动</value>
   </data>
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
-    <value>使用震动功能可能会占用更多CPU资源</value>
+    <value>使用HD震动功能可能会占用更多CPU资源</value>
   </data>
   <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>控制器设置</value>
