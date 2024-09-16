@@ -490,7 +490,7 @@
     <value>额外选项</value>
   </data>
   <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
-    <value>ADS(瞄准器) 灵敏度</value>
+    <value>ADS（瞄准器）灵敏度</value>
   </data>
   <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
     <value>启动按键</value>
@@ -2870,7 +2870,7 @@
     <value>Local space</value>
   </data>
   <data name="Enum_MotionInput_LocalSpace_Desc" xml:space="preserve">
-    <value>输入基于手柄的方向，与游戏世界或角色无关。</value>
+    <value>输入基于手柄的方向，与游戏世界或角色无关</value>
   </data>
   <data name="SettingsPage_SensorCalibration" xml:space="preserve">
     <value>传感器校准</value>
@@ -2984,7 +2984,7 @@
     <value>最终尝试重新排序手柄，请稍候…</value>
   </data>
   <data name="ControllerPage_ControllerManagment_RedOrGreen" xml:space="preserve">
-    <value>红色还是绿色，红色还是绿色？我该剪哪一个？！</value>
+    <value>红色还是绿色？我该剪哪一个？！</value>
   </data>
   <data name="ControllerPage_ControllerManagment_Reordering" xml:space="preserve">
     <value>正在重新排序，请稍候…</value>
