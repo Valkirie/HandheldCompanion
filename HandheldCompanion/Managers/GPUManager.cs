@@ -326,6 +326,9 @@ namespace HandheldCompanion.Managers
                     {
                         if (!amdGPU.GetAFMF())
                             amdGPU.SetAFMF(true);
+
+                        if (!amdGPU.GetAntiLag())
+                            amdGPU.SetAntiLag(true);
                     }
                     else if (amdGPU.GetAFMF())
                     {

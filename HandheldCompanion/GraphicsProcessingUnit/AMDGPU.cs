@@ -125,6 +125,22 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => ADLXBackend.GetGPUScaling(displayIdx), false);
         }
 
+        public bool SetAntiLag(bool enable)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.SetAntiLag(displayIdx, enable), false);
+        }
+
+        public bool GetAntiLag()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.GetAntiLag(displayIdx), false);
+        }
+
         public override int GetScalingMode()
         {
             if (!IsInitialized)
@@ -171,9 +187,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             if (!IsInitialized)
                 return false;
-
-            // mutually exclusive ?
-            // TODO
 
             return Execute(() => ADLXBackend.SetAFMF(enable), false);
         }
