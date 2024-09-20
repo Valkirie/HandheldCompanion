@@ -559,7 +559,7 @@ namespace HandheldCompanion.IGCL
                 if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                     continue;
 
-                if (deviceName.Equals(StDeviceAdapterProperties.name))
+                if (deviceName.Equals(StDeviceAdapterProperties.name) || adapterCount == 1)
                     return idx;
             }
 

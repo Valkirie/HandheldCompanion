@@ -286,22 +286,27 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (result != ADLX_RESULT.ADLX_OK)
                 return;
 
-            for (int idx = 0; idx < adapterCount; idx++)
+            if (adapterCount == 1)
+                displayIdx = 0;
+            else
             {
-                StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
+                for (int idx = 0; idx < adapterCount; idx++)
+                {
+                    StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
 
-                // skip if failed to retrieve display
-                result = GetDisplayName(idx, displayName, displayName.Capacity);
-                if (result != ADLX_RESULT.ADLX_OK)
-                    continue;
+                    // skip if failed to retrieve display
+                    result = GetDisplayName(idx, displayName, displayName.Capacity);
+                    if (result != ADLX_RESULT.ADLX_OK)
+                        continue;
 
-                // skip if display is not the one we're looking for
-                if (!displayName.ToString().Equals(friendlyName))
-                    continue;
+                    // skip if display is not the one we're looking for
+                    if (!displayName.ToString().Equals(friendlyName))
+                        continue;
 
-                // update displayIdx
-                displayIdx = idx;
-                break;
+                    // update displayIdx
+                    displayIdx = idx;
+                    break;
+                }
             }
 
             if (displayIdx != -1)
