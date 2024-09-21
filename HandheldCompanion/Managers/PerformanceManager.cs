@@ -323,8 +323,7 @@ public static class PerformanceManager
     {
         // On power status change, force refresh TDP
         PowerProfile profile = PowerProfileManager.GetDefault();
-        if (profile.TDPOverrideEnabled)
-            RequestTDP(profile.TDPOverrideValues, immediate);
+        RequestTDP(profile.TDPOverrideValues, immediate);
     }
 
     private static void RestoreCPUClock(bool immediate)
