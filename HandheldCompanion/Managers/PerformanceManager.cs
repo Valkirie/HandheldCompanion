@@ -113,8 +113,17 @@ public static class PerformanceManager
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
+        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
 
         currentCoreCount = MotherboardInfo.NumberOfCores;
+    }
+
+    private static void PowerManager_PowerStatusChanged(System.Windows.Forms.PowerStatus status)
+    {
+        // On power status change, force refresh TDP
+        PowerProfile profile = PowerProfileManager.GetCurrent();
+        if (profile.TDPOverrideEnabled)
+            RequestTDP(profile.TDPOverrideValues, true);
     }
 
     private static void SettingsManagerOnSettingValueChanged(string name, object value)
@@ -146,7 +155,10 @@ public static class PerformanceManager
             {
                 // Manual TDP is set, use it and set max limit
                 RequestTDP(profile.TDPOverrideValues);
-                StartTDPWatchdog();
+
+                if (!cpuWatchdog.Enabled)
+                    StartTDPWatchdog();
+
                 AutoTDPMax = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
             }
             else
@@ -157,9 +169,10 @@ public static class PerformanceManager
                 StopTDPWatchdog(true);
             }
         }
-        else if (cpuWatchdog.Enabled)
+        else
         {
-            StopTDPWatchdog(true);
+            if (cpuWatchdog.Enabled)
+                StopTDPWatchdog(true);
 
             if (!profile.AutoTDPEnabled)
             {
@@ -308,8 +321,10 @@ public static class PerformanceManager
 
     private static void RestoreTDP(bool immediate)
     {
-        for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
-            RequestTDP(pType, IDevice.GetCurrent().cTDP[1], immediate);
+        // On power status change, force refresh TDP
+        PowerProfile profile = PowerProfileManager.GetDefault();
+        if (profile.TDPOverrideEnabled)
+            RequestTDP(profile.TDPOverrideValues, immediate);
     }
 
     private static void RestoreCPUClock(bool immediate)
