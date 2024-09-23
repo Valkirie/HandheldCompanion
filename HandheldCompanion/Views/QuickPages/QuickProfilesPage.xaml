@@ -138,6 +138,8 @@
         </ikw:SimpleStackPanel>
 
         <ikw:SimpleStackPanel Name="GridProfile" Spacing="24">
+
+            <!--  Battery Power Settings  -->
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
@@ -154,7 +156,7 @@
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xe945;" />
+                                    Glyph="&#xf5f7;" />
 
                                 <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerPreset}" />
@@ -178,34 +180,159 @@
                     </Expander.Header>
 
                     <ikw:SimpleStackPanel Spacing="16">
-                        <ikw:SimpleStackPanel Name="ProfileStack" Spacing="16" />
-
-                        <!--  Separator  -->
-                        <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-
-                        <Grid>
+                        <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" />
-                                <ColumnDefinition Width="5*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="46" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                HorizontalAlignment="Center"
+                            <ComboBox
+                                Name="PowerProfileOnBattery"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                Text="{l:Static resx:Resources.ProfilesPage_CreatePowerProfile}" />
-                            <Button
-                                Name="Button_PowerSettings_Create"
-                                Grid.Column="1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Click="Button_PowerSettings_Create_Click"
-                                Style="{DynamicResource AccentButtonStyle}">
-                                <TextBlock Text="{l:Static resx:Resources.ProfilesPage_CreatePowerProfileButton}" />
-                            </Button>
+                                DisplayMemberPath="Text"
+                                ItemsSource="{Binding ProfilePickerItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValuePath="Text">
+                                <ComboBox.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsHeader}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.ItemContainerStyle>
+                            </ComboBox>
 
+                            <Button
+                                Name="PowerProfileOnBatteryMore"
+                                Grid.Column="1"
+                                Width="40"
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                Click="PowerProfileOnBatteryMore_Click"
+                                Style="{DynamicResource AccentButtonStyle}">
+                                <ui:FontIcon
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE712;" />
+                            </Button>
                         </Grid>
                     </ikw:SimpleStackPanel>
                 </Expander>
+
+                <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="3*" MinWidth="120" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xf602;" />
+
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerPresetPlugged}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
+
+                            <TextBlock
+                                Name="SelectedPowerProfilePluggedName"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
+                        </Grid>
+                    </Expander.Header>
+
+                    <ikw:SimpleStackPanel Spacing="16">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="46" />
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox
+                                Name="PowerProfilePlugged"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                DisplayMemberPath="Text"
+                                ItemsSource="{Binding ProfilePickerItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValuePath="Text">
+                                <ComboBox.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsHeader}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.ItemContainerStyle>
+                            </ComboBox>
+
+                            <Button
+                                Name="PowerProfilePluggedMore"
+                                Grid.Column="1"
+                                Width="40"
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                Click="PowerProfilePluggedMore_Click"
+                                Style="{DynamicResource AccentButtonStyle}">
+                                <ui:FontIcon
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE712;" />
+                            </Button>
+                        </Grid>
+                    </ikw:SimpleStackPanel>
+                </Expander>
+
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="5*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{l:Static resx:Resources.ProfilesPage_CreatePowerProfile}" />
+
+                        <Button
+                            Name="Button_PowerSettings_Create"
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Click="Button_PowerSettings_Create_Click"
+                            Style="{DynamicResource AccentButtonStyle}">
+                            <TextBlock Text="{l:Static resx:Resources.ProfilesPage_CreatePowerProfileButton}" />
+                        </Button>
+
+                    </Grid>
+                </Border>
             </ikw:SimpleStackPanel>
 
             <ikw:SimpleStackPanel Spacing="6">

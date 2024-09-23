@@ -7,6 +7,7 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
 using Microsoft.Win32;
@@ -18,11 +19,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Xml;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 using Page = System.Windows.Controls.Page;
+using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.Pages;
@@ -52,6 +53,7 @@ public partial class ProfilesPage : Page
 
     public ProfilesPage()
     {
+        DataContext = new ProfilesPageViewModel(this);
         InitializeComponent();
 
         // manage events
@@ -59,8 +61,6 @@ public partial class ProfilesPage : Page
         ProfileManager.Updated += ProfileUpdated;
         ProfileManager.Applied += ProfileApplied;
         ProfileManager.Initialized += ProfileManagerLoaded;
-        PowerProfileManager.Updated += PowerProfileManager_Updated;
-        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
@@ -383,119 +383,27 @@ public partial class ProfilesPage : Page
         }
     }
 
-    private void PowerProfileManager_Deleted(PowerProfile powerProfile)
+    private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            int idx = -1;
-            foreach (var item in ProfileStack.Children)
-            {
-                if (item is not Button)
-                    continue;
-
-                // get power profile
-                var parent = (Button)item;
-                if (parent.Tag is not PowerProfile)
-                    continue;
-
-                PowerProfile pr = (PowerProfile)parent.Tag;
-
-                bool isCurrent = pr.Guid == powerProfile.Guid;
-                if (isCurrent)
-                {
-                    idx = ProfileStack.Children.IndexOf(parent);
-                    break;
-                }
-            }
-
-            if (idx != -1)
-            {
-                // remove profile
-                ProfileStack.Children.RemoveAt(idx);
-
-                // remove separator
-                if (idx >= ProfileStack.Children.Count)
-                    idx = ProfileStack.Children.Count - 1;
-                ProfileStack.Children.RemoveAt(idx);
-            }
-        });
-    }
-
-    private void PowerProfileManager_Updated(PowerProfile powerProfile, UpdateSource source)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            int idx = -1;
-            foreach (var item in ProfileStack.Children)
-            {
-                if (item is not Button)
-                    continue;
-
-                // get power profile
-                var parent = (Button)item;
-                if (parent.Tag is not PowerProfile)
-                    continue;
-
-                PowerProfile pr = (PowerProfile)parent.Tag;
-
-                bool isCurrent = pr.Guid == powerProfile.Guid;
-                if (isCurrent)
-                {
-                    idx = ProfileStack.Children.IndexOf(parent);
-                    break;
-                }
-            }
-
-            if (idx != -1)
-            {
-                // found it
-                return;
-            }
-            else
-            {
-                // draw UI elements
-                powerProfile.DrawUI(this);
-
-                idx = ProfileStack.Children.Count;
-                if (idx != 0)
-                {
-                    // Create a separator
-                    Separator separator = new Separator
-                    {
-                        Margin = new Thickness(-16, 0, -16, 0),
-                        BorderBrush = (Brush)FindResource("SystemControlBackgroundChromeMediumBrush"),
-                        BorderThickness = new Thickness(0, 1, 0, 0)
-                    };
-                    ProfileStack.Children.Add(separator);
-                }
-
-                Button button = powerProfile.GetButton(this);
-                if (button is not null)
-                    button.Click += (sender, e) => PowerProfile_Clicked(powerProfile);
-
-                RadioButton radioButton = powerProfile.GetRadioButton(this);
-                if (radioButton is not null)
-                    radioButton.Checked += (sender, e) => PowerProfile_Selected(powerProfile);
-
-                // add new entry
-                ProfileStack.Children.Add(button);
-            }
-        });
-    }
-
-    private void PowerProfile_Clicked(PowerProfile powerProfile)
-    {
-        RadioButton radioButton = powerProfile.GetRadioButton(this);
-        if (radioButton.IsMouseOver)
+        PowerProfile powerProfile = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
+        if (powerProfile is null)
             return;
 
         MainWindow.performancePage.SelectionChanged(powerProfile);
         MainWindow.GetCurrent().NavView_Navigate("PerformancePage");
     }
 
-    private void PowerProfile_Selected(PowerProfile powerProfile)
+    private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
+    {
+        PowerProfile powerProfile = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
+        if (powerProfile is null)
+            return;
+
+        MainWindow.performancePage.SelectionChanged(powerProfile);
+        MainWindow.GetCurrent().NavView_Navigate("PerformancePage");
+    }
+
+    public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)
     {
         if (selectedProfile is null)
             return;
@@ -507,13 +415,19 @@ public partial class ProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // update UI
-            SelectedPowerProfileName.Text = powerProfile.Name;
-
-            // update profile
-            selectedProfile.PowerProfile = powerProfile.Guid;
-            UpdateProfile();
+            switch (AC)
+            {
+                case false:
+                    selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
+                    SelectedPowerProfileName.Text = powerProfile.Name;
+                    break;
+                case true:
+                    selectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
+                    SelectedPowerProfilePluggedName.Text = powerProfile.Name;
+                    break;
+            }
         });
+        UpdateProfile();
     }
 
     private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -647,9 +561,13 @@ public partial class ProfilesPage : Page
                     Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
 
                     // power profile
-                    PowerProfile powerProfile = PowerProfileManager.GetProfile(selectedProfile.PowerProfile);
-                    powerProfile.Check(this);
-                    SelectedPowerProfileName.Text = powerProfile.Name;
+                    PowerProfile powerProfileDC = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
+                    PowerProfile powerProfileAC = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
+
+                    SelectedPowerProfileName.Text = powerProfileDC?.Name;
+                    SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;
+
+                    ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
                     // display warnings
                     WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);

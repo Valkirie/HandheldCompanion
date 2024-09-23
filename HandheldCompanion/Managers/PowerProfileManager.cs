@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers
 {
@@ -32,6 +33,7 @@ namespace HandheldCompanion.Managers
 
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
+            SystemManager.PowerStatusChanged += SystemManager_PowerStatusChanged;
         }
 
         public static void Start()
@@ -83,9 +85,21 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static void SystemManager_PowerStatusChanged(PowerStatus status)
+        {
+            // Get current profile
+            Profile profile = ProfileManager.GetCurrent();
+
+            ProfileManager_Applied(profile, UpdateSource.Background);
+        }
+
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            PowerProfile powerProfile = GetProfile(profile.PowerProfile);
+            // Get the power status
+            PowerStatus powerStatus = SystemInformation.PowerStatus;
+
+            // Get the power profile
+            PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
             if (powerProfile is null)
                 return;
 
@@ -100,7 +114,11 @@ namespace HandheldCompanion.Managers
             // reset current profile
             currentProfile = null;
 
-            PowerProfile powerProfile = GetProfile(profile.PowerProfile);
+            // Get the power status
+            PowerStatus powerStatus = SystemInformation.PowerStatus;
+
+            // Get the power profile
+            PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
             if (powerProfile is null)
                 return;
 

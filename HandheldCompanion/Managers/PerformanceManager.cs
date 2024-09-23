@@ -113,17 +113,8 @@ public static class PerformanceManager
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
-        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
 
         currentCoreCount = MotherboardInfo.NumberOfCores;
-    }
-
-    private static void PowerManager_PowerStatusChanged(System.Windows.Forms.PowerStatus status)
-    {
-        // On power status change, force refresh TDP
-        PowerProfile profile = PowerProfileManager.GetCurrent();
-        if (profile.TDPOverrideEnabled)
-            RequestTDP(profile.TDPOverrideValues, true);
     }
 
     private static void SettingsManagerOnSettingValueChanged(string name, object value)

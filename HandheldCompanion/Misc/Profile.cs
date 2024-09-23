@@ -94,7 +94,12 @@ public partial class Profile : ICloneable, IComparable
     public float FlickstickSensivity { get; set; } = 3.0f;
 
     // power & graphics
-    public Guid PowerProfile { get; set; } = new();
+    public Dictionary<int, Guid> PowerProfiles { get; set; } = new()
+    {
+        { 0 /*PowerLineStatus.Offline*/, new() },
+        { 1 /*PowerLineStatus.Online*/, new() },
+    };
+
     public int FramerateValue { get; set; } = 0; // default RTSS value
     public bool GPUScaling { get; set; } = false;
     public int ScalingMode { get; set; } = 0; // default AMD value

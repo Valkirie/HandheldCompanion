@@ -7158,7 +7158,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Power preset.
+        ///   Looks up a localized string similar to Power preset (On battery).
         /// </summary>
         public static string ProfilesPage_PowerPreset {
             get {
@@ -7176,11 +7176,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Power preset (Plugged).
+        /// </summary>
+        public static string ProfilesPage_PowerPresetPlugged {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerPresetPlugged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power settings.
         /// </summary>
         public static string ProfilesPage_PowerSettings {
             get {
                 return ResourceManager.GetString("ProfilesPage_PowerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UNUSED.
+        /// </summary>
+        public static string ProfilesPage_PowerSettingsPlugged {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerSettingsPlugged", resourceCulture);
             }
         }
         

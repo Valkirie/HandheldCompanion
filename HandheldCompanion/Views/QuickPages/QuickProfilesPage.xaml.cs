@@ -10,6 +10,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Controls;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -20,7 +21,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using Page = System.Windows.Controls.Page;
-using Separator = System.Windows.Controls.Separator;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.QuickPages;
@@ -51,15 +51,13 @@ public partial class QuickProfilesPage : Page
 
     public QuickProfilesPage()
     {
-        DataContext = new QuickProfilesPageViewModel();
+        DataContext = new QuickProfilesPageViewModel(this);
         InitializeComponent();
 
         // manage events
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Deleted += ProfileManager_Deleted;
-        PowerProfileManager.Updated += PowerProfileManager_Updated;
-        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         HotkeysManager.Updated += HotkeysManager_Updated;
@@ -301,119 +299,19 @@ public partial class QuickProfilesPage : Page
         ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
     }
 
-    private void PowerProfileManager_Deleted(PowerProfile powerProfile)
+    private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            int idx = -1;
-            foreach (var item in ProfileStack.Children)
-            {
-                if (item is not Button)
-                    continue;
-
-                // get power profile
-                var parent = (Button)item;
-                if (parent.Tag is not PowerProfile)
-                    continue;
-
-                PowerProfile pr = (PowerProfile)parent.Tag;
-
-                bool isCurrent = pr.Guid == powerProfile.Guid;
-                if (isCurrent)
-                {
-                    idx = ProfileStack.Children.IndexOf(parent);
-                    break;
-                }
-            }
-
-            if (idx != -1)
-            {
-                // remove profile
-                ProfileStack.Children.RemoveAt(idx);
-
-                // remove separator
-                if (idx >= ProfileStack.Children.Count)
-                    idx = ProfileStack.Children.Count - 1;
-                ProfileStack.Children.RemoveAt(idx);
-            }
-        });
-    }
-
-    private void PowerProfileManager_Updated(PowerProfile powerProfile, UpdateSource source)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            int idx = -1;
-            foreach (var item in ProfileStack.Children)
-            {
-                if (item is not Button)
-                    continue;
-
-                // get power profile
-                var parent = (Button)item;
-                if (parent.Tag is not PowerProfile)
-                    continue;
-
-                PowerProfile pr = (PowerProfile)parent.Tag;
-
-                bool isCurrent = pr.Guid == powerProfile.Guid;
-                if (isCurrent)
-                {
-                    idx = ProfileStack.Children.IndexOf(parent);
-                    break;
-                }
-            }
-
-            if (idx != -1)
-            {
-                // found it
-                return;
-            }
-            else
-            {
-                // draw UI elements
-                powerProfile.DrawUI(this);
-
-                idx = ProfileStack.Children.Count;
-                if (idx != 0)
-                {
-                    // Create a separator
-                    Separator separator = new Separator
-                    {
-                        Margin = new Thickness(-16, 0, -16, 0),
-                        BorderBrush = (Brush)FindResource("SystemControlBackgroundChromeMediumBrush"),
-                        BorderThickness = new Thickness(0, 1, 0, 0)
-                    };
-                    ProfileStack.Children.Add(separator);
-                }
-
-                Button button = powerProfile.GetButton(this);
-                if (button is not null)
-                    button.Click += (sender, e) => PowerProfile_Clicked(powerProfile);
-
-                RadioButton radioButton = powerProfile.GetRadioButton(this);
-                if (radioButton is not null)
-                    radioButton.Checked += (sender, e) => PowerProfile_Selected(powerProfile);
-
-                // add new entry
-                ProfileStack.Children.Add(button);
-            }
-        });
-    }
-
-    private void PowerProfile_Clicked(PowerProfile powerProfile)
-    {
-        RadioButton radioButton = powerProfile.GetRadioButton(this);
-        if (radioButton.IsMouseOver)
-            return;
-
-        MainWindow.overlayquickTools.performancePage.SelectionChanged(powerProfile.Guid);
+        MainWindow.overlayquickTools.performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         MainWindow.overlayquickTools.NavView_Navigate("QuickPerformancePage");
     }
 
-    private void PowerProfile_Selected(PowerProfile powerProfile)
+    private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
+    {
+        MainWindow.overlayquickTools.performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
+        MainWindow.overlayquickTools.NavView_Navigate("QuickPerformancePage");
+    }
+
+    public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)
     {
         if (selectedProfile is null)
             return;
@@ -425,11 +323,18 @@ public partial class QuickProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            SelectedPowerProfileName.Text = powerProfile.Name;
+            switch (AC)
+            {
+                case false:
+                    selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
+                    SelectedPowerProfileName.Text = powerProfile.Name;
+                    break;
+                case true:
+                    selectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
+                    SelectedPowerProfilePluggedName.Text = powerProfile.Name;
+                    break;
+            }
         });
-
-        // update profile
-        selectedProfile.PowerProfile = powerProfile.Guid;
         UpdateProfile();
     }
 
@@ -491,9 +396,13 @@ public partial class QuickProfilesPage : Page
                     cb_SubProfiles.SelectedIndex = selectedIndex;
 
                     // power profile
-                    PowerProfile powerProfile = PowerProfileManager.GetProfile(profile.PowerProfile);
-                    powerProfile?.Check(this);
-                    SelectedPowerProfileName.Text = powerProfile?.Name;
+                    PowerProfile powerProfileDC = PowerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Offline]);
+                    PowerProfile powerProfileAC = PowerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Online]);
+
+                    SelectedPowerProfileName.Text = powerProfileDC?.Name;
+                    SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;
+
+                    ((QuickProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
                     // gyro layout
                     if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -1026,6 +935,14 @@ public partial class QuickProfilesPage : Page
         };
 
         PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
+        
+        // localize me
+        new Dialog(OverlayQuickTools.GetCurrent())
+        {
+            Title = "Power preset",
+            Content = $"{powerProfile.Name} preset was created",
+            PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+        }.Show();
     }
 
     private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

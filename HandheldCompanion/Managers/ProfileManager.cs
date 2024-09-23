@@ -285,7 +285,7 @@ public static class ProfileManager
         // update main profiles
         foreach (Profile profile in profiles.Values)
         {
-            bool isCurrent = profile.PowerProfile == powerProfile.Guid;
+            bool isCurrent = profile.PowerProfiles[(int)PowerLineStatus.Online] == powerProfile.Guid || profile.PowerProfiles[(int)PowerLineStatus.Offline] == powerProfile.Guid;
             if (isCurrent)
             {
                 // sanitize profile
@@ -302,7 +302,7 @@ public static class ProfileManager
         // update sub profiles
         foreach (Profile profile in subProfiles)
         {
-            bool isCurrent = profile.PowerProfile == powerProfile.Guid;
+            bool isCurrent = profile.PowerProfiles[(int)PowerLineStatus.Offline] == powerProfile.Guid || profile.PowerProfiles[(int)PowerLineStatus.Online] == powerProfile.Guid;
             if (isCurrent)
             {
                 // sanitize profile
@@ -731,8 +731,13 @@ public static class ProfileManager
         }
 
         // looks like profile power profile was deleted, restore balanced
-        if (!PowerProfileManager.Contains(profile.PowerProfile))
-            profile.PowerProfile = OSPowerMode.BetterPerformance;
+        for (int idx = 0; idx < 2; idx++)
+        {
+            Guid powerProfile = profile.PowerProfiles[idx];
+
+            if (!PowerProfileManager.Contains(powerProfile))
+                profile.PowerProfiles[idx] = OSPowerMode.BetterPerformance;
+        }
     }
 
     public static void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
