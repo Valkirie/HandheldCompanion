@@ -100,54 +100,56 @@ public static class HotkeysManager
     {
         Hotkey? hotkey = null;
 
-        string json = File.ReadAllText(fileName);
-        JObject? dictionary = JObject.Parse(json);
-
-        Version version = new();
-        if (dictionary.ContainsKey("Version"))
-            version = Version.Parse((string)dictionary["Version"]);
-
-        // this is the first version where we added the Version field to Hotkey
-        if (version <= Version.Parse("0.21.5.2"))
+        try
         {
-            // this goes back to 0.21.4.1
-            if (dictionary.ContainsKey("hotkeyId"))
+            string json = File.ReadAllText(fileName);
+            JObject? dictionary = JObject.Parse(json);
+
+            Version version = new();
+            if (dictionary.ContainsKey("Version"))
+                version = Version.Parse((string)dictionary["Version"]);
+
+            // this is the first version where we added the Version field to Hotkey
+            if (version <= Version.Parse("0.21.5.2"))
+            {
+                // this goes back to 0.21.4.1
+                if (dictionary.ContainsKey("hotkeyId"))
+                {
+                    try
+                    {
+                        hotkey = MigrateFrom0_21_4_1(fileName, dictionary);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError("Could not migrate old hotkey {0}. {1}", fileName, ex.Message);
+                        return;
+                    }
+                }
+                else if (dictionary.ContainsKey("ButtonFlags"))
+                {
+                    // this is 0.21.5.1
+                }
+            }
+            else
             {
                 try
                 {
-                    hotkey = MigrateFrom0_21_4_1(fileName, dictionary);
+                    string outputraw = File.ReadAllText(fileName);
+                    hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    });
                 }
                 catch (Exception ex)
                 {
-                    LogManager.LogError("Could not migrate old hotkey {0}. {1}", fileName, ex.Message);
-                    return;
+                    LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
                 }
-
-                if (hotkey is null)
-                {
-                    LogManager.LogError("Could not migrate old hotkey {0}.", fileName);
-                    return;
-                }
-            }
-            else if (dictionary.ContainsKey("ButtonFlags"))
-            {
-                // this is 0.21.5.1
             }
         }
-        else
+        catch (Exception ex)
         {
-            try
-            {
-                string outputraw = File.ReadAllText(fileName);
-                hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
-            }
+            LogManager.LogError("Could not parse profile {0}. {1}", fileName, ex.Message);
+            return;
         }
 
         if (hotkey is null)
