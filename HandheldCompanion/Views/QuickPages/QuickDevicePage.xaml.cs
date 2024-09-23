@@ -81,8 +81,12 @@ public partial class QuickDevicePage : Page
         });
     }
 
-    private void ProfileManager_Discarded(Profile profile)
+    private void ProfileManager_Discarded(Profile profile, bool swapped)
     {
+        // don't bother discarding settings, new one will be enforce shortly
+        if (swapped)
+            return;
+
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
