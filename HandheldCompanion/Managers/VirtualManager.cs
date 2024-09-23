@@ -181,8 +181,12 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static async void ProfileManager_Discarded(Profile profile)
+        private static async void ProfileManager_Discarded(Profile profile, bool swapped)
         {
+            // don't bother discarding settings, new one will be enforce shortly
+            if (swapped)
+                return;
+
             while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
                 await Task.Delay(1000);
 

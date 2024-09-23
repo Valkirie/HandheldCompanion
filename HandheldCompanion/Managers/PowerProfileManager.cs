@@ -95,7 +95,7 @@ namespace HandheldCompanion.Managers
             Applied?.Invoke(powerProfile, source);
         }
 
-        private static void ProfileManager_Discarded(Profile profile)
+        private static void ProfileManager_Discarded(Profile profile, bool swapped)
         {
             // reset current profile
             currentProfile = null;
@@ -104,7 +104,9 @@ namespace HandheldCompanion.Managers
             if (powerProfile is null)
                 return;
 
-            Discarded?.Invoke(powerProfile);
+            // don't bother discarding settings, new one will be enforce shortly
+            if (!swapped)
+                Discarded?.Invoke(powerProfile);
         }
 
         private static void ProcessProfile(string fileName)

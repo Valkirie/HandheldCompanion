@@ -364,9 +364,13 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        private static void ProfileManager_Discarded(Profile profile)
+        private static void ProfileManager_Discarded(Profile profile, bool swapped)
         {
             if (!IsInitialized || currentGPU is null)
+                return;
+
+            // don't bother discarding settings, new one will be enforce shortly
+            if (swapped)
                 return;
 
             try

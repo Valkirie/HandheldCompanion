@@ -333,10 +333,12 @@ public static class ProfileManager
             if (profile is null || profile.Default)
                 return;
 
-            // raise event
-            Discarded?.Invoke(profile);
+            bool isCurrent = profile.ErrorCode.HasFlag(ProfileErrorCode.Running);
 
-            if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
+            // raise event
+            Discarded?.Invoke(profile, isCurrent);
+
+            if (isCurrent)
             {
                 // update profile
                 UpdateOrCreateProfile(profile);
@@ -395,7 +397,7 @@ public static class ProfileManager
                 Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
 
                 if (!backProfile.Guid.Equals(profile.Guid))
-                    Discarded?.Invoke(backProfile);
+                    Discarded?.Invoke(backProfile, true);
             }
 
             ApplyProfile(profile);
@@ -622,7 +624,7 @@ public static class ProfileManager
                 isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
             // raise event
-            Discarded?.Invoke(profile);
+            Discarded?.Invoke(profile, isCurrent);
 
             // raise event(s)
             Deleted?.Invoke(profile);
@@ -658,7 +660,7 @@ public static class ProfileManager
                 isCurrent = subProfile.Guid == currentProfile.Guid;
 
             // raise event
-            Discarded?.Invoke(subProfile);
+            Discarded?.Invoke(subProfile, isCurrent);
 
             // raise event(s)
             Deleted?.Invoke(subProfile);
@@ -881,7 +883,7 @@ public static class ProfileManager
 
     public static event DiscardedEventHandler Discarded;
 
-    public delegate void DiscardedEventHandler(Profile profile);
+    public delegate void DiscardedEventHandler(Profile profile, bool swapped);
 
     public static event InitializedEventHandler Initialized;
 
