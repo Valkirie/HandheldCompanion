@@ -102,6 +102,10 @@ public static class HotkeysManager
 
         try
         {
+            string rawName = Path.GetFileNameWithoutExtension(fileName);
+            if (string.IsNullOrEmpty(rawName))
+                throw new Exception("Profile has an incorrect file name.");
+
             string json = File.ReadAllText(fileName);
             JObject? dictionary = JObject.Parse(json);
 

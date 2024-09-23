@@ -472,12 +472,12 @@ public static class ProfileManager
         Profile profile;
         try
         {
-            string outputraw = File.ReadAllText(fileName);
-            JObject jObject = JObject.Parse(outputraw);
-
             string rawName = Path.GetFileNameWithoutExtension(fileName);
             if (string.IsNullOrEmpty(rawName))
                 throw new Exception("Profile has an incorrect file name.");
+
+            string outputraw = File.ReadAllText(fileName);
+            JObject jObject = JObject.Parse(outputraw);
 
             // latest pre-versionning release
             Version version = new("0.15.0.4");
