@@ -63,15 +63,23 @@ public partial class App : Application
                 using (Process prevProcess = processes[0])
                 {
                     nint handle = prevProcess.MainWindowHandle;
+
+                    // Bring the previous process window to the foreground if it's minimized
                     if (ProcessUtils.IsIconic(handle))
                         ProcessUtils.ShowWindow(handle, (int)ProcessUtils.ShowWindowCommands.Restored);
 
-                    // force close this process if we were able to bring previous process to foreground
-                    // kill previous process otherwise (means it's stalled)
-                    if (ProcessUtils.SetForegroundWindow(handle))
+                    // Check if the previous process is responding to user input
+                    bool isPrevProcessResponding = prevProcess.Responding;
+                    if (isPrevProcessResponding && ProcessUtils.SetForegroundWindow(handle))
+                    {
+                        // If the previous process is responding and was successfully brought to the foreground, kill the current process
                         process.Kill();
+                    }
                     else
+                    {
+                        // If the previous process is not responding or cannot be brought to the foreground, assume it is stalled and kill it
                         prevProcess.Kill();
+                    }
 
                     return;
                 }
