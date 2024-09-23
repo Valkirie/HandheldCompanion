@@ -133,8 +133,17 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                var outputraw = File.ReadAllText(fileName);
-                var jObject = JObject.Parse(outputraw);
+                string outputraw = File.ReadAllText(fileName);
+                JObject jObject = JObject.Parse(outputraw);
+
+                string rawName = Path.GetFileNameWithoutExtension(fileName);
+                if (string.IsNullOrEmpty(rawName))
+                    throw new Exception("Profile has an incorrect file name.");
+
+                // latest pre-versionning release
+                Version version = new("0.15.0.4");
+                if (jObject.TryGetValue("Version", out var value))
+                    version = new Version(value.ToString());
 
                 profile = JsonConvert.DeserializeObject<PowerProfile>(outputraw, new JsonSerializerSettings
                 {

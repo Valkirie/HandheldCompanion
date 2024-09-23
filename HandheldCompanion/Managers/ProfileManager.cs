@@ -484,6 +484,7 @@ public static class ProfileManager
             if (jObject.TryGetValue("Version", out var value))
                 version = new Version(value.ToString());
 
+            // pre-parse manipulations
             switch (version.ToString())
             {
                 case "0.15.0.4":
@@ -506,6 +507,27 @@ public static class ProfileManager
 
             // parse profile
             profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+
+            // post-parse manipulations
+            switch (version.ToString())
+            {
+                default:
+                case "0.21.5.4":
+                    {
+                        // Access the PowerProfile value
+                        string oldPowerProfile = jObject["PowerProfile"]?.ToString();
+                        if (!string.IsNullOrEmpty(oldPowerProfile))
+                        {
+                            for (int idx = 0; idx < 2; idx++)
+                            {
+                                Guid powerProfile = profile.PowerProfiles[idx];
+                                if (powerProfile == Guid.Empty)
+                                    profile.PowerProfiles[idx] = new Guid(oldPowerProfile);
+                            }
+                        }
+                    }
+                    break;
+            }
         }
         catch (Exception ex)
         {
@@ -734,9 +756,11 @@ public static class ProfileManager
         for (int idx = 0; idx < 2; idx++)
         {
             Guid powerProfile = profile.PowerProfiles[idx];
+            if (powerProfile == Guid.Empty)
+                continue;
 
             if (!PowerProfileManager.Contains(powerProfile))
-                profile.PowerProfiles[idx] = OSPowerMode.BetterPerformance;
+                profile.PowerProfiles[idx] = Guid.Empty;
         }
     }
 
