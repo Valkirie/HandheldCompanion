@@ -289,6 +289,9 @@
     <None Update="3DModels\8BitDoLite2\RightStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="minisforum.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Models\AYANEO 2021\LeftStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

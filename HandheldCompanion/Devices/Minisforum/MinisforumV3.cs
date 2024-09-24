@@ -1,11 +1,29 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Devices;
 
 public class MinisforumV3 : IDevice
 {
+    [DllImport("minisforum.dll", CallingConvention = CallingConvention.Winapi)]
+    public static extern int getThermalMode();
+
+    [DllImport("minisforum.dll", CallingConvention = CallingConvention.Winapi)]
+    public static extern bool setThermalMode(int mode);
+
+    [DllImport("minisforum.dll", CallingConvention = CallingConvention.Winapi)]
+    public static extern int getFanSpeed();
+
+    public enum MinisForumMode
+    {
+        Quiet = 0x01,
+        Balanced = 0x02,
+        Performance = 0x03,
+    }
+
     public MinisforumV3()
     {
         // device specific settings
@@ -43,6 +61,7 @@ public class MinisforumV3 : IDevice
             Default = true,
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterBattery,
+            OEMPowerMode = (int)MinisForumMode.Quiet,
             CPUBoostLevel = CPUBoostLevel.Disabled,
             Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
             TDPOverrideEnabled = true,
@@ -54,6 +73,7 @@ public class MinisforumV3 : IDevice
             Default = true,
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterPerformance,
+            OEMPowerMode = (int)MinisForumMode.Balanced,
             Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 22.0d, 22.0d, 22.0d }
@@ -64,6 +84,7 @@ public class MinisforumV3 : IDevice
             Default = true,
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BestPerformance,
+            OEMPowerMode = (int)MinisForumMode.Performance,
             Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
