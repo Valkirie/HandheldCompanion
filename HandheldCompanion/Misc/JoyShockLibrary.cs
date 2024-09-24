@@ -144,6 +144,15 @@ public static class JSL
     [DllImport("JoyShockLibrary")]
     public static extern void JslSetRumble(int deviceId, int smallRumble, int bigRumble);
     [DllImport("JoyShockLibrary")]
+    public static extern void JslSetHDRumble(int deviceId, float lowFreq, float lowAmpli, float highFreq, float highAmpli);
+    [DllImport("JoyShockLibrary")]
+    public static extern void JslSetHDRumbleLR(int deviceId, float lowFreq_L, float lowAmpli_L, float highFreq_L, float highAmpli_L,
+    float lowFreq_R, float lowAmpli_R, float highFreq_R, float highAmpli_R);
+    [DllImport("JoyShockLibrary")]
+    public static extern void JslEnableHDRumble(int deviceId);
+    [DllImport("JoyShockLibrary")]
+    public static extern void JslDisableHDRumble(int deviceId);
+    [DllImport("JoyShockLibrary")]
     public static extern void JslSetPlayerNumber(int deviceId, int number);
 
     [DllImport("JoyShockLibrary")]

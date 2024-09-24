@@ -52,7 +52,14 @@ public class ProController : JSController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
-        // HD rumble isn't yet supported
+        byte LargeMotorF = (byte)(LargeMotor * VibrationStrength);
+        byte SmallMotorF = (byte)(SmallMotor * VibrationStrength);
+
+        // Convert Xbox rumble values to Switch HD Rumble values
+        float leftAmplitude = RumbleConverter.ConvertAmplitude(LargeMotorF);
+        float rightAmplitude = RumbleConverter.ConvertAmplitude(SmallMotorF);
+
+        JslSetHDRumble(UserIndex, RumbleConverter.MinFrequency, leftAmplitude, RumbleConverter.MaxFrequency, rightAmplitude);
     }
 
     public override string GetGlyph(ButtonFlags button)
