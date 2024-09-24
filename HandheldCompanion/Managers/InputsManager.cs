@@ -430,23 +430,21 @@ public static class InputsManager
                     }
                 }
             }
-            else
-            {
-                // manage AltGr
-                if (args.IsKeyUp)
-                {
-                    switch (args.KeyValue)
-                    {
-                        case 165:
-                            KeyboardSimulator.KeyUp((VirtualKeyCode)162);
-                            break;
-                    }
-                }
-            }
         }
         else if (BufferKeys[true].Count != 0)
         {
             BufferKeys[false].Add(args);
+        }
+
+        // manage AltGr
+        if (args.IsKeyUp)
+        {
+            switch (args.KeyValue)
+            {
+                case 165:
+                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
+                    break;
+            }
         }
 
     Done:
