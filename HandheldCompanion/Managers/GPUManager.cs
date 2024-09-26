@@ -109,11 +109,11 @@ namespace HandheldCompanion.Managers
 
             GPU newGPU = null;
 
-            if (adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD"))
+            if ((adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD")) && IsLoaded_ADLX)
             {
                 newGPU = new AMDGPU(adapterInformation);
             }
-            else if (adapterInformation.Details.Description.Contains("Intel"))
+            else if (adapterInformation.Details.Description.Contains("Intel") && IsLoaded_IGCL)
             {
                 newGPU = new IntelGPU(adapterInformation);
             }
@@ -220,13 +220,26 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            lock (GPU.functionLock)
+            if (!IsLoaded_IGCL)
             {
-                if (!IsLoaded_IGCL)
-                    IsLoaded_IGCL = IGCLBackend.Initialize();
+                // try to initialized IGCL
+                IsLoaded_IGCL = IGCLBackend.Initialize();
 
-                if (!IsLoaded_ADLX)
-                    IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
+                if (IsLoaded_IGCL)
+                    LogManager.LogInformation("IGCL was successfully initialized", "GPUManager");
+                else
+                    LogManager.LogError("Failed to initialize IGCL", "GPUManager");
+            }
+
+            if (!IsLoaded_ADLX)
+            {
+                // try to initialized ADLX
+                IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
+
+                if (IsLoaded_ADLX)
+                    LogManager.LogInformation("ADLX was successfully initialized", "GPUManager");
+                else
+                    LogManager.LogError("Failed to initialize ADLX", "GPUManager");
             }
 
             // todo: check if usefull on resume
