@@ -443,7 +443,7 @@ namespace HandheldCompanion.Controllers
         {
             // If the current task is not null and not completed
             if (rumbleTask != null && !rumbleTask.IsCompleted)
-                SetVibration(0, 0);
+                return;
 
             // Create a new task that executes the following code
             rumbleTask = Task.Run(async () =>
