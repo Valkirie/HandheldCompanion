@@ -69,7 +69,9 @@
 
 #ifdef UseDotNet80
 	#define MyConfigurationExt "net8.0"
-#endif 
+#endif
+
+#define WindowsVersion "10.0.19041"
 
 AllowNoIcons=yes
 AppName={#MyAppSetupName}
@@ -89,7 +91,7 @@ DefaultDirName={autopf}\{#MyAppSetupName}
 OutputBaseFilename={#MyBuildId}-{#MyAppVersion}  
 SetupIconFile="{#SourcePath}\HandheldCompanion\Resources\icon.ico"
 SetupLogging=yes 
-MinVersion=6.0
+MinVersion={#WindowsVersion}
 OutputDir={#SourcePath}\install 
 PrivilegesRequired=admin
 SolidCompression=yes 
@@ -107,9 +109,9 @@ Name: en; MessagesFile: "compiler:Default.isl"
 Source: "{#SourcePath}\redist\netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif                   
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "{#SourcePath}\redist\SegoeIcons.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe Fluent Icons (TrueType)"; Flags: onlyifdoesntexist uninsneveruninstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
