@@ -78,8 +78,9 @@ public static class DeviceManager
 
     public static void Start()
     {
-        // fail-safe
-        PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
+        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        foreach (string InfPath in ControllerManager.DriversStore.Values)
+            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
 
         UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
         UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
@@ -122,8 +123,9 @@ public static class DeviceManager
         HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
 
-        // fail-safe
-        PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
+        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        foreach (string InfPath in ControllerManager.DriversStore.Values)
+            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
 
         LogManager.LogInformation("{0} has stopped", "DeviceManager");
     }

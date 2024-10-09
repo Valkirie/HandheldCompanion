@@ -90,7 +90,7 @@ namespace HandheldCompanion.Controllers
         private Thread workingThread;
         private bool workingThreadRunning;
 
-        protected object hidlock = new();
+        protected object hidLock = new();
 
         public virtual bool IsReady => true;
         public virtual bool IsWireless => false;

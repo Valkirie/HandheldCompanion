@@ -306,10 +306,8 @@ public static class ProcessManager
             ForegroundChanged?.Invoke(null, foregroundProcess);
         }
 
-        bool success = Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
-
         // raise event
-        if (success)
+        if (Processes.TryRemove(processId, out _))
         {
             ProcessStopped?.Invoke(processEx);
 

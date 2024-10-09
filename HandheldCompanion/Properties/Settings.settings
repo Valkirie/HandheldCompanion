@@ -179,9 +179,6 @@
     <Setting Name="ControllerManagement" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SuspendedControllers" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="HidModeDoNotShowAgain" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -229,9 +226,6 @@
     </Setting>
     <Setting Name="LEDPresetIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="SuspendedDevices" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="LegionControllerPassthrough" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

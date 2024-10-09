@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -63,7 +62,7 @@ public class MinisforumV3 : IDevice
             OSPowerMode = OSPowerMode.BetterBattery,
             OEMPowerMode = (int)MinisForumMode.Quiet,
             CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
+            Guid = BetterBatteryGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
         });
@@ -74,7 +73,7 @@ public class MinisforumV3 : IDevice
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterPerformance,
             OEMPowerMode = (int)MinisForumMode.Balanced,
-            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
+            Guid = BetterPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 22.0d, 22.0d, 22.0d }
         });
@@ -85,7 +84,7 @@ public class MinisforumV3 : IDevice
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BestPerformance,
             OEMPowerMode = (int)MinisForumMode.Performance,
-            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
+            Guid = BestPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
         });

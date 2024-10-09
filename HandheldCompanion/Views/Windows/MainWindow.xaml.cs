@@ -24,7 +24,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
-using System.Windows.Threading;
 using Windows.UI.ViewManagement;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
@@ -99,8 +98,6 @@ public partial class MainWindow : GamepadWindow
 #endif
         }
 
-        SplashScreen.LoadingSequence.Text = "Preparing UI...";
-
         InitializeComponent();
         this.Tag = "MainWindow";
 
@@ -160,7 +157,6 @@ public partial class MainWindow : GamepadWindow
         Title += $" ({fileVersionInfo.FileVersion})";
 
         // initialize device
-        SplashScreen.LoadingSequence.Text = "Initializing device...";
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
 
@@ -184,18 +180,10 @@ public partial class MainWindow : GamepadWindow
         UISounds uiSounds = new UISounds();
 
         // load window(s)
-        SplashScreen.LoadingSequence.Text = "Drawing windows...";
-        Dispatcher.Invoke(new Action(() =>
-        {
-            loadWindows();
-        }), DispatcherPriority.Background); // Lower priority
+        loadWindows();
 
         // load page(s)
-        SplashScreen.LoadingSequence.Text = "Drawing pages...";
-        Dispatcher.Invoke(new Action(() =>
-        {
-            loadPages();
-        }), DispatcherPriority.Background); // Lower priority
+        loadPages();
 
         // manage events
         SystemManager.SystemStatusChanged += OnSystemStatusChanged;
@@ -207,7 +195,6 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         // start static managers in sequence
-        SplashScreen.LoadingSequence.Text = "Initializing managers...";
         GPUManager.Start();
         PowerProfileManager.Start();
         ProfileManager.Start();
@@ -573,6 +560,9 @@ public partial class MainWindow : GamepadWindow
 
                     // close current device
                     CurrentDevice.Close();
+
+                    // free memory
+                    GC.Collect();
 
                     // Allow system to sleep
                     SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS);

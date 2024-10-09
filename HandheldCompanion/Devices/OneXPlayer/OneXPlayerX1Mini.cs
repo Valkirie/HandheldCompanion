@@ -9,5 +9,7 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         cTDP = new double[] { 15, 30 };
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
+
+        EnableSerialPort = false;
     }
 }

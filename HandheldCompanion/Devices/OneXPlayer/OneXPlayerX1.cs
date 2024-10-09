@@ -129,23 +129,27 @@ public class OneXPlayerX1 : IDevice
 
         if (EnableSerialPort)
         {
-            var devices = GetSerialDevices();
+            List<USBDeviceInfo> devices = GetSerialDevices();
 
             USBDeviceInfo deviceInfo = devices.FirstOrDefault(a => a.Name.Contains(SerialPortDeviceName));
-
-            var SerialPortName = Regex.Match(deviceInfo.Name, "COM\\d+").Value;
-
-            // Add the serial port name to be excluded for other instances
-            SerialUSBIMU.SerialPortNamesInUse.Add(SerialPortName);
-
-            // Initialize and open the serial port if it has not been initialized yet
-            if (_serialPort is null)
+            if (deviceInfo is null)
             {
-                _serialPort = new SerialPort(SerialPortName, SerialPortBaudRate, SerialPortParity, SerialPortDataBits,
-                    SerialPortStopBits);
-                _serialPort.Open();
+                LogManager.LogInformation("Failed to retrieve serial device with name: {0}", SerialPortDeviceName);
+            }
+            else
+            {
+                // Add the serial port name to be excluded for other instances
+                string SerialPortName = Regex.Match(deviceInfo.Name, "COM\\d+").Value;
+                SerialUSBIMU.SerialPortNamesInUse.Add(SerialPortName);
 
-                LogManager.LogInformation("Enabled Serial Port Control: {0}", _serialPort.PortName);
+                // Initialize and open the serial port if it has not been initialized yet
+                if (_serialPort is null)
+                {
+                    _serialPort = new SerialPort(SerialPortName, SerialPortBaudRate, SerialPortParity, SerialPortDataBits, SerialPortStopBits);
+                    _serialPort.Open();
+
+                    LogManager.LogInformation("Enabled Serial Port Control: {0}", _serialPort.PortName);
+                }
             }
         }
 

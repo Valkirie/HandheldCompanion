@@ -377,6 +377,7 @@ public class ProcessEx : IDisposable
         Process?.Dispose();
         MainThread?.Dispose();
         ChildrenProcessIds.Dispose();
+        ProcessWindows.Clear();
 
         GC.SuppressFinalize(this); //now, the finalizer won't be called
     }

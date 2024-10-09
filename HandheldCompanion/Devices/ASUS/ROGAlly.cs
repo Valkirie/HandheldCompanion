@@ -129,7 +129,7 @@ public class ROGAlly : IDevice
             OEMPowerMode = (int)AsusMode.Silent,
             OSPowerMode = OSPowerMode.BetterBattery,
             CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
+            Guid = BetterBatteryGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 10.0d, 10.0d, 10.0d }
         });
@@ -140,7 +140,7 @@ public class ROGAlly : IDevice
             DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Performance,
             OSPowerMode = OSPowerMode.BetterPerformance,
-            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
+            Guid = BetterPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
         });
@@ -151,7 +151,7 @@ public class ROGAlly : IDevice
             DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Turbo,
             OSPowerMode = OSPowerMode.BestPerformance,
-            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
+            Guid = BestPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d }
         });
@@ -366,6 +366,8 @@ public class ROGAlly : IDevice
                 hidDevice.CloseDevice();
             }
         }
+
+        hidDevices.Clear();
 
         base.Close();
     }
@@ -709,7 +711,6 @@ public class ROGAlly : IDevice
             if (device.IsConnected)
                 device.WriteFeatureData(data);
         }
-
     }
 
     public void SetBatteryChargeLimit(int chargeLimit)

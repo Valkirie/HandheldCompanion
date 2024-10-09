@@ -57,21 +57,17 @@ public class DeviceUtils
 
     public static List<USBDeviceInfo> GetSerialDevices()
     {
-        var serials = new List<USBDeviceInfo>();
+        List<USBDeviceInfo> serials = new List<USBDeviceInfo>();
         try
         {
-            using (var searcher =
-                   new ManagementObjectSearcher(
-                       "SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%COM%' AND PNPClass = 'Ports'"))
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%COM%' AND PNPClass = 'Ports'"))
             {
-                var devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
-                foreach (var device in devices)
+                List<ManagementBaseObject> devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
+                foreach (ManagementBaseObject device in devices)
                     serials.Add(new USBDeviceInfo(device));
             }
         }
-        catch
-        {
-        }
+        catch { }
 
         return serials;
     }

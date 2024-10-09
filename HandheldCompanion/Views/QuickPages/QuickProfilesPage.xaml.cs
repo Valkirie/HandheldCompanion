@@ -935,7 +935,7 @@ public partial class QuickProfilesPage : Page
         };
 
         PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
-        
+
         // localize me
         new Dialog(OverlayQuickTools.GetCurrent())
         {

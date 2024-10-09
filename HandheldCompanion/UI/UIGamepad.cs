@@ -96,7 +96,7 @@ namespace HandheldCompanion.Managers
             tooltipTimer = new Timer(2000) { AutoReset = false };
             tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
-            ControllerManager.InputsUpdated += InputsUpdated;
+            ControllerManager.InputsUpdated2 += InputsUpdated;
         }
 
         private void _currentWindow_ContentDialogClosed(ContentDialog contentDialog)
@@ -618,7 +618,7 @@ namespace HandheldCompanion.Managers
                         // get the associated ComboBox
                         comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
 
-                        if (comboBox.IsDropDownOpen)
+                        if (comboBox.IsDropDownOpen && comboBoxItem.IsEnabled)
                         {
                             int idx = comboBox.Items.IndexOf(comboBoxItem);
                             if (idx == -1)
@@ -880,22 +880,39 @@ namespace HandheldCompanion.Managers
                                         if (idx == -1)
                                             idx = comboBox.Items.IndexOf(comboBoxItem.Content);
 
-                                        switch (direction)
+                                        while (true) // Loop to skip disabled items
                                         {
-                                            case WPFUtils.Direction.Up:
-                                                idx--;
-                                                break;
+                                            switch (direction)
+                                            {
+                                                case WPFUtils.Direction.Up:
+                                                    idx--;
+                                                    break;
 
-                                            case WPFUtils.Direction.Down:
-                                                idx++;
+                                                case WPFUtils.Direction.Down:
+                                                    idx++;
+                                                    break;
+                                            }
+
+                                            // Ensure index is within bounds
+                                            if (idx < 0 || idx >= comboBox.Items.Count)
+                                            {
+                                                // We've reached the top or bottom, so stop the loop
                                                 break;
+                                            }
+
+                                            // Get the ComboBoxItem at the new index
+                                            focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
+
+                                            // Check if the focused element is enabled
+                                            if (focusedElement != null && focusedElement.IsEnabled)
+                                            {
+                                                // If the element is enabled, focus it and break out of the loop
+                                                Focus(focusedElement, comboBox, true);
+                                                break;
+                                            }
+
+                                            // If the element is not enabled, continue to the next item in the loop
                                         }
-
-                                        // Get the ComboBoxItem
-                                        idx = Math.Max(0, Math.Min(comboBox.Items.Count - 1, idx));
-
-                                        focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
-                                        Focus(focusedElement, comboBox, true);
                                     }
                                     return;
                                 }

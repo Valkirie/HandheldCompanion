@@ -4,9 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Width="450"
     Height="450"
     ui:ThemeManager.IsThemeAware="True"
@@ -22,19 +23,13 @@
             Margin="0,0,0,32"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
-            <Grid>
-                <TextBlock
-                    FontSize="220"
-                    FontWeight="Black"
-                    Foreground="{DynamicResource AccentFillColorDefaultBrush}"
-                    Text="HC"
-                    TextAlignment="Center" />
-                <TextBlock
-                    x:Name="LoadingSequence"
-                    Margin="0,0,0,10"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom" />
-            </Grid>
+            <TextBlock
+                FontSize="220"
+                FontWeight="Black"
+                Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                Text="HC"
+                TextAlignment="Center" />
+
             <Grid Margin="0,25,25,0" HorizontalAlignment="Right">
                 <ui:ProgressRing />
             </Grid>

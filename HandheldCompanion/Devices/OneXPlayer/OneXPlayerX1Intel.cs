@@ -20,7 +20,7 @@ public class OneXPlayerX1Intel : OneXPlayerX1
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterBattery,
             CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
+            Guid = BetterBatteryGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
         });
@@ -32,7 +32,7 @@ public class OneXPlayerX1Intel : OneXPlayerX1
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BetterPerformance,
             CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
+            Guid = BetterPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
         });
@@ -44,7 +44,7 @@ public class OneXPlayerX1Intel : OneXPlayerX1
             DeviceDefault = true,
             OSPowerMode = OSPowerMode.BestPerformance,
             CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
+            Guid = BestPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 35.0d, 35.0d, 64.0d },
             EPPOverrideEnabled = true,

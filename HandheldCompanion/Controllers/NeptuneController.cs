@@ -289,7 +289,7 @@ public class NeptuneController : SteamController
 
     public override void Hide(bool powerCycle = true)
     {
-        lock (hidlock)
+        lock (hidLock)
         {
             Close();
             base.Hide(powerCycle);
@@ -305,7 +305,7 @@ public class NeptuneController : SteamController
         if (IsExclusiveMode)
             return;
 
-        lock (hidlock)
+        lock (hidLock)
         {
             Close();
             base.Unhide(powerCycle);

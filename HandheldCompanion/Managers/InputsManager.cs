@@ -442,7 +442,13 @@ public static class InputsManager
             switch (args.KeyValue)
             {
                 case 165:
+                    // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RMenu);
+                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LMenu);
                     KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
+                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RControl);
+                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.Alt);
+                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LAlt);
+                    // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RAlt);
                     break;
             }
         }

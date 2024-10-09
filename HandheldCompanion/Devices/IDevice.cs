@@ -12,7 +12,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Sentry;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Media;
@@ -65,6 +64,10 @@ public abstract class IDevice
     public delegate void KeyPressedEventHandler(ButtonFlags button);
     public delegate void KeyReleasedEventHandler(ButtonFlags button);
     public delegate void PowerStatusChangedEventHandler(IDevice device);
+
+    public static readonly Guid BetterBatteryGuid = new Guid("961cc777-2547-4f9d-8174-7d86181b8a7a");
+    public static readonly Guid BetterPerformanceGuid = new Guid("3af9B8d9-7c97-431d-ad78-34a8bfea439f");
+    public static readonly Guid BestPerformanceGuid = new Guid("ded574b5-45a0-4f42-8737-46345c09c238");
 
     protected static OpenLibSys openLibSys;
     protected object updateLock = new();
@@ -479,6 +482,9 @@ public abstract class IDevice
                         case "RC71L":
                             device = new ROGAlly();
                             break;
+                        case "RC72LA":
+                            device = new ROGAllyX();
+                            break;
                     }
                 }
                 break;
@@ -860,48 +866,6 @@ public abstract class IDevice
             IEnumerable<KeyCode> chords = pair.chords.SelectMany(chord => chord.Value);
             if (chords.Any())
                 return true;
-        }
-
-        return false;
-    }
-
-    protected void ResumeDevices()
-    {
-        List<string> successes = [];
-
-        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
-
-        if (deviceInstanceIds is null)
-            deviceInstanceIds = [];
-
-        foreach (string InstanceId in deviceInstanceIds)
-        {
-            if (PnPUtil.EnableDevice(InstanceId))
-                successes.Add(InstanceId);
-        }
-
-        foreach (string InstanceId in successes)
-            deviceInstanceIds.Remove(InstanceId);
-
-        SettingsManager.SetProperty("SuspendedDevices", deviceInstanceIds);
-    }
-
-    protected bool SuspendDevice(string InterfaceId)
-    {
-        PnPDevice pnPDevice = PnPDevice.GetDeviceByInterfaceId(InterfaceId);
-        if (pnPDevice is not null)
-        {
-            StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
-
-            if (deviceInstanceIds is null)
-                deviceInstanceIds = [];
-
-            if (!deviceInstanceIds.Contains(pnPDevice.InstanceId))
-                deviceInstanceIds.Add(pnPDevice.InstanceId);
-
-            SettingsManager.SetProperty("SuspendedDevices", deviceInstanceIds);
-
-            return PnPUtil.DisableDevice(pnPDevice.InstanceId);
         }
 
         return false;

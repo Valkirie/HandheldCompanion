@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HandheldCompanion.Controllers
+﻿namespace HandheldCompanion.Controllers
 {
     // Function to map the Xbox rumble value to Nintendo Switch HD Rumble
     public class RumbleConverter
