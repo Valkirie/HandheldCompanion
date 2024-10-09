@@ -51,7 +51,7 @@ namespace HandheldCompanion.Actions
         // settings axis
         public int Sensivity = 33;
         public float Acceleration = 1.0f;
-        public int Deadzone = 10;           // stick only
+        public int Deadzone = 15;           // stick only
         public bool Filtering = false;      // pad only
         public float FilterCutoff = 0.05f;  // pad only
         public bool AxisRotated = false;
