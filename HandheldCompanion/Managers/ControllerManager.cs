@@ -1204,8 +1204,14 @@ public static class ControllerManager
         controllerState = LayoutManager.MapController(controllerState);
         InputsUpdated2?.Invoke(controllerState);
 
-        if (!ControllerMuted)
-            VirtualManager.UpdateInputs(controllerState, gamepadMotion);
+        // controller is muted
+        if (ControllerMuted)
+        {
+            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
+            controllerState = mutedState;
+        }
+        
+        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
     internal static IController GetEmulatedController()
