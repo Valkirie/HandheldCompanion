@@ -95,10 +95,8 @@ public static class ControllerManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        /*
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
-        */
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
@@ -173,7 +171,6 @@ public static class ControllerManager
         Quicktools
     }
 
-    /*
     private static void GamepadFocusManager_LostFocus(string Name)
     {
         switch (Name)
@@ -207,7 +204,6 @@ public static class ControllerManager
         // check applicable scenarios
         CheckControllerScenario();
     }
-    */
 
     private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
@@ -281,11 +277,10 @@ public static class ControllerManager
             }
         }
 
-        /*
+        
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
             ControllerMuted = true;
-        */
     }
 
     private static void CheckControllerScenario()
@@ -1205,22 +1200,12 @@ public static class ControllerManager
             MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, deltaTimeSeconds);
         }
 
-        // controller is muted
-        if (ControllerMuted)
-        {
-            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
+        // compute layout
+        controllerState = LayoutManager.MapController(controllerState);
+        InputsUpdated2?.Invoke(controllerState);
 
-            // swap states
-            controllerState = mutedState;
-        }
-        else
-        {
-            // compute layout
-            controllerState = LayoutManager.MapController(controllerState);
-            InputsUpdated2?.Invoke(controllerState);
-        }
-
-        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
+        if (!ControllerMuted)
+            VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
     internal static IController GetEmulatedController()
