@@ -1179,10 +1179,13 @@ public static class ControllerManager
     }
 
     private static ControllerState mutedState = new ControllerState();
-    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float deltaTimeSeconds)
+    private static void UpdateInputs(ControllerState controllerState, List<GamepadMotion> gamepadMotions, float deltaTimeSeconds, int gamepadIndex)
     {
         // raise event
         InputsUpdated?.Invoke(controllerState);
+
+        // get main motion
+        GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
 
         switch (sensorSelection)
         {
@@ -1210,7 +1213,6 @@ public static class ControllerManager
             mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
             controllerState = mutedState;
         }
-        
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 

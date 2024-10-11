@@ -82,7 +82,6 @@ namespace HandheldCompanion.Controllers
         }
 
         private bool IsPassthrough = false;
-        private int GyroIndex = LegionGo.RightJoyconIndex;
 
         private uint LongPressTime = 1000;                      // The minimum time in milliseconds for a long press
         private const int MaxDistance = 40;                     // Maximum distance tolerance between touch and untouch in pixels
@@ -95,8 +94,6 @@ namespace HandheldCompanion.Controllers
         private bool touchpadLongTapped = false;                // Whether the touchpad has been long tapped
         private long lastTap = 0;
         private Vector2 lastTapPosition = Vector2.Zero;         // The current position of the touchpad
-
-        private GamepadMotion gamepadMotionR;
 
         public LegionController() : base()
         { }
@@ -165,8 +162,8 @@ namespace HandheldCompanion.Controllers
         {
             base.AttachDetails(details);
 
-            // manage gamepad motion
-            gamepadMotionR = new($"{details.deviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            // manage gamepad motion from right controller
+            gamepadMotions[1] = new($"{details.deviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             hidDevice = GetHidDevice();
             if (hidDevice is not null)
@@ -248,6 +245,9 @@ namespace HandheldCompanion.Controllers
             base.Unplug();
         }
 
+        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
+        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
+
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
@@ -290,68 +290,48 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.RightStickY] -= (short)InputUtils.MapRange(Data[32], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
             */
 
-            float aX, aZ, aY = 0;
-            float gX, gZ, gY = 0;
-
-            switch (GyroIndex)
+            for (int idx = 0; idx <= 1; ++idx)
             {
-                default:
-                case LegionGo.LeftJoyconIndex:
-                    {
-                        aX = (short)(Data[34] << 8 | Data[35]) * -(4.0f / short.MaxValue);
-                        aZ = (short)(Data[36] << 8 | Data[37]) * -(4.0f / short.MaxValue);
-                        aY = (short)(Data[38] << 8 | Data[39]) * -(4.0f / short.MaxValue);
+                switch (idx)
+                {
+                    default:
+                    case 0: // LeftJoycon
+                        {
+                            aX = (short)(Data[34] << 8 | Data[35]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(Data[36] << 8 | Data[37]) * -(4.0f / short.MaxValue);
+                            aY = (short)(Data[38] << 8 | Data[39]) * -(4.0f / short.MaxValue);
 
-                        gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
-                        gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
-                        gY = (short)(Data[44] << 8 | Data[45]) * -(2000.0f / short.MaxValue);
-                    }
-                    break;
+                            gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
+                            gY = (short)(Data[44] << 8 | Data[45]) * -(2000.0f / short.MaxValue);
+                        }
+                        break;
 
-                case LegionGo.RightJoyconIndex:
-                    {
-                        aX = (short)(Data[49] << 8 | Data[50]) * -(4.0f / short.MaxValue);
-                        aZ = (short)(Data[47] << 8 | Data[48]) * (4.0f / short.MaxValue);
-                        aY = (short)(Data[51] << 8 | Data[52]) * -(4.0f / short.MaxValue);
+                    case 1: // RightJoycon
+                        {
+                            aX = (short)(Data[49] << 8 | Data[50]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(Data[47] << 8 | Data[48]) * (4.0f / short.MaxValue);
+                            aY = (short)(Data[51] << 8 | Data[52]) * -(4.0f / short.MaxValue);
 
-                        gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
-                        gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
-                        gY = (short)(Data[57] << 8 | Data[58]) * -(2000.0f / short.MaxValue);
-                    }
-                    break;
+                            gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
+                            gY = (short)(Data[57] << 8 | Data[58]) * -(2000.0f / short.MaxValue);
+                        }
+                        break;
+                }
+
+                // compute motion from controller
+                gamepadMotions[idx].ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+
+                // store motion from user selected gyro (left, right)
+                if (idx == gamepadIndex)
+                {
+                    Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+                    Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+                }
             }
 
-            // store motion
-            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
-            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
-
-            // process motion
-            switch (GyroIndex)
-            {
-                default:
-                case LegionGo.LeftJoyconIndex:
-                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
-                    base.UpdateInputs(ticks, delta);
-                    break;
-                case LegionGo.RightJoyconIndex:
-                    gamepadMotionR.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
-                    base.UpdateInputs(ticks, delta, gamepadMotionR);
-                    break;
-            }
-        }
-
-        protected override async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
-        {
-            switch (GyroIndex)
-            {
-                default:
-                case LegionGo.LeftJoyconIndex:
-                    SensorsManager.Calibrate(gamepadMotion);
-                    break;
-                case LegionGo.RightJoyconIndex:
-                    SensorsManager.Calibrate(gamepadMotionR);
-                    break;
-            }
+            base.UpdateInputs(ticks, delta);
         }
 
         private void dataThreadLoop(object? obj)
@@ -501,7 +481,7 @@ namespace HandheldCompanion.Controllers
 
         public void SetGyroIndex(int idx)
         {
-            GyroIndex = idx + LegionGo.LeftJoyconIndex;
+            gamepadIndex = idx;
         }
     }
 }

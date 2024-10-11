@@ -1,5 +1,7 @@
 using Force.Crc32;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.DSU;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -48,56 +50,37 @@ public enum DsBattery : byte
     Charged = 0xEF
 }
 
-public struct DualShockPadMeta
+public static class DSUServer
 {
-    public byte PadId;
-    public DsState PadState;
-    public DsConnection ConnectionType;
-    public DsModel Model;
-    public PhysicalAddress PadMacAddress;
-    public DsBattery BatteryStatus;
-    public bool IsActive;
-}
-
-public class DSUServer
-{
-    public delegate void GetPadDetail(int padIdx, ref DualShockPadMeta meta);
-
-    public delegate void StartedEventHandler(DSUServer server);
-
-    public delegate void StoppedEventHandler(DSUServer server);
-
-    public const int NUMBER_SLOTS = 4;
+    private const byte NUMBER_SLOTS = 4;
     private const int ARG_BUFFER_LEN = 80;
-
     private const ushort MaxProtocolVersion = 1001;
-    private SemaphoreSlim _pool;
-    //private SocketAsyncEventArgs[] argsList;
-    private byte[][] dataBuffers;
 
-    private readonly Dictionary<IPEndPoint, ClientRequestTimes> clients = [];
+    private static SemaphoreSlim _pool;
+    private static byte[][] dataBuffers;
 
-    private ControllerState Inputs = new();
+    private static readonly Dictionary<IPEndPoint, ClientRequestTimes> clients = [];
+    private static readonly DualShockPadMeta[] padMetas = new DualShockPadMeta[NUMBER_SLOTS];
+    private static readonly ReaderWriterLockSlim poolLock = new();
+    private static readonly byte[] recvBuffer = new byte[1024];
 
-    private int listInd;
-    private readonly PhysicalAddress PadMacAddress;
+    private const int serverPort = 26760;
+    private static uint serverId;
+    private static int udpPacketCount;
+    private static Socket udpSock;
 
-    public DualShockPadMeta padMeta;
-    private readonly ReaderWriterLockSlim poolLock = new();
+    public static bool IsInitialized;
 
-    public int port = 26760;
+    #region events
+    public delegate void StartedEventHandler();
+    public static event StartedEventHandler Started;
 
-    private readonly GetPadDetail portInfoGet;
-    private readonly byte[] recvBuffer = new byte[1024];
-    public bool running;
-    private uint serverId;
-    private int udpPacketCount;
-    private Socket udpSock;
+    public delegate void StoppedEventHandler();
+    public static event StoppedEventHandler Stopped;
+    #endregion
 
-    public DSUServer()
+    static DSUServer()
     {
-        PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
-        portInfoGet = GetPadDetailForIdx;
         _pool = new SemaphoreSlim(ARG_BUFFER_LEN);
         dataBuffers = new byte[ARG_BUFFER_LEN][];
         for (int num = 0; num < ARG_BUFFER_LEN; num++)
@@ -107,45 +90,41 @@ public class DSUServer
             dataBuffers[num] = new byte[100];
         }
 
-        padMeta = new DualShockPadMeta()
+        for (byte padIdx = 0; padIdx < NUMBER_SLOTS; padIdx++)
         {
-            BatteryStatus = DsBattery.Full,
-            ConnectionType = DsConnection.Usb,
-            IsActive = true,
-            PadId = 0,
-            PadMacAddress = PadMacAddress,
-            Model = DsModel.DS4,
-            PadState = DsState.Connected
-        };
+            byte address = (byte)(0x10 + padIdx);
+
+            padMetas[padIdx] = new DualShockPadMeta()
+            {
+                BatteryStatus = DsBattery.Full,
+                ConnectionType = DsConnection.Usb,
+                IsActive = true,
+                PadId = padIdx,
+                PadMacAddress = new PhysicalAddress([address, address, address, address, address, address]),
+                Model = DsModel.DS4,
+                PadState = DsState.Connected
+            };
+        }
     }
 
-    private void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
+    private static void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
     {
-        meta = padMeta;
+        meta = padMetas[padIdx];
     }
 
-    public event StartedEventHandler Started;
-
-    public event StoppedEventHandler Stopped;
-
-    public override string ToString()
-    {
-        return GetType().Name;
-    }
-
-    private void SocketEvent_AsyncCompleted(object sender, SocketAsyncEventArgs e)
+    private static void SocketEvent_AsyncCompleted(object sender, SocketAsyncEventArgs e)
     {
         _pool.Release();
         e.Dispose();
     }
 
-    private void CompletedSynchronousSocketEvent(SocketAsyncEventArgs args)
+    private static void CompletedSynchronousSocketEvent(SocketAsyncEventArgs args)
     {
         _pool.Release();
         args.Dispose();
     }
 
-    private int BeginPacket(byte[] packetBuf, ushort reqProtocolVersion = MaxProtocolVersion)
+    private static int BeginPacket(byte[] packetBuf, ushort reqProtocolVersion = MaxProtocolVersion)
     {
         var currIdx = 0;
         packetBuf[currIdx++] = (byte)'D';
@@ -168,7 +147,7 @@ public class DSUServer
         return currIdx;
     }
 
-    private void FinishPacket(byte[] packetBuf)
+    private static void FinishPacket(byte[] packetBuf)
     {
         Array.Clear(packetBuf, 8, 4);
 
@@ -176,7 +155,8 @@ public class DSUServer
         Array.Copy(BitConverter.GetBytes(crcCalc), 0, packetBuf, 8, 4);
     }
 
-    private void SendPacket(IPEndPoint clientEP, byte[] usefulData, ushort reqProtocolVersion = MaxProtocolVersion)
+    private static int listInd;
+    private static void SendPacket(IPEndPoint clientEP, byte[] usefulData, ushort reqProtocolVersion = MaxProtocolVersion)
     {
         byte[] packetData = new byte[usefulData.Length + 16];
         int currIdx = BeginPacket(packetData, reqProtocolVersion);
@@ -212,7 +192,7 @@ public class DSUServer
         }
     }
 
-    private void ProcessIncoming(byte[] localMsg, IPEndPoint clientEP)
+    private static void ProcessIncoming(byte[] localMsg, IPEndPoint clientEP)
     {
         try
         {
@@ -293,7 +273,7 @@ public class DSUServer
                 {
                     var currRequest = localMsg[requestsIdx + i];
                     var padData = new DualShockPadMeta();
-                    portInfoGet(currRequest, ref padData);
+                    GetPadDetailForIdx(currRequest, ref padData);
 
                     var outIdx = 0;
                     Array.Copy(BitConverter.GetBytes((uint)MessageType.DSUS_PortInfo), 0, outputData, outIdx, 4);
@@ -359,7 +339,7 @@ public class DSUServer
         }
     }
 
-    private void ReceiveCallback(IAsyncResult iar)
+    private static void ReceiveCallback(IAsyncResult iar)
     {
         byte[] localMsg = null;
         EndPoint clientEP = new IPEndPoint(IPAddress.Any, 0);
@@ -375,7 +355,7 @@ public class DSUServer
         }
         catch (SocketException)
         {
-            if (running)
+            if (IsInitialized)
             {
                 ResetUDPConn();
             }
@@ -390,11 +370,11 @@ public class DSUServer
             ProcessIncoming(localMsg, (IPEndPoint)clientEP);
     }
 
-    private void StartReceive()
+    private static void StartReceive()
     {
         try
         {
-            if (running)
+            if (IsInitialized)
             {
                 //Start listening for a new message.
                 EndPoint newClientEP = new IPEndPoint(IPAddress.Any, 0);
@@ -403,7 +383,7 @@ public class DSUServer
         }
         catch (SocketException /*ex*/)
         {
-            if (running)
+            if (IsInitialized)
             {
                 ResetUDPConn();
                 StartReceive();
@@ -417,7 +397,7 @@ public class DSUServer
     /// Frees Socket from potentially firing SocketException instances after a client
     /// connection is terminated. Avoids memory leak
     /// </summary>
-    private void ResetUDPConn()
+    private static void ResetUDPConn()
     {
         if (udpSock is null)
             return;
@@ -433,18 +413,18 @@ public class DSUServer
         catch (ObjectDisposedException) { }
     }
 
-    public bool Start()
+    public static bool Start()
     {
         try
         {
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            udpSock.Bind(new IPEndPoint(IPAddress.Any, port));
+            udpSock.Bind(new IPEndPoint(IPAddress.Any, serverPort));
         }
         catch (SocketException)
         {
-            LogManager.LogCritical("{0} couldn't listen to port: {1}", ToString(), port);
+            LogManager.LogCritical("DSUServer couldn't listen to port: {0}", serverPort);
             Stop();
-            return running;
+            return IsInitialized;
         }
         catch (Exception /*ex*/) { }
 
@@ -454,17 +434,17 @@ public class DSUServer
 
         TimerManager.Tick += Tick;
 
-        running = true;
+        IsInitialized = true;
 
         StartReceive();
 
-        LogManager.LogInformation("{0} has started. Listening to port: {1}", ToString(), port);
-        Started?.Invoke(this);
+        LogManager.LogInformation("DSUServer has started. Listening to port: {0}", serverPort);
+        Started?.Invoke();
 
-        return running;
+        return IsInitialized;
     }
 
-    public void Stop()
+    public static void Stop()
     {
         if (udpSock is not null)
         {
@@ -476,20 +456,24 @@ public class DSUServer
             udpSock = null;
         }
 
-        running = false;
+        IsInitialized = false;
 
         TimerManager.Tick -= Tick;
 
-        LogManager.LogInformation("{0} has stopped", ToString());
-        Stopped?.Invoke(this);
+        LogManager.LogInformation("DSUServer has stopped");
+        Stopped?.Invoke();
     }
 
-    public void UpdateInputs(ControllerState inputs)
+    private static ControllerState Inputs = new();
+    private static List<GamepadMotion> GamepadMotions = new();
+
+    public static void UpdateInputs(ControllerState inputs, List<GamepadMotion> gamepadMotions)
     {
         Inputs = inputs;
+        GamepadMotions = gamepadMotions;
     }
 
-    private bool ReportToBuffer(byte[] outputData, ref int outIdx)
+    private static bool ReportToBuffer(byte[] outputData, ref int outIdx, byte padIdx)
     {
         unchecked
         {
@@ -518,11 +502,8 @@ public class DSUServer
             if (Inputs.AxisState[AxisFlags.L2] == byte.MaxValue) outputData[outIdx] |= 0x01;
 
             outputData[++outIdx] =
-                Convert.ToByte(Inputs.ButtonState[ButtonFlags.Special]); // (hidReport.PS) ? (byte)1 : 
-            outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.LeftPadClick] ||
-                                                  Inputs.ButtonState[
-                                                      ButtonFlags
-                                                          .RightPadClick]); // (hidReport.TouchButton) ? (byte)1 : 
+                Convert.ToByte(Inputs.ButtonState[ButtonFlags.Special]); // (hidReport.PS) ? (byte)1 : (byte)0
+            outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick]); // (hidReport.TouchButton) ? (byte)1 : (byte)0
 
             //Left stick
             outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.AxisState[AxisFlags.LeftStickX]);
@@ -569,101 +550,113 @@ public class DSUServer
             Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetElapsedSeconds()), 0, outputData, outIdx, 8);
             outIdx += 8;
 
+            float gyroX = 0.0f, gyroY = 0.0f, gyroZ = 0.0f;
+            float accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
+            switch (padIdx)
+            {
+                default:
+                    gyroX = Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].X;
+                    gyroY = Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Y;
+                    gyroZ = Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Z;
+
+                    accelX = Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].X;
+                    accelY = Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Y;
+                    accelZ = Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Z;
+                    break;
+
+                case 1:
+                case 2:
+                    byte gamepadMotionIdx = (byte)(padIdx - 1);
+                    GamepadMotions[gamepadMotionIdx].GetCalibratedGyro(out gyroX, out gyroY, out gyroZ);
+                    GamepadMotions[gamepadMotionIdx].GetGravity(out accelX, out accelY, out accelZ);
+                    break;
+
+                case 3:
+                    // do nothing
+                    break;
+            }
+
             // Accelerometer
-            // accelXG
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].X), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(accelX), 0, outputData, outIdx, 4);
             outIdx += 4;
-            // accelYG
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Y), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(accelY), 0, outputData, outIdx, 4);
             outIdx += 4;
-            // accelZG
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Z), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(accelZ), 0, outputData, outIdx, 4);
             outIdx += 4;
 
             // Gyroscope
-            // angVelPitch
-            Array.Copy(BitConverter.GetBytes(Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].X), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(gyroX), 0, outputData, outIdx, 4);
             outIdx += 4;
-            // angVelYaw
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Y), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-gyroY), 0, outputData, outIdx, 4);
             outIdx += 4;
-            // angVelRoll
-            Array.Copy(BitConverter.GetBytes(-Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Z), 0, outputData, outIdx, 4);
+            Array.Copy(BitConverter.GetBytes(-gyroZ), 0, outputData, outIdx, 4);
             outIdx += 4;
         }
 
         return true;
     }
 
-    public void Tick(long ticks, float delta)
+    public static void Tick(long ticks, float delta)
     {
-        if (!running)
+        if (!IsInitialized)
             return;
 
         // only update every one second
-        if (ticks % 1000 == 0)
+        for (byte padIdx = 0; padIdx < NUMBER_SLOTS; padIdx++)
         {
-            var ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
+            DualShockPadMeta padMeta = padMetas[padIdx];
 
-            if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
-                padMeta.BatteryStatus = DsBattery.Charging;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
-                padMeta.BatteryStatus = DsBattery.None;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
-                padMeta.BatteryStatus = DsBattery.High;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
-                padMeta.BatteryStatus = DsBattery.Low;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
-                padMeta.BatteryStatus = DsBattery.Dying;
-            else
-                padMeta.BatteryStatus = DsBattery.Medium;
-        }
-
-        // update status
-        padMeta.IsActive = true; // fixme ?
-
-        var clientsList = new List<IPEndPoint>();
-        var now = DateTime.UtcNow;
-        lock (clients)
-        {
-            var clientsToDelete = new List<IPEndPoint>();
-
-            foreach (var cl in clients)
+            if (ticks % 1000 == 0)
             {
-                const double TimeoutLimit = 5;
+                BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
 
-                if ((now - cl.Value.AllPadsTime).TotalSeconds < TimeoutLimit)
+                if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
+                    padMeta.BatteryStatus = DsBattery.Charging;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
+                    padMeta.BatteryStatus = DsBattery.None;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
+                    padMeta.BatteryStatus = DsBattery.High;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                    padMeta.BatteryStatus = DsBattery.Low;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
+                    padMeta.BatteryStatus = DsBattery.Dying;
+                else
+                    padMeta.BatteryStatus = DsBattery.Medium;
+            }
+
+            // update status
+            padMeta.IsActive = true; // fixme ?
+
+            List<IPEndPoint>? clientsList = new List<IPEndPoint>();
+            DateTime now = DateTime.UtcNow;
+            lock (clients)
+            {
+                List<IPEndPoint>? clientsToDelete = new List<IPEndPoint>();
+
+                foreach (var cl in clients)
                 {
-                    clientsList.Add(cl.Key);
-                }
-                else if (padMeta.PadId < cl.Value.PadIdsTime.Length &&
-                         (now - cl.Value.PadIdsTime[padMeta.PadId]).TotalSeconds < TimeoutLimit)
-                {
-                    clientsList.Add(cl.Key);
-                }
-                else if (cl.Value.PadMacsTime.TryGetValue(padMeta.PadMacAddress, out var padTime) &&
-                         (now - padTime).TotalSeconds < TimeoutLimit)
-                {
-                    clientsList.Add(cl.Key);
-                }
-                else //check if this client is totally dead, and remove it if so
-                {
-                    var clientOk = false;
-                    foreach (var t in cl.Value.PadIdsTime)
+                    const double TimeoutLimit = 5;
+
+                    if ((now - cl.Value.AllPadsTime).TotalSeconds < TimeoutLimit)
                     {
-                        var dur = (now - t).TotalSeconds;
-                        if (dur < TimeoutLimit)
-                        {
-                            clientOk = true;
-                            break;
-                        }
+                        clientsList.Add(cl.Key);
                     }
-
-                    if (!clientOk)
+                    else if (padMeta.PadId < cl.Value.PadIdsTime.Length &&
+                             (now - cl.Value.PadIdsTime[padMeta.PadId]).TotalSeconds < TimeoutLimit)
                     {
-                        foreach (var dict in cl.Value.PadMacsTime)
+                        clientsList.Add(cl.Key);
+                    }
+                    else if (cl.Value.PadMacsTime.TryGetValue(padMeta.PadMacAddress, out var padTime) &&
+                             (now - padTime).TotalSeconds < TimeoutLimit)
+                    {
+                        clientsList.Add(cl.Key);
+                    }
+                    else //check if this client is totally dead, and remove it if so
+                    {
+                        var clientOk = false;
+                        foreach (var t in cl.Value.PadIdsTime)
                         {
-                            var dur = (now - dict.Value).TotalSeconds;
+                            var dur = (now - t).TotalSeconds;
                             if (dur < TimeoutLimit)
                             {
                                 clientOk = true;
@@ -672,130 +665,93 @@ public class DSUServer
                         }
 
                         if (!clientOk)
-                            clientsToDelete.Add(cl.Key);
+                        {
+                            foreach (var dict in cl.Value.PadMacsTime)
+                            {
+                                var dur = (now - dict.Value).TotalSeconds;
+                                if (dur < TimeoutLimit)
+                                {
+                                    clientOk = true;
+                                    break;
+                                }
+                            }
+
+                            if (!clientOk)
+                                clientsToDelete.Add(cl.Key);
+                        }
+                    }
+                }
+
+                foreach (var delCl in clientsToDelete) clients.Remove(delCl);
+                clientsToDelete.Clear();
+                clientsToDelete = null;
+            }
+
+            if (clientsList.Count <= 0)
+                return;
+
+            unchecked
+            {
+                var outputData = new byte[100];
+                var outIdx = BeginPacket(outputData);
+                Array.Copy(BitConverter.GetBytes((uint)MessageType.DSUS_PadDataRsp), 0, outputData, outIdx, 4);
+                outIdx += 4;
+
+                outputData[outIdx++] = padMeta.PadId;
+                outputData[outIdx++] = (byte)padMeta.PadState;
+                outputData[outIdx++] = (byte)padMeta.Model;
+                outputData[outIdx++] = (byte)padMeta.ConnectionType;
+                {
+                    var padMac = padMeta.PadMacAddress.GetAddressBytes();
+                    outputData[outIdx++] = padMac[0];
+                    outputData[outIdx++] = padMac[1];
+                    outputData[outIdx++] = padMac[2];
+                    outputData[outIdx++] = padMac[3];
+                    outputData[outIdx++] = padMac[4];
+                    outputData[outIdx++] = padMac[5];
+                }
+                outputData[outIdx++] = (byte)padMeta.BatteryStatus;
+                outputData[outIdx++] = padMeta.IsActive ? (byte)1 : (byte)0;
+
+                Array.Copy(BitConverter.GetBytes((uint)udpPacketCount++), 0, outputData, outIdx, 4);
+                outIdx += 4;
+
+                if (!ReportToBuffer(outputData, ref outIdx, padIdx))
+                    return;
+                FinishPacket(outputData);
+
+                foreach (var cl in clientsList)
+                {
+                    int temp = 0;
+                    poolLock.EnterWriteLock();
+                    temp = listInd;
+                    listInd = ++listInd % ARG_BUFFER_LEN;
+                    SocketAsyncEventArgs args = new SocketAsyncEventArgs()
+                    {
+                        RemoteEndPoint = cl,
+                    };
+                    args.SetBuffer(dataBuffers[temp], 0, 100);
+                    args.Completed += SocketEvent_AsyncCompleted;
+                    poolLock.ExitWriteLock();
+
+                    _pool.Wait();
+                    Array.Copy(outputData, args.Buffer, outputData.Length);
+                    bool sentAsync = false;
+                    try
+                    {
+                        bool sendAsync = udpSock.SendToAsync(args);
+                    }
+                    catch (SocketException /*ex*/) { }
+                    catch (Exception /*ex*/) { }
+                    finally
+                    {
+                        if (!sentAsync) CompletedSynchronousSocketEvent(args);
                     }
                 }
             }
 
-            foreach (var delCl in clientsToDelete) clients.Remove(delCl);
-            clientsToDelete.Clear();
-            clientsToDelete = null;
-        }
-
-        if (clientsList.Count <= 0)
-            return;
-
-        unchecked
-        {
-            var outputData = new byte[100];
-            var outIdx = BeginPacket(outputData);
-            Array.Copy(BitConverter.GetBytes((uint)MessageType.DSUS_PadDataRsp), 0, outputData, outIdx, 4);
-            outIdx += 4;
-
-            outputData[outIdx++] = padMeta.PadId;
-            outputData[outIdx++] = (byte)padMeta.PadState;
-            outputData[outIdx++] = (byte)padMeta.Model;
-            outputData[outIdx++] = (byte)padMeta.ConnectionType;
-            {
-                var padMac = padMeta.PadMacAddress.GetAddressBytes();
-                outputData[outIdx++] = padMac[0];
-                outputData[outIdx++] = padMac[1];
-                outputData[outIdx++] = padMac[2];
-                outputData[outIdx++] = padMac[3];
-                outputData[outIdx++] = padMac[4];
-                outputData[outIdx++] = padMac[5];
-            }
-            outputData[outIdx++] = (byte)padMeta.BatteryStatus;
-            outputData[outIdx++] = padMeta.IsActive ? (byte)1 : (byte)0;
-
-            Array.Copy(BitConverter.GetBytes((uint)udpPacketCount++), 0, outputData, outIdx, 4);
-            outIdx += 4;
-
-            if (!ReportToBuffer(outputData, ref outIdx))
-                return;
-            FinishPacket(outputData);
-
-            foreach (var cl in clientsList)
-            {
-                int temp = 0;
-                poolLock.EnterWriteLock();
-                temp = listInd;
-                listInd = ++listInd % ARG_BUFFER_LEN;
-                SocketAsyncEventArgs args = new SocketAsyncEventArgs()
-                {
-                    RemoteEndPoint = cl,
-                };
-                args.SetBuffer(dataBuffers[temp], 0, 100);
-                args.Completed += SocketEvent_AsyncCompleted;
-                poolLock.ExitWriteLock();
-
-                _pool.Wait();
-                Array.Copy(outputData, args.Buffer, outputData.Length);
-                bool sentAsync = false;
-                try
-                {
-                    bool sendAsync = udpSock.SendToAsync(args);
-                }
-                catch (SocketException /*ex*/) { }
-                catch (Exception /*ex*/) { }
-                finally
-                {
-                    if (!sentAsync) CompletedSynchronousSocketEvent(args);
-                }
-            }
-        }
-
-        clientsList.Clear();
-        clientsList = null;
-    }
-
-    private enum MessageType
-    {
-        DSUC_VersionReq = 0x100000,
-        DSUS_VersionRsp = 0x100000,
-        DSUC_ListPorts = 0x100001,
-        DSUS_PortInfo = 0x100001,
-        DSUC_PadDataReq = 0x100002,
-        DSUS_PadDataRsp = 0x100002
-    }
-
-    class ClientRequestTimes
-    {
-        DateTime allPads;
-        DateTime[] padIds;
-        Dictionary<PhysicalAddress, DateTime> padMacs;
-
-        public DateTime AllPadsTime { get { return allPads; } }
-        public DateTime[] PadIdsTime { get { return padIds; } }
-        public Dictionary<PhysicalAddress, DateTime> PadMacsTime { get { return padMacs; } }
-
-        public ClientRequestTimes()
-        {
-            allPads = DateTime.MinValue;
-            padIds = new DateTime[4];
-
-            for (int i = 0; i < padIds.Length; i++)
-                padIds[i] = DateTime.MinValue;
-
-            padMacs = [];
-        }
-
-        public void RequestPadInfo(byte regFlags, byte idToReg, PhysicalAddress macToReg)
-        {
-            if (regFlags == 0)
-                allPads = DateTime.UtcNow;
-            else
-            {
-                if ((regFlags & 0x01) != 0) //id valid
-                {
-                    if (idToReg < padIds.Length)
-                        padIds[idToReg] = DateTime.UtcNow;
-                }
-                if ((regFlags & 0x02) != 0) //mac valid
-                {
-                    padMacs[macToReg] = DateTime.UtcNow;
-                }
-            }
+            clientsList.Clear();
+            clientsList = null;
         }
     }
 }

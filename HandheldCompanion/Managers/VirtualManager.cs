@@ -18,8 +18,6 @@ namespace HandheldCompanion.Managers
         public static ViGEmClient vClient;
         public static ViGEmTarget vTarget;
 
-        private static DSUServer DSUServer;
-
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
         private static HIDmode defaultHIDmode = HIDmode.NoController;
@@ -59,9 +57,6 @@ namespace HandheldCompanion.Managers
                 MessageBox.Show("Unable to start Handheld Companion, the ViGEm application is missing.\n\nPlease get it from: https://github.com/ViGEm/ViGEmBus/releases", "Error");
                 throw new InvalidOperationException();
             }
-
-            // initialize DSUClient
-            DSUServer = new DSUServer();
         }
 
         public static void Start()
@@ -322,11 +317,7 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
-            // DS4Touch is used by both targets below, update first
-            DS4Touch.UpdateInputs(controllerState);
-
             vTarget?.UpdateInputs(controllerState, gamepadMotion);
-            DSUServer?.UpdateInputs(controllerState);
         }
     }
 }
