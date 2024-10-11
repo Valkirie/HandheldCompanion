@@ -347,10 +347,10 @@ namespace HandheldCompanion.Managers
 
                 // store calibration offsets
                 IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
-                
+
                 // display message
                 dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
-                
+
                 // wait a bit
                 await Task.Delay(2000);
             }

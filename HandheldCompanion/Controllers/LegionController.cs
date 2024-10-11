@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
 using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 

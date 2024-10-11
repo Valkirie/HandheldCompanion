@@ -277,7 +277,7 @@ public static class ControllerManager
             }
         }
 
-        
+
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
             ControllerMuted = true;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HandheldCompanion.DSU
+﻿namespace HandheldCompanion.DSU
 {
     public enum MessageType
     {
