@@ -7,8 +7,7 @@
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  ;#define UseDotNet80
-  #define UseDotNet90
+  #define UseDotNet80
 #endif
 
 ;#define UseVC2005
@@ -53,6 +52,12 @@
 ; RTSS 7.3.6
 #define NewRtssVersion "7.3.5.28010"
 
+//#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/b280d97f-25a9-4ab7-8a12-8291aa3af117/a37ed0e68f51fcd973e9f6cb4f40b1a7/windowsdesktop-runtime-8.0.0-win-x64.exe"
+//#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f9e3b581-059d-429f-9f0d-1d1167ff7e32/bd7661030cd5d66cd3eee0fd20b24540/windowsdesktop-runtime-8.0.0-win-x86.exe"   
+                 
+#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f18288f6-1732-415b-b577-7fb46510479a/a98239f751a7aed31bc4aa12f348a9bf/windowsdesktop-runtime-8.0.1-win-x64.exe" 
+#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/ca725693-6de7-4a4d-b8a4-4390b0387c66/ce13f2f016152d9b5f2d3c6537cc415b/windowsdesktop-runtime-8.0.1-win-x86.exe"
+
 #define DirectXDownloadLink "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
 #define HidHideDownloadLink "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define ViGemDownloadLink "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
@@ -64,14 +69,6 @@
 
 #ifdef UseDotNet80
 	#define MyConfigurationExt "net8.0"
-	#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f18288f6-1732-415b-b577-7fb46510479a/a98239f751a7aed31bc4aa12f348a9bf/windowsdesktop-runtime-8.0.1-win-x64.exe" 
-	#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/ca725693-6de7-4a4d-b8a4-4390b0387c66/ce13f2f016152d9b5f2d3c6537cc415b/windowsdesktop-runtime-8.0.1-win-x86.exe"
-#endif
-
-#ifdef UseDotNet90
-	#define MyConfigurationExt "net9.0"
-	#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/19f3f64f-4734-44d8-aa2b-aba6f2940bfe/405c15d5bd31713faaddf9cd9e8d4fc0/dotnet-runtime-9.0.0-rc.2.24473.5-win-x64.exe" 
-	#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/508704e7-25d0-4df6-864a-f070091a7a6b/45ec71800b5b829815ba861e1f510e2c/dotnet-runtime-9.0.0-rc.2.24473.5-win-x86.exe"
 #endif
 
 #define WindowsVersion "10.0.19041"
@@ -172,7 +169,6 @@ procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersi
 function Dependency_PrepareToInstall(var NeedsRestart: Boolean): String; forward;
 function Dependency_UpdateReadyMemo(const Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String; forward;
 procedure Dependency_AddDotNet80Desktop; forward;
-procedure Dependency_AddDotNet90Desktop; forward;
 procedure Dependency_AddDirectX; forward;
 procedure Dependency_AddHideHide; forward;
 procedure Dependency_AddViGem; forward;
@@ -307,15 +303,6 @@ begin
   begin
     log('{#DotNetName} {#NewDotNetVersion} needs update.');
     Dependency_AddDotNet80Desktop; 
-  end;  
-#endif
-
-#ifdef UseDotNet90   
-  installedVersion:= regGetInstalledVersion('{#DotNetName}');
-  if(compareVersions('{#NewDotNetVersion}', installedVersion, '.', '-') > 0) then
-  begin
-    log('{#DotNetName} {#NewDotNetVersion} needs update.');
-    Dependency_AddDotNet90Desktop; 
   end;  
 #endif
 
@@ -634,17 +621,8 @@ begin
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '{#DotNetName}', Dependency_String('{#DotNetX86DownloadLink}', '{#DotNetX64DownloadLink}'), '', False, False);
   end;
-end;
+end;  
 
-procedure Dependency_AddDotNet90Desktop;
-begin
-  // https://dotnet.microsoft.com/fr-fr/download/dotnet/9.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 9.0.0') then begin
-    Dependency_Add_With_Version('dotNet90desktop' + Dependency_ArchSuffix + '.exe', '{#NewDotNetVersion}', regGetInstalledVersion('{#DotNetName}'),
-      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '{#DotNetName}', Dependency_String('{#DotNetX86DownloadLink}', '{#DotNetX64DownloadLink}'), '', False, False);
-  end;
-end;
 
 procedure Dependency_AddVC2005;
 begin
