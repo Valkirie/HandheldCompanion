@@ -1213,6 +1213,9 @@ public static class ControllerManager
             mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
             controllerState = mutedState;
         }
+
+        DS4Touch.UpdateInputs(controllerState);
+        DSUServer.UpdateInputs(controllerState, gamepadMotions);
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
