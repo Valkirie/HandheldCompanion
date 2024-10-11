@@ -81,11 +81,11 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
 
-        protected int gamepadIndex = 0;
-        protected List<GamepadMotion> gamepadMotions = new List<GamepadMotion>
+        protected byte gamepadIndex = 0;
+        protected Dictionary<byte, GamepadMotion> gamepadMotions = new Dictionary<byte, GamepadMotion>
         {
-            new(string.Empty, CalibrationMode.Manual),
-            new(string.Empty, CalibrationMode.Manual),
+            {0, new(string.Empty, CalibrationMode.Manual) },
+            {1, new(string.Empty, CalibrationMode.Manual) },
         };
 
         protected double VibrationStrength = 1.0d;
@@ -837,7 +837,7 @@ namespace HandheldCompanion.Controllers
         public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
         public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, List<GamepadMotion> gamepadMotions, float delta, int gamepadIndex);
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
         #endregion
     }
 }

@@ -290,7 +290,7 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.RightStickY] -= (short)InputUtils.MapRange(Data[32], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
             */
 
-            for (int idx = 0; idx <= 1; ++idx)
+            for (byte idx = 0; idx <= 1; ++idx)
             {
                 switch (idx)
                 {
@@ -481,7 +481,7 @@ namespace HandheldCompanion.Controllers
 
         public void SetGyroIndex(int idx)
         {
-            gamepadIndex = idx;
+            gamepadIndex = (byte)idx;
         }
     }
 }

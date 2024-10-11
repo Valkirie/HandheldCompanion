@@ -1179,7 +1179,7 @@ public static class ControllerManager
     }
 
     private static ControllerState mutedState = new ControllerState();
-    private static void UpdateInputs(ControllerState controllerState, List<GamepadMotion> gamepadMotions, float deltaTimeSeconds, int gamepadIndex)
+    private static void UpdateInputs(ControllerState controllerState, Dictionary<byte, GamepadMotion> gamepadMotions, float deltaTimeSeconds, byte gamepadIndex)
     {
         // raise event
         InputsUpdated?.Invoke(controllerState);

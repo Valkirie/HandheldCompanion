@@ -465,9 +465,9 @@ public static class DSUServer
     }
 
     private static ControllerState Inputs = new();
-    private static List<GamepadMotion> GamepadMotions = new();
+    private static Dictionary<byte, GamepadMotion> GamepadMotions = new();
 
-    public static void UpdateInputs(ControllerState inputs, List<GamepadMotion> gamepadMotions)
+    public static void UpdateInputs(ControllerState inputs, Dictionary<byte, GamepadMotion> gamepadMotions)
     {
         Inputs = inputs;
         GamepadMotions = gamepadMotions;
@@ -567,8 +567,11 @@ public static class DSUServer
                 case 1:
                 case 2:
                     byte gamepadMotionIdx = (byte)(padIdx - 1);
-                    GamepadMotions[gamepadMotionIdx].GetCalibratedGyro(out gyroX, out gyroY, out gyroZ);
-                    GamepadMotions[gamepadMotionIdx].GetGravity(out accelX, out accelY, out accelZ);
+                    if (GamepadMotions.TryGetValue(gamepadMotionIdx, out GamepadMotion gamepadMotion))
+                    {
+                        gamepadMotion.GetCalibratedGyro(out gyroX, out gyroY, out gyroZ);
+                        gamepadMotion.GetGravity(out accelX, out accelY, out accelZ);
+                    }
                     break;
 
                 case 3:

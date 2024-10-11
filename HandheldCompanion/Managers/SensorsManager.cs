@@ -246,10 +246,10 @@ namespace HandheldCompanion.Managers
 
         public static async void Calibrate(GamepadMotion gamepadMotion)
         {
-            Calibrate(new List<GamepadMotion>() { gamepadMotion });
+            Calibrate(new Dictionary<byte, GamepadMotion> { { 0, gamepadMotion } });
         }
 
-        public static async void Calibrate(List<GamepadMotion> gamepadMotions)
+        public static async void Calibrate(Dictionary<byte, GamepadMotion> gamepadMotions)
         {
             Dialog dialog = new Dialog(MainWindow.GetCurrent())
             {
@@ -271,7 +271,7 @@ namespace HandheldCompanion.Managers
                 await Task.Delay(1000);
             }
 
-            foreach (GamepadMotion gamepadMotion in gamepadMotions)
+            foreach (GamepadMotion gamepadMotion in gamepadMotions.Values)
             {
                 dialog.UpdateContent($"Calibrating {gamepadMotion.deviceInstanceId} stationary sensor noise and drift correction...");
 
