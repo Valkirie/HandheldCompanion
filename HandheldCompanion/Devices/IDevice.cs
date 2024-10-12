@@ -397,7 +397,28 @@ public abstract class IDevice
                             device = new GPDWinMax2Intel();
                             break;
                         case "G1619-04":
-                            device = new GPDWinMax2AMD();
+                            switch (Processor)
+                            {
+                                case "AMD Ryzen 7 6800U with Radeon Graphics":
+                                    device = new GPDWinMax2_2022_6800U();
+                                    break;
+                                case "AMD Ryzen 5 7640U w/ Radeon 760M Graphics":
+                                    device = new GPDWinMax2_2023_7640U();
+                                    break;
+                                case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
+                                    device = new GPDWinMax2_2023_7840U();
+                                    break;
+                                case "AMD Ryzen 5 8640U w/ Radeon 760M Graphics":
+                                    device = new GPDWinMax2_2024_8640U();
+                                    break;
+                                case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
+                                    device = new GPDWinMax2_2024_8840U();
+                                    break;
+                                // if none of those
+                                default:
+                                    device = new GPDWinMax2_2024_8840U(); // Assume newer device is similar to latest as of this commit
+                                    break;
+                            }
                             break;
                     }
                 }
