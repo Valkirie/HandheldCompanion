@@ -4183,6 +4183,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Game Bar.
+        /// </summary>
+        public static string Hotkey_GameBar {
+            get {
+                return ResourceManager.GetString("Hotkey_GameBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Windows + G.
+        /// </summary>
+        public static string Hotkey_GameBarDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_GameBarDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Guide or PS button.
         /// </summary>
         public static string Hotkey_Guide {

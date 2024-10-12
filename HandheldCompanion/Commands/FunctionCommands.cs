@@ -26,6 +26,7 @@ namespace HandheldCompanion.Commands
             typeof(ActionCenterCommands),
             typeof(SettingsCommands),
             typeof(ScreenshotCommands),
+            typeof(GameBarCommands),
             "Multimedia",
             typeof(BrightnessIncrease),
             typeof(BrightnessDecrease),
