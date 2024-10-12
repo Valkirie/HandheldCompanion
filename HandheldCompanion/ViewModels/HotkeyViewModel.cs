@@ -110,6 +110,7 @@ namespace HandheldCompanion.ViewModels
         {
             OnPropertyChanged(nameof(LiveGlyph));
             OnPropertyChanged(nameof(IsEnabled));
+            OnPropertyChanged(nameof(IsToggled));
         }
 
         public override void Dispose()

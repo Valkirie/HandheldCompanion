@@ -4345,6 +4345,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mute volume.
+        /// </summary>
+        public static string Hotkey_muteVolume {
+            get {
+                return ResourceManager.GetString("Hotkey_muteVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mute/unmute volume.
+        /// </summary>
+        public static string Hotkey_muteVolumeDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_muteVolumeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
         public static string Hotkey_None {

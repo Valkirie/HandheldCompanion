@@ -17,6 +17,19 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.FontFamily = "PromptFont";
             base.Glyph = "\u243C";
 
+            Update();
+
+            ProfileManager.Applied += ProfileManager_Applied;
+        }
+
+        private void ProfileManager_Applied(Profile profile, UpdateSource source)
+        {
+            IsEnabled = profile.HID == HIDmode.NotSelected;
+            Update();
+        }
+
+        public override void Update()
+        {
             HIDmode currentHIDmode = (HIDmode)SettingsManager.GetInt(SettingsName, true);
             switch (currentHIDmode)
             {
@@ -28,12 +41,6 @@ namespace HandheldCompanion.Commands.Functions.HC
                     break;
             }
 
-            ProfileManager.Applied += ProfileManager_Applied;
-        }
-
-        private void ProfileManager_Applied(Profile profile, UpdateSource source)
-        {
-            IsEnabled = profile.HID == HIDmode.NotSelected;
             base.Update();
         }
 
@@ -46,18 +53,16 @@ namespace HandheldCompanion.Commands.Functions.HC
                 {
                     case HIDmode.Xbox360Controller:
                         SettingsManager.SetProperty(SettingsName, (int)HIDmode.DualShock4Controller);
-                        LiveGlyph = "\uE000";
                         break;
                     case HIDmode.DualShock4Controller:
                         SettingsManager.SetProperty(SettingsName, (int)HIDmode.Xbox360Controller);
-                        LiveGlyph = "\uE001";
                         break;
                     default:
                         break;
                 }
             }
-
-            base.Update();
+                        
+            Update();
             base.Execute(IsKeyDown, IsKeyUp);
         }
 

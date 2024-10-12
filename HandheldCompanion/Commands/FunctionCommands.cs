@@ -31,6 +31,7 @@ namespace HandheldCompanion.Commands
             typeof(BrightnessDecrease),
             typeof(VolumeIncrease),
             typeof(VolumeDecrease),
+            typeof(VolumeMute),
         ];
 
         public FunctionCommands()

@@ -479,6 +479,38 @@ public static class MultimediaManager
         SetVolume(volume);
     }
 
+    public static void Mute()
+    {
+        if (!VolumeSupport)
+            return;
+
+        multimediaDevice.AudioEndpointVolume.Mute = true;
+    }
+
+    public static void Unmute()
+    {
+        if (!VolumeSupport)
+            return;
+
+        multimediaDevice.AudioEndpointVolume.Mute = false;
+    }
+
+    public static void ToggleMute()
+    {
+        if (!VolumeSupport)
+            return;
+
+        multimediaDevice.AudioEndpointVolume.Mute = !multimediaDevice.AudioEndpointVolume.Mute;
+    }
+
+    public static bool IsMuted()
+    {
+        if (!VolumeSupport)
+            return true;
+
+        return multimediaDevice.AudioEndpointVolume.Mute;
+    }
+
     public static short GetBrightness()
     {
         try
