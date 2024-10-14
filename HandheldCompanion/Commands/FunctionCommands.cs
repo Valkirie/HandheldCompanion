@@ -42,9 +42,9 @@ namespace HandheldCompanion.Commands
             base.commandType = CommandType.Function;
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, IsBackground);
         }
     }
 }

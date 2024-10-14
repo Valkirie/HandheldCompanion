@@ -44,7 +44,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.Update();
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             if (IsEnabled)
             {
@@ -63,7 +63,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             }
                         
             Update();
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override object Clone()

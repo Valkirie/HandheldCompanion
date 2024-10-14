@@ -14,11 +14,11 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
             OnKeyDown = true;
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             MultimediaManager.IncreaseVolume();
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override object Clone()

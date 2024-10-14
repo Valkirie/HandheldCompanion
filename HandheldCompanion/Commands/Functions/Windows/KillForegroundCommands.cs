@@ -15,7 +15,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
             OnKeyUp = true;
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             // get current foreground process
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
@@ -27,7 +27,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
             }
             catch { }
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override object Clone()

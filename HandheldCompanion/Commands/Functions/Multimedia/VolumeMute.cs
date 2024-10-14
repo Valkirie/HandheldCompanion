@@ -38,12 +38,12 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
             base.Update();
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             MultimediaManager.ToggleMute();
 
             Update();
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override bool IsToggled => MultimediaManager.IsMuted();

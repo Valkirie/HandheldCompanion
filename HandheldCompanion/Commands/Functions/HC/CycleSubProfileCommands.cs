@@ -16,7 +16,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.OnKeyUp = true;
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             switch (CycleIndex)
             {
@@ -28,7 +28,7 @@ namespace HandheldCompanion.Commands.Functions.HC
                     break;
             }
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override object Clone()

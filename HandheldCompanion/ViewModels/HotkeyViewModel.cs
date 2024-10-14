@@ -417,6 +417,19 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool Rumble
+        {
+            get
+            {
+                return Hotkey.Rumble;
+            }
+            set
+            {
+                Hotkey.Rumble = value;
+                HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+            }
+        }
+
         public bool IsToggled => Hotkey.command.IsToggled;
         public bool IsEnabled => Hotkey.command.IsEnabled;
 
@@ -502,8 +515,7 @@ namespace HandheldCompanion.ViewModels
 
             ExecuteCommand = new DelegateCommand(async () =>
             {
-                if (Hotkey.command is not null)
-                    Hotkey.command.Execute(Hotkey.command.OnKeyDown, Hotkey.command.OnKeyUp);
+                Hotkey.Execute(Hotkey.command.OnKeyDown, Hotkey.command.OnKeyUp, false);
             });
 
             EraseButtonCommand = new DelegateCommand(async () =>

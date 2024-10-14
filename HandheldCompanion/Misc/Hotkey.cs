@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using WindowsInput.Events;
 
@@ -19,6 +20,7 @@ namespace HandheldCompanion
 
         public bool IsPinned { get; set; } = false;
         public bool IsInternal { get; set; } = false;
+        public bool Rumble { get; set; } = false;
 
         public string Name { get; set; } = string.Empty;
         public Version Version { get; set; } = new();
@@ -53,10 +55,19 @@ namespace HandheldCompanion
                 command = this.command.Clone() as ICommands,
                 inputsChord = this.inputsChord.Clone() as InputsChord,
                 IsPinned = this.IsPinned,
-                IsInternal = this.IsInternal
+                IsInternal = this.IsInternal,
+                Rumble = this.Rumble
             };
 
             return hotkey;
+        }
+
+        public void Execute(bool onKeyDown, bool onKeyUp, bool IsBackground)
+        {
+            if (Rumble && !IsBackground)
+                ControllerManager.GetTargetController()?.Rumble();
+
+            command?.Execute(command.OnKeyDown, command.OnKeyUp, IsBackground);
         }
     }
 }

@@ -23,17 +23,17 @@ namespace HandheldCompanion.Commands.Functions.HC
             switch (name)
             {
                 case SettingsName:
-                    base.Execute(OnKeyDown, OnKeyUp);
+                    base.Execute(OnKeyDown, OnKeyUp, true);
                     break;
             }
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             bool value = !SettingsManager.GetBoolean(SettingsName, true);
             SettingsManager.SetProperty(SettingsName, value, false, true);
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override bool IsToggled => SettingsManager.GetBoolean(SettingsName, true);

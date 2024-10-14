@@ -180,7 +180,7 @@ public static class InputsManager
                 }
 
                 // execute command
-                hotkey.command.Execute(IsKeyDown, IsKeyUp);
+                hotkey.Execute(IsKeyDown, IsKeyUp, false);
 
                 // raise event
                 CommandExecuted?.Invoke(hotkey, hotkey.command);

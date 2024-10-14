@@ -590,6 +590,36 @@
                                             <ColumnDefinition Width="5*" />
                                         </Grid.ColumnDefinitions>
 
+                                        <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Rumble on execution" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="Specifies if the controller should rumble when this hotkey is executed"
+                                                TextWrapping="Wrap" />
+                                        </ikw:SimpleStackPanel>
+
+                                        <ui:ToggleSwitch
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            IsOn="{Binding Rumble, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
+
                                         <Button
                                             Grid.Column="1"
                                             Margin="12,0,0,0"

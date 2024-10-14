@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using HandheldCompanion.Managers;
+using Newtonsoft.Json;
 using System;
 
 namespace HandheldCompanion.Commands
@@ -56,7 +57,7 @@ namespace HandheldCompanion.Commands
 
         public ICommands() { }
 
-        public virtual void Execute(bool IsKeyDown, bool IsKeyUp)
+        public virtual void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             Executed?.Invoke(this);
         }
