@@ -116,7 +116,7 @@ namespace HandheldCompanion.Views.Pages
         public void Page_Closed()
         { }
 
-        private void SettingsManager_SettingValueChanged(string? name, object value)
+        private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
         {
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>

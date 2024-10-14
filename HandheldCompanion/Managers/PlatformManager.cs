@@ -94,7 +94,7 @@ public static class PlatformManager
         UpdateTimer.Start();
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>

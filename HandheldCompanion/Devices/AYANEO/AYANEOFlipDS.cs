@@ -49,7 +49,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
         }
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value)
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {

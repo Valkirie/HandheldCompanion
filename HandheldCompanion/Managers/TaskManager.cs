@@ -24,7 +24,7 @@ public static class TaskManager
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {

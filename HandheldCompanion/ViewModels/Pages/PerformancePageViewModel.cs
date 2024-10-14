@@ -489,7 +489,7 @@ namespace HandheldCompanion.ViewModels
 
             #region General Setup
 
-            SettingsManager.SettingValueChanged += SettingsManager_SettingsValueChanged;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
@@ -668,7 +668,7 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingsValueChanged;
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged -= PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
@@ -690,7 +690,7 @@ namespace HandheldCompanion.ViewModels
 
         #region Events
 
-        private void SettingsManager_SettingsValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {

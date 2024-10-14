@@ -144,7 +144,7 @@ namespace HandheldCompanion.Controllers
             SetGyroIndex(SettingsManager.GetInt("LegionControllerGyroIndex"));
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {

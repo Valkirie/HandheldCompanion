@@ -526,7 +526,7 @@ namespace HandheldCompanion.ViewModels
             base.Dispose();
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {

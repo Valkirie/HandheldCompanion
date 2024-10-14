@@ -112,12 +112,12 @@ public static class PerformanceManager
         // manage events
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-        SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         currentCoreCount = MotherboardInfo.NumberOfCores;
     }
 
-    private static void SettingsManagerOnSettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {

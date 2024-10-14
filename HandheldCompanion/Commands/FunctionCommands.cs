@@ -19,6 +19,7 @@ namespace HandheldCompanion.Commands
             typeof(HIDModeCommands),
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
+            typeof(QuickOverlayCommands),
             "Windows",
             typeof(OnScreenKeyboardCommands),
             typeof(OnScreenKeyboardLegacyCommands),

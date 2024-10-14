@@ -32,7 +32,7 @@ public static class SettingsManager
 {
     public delegate void InitializedEventHandler();
 
-    public delegate void SettingValueChangedEventHandler(string name, object value);
+    public delegate void SettingValueChangedEventHandler(string name, object value, bool temporary);
 
     private static readonly Dictionary<string, object> Settings = [];
 
@@ -55,7 +55,7 @@ public static class SettingsManager
             .OrderBy(s => s.Name);
 
         foreach (var property in properties)
-            SettingValueChanged(property.Name, GetProperty(property.Name));
+            SettingValueChanged(property.Name, GetProperty(property.Name), false);
 
         if (GetBoolean("FirstStart"))
             SetProperty("FirstStart", false);
@@ -117,7 +117,7 @@ public static class SettingsManager
             Settings[name] = value;
 
             // raise event
-            SettingValueChanged?.Invoke(name, value);
+            SettingValueChanged?.Invoke(name, value, temporary);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);
         }

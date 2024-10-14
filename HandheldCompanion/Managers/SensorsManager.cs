@@ -96,7 +96,7 @@ namespace HandheldCompanion.Managers
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
         }
 
-        private static void SettingsManager_SettingValueChanged(string name, object value)
+        private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {

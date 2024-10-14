@@ -18,7 +18,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {

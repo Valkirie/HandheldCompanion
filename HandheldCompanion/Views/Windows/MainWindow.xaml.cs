@@ -345,7 +345,7 @@ public partial class MainWindow : GamepadWindow
         notifyIcon.ContextMenuStrip.Items.Add(separator);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value)
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {

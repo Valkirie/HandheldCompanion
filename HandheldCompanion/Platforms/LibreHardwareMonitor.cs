@@ -47,7 +47,7 @@ namespace HandheldCompanion.Platforms
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {

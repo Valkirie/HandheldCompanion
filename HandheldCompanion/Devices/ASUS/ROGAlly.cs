@@ -724,7 +724,7 @@ public class ROGAlly : IDevice
         asusACPI?.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value)
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
