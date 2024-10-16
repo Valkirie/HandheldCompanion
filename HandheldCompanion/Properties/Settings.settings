@@ -293,5 +293,8 @@
     <Setting Name="AYANEOFlipScreenBrightness" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="HotkeyRumbleOnExecution" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

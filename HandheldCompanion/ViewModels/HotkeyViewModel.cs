@@ -417,19 +417,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool Rumble
-        {
-            get
-            {
-                return Hotkey.Rumble;
-            }
-            set
-            {
-                Hotkey.Rumble = value;
-                HotkeysManager.UpdateOrCreateHotkey(Hotkey);
-            }
-        }
-
         public bool IsToggled => Hotkey.command.IsToggled;
         public bool IsEnabled => Hotkey.command.IsEnabled;
 

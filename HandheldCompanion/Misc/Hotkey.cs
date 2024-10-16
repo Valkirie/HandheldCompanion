@@ -20,7 +20,6 @@ namespace HandheldCompanion
 
         public bool IsPinned { get; set; } = false;
         public bool IsInternal { get; set; } = false;
-        public bool Rumble { get; set; } = false;
 
         public string Name { get; set; } = string.Empty;
         public Version Version { get; set; } = new();
@@ -55,8 +54,7 @@ namespace HandheldCompanion
                 command = this.command.Clone() as ICommands,
                 inputsChord = this.inputsChord.Clone() as InputsChord,
                 IsPinned = this.IsPinned,
-                IsInternal = this.IsInternal,
-                Rumble = this.Rumble
+                IsInternal = this.IsInternal
             };
 
             return hotkey;
@@ -64,6 +62,7 @@ namespace HandheldCompanion
 
         public void Execute(bool onKeyDown, bool onKeyUp, bool IsBackground)
         {
+            bool Rumble = SettingsManager.GetBoolean("HotkeyRumbleOnExecution");
             if (Rumble && !IsBackground)
                 ControllerManager.GetTargetController()?.Rumble();
 

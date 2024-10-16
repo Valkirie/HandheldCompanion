@@ -12,6 +12,18 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<HotkeyViewModel> HotkeysList { get; set; } = [];
         public ICommand CreateHotkeyCommand { get; private set; }
 
+        public bool Rumble
+        {
+            get
+            {
+                return SettingsManager.GetBoolean("HotkeyRumbleOnExecution");
+            }
+            set
+            {
+                SettingsManager.SetProperty("HotkeyRumbleOnExecution", value);
+            }
+        }
+
         public HotkeyPageViewModel()
         {
             HotkeysManager.Updated += HotkeysManager_Updated;

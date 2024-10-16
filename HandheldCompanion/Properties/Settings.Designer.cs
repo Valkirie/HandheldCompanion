@@ -1188,5 +1188,17 @@ namespace HandheldCompanion.Properties {
                 this["AYANEOFlipScreenBrightness"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HotkeyRumbleOnExecution {
+            get {
+                return ((bool)(this["HotkeyRumbleOnExecution"]));
+            }
+            set {
+                this["HotkeyRumbleOnExecution"] = value;
+            }
+        }
     }
 }
