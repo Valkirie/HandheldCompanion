@@ -550,6 +550,8 @@ public partial class MainWindow : GamepadWindow
                     // when device goes to sleep
                     // suspend manager(s)
                     VirtualManager.Suspend(true);
+                    await Task.Delay(CurrentDevice.ResumeDelay);
+
                     TimerManager.Stop();
                     SensorsManager.Stop();
                     InputsManager.Stop();

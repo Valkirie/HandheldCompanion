@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -119,7 +120,8 @@ public class JSController : IController
             Inputs.GyroState.SetAccelerometer(iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ);
 
             // process motion
-            gamepadMotions[gamepadIndex].ProcessMotion(iMU_STATE.gyroX, iMU_STATE.gyroY, iMU_STATE.gyroZ, iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ, delta);
+            if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
+                gamepadMotion.ProcessMotion(iMU_STATE.gyroX, iMU_STATE.gyroY, iMU_STATE.gyroZ, iMU_STATE.accelX, iMU_STATE.accelY, iMU_STATE.accelZ, delta);
         }
     }
 

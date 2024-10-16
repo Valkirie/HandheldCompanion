@@ -20,6 +20,7 @@ public class PnPDetails
     public bool isPhysical => !isVirtual;
     public bool isBluetooth => EnumeratorName.Equals("BTHENUM");
     public bool isUSB => EnumeratorName.Equals("USB");
+    public bool isDongle = false;
 
     public string devicePath = string.Empty;
     public string baseContainerDevicePath = string.Empty;

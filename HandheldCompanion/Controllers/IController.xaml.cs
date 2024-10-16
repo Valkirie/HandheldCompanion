@@ -81,11 +81,7 @@ namespace HandheldCompanion.Controllers
         public ControllerState Inputs = new();
 
         protected byte gamepadIndex = 0;
-        protected Dictionary<byte, GamepadMotion> gamepadMotions = new Dictionary<byte, GamepadMotion>
-        {
-            {0, new(string.Empty, CalibrationMode.Manual) },
-            {1, new(string.Empty, CalibrationMode.Manual) },
-        };
+        protected Dictionary<byte, GamepadMotion> gamepadMotions = new();
 
         protected double VibrationStrength = 1.0d;
         private byte _UserIndex = 255;
@@ -98,7 +94,9 @@ namespace HandheldCompanion.Controllers
         protected object hidLock = new();
 
         public virtual bool IsReady => true;
-        public virtual bool IsWireless => false;
+        public virtual bool IsWireless => Details.isBluetooth;
+        public virtual bool IsDongle => Details.isDongle;
+
         public bool isPlaceholder;
 
         public bool IsBusy
@@ -221,6 +219,8 @@ namespace HandheldCompanion.Controllers
             InitializeComponent();
             InitializeInputOutput();
 
+            gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
+
             MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
@@ -242,12 +242,12 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // manage gamepad motion
-            gamepadMotions[0] = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[gamepadIndex] = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ControllerType.Glyph = details.isInternal ? "\uE990" : details.isBluetooth ? "\uE702" : "\uECF0";
+                ControllerType.Glyph = details.isInternal ? "\uE990" : IsWireless ? "\uE702" : IsDongle ? "\uECF1" : "\uECF0";
             });
 
             /*

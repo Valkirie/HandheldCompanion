@@ -840,6 +840,23 @@ public static class ControllerManager
                     case "0x17EF":
                         controller = new LegionController(details);
                         break;
+
+                    // GameSir
+                    case "0x3537":
+                        {
+                            switch(details.GetProductID())
+                            {
+                                // Tarantula Pro (Dongle)
+                                case "0x1099":
+                                    details.isDongle = true;
+                                    goto case "0x1050";
+                                // Tarantula Pro
+                                case "0x1050":
+                                    controller = new TatantulaProController(details);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             });
         }

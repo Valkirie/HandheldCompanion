@@ -320,7 +320,8 @@ namespace HandheldCompanion.Controllers
                 }
 
                 // compute motion from controller
-                gamepadMotions[idx].ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
+                if (gamepadMotions.TryGetValue(idx, out GamepadMotion gamepadMotion))
+                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
                 // store motion from user selected gyro (left, right)
                 if (idx == gamepadIndex)

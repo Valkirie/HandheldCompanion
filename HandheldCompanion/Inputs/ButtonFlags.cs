@@ -87,6 +87,9 @@ public enum ButtonFlags : byte
     [Description("Volume Down")] VolumeDown = 61,
 
     Special2 = 62,
+    B9 = 63,
+    B10 = 64,
+    B11 = 65,
 
     HOTKEY_START = 70,
     HOTKEY_GYRO_ACTIVATION = 140,
