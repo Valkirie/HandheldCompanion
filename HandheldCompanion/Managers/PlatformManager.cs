@@ -53,16 +53,16 @@ public static class PlatformManager
         if (LibreHardwareMonitor.IsInstalled)
             LibreHardwareMonitor.Start();
 
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ProfileManager.Applied += ProfileManager_Applied;
-        PowerProfileManager.Applied += PowerProfileManager_Applied;
-
         UpdateTimer = new Timer(UpdateInterval)
         {
             AutoReset = false
         };
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
         UpdateTimer.Start();
+
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ProfileManager.Applied += ProfileManager_Applied;
+        PowerProfileManager.Applied += PowerProfileManager_Applied;
 
         IsInitialized = true;
         Initialized?.Invoke();
