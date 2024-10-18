@@ -9,9 +9,27 @@ namespace HandheldCompanion.Managers;
 
 public static class SystemManager
 {
-    // Import SetThreadExecutionState Win32 API and define flags
+    #region PInvoke
+
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern uint SetThreadExecutionState(uint esFlags);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern IntPtr OpenInputDesktop(uint dwFlags, bool fInherit, uint dwDesiredAccess);
+
+    #endregion
+
+    #region Events
+
+    public static event SystemStatusChangedEventHandler SystemStatusChanged;
+    public static event PowerStatusChangedEventHandler PowerStatusChanged;
+    public static event InitializedEventHandler Initialized;
+
+    public delegate void SystemStatusChangedEventHandler(SystemStatus status, SystemStatus prevStatus);
+    public delegate void PowerStatusChangedEventHandler(PowerStatus status);
+    public delegate void InitializedEventHandler();
+
+    #endregion
 
     public const uint ES_CONTINUOUS = 0x80000000;
     public const uint ES_SYSTEM_REQUIRED = 0x00000001;
@@ -73,6 +91,11 @@ public static class SystemManager
     static SystemManager()
     {
         // listen to system events
+        SubscribeToSystemEvents();
+    }
+
+    private static void SubscribeToSystemEvents()
+    {
         SystemEvents.PowerModeChanged += OnPowerChange;
         SystemEvents.SessionSwitch += OnSessionSwitch;
 
@@ -83,12 +106,17 @@ public static class SystemManager
         SystemPowerManager.RemainingDischargeTimeChanged += BatteryStatusChanged;
     }
 
-    #region import
+    private static void UnsubscribeFromSystemEvents()
+    {
+        SystemEvents.PowerModeChanged -= OnPowerChange;
+        SystemEvents.SessionSwitch -= OnSessionSwitch;
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr OpenInputDesktop(uint dwFlags, bool fInherit, uint dwDesiredAccess);
-
-    #endregion
+        SystemPowerManager.BatteryStatusChanged -= BatteryStatusChanged;
+        SystemPowerManager.EnergySaverStatusChanged -= BatteryStatusChanged;
+        SystemPowerManager.PowerSupplyStatusChanged -= BatteryStatusChanged;
+        SystemPowerManager.RemainingChargePercentChanged -= BatteryStatusChanged;
+        SystemPowerManager.RemainingDischargeTimeChanged -= BatteryStatusChanged;
+    }
 
     private static void BatteryStatusChanged(object sender, object e)
     {
@@ -97,11 +125,13 @@ public static class SystemManager
 
     public static void Start()
     {
-        // check if current session is locked
-        var handle = OpenInputDesktop(0, false, 0);
-        IsSessionLocked = handle == IntPtr.Zero;
+        if (IsInitialized)
+            return;
 
-        SystemRoutine();
+        // Check if current session is locked
+        IsSessionLocked = OpenInputDesktop(0, false, 0) == IntPtr.Zero;
+
+        PerformSystemRoutine();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -119,8 +149,7 @@ public static class SystemManager
         IsInitialized = false;
 
         // stop listening to system events
-        SystemEvents.PowerModeChanged -= OnPowerChange;
-        SystemEvents.SessionSwitch -= OnSessionSwitch;
+        UnsubscribeFromSystemEvents();
 
         LogManager.LogInformation("{0} has stopped", "PowerManager");
     }
@@ -132,13 +161,16 @@ public static class SystemManager
             case PowerModes.Resume:
                 IsPowerSuspended = false;
                 break;
+
             case PowerModes.Suspend:
                 IsPowerSuspended = true;
 
                 // Prevent system sleep
                 SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+
                 LogManager.LogDebug("System is trying to suspend. Performing tasks...");
                 break;
+
             default:
             case PowerModes.StatusChange:
                 PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
@@ -147,7 +179,7 @@ public static class SystemManager
 
         LogManager.LogDebug("Device power mode set to {0}", e.Mode);
 
-        SystemRoutine();
+        PerformSystemRoutine();
     }
 
     private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -166,10 +198,10 @@ public static class SystemManager
 
         LogManager.LogDebug("Session switched to {0}", e.Reason);
 
-        SystemRoutine();
+        PerformSystemRoutine();
     }
 
-    private static void SystemRoutine()
+    private static void PerformSystemRoutine()
     {
         if (!IsPowerSuspended && !IsSessionLocked)
             currentSystemStatus = SystemStatus.SystemReady;
@@ -177,28 +209,12 @@ public static class SystemManager
             currentSystemStatus = SystemStatus.SystemPending;
 
         // only raise event is system status has changed
-        if (previousSystemStatus != currentSystemStatus)
-        {
-            LogManager.LogInformation("System status set to {0}", currentSystemStatus);
-            SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);
+        if (previousSystemStatus == currentSystemStatus)
+            return;
 
-            previousSystemStatus = currentSystemStatus;
-        }
+        LogManager.LogInformation("System status set to {0}", currentSystemStatus);
+        SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);
+
+        previousSystemStatus = currentSystemStatus;
     }
-
-    #region events
-
-    public static event SystemStatusChangedEventHandler SystemStatusChanged;
-
-    public delegate void SystemStatusChangedEventHandler(SystemStatus status, SystemStatus prevStatus);
-
-    public static event PowerStatusChangedEventHandler PowerStatusChanged;
-
-    public delegate void PowerStatusChangedEventHandler(PowerStatus status);
-
-    public static event InitializedEventHandler Initialized;
-
-    public delegate void InitializedEventHandler();
-
-    #endregion
 }
