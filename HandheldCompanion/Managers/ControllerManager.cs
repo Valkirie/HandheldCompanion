@@ -150,7 +150,11 @@ public static class ControllerManager
                 controller.Unhide(false);
 
         // Flushing possible JoyShocks...
-        JslDisconnectAndDisposeAll();
+        Task jslTask = Task.Run(() => JslDisconnectAndDisposeAll());
+
+        bool completedInTime = jslTask.Wait(TimeSpan.FromSeconds(2));
+        if (!completedInTime)
+            LogManager.LogWarning("JslDisconnectAndDisposeAll() timed out.");
 
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
