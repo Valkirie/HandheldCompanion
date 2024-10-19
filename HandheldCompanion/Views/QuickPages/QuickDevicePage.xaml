@@ -241,49 +241,6 @@
                         Toggled="NightLightToggle_Toggled" />
                 </Grid>
             </Border>
-        </ikw:SimpleStackPanel>
-
-        <!--  Dynamic lighting settings  -->
-        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Dynamic lighting settings" />
-
-            <!--  Use Dynamic lighting  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE781;" />
-
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use dynamic lighting on my device" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:ToggleSwitch
-                        Name="UseDynamicLightingToggle"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="UseDynamicLightingToggle_Toggled" />
-                </Grid>
-            </Border>
-        </ikw:SimpleStackPanel>
-
-        <!--  Device settings  -->
-        <ikw:SimpleStackPanel Grid.Row="1" Spacing="6">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
             <!--  AYANEO Flip DS  -->
             <ikw:SimpleStackPanel
@@ -399,6 +356,44 @@
                     </Grid>
                 </Border>
             </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
+
+        <!--  Dynamic lighting settings  -->
+        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Dynamic lighting settings" />
+
+            <!--  Use Dynamic lighting  -->
+            <Border
+                Padding="15,12,12,12"
+                Background="{DynamicResource ExpanderHeaderBackground}"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="0.2*" MinWidth="80" />
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE781;" />
+
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use dynamic lighting on my device" />
+                        </ikw:SimpleStackPanel>
+                    </DockPanel>
+
+                    <ui:ToggleSwitch
+                        Name="UseDynamicLightingToggle"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="UseDynamicLightingToggle_Toggled" />
+                </Grid>
+            </Border>
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
 </Page>
