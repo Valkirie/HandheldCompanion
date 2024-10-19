@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Multimedia;
+using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,9 @@ namespace HandheldCompanion.Commands
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
             typeof(QuickOverlayCommands),
+            "Performance",
+            typeof(TDPIncrease),
+            typeof(TDPDecrease),
             "Windows",
             typeof(OnScreenKeyboardCommands),
             typeof(OnScreenKeyboardLegacyCommands),

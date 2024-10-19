@@ -117,6 +117,16 @@ public static class PerformanceManager
         currentCoreCount = MotherboardInfo.NumberOfCores;
     }
 
+    public static double GetMinimumTDP()
+    {
+        return TDPMin;
+    }
+
+    public static double GetMaximumTDP()
+    {
+        return TDPMax;
+    }
+
     private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
