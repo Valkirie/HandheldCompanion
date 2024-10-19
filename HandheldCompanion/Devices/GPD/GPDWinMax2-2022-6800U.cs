@@ -13,7 +13,7 @@ public class GPDWinMax2_2022_6800U : GPDWinMax2
         GfxClock = new double[] { 100, 2200 };
         CpuClock = 4700;
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, - 1.0f);
+        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'Y' },

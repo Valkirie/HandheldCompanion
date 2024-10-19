@@ -1,6 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
-using Microsoft.VisualBasic;
 using System;
 
 namespace HandheldCompanion.Commands.Functions.HC
@@ -38,7 +36,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            switch(_IsToggled)
+            switch (_IsToggled)
             {
                 case true:
                     SettingsManager.SetProperty(SettingsName, prevDisplaylevel, false, true);

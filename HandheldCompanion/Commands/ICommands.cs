@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Managers;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace HandheldCompanion.Commands

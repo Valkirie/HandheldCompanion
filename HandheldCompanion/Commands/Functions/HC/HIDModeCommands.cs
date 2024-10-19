@@ -61,7 +61,7 @@ namespace HandheldCompanion.Commands.Functions.HC
                         break;
                 }
             }
-                        
+
             Update();
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

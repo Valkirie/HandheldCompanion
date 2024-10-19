@@ -844,7 +844,7 @@ public static class ControllerManager
                     // GameSir
                     case "0x3537":
                         {
-                            switch(details.GetProductID())
+                            switch (details.GetProductID())
                             {
                                 // Tarantula Pro (Dongle)
                                 case "0x1099":

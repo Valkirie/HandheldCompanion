@@ -1,6 +1,4 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
 using WpfScreenHelper.Enum;
