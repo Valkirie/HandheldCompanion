@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Multimedia;
+using HandheldCompanion.Commands.Functions.Multitasking;
 using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
 using System;
@@ -21,21 +22,24 @@ namespace HandheldCompanion.Commands
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
             typeof(QuickOverlayCommands),
-            "Performance",
+            "Power & battery",
             typeof(TDPIncrease),
             typeof(TDPDecrease),
             "Windows",
             typeof(OnScreenKeyboardCommands),
             typeof(OnScreenKeyboardLegacyCommands),
-            typeof(KillForegroundCommands),
             typeof(ActionCenterCommands),
             typeof(SettingsCommands),
             typeof(ScreenshotCommands),
             typeof(GameBarCommands),
+            "Multitasking",
+            typeof(KillForegroundCommands),
             typeof(TaskManagerCommands),
-            "Multimedia",
+            typeof(SwapScreenCommands),
+            "Display",
             typeof(BrightnessIncrease),
             typeof(BrightnessDecrease),
+            "Sound",
             typeof(VolumeIncrease),
             typeof(VolumeDecrease),
             typeof(VolumeMute),

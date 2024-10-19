@@ -4633,6 +4633,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Swap foreground window.
+        /// </summary>
+        public static string Hotkey_SwapScreen {
+            get {
+                return ResourceManager.GetString("Hotkey_SwapScreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the foreground window to next available screen.
+        /// </summary>
+        public static string Hotkey_SwapScreenDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_SwapScreenDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Task Manager.
         /// </summary>
         public static string Hotkey_TaskManager {

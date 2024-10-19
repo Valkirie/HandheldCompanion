@@ -2,7 +2,7 @@
 using HandheldCompanion.Simulators;
 using System;
 
-namespace HandheldCompanion.Commands.Functions.Windows
+namespace HandheldCompanion.Commands.Functions.Multitasking
 {
     [Serializable]
     public class TaskManagerCommands : FunctionCommands

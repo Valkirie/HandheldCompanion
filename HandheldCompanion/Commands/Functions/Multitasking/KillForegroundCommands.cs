@@ -2,7 +2,7 @@
 using HandheldCompanion.Managers;
 using System;
 
-namespace HandheldCompanion.Commands.Functions.Windows
+namespace HandheldCompanion.Commands.Functions.Multitasking
 {
     [Serializable]
     public class KillForegroundCommands : FunctionCommands

@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Commands;
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Multimedia;
+using HandheldCompanion.Commands.Functions.Multitasking;
+using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
@@ -186,16 +188,16 @@ public static class HotkeysManager
                     command = new OverlayTrackpadCommands();
                     break;
                 case 03:
-                    // "OnScreenDisplayToggle"
+                    command = new QuickOverlayCommands();
                     break;
                 case 10:
                     command = new QuickToolsCommands();
                     break;
                 case 11:
-                    // "increaseTDP"
+                    command = new TDPIncrease();
                     break;
                 case 12:
-                    // "decreaseTDP"
+                    command = new TDPDecrease();
                     break;
                 case 13:
                     // "suspendResumeTask"

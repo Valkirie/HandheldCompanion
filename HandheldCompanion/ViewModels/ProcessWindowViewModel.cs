@@ -66,6 +66,9 @@ namespace HandheldCompanion.ViewModels
             SwapScreenCommand = new DelegateCommand(async () =>
             {
                 Screen screen = Screen.AllScreens.Where(screen => screen.DeviceName != CurrentScreen.DeviceName).FirstOrDefault();
+                if (screen is null)
+                    return;
+
                 WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, WpfScreenHelper.Enum.WindowPositions.Maximize);
                 WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
 
