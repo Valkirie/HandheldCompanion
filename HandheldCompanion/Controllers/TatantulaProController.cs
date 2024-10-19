@@ -19,8 +19,16 @@ namespace HandheldCompanion.Controllers
 
         protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
         protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
+        private const byte EXTRABUTTON0_IDX = 11;
         private const byte EXTRABUTTON1_IDX = 12;
         private const byte EXTRABUTTON2_IDX = 13;
+
+        [Flags]
+        private enum Button0Enum
+        {
+            None = 0,
+            M = 4
+        }
 
         [Flags]
         private enum Button1Enum
@@ -33,14 +41,21 @@ namespace HandheldCompanion.Controllers
             T3 = 16,
             C1 = 32,
             C2 = 64,
-            C3 = 128,
+            C3 = 128
         }
 
         [Flags]
         private enum Button2Enum
         {
             None = 0,
-            C4 = 1,
+            C4 = 1
+        }
+
+        [Flags]
+        private enum ButtonLayout
+        {
+            Xbox = 64,
+            Nintendo = 128,
         }
 
         public TatantulaProController() : base()
@@ -61,6 +76,7 @@ namespace HandheldCompanion.Controllers
         {
             SourceButtons.Add(ButtonFlags.R4);
             SourceButtons.Add(ButtonFlags.L4);
+            SourceButtons.Add(ButtonFlags.L5);
 
             SourceButtons.Add(ButtonFlags.B5);
             SourceButtons.Add(ButtonFlags.B6);
@@ -111,6 +127,15 @@ namespace HandheldCompanion.Controllers
 
         //                                         T3    C1    C2    BACK  START C3    C4
         private byte[] ExtraButtons = new byte[] { 0x28, 0x29, 0x2a, 0x26, 0x27, 0x2b, 0x2c };
+        
+        //                                                                                 (nintendo: 0x02, xbox: 0x01)
+        private byte[] ControllerLayout = new byte[] { 0x07, 0x07, 0x09, 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+
+        private ButtonLayout GetLayout()
+        {
+            ButtonLayout layout = (ButtonLayout)Data[EXTRABUTTON2_IDX];
+            return layout.HasFlag(ButtonLayout.Xbox) ? ButtonLayout.Xbox : ButtonLayout.Nintendo;
+        }
 
         private void SetVerboseMode()
         {
@@ -142,6 +167,18 @@ namespace HandheldCompanion.Controllers
                     ButtonMode[10] = button;
                     hidDevice.Write(ButtonMode);
                 }
+
+                /*
+                ControllerLayout[6] = 0x02; // Nintendo
+                hidDevice.Write(ControllerLayout);
+
+                ButtonLayout layout = GetLayout();
+
+                ControllerLayout[6] = 0x01; // XBOX
+                hidDevice.Write(ControllerLayout);
+
+                layout = GetLayout();
+                */
 
                 /*
                 // LED ON
@@ -234,6 +271,9 @@ namespace HandheldCompanion.Controllers
                 return;
 
             base.UpdateInputs(ticks, delta, false);
+
+            Button0Enum extraButtons0 = (Button0Enum)Data[EXTRABUTTON0_IDX];
+            Inputs.ButtonState[ButtonFlags.L5] = extraButtons0.HasFlag(Button0Enum.M);
 
             Button1Enum extraButtons1 = (Button1Enum)Data[EXTRABUTTON1_IDX];
             Inputs.ButtonState[ButtonFlags.L4] = extraButtons1.HasFlag(Button1Enum.M1);

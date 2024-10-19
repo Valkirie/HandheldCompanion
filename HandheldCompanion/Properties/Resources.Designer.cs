@@ -3319,6 +3319,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to M.
+        /// </summary>
+        public static string Enum_TatantulaProController_ButtonFlags_L5 {
+            get {
+                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_L5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gyroscope.
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_Gyroscope {
