@@ -17,12 +17,11 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            // get current foreground process
-            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
-
-            // kill if is alive
             try
             {
+                // get current foreground process
+                ProcessEx fProcess = ProcessManager.GetForegroundProcess();
+                // kill if is alive
                 fProcess?.Process?.Kill();
             }
             catch { }
