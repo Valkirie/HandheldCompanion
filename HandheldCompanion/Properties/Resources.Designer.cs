@@ -6906,7 +6906,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User per-game profile.
+        ///   Looks up a localized string similar to Use per-game profile.
         /// </summary>
         public static string ProfilesPage_EnableProfile {
             get {
@@ -7253,6 +7253,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_OK {
             get {
                 return ResourceManager.GetString("ProfilesPage_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display the profile in Quick start section from the Quicktools Applications page.
+        /// </summary>
+        public static string ProfilesPage_Pinned {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Pinned", resourceCulture);
             }
         }
         

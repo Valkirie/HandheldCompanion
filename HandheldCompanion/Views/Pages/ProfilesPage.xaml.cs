@@ -501,6 +501,7 @@ public partial class ProfilesPage : Page
 
                     // Global settings
                     cB_Whitelist.IsChecked = selectedProfile.Whitelisted;
+                    cB_Pinned.IsChecked = selectedProfile.IsPinned;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
 
                     // Emulated controller assigned to the profile
@@ -694,6 +695,16 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
+        UpdateProfile();
+    }
+
+    private void cB_Pinned_Checked(object sender, RoutedEventArgs e)
+    {
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.IsPinned = (bool)cB_Pinned.IsChecked;
         UpdateProfile();
     }
 

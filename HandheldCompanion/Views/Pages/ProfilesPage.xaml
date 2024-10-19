@@ -390,6 +390,18 @@
                                     Margin="-46,0,-16,0"
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
+                                <CheckBox
+                                    Name="cB_Pinned"
+                                    HorizontalAlignment="Stretch"
+                                    Checked="cB_Pinned_Checked"
+                                    Content="{l:Static resx:Resources.ProfilesPage_Pinned}"
+                                    Unchecked="cB_Pinned_Checked" />
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
