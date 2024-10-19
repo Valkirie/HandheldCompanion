@@ -84,7 +84,7 @@ public static class ControllerManager
         DriversStore = DeserializeDriverStore();
 
         // Flushing possible JoyShocks...
-        JslDisconnectAndDisposeAll();
+        JslDisconnect();
 
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
@@ -150,11 +150,7 @@ public static class ControllerManager
                 controller.Unhide(false);
 
         // Flushing possible JoyShocks...
-        Task jslTask = Task.Run(() => JslDisconnectAndDisposeAll());
-
-        bool completedInTime = jslTask.Wait(TimeSpan.FromSeconds(2));
-        if (!completedInTime)
-            LogManager.LogWarning("JslDisconnectAndDisposeAll() timed out.");
+        JslDisconnect();
 
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
