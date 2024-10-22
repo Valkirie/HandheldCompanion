@@ -589,8 +589,7 @@ public static class ControllerManager
         // unsupported controller
         if (controller is null)
         {
-            LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(),
-                details.GetProductID());
+            LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
             return;
         }
 
@@ -848,9 +847,11 @@ public static class ControllerManager
                             {
                                 // Tarantula Pro (Dongle)
                                 case "0x1099":
+                                case "0x103E":
                                     details.isDongle = true;
                                     goto case "0x1050";
                                 // Tarantula Pro
+                                default:
                                 case "0x1050":
                                     controller = new TatantulaProController(details);
                                     break;
@@ -859,6 +860,13 @@ public static class ControllerManager
                         break;
                 }
             });
+        }
+
+        // unsupported controller
+        if (controller is null)
+        {
+            LogManager.LogError("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+            return;
         }
 
         while (!controller.IsReady && controller.IsConnected())
