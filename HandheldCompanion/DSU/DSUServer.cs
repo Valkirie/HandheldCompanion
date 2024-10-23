@@ -473,6 +473,8 @@ public static class DSUServer
         GamepadMotions = gamepadMotions;
     }
 
+    private static float gyroX = 0.0f, gyroY = 0.0f, gyroZ = 0.0f;
+    private static float accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
     private static bool ReportToBuffer(byte[] outputData, ref int outIdx, byte padIdx)
     {
         unchecked
@@ -550,8 +552,6 @@ public static class DSUServer
             Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetElapsedSeconds()), 0, outputData, outIdx, 8);
             outIdx += 8;
 
-            float gyroX = 0.0f, gyroY = 0.0f, gyroZ = 0.0f;
-            float accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
             switch (padIdx)
             {
                 default:
@@ -569,8 +569,12 @@ public static class DSUServer
                     byte gamepadMotionIdx = (byte)(padIdx - 1);
                     if (GamepadMotions.TryGetValue(gamepadMotionIdx, out GamepadMotion gamepadMotion))
                     {
-                        gamepadMotion.GetCalibratedGyro(out gyroX, out gyroY, out gyroZ);
-                        gamepadMotion.GetGravity(out accelX, out accelY, out accelZ);
+                        gamepadMotion.GetRawGyro(out gyroX, out gyroY, out gyroZ);
+                        gamepadMotion.GetRawAcceleration(out accelX, out accelY, out accelZ);
+
+                        accelX = accelX * -1.0f;
+                        accelY = accelY * -1.0f;
+                        accelZ = accelZ * -1.0f;
                     }
                     break;
 
