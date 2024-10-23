@@ -787,7 +787,7 @@
                                 IsSnapToTickEnabled="True"
                                 LargeChange="10"
                                 Maximum="90"
-                                Minimum="0"
+                                Minimum="-90"
                                 SmallChange="5"
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="5"
