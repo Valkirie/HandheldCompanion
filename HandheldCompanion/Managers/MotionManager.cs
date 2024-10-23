@@ -230,6 +230,4 @@ namespace HandheldCompanion.Managers
             controllerState.AxisState[AxisFlags.GyroY] = (short)Math.Clamp(output.Y, short.MinValue, short.MaxValue);
         }
     }
-
-
 }
