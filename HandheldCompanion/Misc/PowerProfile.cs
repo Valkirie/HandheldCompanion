@@ -66,7 +66,7 @@ namespace HandheldCompanion.Misc
 
         public bool IsDefault()
         {
-            return Default;
+            return Default && Guid == Guid.Empty;
         }
 
         public override string ToString()

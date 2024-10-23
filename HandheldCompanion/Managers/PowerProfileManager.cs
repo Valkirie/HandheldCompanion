@@ -206,13 +206,13 @@ namespace HandheldCompanion.Managers
 
         private static bool HasDefault()
         {
-            return profiles.Values.Count(a => a.Default) != 0;
+            return profiles.Values.Count(a => a.Default && a.Guid == Guid.Empty) != 0;
         }
 
         public static PowerProfile GetDefault()
         {
             if (HasDefault())
-                return profiles.Values.FirstOrDefault(a => a.Default);
+                return profiles.Values.FirstOrDefault(a => a.Default && a.Guid == Guid.Empty);
             return new PowerProfile();
         }
 

@@ -114,7 +114,7 @@ public class AMDProcessor : Processor
         }
     }
 
-    public override void SetGPUClock(double clock, int result)
+    public override void SetGPUClock(double clock, ref int result)
     {
         lock (updateLock)
         {
@@ -147,8 +147,8 @@ public class AMDProcessor : Processor
                         if (clock == 12750)
                             return;
 
-                        int error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
-                        base.SetGPUClock(clock, error);
+                        result = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                        base.SetGPUClock(clock, ref result);
                     }
                     break;
             }
