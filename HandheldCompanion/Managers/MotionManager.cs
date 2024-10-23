@@ -6,6 +6,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using static HandheldCompanion.Utils.DeviceUtils;
 using SensorState = HandheldCompanion.Inputs.GyroState.SensorState;
@@ -53,71 +54,120 @@ namespace HandheldCompanion.Managers
         // and is enough for DS4/DSU gyroscope handling
         private static void SetupMotion(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
+            // GamepadMotion: calibrated/filtered outputs from JoyShockLibrary
+            if (controllerState.GyroState.Gyroscope.TryGetValue(SensorState.GamepadMotion, out Vector3 gyrometer))
+            {
+                gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
+
+                gyrometer.X = gyroX;
+                gyrometer.Y = gyroZ;
+                gyrometer.Z = gyroY;
+            }
+            if (controllerState.GyroState.Accelerometer.TryGetValue(SensorState.GamepadMotion, out Vector3 acceleromter))
+            {
+                gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
+
+                acceleromter.X = accelX;
+                acceleromter.Y = accelY;
+                acceleromter.Z = accelZ;
+            }
+
+            // DSU: unfiltered outputs from sensors
+            if (controllerState.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out gyrometer))
+            {
+                gamepadMotion.GetRawGyro(out float gyroX, out float gyroY, out float gyroZ);
+
+                gyrometer.X = gyroX;
+                gyrometer.Y = gyroZ;
+                gyrometer.Z = gyroY;
+            }
+            if (controllerState.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out acceleromter))
+            {
+                gamepadMotion.GetRawAcceleration(out float accelX, out float accelY, out float accelZ);
+
+                acceleromter.X = accelX;
+                acceleromter.Y = accelY;
+                acceleromter.Z = accelZ;
+            }
+
+            // Default: based on GamepadMotionHelpers values with profile settings applied
             Profile current = ProfileManager.GetCurrent();
 
-            // GMH: based on GamepadMotionHelpers values
-            gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
-            gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
-
-            controllerState.GyroState.Gyroscope[SensorState.GMH] = new() { X = gyroX, Y = gyroY, Z = gyroZ };
-            controllerState.GyroState.Accelerometer[SensorState.GMH] = new() { X = accelX, Y = accelY, Z = accelZ };
-
-            // Default: based on GamepadMotionHelpers values with multipliers applied
-            controllerState.GyroState.Gyroscope[SensorState.Default] = controllerState.GyroState.Gyroscope[SensorState.GMH] * current.GyrometerMultiplier;
-            controllerState.GyroState.Accelerometer[SensorState.Default] = controllerState.GyroState.Accelerometer[SensorState.GMH] * current.AccelerometerMultiplier;
+            controllerState.GyroState.Gyroscope[SensorState.Default] = controllerState.GyroState.Gyroscope[SensorState.GamepadMotion] * current.GyrometerMultiplier;
+            controllerState.GyroState.Accelerometer[SensorState.Default] = controllerState.GyroState.Accelerometer[SensorState.GamepadMotion] * current.AccelerometerMultiplier;
 
             // Default: swap roll/yaw/auto
+            SteeringAxis steeringAxis = DetermineSteeringAxis(current, controllerState);
+            if (steeringAxis == SteeringAxis.Yaw)
+            {
+                SwapYawRoll(controllerState.GyroState.Gyroscope, SensorState.Default);
+                SwapYawRoll(controllerState.GyroState.Accelerometer, SensorState.Default);
+                SwapYawRoll(controllerState.GyroState.Gyroscope, SensorState.DSU);
+                SwapYawRoll(controllerState.GyroState.Accelerometer, SensorState.DSU);
+            }
+
+            // DSU: invert axes if needed
+            if (current.MotionInvertHorizontal)
+            {
+                InvertAxis(controllerState.GyroState.Gyroscope, SensorState.DSU, Axis.Y, Axis.Z);
+                InvertAxis(controllerState.GyroState.Accelerometer, SensorState.DSU, Axis.Y, Axis.Z);
+            }
+            if (current.MotionInvertVertical)
+            {
+                InvertAxis(controllerState.GyroState.Gyroscope, SensorState.DSU, Axis.X, Axis.Y);
+                InvertAxis(controllerState.GyroState.Accelerometer, SensorState.DSU, Axis.X, Axis.Y);
+            }
+        }
+
+        private static SteeringAxis DetermineSteeringAxis(Profile current, ControllerState controllerState)
+        {
             SteeringAxis steeringAxis = current.SteeringAxis;
             if (steeringAxis == SteeringAxis.Auto)
             {
                 SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
-                switch (sensorSelection)
+                if (sensorSelection == SensorFamily.Windows || sensorSelection == SensorFamily.SerialUSBIMU)
                 {
-                    case SensorFamily.Windows:
-                    case SensorFamily.SerialUSBIMU:
-                        steeringAxis = SteeringAxis.Yaw;
-                        break;
-
-                    case SensorFamily.Controller:
-                        if (Math.Abs(accelZ) > Math.Abs(accelY))
-                            steeringAxis = SteeringAxis.Yaw;
-                        break;
+                    return SteeringAxis.Yaw;
+                }
+                if (sensorSelection == SensorFamily.Controller &&
+                    Math.Abs(controllerState.GyroState.Accelerometer[SensorState.Default].Z) > Math.Abs(controllerState.GyroState.Accelerometer[SensorState.Default].Y))
+                {
+                    return SteeringAxis.Yaw;
                 }
             }
+            return steeringAxis;
+        }
 
-            switch (steeringAxis)
+        private static void SwapYawRoll(Dictionary<SensorState, Vector3> sensorDictionary, SensorState state)
+        {
+            if (sensorDictionary.TryGetValue(state, out Vector3 sensor))
             {
-                case SteeringAxis.Yaw:
-                    controllerState.GyroState.Gyroscope[SensorState.Default] = new(controllerState.GyroState.Gyroscope[SensorState.Default].X, -controllerState.GyroState.Gyroscope[SensorState.Default].Z, -controllerState.GyroState.Gyroscope[SensorState.Default].Y);
-                    controllerState.GyroState.Accelerometer[SensorState.Default] = new(controllerState.GyroState.Accelerometer[SensorState.Default].X, -controllerState.GyroState.Accelerometer[SensorState.Default].Z, -controllerState.GyroState.Accelerometer[SensorState.Default].Y);
-                    break;
-            }
-
-            // update all states (except Default, GMH)
-            foreach (SensorState state in Enum.GetValues(typeof(SensorState)))
-            {
-                if (state == SensorState.Default || state == SensorState.GMH)
-                    continue;
-
-                // set to default
-                controllerState.GyroState.Gyroscope[state] = controllerState.GyroState.Gyroscope[SensorState.Default];
-                controllerState.GyroState.Accelerometer[state] = controllerState.GyroState.Accelerometer[SensorState.Default];
-
-                // DSU: invert horizontal axis
-                if (current.MotionInvertHorizontal)
-                {
-                    controllerState.GyroState.Gyroscope[state] = new(controllerState.GyroState.Gyroscope[state].X, -controllerState.GyroState.Gyroscope[state].Y, -controllerState.GyroState.Gyroscope[state].Z);
-                    controllerState.GyroState.Accelerometer[state] = new(controllerState.GyroState.Accelerometer[state].X, -controllerState.GyroState.Accelerometer[state].Y, -controllerState.GyroState.Accelerometer[state].Z);
-                }
-
-                // DSU: invert vertical axis
-                if (current.MotionInvertVertical)
-                {
-                    controllerState.GyroState.Gyroscope[state] = new(-controllerState.GyroState.Gyroscope[state].X, -controllerState.GyroState.Gyroscope[state].Y, controllerState.GyroState.Gyroscope[state].Z);
-                    controllerState.GyroState.Accelerometer[state] = new(-controllerState.GyroState.Accelerometer[state].X, -controllerState.GyroState.Accelerometer[state].Y, controllerState.GyroState.Accelerometer[state].Z);
-                }
+                sensor = new Vector3(sensor.X, -sensor.Z, -sensor.Y);
+                sensorDictionary[state] = sensor;
             }
         }
+
+        private static void InvertAxis(Dictionary<SensorState, Vector3> sensorDictionary, SensorState state, Axis axis1, Axis axis2)
+        {
+            if (sensorDictionary.TryGetValue(state, out Vector3 sensor))
+            {
+                switch (axis1)
+                {
+                    case Axis.X: sensor.X = -sensor.X; break;
+                    case Axis.Y: sensor.Y = -sensor.Y; break;
+                    case Axis.Z: sensor.Z = -sensor.Z; break;
+                }
+                switch (axis2)
+                {
+                    case Axis.X: sensor.X = -sensor.X; break;
+                    case Axis.Y: sensor.Y = -sensor.Y; break;
+                    case Axis.Z: sensor.Z = -sensor.Z; break;
+                }
+                sensorDictionary[state] = sensor;
+            }
+        }
+
+        private enum Axis { X, Y, Z }
 
         // this function is used for advanced motion calculations used by
         // gyro to joy/mouse mappings and by UI that configures them

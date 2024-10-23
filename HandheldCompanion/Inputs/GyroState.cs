@@ -9,12 +9,10 @@ namespace HandheldCompanion.Inputs
         public Dictionary<SensorState, Vector3> Accelerometer = [];
         public Dictionary<SensorState, Vector3> Gyroscope = [];
 
-        public const byte SENSOR_MAX = 4;
         public enum SensorState
         {
-            Raw,
             Default,
-            GMH,
+            GamepadMotion,
             DSU
         }
 

@@ -11,8 +11,10 @@ using System.ComponentModel;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
+using static HandheldCompanion.Inputs.GyroState;
 
 namespace HandheldCompanion;
 
@@ -473,8 +475,6 @@ public static class DSUServer
         GamepadMotions = gamepadMotions;
     }
 
-    private static float gyroX = 0.0f, gyroY = 0.0f, gyroZ = 0.0f;
-    private static float accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
     private static bool ReportToBuffer(byte[] outputData, ref int outIdx, byte padIdx)
     {
         unchecked
@@ -552,16 +552,26 @@ public static class DSUServer
             Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetElapsedSeconds()), 0, outputData, outIdx, 8);
             outIdx += 8;
 
+            float gyroX = 0.0f, gyroY = 0.0f, gyroZ = 0.0f;
+            float accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
             switch (padIdx)
             {
                 default:
-                    gyroX = Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].X;
-                    gyroY = Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Y;
-                    gyroZ = Inputs.GyroState.Gyroscope[GyroState.SensorState.DSU].Z;
+                    {
+                        if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out Vector3 gyrometer))
+                        {
+                            gyroX = gyrometer.X;
+                            gyroY = gyrometer.Y;
+                            gyroZ = gyrometer.Z;
+                        }
 
-                    accelX = Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].X;
-                    accelY = Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Y;
-                    accelZ = Inputs.GyroState.Accelerometer[GyroState.SensorState.DSU].Z;
+                        if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out Vector3 accelerometer))
+                        {
+                            accelX = accelerometer.X;
+                            accelY = accelerometer.Y;
+                            accelZ = accelerometer.Z;
+                        }
+                    }
                     break;
 
                 case 1:
@@ -571,17 +581,17 @@ public static class DSUServer
                     {
                         gamepadMotion.GetRawGyro(out gyroX, out gyroY, out gyroZ);
                         gamepadMotion.GetRawAcceleration(out accelX, out accelY, out accelZ);
-
-                        accelX = accelX * -1.0f;
-                        accelY = accelY * -1.0f;
-                        accelZ = accelZ * -1.0f;
                     }
                     break;
 
                 case 3:
                     // do nothing
-                    break;
+                    return true;
             }
+
+            accelX = accelX * -1.0f;
+            accelY = accelY * -1.0f;
+            accelZ = accelZ * -1.0f;
 
             // Accelerometer
             Array.Copy(BitConverter.GetBytes(accelX), 0, outputData, outIdx, 4);

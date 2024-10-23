@@ -8,7 +8,9 @@ using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using System;
+using System.Numerics;
 using System.Threading;
+using static HandheldCompanion.Inputs.GyroState;
 
 namespace HandheldCompanion.Targets
 {
@@ -177,13 +179,19 @@ namespace HandheldCompanion.Targets
                 calibration = gamepadMotion.GetCalibration();
 
             // Use gyro sensor data, map to proper range, invert where needed
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(Inputs.GyroState.Gyroscope[GyroState.SensorState.Raw].Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.GamepadMotion, out Vector3 gyrometer))
+            {
+                outDS4Report.wGyroX = (short)InputUtils.rangeMap(gyrometer.X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+                outDS4Report.wGyroY = (short)InputUtils.rangeMap(gyrometer.Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+                outDS4Report.wGyroZ = (short)InputUtils.rangeMap(gyrometer.Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            }
 
-            outDS4Report.wAccelX = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
-            outDS4Report.wAccelY = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);
-            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(Inputs.GyroState.Accelerometer[GyroState.SensorState.Raw].Z, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.GamepadMotion, out Vector3 accelerometer))
+            {
+                outDS4Report.wAccelX = (short)InputUtils.rangeMap(accelerometer.X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+                outDS4Report.wAccelY = (short)InputUtils.rangeMap(accelerometer.Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+                outDS4Report.wAccelZ = (short)InputUtils.rangeMap(accelerometer.Z, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            }
 
             // todo: implement battery value based on device
             outDS4Report.bBatteryLvlSpecial = 11;
