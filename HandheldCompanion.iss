@@ -7,8 +7,8 @@
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  ;#define UseDotNet80
-  #define UseDotNet90
+  #define UseDotNet80
+  ;#define UseDotNet90
 #endif
 
 ;#define UseVC2005
