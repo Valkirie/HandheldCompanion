@@ -243,7 +243,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("-30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public double OverlayControllerRestingPitch {
             get {
                 return ((double)(this["OverlayControllerRestingPitch"]));

@@ -57,7 +57,7 @@
       <Value Profile="(Default)">en-US</Value>
     </Setting>
     <Setting Name="OverlayControllerRestingPitch" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">-30</Value>
+      <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="SensorPlacementUpsideDown" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
