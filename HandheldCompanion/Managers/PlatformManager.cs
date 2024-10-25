@@ -9,8 +9,6 @@ namespace HandheldCompanion.Managers;
 
 public static class PlatformManager
 {
-    private const int UpdateInterval = 1000;
-
     // gaming platforms
     public static readonly Steam Steam = new();
     public static readonly GOGGalaxy GOGGalaxy = new();
@@ -20,7 +18,8 @@ public static class PlatformManager
     public static RTSS RTSS = new();
     public static Platforms.LibreHardwareMonitor LibreHardwareMonitor = new();
 
-    private static Timer UpdateTimer;
+    private const int UpdateInterval = 1000;
+    private static Timer UpdateTimer = new() { Interval = UpdateInterval, AutoReset = false };
 
     private static bool IsInitialized;
 
@@ -52,11 +51,7 @@ public static class PlatformManager
 
         if (LibreHardwareMonitor.IsInstalled)
             LibreHardwareMonitor.Start();
-
-        UpdateTimer = new Timer(UpdateInterval)
-        {
-            AutoReset = false
-        };
+        
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
         UpdateTimer.Start();
 
@@ -205,6 +200,10 @@ public static class PlatformManager
 
         if (LibreHardwareMonitor.IsInstalled)
             LibreHardwareMonitor.Stop();
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ProfileManager.Applied -= ProfileManager_Applied;
+        PowerProfileManager.Applied -= PowerProfileManager_Applied;
 
         IsInitialized = false;
 
