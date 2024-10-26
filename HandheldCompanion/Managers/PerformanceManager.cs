@@ -356,9 +356,12 @@ public static class PerformanceManager
 
         if (!PlatformManager.RTSS.HasHook())
         {
+            autotdpWatchdog.Interval = INTERVAL_DEGRADED;
             RestoreTDP(true);
             return;
         }
+        else
+            autotdpWatchdog.Interval = INTERVAL_AUTO;
 
         if (autotdpLock.TryEnter())
         {
@@ -433,8 +436,17 @@ public static class PerformanceManager
 
                 // user requested to halt AutoTDP watchdog
                 if (autotdpWatchdogPendingStop)
-                    if (TDPdone && MSRdone)
+                {
+                    if (autotdpWatchdog.Interval == INTERVAL_AUTO)
+                    {
+                        if (TDPdone && MSRdone)
+                            autotdpWatchdog.Stop();
+                    }
+                    else if (autotdpWatchdog.Interval == INTERVAL_DEGRADED)
+                    {
                         autotdpWatchdog.Stop();
+                    }
+                }
             }
             finally
             {
