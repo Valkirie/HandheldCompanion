@@ -55,7 +55,7 @@ public static class ControllerManager
     private static object targetLock = new object();
     public static ControllerManagerStatus managerStatus = ControllerManagerStatus.Pending;
 
-    private static Timer scenarioTimer = new(1000) { AutoReset = true };
+    private static Timer scenarioTimer = new(100) { AutoReset = false };
 
     public static bool IsInitialized;
 
@@ -276,7 +276,6 @@ public static class ControllerManager
                 scenarioTimer.Stop();
             }
         }
-
 
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
