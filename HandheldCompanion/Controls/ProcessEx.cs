@@ -27,16 +27,19 @@ public class ProcessWindow
     {
         this.Hwnd = element.Current.NativeWindowHandle;
         this.Element = AutomationElement.FromHandle(this.Hwnd);
-        Refresh();
+        Refresh(false);
     }
 
-    public void Refresh()
+    public void Refresh(bool queryCache)
     {
         try
         {
-            CacheRequest cacheRequest = new CacheRequest();
-            cacheRequest.Add(ValuePattern.ValueProperty);
-            Element = Element.GetUpdatedCache(cacheRequest);
+            if (queryCache)
+            {
+                CacheRequest cacheRequest = new CacheRequest();
+                cacheRequest.Add(ValuePattern.ValueProperty);
+                Element = Element.GetUpdatedCache(cacheRequest);
+            }
 
             if (!string.IsNullOrEmpty(Element.Current.Name))
                 Name = Element.Current.Name;
@@ -225,7 +228,7 @@ public class ProcessEx : IDisposable
 
         // refresh attached windows
         foreach (ProcessWindow processWindow in ProcessWindows.Values)
-            processWindow.Refresh();
+            processWindow.Refresh(true);
 
         // raise event
         Refreshed?.Invoke(this, EventArgs.Empty);
