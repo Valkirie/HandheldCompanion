@@ -84,6 +84,12 @@ public static class PlatformManager
             PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
+        // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("OnScreenDisplayLevel", SettingsManager.GetString("OnScreenDisplayLevel"), false);
+        }
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -103,7 +109,7 @@ public static class PlatformManager
 
         if (RTSS.IsInstalled)
         {
-            var killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
+            bool killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
             RTSS.Stop(killRTSS);
         }
 

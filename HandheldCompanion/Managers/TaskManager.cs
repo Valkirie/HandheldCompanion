@@ -23,16 +23,6 @@ public static class TaskManager
     {
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        switch (name)
-        {
-            case "RunAtStartup":
-                UpdateTask(Convert.ToBoolean(value));
-                break;
-        }
-    }
-
     public static async System.Threading.Tasks.Task Start(string Executable)
     {
         if (IsInitialized)
@@ -72,6 +62,12 @@ public static class TaskManager
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
+        // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("RunAtStartup", SettingsManager.GetString("RunAtStartup"), false);
+        }
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -89,6 +85,16 @@ public static class TaskManager
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "TaskManager");
+    }
+
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "RunAtStartup":
+                UpdateTask(Convert.ToBoolean(value));
+                break;
+        }
     }
 
     private static void UpdateTask(bool value)

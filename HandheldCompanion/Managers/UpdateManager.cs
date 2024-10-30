@@ -34,13 +34,13 @@ public static class UpdateManager
     }
 
     private static readonly Assembly assembly;
-
     private static readonly Version build;
-    private static DateTime lastchecked;
 
-    private static UpdateStatus status;
+    private static DateTime lastCheck;
+    private static UpdateStatus updateStatus;
     private static readonly Dictionary<string, UpdateFile> updateFiles = [];
-    private static string url;
+    private static string updateUrl;
+
     private static readonly WebClient webClient;
     private static readonly string InstallPath;
 
@@ -80,13 +80,19 @@ public static class UpdateManager
 
         DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
 
-        lastchecked = dateTime;
+        lastCheck = dateTime;
 
-        status = UpdateStatus.Initialized;
-        Updated?.Invoke(status, null, null);
+        updateStatus = UpdateStatus.Initialized;
+        Updated?.Invoke(updateStatus, null, null);
 
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("UpdateUrl", SettingsManager.GetString("UpdateUrl"), false);
+        }
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -112,7 +118,7 @@ public static class UpdateManager
         switch (name)
         {
             case "UpdateUrl":
-                url = Convert.ToString(value);
+                updateUrl = Convert.ToString(value);
                 break;
         }
     }
@@ -138,7 +144,7 @@ public static class UpdateManager
 
     private static void WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
     {
-        if (status != UpdateStatus.Downloading)
+        if (updateStatus != UpdateStatus.Downloading)
             return;
 
         var filename = (string)e.UserState;
@@ -148,21 +154,21 @@ public static class UpdateManager
 
         var update = updateFiles[filename];
 
-        status = UpdateStatus.Downloaded;
-        Updated?.Invoke(status, update, null);
+        updateStatus = UpdateStatus.Downloaded;
+        Updated?.Invoke(updateStatus, update, null);
     }
 
     private static void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
-        if (status != UpdateStatus.Download && status != UpdateStatus.Downloading)
+        if (updateStatus != UpdateStatus.Download && updateStatus != UpdateStatus.Downloading)
             return;
 
         var filename = (string)e.UserState;
 
         if (updateFiles.TryGetValue(filename, out var file))
         {
-            status = UpdateStatus.Downloading;
-            Updated?.Invoke(status, file, e.ProgressPercentage);
+            updateStatus = UpdateStatus.Downloading;
+            Updated?.Invoke(updateStatus, file, e.ProgressPercentage);
         }
     }
 
@@ -204,12 +210,12 @@ public static class UpdateManager
                 });
             }
 
-            status = UpdateStatus.Failed;
-            Updated?.Invoke(status, update, e.Error);
+            updateStatus = UpdateStatus.Failed;
+            Updated?.Invoke(updateStatus, update, e.Error);
             return;
         }
 
-        switch (status)
+        switch (updateStatus)
         {
             case UpdateStatus.Checking:
                 ParseLatest(e.Result);
@@ -222,8 +228,8 @@ public static class UpdateManager
         if (webClient.IsBusy)
             return; // lazy
 
-        status = UpdateStatus.Download;
-        Updated?.Invoke(status, update, null);
+        updateStatus = UpdateStatus.Download;
+        Updated?.Invoke(updateStatus, update, null);
 
         // download release
         var filename = Path.Combine(InstallPath, update.filename);
@@ -245,20 +251,20 @@ public static class UpdateManager
             // skip if user is already running latest build
             if (latestBuild <= build)
             {
-                status = UpdateStatus.Updated;
-                Updated?.Invoke(status, null, null);
+                updateStatus = UpdateStatus.Updated;
+                Updated?.Invoke(updateStatus, null, null);
                 return;
             }
 
             // send changelog
-            status = UpdateStatus.Changelog;
-            Updated?.Invoke(status, null, latestRelease.body);
+            updateStatus = UpdateStatus.Changelog;
+            Updated?.Invoke(updateStatus, null, latestRelease.body);
 
             // skip if no assets are currently linked to the release
             if (latestRelease.assets.Count == 0)
             {
-                status = UpdateStatus.Updated;
-                Updated?.Invoke(status, null, null);
+                updateStatus = UpdateStatus.Updated;
+                Updated?.Invoke(updateStatus, null, null);
                 return;
             }
 
@@ -282,41 +288,41 @@ public static class UpdateManager
             // skip if we failed to parse updates
             if (updateFiles.Count == 0)
             {
-                status = UpdateStatus.Failed;
-                Updated?.Invoke(status, null, null);
+                updateStatus = UpdateStatus.Failed;
+                Updated?.Invoke(updateStatus, null, null);
                 return;
             }
 
-            status = UpdateStatus.Ready;
-            Updated?.Invoke(status, null, updateFiles);
+            updateStatus = UpdateStatus.Ready;
+            Updated?.Invoke(updateStatus, null, updateFiles);
         }
         catch
         {
             // failed to parse Json
-            status = UpdateStatus.Failed;
-            Updated?.Invoke(status, null, null);
+            updateStatus = UpdateStatus.Failed;
+            Updated?.Invoke(updateStatus, null, null);
         }
     }
 
     public static DateTime GetTime()
     {
-        return lastchecked;
+        return lastCheck;
     }
 
     private static void UpdateTime()
     {
-        lastchecked = DateTime.Now;
-        SettingsManager.SetProperty("UpdateLastChecked", lastchecked);
+        lastCheck = DateTime.Now;
+        SettingsManager.SetProperty("UpdateLastChecked", lastCheck);
     }
 
     public static void StartProcess()
     {
         // Update UI
-        status = UpdateStatus.Checking;
-        Updated?.Invoke(status, null, null);
+        updateStatus = UpdateStatus.Checking;
+        Updated?.Invoke(updateStatus, null, null);
 
         // download github
-        webClient.DownloadStringAsync(new Uri($"{url}/releases/latest"));
+        webClient.DownloadStringAsync(new Uri($"{updateUrl}/releases/latest"));
     }
 
     public static void InstallUpdate(UpdateFile updateFile)

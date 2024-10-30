@@ -113,9 +113,6 @@ public static class PerformanceManager
 
         autotdpWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
         autotdpWatchdog.Elapsed += autotdpWatchdog_Elapsed;
-
-        TDPMin = SettingsManager.GetDouble("ConfigurableTDPOverrideDown");
-        TDPMax = SettingsManager.GetDouble("ConfigurableTDPOverrideUp");
     }
 
     public static async Task Start()
@@ -148,6 +145,13 @@ public static class PerformanceManager
         if (PowerProfileManager.IsInitialized)
         {
             PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", SettingsManager.GetString("ConfigurableTDPOverrideDown"), false);
+            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", SettingsManager.GetString("ConfigurableTDPOverrideUp"), false);
         }
 
         IsInitialized = true;
@@ -818,10 +822,15 @@ public static class PerformanceManager
         // make sure we're not trying to run below or above specs
         value = Math.Min(TDPMax, Math.Max(TDPMin, value));
 
+        // skip if value is invalid
+        if (value == 0 || double.IsNaN(value) || double.IsInfinity(value))
+            return;
+
         // update value read by timer
         int idx = (int)type;
         StoredTDP[idx] = value;
 
+        // skip if processor is not ready
         if (processor is null || !processor.IsInitialized)
             return;
 

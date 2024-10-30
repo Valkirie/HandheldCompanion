@@ -255,7 +255,6 @@ public partial class SettingsPage : Page
 
     private void Page_Loaded(object? sender, RoutedEventArgs? e)
     {
-        UpdateManager.Start();
     }
 
     public void Page_Closed()
