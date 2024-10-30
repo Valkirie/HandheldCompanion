@@ -50,6 +50,8 @@ public static class ProcessManager
     private static readonly Timer ProcessWatcher;
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
+    private static object processLock = new();
+
     private static ProcessEx foregroundProcess;
     private static IntPtr foregroundWindow;
 
@@ -322,84 +324,87 @@ public static class ProcessManager
 
     private static bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
     {
-        try
+        lock (processLock)
         {
-            // process has exited on arrival
-            Process proc = Process.GetProcessById(processID);
-            if (proc.HasExited)
-                return false;
-
-            if (!Processes.TryGetValue(proc.Id, out ProcessEx processEx))
+            try
             {
-                // hook exited event
-                try
-                {
-                    proc.EnableRaisingEvents = true;
-                }
-                catch (Exception)
-                {
-                    // access denied
-                }
-                proc.Exited += ProcessHalted;
-
-                // check process path
-                string path = ProcessUtils.GetPathToApp(proc.Id);
-                if (string.IsNullOrEmpty(path))
+                // process has exited on arrival
+                Process proc = Process.GetProcessById(processID);
+                if (proc.HasExited)
                     return false;
 
-                // get filter
-                string exec = Path.GetFileName(path);
-                ProcessFilter filter = GetFilter(exec, path);
+                if (!Processes.TryGetValue(proc.Id, out ProcessEx processEx))
+                {
+                    // hook exited event
+                    try
+                    {
+                        proc.EnableRaisingEvents = true;
+                    }
+                    catch (Exception)
+                    {
+                        // access denied
+                    }
+                    proc.Exited += ProcessHalted;
 
-                // create process 
-                // UI thread (synchronous)
-                Application.Current.Dispatcher.Invoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
+                    // check process path
+                    string path = ProcessUtils.GetPathToApp(proc.Id);
+                    if (string.IsNullOrEmpty(path))
+                        return false;
 
-                if (processEx is null)
-                    return false;
+                    // get filter
+                    string exec = Path.GetFileName(path);
+                    ProcessFilter filter = GetFilter(exec, path);
 
-                // attach current window
-                processEx.AttachWindow(automationElement);
+                    // create process 
+                    // UI thread (synchronous)
+                    Application.Current.Dispatcher.Invoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
 
-                // get the proper platform
-                processEx.Platform = PlatformManager.GetPlatform(proc);
+                    if (processEx is null)
+                        return false;
 
-                // add to dictionary
-                Processes.TryAdd(processID, processEx);
+                    // attach current window
+                    processEx.AttachWindow(automationElement);
 
-                // todo: move me to event listeners
-                // we might want to treat this information differently depending on the location
-                if (processEx.Filter != ProcessFilter.Allowed)
-                    return true;
+                    // get the proper platform
+                    processEx.Platform = PlatformManager.GetPlatform(proc);
 
-                // raise event
-                ProcessStarted?.Invoke(processEx, OnStartup);
+                    // add to dictionary
+                    Processes.TryAdd(processID, processEx);
 
-                LogManager.LogDebug("Process detected: {0}", processEx.Executable);
+                    // todo: move me to event listeners
+                    // we might want to treat this information differently depending on the location
+                    if (processEx.Filter != ProcessFilter.Allowed)
+                        return true;
+
+                    // raise event
+                    ProcessStarted?.Invoke(processEx, OnStartup);
+
+                    LogManager.LogDebug("Process detected: {0}", processEx.Executable);
+                }
+                else
+                {
+                    // process already exist
+                    // attach current window
+                    processEx.AttachWindow(automationElement);
+                }
+
+                // listen for window closed event
+                WindowElement windowElement = new(processID, automationElement);
+                windowElement.Closed += (sender) =>
+                {
+                    if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
+                        processEx.DetachWindow((int)sender._hwnd);
+                };
+
+                return true;
             }
-            else
+            catch (Exception)
             {
-                // process already exist
-                // attach current window
-                processEx.AttachWindow(automationElement);
+                // process has too high elevation
             }
 
-            // listen for window closed event
-            WindowElement windowElement = new(processID, automationElement);
-            windowElement.Closed += (sender) =>
-            {
-                if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
-                    processEx.DetachWindow((int)sender._hwnd);
-            };
-
-            return true;
+            return false;
         }
-        catch (Exception)
-        {
-            // process has too high elevation
-        }
-
-        return false;
     }
 
     private static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "")
