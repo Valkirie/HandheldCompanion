@@ -26,6 +26,7 @@ public class ProcessWindow
     public ProcessWindow(AutomationElement element, bool isPrimary)
     {
         this.Hwnd = element.Current.NativeWindowHandle;
+        this.Element = AutomationElement.FromHandle(this.Hwnd);
         Refresh();
     }
 
@@ -33,7 +34,9 @@ public class ProcessWindow
     {
         try
         {
-            Element = AutomationElement.FromHandle(this.Hwnd);
+            CacheRequest cacheRequest = new CacheRequest();
+            cacheRequest.Add(ValuePattern.ValueProperty);
+            Element = Element.GetUpdatedCache(cacheRequest);
 
             if (!string.IsNullOrEmpty(Element.Current.Name))
                 Name = Element.Current.Name;
