@@ -6,7 +6,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -104,7 +103,7 @@ public static class ControllerManager
         // raise events
         if (DeviceManager.IsInitialized)
         {
-            foreach(PnPDetails? device in DeviceManager.PnPDevices.Values)
+            foreach (PnPDetails? device in DeviceManager.PnPDevices.Values)
             {
                 if (device.isXInput)
                     XUsbDeviceArrived(device, device.InterfaceGuid);

@@ -78,7 +78,7 @@ namespace HandheldCompanion.Managers
 
             if (DeviceManager.IsInitialized)
             {
-                foreach(AdapterInformation displayAdapter in DeviceManager.displayAdapters.Values)
+                foreach (AdapterInformation displayAdapter in DeviceManager.displayAdapters.Values)
                     DeviceManager_DisplayAdapterArrived(displayAdapter);
             }
 

@@ -551,7 +551,7 @@ public static class DeviceManager
 
                     LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
                         deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
-                    
+
                     // raise event
                     XUsbDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
                 }

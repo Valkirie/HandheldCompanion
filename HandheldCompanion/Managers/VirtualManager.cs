@@ -5,7 +5,6 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.ControllerManager;

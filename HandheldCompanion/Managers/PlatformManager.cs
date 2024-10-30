@@ -63,7 +63,7 @@ public static class PlatformManager
         {
             LibreHardwareMonitor.Start();
         }
-        
+
         // manage update timer events
         UpdateTimer.Start();
 
