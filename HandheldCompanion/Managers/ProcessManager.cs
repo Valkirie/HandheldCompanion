@@ -53,7 +53,7 @@ public static class ProcessManager
     private static ProcessEx foregroundProcess;
     private static IntPtr foregroundWindow;
 
-    private static bool IsInitialized;
+    public static bool IsInitialized;
 
     static ProcessManager()
     {
@@ -74,6 +74,38 @@ public static class ProcessManager
 
         ProcessWatcher = new Timer(2000);
         ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
+    }
+
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
+        // list all current windows
+        EnumWindows(OnWindowDiscovered, 0);
+
+        // start processes monitor
+        ForegroundTimer.Start();
+        ProcessWatcher.Start();
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "ProcessManager");
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        IsInitialized = false;
+
+        // stop processes monitor
+        ForegroundTimer.Stop();
+        ProcessWatcher.Stop();
+
+        LogManager.LogInformation("{0} has stopped", "ProcessManager");
     }
 
     private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
@@ -145,35 +177,6 @@ public static class ProcessManager
         }
 
         return true;
-    }
-
-    public static void Start()
-    {
-        // list all current windows
-        EnumWindows(OnWindowDiscovered, 0);
-
-        // start processes monitor
-        ForegroundTimer.Start();
-        ProcessWatcher.Start();
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "ProcessManager");
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        IsInitialized = false;
-
-        // stop processes monitor
-        ForegroundTimer.Stop();
-        ProcessWatcher.Stop();
-
-        LogManager.LogInformation("{0} has stopped", "ProcessManager");
     }
 
     public static ProcessEx GetForegroundProcess()

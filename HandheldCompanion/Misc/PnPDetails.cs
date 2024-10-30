@@ -30,6 +30,8 @@ public class PnPDetails
     public string EnumeratorName = string.Empty;
     public DateTimeOffset FirstInstallDate;
 
+    public Guid InterfaceGuid;
+
     public ushort ProductID;
     public ushort VendorID;
 

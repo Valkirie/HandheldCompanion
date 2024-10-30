@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using System;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -35,7 +36,7 @@ namespace HandheldCompanion.ViewModels
             base.Dispose();
         }
 
-        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
         {
             IController controller = ControllerManager.GetTargetController();
             if (controller is not null) UpdateController(controller);

@@ -114,10 +114,74 @@ public static class PerformanceManager
         autotdpWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
         autotdpWatchdog.Elapsed += autotdpWatchdog_Elapsed;
 
+        TDPMin = SettingsManager.GetDouble("ConfigurableTDPOverrideDown");
+        TDPMax = SettingsManager.GetDouble("ConfigurableTDPOverrideUp");
+    }
+
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
+        // initialize watchdog(s)
+        cpuWatchdog.Start();
+
+        // initialize processor
+        processor = Processor.GetCurrent();
+
+        if (processor is not null && processor.IsInitialized)
+        {
+            processor.StatusChanged += Processor_StatusChanged;
+            processor.Initialize();
+        }
+        else
+        {
+            ProcessorStatusChanged?.Invoke(false, false);
+        }
+
         // manage events
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        if (PowerProfileManager.IsInitialized)
+        {
+            PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "PerformanceManager");
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        // halt processor
+        if (processor is not null && processor.IsInitialized)
+        {
+            processor.StatusChanged -= Processor_StatusChanged;
+            processor.Stop();
+        }
+
+        // halt watchdogs
+        autotdpWatchdog.Stop();
+        tdpWatchdog.Stop();
+        gfxWatchdog.Stop();
+        cpuWatchdog.Stop();
+
+        // manage events
+        PowerProfileManager.Applied -= PowerProfileManager_Applied;
+        PowerProfileManager.Discarded -= PowerProfileManager_Discarded;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has stopped", "PerformanceManager");
     }
 
     public static double GetMinimumTDP()
@@ -944,48 +1008,6 @@ public static class PerformanceManager
         currentClock = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PROCFREQMAX);
         if (currentClock[0] != cpuClock || currentClock[1] != cpuClock)
             LogManager.LogWarning("Failed to set requested PROCFREQMAX");
-    }
-
-    public static void Start()
-    {
-        // initialize watchdog(s)
-        cpuWatchdog.Start();
-
-        // initialize processor
-        processor = Processor.GetCurrent();
-
-        if (processor is not null && processor.IsInitialized)
-        {
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.Initialize();
-        }
-        else
-        {
-            ProcessorStatusChanged?.Invoke(false, false);
-        }
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "PerformanceManager");
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        if (processor is not null && processor.IsInitialized)
-            processor.Stop();
-
-        autotdpWatchdog.Stop();
-        tdpWatchdog.Stop();
-        gfxWatchdog.Stop();
-        cpuWatchdog.Stop();
-
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "PerformanceManager");
     }
 
     public static void Resume(bool OS)

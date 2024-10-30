@@ -6,6 +6,7 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Views.QuickPages;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -49,6 +50,9 @@ namespace HandheldCompanion.ViewModels
                 // Ensure the index is within the bounds of the collection
                 if (value != _selectedPresetIndexDC && value >= 0 && value < ProfilePickerItems.Count)
                 {
+                    if (ProfilePickerItems[value].IsHeader)
+                        return;
+
                     _selectedPresetIndexDC = value;
                     SelectedPresetDC = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexDC].LinkedPresetId.Value);
                 }
@@ -85,6 +89,9 @@ namespace HandheldCompanion.ViewModels
                 // Ensure the index is within the bounds of the collection
                 if (value != _selectedPresetIndexAC && value >= 0 && value < ProfilePickerItems.Count)
                 {
+                    if (ProfilePickerItems[value].IsHeader)
+                        return;
+
                     _selectedPresetIndexAC = value;
                     SelectedPresetAC = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexAC].LinkedPresetId.Value);
                 }
@@ -95,25 +102,32 @@ namespace HandheldCompanion.ViewModels
         {
             this.quickProfilesPage = quickProfilesPage;
 
+            // manage events
             HotkeysManager.Updated += HotkeysManager_Updated;
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+            PowerProfileManager.Initialized += PowerProfileManager_Initialized;
+
+            // raise events
+            if (PowerProfileManager.IsInitialized)
+            {
+                PowerProfileManager_Initialized();
+            }
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
 
             _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
             _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };
 
             ProfilePickerItems.Add(_devicePresetsPickerVM);
             ProfilePickerItems.Add(_userPresetsPickerVM);
+        }
 
-            // Fill initial data
-            foreach (var preset in PowerProfileManager.profiles.Values)
-            {
-                var index = ProfilePickerItems.IndexOf(preset.IsDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
-                ProfilePickerItems.Insert(index, new ProfilesPickerViewModel { Text = preset.Name, LinkedPresetId = preset.Guid });
-            }
-
+        private void PowerProfileManager_Initialized()
+        {
             SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == PowerProfileManager.GetDefault().Guid));
             SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == PowerProfileManager.GetDefault().Guid));
         }

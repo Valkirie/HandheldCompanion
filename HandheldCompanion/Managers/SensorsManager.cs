@@ -28,17 +28,61 @@ namespace HandheldCompanion.Managers
 
         static SensorsManager()
         {
+        }
+
+        public static async Task Start()
+        {
+            if (IsInitialized)
+                return;
+
+            // manage events
             DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceArrived;
             DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
-
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
             ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            if (DeviceManager.IsInitialized)
+            {
+                DeviceManager_UsbDeviceArrived(null, Guid.Empty);
+            }
+
+            if (ControllerManager.IsInitialized)
+            {
+                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+            }
+
+            IsInitialized = true;
+            Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "SensorsManager");
+            return;
+        }
+
+        public static void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            StopListening();
+
+            // manage events
+            DeviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceArrived;
+            DeviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceRemoved;
+            ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+            ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+            IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", "SensorsManager");
         }
 
         private static void ControllerManager_ControllerSelected(IController Controller)
         {
+            if (Controller is null)
+                return;
+
             // select controller as current sensor if current sensor selection is none
             if (Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
@@ -59,7 +103,7 @@ namespace HandheldCompanion.Managers
             PickNextSensor();
         }
 
-        private static void DeviceManager_UsbDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
+        private static void DeviceManager_UsbDeviceRemoved(PnPDevice device, Guid IntefaceGuid)
         {
             if (USBSensor is null || sensorFamily != SensorFamily.SerialUSBIMU)
                 return;
@@ -86,7 +130,7 @@ namespace HandheldCompanion.Managers
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
         }
 
-        private static void DeviceManager_UsbDeviceArrived(PnPDevice device, DeviceEventArgs obj)
+        private static void DeviceManager_UsbDeviceArrived(PnPDevice device, Guid IntefaceGuid)
         {
             // If USB Gyro is plugged, hook into it
             USBSensor = SerialUSBIMU.GetCurrent();
@@ -172,26 +216,6 @@ namespace HandheldCompanion.Managers
                     }
                     break;
             }
-        }
-
-        public static void Start()
-        {
-            IsInitialized = true;
-            Initialized?.Invoke();
-
-            LogManager.LogInformation("{0} has started", "SensorsManager");
-        }
-
-        public static void Stop()
-        {
-            if (!IsInitialized)
-                return;
-
-            StopListening();
-
-            IsInitialized = false;
-
-            LogManager.LogInformation("{0} has stopped", "SensorsManager");
         }
 
         public static void Resume(bool OS)

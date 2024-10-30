@@ -32,12 +32,7 @@ public partial class QuickHomePage : Page
 
     private void GPUManager_Hooked(GraphicsProcessingUnit.GPU GPU)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            // deprecated
-            // t_CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
-        });
+        // do something
     }
 
     public QuickHomePage()

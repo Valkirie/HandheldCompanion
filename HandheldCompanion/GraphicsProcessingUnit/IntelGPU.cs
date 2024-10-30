@@ -171,7 +171,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             IsInitialized = true;
 
             // pull telemetry once
-            TelemetryData = GetTelemetry();
+            TelemetryData = IGCLBackend.GetTelemetry(deviceIdx);
 
             TelemetryTimer = new Timer(TelemetryInterval)
             {

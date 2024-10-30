@@ -26,14 +26,19 @@ namespace HandheldCompanion.ViewModels
 
         public HotkeyPageViewModel()
         {
+            // manage events
             HotkeysManager.Updated += HotkeysManager_Updated;
             HotkeysManager.Deleted += HotkeysManager_Deleted;
             HotkeysManager.Initialized += HotkeysManager_Initialized;
-
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
-
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+            // raise event
+            if (ControllerManager.IsInitialized)
+            {
+                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+            }
 
             CreateHotkeyCommand = new DelegateCommand(async () =>
             {

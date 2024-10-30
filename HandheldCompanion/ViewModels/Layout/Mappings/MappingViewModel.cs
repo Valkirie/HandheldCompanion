@@ -6,6 +6,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
@@ -192,7 +193,7 @@ namespace HandheldCompanion.ViewModels
 
         private void VirtualManager_ControllerSelected(HIDmode hid) => ActionTypeChanged();
 
-        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
         {
             IController controller = ControllerManager.GetTargetController();
             if (controller is not null) UpdateController(controller);

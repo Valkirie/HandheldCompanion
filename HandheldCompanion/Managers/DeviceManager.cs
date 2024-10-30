@@ -25,7 +25,7 @@ public static class DeviceManager
     private static readonly DeviceNotificationListener XUsbDeviceListener = new();
     private static readonly DeviceNotificationListener HidDeviceListener = new();
 
-    private static readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
+    public static readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
     private static Timer adaptersTimer = new(2000) { AutoReset = false };
 
@@ -76,8 +76,11 @@ public static class DeviceManager
         adaptersTimer.Elapsed += (sender, e) => RefreshDisplayAdapters(true);
     }
 
-    public static void Start()
+    public static async Task Start()
     {
+        if (IsInitialized)
+            return;
+
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
         foreach (string InfPath in ControllerManager.DriversStore.Values)
             PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
@@ -102,14 +105,13 @@ public static class DeviceManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "DeviceManager");
+        return;
     }
 
     public static void Stop()
     {
         if (!IsInitialized)
             return;
-
-        IsInitialized = false;
 
         UsbDeviceListener.StopListen(DeviceInterfaceIds.UsbDevice);
         UsbDeviceListener.DeviceArrived -= UsbDevice_DeviceArrived;
@@ -126,6 +128,8 @@ public static class DeviceManager
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
         foreach (string InfPath in ControllerManager.DriversStore.Values)
             PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+
+        IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "DeviceManager");
     }
@@ -505,7 +509,9 @@ public static class DeviceManager
                 if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
                 {
                     LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
-                    XUsbDeviceRemoved?.Invoke(deviceEx, obj);
+
+                    // raise event
+                    XUsbDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
                 }
             });
         }
@@ -540,12 +546,14 @@ public static class DeviceManager
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
                         deviceEx.XInputDeviceIdx = GetDeviceIndex(obj.SymLink);
 
+                    // set InterfaceGuid
+                    deviceEx.InterfaceGuid = obj.InterfaceGuid;
+
                     LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
                         deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
-
-                // raise event
-                Event:
-                    XUsbDeviceArrived?.Invoke(deviceEx, obj);
+                    
+                    // raise event
+                    XUsbDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
                 }
             });
         }
@@ -577,7 +585,9 @@ public static class DeviceManager
                 if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
                 {
                     LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
-                    HidDeviceRemoved?.Invoke(deviceEx, obj);
+
+                    // raise event
+                    HidDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
                 }
             });
         }
@@ -606,9 +616,14 @@ public static class DeviceManager
                 if (deviceEx is null || deviceEx.isXInput)
                     return;
 
-                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
-                    deviceEx.GetProductID(), deviceEx.deviceInstanceId);
-                HidDeviceArrived?.Invoke(deviceEx, obj);
+                // set InterfaceGuid
+                deviceEx.InterfaceGuid = obj.InterfaceGuid;
+
+                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
+                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+
+                // raise event
+                HidDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
             });
         }
         catch { }
@@ -623,7 +638,7 @@ public static class DeviceManager
             var ProductID = CommonUtils.Between(symLink, "PID_", "&");
 
             if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
-                UsbDeviceRemoved?.Invoke(null, obj);
+                UsbDeviceRemoved?.Invoke(null, obj.InterfaceGuid);
         }
         catch
         {
@@ -639,7 +654,7 @@ public static class DeviceManager
             var ProductID = CommonUtils.Between(symLink, "PID_", "&");
 
             if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
-                UsbDeviceArrived?.Invoke(null, obj);
+                UsbDeviceArrived?.Invoke(null, obj.InterfaceGuid);
         }
         catch
         {
@@ -674,7 +689,7 @@ public static class DeviceManager
         return XINPUT_LED_TO_PORT_MAP[ledState];
     }
 
-    private static Dictionary<Guid, AdapterInformation> displayAdapters = [];
+    public static Dictionary<Guid, AdapterInformation> displayAdapters = [];
     public static void RefreshDisplayAdapters(bool elapsed = false)
     {
         if (elapsed)
@@ -973,22 +988,22 @@ public static class DeviceManager
     #region events
 
     public static event XInputDeviceArrivedEventHandler XUsbDeviceArrived;
-    public delegate void XInputDeviceArrivedEventHandler(PnPDetails device, DeviceEventArgs obj);
+    public delegate void XInputDeviceArrivedEventHandler(PnPDetails device, Guid InterfaceGuid);
 
     public static event XInputDeviceRemovedEventHandler XUsbDeviceRemoved;
-    public delegate void XInputDeviceRemovedEventHandler(PnPDetails device, DeviceEventArgs obj);
+    public delegate void XInputDeviceRemovedEventHandler(PnPDetails device, Guid InterfaceGuid);
 
     public static event GenericDeviceArrivedEventHandler UsbDeviceArrived;
-    public delegate void GenericDeviceArrivedEventHandler(PnPDevice device, DeviceEventArgs obj);
+    public delegate void GenericDeviceArrivedEventHandler(PnPDevice device, Guid InterfaceGuid);
 
     public static event GenericDeviceRemovedEventHandler UsbDeviceRemoved;
-    public delegate void GenericDeviceRemovedEventHandler(PnPDevice device, DeviceEventArgs obj);
+    public delegate void GenericDeviceRemovedEventHandler(PnPDevice device, Guid InterfaceGuid);
 
     public static event DInputDeviceArrivedEventHandler HidDeviceArrived;
-    public delegate void DInputDeviceArrivedEventHandler(PnPDetails device, DeviceEventArgs obj);
+    public delegate void DInputDeviceArrivedEventHandler(PnPDetails device, Guid InterfaceGuid);
 
     public static event DInputDeviceRemovedEventHandler HidDeviceRemoved;
-    public delegate void DInputDeviceRemovedEventHandler(PnPDetails device, DeviceEventArgs obj);
+    public delegate void DInputDeviceRemovedEventHandler(PnPDetails device, Guid InterfaceGuid);
 
     public static event DisplayAdapterArrivedEventHandler DisplayAdapterArrived;
     public delegate void DisplayAdapterArrivedEventHandler(AdapterInformation adapterInformation);

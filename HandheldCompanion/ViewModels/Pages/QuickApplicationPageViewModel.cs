@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 using WpfScreenHelper.Enum;
 
@@ -61,19 +62,19 @@ namespace HandheldCompanion.ViewModels
         {
             RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
 
+            // manage events
             ProcessManager.ProcessStarted += ProcessStarted;
             ProcessManager.ProcessStopped += ProcessStopped;
 
-            // get processes
-            foreach (ProcessEx processEx in ProcessManager.GetProcesses())
-                ProcessStarted(processEx, true);
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(Processes, new object());
 
+            // manage events
             ProfileManager.Updated += ProfileManager_Updated;
             ProfileManager.Deleted += ProfileManager_Deleted;
 
-            // get profiles
-            foreach (Profile profile in ProfileManager.GetProfiles())
-                ProfileManager_Updated(profile, UpdateSource.Background, false);
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
         }
 
         private void ProfileManager_Deleted(Profile profile)

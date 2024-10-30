@@ -21,7 +21,6 @@ public static class TaskManager
 
     static TaskManager()
     {
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -34,8 +33,11 @@ public static class TaskManager
         }
     }
 
-    public static void Start(string Executable)
+    public static async System.Threading.Tasks.Task Start(string Executable)
     {
+        if (IsInitialized)
+            return;
+
         TaskExecutable = Executable;
         taskService = new TaskService();
 
@@ -67,6 +69,9 @@ public static class TaskManager
         }
         catch { }
 
+        // manage events
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -78,9 +83,10 @@ public static class TaskManager
         if (!IsInitialized)
             return;
 
-        IsInitialized = false;
-
+        // manage events
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "TaskManager");
     }

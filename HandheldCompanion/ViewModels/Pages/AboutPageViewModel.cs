@@ -37,7 +37,7 @@ namespace HandheldCompanion.ViewModels
             base.Dispose();
         }
 
-        private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+        private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
         {
             // Update all bindings
             OnPropertyChanged(string.Empty);

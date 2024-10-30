@@ -1,6 +1,7 @@
 ﻿using PrecisionTiming;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -26,6 +27,34 @@ public static class TimerManager
         MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
 
         Stopwatch = new Stopwatch();
+    }
+
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
+        MasterTimer.Start();
+        Stopwatch.Start();
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started with Period set to {1}", "TimerManager", GetPeriod());
+        return;
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        IsInitialized = false;
+
+        MasterTimer.Stop();
+        Stopwatch.Stop();
+
+        LogManager.LogInformation("{0} has stopped", "TimerManager");
     }
 
     private static void DoWork()
@@ -77,33 +106,6 @@ public static class TimerManager
     public static long GetElapsedMilliseconds()
     {
         return Stopwatch.ElapsedMilliseconds;
-    }
-
-    public static void Start()
-    {
-        if (IsInitialized)
-            return;
-
-        MasterTimer.Start();
-        Stopwatch.Start();
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started with Period set to {1}", "TimerManager", GetPeriod());
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        IsInitialized = false;
-
-        MasterTimer.Stop();
-        Stopwatch.Stop();
-
-        LogManager.LogInformation("{0} has stopped", "TimerManager");
     }
 
     public static void Restart()

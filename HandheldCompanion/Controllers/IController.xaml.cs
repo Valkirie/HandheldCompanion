@@ -457,6 +457,9 @@ namespace HandheldCompanion.Controllers
         // this function cannot be called twice
         public virtual void Plug()
         {
+            if (isPlaceholder)
+                return;
+
             SetVibrationStrength(SettingsManager.GetUInt("VibrationStrength"));
 
             InjectedButtons.Clear();
@@ -471,6 +474,9 @@ namespace HandheldCompanion.Controllers
         // this function cannot be called twice
         public virtual void Unplug()
         {
+            if (isPlaceholder)
+                return;
+
             // UI thread (async)
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -487,6 +493,9 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Hide(bool powerCycle = true)
         {
+            if (isPlaceholder)
+                return;
+
             HideHID();
 
             if (powerCycle)
@@ -502,6 +511,9 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Unhide(bool powerCycle = true)
         {
+            if (isPlaceholder)
+                return;
+
             UnhideHID();
 
             if (powerCycle)

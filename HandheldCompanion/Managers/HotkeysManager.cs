@@ -14,6 +14,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -31,40 +32,13 @@ public static class HotkeysManager
         HotkeysPath = Path.Combine(MainWindow.SettingsPath, "hotkeys");
         if (!Directory.Exists(HotkeysPath))
             Directory.CreateDirectory(HotkeysPath);
-
-        InputsManager.StoppedListening += InputsManager_StoppedListening;
     }
 
-    private static void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
+    public static async Task Start()
     {
-        // update chord(s)
-        if (storedChord.KeyState.Count != 0 || storedChord.ButtonState.Buttons.Count() != 0)
-        {
-            if (hotkeys.TryGetValue(buttonFlags, out Hotkey hotkey))
-            {
-                switch (storedChord.chordTarget)
-                {
-                    case InputsChordTarget.Input:
-                        hotkey.inputsChord = storedChord.Clone() as InputsChord;
-                        break;
-                    case InputsChordTarget.Output:
-                        if (hotkey.command is KeyboardCommands keyboardCommands)
-                            keyboardCommands.outputChord = storedChord.Clone() as InputsChord;
-                        break;
-                }
+        if (IsInitialized)
+            return;
 
-                UpdateOrCreateHotkey(hotkey);
-            }
-        }
-    }
-
-    public static ICollection<Hotkey> GetHotkeys()
-    {
-        return hotkeys.Values;
-    }
-
-    public static void Start()
-    {
         // process existing hotkeys
         string[] fileEntries = Directory.GetFiles(HotkeysPath, "*.json", SearchOption.AllDirectories);
         foreach (string fileName in fileEntries)
@@ -94,8 +68,55 @@ public static class HotkeysManager
                 UpdateOrCreateHotkey(new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true });
         }
 
+        // manage events
+        InputsManager.StoppedListening += InputsManager_StoppedListening;
+
         IsInitialized = true;
         Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "HotkeysManager");
+        return;
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        // manage events
+        InputsManager.StoppedListening -= InputsManager_StoppedListening;
+
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has stopped", "HotkeysManager");
+    }
+
+    private static void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
+    {
+        // update chord(s)
+        if (storedChord.KeyState.Count != 0 || storedChord.ButtonState.Buttons.Count() != 0)
+        {
+            if (hotkeys.TryGetValue(buttonFlags, out Hotkey hotkey))
+            {
+                switch (storedChord.chordTarget)
+                {
+                    case InputsChordTarget.Input:
+                        hotkey.inputsChord = storedChord.Clone() as InputsChord;
+                        break;
+                    case InputsChordTarget.Output:
+                        if (hotkey.command is KeyboardCommands keyboardCommands)
+                            keyboardCommands.outputChord = storedChord.Clone() as InputsChord;
+                        break;
+                }
+
+                UpdateOrCreateHotkey(hotkey);
+            }
+        }
+    }
+
+    public static ICollection<Hotkey> GetHotkeys()
+    {
+        return hotkeys.Values;
     }
 
     private static void ProcessHotkey(string fileName)
@@ -344,11 +365,6 @@ public static class HotkeysManager
         }
 
         FileUtils.FileDelete(hotkeyPath);
-    }
-
-    public static void Stop()
-    {
-        IsInitialized = false;
     }
 
     #region events

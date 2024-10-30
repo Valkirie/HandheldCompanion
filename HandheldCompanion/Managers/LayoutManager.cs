@@ -38,6 +38,8 @@ internal static class LayoutManager
     public static string LayoutsPath;
     public static string TemplatesPath;
 
+    public static FileSystemWatcher layoutWatcher { get; set; }
+
     private static bool IsInitialized;
 
     static LayoutManager()
@@ -60,27 +62,22 @@ internal static class LayoutManager
             Filter = "*.json",
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
         };
-
-        ProfileManager.Applied += ProfileManager_Applied;
-
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        MultimediaManager.DisplayOrientationChanged += DesktopManager_DisplayOrientationChanged;
     }
 
-    public static FileSystemWatcher layoutWatcher { get; set; }
-
-    public static void Start()
+    public static async Task Start()
     {
+        if (IsInitialized)
+            return;
+
         // process community templates
-        var fileEntries = Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories);
-        foreach (var fileName in fileEntries)
+        string[] fileEntries = Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories);
+        foreach (string fileName in fileEntries)
             ProcessLayoutTemplate(fileName);
 
-        foreach (var layoutTemplate in Templates)
+        foreach (LayoutTemplate layoutTemplate in Templates)
             Updated?.Invoke(layoutTemplate);
 
-        var desktopFile = Path.Combine(LayoutsPath, $"{desktopLayoutFile}.json");
+        string desktopFile = Path.Combine(LayoutsPath, $"{desktopLayoutFile}.json");
         desktopLayout = ProcessLayout(desktopFile);
         if (desktopLayout is null)
         {
@@ -88,22 +85,52 @@ internal static class LayoutManager
             DesktopLayout_Updated(desktopLayout);
         }
 
+        // manage desktop layout events
         desktopLayout.Updated += DesktopLayout_Updated;
 
-        // TODO: overwritten layout will have different GUID so it will duplicate
+        // manage layout watcher events
         layoutWatcher.Created += LayoutWatcher_Template;
         layoutWatcher.Changed += LayoutWatcher_Template;
+
+        // manage events
+        ProfileManager.Applied += ProfileManager_Applied;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        MultimediaManager.DisplayOrientationChanged += MultimediaManager_DisplayOrientationChanged;
+
+        // raise events
+        if (ProfileManager.IsInitialized)
+        {
+            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        if (MultimediaManager.IsInitialized)
+        {
+            MultimediaManager_DisplayOrientationChanged(MultimediaManager.GetScreenOrientation());
+        }
 
         IsInitialized = true;
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "LayoutManager");
+        return;
     }
 
     public static void Stop()
     {
         if (!IsInitialized)
             return;
+
+        // manage desktop layout events
+        desktopLayout.Updated -= DesktopLayout_Updated;
+
+        // manage layout watcher events
+        layoutWatcher.Created -= LayoutWatcher_Template;
+        layoutWatcher.Changed -= LayoutWatcher_Template;
+
+        // manage events
+        ProfileManager.Applied -= ProfileManager_Applied;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        MultimediaManager.DisplayOrientationChanged -= MultimediaManager_DisplayOrientationChanged;
 
         IsInitialized = false;
 
@@ -263,7 +290,7 @@ internal static class LayoutManager
         }
     }
 
-    private static void DesktopManager_DisplayOrientationChanged(ScreenRotation rotation)
+    private static void MultimediaManager_DisplayOrientationChanged(ScreenRotation rotation)
     {
         currentOrientation = rotation;
 

@@ -11,6 +11,7 @@ namespace HandheldCompanion.ViewModels
 
         public QuickHomePageViewModel()
         {
+            // manage events
             HotkeysManager.Updated += HotkeysManager_Updated;
             HotkeysManager.Deleted += HotkeysManager_Deleted;
             HotkeysManager.Initialized += HotkeysManager_Initialized;

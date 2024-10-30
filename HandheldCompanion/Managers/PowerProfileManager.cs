@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers
@@ -24,22 +25,19 @@ namespace HandheldCompanion.Managers
 
         static PowerProfileManager()
         {
-            // initialiaze path(s)
+            // initialize path(s)
             ProfilesPath = Path.Combine(MainWindow.SettingsPath, "powerprofiles");
             if (!Directory.Exists(ProfilesPath))
                 Directory.CreateDirectory(ProfilesPath);
-
-            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
-
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
-            SystemManager.PowerStatusChanged += SystemManager_PowerStatusChanged;
         }
 
-        public static void Start()
+        public static async Task Start()
         {
+            if (IsInitialized)
+                return;
+
             // process existing profiles
-            var fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
@@ -49,16 +47,35 @@ namespace HandheldCompanion.Managers
                     UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
             }
 
+            // manage events
+            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
+            SystemManager.PowerStatusChanged += SystemManager_PowerStatusChanged;
+
+            // raise events
+            if (ProfileManager.IsInitialized)
+            {
+                ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+            }
+
             IsInitialized = true;
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "PowerProfileManager");
+            return;
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            // manage events
+            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+            ProfileManager.Applied -= ProfileManager_Applied;
+            ProfileManager.Discarded -= ProfileManager_Discarded;
+            SystemManager.PowerStatusChanged -= SystemManager_PowerStatusChanged;
 
             IsInitialized = false;
 

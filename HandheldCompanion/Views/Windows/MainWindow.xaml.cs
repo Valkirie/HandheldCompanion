@@ -115,7 +115,7 @@ public partial class MainWindow : GamepadWindow
         SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
             "HandheldCompanion");
 
-        // initialiaze path
+        // initialize path
         if (!Directory.Exists(SettingsPath))
             Directory.CreateDirectory(SettingsPath);
 
@@ -183,6 +183,7 @@ public partial class MainWindow : GamepadWindow
         loadWindows();
 
         // load page(s)
+        overlayquickTools.loadPages();
         loadPages();
 
         // manage events
@@ -190,14 +191,12 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         ToastManager.Start();
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
-        // start static managers in sequence
-        GPUManager.Start();
-        PowerProfileManager.Start();
-        ProfileManager.Start();
+        // start static managers
         ControllerManager.Start();
         HotkeysManager.Start();
         DeviceManager.Start();
@@ -207,19 +206,36 @@ public partial class MainWindow : GamepadWindow
         DynamicLightingManager.Start();
         MultimediaManager.Start();
         VirtualManager.Start();
-        InputsManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
 
-        // todo: improve overall threading logic
-        new Thread(() => { PlatformManager.Start(); }).Start();
-        new Thread(() => { ProcessManager.Start(); }).Start();
-        new Thread(() => { TaskManager.Start(CurrentExe); }).Start();
-        new Thread(() => { PerformanceManager.Start(); }).Start();
-        new Thread(() => { UpdateManager.Start(); }).Start();
+        // STA threads
+        List<Thread> STAThreads =
+        [
+            new Thread(() => ProfileManager.Start()),
+            new Thread(() => PowerProfileManager.Start()),
+            new Thread(() => GPUManager.Start()),
+        ];
 
-        // start setting last
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        // Set the thread to STA
+        foreach (Thread thread in STAThreads)
+        {
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
+        // non-STA threads
+        List<Task> tasks = new List<Task>
+        {
+            Task.Run(() => PlatformManager.Start()),
+            Task.Run(() => ProcessManager.Start()),
+            Task.Run(() => TaskManager.Start(CurrentExe)),
+            Task.Run(() => PerformanceManager.Start()),
+            Task.Run(() => UpdateManager.Start())
+        };
+
+        // those managers can't be threaded
+        InputsManager.Start();
         SettingsManager.Start();
 
         // Load MVVM pages after the Models / data have been created.
@@ -254,7 +270,7 @@ public partial class MainWindow : GamepadWindow
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
@@ -270,7 +286,7 @@ public partial class MainWindow : GamepadWindow
 
     private void GamepadFocusManagerOnFocused(Control control)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             // todo : localize me
@@ -436,7 +452,7 @@ public partial class MainWindow : GamepadWindow
         overlayquickTools = new OverlayQuickTools();
     }
 
-    private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
     {
         // todo: improve me
         CurrentDevice.PullSensors();

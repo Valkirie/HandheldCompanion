@@ -49,10 +49,6 @@ public static class DynamicLightingManager
         leftLedTracker = new ColorTracker();
         rightLedTracker = new ColorTracker();
 
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        IDevice.GetCurrent().PowerStatusChanged += CurrentDevice_PowerStatusChanged;
-
         ambilightThread = new Thread(ambilightThreadLoop)
         {
             IsBackground = true
@@ -65,12 +61,27 @@ public static class DynamicLightingManager
         DynamicLightingTimer.Elapsed += (sender, e) => UpdateLED();
     }
 
-    public static void Start()
+    public static async Task Start()
     {
+        if (IsInitialized)
+            return;
+
         IsInitialized = true;
         Initialized?.Invoke();
 
+        // manage events
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        IDevice.GetCurrent().PowerStatusChanged += CurrentDevice_PowerStatusChanged;
+
+        // raise events
+        if (MultimediaManager.IsInitialized)
+        {
+            MultimediaManager_DisplaySettingsChanged(MultimediaManager.PrimaryDesktop, MultimediaManager.PrimaryDesktop.GetResolution());
+        }
+
         LogManager.LogInformation("{0} has started", "DynamicLightingManager");
+        return;
     }
 
     public static void Stop()
@@ -81,6 +92,11 @@ public static class DynamicLightingManager
         StopAmbilight();
 
         ReleaseDirect3DDevice();
+
+        // manage events
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        IDevice.GetCurrent().PowerStatusChanged -= CurrentDevice_PowerStatusChanged;
 
         IsInitialized = false;
 

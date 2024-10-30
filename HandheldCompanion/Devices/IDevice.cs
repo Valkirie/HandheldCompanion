@@ -174,7 +174,7 @@ public abstract class IDevice
         SetKeyPressDelay(mode);
     }
 
-    private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
     {
         // todo: improve me
         PullSensors();

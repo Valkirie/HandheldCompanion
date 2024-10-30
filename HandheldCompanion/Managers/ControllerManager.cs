@@ -74,53 +74,64 @@ public static class ControllerManager
             IsBackground = true
         };
 
-        // prepare timer
-        scenarioTimer.Elapsed += ScenarioTimer_Elapsed;
     }
 
-    public static Task Start()
+    public static async Task Start()
     {
+        if (IsInitialized)
+            return;
+
         // get driver store
         DriversStore = DeserializeDriverStore();
 
-        // Flushing possible JoyShocks...
-        JslDisconnect();
-
+        // manage events
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
         DeviceManager.HidDeviceArrived += HidDeviceArrived;
         DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
-
         DeviceManager.Initialized += DeviceManager_Initialized;
-
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
-
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-
         VirtualManager.Vibrated += VirtualManager_Vibrated;
+        MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
+        // manage device events
         IDevice.GetCurrent().KeyPressed += CurrentDevice_KeyPressed;
         IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
-        MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
+        // raise events
+        if (DeviceManager.IsInitialized)
+        {
+            foreach(PnPDetails? device in DeviceManager.PnPDevices.Values)
+            {
+                if (device.isXInput)
+                    XUsbDeviceArrived(device, device.InterfaceGuid);
+                else if (device.isGaming)
+                    HidDeviceArrived(device, device.InterfaceGuid);
+            }
+        }
 
-        // enable timer
+        if (ProcessManager.IsInitialized)
+        {
+            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        }
+
+        // prepare timer
+        scenarioTimer.Elapsed += ScenarioTimer_Elapsed;
         scenarioTimer.Start();
 
         // enable HidHide
         HidHide.SetCloaking(true);
 
+        HasTargetController();
+
         IsInitialized = true;
         Initialized?.Invoke();
 
-        HasTargetController();
-
         LogManager.LogInformation("{0} has started", "ControllerManager");
-
-        return Task.CompletedTask;
+        return;
     }
 
     public static void Stop()
@@ -128,20 +139,31 @@ public static class ControllerManager
         if (!IsInitialized)
             return;
 
-        IsInitialized = false;
+        // Flushing possible JoyShocks...
+        JslDisconnect();
 
         // unplug on close
         ClearTargetController();
 
+        // manage events
         DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
-
         DeviceManager.HidDeviceArrived -= HidDeviceArrived;
         DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
-
+        DeviceManager.Initialized -= DeviceManager_Initialized;
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
+        UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
+        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        VirtualManager.Vibrated -= VirtualManager_Vibrated;
+        MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+
+        // manage device events
+        IDevice.GetCurrent().KeyPressed -= CurrentDevice_KeyPressed;
+        IDevice.GetCurrent().KeyReleased -= CurrentDevice_KeyReleased;
 
         // stop timer
+        scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
         scenarioTimer.Stop();
 
         // uncloak on close, if requested
@@ -149,8 +171,7 @@ public static class ControllerManager
             foreach (var controller in GetPhysicalControllers())
                 controller.Unhide(false);
 
-        // Flushing possible JoyShocks...
-        JslDisconnect();
+        IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
@@ -372,7 +393,7 @@ public static class ControllerManager
         targetController?.SetVibration(LargeMotor, SmallMotor);
     }
 
-    private static async void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
+    private static async void HidDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
         if (!details.isGaming)
             return;
@@ -464,7 +485,7 @@ public static class ControllerManager
         else
         {
             // DInput
-            var directInput = new DirectInput();
+            DirectInput directInput = new DirectInput();
             int VendorId = details.VendorID;
             int ProductId = details.ProductID;
 
@@ -472,14 +493,13 @@ public static class ControllerManager
             Joystick joystick = null;
 
             // search for the plugged controller
-            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+            foreach (DeviceInstance? deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
             {
                 try
                 {
                     // Instantiate the joystick
-                    var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                    var SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath,
-                        obj.InterfaceGuid.ToString());
+                    Joystick lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                    string SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, InterfaceGuid.ToString());
 
                     if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -623,7 +643,7 @@ public static class ControllerManager
         }
     }
 
-    private static async void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    private static async void HidDeviceRemoved(PnPDetails details, Guid IntefaceGuid)
     {
         IController controller = null;
 
@@ -760,11 +780,14 @@ public static class ControllerManager
                             VirtualManager.Resume(false);
 
                             // resume all physical controllers
-                            ResumeControllers();
+                            // wait a bit if none were resumed
+                            if (!ResumeControllers())
+                                Thread.Sleep(2000);
 
                             // suspend and resume virtual controller
+                            // wait a bit between both
                             VirtualManager.Suspend(false);
-                            Thread.Sleep(1000);
+                            Thread.Sleep(2000);
                             VirtualManager.Resume(false);
 
                             // increment attempt counter (if no wireless controller is power cycling)
@@ -796,7 +819,7 @@ public static class ControllerManager
         StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }
 
-    private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
+    private static async void XUsbDeviceArrived(PnPDetails details, Guid IntefaceGuid)
     {
         Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
 
@@ -909,7 +932,7 @@ public static class ControllerManager
         }
     }
 
-    private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    private static async void XUsbDeviceRemoved(PnPDetails details, Guid IntefaceGuid)
     {
         IController controller = null;
 
@@ -1249,8 +1272,7 @@ public static class ControllerManager
         HIDmode HIDmode = HIDmode.NoController;
 
         // if profile is selected, get its HIDmode
-        if (ProfilesPage.selectedProfile != null)
-            HIDmode = ProfilesPage.selectedProfile.HID;
+        HIDmode = ProfileManager.GetCurrent().HID;
 
         // if profile HID is NotSelected, use HIDmode from settings
         if (HIDmode == HIDmode.NotSelected)

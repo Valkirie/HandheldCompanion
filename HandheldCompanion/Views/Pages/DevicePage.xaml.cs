@@ -61,7 +61,7 @@ namespace HandheldCompanion.Views.Pages
             DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         }
 
-        private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+        private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
         {
             UpdateDevice(device);
         }

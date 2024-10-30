@@ -2,6 +2,7 @@
 using HandheldCompanion.Platforms;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 
@@ -19,9 +20,9 @@ public static class PlatformManager
     public static Platforms.LibreHardwareMonitor LibreHardwareMonitor = new();
 
     private const int UpdateInterval = 1000;
-    private static Timer UpdateTimer = new() { Interval = UpdateInterval, AutoReset = false };
+    private static Timer UpdateTimer;
 
-    private static bool IsInitialized;
+    public static bool IsInitialized;
 
     private static PlatformNeeds CurrentNeeds = PlatformNeeds.None;
     private static PlatformNeeds PreviousNeeds = PlatformNeeds.None;
@@ -29,8 +30,17 @@ public static class PlatformManager
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
 
-    public static void Start()
+    static PlatformManager()
     {
+        UpdateTimer = new() { Interval = UpdateInterval, AutoReset = false };
+        UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
+    }
+
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
         if (Steam.IsInstalled)
             Steam.Start();
 
@@ -50,19 +60,69 @@ public static class PlatformManager
         }
 
         if (LibreHardwareMonitor.IsInstalled)
+        {
             LibreHardwareMonitor.Start();
+        }
         
-        UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
+        // manage update timer events
         UpdateTimer.Start();
 
+        // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
+
+        // raise events
+        if (ProfileManager.IsInitialized)
+        {
+            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        // raise events
+        if (PowerProfileManager.IsInitialized)
+        {
+            PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
+        }
 
         IsInitialized = true;
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "PlatformManager");
+    }
+
+    public static void Stop()
+    {
+        if (Steam.IsInstalled)
+            Steam.Stop();
+
+        if (GOGGalaxy.IsInstalled)
+            GOGGalaxy.Stop();
+
+        if (UbisoftConnect.IsInstalled)
+            UbisoftConnect.Stop();
+
+        if (RTSS.IsInstalled)
+        {
+            var killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
+            RTSS.Stop(killRTSS);
+        }
+
+        if (LibreHardwareMonitor.IsInstalled)
+        {
+            LibreHardwareMonitor.Stop();
+        }
+
+        // manage update timer events
+        UpdateTimer.Stop();
+
+        // manage events
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ProfileManager.Applied -= ProfileManager_Applied;
+        PowerProfileManager.Applied -= PowerProfileManager_Applied;
+
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has stopped", "PlatformManager");
     }
 
     private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -178,36 +238,6 @@ public static class PlatformManager
 
         // Store the current needs in the previous needs variable
         PreviousNeeds = CurrentNeeds;
-    }
-
-    public static void Stop()
-    {
-        if (Steam.IsInstalled)
-            Steam.Stop();
-
-        if (GOGGalaxy.IsInstalled)
-            GOGGalaxy.Dispose();
-
-        if (UbisoftConnect.IsInstalled)
-            UbisoftConnect.Dispose();
-
-        if (RTSS.IsInstalled)
-        {
-            var killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
-            RTSS.Stop(killRTSS);
-            RTSS.Dispose();
-        }
-
-        if (LibreHardwareMonitor.IsInstalled)
-            LibreHardwareMonitor.Stop();
-
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ProfileManager.Applied -= ProfileManager_Applied;
-        PowerProfileManager.Applied -= PowerProfileManager_Applied;
-
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "PlatformManager");
     }
 
     public static PlatformType GetPlatform(Process proc)

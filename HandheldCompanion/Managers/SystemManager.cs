@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 
@@ -96,21 +97,24 @@ public static class SystemManager
 
     private static void SubscribeToSystemEvents()
     {
+        // manage events
         SystemEvents.PowerModeChanged += OnPowerChange;
         SystemEvents.SessionSwitch += OnSessionSwitch;
-
         SystemPowerManager.BatteryStatusChanged += BatteryStatusChanged;
         SystemPowerManager.EnergySaverStatusChanged += BatteryStatusChanged;
         SystemPowerManager.PowerSupplyStatusChanged += BatteryStatusChanged;
         SystemPowerManager.RemainingChargePercentChanged += BatteryStatusChanged;
         SystemPowerManager.RemainingDischargeTimeChanged += BatteryStatusChanged;
+
+        // raise events
+        BatteryStatusChanged(null, null);
     }
 
     private static void UnsubscribeFromSystemEvents()
     {
+        // manage events
         SystemEvents.PowerModeChanged -= OnPowerChange;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
-
         SystemPowerManager.BatteryStatusChanged -= BatteryStatusChanged;
         SystemPowerManager.EnergySaverStatusChanged -= BatteryStatusChanged;
         SystemPowerManager.PowerSupplyStatusChanged -= BatteryStatusChanged;
@@ -123,7 +127,7 @@ public static class SystemManager
         PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
     }
 
-    public static void Start()
+    public static async Task Start()
     {
         if (IsInitialized)
             return;
@@ -139,6 +143,7 @@ public static class SystemManager
         PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
 
         LogManager.LogInformation("{0} has started", "PowerManager");
+        return;
     }
 
     public static void Stop()

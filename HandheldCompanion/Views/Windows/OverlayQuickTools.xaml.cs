@@ -115,6 +115,12 @@ public partial class OverlayQuickTools : GamepadWindow
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
+        // load gamepad navigation manager
+        gamepadFocusManager = new(this, ContentFrame);
+    }
+
+    public void loadPages()
+    {
         // create pages
         homePage = new("quickhome");
         devicePage = new("quickdevice");
@@ -125,9 +131,6 @@ public partial class OverlayQuickTools : GamepadWindow
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickApplicationsPage", applicationsPage);
-
-        // load gamepad navigation manager
-        gamepadFocusManager = new(this, ContentFrame);
     }
 
     protected override void OnSourceInitialized(EventArgs e)

@@ -10,6 +10,7 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace HandheldCompanion.Managers;
@@ -70,8 +71,40 @@ public static class UpdateManager
         webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
         webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
         webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+    }
 
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
+        DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
+
+        lastchecked = dateTime;
+
+        status = UpdateStatus.Initialized;
+        Updated?.Invoke(status, null, null);
+
+        // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "UpdateManager");
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        // manage events
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has stopped", "UpdateManager");
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -263,33 +296,6 @@ public static class UpdateManager
             status = UpdateStatus.Failed;
             Updated?.Invoke(status, null, null);
         }
-    }
-
-    public static void Start()
-    {
-        var dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
-
-        lastchecked = dateTime;
-
-        status = UpdateStatus.Initialized;
-        Updated?.Invoke(status, null, null);
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "UpdateManager");
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        IsInitialized = false;
-
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-
-        LogManager.LogInformation("{0} has stopped", "UpdateManager");
     }
 
     public static DateTime GetTime()

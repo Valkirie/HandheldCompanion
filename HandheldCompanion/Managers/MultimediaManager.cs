@@ -9,6 +9,7 @@ using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsDisplayAPI;
 using WindowsDisplayAPI.DisplayConfig;
@@ -48,14 +49,52 @@ public static class MultimediaManager
 
         // creating the watcher
         BrightnessWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
-        BrightnessWatcher.EventArrived += onWMIEvent;
 
         // check if we have control over brightness
         BrightnessSupport = GetBrightness() != -1;
+    }
+
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
+        // force trigger events
+        SystemEvents_DisplaySettingsChanged(null, null);
+
+        // manage brightness watcher events
+        BrightnessWatcher.EventArrived += onWMIEvent;
+        BrightnessWatcher.Start();
 
         // manage events
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "SystemManager");
+        return;
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        DevEnum.UnregisterEndpointNotificationCallback(notificationClient);
+
+        // stop brightness watcher
+        BrightnessWatcher.EventArrived -= onWMIEvent;
+        BrightnessWatcher.Stop();
+
+        // manage events
+        SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has stopped", "SystemManager");
     }
 
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
@@ -284,35 +323,6 @@ public static class MultimediaManager
     public static ScreenRotation GetScreenOrientation()
     {
         return screenOrientation;
-    }
-
-    public static void Start()
-    {
-        // start brightness watcher
-        BrightnessWatcher.Start();
-
-        // force trigger events
-        SystemEvents_DisplaySettingsChanged(null, null);
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "SystemManager");
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        // stop brightness watcher
-        BrightnessWatcher.Stop();
-
-        DevEnum.UnregisterEndpointNotificationCallback(notificationClient);
-
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "SystemManager");
     }
 
     public static bool SetResolution(int width, int height, int displayFrequency)

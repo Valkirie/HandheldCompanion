@@ -29,6 +29,7 @@ public static class ProfileManager
 
     private static Profile currentProfile;
 
+    public static FileSystemWatcher profileWatcher { get; set; }
     private static string ProfilesPath;
 
     public static bool IsInitialized;
@@ -39,12 +40,7 @@ public static class ProfileManager
         ProfilesPath = Path.Combine(MainWindow.SettingsPath, "profiles");
         if (!Directory.Exists(ProfilesPath))
             Directory.CreateDirectory(ProfilesPath);
-    }
 
-    public static FileSystemWatcher profileWatcher { get; set; }
-
-    public static void Start()
-    {
         // monitor profile files
         profileWatcher = new FileSystemWatcher
         {
@@ -54,8 +50,12 @@ public static class ProfileManager
             Filter = "*.json",
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
         };
-        profileWatcher.Created += ProfileCreated;
-        profileWatcher.Deleted += ProfileDeleted;
+    }
+
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
 
         // process existing profiles
         string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
@@ -79,17 +79,33 @@ public static class ProfileManager
             UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);
         }
 
-        IsInitialized = true;
-        Initialized?.Invoke();
+        // profile watcher events
+        profileWatcher.Created += ProfileCreated;
+        profileWatcher.Deleted += ProfileDeleted;
 
-        // listen to external events when ready
+        // manage events
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
         ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
+        // raise events
+        if (ProcessManager.IsInitialized)
+        {
+            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        }
+
+        if (ControllerManager.IsInitialized)
+        {
+            ControllerManager_ControllerPlugged(ControllerManager.GetTargetController(), false);
+        }
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
         LogManager.LogInformation("{0} has started", "ProfileManager");
+        return;
     }
 
     public static void Stop()
@@ -97,10 +113,18 @@ public static class ProfileManager
         if (!IsInitialized)
             return;
 
-        IsInitialized = false;
-
+        // profile watcher events
+        profileWatcher.Created -= ProfileCreated;
         profileWatcher.Deleted -= ProfileDeleted;
-        profileWatcher.Dispose();
+
+        // manage events
+        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ProcessManager.ProcessStarted -= ProcessManager_ProcessStarted;
+        ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        PowerProfileManager.Deleted -= PowerProfileManager_Deleted;
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+
+        IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "ProfileManager");
     }

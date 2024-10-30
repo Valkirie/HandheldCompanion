@@ -399,6 +399,7 @@ namespace HandheldCompanion.ViewModels
 
             CPUName = IDevice.GetCurrent().Processor;
 
+            // manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PlatformManager.RTSS.Updated += PlatformManager_RTSS_Updated;
             PlatformManager.LibreHardwareMonitor.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
@@ -407,9 +408,18 @@ namespace HandheldCompanion.ViewModels
             GPUManager.Hooked += GPUManager_Hooked;
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
-            // GPUManager is a synchronous manager, it started before this page was loaded, force raise an event
-            if (GPUManager.IsInitialized && GPUManager.GetCurrent() is not null)
-                GPUManager_Hooked(GPUManager.GetCurrent());
+            // raise events
+            if (GPUManager.IsInitialized)
+            {
+                GPU gpu = GPUManager.GetCurrent();
+                if (gpu is not null)
+                    GPUManager_Hooked(gpu);
+            }
+
+            if (ProcessManager.IsInitialized)
+            {
+                ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            }
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)

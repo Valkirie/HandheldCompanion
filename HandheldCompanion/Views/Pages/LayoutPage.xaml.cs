@@ -127,7 +127,7 @@ public partial class LayoutPage : Page
         });
     }
 
-    private void DeviceManager_UsbDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
     {
         IController controller = ControllerManager.GetTargetController();
 

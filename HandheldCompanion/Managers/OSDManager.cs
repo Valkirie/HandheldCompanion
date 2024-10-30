@@ -4,12 +4,14 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
 public static class OSDManager
 {
     public delegate void InitializedEventHandler();
+    public static event InitializedEventHandler Initialized;
 
     // C1: GPU
     // C2: CPU
@@ -41,22 +43,66 @@ public static class OSDManager
 
     static OSDManager()
     {
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        PlatformManager.RTSS.Hooked += RTSS_Hooked;
-        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
-
-        // timer used to monitor foreground application framerate
-        RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
-
-        // OverlayLevel
-        OverlayLevel = Convert.ToInt16(SettingsManager.GetInt("OnScreenDisplayLevel"));
-
         RefreshTimer = new PrecisionTimer();
         RefreshTimer.SetInterval(new Action(UpdateOSD), RefreshInterval, false, 0, TimerMode.Periodic, true);
     }
 
-    public static event InitializedEventHandler Initialized;
+    public static async Task Start()
+    {
+        if (IsInitialized)
+            return;
+
+        if (OverlayLevel != 0 && !RefreshTimer.IsRunning())
+            RefreshTimer.Start();
+
+        // manage events
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        PlatformManager.RTSS.Hooked += RTSS_Hooked;
+        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
+
+        if (SettingsManager.IsInitialized)
+        {
+            // timer used to monitor foreground application framerate
+            RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
+
+            // OverlayLevel
+            OverlayLevel = (short)SettingsManager.GetInt("OnScreenDisplayLevel");
+        }
+
+        if (PlatformManager.IsInitialized)
+        {
+            AppEntry appEntry = PlatformManager.RTSS.GetAppEntry();
+            if (appEntry is not null)
+                RTSS_Hooked(appEntry);
+        }
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "OSDManager");
+        return;
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        RefreshTimer.Stop();
+
+        // unhook all processes
+        foreach (var processId in OnScreenDisplay.Keys)
+            RTSS_Unhooked(processId);
+
+        // manage events
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        PlatformManager.RTSS.Hooked -= RTSS_Hooked;
+        PlatformManager.RTSS.Unhooked -= RTSS_Unhooked;
+
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has stopped", "OSDManager");
+    }
 
     private static void RTSS_Unhooked(int processId)
     {
@@ -71,13 +117,14 @@ public static class OSDManager
                 OnScreenDisplay.TryRemove(new KeyValuePair<int, OSD>(processId, OSD));
             }
         }
-        catch
-        {
-        }
+        catch { }
     }
 
     private static void RTSS_Hooked(AppEntry appEntry)
     {
+        if (appEntry is null)
+            return;
+
         try
         {
             // update foreground id
@@ -89,20 +136,7 @@ public static class OSDManager
 
             OnScreenDisplay[OnScreenAppEntry.ProcessId] = new OSD(OnScreenAppEntry.Name);
         }
-        catch
-        {
-        }
-    }
-
-    public static void Start()
-    {
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "OSDManager");
-
-        if (OverlayLevel != 0 && !RefreshTimer.IsRunning())
-            RefreshTimer.Start();
+        catch { }
     }
 
     private static void UpdateOSD()
@@ -127,9 +161,7 @@ public static class OSDManager
                     processOSD.Update("");
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
     }
 
@@ -274,22 +306,6 @@ public static class OSDManager
         return string.Join("\n", Content);
     }
 
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        RefreshTimer.Stop();
-
-        // unhook all processes
-        foreach (var processId in OnScreenDisplay.Keys)
-            RTSS_Unhooked(processId);
-
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "OSDManager");
-    }
-
     private static string EntryContent(String name, GPU gpu)
     {
         OverlayRow row = new();
@@ -378,6 +394,7 @@ public static class OSDManager
                 }
                 break;
         }
+
         // Skip empty rows
         if (entry.elements.Count == 0) return "";
         row.entries.Add(entry);

@@ -338,7 +338,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 return;
 
             // pull telemetry once
-            TelemetryData = GetTelemetry();
+            GetAdlxTelemetry(deviceIdx, ref TelemetryData);
 
             UpdateTimer = new Timer(UpdateInterval)
             {
