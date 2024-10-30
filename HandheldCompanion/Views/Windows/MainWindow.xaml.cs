@@ -509,14 +509,13 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
-    private void NotificationsPage_LayoutUpdated(int status)
+    private void NotificationsPage_LayoutUpdated(int notifications)
     {
-        bool hasNotification = Convert.ToBoolean(status);
-
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            HasNotifications.Visibility = hasNotification ? Visibility.Visible : Visibility.Collapsed;
+            HasNotifications.Visibility = notifications != 0 ? Visibility.Visible : Visibility.Collapsed;
+            HasNotifications.Value = notifications;
         });
     }
 

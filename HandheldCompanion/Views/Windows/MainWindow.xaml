@@ -136,25 +136,14 @@
                 Content="{l:Static resx:Resources.MainWindow_navNotifications}"
                 Tag="NotificationsPage">
                 <ui:NavigationViewItem.Icon>
-                    <Grid>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
-
-                        <Grid
-                            Name="HasNotifications"
-                            Margin="11,-11,-11,11"
-                            Visibility="Hidden">
-                            <ui:FontIcon
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="Red"
-                                Glyph="&#xF136;" />
-                            <ui:FontIcon
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontWeight="Black"
-                                Foreground="White"
-                                Glyph="&#xF13C;" />
-                        </Grid>
-                    </Grid>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
                 </ui:NavigationViewItem.Icon>
+                <ui:NavigationViewItem.InfoBadge>
+                    <ui:InfoBadge
+                        Name="HasNotifications"
+                        Foreground="White"
+                        Background="Red"/>
+                </ui:NavigationViewItem.InfoBadge>
             </ui:NavigationViewItem>
 
             <!--  Settings  -->
