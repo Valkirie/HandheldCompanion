@@ -36,6 +36,7 @@ namespace HandheldCompanion.Commands
             typeof(KillForegroundCommands),
             typeof(TaskManagerCommands),
             typeof(SwapScreenCommands),
+            typeof(DesktopCommands),
             "Display",
             typeof(BrightnessIncrease),
             typeof(BrightnessDecrease),
