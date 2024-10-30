@@ -5,6 +5,7 @@ using HandheldCompanion.Managers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HandheldCompanion;
 
@@ -100,7 +101,8 @@ public partial class Layout : ICloneable, IDisposable
 
     public void UpdateLayout(ButtonFlags button, List<IActions> actions)
     {
-        ButtonLayout[button] = actions;
+        // sort actions based on press type, will be required by layout manager
+        ButtonLayout[button] = actions.OrderByDescending(a => (int)a.pressType).ToList();
         Updated?.Invoke(this);
     }
 
