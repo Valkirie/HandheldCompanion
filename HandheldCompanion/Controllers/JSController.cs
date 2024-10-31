@@ -56,7 +56,7 @@ public class JSController : IController
 
     public virtual void UpdateState(float delta)
     {
-        Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
+        InjectedButtons.Overwrite(Inputs.ButtonState);
 
         // skip if controller isn't connected
         if (IsConnected())

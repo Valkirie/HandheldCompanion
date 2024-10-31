@@ -64,8 +64,14 @@ public partial class ButtonState : ICloneable
     public void AddRange(ButtonState buttonState)
     {
         // only add pressed button
-        foreach (var state in buttonState.State.Where(a => a.Value))
+        foreach (KeyValuePair<ButtonFlags, bool> state in buttonState.State.Where(a => a.Value))
             this[state.Key] = state.Value;
+    }
+
+    public void Overwrite(ButtonState buttonState)
+    {
+        foreach (KeyValuePair<ButtonFlags, bool> state in State)
+            buttonState[state.Key] = this[state.Key];
     }
 
     public override bool Equals(object obj)
