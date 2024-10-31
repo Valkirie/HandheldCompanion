@@ -106,7 +106,7 @@ namespace HandheldCompanion.ViewModels
                 await Task.Run(() =>
                 {
                     process.Start();
-                    process.WaitForInputIdle();
+                    process.WaitForInputIdle(4000);
                 });
 
                 dialog.Hide();
