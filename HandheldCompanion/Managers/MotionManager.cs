@@ -8,6 +8,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using static HandheldCompanion.Utils.DeviceUtils;
 using SensorState = HandheldCompanion.Inputs.GyroState.SensorState;
 
@@ -50,44 +51,37 @@ namespace HandheldCompanion.Managers
             ProcessMotion(controllerState, gamepadMotion);
         }
 
+        private static ref Vector3 GetGyroRef(Dictionary<SensorState, Vector3> dictionary, SensorState state)
+        {
+            return ref CollectionsMarshal.GetValueRefOrNullRef(dictionary, state);
+        }
+
         // this function sets some basic motion settings, sensitivity and inverts
         // and is enough for DS4/DSU gyroscope handling
         private static void SetupMotion(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             // GamepadMotion: calibrated/filtered outputs from JoyShockLibrary
-            if (controllerState.GyroState.Gyroscope.TryGetValue(SensorState.GamepadMotion, out Vector3 gyrometer))
+            if (controllerState.GyroState.Gyroscope.ContainsKey(SensorState.GamepadMotion))
             {
-                gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
-
-                gyrometer.X = gyroX;
-                gyrometer.Y = gyroZ;
-                gyrometer.Z = gyroY;
+                ref Vector3 gyrometer = ref GetGyroRef(controllerState.GyroState.Gyroscope, SensorState.GamepadMotion);
+                gamepadMotion.GetCalibratedGyro(out gyrometer.X, out gyrometer.Y, out gyrometer.Z);
             }
-            if (controllerState.GyroState.Accelerometer.TryGetValue(SensorState.GamepadMotion, out Vector3 acceleromter))
+            if (controllerState.GyroState.Accelerometer.ContainsKey(SensorState.GamepadMotion))
             {
-                gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
-
-                acceleromter.X = accelX;
-                acceleromter.Y = accelY;
-                acceleromter.Z = accelZ;
+                ref Vector3 accelerometer = ref GetGyroRef(controllerState.GyroState.Accelerometer, SensorState.GamepadMotion);
+                gamepadMotion.GetGravity(out accelerometer.X, out accelerometer.Y, out accelerometer.Z);
             }
 
             // DSU: unfiltered outputs from sensors
-            if (controllerState.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out gyrometer))
+            if (controllerState.GyroState.Gyroscope.ContainsKey(SensorState.DSU))
             {
-                gamepadMotion.GetRawGyro(out float gyroX, out float gyroY, out float gyroZ);
-
-                gyrometer.X = gyroX;
-                gyrometer.Y = gyroZ;
-                gyrometer.Z = gyroY;
+                ref Vector3 gyrometer = ref GetGyroRef(controllerState.GyroState.Gyroscope, SensorState.DSU);
+                gamepadMotion.GetRawGyro(out gyrometer.X, out gyrometer.Y, out gyrometer.Z);
             }
-            if (controllerState.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out acceleromter))
+            if (controllerState.GyroState.Accelerometer.ContainsKey(SensorState.DSU))
             {
-                gamepadMotion.GetRawAcceleration(out float accelX, out float accelY, out float accelZ);
-
-                acceleromter.X = accelX;
-                acceleromter.Y = accelY;
-                acceleromter.Z = accelZ;
+                ref Vector3 accelerometer = ref GetGyroRef(controllerState.GyroState.Accelerometer, SensorState.DSU);
+                gamepadMotion.GetRawAcceleration(out accelerometer.X, out accelerometer.Y, out accelerometer.Z);
             }
 
             // Default: based on GamepadMotionHelpers values with profile settings applied
