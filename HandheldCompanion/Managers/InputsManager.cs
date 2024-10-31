@@ -560,8 +560,7 @@ public static class InputsManager
     private static void UpdateInputs(ControllerState controllerState)
     {
         // prepare button state
-        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
-
+        ButtonState buttonState = controllerState.ButtonState;
         if (prevState.Equals(buttonState))
             return;
 

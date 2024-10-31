@@ -31,7 +31,7 @@ public partial class ButtonState : ICloneable
     }
 
     [JsonIgnore]
-    public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value).Select(a => a.Key).ToList();
+    public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value).Select(a => a.Key);
 
     public object Clone()
     {
@@ -71,7 +71,7 @@ public partial class ButtonState : ICloneable
     public override bool Equals(object obj)
     {
         if (obj is ButtonState buttonState)
-            return Enumerable.SequenceEqual(Buttons.OrderBy(e => e), buttonState.Buttons.OrderBy(e => e));
+            return Buttons.SequenceEqual(buttonState.Buttons);
 
         return false;
     }
