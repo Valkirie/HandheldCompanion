@@ -190,12 +190,9 @@ public class Steam : IPlatform
 
     public bool HasXboxDriversInstalled()
     {
-        return FilterDrivers
-            .GetDeviceClassUpperFilters(DeviceClassIds.XnaComposite)
-            .Any(f => f.Equals("steamxbox"));
-
-        // deprecated method
-        return RegistryUtils.SearchForKeyValue(@"SYSTEM\CurrentControlSet\Enum\ROOT\SYSTEM", "Service", "steamxbox");
+        bool driversCheck = FilterDrivers.GetDeviceClassUpperFilters(DeviceClassIds.XnaComposite).Any(f => f.Equals("steamxbox"));
+        bool registryCheck = RegistryUtils.SearchForKeyValue(@"SYSTEM\CurrentControlSet\Enum\ROOT\SYSTEM", "Service", "steamxbox");
+        return driversCheck || registryCheck;
     }
 
     public override bool StartProcess()
