@@ -51,7 +51,7 @@ namespace HandheldCompanion.Managers
             PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
-            SystemManager.PowerStatusChanged += SystemManager_PowerStatusChanged;
+            SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
 
             // raise events
             if (ProfileManager.IsInitialized)
@@ -75,7 +75,7 @@ namespace HandheldCompanion.Managers
             PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
             ProfileManager.Applied -= ProfileManager_Applied;
             ProfileManager.Discarded -= ProfileManager_Discarded;
-            SystemManager.PowerStatusChanged -= SystemManager_PowerStatusChanged;
+            SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged;
 
             IsInitialized = false;
 
@@ -102,7 +102,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void SystemManager_PowerStatusChanged(PowerStatus status)
+        private static void SystemManager_PowerLineStatusChanged(PowerLineStatus powerLineStatus)
         {
             // Get current profile
             Profile profile = ProfileManager.GetCurrent();

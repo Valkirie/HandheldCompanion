@@ -23,11 +23,15 @@ public static class SystemManager
     #region Events
 
     public static event SystemStatusChangedEventHandler SystemStatusChanged;
-    public static event PowerStatusChangedEventHandler PowerStatusChanged;
-    public static event InitializedEventHandler Initialized;
-
     public delegate void SystemStatusChangedEventHandler(SystemStatus status, SystemStatus prevStatus);
+
+    public static event PowerStatusChangedEventHandler PowerStatusChanged;
     public delegate void PowerStatusChangedEventHandler(PowerStatus status);
+
+    public static event PowerLineStatusChangedEventHandler PowerLineStatusChanged;
+    public delegate void PowerLineStatusChangedEventHandler(PowerLineStatus powerLineStatus);
+
+    public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
 
     #endregion
@@ -47,6 +51,7 @@ public static class SystemManager
 
     private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
+    private static PowerLineStatus previousPowerLineStatus = PowerLineStatus.Offline;
 
     public static bool IsInitialized;
 
@@ -178,7 +183,16 @@ public static class SystemManager
 
             default:
             case PowerModes.StatusChange:
-                PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
+                {
+                    if (previousPowerLineStatus != SystemInformation.PowerStatus.PowerLineStatus)
+                    {
+                        // raise event
+                        PowerLineStatusChanged?.Invoke(SystemInformation.PowerStatus.PowerLineStatus);
+
+                        // update status
+                        previousPowerLineStatus = SystemInformation.PowerStatus.PowerLineStatus;
+                    }
+                }
                 return;
         }
 
