@@ -3,6 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
@@ -40,7 +41,7 @@ internal static class LayoutManager
 
     public static FileSystemWatcher layoutWatcher { get; set; }
 
-    private static bool IsInitialized;
+    public static bool IsInitialized;
 
     static LayoutManager()
     {

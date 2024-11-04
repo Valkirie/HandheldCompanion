@@ -5,69 +5,66 @@ using HandheldCompanion.Inputs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
-namespace HandheldCompanion.Controls;
-
-/// <summary>
-///     Logique d'interaction pour LayoutTemplate.xaml
-/// </summary>
-[JsonObject(MemberSerialization.OptIn)]
-public partial class LayoutTemplate : UserControl, IComparable
+namespace HandheldCompanion.Misc
 {
-    public static readonly LayoutTemplate DesktopLayout =
-        new("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true);
-
-    public static readonly LayoutTemplate DefaultLayout = new("Gamepad (XBOX)",
-        "This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc.",
-        "HandheldCompanion", true);
-
-    public static readonly LayoutTemplate NintendoLayout = new("Gamepad (Nintendo)",
-        "This template is for games that already have built-in gamepad support. Intended for games that are designed with a Nintendo gamepad in mind.",
-        "HandheldCompanion", true);
-
-    public static readonly LayoutTemplate KeyboardLayout = new("Keyboard (WASD) and Mouse",
-        "This template works great for the games that were designed with a keyboard and mouse in mind, without gamepad support. The controller will drive the game's keyboard based events with buttons, but will make assumptions about which buttons move you around (WASD for movement, space for jump, etc.). The right pad will emulate the movement of a mouse.",
-        "HandheldCompanion", true);
-
-    public static readonly LayoutTemplate GamepadMouseLayout = new("Gamepad with Mouse Trackpad",
-        "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.",
-        "HandheldCompanion", true, typeof(NeptuneController));
-
-    public static readonly LayoutTemplate GamepadJoystickLayout = new("Gamepad with Joystick Trackpad",
-        "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.",
-        "HandheldCompanion", true, typeof(NeptuneController));
-
-    public LayoutTemplate()
+    [JsonObject(MemberSerialization.OptIn)]
+    public partial class LayoutTemplate : IComparable
     {
-        InitializeComponent();
-    }
+        public static readonly LayoutTemplate DesktopLayout =
+            new("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true);
 
-    public LayoutTemplate(Layout layout) : this()
-    {
-        Layout = layout;
-        Layout.Updated += Layout_Updated;
-    }
+        public static readonly LayoutTemplate DefaultLayout = new("Gamepad (XBOX)",
+            "This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc.",
+            "HandheldCompanion", true);
 
-    private LayoutTemplate(string name, string description, string author, bool isInternal,
-        Type deviceType = null) : this()
-    {
-        Name = name;
-        Description = description;
-        Author = author;
-        Product = string.Empty;
+        public static readonly LayoutTemplate NintendoLayout = new("Gamepad (Nintendo)",
+            "This template is for games that already have built-in gamepad support. Intended for games that are designed with a Nintendo gamepad in mind.",
+            "HandheldCompanion", true);
 
-        IsInternal = isInternal;
-        ControllerType = deviceType;
+        public static readonly LayoutTemplate KeyboardLayout = new("Keyboard (WASD) and Mouse",
+            "This template works great for the games that were designed with a keyboard and mouse in mind, without gamepad support. The controller will drive the game's keyboard based events with buttons, but will make assumptions about which buttons move you around (WASD for movement, space for jump, etc.). The right pad will emulate the movement of a mouse.",
+            "HandheldCompanion", true);
 
-        Layout = new Layout(true);
+        public static readonly LayoutTemplate GamepadMouseLayout = new("Gamepad with Mouse Trackpad",
+            "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.",
+            "HandheldCompanion", true, typeof(NeptuneController));
 
-        switch (Name)
+        public static readonly LayoutTemplate GamepadJoystickLayout = new("Gamepad with Joystick Trackpad",
+            "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.",
+            "HandheldCompanion", true, typeof(NeptuneController));
+
+        public LayoutTemplate()
         {
-            case "Desktop":
-                {
-                    Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
+        }
+
+        public LayoutTemplate(Layout layout) : this()
+        {
+            Layout = layout;
+            Layout.Updated += Layout_Updated;
+        }
+
+        private LayoutTemplate(string name, string description, string author, bool isInternal, Type deviceType = null) : this()
+        {
+            Name = name;
+            Description = description;
+            Author = author;
+            Product = string.Empty;
+
+            IsInternal = isInternal;
+            ControllerType = deviceType;
+
+            Layout = new Layout(true);
+
+            switch (Name)
+            {
+                case "Desktop":
+                    {
+                        Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                     {
                         {
                             AxisLayoutFlags.LeftStick,
@@ -87,7 +84,7 @@ public partial class LayoutTemplate : UserControl, IComparable
                         }
                     };
 
-                    Layout.ButtonLayout = new()
+                        Layout.ButtonLayout = new()
                     {
                         { ButtonFlags.B1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.RETURN } } },
                         { ButtonFlags.B2, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.ESCAPE } } },
@@ -111,21 +108,21 @@ public partial class LayoutTemplate : UserControl, IComparable
                         { ButtonFlags.LeftPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
                         { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
                     };
-                }
-                break;
+                    }
+                    break;
 
-            case "Gamepad (Nintendo)":
-                {
-                    Layout.ButtonLayout[ButtonFlags.B1] = [new ButtonActions { Button = ButtonFlags.B2 }];
-                    Layout.ButtonLayout[ButtonFlags.B2] = [new ButtonActions { Button = ButtonFlags.B1 }];
-                    Layout.ButtonLayout[ButtonFlags.B3] = [new ButtonActions { Button = ButtonFlags.B4 }];
-                    Layout.ButtonLayout[ButtonFlags.B4] = [new ButtonActions { Button = ButtonFlags.B3 }];
-                }
-                break;
+                case "Gamepad (Nintendo)":
+                    {
+                        Layout.ButtonLayout[ButtonFlags.B1] = [new ButtonActions { Button = ButtonFlags.B2 }];
+                        Layout.ButtonLayout[ButtonFlags.B2] = [new ButtonActions { Button = ButtonFlags.B1 }];
+                        Layout.ButtonLayout[ButtonFlags.B3] = [new ButtonActions { Button = ButtonFlags.B4 }];
+                        Layout.ButtonLayout[ButtonFlags.B4] = [new ButtonActions { Button = ButtonFlags.B3 }];
+                    }
+                    break;
 
-            case "Keyboard (WASD) and Mouse":
-                {
-                    Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
+                case "Keyboard (WASD) and Mouse":
+                    {
+                        Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                     {
                         {
                             AxisLayoutFlags.RightStick,
@@ -137,7 +134,7 @@ public partial class LayoutTemplate : UserControl, IComparable
                         }
                     };
 
-                    Layout.ButtonLayout = new()
+                        Layout.ButtonLayout = new()
                     {
                         { ButtonFlags.B1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.SPACE } } },
                         { ButtonFlags.B2, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_E } } },
@@ -173,86 +170,55 @@ public partial class LayoutTemplate : UserControl, IComparable
 
                         { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
                     };
-                }
-                break;
+                    }
+                    break;
 
-            case "Gamepad with Mouse Trackpad":
-                {
-                    Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
-                }
-                break;
+                case "Gamepad with Mouse Trackpad":
+                    {
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
+                    }
+                    break;
 
-            case "Gamepad with Joystick Trackpad":
-                {
-                    Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightStick };
-                }
-                break;
+                case "Gamepad with Joystick Trackpad":
+                    {
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightStick };
+                    }
+                    break;
+            }
         }
-    }
 
-    [JsonProperty]
-    public string Author
-    {
-        get => _Author.Text;
-        set => _Author.Text = value;
-    }
+        [JsonProperty] public string Author { get; set; } = string.Empty;
+        [JsonProperty] public string Name { get; set; } = string.Empty;
+        [JsonProperty] public string Description { get; set; } = string.Empty;
+        [JsonProperty] public string Product { get; set; } = string.Empty;
+        [JsonProperty] public Guid Guid { get; set; } = Guid.NewGuid();
+        [JsonProperty] public string Executable { get; set; } = string.Empty;
+        [JsonProperty] public bool IsInternal { get; set; } = false;
+        [JsonProperty] public Layout Layout { get; set; } = new();
+        [JsonProperty] public Type ControllerType { get; set; }
 
-    [JsonProperty]
-    public string Name
-    {
-        get => _Name.Text;
-        set => _Name.Text = value;
-    }
-
-    [JsonProperty]
-    public string Description
-    {
-        get => _Description.Text;
-        set => _Description.Text = value;
-    }
-
-    [JsonProperty]
-    public string Product
-    {
-        get => _Product.Text;
-        set
+        public int CompareTo(object obj)
         {
-            _Product.Text = value;
-            _Product.Visibility = string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
+            var profile = (LayoutTemplate)obj;
+            return profile.Name.CompareTo(Name);
         }
+
+        public void ClearDelegates()
+        {
+            Updated = null;
+        }
+
+        private void Layout_Updated(Layout layout)
+        {
+            Updated?.Invoke(this);
+        }
+
+        #region events
+
+        public event UpdatedEventHandler Updated;
+
+        public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
+
+        #endregion
     }
-
-    [JsonProperty] public Guid Guid { get; set; } = Guid.NewGuid();
-
-    [JsonProperty] public string Executable { get; set; } = string.Empty;
-
-    [JsonProperty] public bool IsInternal { get; set; }
-
-    [JsonProperty] public Layout Layout { get; set; } = new();
-
-    [JsonProperty] public Type ControllerType { get; set; }
-
-    public int CompareTo(object obj)
-    {
-        var profile = (LayoutTemplate)obj;
-        return profile.Name.CompareTo(Name);
-    }
-
-    public void ClearDelegates()
-    {
-        Updated = null;
-    }
-
-    private void Layout_Updated(Layout layout)
-    {
-        Updated?.Invoke(this);
-    }
-
-    #region events
-
-    public event UpdatedEventHandler Updated;
-
-    public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
-
-    #endregion
 }

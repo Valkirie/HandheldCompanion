@@ -8,12 +8,12 @@ namespace HandheldCompanion.Converters;
 public sealed class BooleanToVisibilityConverter : IValueConverter
 {
     /// <summary>
-    ///     Convert bool or Nullable bool to Visibility
+    ///     Convert bool or Nullable bool to Visibility, optionally inverting based on parameter
     /// </summary>
     /// <param name="value">bool or Nullable bool</param>
     /// <param name="targetType">Visibility</param>
-    /// <param name="parameter">null</param>
-    /// <param name="culture">null</param>
+    /// <param name="parameter">Optional inversion parameter</param>
+    /// <param name="culture">Culture info</param>
     /// <returns>Visible or Collapsed</returns>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -26,6 +26,14 @@ public sealed class BooleanToVisibilityConverter : IValueConverter
         {
             var tmp = (bool?)value;
             bValue = tmp.HasValue ? tmp.Value : false;
+        }
+
+        // Check if parameter requests inversion (e.g., "False" means invert)
+        var invert = parameter as string == "False";
+
+        if (invert)
+        {
+            return bValue ? Visibility.Collapsed : Visibility.Visible;
         }
 
         return bValue ? Visibility.Visible : Visibility.Collapsed;

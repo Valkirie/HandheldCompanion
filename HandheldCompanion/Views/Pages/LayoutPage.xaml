@@ -8,9 +8,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Layout"
     Title="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:LayoutPageViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
@@ -101,23 +103,69 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
-                        SelectionChanged="cB_Layouts_SelectionChanged"
-                        SizeChanged="cB_Layouts_SizeChanged">
+                        ItemsSource="{Binding LayoutList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectionChanged="cB_Layouts_SelectionChanged">
 
-                        <!--  TEMPLATES  -->
-                        <ComboBoxItem
-                            Name="cB_LayoutsSplitterTemplates"
-                            Content="{l:Static resx:Resources.LayoutPage_Templates}"
-                            IsEnabled="false" />
-                        <!--  COMMUNITY  -->
-                        <ComboBoxItem
-                            Name="cB_LayoutsSplitterCommunity"
-                            Content="{l:Static resx:Resources.LayoutPage_Community}"
-                            IsEnabled="false" />
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="15,0,15,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xE7FC;"
+                                        Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
+
+                                    <StackPanel Grid.Column="1">
+                                        <Grid>
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <ikw:SimpleStackPanel
+                                                HorizontalAlignment="Right"
+                                                Orientation="Horizontal"
+                                                Spacing="6"
+                                                Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
+                                                <TextBlock
+                                                    FontStyle="Italic"
+                                                    Style="{StaticResource BaseTextBlockStyle}"
+                                                    Text="{Binding Product, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBlock
+                                                    Margin="5,0,5,0"
+                                                    Style="{StaticResource BaseTextBlockStyle}"
+                                                    Text="{Binding Author, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </ikw:SimpleStackPanel>
+                                        </Grid>
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{Binding Description, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            TextWrapping="Wrap"
+                                            Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+
+                        <ComboBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Setter Property="Visibility" Value="{Binding Visibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Setter Property="Width" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHeader}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
                     </ComboBox>
 
                     <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
-
                         <Grid>
                             <CheckBox
                                 Name="CheckBoxDeviceLayouts"
