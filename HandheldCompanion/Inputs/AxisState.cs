@@ -9,9 +9,9 @@ namespace HandheldCompanion.Inputs;
 [Serializable]
 public partial class AxisState : ICloneable
 {
-    public ConcurrentDictionary<AxisFlags, short> State = new();
+    public Dictionary<AxisFlags, short> State = new();
 
-    public AxisState(ConcurrentDictionary<AxisFlags, short> State)
+    public AxisState(Dictionary<AxisFlags, short> State)
     {
         foreach (var state in State)
             this[state.Key] = state.Value;
@@ -78,8 +78,8 @@ public partial class AxisState : ICloneable
         return false;
     }
 
-    public static bool EqualsWithValues(ConcurrentDictionary<AxisFlags, short> obj1,
-        ConcurrentDictionary<AxisFlags, short> obj2)
+    public static bool EqualsWithValues(Dictionary<AxisFlags, short> obj1,
+        Dictionary<AxisFlags, short> obj2)
     {
         if (obj1.Count != obj2.Count) return false;
         {

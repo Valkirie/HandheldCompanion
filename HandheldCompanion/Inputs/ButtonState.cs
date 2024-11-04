@@ -9,9 +9,9 @@ namespace HandheldCompanion.Inputs;
 [Serializable]
 public partial class ButtonState : ICloneable
 {
-    public ConcurrentDictionary<ButtonFlags, bool> State = new();
+    public Dictionary<ButtonFlags, bool> State = new();
 
-    public ButtonState(ConcurrentDictionary<ButtonFlags, bool> State)
+    public ButtonState(Dictionary<ButtonFlags, bool> State)
     {
         foreach (var state in State)
             this[state.Key] = state.Value;

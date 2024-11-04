@@ -162,10 +162,21 @@ public static class HotkeysManager
                 try
                 {
                     string outputraw = File.ReadAllText(fileName);
-                    hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings
+
+                    // pre-parse manipulations
+                    switch (version.ToString())
                     {
-                        TypeNameHandling = TypeNameHandling.All
-                    });
+                        case "0.21.7.0":
+                            {
+                                outputraw = outputraw.Replace(
+                                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
+                                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+                            }
+                            break;
+                    }
+
+                    // parse profile
+                    hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
                 }
                 catch (Exception ex)
                 {
