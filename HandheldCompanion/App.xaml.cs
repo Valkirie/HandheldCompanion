@@ -55,7 +55,8 @@ public partial class App : Application
         using (var process = Process.GetCurrentProcess())
         {
             // force high priority
-            SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
+            // taking this away, might have un predictable side effects
+            // SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
 
             Process[] processes = Process.GetProcessesByName(process.ProcessName);
             if (processes.Length > 1)
