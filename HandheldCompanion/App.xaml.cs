@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using static HandheldCompanion.WinAPI;
 
 namespace HandheldCompanion;
 

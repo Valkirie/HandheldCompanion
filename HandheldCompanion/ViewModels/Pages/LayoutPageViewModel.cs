@@ -1,15 +1,12 @@
-﻿using HandheldCompanion.Controls;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows;
-using HandheldCompanion.Controllers;
 using System.Windows.Data;
-using HandheldCompanion.Properties;
-using HandheldCompanion.Misc;
-using System;
 
 namespace HandheldCompanion.ViewModels
 {

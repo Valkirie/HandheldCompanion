@@ -438,7 +438,7 @@ public class ProcessEx : IDisposable
         MainThread?.Dispose();
         ChildrenProcessIds.Dispose();
 
-        foreach(ProcessWindow window in ProcessWindows.Values)
+        foreach (ProcessWindow window in ProcessWindows.Values)
             window.Dispose();
 
         ProcessWindows.Clear();
