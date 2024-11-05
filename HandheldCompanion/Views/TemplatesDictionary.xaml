@@ -511,7 +511,7 @@
                 </Grid>
             </Expander.Header>
             <Expander.Content>
-                <ikw:SimpleStackPanel Spacing="6">
+                <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
                     <!--  Shared  -->
                     <Grid>
                         <ikw:SimpleStackPanel Spacing="6">
