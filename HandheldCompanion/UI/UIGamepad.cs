@@ -208,6 +208,10 @@ namespace HandheldCompanion.Managers
                 if (_focused[window])
                     GotFocus?.Invoke(window);
             }
+
+            // hide tooltip
+            tooltip.PlacementTarget = null;
+            tooltip.IsOpen = false;
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
@@ -306,6 +310,7 @@ namespace HandheldCompanion.Managers
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
+                tooltip.PlacementTarget = null;
                 tooltip.IsOpen = false;
             });
         }
