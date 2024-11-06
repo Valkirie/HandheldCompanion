@@ -103,13 +103,15 @@ public partial class QuickHomePage : Page
         {
             try
             {
+                int value = Convert.ToInt32(volume);
+
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    UpdateVolumeIcon(volume);
+                    UpdateVolumeIcon(value);
 
-                    if (SliderVolume.Value != (int)volume)
-                        SliderVolume.Value = (int)volume;
+                    if (SliderVolume.Value != value)
+                        SliderVolume.Value = value;
                 });
             }
             finally
