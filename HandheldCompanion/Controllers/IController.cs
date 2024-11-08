@@ -4,30 +4,27 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
-using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers
 {
-    [Flags]
-    public enum ControllerCapabilities : ushort
+    public class IController
     {
-        None = 0,
-        MotionSensor = 1,
-    }
+        #region events
+        public event UserIndexChangedEventHandler UserIndexChanged;
+        public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
-    /// <summary>
-    /// Logique d'interaction pour IController.xaml
-    /// </summary>
-    public partial class IController : UserControl
-    {
+        public event StateChangedEventHandler StateChanged;
+        public delegate void StateChangedEventHandler();
+
+        public event InputsUpdatedEventHandler InputsUpdated;
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
+        #endregion
+
         // Buttons and axes we should be able to map to.
         // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
         protected readonly List<ButtonFlags> TargetButtons =
@@ -68,12 +65,12 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
         ];
 
-        protected FontFamily GlyphFontFamily = new("PromptFont");
-        public static readonly string defaultGlyph = "\u2753";
+        protected static readonly FontFamily GlyphFontFamily = new("PromptFont");
+        protected static readonly string defaultGlyph = "\u2753";
+
         public ControllerCapabilities Capabilities = ControllerCapabilities.None;
-        protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = [];
-        protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = [];
-        protected FontFamily DefaultFontFamily = new("Segeo WP");
+        protected SortedDictionary<AxisLayoutFlags, Color> ColoredAxis = [];
+        protected SortedDictionary<ButtonFlags, Color> ColoredButtons = [];
 
         public PnPDetails Details;
 
@@ -84,78 +81,39 @@ namespace HandheldCompanion.Controllers
         protected Dictionary<byte, GamepadMotion> gamepadMotions = new();
 
         protected double VibrationStrength = 1.0d;
-        private byte _UserIndex = 255;
-        private readonly int MaxUserIndex = 10;
-
-        private int workingIdx = 0;
-        private Thread workingThread;
-        private bool workingThreadRunning;
+        private Task rumbleTask;
 
         protected object hidLock = new();
 
         public virtual bool IsReady => true;
+
         public virtual bool IsWireless => Details.isBluetooth;
         public virtual bool IsDongle => Details.isDongle;
 
         public bool isPlaceholder;
 
+        private bool _IsBusy;
         public bool IsBusy
         {
             get
             {
-                bool isBusy = false;
-
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    isBusy = !IsEnabled;
-                });
-
-                return isBusy;
+                return _IsBusy;
             }
 
             set
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    IsEnabled = !value;
-                    ProgressBarWarning.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-                });
+                if (IsVirtual())
+                    return;
 
-                switch (value)
-                {
-                    case false:
-                        {
-                            // kill working thread
-                            if (workingThread is not null)
-                            {
-                                workingThreadRunning = false;
-                                // Ensure the thread has finished execution
-                                if (workingThread.IsAlive)
-                                    workingThread.Join();
-                                workingThread = null;
-                            }
+                if (value == _IsBusy)
+                    return;
 
-                            // visually update user index
-                            SetVirtualControllerVisualIndex(UserIndex);
-                        }
-                        break;
-
-                    case true:
-                        {
-                            workingThreadRunning = true;
-                            workingThread = new Thread(workingThreadLoop)
-                            {
-                                IsBackground = true,
-                            };
-                            workingThread.Start();
-                        }
-                        return;
-                }
+                _IsBusy = value;
+                StateChanged?.Invoke();
             }
         }
 
+        private byte _UserIndex = 255;
         protected byte UserIndex
         {
             get
@@ -165,63 +123,18 @@ namespace HandheldCompanion.Controllers
 
             set
             {
-                _UserIndex = value;
-                UserIndexChanged?.Invoke(value);
-
-                if (IsBusy)
+                if (value == _UserIndex)
                     return;
 
-                // visually update user index
-                SetVirtualControllerVisualIndex(value);
-            }
-        }
-
-        private void SetVirtualControllerVisualIndex(int value)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (FrameworkElement frameworkElement in UserIndexPanel.Children)
-                {
-                    if (frameworkElement is not Border)
-                        continue;
-
-                    Border border = (Border)frameworkElement;
-                    int idx = UserIndexPanel.Children.IndexOf(border);
-
-                    if (idx == value)
-                        border.SetResourceReference(BackgroundProperty, "AccentAAFillColorDefaultBrush");
-                    else
-                        border.SetResourceReference(BackgroundProperty, "SystemControlForegroundBaseLowBrush");
-                }
-            });
-        }
-
-        private void workingThreadLoop()
-        {
-            int direction = 1; // 1 for increasing, -1 for decreasing
-            workingIdx = 0;
-
-            while (workingThreadRunning)
-            {
-                workingIdx += direction; // increment or decrement the index
-                if (workingIdx == MaxUserIndex - 1 || workingIdx == 0) // if the index reaches the limit or zero
-                    direction = -direction; // reverse the direction
-
-                SetVirtualControllerVisualIndex(workingIdx);
-
-                Thread.Sleep(100);
+                _UserIndex = value;
+                UserIndexChanged?.Invoke(value);
             }
         }
 
         public IController()
         {
-            InitializeComponent();
-            InitializeInputOutput();
-
             gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
-
-            MaxUserIndex = UserIndexPanel.Children.Count;
+            InitializeInputOutput();
         }
 
         protected virtual void UpdateSettings()
@@ -245,10 +158,12 @@ namespace HandheldCompanion.Controllers
             gamepadMotions[gamepadIndex] = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             // UI thread
+            /*
             Application.Current.Dispatcher.Invoke(() =>
             {
                 ControllerType.Glyph = details.isInternal ? "\uE990" : IsWireless ? "\uE702" : IsDongle ? "\uECF1" : "\uECF0";
             });
+            */
 
             /*
             // Retrieve the oldest device using LINQ
@@ -260,6 +175,9 @@ namespace HandheldCompanion.Controllers
 
         public virtual void UpdateInputs(long ticks, float delta)
         {
+            if (IsBusy)
+                return;
+
             InputsUpdated?.Invoke(Inputs, gamepadMotions, delta, gamepadIndex);
         }
 
@@ -309,57 +227,6 @@ namespace HandheldCompanion.Controllers
             if (Details is not null)
                 return Details.baseContainerDeviceInstanceId;
             return string.Empty;
-        }
-
-        public override string ToString()
-        {
-            if (Details is not null)
-                return Details.Name;
-            return string.Empty;
-        }
-
-        protected void DrawUI()
-        {
-            // update name
-            ControllerName.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
-
-            // some elements of virtual controllers shouldn't be visible
-            if (IsVirtual())
-            {
-                ui_button_hook.Visibility = Visibility.Collapsed;
-                ui_button_hide.Visibility = Visibility.Collapsed;
-                ui_button_calibrate.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        protected void UpdateUI()
-        {
-            // some elements of virtual controllers shouldn't be visible
-            if (IsVirtual())
-                return;
-
-            // UI thread (async)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
-                ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
-                ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.MotionSensor) ? Visibility.Visible : Visibility.Collapsed;
-            });
-        }
-
-        public Button GetButtonHook()
-        {
-            return ui_button_hook;
-        }
-
-        public Button GetButtonHide()
-        {
-            return ui_button_hide;
-        }
-
-        public Button GetButtonCalibrate()
-        {
-            return ui_button_calibrate;
         }
 
         public void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
@@ -435,10 +302,9 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsConnected()
         {
-            return false;
+            return !IsBusy;
         }
 
-        private Task rumbleTask;
         public virtual void Rumble(int delay = 125, byte LargeMotor = byte.MaxValue, byte SmallMotor = byte.MaxValue)
         {
             // If the current task is not null and not completed
@@ -463,12 +329,6 @@ namespace HandheldCompanion.Controllers
             SetVibrationStrength(SettingsManager.GetUInt("VibrationStrength"));
 
             InjectedButtons.Clear();
-
-            // UI thread (async)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ui_button_hook.IsEnabled = false;
-            });
         }
 
         // this function cannot be called twice
@@ -476,12 +336,6 @@ namespace HandheldCompanion.Controllers
         {
             if (isPlaceholder)
                 return;
-
-            // UI thread (async)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ui_button_hook.IsEnabled = true;
-            });
         }
 
         public bool IsHidden()
@@ -499,14 +353,7 @@ namespace HandheldCompanion.Controllers
             HideHID();
 
             if (powerCycle)
-            {
-                IsBusy = true;
-
-                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 CyclePort();
-            }
-
-            UpdateUI();
         }
 
         public virtual void Unhide(bool powerCycle = true)
@@ -517,18 +364,15 @@ namespace HandheldCompanion.Controllers
             UnhideHID();
 
             if (powerCycle)
-            {
-                IsBusy = true;
-
-                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 CyclePort();
-            }
-
-            UpdateUI();
         }
 
         public virtual void CyclePort()
         {
+            // set status
+            IsBusy = true;
+            ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+
             Details.CyclePort();
         }
 
@@ -540,28 +384,12 @@ namespace HandheldCompanion.Controllers
         {
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
             HidHide.HidePath(Details.deviceInstanceId);
-
-            /*
-            // get HidHideDevice
-            HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
-            if (hideDevice is not null)
-                foreach (HidHideSubDevice subDevice in hideDevice.Devices)
-                    HidHide.HidePath(subDevice.DeviceInstancePath);
-            */
         }
 
         protected void UnhideHID()
         {
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
             HidHide.UnhidePath(Details.deviceInstanceId);
-
-            /*
-            // get HidHideDevice
-            HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
-            if (hideDevice is not null)
-                foreach (HidHideSubDevice subDevice in hideDevice.Devices)
-                    HidHide.UnhidePath(subDevice.DeviceInstancePath);
-            */
         }
 
         public virtual bool RestoreDrivers()
@@ -573,17 +401,6 @@ namespace HandheldCompanion.Controllers
         {
             SensorsManager.Calibrate(gamepadMotions);
         }
-
-        protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
-        {
-            Calibrate();
-        }
-
-        protected virtual void ui_button_hide_Click(object sender, RoutedEventArgs e)
-        { }
-
-        protected virtual void ui_button_hook_Click(object sender, RoutedEventArgs e)
-        { }
 
         public virtual string GetGlyph(ButtonFlags button)
         {
@@ -721,7 +538,7 @@ namespace HandheldCompanion.Controllers
                 Glyph = glyph is not null ? glyph : defaultGlyph,
                 FontSize = fontIconSize,
                 FontFamily = GlyphFontFamily,
-                Foreground = GetGlyphColor(button)
+                Color = GetGlyphColor(button)
             };
         }
 
@@ -734,57 +551,24 @@ namespace HandheldCompanion.Controllers
                 Glyph = glyph is not null ? glyph : defaultGlyph,
                 FontSize = fontIconSize,
                 FontFamily = GlyphFontFamily,
-                Foreground = GetGlyphColor(axis)
+                Color = GetGlyphColor(axis)
             };
         }
 
-        [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
-        public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
+        public Color GetGlyphColor(ButtonFlags button)
         {
-            var FontIcon = new FontIcon
-            {
-                Glyph = GetGlyph(button),
-                FontSize = FontIconSize,
-                Foreground = GetGlyphColor(button)
-            };
+            if (ColoredButtons.TryGetValue(button, out Color color))
+                return color;
 
-            if (FontIcon.Glyph is not null)
-                FontIcon.FontFamily = GlyphFontFamily;
-
-            return FontIcon;
+            return Colors.White;
         }
 
-
-        [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
-        public FontIcon GetFontIcon(AxisLayoutFlags axis, int FontIconSize = 14)
-        {
-            var FontIcon = new FontIcon
-            {
-                Glyph = GetGlyph(axis),
-                FontSize = FontIconSize,
-                Foreground = GetGlyphColor(axis)
-            };
-
-            if (FontIcon.Glyph is not null)
-                FontIcon.FontFamily = GlyphFontFamily;
-
-            return FontIcon;
-        }
-
-        public Brush GetGlyphColor(ButtonFlags button)
-        {
-            if (ColoredButtons.TryGetValue(button, out var brush))
-                return brush;
-
-            return null;
-        }
-
-        public Brush GetGlyphColor(AxisLayoutFlags axis)
+        public Color GetGlyphColor(AxisLayoutFlags axis)
         {
             /* if (AxisBrush.TryGetValue(axis, out Brush brush))
                 return brush; */
 
-            return null;
+            return Colors.White;
         }
 
         private static bool IsTrigger(AxisLayoutFlags axis)
@@ -843,12 +627,11 @@ namespace HandheldCompanion.Controllers
             return EnumUtils.GetDescriptionFromEnumValue(axis, GetType().Name);
         }
 
-        #region events
-        public event UserIndexChangedEventHandler UserIndexChanged;
-        public delegate void UserIndexChangedEventHandler(byte UserIndex);
-
-        public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
-        #endregion
+        public override string ToString()
+        {
+            if (Details is not null)
+                return Details.Name;
+            return string.Empty;
+        }
     }
 }

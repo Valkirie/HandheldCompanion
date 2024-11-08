@@ -106,9 +106,6 @@ public class ClawA1M : IDevice
             { 'Z', 'Y' }
         };
 
-        // device specific capacities
-        Capabilities |= DeviceCapabilities.None;
-
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterBattery, Properties.Resources.PowerProfileMSIClawBetterBatteryDesc)
         {
             Default = true,

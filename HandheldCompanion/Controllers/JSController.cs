@@ -28,10 +28,6 @@ public class JSController : IController
 
         // Capabilities
         Capabilities |= ControllerCapabilities.MotionSensor;
-
-        // UI
-        DrawUI();
-        UpdateUI();
     }
 
     public override string ToString()

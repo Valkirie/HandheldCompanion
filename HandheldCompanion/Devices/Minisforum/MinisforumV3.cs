@@ -52,9 +52,6 @@ public class MinisforumV3 : IDevice
             { 'Z', 'Z' }
         };
 
-        // device specific capacities
-        Capabilities |= DeviceCapabilities.None;
-
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMinisforumV3BetterBattery, Properties.Resources.PowerProfileMinisforumV3BetterBatteryDesc)
         {
             Default = true,

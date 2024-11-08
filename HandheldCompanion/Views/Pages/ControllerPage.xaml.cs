@@ -3,7 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
-using iNKORE.UI.WPF.Controls;
+using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Threading.Tasks;
@@ -25,18 +25,15 @@ public partial class ControllerPage : Page
 
     public ControllerPage()
     {
+        DataContext = new ControllerPageViewModel(this);
         InitializeComponent();
 
         SteamDeckPanel.Visibility = IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
 
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ControllerManager.ControllerPlugged += ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerUnplugged;
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.StatusChanged += ControllerManager_Working;
         ProfileManager.Applied += ProfileManager_Applied;
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
 
     public ControllerPage(string Tag) : this()
@@ -107,62 +104,6 @@ public partial class ControllerPage : Page
 
     public void Page_Closed()
     {
-    }
-
-    private void ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevicesList : PhysicalDevicesList;
-
-            // Search for an existing controller, remove it
-            foreach (IController ctrl in targetPanel.Children)
-            {
-                if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
-                {
-                    if (!IsPowerCycling)
-                    {
-                        targetPanel.Children.Remove(ctrl);
-                        break;
-                    }
-                }
-            }
-
-            ControllerRefresh();
-        });
-    }
-
-    private void ControllerPlugged(IController Controller, bool IsPowerCycling)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevicesList : PhysicalDevicesList;
-
-            // Search for an existing controller, remove it
-            foreach (IController ctrl in targetPanel.Children)
-                if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
-                    return;
-
-            // Add new controller to list if no existing controller was found
-            targetPanel.Children.Add(Controller);
-
-            // todo: move me
-            Button ui_button_hook = Controller.GetButtonHook();
-            ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
-
-            Button ui_button_hide = Controller.GetButtonHide();
-            ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
-
-            ControllerRefresh();
-        });
-    }
-
-    private void ControllerManager_ControllerSelected(IController Controller)
-    {
-        // UI thread (async)
-        ControllerRefresh();
     }
 
     private Dialog dialog = new Dialog(MainWindow.GetCurrent())
@@ -246,47 +187,15 @@ public partial class ControllerPage : Page
         });
     }
 
-    private void VirtualManager_ControllerSelected(HIDmode mode)
-    {
-        return;
-
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            cB_HidMode.SelectedIndex = (int)mode;
-        });
-    }
-
-    private void ControllerHookClicked(IController Controller)
-    {
-        if (Controller.IsBusy)
-            return;
-
-        var path = Controller.GetContainerInstancePath();
-        ControllerManager.SetTargetController(path, false);
-
-        ControllerRefresh();
-    }
-
-    private void ControllerHideClicked(IController Controller)
-    {
-        if (Controller.IsBusy)
-            return;
-
-        if (Controller.IsHidden())
-            Controller.Unhide();
-        else
-            Controller.Hide();
-
-        ControllerRefresh();
-    }
-
-    private void ControllerRefresh()
+    public void ControllerRefresh()
     {
         IController targetController = ControllerManager.GetTargetController();
         bool hasPhysical = ControllerManager.HasPhysicalController();
         bool hasVirtual = ControllerManager.HasVirtualController();
         bool hasTarget = targetController != null;
+
+        bool isPlugged = hasPhysical && hasTarget;
+        bool isHidden = targetController is not null && targetController.IsHidden();
 
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
@@ -294,15 +203,7 @@ public partial class ControllerPage : Page
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
-            bool isPlugged = hasPhysical && hasTarget;
-            bool isHidden = false;
-            if (targetController is not null)
-                isHidden = targetController.IsHidden();
-
-            // hint: Has physical controller, but is not connected
-            HintsNoPhysicalConnected.Visibility = hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
-
-            // hint: Has physical controller (not Neptune) hidden, but no virtual controller
+            // hint: Has physical controller hidden, but no virtual controller
             VirtualDevices.Visibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
             WarningNoVirtual.Visibility = isHidden && !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
 
@@ -310,13 +211,13 @@ public partial class ControllerPage : Page
             bool hasDualInput = isPlugged && !isHidden && hasVirtual;
             HintsNotMuted.Visibility = hasDualInput ? Visibility.Visible : Visibility.Collapsed;
 
-            Hints.Visibility = (HintsNoPhysicalConnected.Visibility == Visibility.Visible ||
-                                HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
-                                HintsNotMuted.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
+            Hints.Visibility = (HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
+                                HintsNotMuted.Visibility == Visibility.Visible ||
+                                WarningNoVirtual.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 
-    private async void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (cB_HidMode.SelectedIndex == -1)
             return;

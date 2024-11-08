@@ -322,6 +322,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calibrate.
+        /// </summary>
+        public static string Controller_Calibrate {
+            get {
+                return ResourceManager.GetString("Controller_Calibrate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
         public static string Controller_Connect {

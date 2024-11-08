@@ -14,10 +14,10 @@ public class DS4Controller : JSController
     public DS4Controller(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
         // UI
-        ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
-        ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
-        ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
-        ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
+        ColoredButtons.Add(ButtonFlags.B1, Color.FromArgb(255, 116, 139, 255));
+        ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 255, 73, 75));
+        ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 244, 149, 193));
+        ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 73, 191, 115));
     }
 
     protected override void InitializeInputOutput()

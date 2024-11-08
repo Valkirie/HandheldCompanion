@@ -28,13 +28,10 @@ namespace HandheldCompanion.Controllers
             AttachDetails(details);
 
             // UI
-            ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
-            ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
-            ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
-            ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
-
-            DrawUI();
-            UpdateUI();
+            ColoredButtons.Add(ButtonFlags.B1, Color.FromArgb(255, 81, 191, 61));
+            ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 217, 65, 38));
+            ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 26, 159, 255));
+            ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 255, 200, 44));
         }
 
         protected override void InitializeInputOutput()

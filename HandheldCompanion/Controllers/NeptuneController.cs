@@ -34,10 +34,6 @@ public class NeptuneController : SteamController
     public NeptuneController(PnPDetails details) : base()
     {
         AttachDetails(details);
-
-        // UI
-        DrawUI();
-        UpdateUI();
     }
 
     protected override void InitializeInputOutput()

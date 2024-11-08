@@ -26,10 +26,6 @@ public class DInputController : IController
 
         // Set BufferSize in order to use buffered data.
         joystick.Properties.BufferSize = 128;
-
-        // UI
-        DrawUI();
-        UpdateUI();
     }
 
     public override string ToString()

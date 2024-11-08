@@ -9,6 +9,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Media;
 
 namespace HandheldCompanion.ViewModels
@@ -201,11 +202,19 @@ namespace HandheldCompanion.ViewModels
 
         protected void UpdateIcon(GlyphIconInfo glyphIconInfo)
         {
+            if (glyphIconInfo is null)
+                return;
+
             Name = glyphIconInfo.Name!;
             Glyph = glyphIconInfo.Glyph!;
             GlyphFontFamily = glyphIconInfo.FontFamily;
             GlyphFontSize = glyphIconInfo.FontSize;
-            GlyphForeground = glyphIconInfo.Foreground;
+
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                GlyphForeground = new SolidColorBrush(glyphIconInfo.Color);
+            });
         }
 
         protected abstract void UpdateController(IController controller);

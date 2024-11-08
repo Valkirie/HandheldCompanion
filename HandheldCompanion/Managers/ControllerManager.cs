@@ -20,7 +20,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -463,22 +462,18 @@ public static class ControllerManager
             }
             else
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                switch (joyShockType)
                 {
-                    switch (joyShockType)
-                    {
-                        case JOY_TYPE.DualSense:
-                            controller = new DualSenseController(settings, details);
-                            break;
-                        case JOY_TYPE.DualShock4:
-                            controller = new DS4Controller(settings, details);
-                            break;
-                        case JOY_TYPE.ProController:
-                            controller = new ProController(settings, details);
-                            break;
-                    }
-                });
+                    case JOY_TYPE.DualSense:
+                        controller = new DualSenseController(settings, details);
+                        break;
+                    case JOY_TYPE.DualShock4:
+                        controller = new DS4Controller(settings, details);
+                        break;
+                    case JOY_TYPE.ProController:
+                        controller = new ProController(settings, details);
+                        break;
+                }
             }
         }
         else
@@ -538,69 +533,65 @@ public static class ControllerManager
             }
             else
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                // search for a supported controller
+                switch (VendorId)
                 {
-                    // search for a supported controller
-                    switch (VendorId)
-                    {
-                        // STEAM
-                        case 0x28DE:
+                    // STEAM
+                    case 0x28DE:
+                        {
+                            switch (ProductId)
                             {
-                                switch (ProductId)
-                                {
-                                    // WIRED STEAM CONTROLLER
-                                    case 0x1102:
-                                        // MI == 0 is virtual keyboards
-                                        // MI == 1 is virtual mouse
-                                        // MI == 2 is controller proper
-                                        // No idea what's in case of more than one controller connected
-                                        if (details.GetMI() == 2)
-                                            controller = new GordonController(details);
-                                        break;
-                                    // WIRELESS STEAM CONTROLLER
-                                    case 0x1142:
-                                        // MI == 0 is virtual keyboards
-                                        // MI == 1-4 are 4 controllers
-                                        // TODO: The dongle registers 4 controller devices, regardless how many are
-                                        // actually connected. There is no easy way to check for connection without
-                                        // actually talking to each controller. Handle only the first for now.
-                                        if (details.GetMI() == 1)
-                                            controller = new GordonController(details);
-                                        break;
+                                // WIRED STEAM CONTROLLER
+                                case 0x1102:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1 is virtual mouse
+                                    // MI == 2 is controller proper
+                                    // No idea what's in case of more than one controller connected
+                                    if (details.GetMI() == 2)
+                                        controller = new GordonController(details);
+                                    break;
+                                // WIRELESS STEAM CONTROLLER
+                                case 0x1142:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1-4 are 4 controllers
+                                    // TODO: The dongle registers 4 controller devices, regardless how many are
+                                    // actually connected. There is no easy way to check for connection without
+                                    // actually talking to each controller. Handle only the first for now.
+                                    if (details.GetMI() == 1)
+                                        controller = new GordonController(details);
+                                    break;
 
-                                    // STEAM DECK
-                                    case 0x1205:
-                                        controller = new NeptuneController(details);
-                                        break;
-                                }
+                                // STEAM DECK
+                                case 0x1205:
+                                    controller = new NeptuneController(details);
+                                    break;
                             }
-                            break;
+                        }
+                        break;
 
-                        // NINTENDO
-                        case 0x057E:
+                    // NINTENDO
+                    case 0x057E:
+                        {
+                            switch (ProductId)
                             {
-                                switch (ProductId)
-                                {
-                                    // Nintendo Wireless Gamepad
-                                    case 0x2009:
-                                        break;
-                                }
+                                // Nintendo Wireless Gamepad
+                                case 0x2009:
+                                    break;
                             }
-                            break;
+                        }
+                        break;
 
-                        // LENOVO
-                        case 0x17EF:
+                    // LENOVO
+                    case 0x17EF:
+                        {
+                            switch (ProductId)
                             {
-                                switch (ProductId)
-                                {
-                                    case 0x6184:
-                                        break;
-                                }
+                                case 0x6184:
+                                    break;
                             }
-                            break;
-                    }
-                });
+                        }
+                        break;
+                }
             }
         }
 
@@ -848,39 +839,36 @@ public static class ControllerManager
         }
         else
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            switch (details.GetVendorID())
             {
-                switch (details.GetVendorID())
-                {
-                    default:
-                        controller = new XInputController(details);
-                        break;
+                default:
+                    controller = new XInputController(details);
+                    break;
 
-                    // LegionGo
-                    case "0x17EF":
-                        controller = new LegionController(details);
-                        break;
+                // LegionGo
+                case "0x17EF":
+                    controller = new LegionController(details);
+                    break;
 
-                    // GameSir
-                    case "0x3537":
+                // GameSir
+                case "0x3537":
+                    {
+                        switch (details.GetProductID())
                         {
-                            switch (details.GetProductID())
-                            {
-                                // Tarantula Pro (Dongle)
-                                case "0x1099":
-                                case "0x103E":
-                                    details.isDongle = true;
-                                    goto case "0x1050";
-                                // Tarantula Pro
-                                default:
-                                case "0x1050":
-                                    controller = new TatantulaProController(details);
-                                    break;
-                            }
+                            // Tarantula Pro (Dongle)
+                            case "0x1099":
+                            case "0x103E":
+                                details.isDongle = true;
+                                goto case "0x1050";
+                            // Tarantula Pro
+                            default:
+                            case "0x1050":
+                                controller = new TatantulaProController(details);
+                                break;
                         }
-                        break;
-                }
-            });
+                    }
+                    break;
+            }
         }
 
         // unsupported controller

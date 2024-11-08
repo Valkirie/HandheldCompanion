@@ -6,7 +6,6 @@ using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
-using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Sentry;
 using System;
@@ -913,24 +912,8 @@ public abstract class IDevice
             Glyph = glyph is not null ? glyph : defaultGlyph,
             FontSize = fontIconSize,
             FontFamily = GlyphFontFamily,
-            Foreground = null
+            Color = Colors.White
         };
-    }
-
-    [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
-    public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
-    {
-        FontIcon FontIcon = new FontIcon
-        {
-            Glyph = GetGlyph(button),
-            FontSize = FontIconSize,
-            Foreground = null,
-        };
-
-        if (FontIcon.Glyph is not null)
-            FontIcon.FontFamily = GlyphFontFamily;
-
-        return FontIcon;
     }
 
     public virtual string GetGlyph(ButtonFlags button)

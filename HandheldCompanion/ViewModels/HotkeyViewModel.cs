@@ -16,11 +16,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Commands.ICommands;
+using Application = System.Windows.Application;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -433,6 +435,10 @@ namespace HandheldCompanion.ViewModels
         {
             Hotkey = hotkey;
 
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, new object());
+            BindingOperations.EnableCollectionSynchronization(FunctionItems, new object());
+
             // Fill initial data
             foreach (object value in FunctionCommands.Functions)
             {
@@ -530,32 +536,36 @@ namespace HandheldCompanion.ViewModels
             if (controller is null)
                 controller = ControllerManager.GetEmulatedController();
 
-            foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                string glyphString = string.Empty;
-                Brush glyphColor = controller.GetGlyphColor(buttonFlags);
-
-                switch (buttonFlags)
+                foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
                 {
-                    case ButtonFlags.OEM1:
-                    case ButtonFlags.OEM2:
-                    case ButtonFlags.OEM3:
-                    case ButtonFlags.OEM4:
-                    case ButtonFlags.OEM5:
-                    case ButtonFlags.OEM6:
-                    case ButtonFlags.OEM7:
-                    case ButtonFlags.OEM8:
-                    case ButtonFlags.OEM9:
-                    case ButtonFlags.OEM10:
-                        glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
-                        break;
-                    default:
-                        glyphString = controller.GetGlyph(buttonFlags);
-                        break;
-                }
+                    string glyphString = string.Empty;
+                    Brush glyphColor = new SolidColorBrush(controller.GetGlyphColor(buttonFlags));
 
-                ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString, glyphColor));
-            }
+                    switch (buttonFlags)
+                    {
+                        case ButtonFlags.OEM1:
+                        case ButtonFlags.OEM2:
+                        case ButtonFlags.OEM3:
+                        case ButtonFlags.OEM4:
+                        case ButtonFlags.OEM5:
+                        case ButtonFlags.OEM6:
+                        case ButtonFlags.OEM7:
+                        case ButtonFlags.OEM8:
+                        case ButtonFlags.OEM9:
+                        case ButtonFlags.OEM10:
+                            glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
+                            break;
+                        default:
+                            glyphString = controller.GetGlyph(buttonFlags);
+                            break;
+                    }
+
+                    ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString, glyphColor));
+                }
+            });
 
             switch (Hotkey.command.commandType)
             {
