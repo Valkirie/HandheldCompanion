@@ -153,21 +153,6 @@ namespace HandheldCompanion.Controllers
 
             // manage gamepad motion
             gamepadMotions[gamepadIndex] = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
-
-            // UI thread
-            /*
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ControllerType.Glyph = details.isInternal ? "\uE990" : IsWireless ? "\uE702" : IsDongle ? "\uECF1" : "\uECF0";
-            });
-            */
-
-            /*
-            // Retrieve the oldest device using LINQ
-            PnPDetails oldest = Details.isXInput ? DeviceManager.GetOldestXInput() : DeviceManager.GetOldestDInput();
-            if (oldest is not null)
-                IsInternal = oldest.deviceInstanceId == Details.deviceInstanceId;
-            */
         }
 
         public virtual void UpdateInputs(long ticks, float delta)
@@ -299,7 +284,7 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsConnected()
         {
-            return !IsBusy;
+            return false;
         }
 
         public virtual void Rumble(int delay = 125, byte LargeMotor = byte.MaxValue, byte SmallMotor = byte.MaxValue)
