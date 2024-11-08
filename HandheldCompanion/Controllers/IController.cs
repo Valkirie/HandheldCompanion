@@ -102,9 +102,6 @@ namespace HandheldCompanion.Controllers
 
             set
             {
-                if (IsVirtual())
-                    return;
-
                 if (value == _IsBusy)
                     return;
 
