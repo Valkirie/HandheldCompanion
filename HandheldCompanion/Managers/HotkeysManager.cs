@@ -152,7 +152,7 @@ public static class HotkeysManager
                     // too old
                     throw new Exception("Hotkey is outdated.");
                 }
-                else if (version <= Version.Parse("0.21.7.0"))
+                else if (version <= Version.Parse("0.21.8.0"))
                 {
                     outputraw = outputraw.Replace(
                         "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
