@@ -82,8 +82,6 @@ public partial class LayoutPage : Page
         // manage events
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
-        DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
         ProfileManager.Updated += ProfileManager_Updated;
 
         // raise events
@@ -123,15 +121,6 @@ public partial class LayoutPage : Page
                 page.Item2.IsEnabled = page.Item1.IsEnabled();
             }
         });
-    }
-
-    private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
-    {
-        IController controller = ControllerManager.GetTargetController();
-
-        // lazy
-        if (controller is not null)
-            ControllerManager_ControllerSelected(controller);
     }
 
     private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
