@@ -10,6 +10,7 @@ using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -127,61 +128,44 @@ public static class HotkeysManager
         {
             string rawName = Path.GetFileNameWithoutExtension(fileName);
             if (string.IsNullOrEmpty(rawName))
-                throw new Exception("Profile has an incorrect file name.");
+            {
+                LogManager.LogError("Could not parse profile {0}. {1}", fileName, "Profile has an incorrect file name.");
+                return;
+            }
 
-            string json = File.ReadAllText(fileName);
-            JObject? dictionary = JObject.Parse(json);
+            string outputraw = File.ReadAllText(fileName);
+            JObject? jObject = JObject.Parse(outputraw);
 
             Version version = new();
-            if (dictionary.ContainsKey("Version"))
-                version = Version.Parse((string)dictionary["Version"]);
+            if (jObject.ContainsKey("Version"))
+                version = Version.Parse((string)jObject["Version"]);
 
-            // this is the first version where we added the Version field to Hotkey
-            if (version <= Version.Parse("0.21.5.2"))
+            try
             {
-                // this goes back to 0.21.4.1
-                if (dictionary.ContainsKey("hotkeyId"))
+                if (jObject.ContainsKey("hotkeyId"))
                 {
-                    try
-                    {
-                        hotkey = MigrateFrom0_21_4_1(fileName, dictionary);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogManager.LogError("Could not migrate old hotkey {0}. {1}", fileName, ex.Message);
-                        return;
-                    }
+                    // this goes back to 0.21.4.1 ?
+                    hotkey = MigrateFrom0_21_4_1(fileName, jObject);
                 }
-                else if (dictionary.ContainsKey("ButtonFlags"))
+                else if (version == Version.Parse("0.0.0.0"))
                 {
-                    // this is 0.21.5.1
+                    // too old
+                    throw new Exception("Hotkey is outdated.");
                 }
-            }
-            else
-            {
-                try
+                else if (version <= Version.Parse("0.21.7.0"))
                 {
-                    string outputraw = File.ReadAllText(fileName);
-
-                    // pre-parse manipulations
-                    switch (version.ToString())
-                    {
-                        case "0.21.7.0":
-                            {
-                                outputraw = outputraw.Replace(
-                                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
-                                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
-                            }
-                            break;
-                    }
+                    outputraw = outputraw.Replace(
+                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
+                        "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
 
                     // parse profile
                     hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
                 }
-                catch (Exception ex)
-                {
-                    LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
+                return;
             }
         }
         catch (Exception ex)
@@ -199,8 +183,7 @@ public static class HotkeysManager
         if (hotkey.ButtonFlags == ButtonFlags.None)
             return;
 
-        hotkeys[hotkey.ButtonFlags] = hotkey;
-        Updated?.Invoke(hotkey);
+        UpdateOrCreateHotkey(hotkey);
     }
 
     private static Hotkey? MigrateFrom0_21_4_1(string fileName, JObject? dictionary)

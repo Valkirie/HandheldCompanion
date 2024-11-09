@@ -498,44 +498,30 @@ public static class ProfileManager
         {
             string rawName = Path.GetFileNameWithoutExtension(fileName);
             if (string.IsNullOrEmpty(rawName))
-                throw new Exception("Profile has an incorrect file name.");
+            {
+                LogManager.LogError("Could not parse profile {0}. {1}", fileName, "Profile has an incorrect file name.");
+                return;
+            }
 
             string outputraw = File.ReadAllText(fileName);
             JObject jObject = JObject.Parse(outputraw);
 
             // latest pre-versionning release
-            Version version = new("0.15.0.4");
+            Version version = new();
             if (jObject.TryGetValue("Version", out var value))
                 version = new Version(value.ToString());
 
             // pre-parse manipulations
-            switch (version.ToString())
+            if (version == Version.Parse("0.0.0.0"))
             {
-                case "0.15.0.4":
-                    {
-                        outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"",
-                            "Generic.SortedDictionary$1System.Collections\"");
-                        jObject = JObject.Parse(outputraw);
-                        jObject.Remove("MotionSensivityArray");
-                        outputraw = jObject.ToString();
-                    }
-                    break;
-
-                case "0.16.0.5":
-                    {
-                        outputraw = outputraw.Replace(
-                            "\"System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections\"",
-                            "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
-                    }
-                    break;
-
-                case "0.21.7.0":
-                    {
-                        outputraw = outputraw.Replace(
-                            "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
-                            "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
-                    }
-                    break;
+                // too old
+                throw new Exception("Profile is outdated.");
+            }
+            else if (version <= Version.Parse("0.21.7.0"))
+            {
+                outputraw = outputraw.Replace(
+                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
+                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
             }
 
             // parse profile
