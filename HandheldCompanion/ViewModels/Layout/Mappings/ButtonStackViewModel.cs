@@ -37,18 +37,21 @@ namespace HandheldCompanion.ViewModels
             _flag = flag;
             ButtonMappings.Add(new ButtonMappingViewModel(this, flag, isInitialMapping: true));
 
+            // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
             ControllerManager.ControllerSelected += UpdateController;
-            DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
+
+            // send events
+            if (ControllerManager.IsInitialized)
+            {
+                UpdateController(ControllerManager.GetTargetController());
+            }
         }
 
         public override void Dispose()
         {
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
             ControllerManager.ControllerSelected -= UpdateController;
-            DeviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceUpdated;
 
             foreach (var buttonMapping in ButtonMappings)
             {
@@ -119,12 +122,6 @@ namespace HandheldCompanion.ViewModels
                 }
                 ButtonMappings.ReplaceWith([new ButtonMappingViewModel(this, _flag, isInitialMapping: true)]);
             }
-        }
-
-        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
-        {
-            IController controller = ControllerManager.GetTargetController();
-            if (controller is not null) UpdateController(controller);
         }
 
         private void UpdateController(IController controller)

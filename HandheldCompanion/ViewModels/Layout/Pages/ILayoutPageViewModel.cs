@@ -23,23 +23,20 @@ namespace HandheldCompanion.ViewModels
 
         public ILayoutPageViewModel()
         {
+            // manage events
             ControllerManager.ControllerSelected += UpdateController;
-            DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
+
+            // send events
+            if (ControllerManager.IsInitialized)
+            {
+                UpdateController(ControllerManager.GetTargetController());
+            }
         }
 
         public override void Dispose()
         {
             ControllerManager.ControllerSelected -= UpdateController;
-            DeviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceUpdated;
             base.Dispose();
-        }
-
-        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
-        {
-            IController controller = ControllerManager.GetTargetController();
-            if (controller is not null) UpdateController(controller);
         }
 
         protected abstract void UpdateController(IController controller);

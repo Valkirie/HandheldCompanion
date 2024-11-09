@@ -164,12 +164,16 @@ namespace HandheldCompanion.ViewModels
         {
             Value = value;
 
+            // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
-
             ControllerManager.ControllerSelected += UpdateController;
-            DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
             VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+
+            // send events
+            if (ControllerManager.IsInitialized)
+            {
+                UpdateController(ControllerManager.GetTargetController());
+            }
 
             // Send update event to Model
             PropertyChanged +=
@@ -183,22 +187,13 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
-
             ControllerManager.ControllerSelected -= UpdateController;
-            DeviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceUpdated;
             VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
 
             base.Dispose();
         }
 
         private void VirtualManager_ControllerSelected(HIDmode hid) => ActionTypeChanged();
-
-        private void DeviceManager_UsbDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
-        {
-            IController controller = ControllerManager.GetTargetController();
-            if (controller is not null) UpdateController(controller);
-        }
 
         protected void UpdateIcon(GlyphIconInfo glyphIconInfo)
         {

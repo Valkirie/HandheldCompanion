@@ -85,6 +85,12 @@ public partial class LayoutPage : Page
         DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
         ProfileManager.Updated += ProfileManager_Updated;
+
+        // raise events
+        if (ControllerManager.IsInitialized)
+        {
+            ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+        }
     }
 
     private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)

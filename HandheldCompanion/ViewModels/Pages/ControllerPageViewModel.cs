@@ -23,9 +23,16 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(PhysicalControllers, new object());
             BindingOperations.EnableCollectionSynchronization(VirtualControllers, new object());
 
+            // manage events
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+            // send events
+            if (ControllerManager.IsInitialized)
+            {
+                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+            }
         }
 
         private void ControllerPlugged(IController Controller, bool IsPowerCycling)
