@@ -213,7 +213,7 @@
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
     <PackageReference Include="Nefarius.Drivers.HidHide" Version="2.4.1" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="4.0.3" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
