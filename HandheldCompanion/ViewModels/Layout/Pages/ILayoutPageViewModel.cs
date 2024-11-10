@@ -1,7 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
 
 namespace HandheldCompanion.ViewModels
 {

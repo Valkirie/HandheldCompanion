@@ -19,6 +19,7 @@ namespace HandheldCompanion
         public InputsChord inputsChord { get; set; } = new();
 
         public bool IsPinned { get; set; } = false;
+        public int PinIndex { get; set; } = -1;
         public bool IsInternal { get; set; } = false;
 
         public string Name { get; set; } = string.Empty;
