@@ -1,6 +1,7 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Helpers;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -41,6 +42,9 @@ namespace HandheldCompanion
 
             // prevent adorner from catching click
             IsHitTestVisible = false;
+
+            // prevent adorner from catching drag & drop
+            ScrollViewer.SetPanningMode(this, PanningMode.HorizontalOnly);
         }
 
         protected override int VisualChildrenCount => 1;
