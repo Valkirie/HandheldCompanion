@@ -110,6 +110,7 @@ namespace HandheldCompanion.ViewModels
         {
             OnPropertyChanged(nameof(LiveGlyph));
             OnPropertyChanged(nameof(IsEnabled));
+            OnPropertyChanged(nameof(IsToggled));
         }
 
         public override void Dispose()
@@ -501,8 +502,7 @@ namespace HandheldCompanion.ViewModels
 
             ExecuteCommand = new DelegateCommand(async () =>
             {
-                if (Hotkey.command is not null)
-                    Hotkey.command.Execute(Hotkey.command.OnKeyDown, Hotkey.command.OnKeyUp);
+                Hotkey.Execute(Hotkey.command.OnKeyDown, Hotkey.command.OnKeyUp, false);
             });
 
             EraseButtonCommand = new DelegateCommand(async () =>

@@ -99,11 +99,15 @@ namespace HandheldCompanion.ViewModels
             ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
             if (foundProfile is null)
             {
-                Profiles.SafeAdd(new ProfileViewModel(profile, this));
+                if (profile.IsPinned)
+                    Profiles.SafeAdd(new ProfileViewModel(profile, this));
             }
             else
             {
-                foundProfile.Profile = profile;
+                if (profile.IsPinned)
+                    foundProfile.Profile = profile;
+                else
+                    ProfileManager_Deleted(profile);
             }
         }
 

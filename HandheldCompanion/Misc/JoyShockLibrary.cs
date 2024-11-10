@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using HandheldCompanion.Managers;
+using System;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 public static class JSL
 {
@@ -98,8 +101,20 @@ public static class JSL
     public static extern int JslConnectDevices();
     [DllImport("JoyShockLibrary")]
     public static extern int JslGetConnectedDeviceHandles(int[] deviceHandleArray, int size);
+
     [DllImport("JoyShockLibrary")]
     public static extern void JslDisconnectAndDisposeAll();
+
+    public static void JslDisconnect()
+    {
+        // Flushing possible JoyShocks...
+        Task jslTask = Task.Run(() => JslDisconnectAndDisposeAll());
+
+        bool completedInTime = jslTask.Wait(TimeSpan.FromSeconds(2));
+        if (!completedInTime)
+            LogManager.LogWarning("JslDisconnectAndDisposeAll() timed out.");
+    }
+
     [DllImport("JoyShockLibrary")]
     public static extern bool JslStillConnected(int deviceId);
     [DllImport("JoyShockLibrary")]

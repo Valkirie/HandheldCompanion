@@ -243,7 +243,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public double OverlayControllerRestingPitch {
             get {
                 return ((double)(this["OverlayControllerRestingPitch"]));
@@ -1186,6 +1186,18 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["AYANEOFlipScreenBrightness"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HotkeyRumbleOnExecution {
+            get {
+                return ((bool)(this["HotkeyRumbleOnExecution"]));
+            }
+            set {
+                this["HotkeyRumbleOnExecution"] = value;
             }
         }
     }

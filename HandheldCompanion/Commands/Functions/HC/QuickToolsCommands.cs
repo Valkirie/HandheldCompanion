@@ -18,14 +18,14 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         private void IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            base.Execute(OnKeyDown, OnKeyUp);
+            base.Execute(OnKeyDown, OnKeyUp, true);
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             OverlayQuickTools.GetCurrent().ToggleVisibility();
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override bool IsToggled => OverlayQuickTools.GetCurrent().Visibility == System.Windows.Visibility.Visible;

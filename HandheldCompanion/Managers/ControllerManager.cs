@@ -55,7 +55,7 @@ public static class ControllerManager
     private static object targetLock = new object();
     public static ControllerManagerStatus managerStatus = ControllerManagerStatus.Pending;
 
-    private static Timer scenarioTimer = new(1000) { AutoReset = true };
+    private static Timer scenarioTimer = new(100) { AutoReset = false };
 
     public static bool IsInitialized;
 
@@ -84,7 +84,7 @@ public static class ControllerManager
         DriversStore = DeserializeDriverStore();
 
         // Flushing possible JoyShocks...
-        JslDisconnectAndDisposeAll();
+        JslDisconnect();
 
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
@@ -95,10 +95,8 @@ public static class ControllerManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        /*
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
-        */
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
@@ -152,7 +150,7 @@ public static class ControllerManager
                 controller.Unhide(false);
 
         // Flushing possible JoyShocks...
-        JslDisconnectAndDisposeAll();
+        JslDisconnect();
 
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
@@ -173,7 +171,6 @@ public static class ControllerManager
         Quicktools
     }
 
-    /*
     private static void GamepadFocusManager_LostFocus(string Name)
     {
         switch (Name)
@@ -207,7 +204,6 @@ public static class ControllerManager
         // check applicable scenarios
         CheckControllerScenario();
     }
-    */
 
     private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
@@ -281,11 +277,9 @@ public static class ControllerManager
             }
         }
 
-        /*
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
             ControllerMuted = true;
-        */
     }
 
     private static void CheckControllerScenario()
@@ -295,7 +289,7 @@ public static class ControllerManager
         scenarioTimer.Start();
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
@@ -594,8 +588,7 @@ public static class ControllerManager
         // unsupported controller
         if (controller is null)
         {
-            LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(),
-                details.GetProductID());
+            LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
             return;
         }
 
@@ -845,8 +838,34 @@ public static class ControllerManager
                     case "0x17EF":
                         controller = new LegionController(details);
                         break;
+
+                    // GameSir
+                    case "0x3537":
+                        {
+                            switch (details.GetProductID())
+                            {
+                                // Tarantula Pro (Dongle)
+                                case "0x1099":
+                                case "0x103E":
+                                    details.isDongle = true;
+                                    goto case "0x1050";
+                                // Tarantula Pro
+                                default:
+                                case "0x1050":
+                                    controller = new TatantulaProController(details);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             });
+        }
+
+        // unsupported controller
+        if (controller is null)
+        {
+            LogManager.LogError("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+            return;
         }
 
         while (!controller.IsReady && controller.IsConnected())
@@ -1184,10 +1203,13 @@ public static class ControllerManager
     }
 
     private static ControllerState mutedState = new ControllerState();
-    private static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion, float deltaTimeSeconds)
+    private static void UpdateInputs(ControllerState controllerState, Dictionary<byte, GamepadMotion> gamepadMotions, float deltaTimeSeconds, byte gamepadIndex)
     {
         // raise event
         InputsUpdated?.Invoke(controllerState);
+
+        // get main motion
+        GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
 
         switch (sensorSelection)
         {
@@ -1205,21 +1227,19 @@ public static class ControllerManager
             MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, deltaTimeSeconds);
         }
 
+        // compute layout
+        controllerState = LayoutManager.MapController(controllerState);
+        InputsUpdated2?.Invoke(controllerState);
+
         // controller is muted
         if (ControllerMuted)
         {
             mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
-
-            // swap states
             controllerState = mutedState;
         }
-        else
-        {
-            // compute layout
-            controllerState = LayoutManager.MapController(controllerState);
-            InputsUpdated2?.Invoke(controllerState);
-        }
 
+        DS4Touch.UpdateInputs(controllerState);
+        DSUServer.UpdateInputs(controllerState, gamepadMotions);
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 

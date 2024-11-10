@@ -23,7 +23,7 @@ namespace HandheldCompanion.Commands
             base.OnKeyUp = true;
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             if (!File.Exists(this.Path))
                 return;
@@ -45,7 +45,7 @@ namespace HandheldCompanion.Commands
                 process.Start();
             });
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override object Clone()

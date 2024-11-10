@@ -18,14 +18,14 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         private void StateChanged(object? sender, EventArgs e)
         {
-            base.Execute(OnKeyDown, OnKeyUp);
+            base.Execute(OnKeyDown, OnKeyUp, true);
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             MainWindow.GetCurrent().SwapWindowState();
 
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public override bool IsToggled => MainWindow.GetCurrent().WindowState != System.Windows.WindowState.Minimized;

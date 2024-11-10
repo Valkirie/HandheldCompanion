@@ -90,7 +90,7 @@ public static class MultimediaManager
         }
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
@@ -477,6 +477,38 @@ public static class MultimediaManager
         int stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 2.0d));
         int volume = stepRoundUp * 2 - 2;
         SetVolume(volume);
+    }
+
+    public static void Mute()
+    {
+        if (!VolumeSupport)
+            return;
+
+        multimediaDevice.AudioEndpointVolume.Mute = true;
+    }
+
+    public static void Unmute()
+    {
+        if (!VolumeSupport)
+            return;
+
+        multimediaDevice.AudioEndpointVolume.Mute = false;
+    }
+
+    public static void ToggleMute()
+    {
+        if (!VolumeSupport)
+            return;
+
+        multimediaDevice.AudioEndpointVolume.Mute = !multimediaDevice.AudioEndpointVolume.Mute;
+    }
+
+    public static bool IsMuted()
+    {
+        if (!VolumeSupport)
+            return true;
+
+        return multimediaDevice.AudioEndpointVolume.Mute;
     }
 
     public static short GetBrightness()

@@ -26,6 +26,10 @@ public static class PowerSetting
             new("75b0ae3f-bce0-45a7-8c89-c9611c25e100"); // Maximum processor frequency in MHz, 0 for no limit (default)
 
     public static Guid
+        PROCFREQMAX1 =
+            new("75b0ae3f-bce0-45a7-8c89-c9611c25e101"); // Maximum processor frequency for processor power efficiency class 1 in MHz, 0 for no limit (default)
+
+    public static Guid
         CPMINCORES =
             new("0cc5b647-c1df-4637-891a-dec35c318583"); // Processor performance core parking min cores, expressed as a percent from 0 - 100
 
@@ -121,9 +125,9 @@ public static class PowerScheme
         return false;
     }
 
-    public static bool SetAttribute(Guid SubGroupOfPowerSettingsGuid, Guid PowerSettingGuid, bool hide)
+    public static bool SetAttribute(Guid SubGroupOfPowerSettingsGuid, Guid PowerSettingGuid, uint value)
     {
-        return PowerWriteSettingAttributes(SubGroupOfPowerSettingsGuid, PowerSettingGuid, (uint)(hide ? 1 : 0)) == 0;
+        return PowerWriteSettingAttributes(SubGroupOfPowerSettingsGuid, PowerSettingGuid, value) == 0;
     }
 
     public static uint[] ReadPowerCfg(Guid SubGroup, Guid Settings)
@@ -147,7 +151,7 @@ public static class PowerScheme
         if (GetActiveScheme(out var currentScheme))
         {
             // unhide attribute
-            SetAttribute(SubGroup, Settings, false);
+            SetAttribute(SubGroup, Settings, 2);
 
             // set value(s)
             SetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, ACValue);

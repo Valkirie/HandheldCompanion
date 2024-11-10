@@ -12,9 +12,9 @@ namespace HandheldCompanion.Commands
             base.OnKeyDown = true;
         }
 
-        public virtual void Execute(bool IsKeyDown, bool IsKeyUp)
+        public virtual void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, IsBackground);
         }
     }
 }

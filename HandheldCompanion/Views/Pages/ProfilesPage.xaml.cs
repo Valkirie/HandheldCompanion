@@ -501,6 +501,7 @@ public partial class ProfilesPage : Page
 
                     // Global settings
                     cB_Whitelist.IsChecked = selectedProfile.Whitelisted;
+                    cB_Pinned.IsChecked = selectedProfile.IsPinned;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
 
                     // Emulated controller assigned to the profile
@@ -578,6 +579,8 @@ public partial class ProfilesPage : Page
                         case ProfileErrorCode.None:
                             WarningBorder.Visibility = Visibility.Collapsed;
                             cB_Whitelist.IsEnabled = true;
+                            cB_Pinned.IsEnabled = true;
+                            cB_Wrapper.IsEnabled = true;
 
                             // wrapper
                             cB_Wrapper_Injection.IsEnabled = true;
@@ -590,6 +593,7 @@ public partial class ProfilesPage : Page
                         case ProfileErrorCode.Default:              // profile is default
                             WarningBorder.Visibility = Visibility.Visible;
                             cB_Whitelist.IsEnabled = false;
+                            cB_Pinned.IsEnabled = false;
                             cB_Wrapper.IsEnabled = false;
 
                             // wrapper
@@ -600,6 +604,8 @@ public partial class ProfilesPage : Page
                         case ProfileErrorCode.MissingPermission:
                             WarningBorder.Visibility = Visibility.Visible;
                             cB_Whitelist.IsEnabled = true;
+                            cB_Pinned.IsEnabled = true;
+                            cB_Wrapper.IsEnabled = true;
 
                             // wrapper
                             cB_Wrapper_Injection.IsEnabled = true;
@@ -694,6 +700,16 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
+        UpdateProfile();
+    }
+
+    private void cB_Pinned_Checked(object sender, RoutedEventArgs e)
+    {
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.IsPinned = (bool)cB_Pinned.IsChecked;
         UpdateProfile();
     }
 

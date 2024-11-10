@@ -69,7 +69,7 @@ public class Processor
         LogManager.LogDebug("User requested {0} TDP limit: {1}, error code: {2}", type, (uint)limit, result);
     }
 
-    public virtual void SetGPUClock(double clock, int result = 0)
+    public virtual void SetGPUClock(double clock, ref int result)
     {
         /*
          * #define ADJ_ERR_FAM_UNSUPPORTED      -1

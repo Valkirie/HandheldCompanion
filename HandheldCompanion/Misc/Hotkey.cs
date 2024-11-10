@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using WindowsInput.Events;
 
@@ -57,6 +58,15 @@ namespace HandheldCompanion
             };
 
             return hotkey;
+        }
+
+        public void Execute(bool onKeyDown, bool onKeyUp, bool IsBackground)
+        {
+            bool Rumble = SettingsManager.GetBoolean("HotkeyRumbleOnExecution");
+            if (Rumble && !IsBackground && !IsInternal)
+                ControllerManager.GetTargetController()?.Rumble();
+
+            command?.Execute(command.OnKeyDown, command.OnKeyUp, IsBackground);
         }
     }
 }

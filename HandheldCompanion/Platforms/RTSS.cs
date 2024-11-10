@@ -246,7 +246,11 @@ public class RTSS : IPlatform
     {
         // refresh appEntry
         int processId = appEntry is not null ? appEntry.ProcessId : 0;
-        appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == processId);
+        try
+        {
+            appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == processId);
+        }
+        catch (FileNotFoundException) { }
     }
 
     public double GetFramerate(bool refresh = false)

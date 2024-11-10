@@ -111,7 +111,7 @@ public partial class QuickDevicePage : Page
         });
     }
 
-    private void SettingsManager_SettingValueChanged(string? name, object value)
+    private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
     {
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>

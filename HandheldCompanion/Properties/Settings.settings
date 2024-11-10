@@ -57,7 +57,7 @@
       <Value Profile="(Default)">en-US</Value>
     </Setting>
     <Setting Name="OverlayControllerRestingPitch" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="SensorPlacementUpsideDown" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -292,6 +292,9 @@
     </Setting>
     <Setting Name="AYANEOFlipScreenBrightness" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="HotkeyRumbleOnExecution" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

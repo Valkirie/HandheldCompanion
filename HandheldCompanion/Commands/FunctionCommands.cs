@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Multimedia;
+using HandheldCompanion.Commands.Functions.Multitasking;
+using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
 using System;
 using System.Collections.Generic;
@@ -19,18 +21,28 @@ namespace HandheldCompanion.Commands
             typeof(HIDModeCommands),
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
+            typeof(QuickOverlayCommands),
+            "Power & battery",
+            typeof(TDPIncrease),
+            typeof(TDPDecrease),
             "Windows",
             typeof(OnScreenKeyboardCommands),
             typeof(OnScreenKeyboardLegacyCommands),
-            typeof(KillForegroundCommands),
             typeof(ActionCenterCommands),
             typeof(SettingsCommands),
             typeof(ScreenshotCommands),
-            "Multimedia",
+            typeof(GameBarCommands),
+            "Multitasking",
+            typeof(KillForegroundCommands),
+            typeof(TaskManagerCommands),
+            typeof(SwapScreenCommands),
+            "Display",
             typeof(BrightnessIncrease),
             typeof(BrightnessDecrease),
+            "Sound",
             typeof(VolumeIncrease),
             typeof(VolumeDecrease),
+            typeof(VolumeMute),
         ];
 
         public FunctionCommands()
@@ -38,9 +50,9 @@ namespace HandheldCompanion.Commands
             base.commandType = CommandType.Function;
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp)
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            base.Execute(IsKeyDown, IsKeyUp);
+            base.Execute(IsKeyDown, IsKeyUp, IsBackground);
         }
     }
 }

@@ -34,10 +34,10 @@ public class DInputController : IController
 
     public override string ToString()
     {
-        var baseName = base.ToString();
+        string baseName = base.ToString();
         if (!string.IsNullOrEmpty(baseName))
             return baseName;
-        if (!string.IsNullOrEmpty(joystick.Information.ProductName))
+        if (!string.IsNullOrEmpty(joystick?.Information.ProductName))
             return joystick.Information.ProductName;
         return $"DInput Controller {UserIndex}";
     }

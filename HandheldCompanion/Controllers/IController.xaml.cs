@@ -80,7 +80,8 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
 
-        protected GamepadMotion gamepadMotion = new(string.Empty, CalibrationMode.Manual);
+        protected byte gamepadIndex = 0;
+        protected Dictionary<byte, GamepadMotion> gamepadMotions = new();
 
         protected double VibrationStrength = 1.0d;
         private byte _UserIndex = 255;
@@ -93,7 +94,9 @@ namespace HandheldCompanion.Controllers
         protected object hidLock = new();
 
         public virtual bool IsReady => true;
-        public virtual bool IsWireless => false;
+        public virtual bool IsWireless => Details.isBluetooth;
+        public virtual bool IsDongle => Details.isDongle;
+
         public bool isPlaceholder;
 
         public bool IsBusy
@@ -216,6 +219,8 @@ namespace HandheldCompanion.Controllers
             InitializeComponent();
             InitializeInputOutput();
 
+            gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
+
             MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
@@ -237,12 +242,12 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // manage gamepad motion
-            gamepadMotion = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[gamepadIndex] = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ControllerType.Glyph = details.isInternal ? "\uE990" : details.isBluetooth ? "\uE702" : "\uECF0";
+                ControllerType.Glyph = details.isInternal ? "\uE990" : IsWireless ? "\uE702" : IsDongle ? "\uECF1" : "\uECF0";
             });
 
             /*
@@ -255,12 +260,7 @@ namespace HandheldCompanion.Controllers
 
         public virtual void UpdateInputs(long ticks, float delta)
         {
-            InputsUpdated?.Invoke(Inputs, gamepadMotion, delta);
-        }
-
-        public virtual void UpdateInputs(long ticks, float delta, GamepadMotion gamepadOverwrite)
-        {
-            InputsUpdated?.Invoke(Inputs, gamepadOverwrite, delta);
+            InputsUpdated?.Invoke(Inputs, gamepadMotions, delta, gamepadIndex);
         }
 
         public bool HasMotionSensor()
@@ -270,7 +270,7 @@ namespace HandheldCompanion.Controllers
 
         public GamepadMotion GetMotionSensor()
         {
-            return gamepadMotion;
+            return gamepadMotions[gamepadIndex];
         }
 
         public bool IsPhysical()
@@ -557,9 +557,9 @@ namespace HandheldCompanion.Controllers
             return true;
         }
 
-        public async void Calibrate()
+        public virtual async void Calibrate()
         {
-            SensorsManager.Calibrate(gamepadMotion);
+            SensorsManager.Calibrate(gamepadMotions);
         }
 
         protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
@@ -832,13 +832,11 @@ namespace HandheldCompanion.Controllers
         }
 
         #region events
-
         public event UserIndexChangedEventHandler UserIndexChanged;
         public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
         public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, GamepadMotion gamepadMotion, float delta);
-
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
         #endregion
     }
 }

@@ -172,6 +172,7 @@
             <Grid Margin="0,-24,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*" />
+                    <RowDefinition Height="42" />
                 </Grid.RowDefinitions>
 
                 <Grid>
@@ -191,11 +192,10 @@
 
                 <!--  GAMEPAD AREA  -->
                 <Border
-                    Margin="30"
-                    Padding="6,2,9,2"
+                    Grid.Row="1"
+                    Padding="9"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Background="{DynamicResource NavigationViewDefaultPaneBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <ikw:SimpleStackPanel

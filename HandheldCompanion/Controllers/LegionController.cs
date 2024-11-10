@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 
 namespace HandheldCompanion.Controllers
@@ -60,8 +58,26 @@ namespace HandheldCompanion.Controllers
 
         private Thread dataThread;
         private bool dataThreadRunning;
-
         private byte[] Data = new byte[64];
+
+        #region TouchVariables
+        private bool IsPassthrough = false;
+        private bool touchpadTouched = false;
+        private DateTime touchStartTime;
+        private DateTime lastTapTime = DateTime.MinValue;
+        private Vector2 lastTapPosition;
+        private Vector2 touchStartPosition;
+        private const int doubleTapMaxDistance = 100; // Example threshold distance
+        private const int doubleTapMaxTime = 300; // Maximum time between taps in milliseconds
+        private uint longTapDuration = 500; // Threshold for a long tap in milliseconds
+        private const int longTapMaxMovement = 50; // Maximum movement allowed for a long tap
+        private bool longTapTriggered = false;
+        private bool validTapPosition = false;
+        private bool doubleTapPending = false;
+        private bool doubleTapped = false;
+        private Vector2 lastKnownPosition;
+        #endregion
+
         public override bool IsReady
         {
             get
@@ -81,22 +97,6 @@ namespace HandheldCompanion.Controllers
             }
         }
 
-        private bool IsPassthrough = false;
-        private int GyroIndex = LegionGo.RightJoyconIndex;
-
-        private uint LongPressTime = 1000;                      // The minimum time in milliseconds for a long press
-        private const int MaxDistance = 40;                     // Maximum distance tolerance between touch and untouch in pixels
-        private bool touchpadTouched = false;                   // Whether the touchpad is currently touched
-        private Vector2 touchpadPosition = Vector2.Zero;        // The current position of the touchpad
-        private Vector2 touchpadFirstPosition = Vector2.Zero;   // The first position of the touchpad when touched
-        private long touchpadStartTime = 0;                     // The start time of the touchpad when touched
-        private long touchpadEndTime = 0;                       // The end time of the touchpad when untouched
-        private bool touchpadDoubleTapped = false;              // Whether the touchpad has been double tapped
-        private bool touchpadLongTapped = false;                // Whether the touchpad has been long tapped
-        private long lastTap = 0;
-        private Vector2 lastTapPosition = Vector2.Zero;         // The current position of the touchpad
-
-        private GamepadMotion gamepadMotionR;
 
         public LegionController() : base()
         { }
@@ -107,7 +107,7 @@ namespace HandheldCompanion.Controllers
             Capabilities |= ControllerCapabilities.MotionSensor;
 
             // get long press time from system settings
-            SystemParametersInfo(0x006A, 0, ref LongPressTime, 0);
+            SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             UpdateSettings();
@@ -148,7 +148,7 @@ namespace HandheldCompanion.Controllers
             SetGyroIndex(SettingsManager.GetInt("LegionControllerGyroIndex"));
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {
@@ -165,8 +165,8 @@ namespace HandheldCompanion.Controllers
         {
             base.AttachDetails(details);
 
-            // manage gamepad motion
-            gamepadMotionR = new($"{details.deviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            // manage gamepad motion from right controller
+            gamepadMotions[1] = new($"{details.deviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             hidDevice = GetHidDevice();
             if (hidDevice is not null)
@@ -226,6 +226,8 @@ namespace HandheldCompanion.Controllers
 
         public override void Unplug()
         {
+            SetPassthrough(true);
+
             // Kill data thread
             if (dataThread is not null)
             {
@@ -247,6 +249,9 @@ namespace HandheldCompanion.Controllers
 
             base.Unplug();
         }
+
+        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
+        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
 
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
@@ -270,88 +275,60 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.B7] = Data[24] == 129;   // Scroll up
             Inputs.ButtonState[ButtonFlags.B8] = Data[24] == 255;   // Scroll down
 
-            // Right Pad
-            ushort TouchpadX = (ushort)((Data[25] << 8) | Data[26]);
-            ushort TouchpadY = (ushort)((Data[27] << 8) | Data[28]);
-
-            bool touched = (TouchpadX != 0 || TouchpadY != 0);
-
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = touched;
-
             // handle touchpad if passthrough is off
             if (!IsPassthrough)
+            {
+                // Right Pad
+                ushort TouchpadX = (ushort)((Data[25] << 8) | Data[26]);
+                ushort TouchpadY = (ushort)((Data[27] << 8) | Data[28]);
+                bool touched = (TouchpadX != 0 || TouchpadY != 0);
+
                 HandleTouchpadInput(touched, TouchpadX, TouchpadY);
-
-            /*
-            Inputs.AxisState[AxisFlags.LeftStickX] += (short)InputUtils.MapRange(Data[29], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.LeftStickY] -= (short)InputUtils.MapRange(Data[30], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
-
-            Inputs.AxisState[AxisFlags.RightStickX] += (short)InputUtils.MapRange(Data[31], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.RightStickY] -= (short)InputUtils.MapRange(Data[32], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
-            */
-
-            float aX, aZ, aY = 0;
-            float gX, gZ, gY = 0;
-
-            switch (GyroIndex)
-            {
-                default:
-                case LegionGo.LeftJoyconIndex:
-                    {
-                        aX = (short)(Data[34] << 8 | Data[35]) * -(4.0f / short.MaxValue);
-                        aZ = (short)(Data[36] << 8 | Data[37]) * -(4.0f / short.MaxValue);
-                        aY = (short)(Data[38] << 8 | Data[39]) * -(4.0f / short.MaxValue);
-
-                        gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
-                        gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
-                        gY = (short)(Data[44] << 8 | Data[45]) * -(2000.0f / short.MaxValue);
-                    }
-                    break;
-
-                case LegionGo.RightJoyconIndex:
-                    {
-                        aX = (short)(Data[49] << 8 | Data[50]) * -(4.0f / short.MaxValue);
-                        aZ = (short)(Data[47] << 8 | Data[48]) * (4.0f / short.MaxValue);
-                        aY = (short)(Data[51] << 8 | Data[52]) * -(4.0f / short.MaxValue);
-
-                        gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
-                        gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
-                        gY = (short)(Data[57] << 8 | Data[58]) * -(2000.0f / short.MaxValue);
-                    }
-                    break;
             }
 
-            // store motion
-            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
-            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
-
-            // process motion
-            switch (GyroIndex)
+            for (byte idx = 0; idx <= 1; ++idx)
             {
-                default:
-                case LegionGo.LeftJoyconIndex:
+                switch (idx)
+                {
+                    default:
+                    case 0: // LeftJoycon
+                        {
+                            aX = (short)(Data[34] << 8 | Data[35]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(Data[36] << 8 | Data[37]) * -(4.0f / short.MaxValue);
+                            aY = (short)(Data[38] << 8 | Data[39]) * -(4.0f / short.MaxValue);
+
+                            gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
+                            gY = (short)(Data[44] << 8 | Data[45]) * -(2000.0f / short.MaxValue);
+                        }
+                        break;
+
+                    case 1: // RightJoycon
+                        {
+                            aX = (short)(Data[49] << 8 | Data[50]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(Data[47] << 8 | Data[48]) * (4.0f / short.MaxValue);
+                            aY = (short)(Data[51] << 8 | Data[52]) * -(4.0f / short.MaxValue);
+
+                            gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
+                            gY = (short)(Data[57] << 8 | Data[58]) * -(2000.0f / short.MaxValue);
+                        }
+                        break;
+                }
+
+                // compute motion from controller
+                if (gamepadMotions.TryGetValue(idx, out GamepadMotion gamepadMotion))
                     gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
-                    base.UpdateInputs(ticks, delta);
-                    break;
-                case LegionGo.RightJoyconIndex:
-                    gamepadMotionR.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
-                    base.UpdateInputs(ticks, delta, gamepadMotionR);
-                    break;
-            }
-        }
 
-        protected override async void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
-        {
-            switch (GyroIndex)
-            {
-                default:
-                case LegionGo.LeftJoyconIndex:
-                    SensorsManager.Calibrate(gamepadMotion);
-                    break;
-                case LegionGo.RightJoyconIndex:
-                    SensorsManager.Calibrate(gamepadMotionR);
-                    break;
+                // store motion from user selected gyro (left, right)
+                if (idx == gamepadIndex)
+                {
+                    Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+                    Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+                }
             }
+
+            base.UpdateInputs(ticks, delta);
         }
 
         private void dataThreadLoop(object? obj)
@@ -382,70 +359,56 @@ namespace HandheldCompanion.Controllers
             return base.GetGlyph(button);
         }
 
-        public void HandleTouchpadInput(bool touched, ushort x, ushort y)
+        public void HandleTouchpadInput(bool touched, ushort TouchpadX, ushort TouchpadY)
         {
             // Convert the ushort values to Vector2
-            Vector2 position = new Vector2(x, y);
+            Vector2 position = new Vector2(TouchpadX, TouchpadY);
+
+            if (touched)
+            {
+                lastKnownPosition = position;
+            }
+
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = touched;
 
             // If the touchpad is touched
             if (touched)
             {
-                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)x, 0, 1000, short.MinValue, short.MaxValue);
-                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-y, 0, 1000, short.MinValue, short.MaxValue);
+                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)TouchpadX, 0, 1000, short.MinValue, short.MaxValue);
+                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-TouchpadY, 0, 1000, short.MinValue, short.MaxValue);
 
                 // If the touchpad was not touched before
                 if (!touchpadTouched)
                 {
-                    // Set the touchpad state variables
                     touchpadTouched = true;
-                    touchpadPosition = position;
-                    touchpadFirstPosition = position;
-                    touchpadStartTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                    touchStartTime = DateTime.Now;
+                    touchStartPosition = position;
+                    longTapTriggered = false;
+                    validTapPosition = true;
 
-                    // Set the right pad touch flag to true
-                    Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
-
-                    long delay = touchpadStartTime - lastTap;
-                    float distance = Vector2.Distance(touchpadFirstPosition, lastTapPosition);
-
-                    if (delay < SystemInformation.DoubleClickTime && distance < MaxDistance * 5)
+                    // Trigger double tap if pending
+                    if (doubleTapPending && (DateTime.Now - lastTapTime).TotalMilliseconds <= doubleTapMaxTime &&
+                        Vector2.Distance(lastTapPosition, lastKnownPosition) <= doubleTapMaxDistance)
                     {
-                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
-                        touchpadDoubleTapped = true;
+                        HandleDoubleTap(lastKnownPosition);
+                        doubleTapPending = false;
+                        doubleTapped = true;
+                        lastTapTime = DateTime.MinValue; // Reset lastTapTime after double tap
                     }
                 }
-                // If the touchpad was touched before
-                else
+                else if (!longTapTriggered && !doubleTapped && (DateTime.Now - touchStartTime).TotalMilliseconds >= longTapDuration)
                 {
-                    // Update the touchpad position
-                    touchpadPosition = position;
-
-                    // If the touchpad has been double tapped
-                    if (touchpadDoubleTapped)
+                    // Check if the touch moved too much for a long tap
+                    if (Vector2.Distance(touchStartPosition, position) <= longTapMaxMovement)
                     {
-                        // Keep the right pad click flag to true
-                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+                        // Trigger long tap while the touch is held
+                        HandleLongTap(position);
+                        longTapTriggered = true;
                     }
-                    else
-                    {
-                        // Calculate the duration and the distance of the touchpad
-                        long duration = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - touchpadStartTime;
-                        float distance = Vector2.Distance(touchpadFirstPosition, touchpadPosition);
-
-                        // If the duration is more than the long tap duration and the distance is less than the maximum distance
-                        if (duration >= LongPressTime && duration < (LongPressTime + 100) && distance < MaxDistance)
-                        {
-                            // If the touchpad has not been long tapped before
-                            if (!touchpadLongTapped)
-                            {
-                                // Set the right pad click down flag to true
-                                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
-
-                                // Set the touchpad long tapped flag to true
-                                touchpadLongTapped = true;
-                            }
-                        }
-                    }
+                }
+                else if (Vector2.Distance(touchStartPosition, position) > longTapMaxMovement)
+                {
+                    validTapPosition = false;
                 }
             }
             // If the touchpad is not touched
@@ -453,44 +416,51 @@ namespace HandheldCompanion.Controllers
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = 0;
                 Inputs.AxisState[AxisFlags.RightPadY] = 0;
+                Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
                 Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
                 // If the touchpad was touched before
                 if (touchpadTouched)
                 {
-                    // Set the touchpad state variables
                     touchpadTouched = false;
-                    touchpadEndTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                    doubleTapped = false;
+                    DateTime touchEndTime = DateTime.Now;
+                    double touchDuration = (touchEndTime - touchStartTime).TotalMilliseconds;
 
-                    // Set the right pad touch flag to false
-                    Inputs.ButtonState[ButtonFlags.RightPadTouch] = false;
-
-                    // Calculate the duration and the distance of the touchpad
-                    long duration = touchpadEndTime - touchpadStartTime;
-                    float distance = Vector2.Distance(touchpadFirstPosition, touchpadPosition);
-
-                    // If the duration is less than the short tap duration and the distance is less than the maximum distance
-                    if (duration < SystemInformation.DoubleClickTime && distance < MaxDistance)
+                    // Handle short tap
+                    if (touchDuration < longTapDuration && !longTapTriggered && validTapPosition &&
+                        Vector2.Distance(touchStartPosition, lastKnownPosition) <= doubleTapMaxDistance)
                     {
-                        // Set the right pad click flag to true
-                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
-
-                        // Store tap time
-                        lastTap = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                        lastTapPosition = touchpadPosition;
+                        // Single short tap detected
+                        HandleShortTap(lastKnownPosition);
+                        lastTapTime = touchEndTime;
+                        lastTapPosition = lastKnownPosition;
+                        doubleTapPending = true;
                     }
-                    else
-                    {
-                        Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
-                    }
-
-                    // Set the touchpad long tapped flag to false
-                    touchpadLongTapped = false;
-
-                    // Set the touchpad double tapped flag to false
-                    touchpadDoubleTapped = false;
                 }
             }
+        }
+
+        private void HandleShortTap(Vector2 position)
+        {
+            // Handle short tap action here
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+        }
+
+        private void HandleDoubleTap(Vector2 position)
+        {
+            // Handle double tap action here
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+        }
+
+        private void HandleLongTap(Vector2 position)
+        {
+            // Handle long tap action here
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+            Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
         }
 
         public void SetPassthrough(bool enabled)
@@ -501,7 +471,7 @@ namespace HandheldCompanion.Controllers
 
         public void SetGyroIndex(int idx)
         {
-            GyroIndex = idx + LegionGo.LeftJoyconIndex;
+            gamepadIndex = (byte)idx;
         }
     }
 }

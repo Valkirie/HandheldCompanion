@@ -160,7 +160,7 @@ public partial class QuickHomePage : Page
         });
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value)
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         string[] onScreenDisplayLevels = {
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Disabled,

@@ -65,13 +65,13 @@ public class IntelProcessor : Processor
         platform.set_msr_limits((int)PL1, (int)PL2);
     }
 
-    public override void SetGPUClock(double clock, int result)
+    public override void SetGPUClock(double clock, ref int result)
     {
         lock (updateLock)
         {
-            var error = platform.set_gfx_clk((int)clock);
+            result = platform.set_gfx_clk((int)clock);
 
-            base.SetGPUClock(clock, error);
+            base.SetGPUClock(clock, ref result);
         }
     }
 }
