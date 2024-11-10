@@ -54,7 +54,8 @@
                             HorizontalContentAlignment="Stretch"
                             Command="{Binding ExecuteCommand}"
                             IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            ScrollViewer.PanningMode="HorizontalOnly">
 
                             <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
                                 <ui:FontIcon
