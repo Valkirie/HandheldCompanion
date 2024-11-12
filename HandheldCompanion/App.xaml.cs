@@ -80,8 +80,6 @@ public partial class App : Application
                         // If the previous process is not responding or cannot be brought to the foreground, assume it is stalled and kill it
                         prevProcess.Kill();
                     }
-
-                    return;
                 }
             }
         }
