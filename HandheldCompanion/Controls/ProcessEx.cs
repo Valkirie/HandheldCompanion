@@ -45,14 +45,17 @@ public class ProcessWindow : IDisposable
     public ProcessWindow(AutomationElement element, bool isPrimary)
     {
         this.Hwnd = element.Current.NativeWindowHandle;
-        this.Element = AutomationElement.FromHandle(this.Hwnd);
+        this.Element = element;
 
-        Automation.AddAutomationPropertyChangedEventHandler(
+        if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
+        {
+            Automation.AddAutomationPropertyChangedEventHandler(
             Element,
             TreeScope.Element,
             new AutomationPropertyChangedEventHandler(OnPropertyChanged),
             AutomationElement.NameProperty,
             AutomationElement.BoundingRectangleProperty);
+        }
 
         RefreshName(false);
     }
