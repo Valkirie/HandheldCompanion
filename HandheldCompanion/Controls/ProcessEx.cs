@@ -87,19 +87,21 @@ public class ProcessWindow : IDisposable
                 Element = Element.GetUpdatedCache(cacheRequest);
             }
 
-            string ElementName = Element.Current.Name;
-            if (!string.IsNullOrEmpty(ElementName))
+            if (Element.TryGetCurrentPattern(InvokePattern.Pattern, out _))
             {
-                // preferred method
-                Name = ElementName;
+                string ElementName = Element.Current.Name;
+                if (!string.IsNullOrEmpty(ElementName))
+                {
+                    // preferred method
+                    Name = ElementName;
+                    return;
+                }
             }
-            else
-            {
-                // backup method
-                string title = ProcessUtils.GetWindowTitle(Hwnd);
-                if (!string.IsNullOrEmpty(title))
-                    Name = title;
-            }
+
+            // backup method
+            string title = ProcessUtils.GetWindowTitle(Hwnd);
+            if (!string.IsNullOrEmpty(title))
+                Name = title;
         }
         catch { }
     }

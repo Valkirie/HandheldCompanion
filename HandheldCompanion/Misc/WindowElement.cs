@@ -16,11 +16,14 @@ namespace HandheldCompanion.Misc
             _hwnd = element.Current.NativeWindowHandle;
             _processId = processId;
 
-            Automation.AddAutomationEventHandler(
-                WindowPattern.WindowClosedEvent,
-                element,
-                TreeScope.Element,
-                OnWindowClosed);
+            if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
+            {
+                Automation.AddAutomationEventHandler(
+                    WindowPattern.WindowClosedEvent,
+                    element,
+                    TreeScope.Subtree,
+                    OnWindowClosed);
+            }
         }
 
         private void OnWindowClosed(object sender, AutomationEventArgs e)
