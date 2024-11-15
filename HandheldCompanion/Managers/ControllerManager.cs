@@ -750,7 +750,7 @@ public static class ControllerManager
                                 // update busy flag
                                 HasBusyWireless = true;
 
-                                // is the controller power cyclinc ?
+                                // is the controller power cycling ?
                                 PowerCyclers.TryGetValue(wirelessController.Details.baseContainerDeviceInstanceId, out HasCyclingController);
                                 if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
                                     goto Exit;
@@ -760,11 +760,17 @@ public static class ControllerManager
                             VirtualManager.Suspend(false);
 
                             // suspend all physical controllers
+                            bool suspendedControllers = false;
                             foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
                             {
+                                // set flag(s)
                                 xInputController.IsBusy = true;
-                                SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
+                                suspendedControllers |= SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
                             }
+
+                            // wait a bit if none were suspended
+                            if (!suspendedControllers)
+                                Thread.Sleep(2000);
 
                             // resume virtual controller
                             VirtualManager.Resume(false);

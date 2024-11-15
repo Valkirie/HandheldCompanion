@@ -7,8 +7,7 @@
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  #define UseDotNet80
-  ;#define UseDotNet90
+  #define UseDotNet90
 #endif
 
 ;#define UseVC2005
@@ -27,7 +26,7 @@
 #define InstallerVersion '0.2'
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.21.8.3'
+#define MyAppVersion '0.22.0.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -46,7 +45,7 @@
 #define HidHideName "HidHide Drivers"
 #define RtssName "RTSS Setup"
 
-#define NewDotNetVersion "8.0.1"
+#define NewDotNetVersion "9.0.0"
 #define NewDirectXVersion "9.29.1974"
 #define NewViGemVersion "1.22.0.0"
 #define NewHidHideVersion "1.5.230"
@@ -62,16 +61,10 @@
 #define RegAppsPath "SOFTWARE\" +MyAppSetupName+ "\" 
 #define SoftwareUninstallKey "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 
-#ifdef UseDotNet80
-	#define MyConfigurationExt "net8.0"
-	#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f18288f6-1732-415b-b577-7fb46510479a/a98239f751a7aed31bc4aa12f348a9bf/windowsdesktop-runtime-8.0.1-win-x64.exe" 
-	#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/ca725693-6de7-4a4d-b8a4-4390b0387c66/ce13f2f016152d9b5f2d3c6537cc415b/windowsdesktop-runtime-8.0.1-win-x86.exe"
-#endif
-
 #ifdef UseDotNet90
 	#define MyConfigurationExt "net9.0"
-	#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/30d1fcdb-8bf1-4b6e-ad06-f66ed68017bf/20abf38df849587b0a2de99a31f5c1c8/windowsdesktop-runtime-9.0.0-rc.2.24474.4-win-x64.exe" 
-	#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/f6a4c462-a2a6-4488-9448-574b659c31e5/7eb8840cb5e42e0fd41a57964fe3472c/windowsdesktop-runtime-9.0.0-rc.2.24474.4-win-x86.exe"
+	#define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/685792b6-4827-4dca-a971-bce5d7905170/1bf61b02151bc56e763dc711e45f0e1e/windowsdesktop-runtime-9.0.0-win-x64.exe" 
+	#define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/8dfbde7b-c316-418d-934a-d3246253f342/69c6a35b77a4f01b95588e1df2bddf9a/windowsdesktop-runtime-9.0.0-win-x86.exe"
 #endif
 
 #define WindowsVersion "10.0.19041"
@@ -82,7 +75,7 @@ AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName}
 AppCopyright={#MyAppCopyright}
 // remove next line if you only deploy 32-bit binaries and dependencies
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesInstallIn64BitMode=x64compatible
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -171,7 +164,6 @@ procedure Dependency_Add(const Filename, Parameters, Title, URL, Checksum: Strin
 procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersion, Parameters, Title, URL, Checksum: String; const ForceSuccess, RestartNeeded: Boolean); forward;
 function Dependency_PrepareToInstall(var NeedsRestart: Boolean): String; forward;
 function Dependency_UpdateReadyMemo(const Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String; forward;
-procedure Dependency_AddDotNet80Desktop; forward;
 procedure Dependency_AddDotNet90Desktop; forward;
 procedure Dependency_AddDirectX; forward;
 procedure Dependency_AddHideHide; forward;
@@ -300,15 +292,6 @@ function InitializeSetup: Boolean;
 var
   installedVersion:string;
 begin
-
-#ifdef UseDotNet80   
-  installedVersion:= regGetInstalledVersion('{#DotNetName}');
-  if(compareVersions('{#NewDotNetVersion}', installedVersion, '.', '-') > 0) then
-  begin
-    log('{#DotNetName} {#NewDotNetVersion} needs update.');
-    Dependency_AddDotNet80Desktop; 
-  end;  
-#endif
 
 #ifdef UseDotNet90   
   installedVersion:= regGetInstalledVersion('{#DotNetName}');
@@ -624,16 +607,6 @@ begin
     ExtractTemporaryFile('netcorecheck' + Dependency_ArchSuffix + '.exe');
   end;
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
-end;
-
-procedure Dependency_AddDotNet80Desktop;
-begin
-  // https://dotnet.microsoft.com/en-us/download/dotnet/8.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 8.0.0') then begin
-    Dependency_Add_With_Version('dotNet80desktop' + Dependency_ArchSuffix + '.exe', '{#NewDotNetVersion}', regGetInstalledVersion('{#DotNetName}'),
-      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '{#DotNetName}', Dependency_String('{#DotNetX86DownloadLink}', '{#DotNetX64DownloadLink}'), '', False, False);
-  end;
 end;
 
 procedure Dependency_AddDotNet90Desktop;
