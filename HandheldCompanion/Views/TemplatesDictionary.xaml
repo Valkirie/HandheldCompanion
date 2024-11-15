@@ -382,7 +382,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <DockPanel MinWidth="150">
+                        <DockPanel Grid.Column="0" MinWidth="150">
                             <DockPanel.Style>
                                 <Style TargetType="{x:Type DockPanel}">
                                     <Setter Property="Visibility" Value="Hidden" />
@@ -426,6 +426,32 @@
                         </DockPanel>
 
                         <ComboBox
+                            Grid.Column="0"
+                            MinWidth="138"
+                            VerticalAlignment="Center"
+                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="No Shift" />
+                            <ComboBoxItem Content="Shift A" />
+                            <ComboBoxItem Content="Shift B" />
+                            <ComboBoxItem Content="Shift C" />
+                            <ComboBoxItem Content="Shift D" />
+                            <ComboBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+
+                        <ComboBox
                             Grid.Column="1"
                             Width="160"
                             VerticalAlignment="Center"
@@ -448,6 +474,7 @@
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="False" />
+                                <ComboBoxItem Content="Shift" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox
@@ -477,7 +504,7 @@
                     <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
 
                         <!--  Button 2 Button, Long press  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
 
                             <Grid Height="40">
                                 <Grid.ColumnDefinitions>
@@ -563,10 +590,10 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Button 2 Button/Keyboard/Mouse  -->
-                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
-
+                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|6}">
                             <ikw:SimpleStackPanel Spacing="6">
-                                <ikw:SimpleStackPanel Spacing="6">
+                                <!--  Repeat  -->
+                                <ikw:SimpleStackPanel IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="2*" MinWidth="200" />
@@ -637,106 +664,100 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
                                 </ikw:SimpleStackPanel>
+                                <Grid IsEnabled="{Binding HasInterruptable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
 
-                                <ikw:SimpleStackPanel Spacing="6">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="Interruptable" />
 
-                                        <TextBlock
+                                    <ui:ToggleSwitch
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <Grid IsEnabled="{Binding HasToggle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="Press to toggle" />
+
+                                    <ui:ToggleSwitch
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  Haptic  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="Haptic feedback" />
+
+                                    <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                                        <ComboBox
+                                            Width="105"
+                                            Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Interruptable" />
-
-                                        <ui:ToggleSwitch
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
+                                            SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="Off" />
+                                            <ComboBoxItem Content="Down" />
+                                            <ComboBoxItem Content="Up" />
+                                            <ComboBoxItem Content="Both" />
+                                        </ComboBox>
+                                        <ComboBox
+                                            Width="105"
+                                            Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Press to toggle" />
-
-                                        <ui:ToggleSwitch
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-
-                                </ikw:SimpleStackPanel>
+                                            SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="Low" />
+                                            <ComboBoxItem Content="Medium" />
+                                            <ComboBoxItem Content="High" />
+                                            <ComboBox.Style>
+                                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                                    <Setter Property="IsEnabled" Value="True" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HapticModeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
+                                        </ComboBox>
+                                    </DockPanel>
+                                </Grid>
                             </ikw:SimpleStackPanel>
                         </Grid>
-
-                        <!--  Button 2 Button, haptic  -->
-                        <Grid Height="40" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Haptic feedback" />
-
-                            <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                                <ComboBox
-                                    Width="105"
-                                    Margin="6,0,0,0"
-                                    VerticalAlignment="Center"
-                                    SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Off" />
-                                    <ComboBoxItem Content="Down" />
-                                    <ComboBoxItem Content="Up" />
-                                    <ComboBoxItem Content="Both" />
-                                </ComboBox>
-                                <ComboBox
-                                    Width="105"
-                                    Margin="6,0,0,0"
-                                    VerticalAlignment="Center"
-                                    SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Low" />
-                                    <ComboBoxItem Content="Medium" />
-                                    <ComboBoxItem Content="High" />
-                                    <ComboBox.Style>
-                                        <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                            <Setter Property="IsEnabled" Value="True" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding HapticStrengthIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                                    <Setter Property="IsEnabled" Value="False" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ComboBox.Style>
-                                </ComboBox>
-                            </DockPanel>
-                        </Grid>
-
                     </ikw:SimpleStackPanel>
                 </Expander.Content>
             </Expander>
@@ -803,6 +824,7 @@
                             <ComboBoxItem Content="Keyboard" IsEnabled="False" />
                             <ComboBoxItem Content="Mouse" IsEnabled="True" />
                             <ComboBoxItem Content="Trigger" IsEnabled="False" />
+                            <ComboBoxItem Content="Shift" IsEnabled="False" />
                         </ComboBox>
 
                         <ComboBox
@@ -1539,6 +1561,7 @@
                             <ComboBoxItem Content="Keyboard" IsEnabled="False" />
                             <ComboBoxItem Content="Mouse" IsEnabled="True" />
                             <ComboBoxItem Content="Trigger" IsEnabled="False" />
+                            <ComboBoxItem Content="Shift" IsEnabled="False" />
                         </ComboBox>
 
                         <ComboBox
@@ -2143,6 +2166,7 @@
                             <ComboBoxItem Content="Keyboard" IsEnabled="False" />
                             <ComboBoxItem Content="Mouse" IsEnabled="False" />
                             <ComboBoxItem Content="Trigger" IsEnabled="True" />
+                            <ComboBoxItem Content="Shift" IsEnabled="False" />
                         </ComboBox>
 
                         <ComboBox

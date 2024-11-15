@@ -94,12 +94,10 @@ namespace HandheldCompanion.ViewModels
             if (layout.ButtonLayout.TryGetValue(_flag, out var actions))
             {
                 foreach (var mapping in ButtonMappings)
-                {
                     mapping.Dispose();
-                }
 
                 var newMappings = new List<ButtonMappingViewModel>();
-                foreach (var action in actions)
+                foreach (var action in actions.OrderBy(a => a.ShiftSlot))
                 {
                     var newMapping = new ButtonMappingViewModel(this, _flag, isInitialMapping: newMappings.Count == 0);
                     newMappings.Add(newMapping);
@@ -115,9 +113,8 @@ namespace HandheldCompanion.ViewModels
             else
             {
                 foreach (var mapping in ButtonMappings)
-                {
                     mapping.Dispose();
-                }
+
                 ButtonMappings.ReplaceWith([new ButtonMappingViewModel(this, _flag, isInitialMapping: true)]);
             }
         }

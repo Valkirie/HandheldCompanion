@@ -16,7 +16,7 @@ namespace HandheldCompanion.Actions
         Keyboard = 3,
         Mouse = 4,
         Trigger = 5,
-        Special = 6,
+        Shift = 6,
     }
 
     [Serializable]
@@ -96,6 +96,10 @@ namespace HandheldCompanion.Actions
 
         private int pressCount = 0; // used to store previous press value for double tap
 
+        public bool HasTurbo = true;
+        public bool HasToggle = true;
+        public bool HasInterruptable = true;
+
         public bool Turbo;
         public int TurboDelay = 30;
         protected int TurboIdx;
@@ -105,6 +109,7 @@ namespace HandheldCompanion.Actions
         protected bool IsToggled;
 
         public bool Interruptable = true;
+        public ShiftSlot ShiftSlot = 0;
 
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
@@ -125,7 +130,7 @@ namespace HandheldCompanion.Actions
             ControllerManager.GetTargetController()?.SetHaptic(this.HapticStrength, button);
         }
 
-        public virtual void Execute(ButtonFlags button, bool value)
+        public virtual void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)
         {
             if (actionState == ActionState.Suspended)
             {
@@ -138,6 +143,19 @@ namespace HandheldCompanion.Actions
             {
                 // bypass output
                 value = true;
+            }
+
+            switch(ShiftSlot)
+            {
+                case ShiftSlot.None:
+                    if (shiftSlot != ShiftSlot.None)
+                        value = false;
+                    break;
+
+                default:
+                    if (!shiftSlot.HasFlag(ShiftSlot))
+                        value = false;
+                    break;
             }
 
             switch (pressType)

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -340,7 +341,36 @@ internal static class LayoutManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
+            
+            // we need to check for shifter(s) first
+            ShiftSlot shiftSlot = ShiftSlot.None;
+            foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
+            {
+                ButtonFlags button = buttonState.Key;
+                bool value = buttonState.Value;
 
+                // skip, if not mapped
+                if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
+                    continue;
+
+                foreach (IActions action in actions)
+                {
+                    switch (action.actionType)
+                    {
+                        // button to shift
+                        case ActionType.Shift:
+                            {
+                                ShiftActions sAction = action as ShiftActions;
+                                sAction.Execute(button, value, shiftSlot);
+                                bool outVal = sAction.GetValue();
+
+                                if (outVal) shiftSlot |= sAction.ShiftSlot;
+                            }
+                            break;
+                    }
+                }
+            }
+            
             foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
             {
                 ButtonFlags button = buttonState.Key;
@@ -358,7 +388,7 @@ internal static class LayoutManager
                         case ActionType.Button:
                             {
                                 ButtonActions bAction = action as ButtonActions;
-                                bAction.Execute(button, value);
+                                bAction.Execute(button, value, shiftSlot);
 
                                 bool outVal = bAction.GetValue() || outputState.ButtonState[bAction.Button];
                                 outputState.ButtonState[bAction.Button] = outVal;
@@ -369,7 +399,7 @@ internal static class LayoutManager
                         case ActionType.Keyboard:
                             {
                                 KeyboardActions kAction = action as KeyboardActions;
-                                kAction.Execute(button, value);
+                                kAction.Execute(button, value, shiftSlot);
                             }
                             break;
 
@@ -377,7 +407,7 @@ internal static class LayoutManager
                         case ActionType.Mouse:
                             {
                                 MouseActions mAction = action as MouseActions;
-                                mAction.Execute(button, value);
+                                mAction.Execute(button, value, shiftSlot);
                             }
                             break;
                     }
@@ -386,46 +416,56 @@ internal static class LayoutManager
                     {
                         case ActionState.Aborted:
                         case ActionState.Stopped:
-                            foreach (IActions action2 in actions)
                             {
-                                if (action2 == action)
-                                    continue;
-
-                                if (!action2.Interruptable)
-                                    continue;
-
-                                if (action2.actionState == ActionState.Succeed)
-                                    continue;
-
-                                if (action2.actionState != ActionState.Stopped && action2.actionState != ActionState.Aborted)
-                                    action2.actionState = ActionState.Stopped;
-                            }
-
-                            if (action.actionState == ActionState.Aborted)
-                            {
-                                int idx = actions.IndexOf(action);
-                                if (idx < actions.Count - 1)
+                                foreach (IActions action2 in actions.Where(a => a.ShiftSlot == action.ShiftSlot))
                                 {
-                                    IActions nAction = actions[idx + 1]; // next action
-                                    if (nAction.Interruptable)
-                                        nAction.actionState = ActionState.Forced;
+                                    if (action2 == action)
+                                        continue;
+
+                                    if (!action2.Interruptable)
+                                        continue;
+
+                                    if (action2.actionState == ActionState.Succeed)
+                                        continue;
+
+                                    if (action2.actionState != ActionState.Stopped && action2.actionState != ActionState.Aborted)
+                                        action2.actionState = ActionState.Stopped;
+                                }
+
+                                if (action.actionState == ActionState.Aborted)
+                                {
+                                    int idx = actions.IndexOf(action);
+                                    if (idx >= 0 && idx < actions.Count - 1)
+                                    {
+                                        var currentShiftSlot = action.ShiftSlot;
+
+                                        // Find the next action with the same ShiftSlot after the current index
+                                        IActions nextAction = actions
+                                            .Skip(idx + 1)
+                                            .FirstOrDefault(a => a.ShiftSlot == currentShiftSlot && a.Interruptable);
+
+                                        if (nextAction != null)
+                                            nextAction.actionState = ActionState.Forced;
+                                    }
                                 }
                             }
                             break;
 
                         case ActionState.Running:
-                            foreach (IActions action2 in actions)
                             {
-                                if (action2 == action)
-                                    continue;
+                                foreach (IActions action2 in actions.Where(a => a.ShiftSlot == action.ShiftSlot))
+                                {
+                                    if (action2 == action)
+                                        continue;
 
-                                if (!action2.Interruptable)
-                                    continue;
+                                    if (!action2.Interruptable)
+                                        continue;
 
-                                if (action2.actionState == ActionState.Succeed)
-                                    continue;
+                                    if (action2.actionState == ActionState.Succeed)
+                                        continue;
 
-                                action2.actionState = ActionState.Suspended;
+                                    action2.actionState = ActionState.Suspended;
+                                }
                             }
                             break;
                     }

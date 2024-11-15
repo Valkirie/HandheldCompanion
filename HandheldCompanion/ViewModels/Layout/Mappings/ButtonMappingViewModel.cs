@@ -43,6 +43,23 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        // default mapping can't be shifted
+        public int ShiftIndex
+        {
+            get => IsInitialMapping ? 0 : Action is not null ? (int)Action.ShiftSlot : 0;
+            set
+            {
+                if (IsInitialMapping)
+                    return;
+
+                if (Action is not null && value != ShiftIndex)
+                {
+                    Action.ShiftSlot = (ShiftSlot)value;
+                    OnPropertyChanged(nameof(ShiftIndex));
+                }
+            }
+        }
+
         public int LongPressDelay
         {
             get => Action is not null ? Action.ActionTimer : 0;
@@ -80,6 +97,45 @@ namespace HandheldCompanion.ViewModels
                         mouseAction.Modifiers = (ModifierSet)value;
 
                     OnPropertyChanged(nameof(ModifierIndex));
+                }
+            }
+        }
+
+        public bool HasTurbo
+        {
+            get => Action is not null ? Action.HasTurbo : false;
+            set
+            {
+                if (Action is not null && value != HasTurbo)
+                {
+                    Action.HasTurbo = value;
+                    OnPropertyChanged(nameof(HasTurbo));
+                }
+            }
+        }
+
+        public bool HasInterruptable
+        {
+            get => Action is not null ? Action.HasInterruptable : false;
+            set
+            {
+                if (Action is not null && value != HasInterruptable)
+                {
+                    Action.HasInterruptable = value;
+                    OnPropertyChanged(nameof(HasInterruptable));
+                }
+            }
+        }
+
+        public bool HasToggle
+        {
+            get => Action is not null ? Action.HasToggle : false;
+            set
+            {
+                if (Action is not null && value != HasToggle)
+                {
+                    Action.HasToggle = value;
+                    OnPropertyChanged(nameof(HasToggle));
                 }
             }
         }
@@ -166,7 +222,7 @@ namespace HandheldCompanion.ViewModels
 
         private ButtonStackViewModel _parentStack;
 
-        public bool IsInitialMapping { get; private set; } = false;
+        public bool IsInitialMapping { get; set; } = false;
 
         public ICommand ButtonCommand { get; private set; }
 
@@ -299,6 +355,34 @@ namespace HandheldCompanion.ViewModels
                 Targets.ReplaceWith(targets);
                 if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
             }
+            else if (actionType == ActionType.Shift)
+            {
+                if (Action is null || Action is not ShiftActions)
+                    Action = new ShiftActions(ShiftSlot.ShiftA);
+
+                // Build Targets
+                var targets = new List<MappingTargetViewModel>();
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (var shiftSlot in Enum.GetValues<ShiftSlot>())
+                {
+                    var mappingTargetVm = new MappingTargetViewModel
+                    {
+                        Tag = shiftSlot,
+                        Content = EnumUtils.GetDescriptionFromEnumValue(shiftSlot)
+                    };
+                    targets.Add(mappingTargetVm);
+
+                    if (shiftSlot == ((ShiftActions)Action).ShiftSlot)
+                    {
+                        matchingTargetVm = mappingTargetVm;
+                    }
+                }
+
+                // Update list and selected target
+                Targets.ReplaceWith(targets);
+                if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
+            }
 
             // Refresh mapping
             OnPropertyChanged(string.Empty);
@@ -321,6 +405,10 @@ namespace HandheldCompanion.ViewModels
 
                 case ActionType.Mouse:
                     ((MouseActions)Action).MouseType = (MouseActionsType)SelectedTarget.Tag;
+                    break;
+
+                case ActionType.Shift:
+                    ((ShiftActions)Action).ShiftSlot = (ShiftSlot)SelectedTarget.Tag;
                     break;
             }
         }
