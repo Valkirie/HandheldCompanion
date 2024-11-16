@@ -6,6 +6,7 @@ using HandheldCompanion.Managers.Desktop;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
@@ -178,10 +179,13 @@ namespace HandheldCompanion.Managers
             GPU.Stop();
         }
 
-        private static async void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
+        private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
             try
             {
+                while (!DeviceManager.IsInitialized)
+                    Thread.Sleep(1000);
+
                 AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
                 if (DisplayGPU.TryGetValue(key, out GPU gpu))
                 {
@@ -199,7 +203,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        private static void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
             GPU newGPU = null;
 

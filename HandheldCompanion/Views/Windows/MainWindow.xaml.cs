@@ -198,9 +198,7 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         // start static managers
-        ControllerManager.Start();
         HotkeysManager.Start();
-        DeviceManager.Start();
         OSDManager.Start();
         LayoutManager.Start();
         SystemManager.Start();
@@ -228,6 +226,8 @@ public partial class MainWindow : GamepadWindow
         // non-STA threads
         List<Task> tasks = new List<Task>
         {
+            Task.Run(() => ControllerManager.Start()),
+            Task.Run(() => DeviceManager.Start()),
             Task.Run(() => PlatformManager.Start()),
             Task.Run(() => ProcessManager.Start()),
             Task.Run(() => TaskManager.Start(CurrentExe)),
