@@ -47,7 +47,7 @@ namespace HandheldCompanion.Managers
                 DeviceManager_UsbDeviceArrived(null, Guid.Empty);
             }
 
-            if (ControllerManager.IsInitialized)
+            if (ControllerManager.HasTargetController)
             {
                 ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
             }

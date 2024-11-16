@@ -40,7 +40,7 @@ namespace HandheldCompanion.ViewModels
                     LayoutManager_Updated(template);
             }
 
-            if (ControllerManager.IsInitialized)
+            if (ControllerManager.HasTargetController)
             {
                 ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
             }

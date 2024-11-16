@@ -340,7 +340,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // get current controller
-                var controller = ControllerManager.GetEmulatedController();
+                var controller = ControllerManager.GetPlaceholderController();
 
                 // Build Targets
                 var targets = new List<MappingTargetViewModel>();

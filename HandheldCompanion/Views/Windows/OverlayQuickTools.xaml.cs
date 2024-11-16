@@ -109,11 +109,17 @@ public partial class OverlayQuickTools : GamepadWindow
 
         WMPaintTimer.Elapsed += WMPaintTimer_Elapsed;
 
-        // create manager(s)
+        // manage events
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
         MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        // raise events
+        if (ControllerManager.HasTargetController)
+        {
+            ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+        }
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);

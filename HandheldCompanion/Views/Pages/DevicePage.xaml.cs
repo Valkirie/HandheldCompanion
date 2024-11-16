@@ -54,11 +54,18 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
+            // manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
             DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
             DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+
+            // raise events
+            if (ControllerManager.HasTargetController)
+            {
+                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+            }
         }
 
         private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)

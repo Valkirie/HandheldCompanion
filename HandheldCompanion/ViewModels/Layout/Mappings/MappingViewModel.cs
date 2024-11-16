@@ -168,7 +168,7 @@ namespace HandheldCompanion.ViewModels
             VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
             // send events
-            if (ControllerManager.IsInitialized)
+            if (ControllerManager.HasTargetController)
             {
                 UpdateController(ControllerManager.GetTargetController());
             }

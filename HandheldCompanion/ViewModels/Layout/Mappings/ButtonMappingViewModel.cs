@@ -295,7 +295,7 @@ namespace HandheldCompanion.ViewModels
                     Action = new ButtonActions() { pressType = fallbackPressType };
 
                 // get current controller
-                var controller = ControllerManager.GetEmulatedController();
+                var controller = ControllerManager.GetPlaceholderController();
 
                 // Build Targets
                 var targets = new List<MappingTargetViewModel>();

@@ -84,7 +84,7 @@ public partial class LayoutPage : Page
         ProfileManager.Updated += ProfileManager_Updated;
 
         // raise events
-        if (ControllerManager.IsInitialized)
+        if (ControllerManager.HasTargetController)
         {
             ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
         }

@@ -30,7 +30,7 @@ public partial class Layout : ICloneable, IDisposable
         Dispose();
 
         // get current controller
-        IController controller = ControllerManager.GetEmulatedController();
+        IController controller = ControllerManager.GetPlaceholderController();
 
         // generic button mapping
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))

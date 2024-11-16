@@ -119,7 +119,7 @@ public static class ControllerManager
         // enable HidHide
         HidHide.SetCloaking(true);
 
-        HasTargetController();
+        SetPlaceholderController();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -667,7 +667,7 @@ public static class ControllerManager
             if (WasTarget)
             {
                 ClearTargetController();
-                HasTargetController();
+                SetPlaceholderController();
             }
             else
                 controller.Unplug();
@@ -953,7 +953,7 @@ public static class ControllerManager
             if (WasTarget)
             {
                 ClearTargetController();
-                HasTargetController();
+                SetPlaceholderController();
             }
             else
                 controller.Unplug();
@@ -965,13 +965,15 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
-    private static void HasTargetController()
+    private static void SetPlaceholderController()
     {
         // summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/oem chords
         // todo: improve me
-        Controllers[string.Empty] = GetEmulatedController();
+        Controllers[string.Empty] = GetPlaceholderController();
         SetTargetController(string.Empty, false);
     }
+
+    public static bool HasTargetController => GetTargetController() != null;
 
     private static void ClearTargetController()
     {
@@ -1205,7 +1207,7 @@ public static class ControllerManager
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
-    internal static IController GetEmulatedController()
+    internal static IController GetPlaceholderController()
     {
         // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
         HIDmode HIDmode = HIDmode.NoController;

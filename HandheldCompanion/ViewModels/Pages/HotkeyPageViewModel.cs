@@ -35,7 +35,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
             // raise event
-            if (ControllerManager.IsInitialized)
+            if (ControllerManager.HasTargetController)
             {
                 ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
             }

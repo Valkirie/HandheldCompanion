@@ -534,7 +534,7 @@ namespace HandheldCompanion.ViewModels
 
             IController? controller = ControllerManager.GetTargetController();
             if (controller is null)
-                controller = ControllerManager.GetEmulatedController();
+                controller = ControllerManager.GetPlaceholderController();
 
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>

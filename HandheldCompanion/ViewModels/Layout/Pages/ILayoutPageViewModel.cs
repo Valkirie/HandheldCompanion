@@ -25,7 +25,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerSelected += UpdateController;
 
             // send events
-            if (ControllerManager.IsInitialized)
+            if (ControllerManager.HasTargetController)
             {
                 UpdateController(ControllerManager.GetTargetController());
             }
