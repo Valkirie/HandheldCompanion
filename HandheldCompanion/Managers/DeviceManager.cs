@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers.Hid;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
@@ -81,22 +82,19 @@ public static class DeviceManager
         if (IsInitialized)
             return;
 
-        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
-        foreach (string InfPath in ControllerManager.DriversStore.Values)
-            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
-
-        UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
+        // manage events
         UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved += UsbDevice_DeviceRemoved;
-
-        XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
         XUsbDeviceListener.DeviceArrived += XUsbDevice_DeviceArrived;
         XUsbDeviceListener.DeviceRemoved += XUsbDevice_DeviceRemoved;
-
-        HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
         HidDeviceListener.DeviceArrived += HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved += HidDevice_DeviceRemoved;
 
+        UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
+        XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
+        HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
+
+        RefreshDrivers();
         RefreshXInput();
         RefreshDInput();
         RefreshDisplayAdapters(true);
@@ -108,26 +106,29 @@ public static class DeviceManager
         return;
     }
 
+    private static void RefreshDrivers()
+    {
+        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        foreach (string InfPath in DriverStore.GetDrivers())
+            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
 
-        UsbDeviceListener.StopListen(DeviceInterfaceIds.UsbDevice);
+        // manage events
         UsbDeviceListener.DeviceArrived -= UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved -= UsbDevice_DeviceRemoved;
-
-        XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
         XUsbDeviceListener.DeviceArrived -= XUsbDevice_DeviceArrived;
         XUsbDeviceListener.DeviceRemoved -= XUsbDevice_DeviceRemoved;
-
-        HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
         HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
 
-        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
-        foreach (string InfPath in ControllerManager.DriversStore.Values)
-            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+        UsbDeviceListener.StopListen(DeviceInterfaceIds.UsbDevice);
+        XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
+        HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
 
         IsInitialized = false;
 

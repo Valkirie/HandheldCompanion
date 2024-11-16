@@ -9,13 +9,11 @@ using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using Newtonsoft.Json;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +23,7 @@ using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
 using DeviceType = SharpDX.DirectInput.DeviceType;
+using DriverStore = HandheldCompanion.Helpers.DriverStore;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -78,9 +77,6 @@ public static class ControllerManager
     {
         if (IsInitialized)
             return;
-
-        // get driver store
-        DriversStore = DeserializeDriverStore();
 
         // manage events
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
@@ -1052,9 +1048,6 @@ public static class ControllerManager
         }
     }
 
-    public static string DriversPath = Path.Combine(MainWindow.SettingsPath, "drivers.json");
-    public static Dictionary<string, string> DriversStore = [];
-
     public static bool SuspendController(string baseContainerDeviceInstanceId)
     {
         try
@@ -1076,7 +1069,7 @@ public static class ControllerManager
                     if (!string.IsNullOrEmpty(pnPDriver?.InfPath))
                     {
                         // store driver to collection
-                        AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
+                        DriverStore.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
 
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
                         usbPnPDevice.CyclePort();
@@ -1094,7 +1087,7 @@ public static class ControllerManager
     public static bool ResumeControllers()
     {
         // loop through controllers
-        foreach (string baseContainerDeviceInstanceId in DriversStore.Keys)
+        foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
         {
             try
             {
@@ -1115,7 +1108,7 @@ public static class ControllerManager
                     case "USB":
                         {
                             // todo: check PnPDevice PID/VID to deploy the appropriate inf
-                            string InfPath = GetDriverFromDriverStore(baseContainerDeviceInstanceId);
+                            string InfPath = DriverStore.GetDriverFromDriverStore(baseContainerDeviceInstanceId);
                             if (pnPDriver?.InfPath != InfPath && !string.IsNullOrEmpty(InfPath))
                             {
                                 pnPDevice.RemoveAndSetup();
@@ -1123,7 +1116,7 @@ public static class ControllerManager
                             }
 
                             // remove device from store
-                            RemoveFromDriverStore(baseContainerDeviceInstanceId);
+                            DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
 
                             PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                             return true;
@@ -1134,53 +1127,6 @@ public static class ControllerManager
         }
 
         return false;
-    }
-
-    private static void SerializeDriverStore()
-    {
-        string json = JsonConvert.SerializeObject(DriversStore, Formatting.Indented);
-        File.WriteAllText(DriversPath, json);
-    }
-
-    private static Dictionary<string, string> DeserializeDriverStore()
-    {
-        if (!File.Exists(DriversPath))
-            return [];
-
-        string json = File.ReadAllText(DriversPath);
-        return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-    }
-
-    private static string GetDriverFromDriverStore(string path)
-    {
-        if (DriversStore.TryGetValue(path, out string driver))
-            return driver;
-
-        return "xusb22.inf";
-    }
-
-    private static void AddOrUpdateDriverStore(string path, string calibration)
-    {
-        // upcase
-        path = path.ToUpper();
-
-        // update array
-        DriversStore[path] = calibration;
-
-        // serialize store
-        SerializeDriverStore();
-    }
-
-    private static void RemoveFromDriverStore(string path)
-    {
-        // upcase
-        path = path.ToUpper();
-
-        // update array
-        DriversStore.Remove(path);
-
-        // serialize store
-        SerializeDriverStore();
     }
 
     public static IController GetTargetController()
