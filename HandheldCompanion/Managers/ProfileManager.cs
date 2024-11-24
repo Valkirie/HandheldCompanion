@@ -500,7 +500,7 @@ public static class ProfileManager
             string rawName = Path.GetFileNameWithoutExtension(fileName);
             if (string.IsNullOrEmpty(rawName))
             {
-                LogManager.LogError("Could not parse profile {0}. {1}", fileName, "Profile has an incorrect file name.");
+                LogManager.LogError("Could not parse profile: {0}. {1}", fileName, "Profile has an incorrect file name.");
                 return;
             }
 
@@ -551,14 +551,14 @@ public static class ProfileManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Could not parse profile {0}. {1}", fileName, ex.Message);
+            LogManager.LogError("Could not parse profile: {0}. {1}", fileName, ex.Message);
             return;
         }
 
         // failed to parse
         if (!profile.Default && (string.IsNullOrEmpty(profile.Name) || string.IsNullOrEmpty(profile.Path)))
         {
-            LogManager.LogError("Corrupted profile {0}. Profile has an empty name or an empty path.", fileName);
+            LogManager.LogError("Corrupted profile: {0}. Profile has an empty name or an empty path.", fileName);
             return;
         }
 
@@ -649,7 +649,7 @@ public static class ProfileManager
             foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path, false))
                 DeleteSubProfile(subprofile);
 
-            LogManager.LogInformation("Deleted subprofiles for profile {0}", profile);
+            LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
 
             // Unregister application from HidHide
             HidHide.UnregisterApplication(profile.Path);
@@ -675,7 +675,7 @@ public static class ProfileManager
             // todo: localize me
             ToastManager.SendToast($"Profile {profile.Name} deleted");
 
-            LogManager.LogInformation("Deleted profile {0}", profilePath);
+            LogManager.LogInformation("Deleted profile: {0}", profilePath);
 
             // restore default profile
             if (isCurrent)
@@ -711,7 +711,7 @@ public static class ProfileManager
             // todo: localize me
             ToastManager.SendToast($"Subprofile {subProfile.Name} deleted");
 
-            LogManager.LogInformation("Deleted subprofile {0}", profilePath);
+            LogManager.LogInformation("Deleted subprofile: {0}", profilePath);
 
             // restore main profile as favorite
             if (isCurrent)
@@ -786,8 +786,6 @@ public static class ProfileManager
 
     public static void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
-        LogManager.LogInformation($"Attempting to update/create {(profile.IsSubProfile ? "subprofile" : "profile")} {profile.Name}");
-
         bool isCurrent = false;
         switch (source)
         {
@@ -801,6 +799,17 @@ public static class ProfileManager
             default:
                 // check if this is current profile
                 isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+                break;
+        }
+
+        switch (source)
+        {
+            case UpdateSource.Serializer:
+                LogManager.LogInformation($"Loaded {(profile.IsSubProfile ? "subprofile" : "profile")}: {profile.Name}");
+                break;
+
+            default:
+                LogManager.LogInformation($"Attempting to update/create {(profile.IsSubProfile ? "subprofile" : "profile")}: {profile.Name}");
                 break;
         }
 

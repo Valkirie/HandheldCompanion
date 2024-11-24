@@ -170,13 +170,13 @@ namespace HandheldCompanion.Managers
             }
             catch (Exception ex)
             {
-                LogManager.LogError("Could not parse power profile {0}. {1}", fileName, ex.Message);
+                LogManager.LogError("Could not parse power profile: {0}. {1}", fileName, ex.Message);
             }
 
             // failed to parse
             if (profile is null || profile.Name is null)
             {
-                LogManager.LogError("Failed to parse power profile {0}", fileName);
+                LogManager.LogError("Failed to parse power profile: {0}", fileName);
                 return;
             }
 
@@ -185,6 +185,17 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateOrCreateProfile(PowerProfile profile, UpdateSource source)
         {
+            switch (source)
+            {
+                case UpdateSource.Serializer:
+                    LogManager.LogInformation($"Loaded power profile: {profile.Name}");
+                    break;
+
+                default:
+                    LogManager.LogInformation($"Attempting to update/create power profile: {profile.Name}");
+                    break;
+            }
+
             // update database
             profiles[profile.Guid] = profile;
 
