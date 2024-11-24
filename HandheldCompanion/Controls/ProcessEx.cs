@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
@@ -191,12 +192,19 @@ public class ProcessEx : IDisposable
             // create new window object
             window = new(automationElement, primary);
 
+            if (string.IsNullOrEmpty(window.Name))
+                return;
+
             // update window
             ProcessWindows[hwnd] = window;
         }
 
-        if (string.IsNullOrEmpty(window.Name))
-            return;
+        // listen for window closed event
+        WindowElement windowElement = new(ProcessId, automationElement);
+        windowElement.Closed += (sender) =>
+        {
+            DetachWindow((int)sender._hwnd);
+        };
 
         // raise event
         WindowAttached?.Invoke(window);

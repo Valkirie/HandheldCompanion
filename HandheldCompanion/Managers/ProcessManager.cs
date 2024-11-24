@@ -389,14 +389,6 @@ public static class ProcessManager
                     processEx.AttachWindow(automationElement);
                 }
 
-                // listen for window closed event
-                WindowElement windowElement = new(processID, automationElement);
-                windowElement.Closed += (sender) =>
-                {
-                    if (Processes.TryGetValue(windowElement._processId, out ProcessEx processEx))
-                        processEx.DetachWindow((int)sender._hwnd);
-                };
-
                 return true;
             }
             catch (Exception)
