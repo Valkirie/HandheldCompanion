@@ -2,6 +2,7 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.QuickPages;
@@ -111,7 +112,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // manage events
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
-        MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
@@ -202,12 +203,8 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    private void SystemManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
+    private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
-        // ignore if we're not ready yet
-        if (!MultimediaManager.IsInitialized)
-            return;
-
         UpdateLocation();
     }
 
@@ -228,6 +225,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // Attempt to find the screen with the specified friendly name
         DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.FriendlyName.Equals(DeviceName)) ?? MultimediaManager.PrimaryDesktop;
+        if (friendlyScreen is null)
+            return;
 
         // Find the corresponding Screen object
         targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
@@ -250,26 +249,22 @@ public partial class OverlayQuickTools : GamepadWindow
                     WindowStyle = WindowStyle.None;
                     break;
             }
-        });
 
-        switch (QuickToolsLocation)
-        {
-            case 0: // Left
-                this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
-                break;
+            switch (QuickToolsLocation)
+            {
+                case 0: // Left
+                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                    break;
 
-            case 1: // Right
-                this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
-                break;
+                case 1: // Right
+                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                    break;
 
-            case 2: // Maximized
-                this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
-                break;
-        }
+                case 2: // Maximized
+                    this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
+                    break;
+            }
 
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
             switch (QuickToolsLocation)
             {
                 case 0: // Left
@@ -282,11 +277,11 @@ public partial class OverlayQuickTools : GamepadWindow
                     Left -= _Margin;
                     break;
             }
-        });
 
-        // used by SlideIn/SlideOut
-        _Top = Top;
-        _Left = Left;
+            // used by SlideIn/SlideOut
+            _Top = Top;
+            _Left = Left;
+        });        
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)

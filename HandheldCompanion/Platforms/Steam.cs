@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.Drivers;

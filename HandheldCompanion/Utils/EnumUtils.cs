@@ -1,5 +1,5 @@
-﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
+﻿using HandheldCompanion.Properties;
+using HandheldCompanion.Shared;
 using System;
 using System.ComponentModel;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using PrecisionTiming;
+﻿using HandheldCompanion.Shared;
+using PrecisionTiming;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;

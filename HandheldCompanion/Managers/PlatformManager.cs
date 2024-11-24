@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Shared;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;

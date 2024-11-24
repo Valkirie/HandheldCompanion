@@ -2,6 +2,7 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;

@@ -2,6 +2,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
@@ -198,34 +199,22 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         // start static managers
-        HotkeysManager.Start();
         OSDManager.Start();
         LayoutManager.Start();
         SystemManager.Start();
         DynamicLightingManager.Start();
-        MultimediaManager.Start();
         VirtualManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
 
-        // STA threads
-        List<Thread> STAThreads =
-        [
-            new Thread(() => ProfileManager.Start()),
-            new Thread(() => PowerProfileManager.Start()),
-            new Thread(() => GPUManager.Start()),
-        ];
-
-        // Set the thread to STA
-        foreach (Thread thread in STAThreads)
-        {
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-        }
-
         // non-STA threads
         List<Task> tasks = new List<Task>
         {
+            Task.Run(() => HotkeysManager.Start()),
+            Task.Run(() => ProfileManager.Start()),
+            Task.Run(() => PowerProfileManager.Start()),
+            Task.Run(() => GPUManager.Start()),
+            Task.Run(() => MultimediaManager.Start()),
             Task.Run(() => ControllerManager.Start()),
             Task.Run(() => DeviceManager.Start()),
             Task.Run(() => PlatformManager.Start()),

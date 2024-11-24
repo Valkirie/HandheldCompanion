@@ -5,6 +5,7 @@ using HandheldCompanion.Commands.Functions.Multitasking;
 using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
@@ -24,7 +25,7 @@ public static class HotkeysManager
 
     private static readonly string HotkeysPath;
 
-    private static bool IsInitialized;
+    public static bool IsInitialized;
 
     static HotkeysManager()
     {

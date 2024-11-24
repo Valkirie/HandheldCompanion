@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;

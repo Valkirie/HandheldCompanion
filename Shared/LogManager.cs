@@ -5,7 +5,7 @@ using Serilog.Extensions.Logging;
 using System.Diagnostics;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace HandheldCompanion.Managers;
+namespace HandheldCompanion.Shared;
 
 public static class LogManager
 {

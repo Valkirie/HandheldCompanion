@@ -1,5 +1,6 @@
 using HandheldCompanion.Controls;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Concurrent;

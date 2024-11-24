@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;

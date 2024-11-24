@@ -145,7 +145,7 @@ namespace HandheldCompanion.Actions
                 value = true;
             }
 
-            switch(ShiftSlot)
+            switch (ShiftSlot)
             {
                 case ShiftSlot.None:
                     if (shiftSlot != ShiftSlot.None)

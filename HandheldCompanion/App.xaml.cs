@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Sentry;
@@ -44,8 +45,9 @@ public partial class App : Application
         string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string logDirectory = System.IO.Path.Combine(myDocumentsPath, "HandheldCompanion", "logs");
 
-        // Set the LOG_PATH environment variable
+        // Set environment variables
         Environment.SetEnvironmentVariable("LOG_PATH", logDirectory);
+        Environment.SetEnvironmentVariable("COMPlus_legacyCorruptedStateExceptionsPolicy", "1");
 
         // initialize log
         LogManager.Initialize("HandheldCompanion");

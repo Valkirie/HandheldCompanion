@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;

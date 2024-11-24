@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 
 namespace HandheldCompanion.ADLX
@@ -70,20 +73,17 @@ namespace HandheldCompanion.ADLX
             ADLX_GPU_INACTIVE               /**< @ENG_START_DOX This result indicates that the GPU is inactive. @ENG_END_DOX */
         }
 
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool IntializeAdlx();
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool InitializeAdlxWithIncompatibleDriver();
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] private static extern bool IntializeAdlx();
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] private static extern bool InitializeAdlxWithIncompatibleDriver();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool CloseAdlx();
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetNumberOfDisplays(ref int displayNum);
 
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        public static extern ADLX_RESULT GetDisplayName(int idx, StringBuilder dispName, int nameLength);
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] public static extern ADLX_RESULT GetDisplayName(int idx, StringBuilder dispName, int nameLength);
 
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ADLX_RESULT GetDisplayGPU(int idx, ref int UniqueId);
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetDisplayGPU(int idx, ref int UniqueId);
 
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ADLX_RESULT GetGPUIndex(int UniqueId, ref int idx);
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetGPUIndex(int UniqueId, ref int idx);
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasRSRSupport();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetRSR();
@@ -128,5 +128,20 @@ namespace HandheldCompanion.ADLX
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetScalingMode(int displayIdx, int mode);
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetAdlxTelemetry(int GPU, ref AdlxTelemetryData adlxTelemetryData);
+
+        static ADLXBackend() { }
+
+        [HandleProcessCorruptedStateExceptions]
+        [SecurityCritical]
+        public static bool SafeIntializeAdlx()
+        {
+            try
+            {
+                return IntializeAdlx();
+            }
+            catch (Exception ex) { }
+
+            return false;
+        }
     }
 }

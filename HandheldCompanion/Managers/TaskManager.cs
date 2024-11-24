@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32.TaskScheduler;
+﻿using HandheldCompanion.Shared;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Security.Principal;
 

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

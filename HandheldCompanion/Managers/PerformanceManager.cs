@@ -2,6 +2,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;

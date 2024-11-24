@@ -1,11 +1,9 @@
-﻿using System.Threading;
-
-namespace HandheldCompanion.Localization;
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
+using System.Threading;
 
+namespace HandheldCompanion.Localization;
 public class TranslationSource : INotifyPropertyChanged
 {
     private static readonly TranslationSource instance = new TranslationSource();

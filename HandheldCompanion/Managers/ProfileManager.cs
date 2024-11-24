@@ -3,6 +3,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;

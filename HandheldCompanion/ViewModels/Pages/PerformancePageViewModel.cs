@@ -169,7 +169,16 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public double AutoTDPMaximum => MultimediaManager.PrimaryDesktop.devMode.dmDisplayFrequency;
+        public double AutoTDPMaximum
+        {
+            get
+            {
+                if (!MultimediaManager.IsInitialized)
+                    return 60.0d;
+                
+                return MultimediaManager.PrimaryDesktop.devMode.dmDisplayFrequency;
+            }
+        }
 
         public bool TDPOverrideEnabled
         {

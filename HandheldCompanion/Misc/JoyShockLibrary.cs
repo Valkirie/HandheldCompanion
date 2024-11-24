@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Shared;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;

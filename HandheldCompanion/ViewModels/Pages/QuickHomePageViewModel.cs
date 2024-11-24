@@ -17,6 +17,11 @@ namespace HandheldCompanion.ViewModels
             HotkeysManager.Updated += HotkeysManager_Updated;
             HotkeysManager.Deleted += HotkeysManager_Deleted;
             HotkeysManager.Initialized += HotkeysManager_Initialized;
+
+            if (HotkeysManager.IsInitialized)
+            {
+                HotkeysManager_Initialized();
+            }
         }
 
         void IDropTarget.DragOver(IDropInfo dropInfo)

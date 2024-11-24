@@ -3,6 +3,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc.Threading.Tasks;
 using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
+using HandheldCompanion.Shared;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;

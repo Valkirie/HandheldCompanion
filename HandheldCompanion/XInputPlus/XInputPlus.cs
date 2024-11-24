@@ -3,6 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;

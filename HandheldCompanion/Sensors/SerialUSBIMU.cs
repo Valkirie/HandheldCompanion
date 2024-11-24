@@ -1,4 +1,4 @@
-using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;

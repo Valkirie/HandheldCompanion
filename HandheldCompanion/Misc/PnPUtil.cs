@@ -70,13 +70,6 @@ namespace HandheldCompanion
                 }
             }
 
-            // Print the list of Instance ID values
-            Debug.WriteLine("The Instance ID values are:");
-            foreach (string id in instanceIDs)
-            {
-                Debug.WriteLine(id);
-            }
-
             return instanceIDs;
         }
 

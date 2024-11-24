@@ -1,5 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;

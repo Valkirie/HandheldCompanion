@@ -71,8 +71,6 @@ public partial class OverlayModel : OverlayWindow
             AutoReset = true
         };
         UpdateTimer.Elapsed += DrawModel;
-
-        UpdateModel();
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -125,7 +123,9 @@ public partial class OverlayModel : OverlayWindow
             return;
 
         this.Modelmode = Modelmode;
-        UpdateModel();
+
+        if (IsLoaded)
+            UpdateModel();
     }
 
     public void UpdateModel()
@@ -185,6 +185,8 @@ public partial class OverlayModel : OverlayWindow
                     break;
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
+                    if (CurrentModel is null)
+                        UpdateModel();
                     UpdateTimer.Start();
                     try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;

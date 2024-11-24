@@ -1,9 +1,5 @@
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Simulators;
 using System;
 using System.ComponentModel;
-using System.Numerics;
-using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
 {

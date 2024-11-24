@@ -1,6 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using System;

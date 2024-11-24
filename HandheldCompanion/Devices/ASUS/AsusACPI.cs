@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Shared;
 using System;
 using System.Management;
 using System.Runtime.InteropServices;
@@ -265,8 +265,6 @@ namespace HandheldCompanion.Devices.ASUS
             BitConverter.GetBytes((uint)args.Length).CopyTo(acpiBuf, 4);
             Array.Copy(args, 0, acpiBuf, 8, args.Length);
 
-            // if (MethodID == DEVS)  Debug.WriteLine(BitConverter.ToString(acpiBuf, 0, acpiBuf.Length));
-
             Control(CONTROL_CODE, acpiBuf, outBuffer);
 
             return outBuffer;
@@ -474,7 +472,6 @@ namespace HandheldCompanion.Devices.ASUS
             setting[5] = (byte)speed;
 
             DeviceSet(TUF_KB, setting, "TUF RGB");
-            //Debug.WriteLine(BitConverter.ToString(setting));
         }
 
         public void TUFKeyboardPower(bool awake = true, bool boot = false, bool sleep = false, bool shutdown = false)

@@ -3,6 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
@@ -341,7 +342,7 @@ internal static class LayoutManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
-            
+
             // we need to check for shifter(s) first
             ShiftSlot shiftSlot = ShiftSlot.None;
             foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
@@ -370,7 +371,7 @@ internal static class LayoutManager
                     }
                 }
             }
-            
+
             foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
             {
                 ButtonFlags button = buttonState.Key;

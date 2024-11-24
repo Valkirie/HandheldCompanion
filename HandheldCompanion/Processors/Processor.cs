@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Shared;
 using System.Timers;
 
 namespace HandheldCompanion.Processors;

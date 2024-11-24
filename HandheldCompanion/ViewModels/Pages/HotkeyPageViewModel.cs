@@ -40,6 +40,11 @@ namespace HandheldCompanion.ViewModels
                 ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
             }
 
+            if (HotkeysManager.IsInitialized)
+            {
+                HotkeysManager_Initialized();
+            }
+
             CreateHotkeyCommand = new DelegateCommand(async () =>
             {
                 HotkeysManager.UpdateOrCreateHotkey(new Hotkey());

@@ -1,5 +1,5 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -7,9 +7,9 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
-namespace HandheldCompanion.Devices;
 using static HandheldCompanion.Utils.DeviceUtils;
 
+namespace HandheldCompanion.Devices;
 public class OneXPlayerOneXFly : IDevice
 {
     HidDevice hidDevice;

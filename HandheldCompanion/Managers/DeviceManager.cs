@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -9,7 +10,6 @@ using SharpDX.Direct3D9;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -709,7 +709,6 @@ public static class DeviceManager
                 else
                 {
                     // added device
-                    Debug.WriteLine("Adapter {0} was added", adapterInformation.Details.Description);
                     DisplayAdapterArrived?.Invoke(adapterInformation);
                     adaptersProcessed.Add(adapterInformation.Details.DeviceIdentifier);
                 }
@@ -725,7 +724,6 @@ public static class DeviceManager
                 {
                     // removed device
                     AdapterInformation adapterInformation = displayAdapters[deviceIdentifier];
-                    Debug.WriteLine("Adapter {0} was removed", adapterInformation.Details.Description);
                     DisplayAdapterRemoved?.Invoke(adapterInformation);
                     adaptersProcessed.Add(deviceIdentifier);
                 }

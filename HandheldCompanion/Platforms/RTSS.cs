@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using RTSSSharedMemoryNET;
 using System;

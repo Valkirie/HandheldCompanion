@@ -2,6 +2,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
+using HandheldCompanion.Shared;
 using SharpDX;
 using SharpDX.Direct3D9;
 using System;

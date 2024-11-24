@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Shared;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -59,9 +60,6 @@ public static class MultimediaManager
         if (IsInitialized)
             return;
 
-        // force trigger events
-        SystemEvents_DisplaySettingsChanged(null, null);
-
         // manage brightness watcher events
         BrightnessWatcher.EventArrived += onWMIEvent;
         BrightnessWatcher.Start();
@@ -69,6 +67,9 @@ public static class MultimediaManager
         // manage events
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SystemEvents_DisplaySettingsChanged(null, null);
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -189,7 +190,7 @@ public static class MultimediaManager
                 friendlyName = PrimaryDisplay.DeviceName;
 
             PathDisplayTarget? PrimaryTarget = GetDisplayTarget(PrimaryDisplay.DevicePath);
-            if (PrimaryTarget is not null)
+            if (PrimaryTarget is not null && !string.IsNullOrEmpty(PrimaryTarget.FriendlyName))
                 friendlyName = PrimaryTarget.FriendlyName;
         }
 

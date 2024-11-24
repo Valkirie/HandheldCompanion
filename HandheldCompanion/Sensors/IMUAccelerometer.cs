@@ -1,5 +1,5 @@
 using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;

@@ -3,6 +3,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace HandheldCompanion.Managers
             if (!IsLoaded_ADLX)
             {
                 // try to initialized ADLX
-                IsLoaded_ADLX = ADLXBackend.IntializeAdlx();
+                IsLoaded_ADLX = ADLXBackend.SafeIntializeAdlx();
 
                 if (IsLoaded_ADLX)
                     LogManager.LogInformation("ADLX was successfully initialized", "GPUManager");
