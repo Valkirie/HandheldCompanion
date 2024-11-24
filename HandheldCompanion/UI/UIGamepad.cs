@@ -490,7 +490,7 @@ namespace HandheldCompanion.Managers
                 // update the last change time and the last call time
                 lastChangeTime = currentTime;
                 lastCallTime = currentTime;
-                prevButtonState = controllerState.ButtonState.Clone() as ButtonState;
+                controllerState.ButtonState.Overwrite(prevButtonState);
             }
 
             // UI thread

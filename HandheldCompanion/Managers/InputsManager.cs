@@ -50,6 +50,7 @@ public static class InputsManager
     private static readonly Timer ListenerTimer;
     private static readonly Timer InputsChordHoldTimer;
 
+    private static ButtonState buttonState = new();
     private static ButtonState prevState = new();
 
     // InputsChord variables
@@ -561,17 +562,17 @@ public static class InputsManager
     private static void UpdateInputs(ControllerState controllerState)
     {
         // prepare button state
-        ButtonState buttonState = controllerState.ButtonState;
+        controllerState.ButtonState.Overwrite(buttonState);
         if (prevState.Equals(buttonState))
             return;
 
         // half-press should be removed if full-press is also present
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.L2Full, ButtonFlags.L2Soft);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.R2Full, ButtonFlags.R2Soft);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.LeftStickClick, ButtonFlags.LeftStickTouch);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.RightStickClick, ButtonFlags.RightStickTouch);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch);
-        RemoveHalfPressIfFullPress(buttonState, ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch);
+        RemoveHalfPressIfFullPress(ButtonFlags.L2Full, ButtonFlags.L2Soft);
+        RemoveHalfPressIfFullPress(ButtonFlags.R2Full, ButtonFlags.R2Soft);
+        RemoveHalfPressIfFullPress(ButtonFlags.LeftStickClick, ButtonFlags.LeftStickTouch);
+        RemoveHalfPressIfFullPress(ButtonFlags.RightStickClick, ButtonFlags.RightStickTouch);
+        RemoveHalfPressIfFullPress(ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch);
+        RemoveHalfPressIfFullPress(ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch);
 
         // reset hold timer
         InputsChordHoldTimer.Stop();
@@ -619,15 +620,12 @@ public static class InputsManager
         }
 
     Done:
-        currentChord.ButtonState = bufferChord.ButtonState.Clone() as ButtonState;
+        bufferChord.ButtonState.Overwrite(currentChord.ButtonState);
 
         if (CheckForSequence(IsKeyDown, IsKeyUp))
         {
-            successChord = new()
-            {
-                ButtonState = currentChord.ButtonState.Clone() as ButtonState,
-                chordType = currentChord.chordType
-            };
+            successChord = new() { chordType = currentChord.chordType };
+            currentChord.ButtonState.Overwrite(successChord.ButtonState);
         }
 
         if ((buttonState.IsEmpty() || !successChord.ButtonState.IsEmpty()) && IsKeyUp)
@@ -637,12 +635,11 @@ public static class InputsManager
             successChord.ButtonState.Clear();
         }
 
-        prevState = buttonState.Clone() as ButtonState;
-
-        // GamepadResetTimer.Start();
+        // update previous state
+        buttonState.Overwrite(prevState);
     }
 
-    private static void RemoveHalfPressIfFullPress(ButtonState buttonState, ButtonFlags fullPress, ButtonFlags halfPress)
+    private static void RemoveHalfPressIfFullPress(ButtonFlags fullPress, ButtonFlags halfPress)
     {
         if (currentChord.ButtonState[fullPress])
         {
