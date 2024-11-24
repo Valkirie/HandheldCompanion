@@ -91,6 +91,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             this.adapterInformation = adapterInformation;
         }
 
+        public override string ToString()
+        {
+            return adapterInformation.Details.Description;
+        }
+
         public virtual void Start()
         {
             // release halting flag

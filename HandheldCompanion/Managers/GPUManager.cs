@@ -7,7 +7,6 @@ using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
@@ -71,6 +70,7 @@ namespace HandheldCompanion.Managers
             DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
             DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
             MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+            MultimediaManager.Initialized += MultimediaManager_Initialized;
 
             // raise events
             if (ProfileManager.IsInitialized)
@@ -84,7 +84,7 @@ namespace HandheldCompanion.Managers
                     DeviceManager_DisplayAdapterArrived(displayAdapter);
             }
 
-            if (MultimediaManager.IsInitialized)
+            if (MultimediaManager.IsInitialized && MultimediaManager.PrimaryDesktop is not null)
             {
                 MultimediaManager_PrimaryScreenChanged(MultimediaManager.PrimaryDesktop);
             }
@@ -108,6 +108,7 @@ namespace HandheldCompanion.Managers
             DeviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
             DeviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
             MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+            MultimediaManager.Initialized -= MultimediaManager_Initialized;
 
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
@@ -155,6 +156,8 @@ namespace HandheldCompanion.Managers
             {
                 GPU.Start();
                 Hooked?.Invoke(GPU);
+
+                LogManager.LogInformation("Hooked DisplayAdapter: {0}", GPU.ToString());
             }
         }
 
@@ -182,26 +185,28 @@ namespace HandheldCompanion.Managers
 
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
-            try
+            AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
+            if (DisplayGPU.TryGetValue(key, out GPU gpu))
             {
-                while (!DeviceManager.IsInitialized)
-                    Thread.Sleep(1000);
+                LogManager.LogError("Retrieved DisplayAdapter: {0} for screen: {1}", gpu.ToString(), screen.screen.DeviceName);
 
-                AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
-                if (DisplayGPU.TryGetValue(key, out GPU gpu))
-                {
-                    // a new GPU was connected, disconnect from current gpu
-                    if (currentGPU is not null && currentGPU != gpu)
-                        GPUDisconnect(currentGPU);
+                // a new GPU was connected, disconnect from current gpu
+                if (currentGPU is not null && currentGPU != gpu)
+                    GPUDisconnect(currentGPU);
 
-                    // connect to new gpu
-                    GPUConnect(gpu);
-                }
+                // connect to new gpu
+                GPUConnect(gpu);
             }
-            catch
+            else
             {
-                // AdapterInformation can't be null
+                LogManager.LogError("Failed to retrieve DisplayAdapter for screen: {0}", screen.screen.DeviceName);
             }
+        }
+
+        private static void MultimediaManager_Initialized()
+        {
+            if (MultimediaManager.PrimaryDesktop is not null)
+                MultimediaManager_PrimaryScreenChanged(MultimediaManager.PrimaryDesktop);
         }
 
         private static void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
