@@ -229,6 +229,9 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
+            LogManager.LogInformation("Detected DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
+            
+            // add to dictionary
             DisplayGPU.TryAdd(adapterInformation, newGPU);
         }
 

@@ -139,7 +139,7 @@ namespace HandheldCompanion.ADLX
             {
                 return IntializeAdlx();
             }
-            catch (Exception ex) { }
+            catch { }
 
             return false;
         }
