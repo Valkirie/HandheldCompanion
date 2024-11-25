@@ -562,7 +562,7 @@ public static class InputsManager
     private static void UpdateInputs(ControllerState controllerState)
     {
         // prepare button state
-        controllerState.ButtonState.Overwrite(buttonState);
+        ButtonState.Overwrite(controllerState.ButtonState, buttonState);
         if (prevState.Equals(buttonState))
             return;
 
@@ -620,12 +620,12 @@ public static class InputsManager
         }
 
     Done:
-        bufferChord.ButtonState.Overwrite(currentChord.ButtonState);
+        ButtonState.Overwrite(bufferChord.ButtonState, currentChord.ButtonState);
 
         if (CheckForSequence(IsKeyDown, IsKeyUp))
         {
             successChord = new() { chordType = currentChord.chordType };
-            currentChord.ButtonState.Overwrite(successChord.ButtonState);
+            ButtonState.Overwrite(currentChord.ButtonState, successChord.ButtonState);
         }
 
         if ((buttonState.IsEmpty() || !successChord.ButtonState.IsEmpty()) && IsKeyUp)
@@ -636,7 +636,7 @@ public static class InputsManager
         }
 
         // update previous state
-        buttonState.Overwrite(prevState);
+        ButtonState.Overwrite(buttonState, prevState);
     }
 
     private static void RemoveHalfPressIfFullPress(ButtonFlags fullPress, ButtonFlags halfPress)

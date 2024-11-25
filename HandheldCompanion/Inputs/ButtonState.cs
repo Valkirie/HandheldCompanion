@@ -67,10 +67,10 @@ public partial class ButtonState : ICloneable
             this[state.Key] = state.Value;
     }
 
-    public void Overwrite(ButtonState buttonState)
+    public static void Overwrite(ButtonState origin, ButtonState target)
     {
-        foreach (KeyValuePair<ButtonFlags, bool> state in State)
-            buttonState[state.Key] = this[state.Key];
+        foreach (KeyValuePair<ButtonFlags, bool> state in origin.State)
+            target[state.Key] = origin[state.Key];
     }
 
     public override bool Equals(object obj)

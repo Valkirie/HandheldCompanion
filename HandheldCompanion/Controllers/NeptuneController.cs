@@ -79,7 +79,7 @@ public class NeptuneController : SteamController
         if (input is null)
             return;
 
-        InjectedButtons.Overwrite(Inputs.ButtonState);
+        ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
         Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[NeptuneControllerButton.BtnA];
         Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[NeptuneControllerButton.BtnB];

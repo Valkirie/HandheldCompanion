@@ -46,7 +46,7 @@ public class XInputController : IController
         // update secret state
         XInputGetStateSecret14(UserIndex, out State);
 
-        InjectedButtons.Overwrite(Inputs.ButtonState);
+        ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
         // skip if controller isn't connected
         if (IsConnected())

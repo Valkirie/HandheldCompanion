@@ -88,7 +88,7 @@ namespace HandheldCompanion.Controllers
             if (input is null)
                 return;
 
-            InjectedButtons.Overwrite(Inputs.ButtonState);
+            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
             Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[GordonControllerButton.BtnA];
             Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[GordonControllerButton.BtnB];
