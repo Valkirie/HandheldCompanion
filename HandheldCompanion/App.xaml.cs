@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -19,6 +20,13 @@ namespace HandheldCompanion;
 public partial class App : Application
 {
     public static bool IsMultiThreaded { get; } = false;
+
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -55,33 +63,25 @@ public partial class App : Application
 
         using (var process = Process.GetCurrentProcess())
         {
-            // force high priority
-            // taking this away, might have un predictable side effects
-            // SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
-
             Process[] processes = Process.GetProcessesByName(process.ProcessName);
             if (processes.Length > 1)
             {
                 using (Process prevProcess = processes[0])
                 {
-                    nint handle = prevProcess.MainWindowHandle;
-
-                    // Bring the previous process window to the foreground if it's minimized
-                    if (ProcessUtils.IsIconic(handle))
-                        ProcessUtils.ShowWindow(handle, (int)ProcessUtils.ShowWindowCommands.Restored);
-
-                    // Check if the previous process is responding to user input
-                    bool isPrevProcessResponding = prevProcess.Responding;
-                    if (isPrevProcessResponding && ProcessUtils.SetForegroundWindow(handle))
+                    // Find the window by its title
+                    IntPtr hWnd = FindWindow(null, $"Handheld Companion ({fileVersionInfo.FileVersion})");
+                    if (hWnd == IntPtr.Zero || !prevProcess.Responding)
                     {
-                        // If the previous process is responding and was successfully brought to the foreground, kill the current process
+                        MessageBox.Show("Another instance of Handheld Companion is already running.\n\nPlease close the other instance and try again.", "Error");
                         process.Kill();
+                        return;
                     }
-                    else
-                    {
-                        // If the previous process is not responding or cannot be brought to the foreground, assume it is stalled and kill it
-                        prevProcess.Kill();
-                    }
+
+                    // Bring previous window to foreground, kill self
+                    ProcessUtils.ShowWindow(hWnd, (int)ProcessUtils.ShowWindowCommands.Normal);
+                    ProcessUtils.SetForegroundWindow(hWnd);
+                    process.Kill();
+                    return;
                 }
             }
         }
