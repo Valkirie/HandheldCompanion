@@ -77,9 +77,15 @@ public partial class ButtonState : ICloneable
     {
         if (obj is ButtonState buttonState)
         {
-            var currentSet = new HashSet<ButtonFlags>(Buttons);
-            var otherSet = new HashSet<ButtonFlags>(buttonState.Buttons);
-            return currentSet.SetEquals(otherSet);
+            if (Buttons.Count() != buttonState.Buttons.Count())
+                return false;
+
+            // Use a simple sequence comparison if ordering is irrelevant
+            foreach (var button in Buttons)
+                if (!buttonState.Buttons.Contains(button))
+                    return false;
+
+            return true;
         }
 
         return false;
