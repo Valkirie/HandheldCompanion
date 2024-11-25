@@ -429,7 +429,7 @@ namespace HandheldCompanion.ViewModels
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ProcessIcon = processEx != null ? processEx.ProcessIcon : null;
+                ProcessIcon = processEx?.ProcessIcon;
 
                 if (processEx is null)
                 {
@@ -500,9 +500,9 @@ namespace HandheldCompanion.ViewModels
             // localize me
             GPUName = GPU is not null ? GPU.adapterInformation.Details.Description : "No GPU detected";
 
-            HasGPUPower = GPU is not null ? GPU.HasPower() : false;
-            HasGPUTemperature = GPU is not null ? GPU.HasTemperature() : false;
-            HasGPULoad = GPU is not null ? GPU.HasLoad() : false;
+            HasGPUPower = GPU is not null && GPU.HasPower();
+            HasGPUTemperature = GPU is not null && GPU.HasTemperature();
+            HasGPULoad = GPU is not null && GPU.HasLoad();
         }
 
         private void LibreHardwareMonitor_CPULoadChanged(float? value)

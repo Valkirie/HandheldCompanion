@@ -72,7 +72,7 @@ namespace steam_hidapi.net
         {
             get
             {
-                return _buttonState.ContainsKey(button) ? _buttonState[button] : false;
+                return _buttonState.ContainsKey(button) && _buttonState[button];
             }
         }
 

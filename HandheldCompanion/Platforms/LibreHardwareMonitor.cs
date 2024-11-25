@@ -61,25 +61,21 @@ namespace HandheldCompanion.Platforms
         public override bool Start()
         {
             // open computer, slow
-            if (computer is not null)
-                computer.Open();
+            computer?.Open();
 
-            if (updateTimer is not null)
-                updateTimer.Start();
+            updateTimer?.Start();
 
             return base.Start();
         }
 
         public override bool Stop(bool kill = false)
         {
-            if (updateTimer is not null)
-                updateTimer.Stop();
+            updateTimer?.Stop();
 
             // wait until all tasks are complete
             lock (updateLock)
             {
-                if (computer is not null)
-                    computer.Close();
+                computer?.Close();
             }
 
             return base.Stop(kill);

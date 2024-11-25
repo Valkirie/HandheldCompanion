@@ -28,7 +28,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2AxisAutoRotate
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AutoRotate : false;
+            get => (Action is AxisActions axisAction) && axisAction.AutoRotate;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisAutoRotate)
@@ -102,7 +102,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2AxisImproveCircularity
         {
-            get => (Action is AxisActions axisAction) ? axisAction.ImproveCircularity : false;
+            get => (Action is AxisActions axisAction) && axisAction.ImproveCircularity;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisImproveCircularity)
@@ -132,7 +132,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2MouseAutoRotate
         {
-            get => (Action is MouseActions mouseAction) ? mouseAction.AutoRotate : false;
+            get => (Action is MouseActions mouseAction) && mouseAction.AutoRotate;
             set
             {
                 if (Action is MouseActions mouseAction && value != Axis2MouseAutoRotate)
@@ -285,15 +285,13 @@ namespace HandheldCompanion.ViewModels
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
             HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
-            if (hotkeyViewModel != null)
-                hotkeyViewModel.SetListening(true, chordTarget);
+            hotkeyViewModel?.SetListening(true, chordTarget);
         }
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
             HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
-            if (hotkeyViewModel != null)
-                hotkeyViewModel.SetListening(false, storedChord.chordTarget);
+            hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
         }
 
         public override void Dispose()

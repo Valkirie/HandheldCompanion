@@ -798,7 +798,7 @@ public static class ProfileManager
                 break;
             default:
                 // check if this is current profile
-                isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+                isCurrent = currentProfile is not null && profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
                 break;
         }
 

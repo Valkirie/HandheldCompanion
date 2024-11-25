@@ -449,7 +449,7 @@ public partial class ProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.Invoke(() =>
         {
-            MotionControlAdditional.IsEnabled = MotionMapped ? true : false;
+            MotionControlAdditional.IsEnabled = MotionMapped;
         });
     }
 

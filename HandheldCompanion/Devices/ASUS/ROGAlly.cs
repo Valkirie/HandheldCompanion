@@ -350,8 +350,7 @@ public class ROGAlly : IDevice
     public override void Close()
     {
         // close Asus ACPI
-        if (asusACPI is not null)
-            asusACPI.Close();
+        asusACPI?.Close();
 
         // restore default M1/M2 behavior
         ConfigureController(false);

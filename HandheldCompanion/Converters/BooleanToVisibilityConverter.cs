@@ -25,7 +25,7 @@ public sealed class BooleanToVisibilityConverter : IValueConverter
         else if (value is bool?)
         {
             var tmp = (bool?)value;
-            bValue = tmp.HasValue ? tmp.Value : false;
+            bValue = tmp.HasValue && tmp.Value;
         }
 
         // Check if parameter requests inversion (e.g., "False" means invert)

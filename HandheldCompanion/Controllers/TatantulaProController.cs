@@ -94,8 +94,7 @@ namespace HandheldCompanion.Controllers
             base.AttachDetails(details);
 
             hidDevice = GetHidDevice();
-            if (hidDevice is not null)
-                hidDevice.OpenDevice();
+            hidDevice?.OpenDevice();
         }
 
         private HidDevice GetHidDevice()

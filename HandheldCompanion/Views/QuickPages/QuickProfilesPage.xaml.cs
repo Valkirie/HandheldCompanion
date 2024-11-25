@@ -492,7 +492,7 @@ public partial class QuickProfilesPage : Page
 
                 // get path
                 string path = currentProcess != null ? currentProcess.Path : string.Empty;
-                ImageSource imageSource = currentProcess != null ? currentProcess.ProcessIcon : null;
+                ImageSource imageSource = currentProcess?.ProcessIcon;
 
                 // update real profile
                 realProfile = ProfileManager.GetProfileFromPath(path, true);

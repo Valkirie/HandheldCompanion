@@ -103,7 +103,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool HasTurbo
         {
-            get => Action is not null ? Action.HasTurbo : false;
+            get => Action is not null && Action.HasTurbo;
             set
             {
                 if (Action is not null && value != HasTurbo)
@@ -116,7 +116,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool HasInterruptable
         {
-            get => Action is not null ? Action.HasInterruptable : false;
+            get => Action is not null && Action.HasInterruptable;
             set
             {
                 if (Action is not null && value != HasInterruptable)
@@ -129,7 +129,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool HasToggle
         {
-            get => Action is not null ? Action.HasToggle : false;
+            get => Action is not null && Action.HasToggle;
             set
             {
                 if (Action is not null && value != HasToggle)
@@ -142,7 +142,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Turbo
         {
-            get => Action is not null ? Action.Turbo : false;
+            get => Action is not null && Action.Turbo;
             set
             {
                 if (Action is not null && value != Turbo)
@@ -168,7 +168,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Toggle
         {
-            get => Action is not null ? Action.Toggle : false;
+            get => Action is not null && Action.Toggle;
             set
             {
                 if (Action is not null && value != Toggle)
@@ -207,7 +207,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Interruptable
         {
-            get => Action is not null ? Action.Interruptable : false;
+            get => Action is not null && Action.Interruptable;
             set
             {
                 if (Action is not null && value != Interruptable)

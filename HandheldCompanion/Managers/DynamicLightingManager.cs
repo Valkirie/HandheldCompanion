@@ -158,8 +158,7 @@ public static class DynamicLightingManager
 
     private static void ReleaseDirect3DDevice()
     {
-        if (device is not null)
-            device.Dispose();
+        device?.Dispose();
         device = null;
     }
 

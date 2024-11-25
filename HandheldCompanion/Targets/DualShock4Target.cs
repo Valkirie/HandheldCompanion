@@ -219,8 +219,7 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
-            if (virtualController is not null)
-                virtualController.Disconnect();
+            virtualController?.Disconnect();
 
             base.Dispose();
         }

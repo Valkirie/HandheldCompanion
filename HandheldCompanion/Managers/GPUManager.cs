@@ -60,8 +60,7 @@ namespace HandheldCompanion.Managers
 
             // todo: check if usefull on resume
             // it could be DeviceManager_DisplayAdapterArrived is called already, making this redundant
-            if (currentGPU is not null)
-                currentGPU.Start();
+            currentGPU?.Start();
 
             // manage events
             ProfileManager.Applied += ProfileManager_Applied;

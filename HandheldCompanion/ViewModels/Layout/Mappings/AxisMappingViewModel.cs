@@ -26,7 +26,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2AxisAutoRotate
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AutoRotate : false;
+            get => (Action is AxisActions axisAction) && axisAction.AutoRotate;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisAutoRotate)
@@ -100,7 +100,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2AxisImproveCircularity
         {
-            get => (Action is AxisActions axisAction) ? axisAction.ImproveCircularity : false;
+            get => (Action is AxisActions axisAction) && axisAction.ImproveCircularity;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisImproveCircularity)
@@ -130,7 +130,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2MouseAutoRotate
         {
-            get => (Action is MouseActions mouseAction) ? mouseAction.AutoRotate : false;
+            get => (Action is MouseActions mouseAction) && mouseAction.AutoRotate;
             set
             {
                 if (Action is MouseActions mouseAction && value != Axis2MouseAutoRotate)
@@ -191,7 +191,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool Axis2MouseFiltering
         {
-            get => (Action is MouseActions mouseAction) ? mouseAction.Filtering : false;
+            get => (Action is MouseActions mouseAction) && mouseAction.Filtering;
             set
             {
                 if (Action is MouseActions mouseAction && value != Axis2MouseFiltering)

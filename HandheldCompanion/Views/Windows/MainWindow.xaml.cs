@@ -468,8 +468,7 @@ public partial class MainWindow : GamepadWindow
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         // hide splashscreen
-        if (SplashScreen is not null)
-            SplashScreen.Close();
+        SplashScreen?.Close();
 
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
@@ -495,7 +494,7 @@ public partial class MainWindow : GamepadWindow
 
             MessageBoxResult result = MessageBox.Show(Content, Title, MessageBoxButton.YesNo);
             SettingsManager.SetProperty("TelemetryApproved", result == MessageBoxResult.Yes ? "True" : "False");
-            SettingsManager.SetProperty("TelemetryEnabled", result == MessageBoxResult.Yes ? true : false);
+            SettingsManager.SetProperty("TelemetryEnabled", result == MessageBoxResult.Yes);
         }
     }
 

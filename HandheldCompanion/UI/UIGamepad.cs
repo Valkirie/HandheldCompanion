@@ -568,16 +568,14 @@ namespace HandheldCompanion.Managers
                         // set state
                         radioButton.IsChecked = !radioButton.IsChecked;
 
-                        if (radioButton.Command is not null)
-                            radioButton.Command.Execute(radioButton.CommandParameter);
+                        radioButton.Command?.Execute(radioButton.CommandParameter);
                     }
                     else if (focusedElement is CheckBox checkBox)
                     {
                         // set state
                         checkBox.IsChecked = !checkBox.IsChecked;
 
-                        if (checkBox.Command is not null)
-                            checkBox.Command.Execute(checkBox.CommandParameter);
+                        checkBox.Command?.Execute(checkBox.CommandParameter);
                     }
                     else if (focusedElement is NavigationViewItem navigationViewItem)
                     {

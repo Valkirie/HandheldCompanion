@@ -225,8 +225,7 @@ public abstract class IPlatform : IDisposable
         KeepAlive = true;
 
         // start watchdog
-        if (PlatformWatchdog is not null)
-            PlatformWatchdog.Start();
+        PlatformWatchdog?.Start();
 
         return true;
     }
@@ -239,8 +238,7 @@ public abstract class IPlatform : IDisposable
         SetStatus(PlatformStatus.Stopping);
 
         // stop watchdog
-        if (PlatformWatchdog is not null)
-            PlatformWatchdog.Stop();
+        PlatformWatchdog?.Stop();
 
         if (kill)
             KillProcess();

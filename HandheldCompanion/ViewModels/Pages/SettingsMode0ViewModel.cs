@@ -33,15 +33,13 @@ namespace HandheldCompanion.ViewModels
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
             HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
-            if (hotkeyViewModel != null)
-                hotkeyViewModel.SetListening(true, chordTarget);
+            hotkeyViewModel?.SetListening(true, chordTarget);
         }
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
             HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
-            if (hotkeyViewModel != null)
-                hotkeyViewModel.SetListening(false, storedChord.chordTarget);
+            hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
         }
     }
 }

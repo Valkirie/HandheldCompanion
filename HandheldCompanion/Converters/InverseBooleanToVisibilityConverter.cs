@@ -25,7 +25,7 @@ public sealed class InverseBooleanToVisibilityConverter : IValueConverter
         else if (value is bool?)
         {
             var tmp = (bool?)value;
-            bValue = tmp.HasValue ? tmp.Value : false;
+            bValue = tmp.HasValue && tmp.Value;
         }
 
         return !bValue ? Visibility.Visible : Visibility.Collapsed;

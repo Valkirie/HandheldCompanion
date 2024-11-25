@@ -50,8 +50,7 @@ public class DInputController : IController
 
     public override void Plug()
     {
-        if (joystick is not null)
-            joystick.Acquire();
+        joystick?.Acquire();
 
         base.Plug();
     }
@@ -59,8 +58,7 @@ public class DInputController : IController
     public override void Unplug()
     {
         // Unacquire the joystick
-        if (joystick is not null)
-            joystick.Unacquire();
+        joystick?.Unacquire();
 
         base.Unplug();
     }

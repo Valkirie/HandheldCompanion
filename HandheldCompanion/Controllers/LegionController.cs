@@ -169,8 +169,7 @@ namespace HandheldCompanion.Controllers
             gamepadMotions[1] = new($"{details.deviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
 
             hidDevice = GetHidDevice();
-            if (hidDevice is not null)
-                hidDevice.OpenDevice();
+            hidDevice?.OpenDevice();
         }
 
         private HidDevice GetHidDevice()
