@@ -76,7 +76,11 @@ public partial class ButtonState : ICloneable
     public override bool Equals(object obj)
     {
         if (obj is ButtonState buttonState)
-            return Buttons.SequenceEqual(buttonState.Buttons);
+        {
+            var currentSet = new HashSet<ButtonFlags>(Buttons);
+            var otherSet = new HashSet<ButtonFlags>(buttonState.Buttons);
+            return currentSet.SetEquals(otherSet);
+        }
 
         return false;
     }
