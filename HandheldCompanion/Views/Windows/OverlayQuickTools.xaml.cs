@@ -281,7 +281,7 @@ public partial class OverlayQuickTools : GamepadWindow
             // used by SlideIn/SlideOut
             _Top = Top;
             _Left = Left;
-        });        
+        });
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)

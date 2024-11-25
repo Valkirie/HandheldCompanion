@@ -175,7 +175,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (!MultimediaManager.IsInitialized)
                     return 60.0d;
-                
+
                 return MultimediaManager.PrimaryDesktop.devMode.dmDisplayFrequency;
             }
         }
