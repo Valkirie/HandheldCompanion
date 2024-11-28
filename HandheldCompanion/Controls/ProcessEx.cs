@@ -112,8 +112,12 @@ public class ProcessWindow : IDisposable
 
     public void Dispose()
     {
-        // Remove the event handler when done
-        Automation.RemoveAllEventHandlers();
+        try
+        {
+            // Remove the event handler when done
+            Automation.RemoveAllEventHandlers();
+        }
+        catch { }
         GC.SuppressFinalize(this);
     }
 }
