@@ -75,18 +75,12 @@ namespace HandheldCompanion.ViewModels
             HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
             if (foundHotkey is null)
             {
-                if (hotkey.IsPinned)
-                {
-                    HotkeyViewModel hotkeyViewModel = new HotkeyViewModel(hotkey);
-                    HotkeysList.SafeAdd(hotkeyViewModel);
-                }
+                HotkeyViewModel hotkeyViewModel = new HotkeyViewModel(hotkey);
+                HotkeysList.SafeAdd(hotkeyViewModel);
             }
             else
             {
-                if (hotkey.IsPinned)
-                    foundHotkey.Hotkey = hotkey;
-                else
-                    HotkeysManager_Deleted(hotkey);
+                foundHotkey.Hotkey = hotkey;
             }
         }
 

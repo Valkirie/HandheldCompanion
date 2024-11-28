@@ -45,6 +45,16 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPinned}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ToggleButton
@@ -56,7 +66,6 @@
                             IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             ScrollViewer.PanningMode="HorizontalOnly">
-
                             <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
                                 <ui:FontIcon
                                     Width="24"
