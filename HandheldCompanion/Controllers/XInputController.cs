@@ -29,8 +29,6 @@ public class XInputController : IController
         ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 217, 65, 38));
         ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 26, 159, 255));
         ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 255, 200, 44));
-
-        string enumerator = Details.GetEnumerator();
     }
 
     public override string ToString()
@@ -190,7 +188,7 @@ public class XInputController : IController
     {
         get
         {
-            string enumerator = Details.GetEnumerator();
+            string enumerator = Details.EnumeratorName;
             switch (enumerator)
             {
                 default:
@@ -198,39 +196,6 @@ public class XInputController : IController
                 case "BTHENUM":
                     return true;
             }
-        }
-    }
-
-    public override void CyclePort()
-    {
-        string enumerator = Details.GetEnumerator();
-        switch (enumerator)
-        {
-            default:
-            case "BTHENUM":
-                Task.Run(async () =>
-                {
-                    /*
-                    // Bluetooth HID Device
-                    Details.InstallNullDrivers(false);
-                    Details.InstallCustomDriver("hidbth.inf", false);
-
-                    // Bluetooth XINPUT compatible input device
-                    Details.InstallNullDrivers(true);
-                    Details.InstallCustomDriver("xinputhid.inf", true);
-                    */
-
-                    /*
-                    Details.Uninstall(false);   // Bluetooth HID Device
-                    Details.Uninstall(true);    // Bluetooth XINPUT compatible input device
-                    await Task.Delay(1000);
-                    Devcon.Refresh();
-                    */
-                });
-                break;
-            case "USB":
-                base.CyclePort();
-                break;
         }
     }
 

@@ -5,6 +5,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,6 +91,7 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsWireless => Details.isBluetooth;
         public virtual bool IsDongle => Details.isDongle;
+        public string Enumerator => Details.EnumeratorName;
 
         public bool isPlaceholder;
 
@@ -356,7 +358,21 @@ namespace HandheldCompanion.Controllers
             IsBusy = true;
             ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
 
-            Details.CyclePort();
+            switch (Enumerator)
+            {
+                default:
+                case "BTHENUM":
+                    Task.Run(async () =>
+                    {
+                        Details.Uninstall(false);
+                        await Task.Delay(3000);
+                        Devcon.Refresh();
+                    });
+                    break;
+                case "USB":
+                    Details.CyclePort();
+                    break;
+            }
         }
 
         public virtual void SetLightColor(byte R, byte G, byte B)

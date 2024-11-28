@@ -141,30 +141,6 @@ public class JSController : IController
         JslSetRumble(UserIndex, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength));
     }
 
-    public override void CyclePort()
-    {
-        string enumerator = Details.GetEnumerator();
-        switch (enumerator)
-        {
-            default:
-            case "BTHENUM":
-                Task.Run(async () =>
-                {
-                    // Details.InstallNullDrivers();
-                    // await Task.Delay(1000);
-                    // Details.InstallCustomDriver("hidbth.inf");
-
-                    Details.Uninstall(false);
-                    await Task.Delay(3000);
-                    Devcon.Refresh();
-                });
-                break;
-            case "USB":
-                base.CyclePort();
-                break;
-        }
-    }
-
     public void AttachJoySettings(JOY_SETTINGS settings)
     {
         this.sSETTINGS = settings;

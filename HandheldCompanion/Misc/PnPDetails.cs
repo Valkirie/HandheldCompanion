@@ -64,11 +64,6 @@ public class PnPDetails
         return -1;
     }
 
-    public string GetEnumerator()
-    {
-        return EnumeratorName;
-    }
-
     public UsbPnPDevice GetUsbPnPDevice()
     {
         PnPDevice device = GetBasePnPDevice();

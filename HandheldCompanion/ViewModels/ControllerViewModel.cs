@@ -21,7 +21,7 @@ namespace HandheldCompanion.ViewModels
         public int UserIndex => _controller is not null ? _controller.GetUserIndex() : 0;
 
         public bool CanCalibrate => _controller is not null && _controller.HasMotionSensor();
-        public string Enumerator => _controller is not null ? _controller.Details.GetEnumerator() : "USB";
+        public string Enumerator => _controller is not null ? _controller.Details.EnumeratorName : "USB";
 
         public bool IsBusy => _controller is not null && _controller.IsBusy;
         public bool IsVirtual => _controller is not null && _controller.IsVirtual();
