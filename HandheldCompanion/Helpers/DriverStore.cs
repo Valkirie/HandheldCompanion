@@ -1,7 +1,10 @@
-﻿using HandheldCompanion.Views;
+﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Views;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using static PInvoke.Kernel32;
 
 namespace HandheldCompanion.Helpers
 {
@@ -37,8 +40,17 @@ namespace HandheldCompanion.Helpers
             if (!File.Exists(DriversPath))
                 return [];
 
-            string json = File.ReadAllText(DriversPath);
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            try
+            {
+                string json = File.ReadAllText(DriversPath);
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Could not retrieve drivers store {0}", ex.Message);
+            }
+
+            return [];
         }
 
         public static string GetDriverFromDriverStore(string path)
