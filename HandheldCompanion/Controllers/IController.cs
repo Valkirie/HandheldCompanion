@@ -300,7 +300,7 @@ namespace HandheldCompanion.Controllers
             rumbleTask = Task.Run(async () =>
             {
                 SetVibration(LargeMotor, SmallMotor);
-                await Task.Delay(delay);
+                await Task.Delay(delay).ConfigureAwait(false); // Avoid blocking the synchronization context
                 SetVibration(0, 0);
             });
         }
@@ -365,7 +365,7 @@ namespace HandheldCompanion.Controllers
                     Task.Run(async () =>
                     {
                         Details.Uninstall(false);
-                        await Task.Delay(3000);
+                        await Task.Delay(3000).ConfigureAwait(false); // Avoid blocking the synchronization context
                         Devcon.Refresh();
                     });
                     break;

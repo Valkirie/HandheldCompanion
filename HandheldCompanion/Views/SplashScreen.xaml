@@ -12,8 +12,6 @@
     Height="450"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"
-    ui:WindowHelper.UseAcrylicBackdrop="True"
-    ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -30,10 +28,7 @@
                 Text="HC"
                 TextAlignment="Center" />
 
-            <Grid Margin="0,25,25,0" HorizontalAlignment="Right">
-                <ui:ProgressRing />
-            </Grid>
-            <Grid />
+            <ui:ProgressRing Margin="0,25,25,0" HorizontalAlignment="Right" />
         </Grid>
 
         <ikw:SimpleStackPanel

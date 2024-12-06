@@ -221,16 +221,16 @@ namespace HandheldCompanion.Controllers
 
             base.UpdateInputs(ticks, delta);
         }
-        private async Task OnControllerInputReceived(GordonControllerInputEventArgs input)
-        {
-            this.input = input;
-        }
 
         public override void Plug()
         {
             try
             {
-                Controller.OnControllerInputReceived = input => OnControllerInputReceived(input);
+                Controller.OnControllerInputReceived += input =>
+                {
+                    this.input = input;
+                    return Task.CompletedTask;
+                };
 
                 // open controller
                 Open();

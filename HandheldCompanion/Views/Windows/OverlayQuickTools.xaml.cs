@@ -230,6 +230,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // Find the corresponding Screen object
         targetScreen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(friendlyScreen.screen.DeviceName));
+        if (targetScreen is null)
+            return;
 
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>

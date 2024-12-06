@@ -413,7 +413,7 @@ public static class ControllerManager
             }
             catch
             {
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
             }
         }
 
@@ -600,7 +600,7 @@ public static class ControllerManager
         }
 
         while (!controller.IsReady && controller.IsConnected())
-            await Task.Delay(250);
+            await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context
 
         // set (un)busy
         controller.IsBusy = false;
@@ -640,7 +640,7 @@ public static class ControllerManager
             if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
                 break;
 
-            await Task.Delay(100);
+            await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
         }
 
         if (controller is null)
@@ -693,7 +693,7 @@ public static class ControllerManager
 
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
-                byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath);
+                byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath, true);
 
                 // controller is not ready yet
                 if (UserIndex == byte.MaxValue)
@@ -882,7 +882,7 @@ public static class ControllerManager
         }
 
         while (!controller.IsReady && controller.IsConnected())
-            await Task.Delay(250);
+            await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context
 
         // set (un)busy
         controller.IsBusy = false;
@@ -932,7 +932,7 @@ public static class ControllerManager
             if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
                 break;
 
-            await Task.Delay(100);
+            await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
         }
 
         if (controller is null)

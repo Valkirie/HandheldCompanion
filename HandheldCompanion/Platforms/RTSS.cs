@@ -194,7 +194,7 @@ public class RTSS : IPlatform
             }
             catch { }
 
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
         } while (appEntry is null && foregroundId == ProcessId && KeepAlive);
 
         if (appEntry is null)

@@ -151,7 +151,7 @@ public partial class ControllerPage : Page
                 case ControllerManagerStatus.Succeeded:
                     {
                         dialog.UpdateContent(Properties.Resources.ControllerPage_ControllerManagment_Done);
-                        await Task.Delay(2000);
+                        await Task.Delay(2000); // Captures synchronization context
                         dialog.Hide();
                     }
                     break;

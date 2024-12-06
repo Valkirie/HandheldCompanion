@@ -51,7 +51,7 @@ namespace HandheldCompanion.Controls.Hints
                 // halt steam and wait
                 PlatformManager.Steam.StopProcess();
                 while (PlatformManager.Steam.IsRunning)
-                    await Task.Delay(1000);
+                    await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context;
 
                 // overwrite desktop layout
                 PlatformManager.Steam.SetUseSteamControllerConfigValue(0);

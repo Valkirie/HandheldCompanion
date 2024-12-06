@@ -510,7 +510,7 @@ public static class ProcessManager
                 ProcessUtils.NtResumeProcess(process.Handle);
             });
 
-        await Task.Delay(500);
+        await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
         // restore process windows
         foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
@@ -527,7 +527,7 @@ public static class ProcessManager
         foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
             ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
 
-        await Task.Delay(500);
+        await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
         ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
 

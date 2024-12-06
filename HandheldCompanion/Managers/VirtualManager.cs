@@ -164,7 +164,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
 
             switch (profile.HID)
             {
@@ -184,7 +184,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
 
             // restore default HID mode
             if (profile.HID != HIDmode.NotSelected)

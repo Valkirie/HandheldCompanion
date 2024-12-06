@@ -40,7 +40,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
                 {
                     // Start a new osk.exe process
                     Process OSK = Process.Start(new ProcessStartInfo("osk.exe") { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
-                    await Task.Delay(200);
+                    await Task.Delay(200).ConfigureAwait(false); // Avoid blocking the synchronization context
 
                     // Find the OSK window. 
                     IntPtr hwndOSK = FindWindow("OSKMainClass", null);

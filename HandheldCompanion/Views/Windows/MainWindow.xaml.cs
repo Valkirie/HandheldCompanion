@@ -93,12 +93,9 @@ public partial class MainWindow : GamepadWindow
         // get last version
         Version LastVersion = Version.Parse(SettingsManager.GetString("LastVersion"));
         bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
-        if (FirstStart)
-        {
 #if !DEBUG
-            SplashScreen.Show();
+        SplashScreen.Show();
 #endif
-        }
 
         InitializeComponent();
         this.Tag = "MainWindow";
@@ -522,7 +519,7 @@ public partial class MainWindow : GamepadWindow
                     {
                         // when device resumes from sleep
                         // use device-specific delay
-                        await Task.Delay(CurrentDevice.ResumeDelay);
+                        await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
                         // resume manager(s)
                         InputsManager.Start();
@@ -554,7 +551,7 @@ public partial class MainWindow : GamepadWindow
                     // when device goes to sleep
                     // suspend manager(s)
                     VirtualManager.Suspend(true);
-                    await Task.Delay(CurrentDevice.ResumeDelay);
+                    await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
                     TimerManager.Stop();
                     SensorsManager.Stop();

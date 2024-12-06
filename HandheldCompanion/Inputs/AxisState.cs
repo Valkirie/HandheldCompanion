@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,9 +9,9 @@ namespace HandheldCompanion.Inputs;
 [Serializable]
 public partial class AxisState : ICloneable
 {
-    public Dictionary<AxisFlags, short> State = new();
+    public ConcurrentDictionary<AxisFlags, short> State = new();
 
-    public AxisState(Dictionary<AxisFlags, short> State)
+    public AxisState(ConcurrentDictionary<AxisFlags, short> State)
     {
         foreach (var state in State)
             this[state.Key] = state.Value;
@@ -24,7 +25,7 @@ public partial class AxisState : ICloneable
 
     public short this[AxisFlags axis]
     {
-        get => !State.ContainsKey(axis) ? (short)0 : State[axis];
+        get => State.TryGetValue(axis, out short value) ? value : (short)0;
 
         set => State[axis] = value;
     }
@@ -77,8 +78,8 @@ public partial class AxisState : ICloneable
         return false;
     }
 
-    public static bool EqualsWithValues(Dictionary<AxisFlags, short> obj1,
-        Dictionary<AxisFlags, short> obj2)
+    public static bool EqualsWithValues(ConcurrentDictionary<AxisFlags, short> obj1,
+        ConcurrentDictionary<AxisFlags, short> obj2)
     {
         if (obj1.Count != obj2.Count) return false;
         {

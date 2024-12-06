@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,9 +9,9 @@ namespace HandheldCompanion.Inputs;
 [Serializable]
 public partial class ButtonState : ICloneable
 {
-    public Dictionary<ButtonFlags, bool> State = new();
+    public ConcurrentDictionary<ButtonFlags, bool> State = new();
 
-    public ButtonState(Dictionary<ButtonFlags, bool> State)
+    public ButtonState(ConcurrentDictionary<ButtonFlags, bool> State)
     {
         foreach (var state in State)
             this[state.Key] = state.Value;
@@ -24,7 +25,7 @@ public partial class ButtonState : ICloneable
 
     public bool this[ButtonFlags button]
     {
-        get => State.ContainsKey(button) && State[button];
+        get => State.TryGetValue(button, out bool value) && value;
 
         set => State[button] = value;
     }

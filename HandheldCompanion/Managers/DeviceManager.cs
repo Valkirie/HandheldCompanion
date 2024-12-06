@@ -501,7 +501,7 @@ public static class DeviceManager
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     deviceEx = FindDevice(InstanceId);
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
                 if (deviceEx is null)
@@ -533,7 +533,7 @@ public static class DeviceManager
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     deviceEx = FindDevice(InstanceId);
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
                 if (deviceEx is not null && deviceEx.isGaming)
@@ -542,7 +542,7 @@ public static class DeviceManager
                     deviceEx.baseContainerDevicePath = obj.SymLink;
 
                     if (deviceEx.EnumeratorName.Equals("USB"))
-                        deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink);
+                        deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink, false);
 
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
                         deviceEx.XInputDeviceIdx = GetDeviceIndex(obj.SymLink);
@@ -576,7 +576,7 @@ public static class DeviceManager
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     deviceEx = FindDevice(InstanceId);
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
                 // skip if XInput
@@ -610,7 +610,7 @@ public static class DeviceManager
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     deviceEx = GetDetails(obj.SymLink);
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
                 // skip if XInput
@@ -662,7 +662,7 @@ public static class DeviceManager
         }
     }
 
-    public static byte GetXInputIndexAsync(string SymLink)
+    public static byte GetXInputIndexAsync(string SymLink, bool UIthread)
     {
         byte ledState = 0;
 
@@ -684,7 +684,7 @@ public static class DeviceManager
                 ledState = ledStateData[2];
             }
 
-            Task.Delay(1000);
+            Task.Delay(1000).ConfigureAwait(UIthread);
         }
 
         return XINPUT_LED_TO_PORT_MAP[ledState];

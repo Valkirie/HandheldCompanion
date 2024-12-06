@@ -145,6 +145,7 @@ namespace HandheldCompanion.Managers
                     _focused[window] = false;
 
                     // raise event
+                    
                     LostFocus?.Invoke(window);
                 }
             }
@@ -620,8 +621,7 @@ namespace HandheldCompanion.Managers
                     {
                         // get the associated ComboBox
                         comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
-
-                        if (comboBox.IsDropDownOpen && comboBoxItem.IsEnabled)
+                        if (comboBox is not null && comboBox.IsDropDownOpen && comboBoxItem.IsEnabled)
                         {
                             int idx = comboBox.Items.IndexOf(comboBoxItem);
                             if (idx == -1)
@@ -719,8 +719,8 @@ namespace HandheldCompanion.Managers
 
                         case "ComboBoxItem":
                             {
-                                ComboBox comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
-                                comboBox.IsDropDownOpen = false;
+                                if (ItemsControl.ItemsControlFromItemContainer(focusedElement) is ComboBox comboBox)
+                                    comboBox.IsDropDownOpen = false;
                             }
                             return;
 
@@ -876,45 +876,47 @@ namespace HandheldCompanion.Managers
                             {
                                 if (focusedElement is ComboBoxItem comboBoxItem)
                                 {
-                                    ComboBox comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
-                                    if (comboBox.IsDropDownOpen)
+                                    if (ItemsControl.ItemsControlFromItemContainer(focusedElement) is ComboBox comboBox)
                                     {
-                                        int idx = comboBox.Items.IndexOf(comboBoxItem);
-                                        if (idx == -1)
-                                            idx = comboBox.Items.IndexOf(comboBoxItem.Content);
-
-                                        while (true) // Loop to skip disabled items
+                                        if (comboBox.IsDropDownOpen)
                                         {
-                                            switch (direction)
+                                            int idx = comboBox.Items.IndexOf(comboBoxItem);
+                                            if (idx == -1)
+                                                idx = comboBox.Items.IndexOf(comboBoxItem.Content);
+
+                                            while (true) // Loop to skip disabled items
                                             {
-                                                case WPFUtils.Direction.Up:
-                                                    idx--;
+                                                switch (direction)
+                                                {
+                                                    case WPFUtils.Direction.Up:
+                                                        idx--;
+                                                        break;
+
+                                                    case WPFUtils.Direction.Down:
+                                                        idx++;
+                                                        break;
+                                                }
+
+                                                // Ensure index is within bounds
+                                                if (idx < 0 || idx >= comboBox.Items.Count)
+                                                {
+                                                    // We've reached the top or bottom, so stop the loop
                                                     break;
+                                                }
 
-                                                case WPFUtils.Direction.Down:
-                                                    idx++;
+                                                // Get the ComboBoxItem at the new index
+                                                focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
+
+                                                // Check if the focused element is enabled
+                                                if (focusedElement != null && focusedElement.IsEnabled)
+                                                {
+                                                    // If the element is enabled, focus it and break out of the loop
+                                                    Focus(focusedElement, comboBox, true);
                                                     break;
+                                                }
+
+                                                // If the element is not enabled, continue to the next item in the loop
                                             }
-
-                                            // Ensure index is within bounds
-                                            if (idx < 0 || idx >= comboBox.Items.Count)
-                                            {
-                                                // We've reached the top or bottom, so stop the loop
-                                                break;
-                                            }
-
-                                            // Get the ComboBoxItem at the new index
-                                            focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
-
-                                            // Check if the focused element is enabled
-                                            if (focusedElement != null && focusedElement.IsEnabled)
-                                            {
-                                                // If the element is enabled, focus it and break out of the loop
-                                                Focus(focusedElement, comboBox, true);
-                                                break;
-                                            }
-
-                                            // If the element is not enabled, continue to the next item in the loop
                                         }
                                     }
                                     return;

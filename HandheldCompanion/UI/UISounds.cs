@@ -62,7 +62,7 @@ namespace HandheldCompanion.UI
 
                     // wait here until playback stops or should stop
                     while (waveOut.PlaybackState == PlaybackState.Playing)
-                        await Task.Delay(1);
+                        await Task.Delay(1).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
             }
         }

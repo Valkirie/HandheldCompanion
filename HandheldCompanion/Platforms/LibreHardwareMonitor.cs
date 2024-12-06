@@ -8,7 +8,6 @@ namespace HandheldCompanion.Platforms
     public class LibreHardwareMonitor : IPlatform
     {
         private Computer computer;
-        private string ProductName;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
@@ -29,8 +28,6 @@ namespace HandheldCompanion.Platforms
         {
             Name = "LibreHardwareMonitor";
             IsInstalled = true;
-
-            ProductName = MotherboardInfo.Product;
 
             // watchdog to populate sensors
             updateTimer = new Timer(updateInterval) { Enabled = false };
@@ -175,15 +172,6 @@ namespace HandheldCompanion.Platforms
             if (sensor.Name == "CPU Package" || sensor.Name == "Core (Tctl/Tdie)")
             {
                 CPUTemperatur = (float)sensor.Value;
-
-                // dirty
-                switch (ProductName)
-                {
-                    case "Galileo":
-                        CPUTemperatur /= 2.0f;
-                        break;
-                }
-
                 CPUTemperatureChanged?.Invoke(CPUTemperatur);
             }
         }

@@ -73,6 +73,7 @@ public static class ToastManager
             }
         });
 
+        ToastThread.IsBackground = true;
         ToastThread.Start();
     }
 

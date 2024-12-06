@@ -664,7 +664,7 @@ public static class PerformanceManager
                     if (ReadTDP != TDP || forcedUpdate)
                         RequestTDP((PowerType)idx, TDP, true);
 
-                    await Task.Delay(20);
+                    await Task.Delay(20).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
                 // are we done ?
@@ -858,7 +858,7 @@ public static class PerformanceManager
         for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
             RequestTDP((PowerType)idx, values[idx], immediate);
-            await Task.Delay(20);
+            await Task.Delay(20).ConfigureAwait(false); // Avoid blocking the synchronization context
         }
     }
 

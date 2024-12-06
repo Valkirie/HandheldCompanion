@@ -97,7 +97,7 @@ public class Steam : IPlatform
 
     private async void ActiveFileWatch_Changed()
     {
-        await Task.Delay(1000);
+        await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
         int SteamInput = GetUseSteamControllerConfigValue();
         base.SettingsValueChaned("UseSteamControllerConfig", SteamInput);
     }

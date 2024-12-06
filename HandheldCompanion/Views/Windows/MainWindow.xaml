@@ -17,8 +17,6 @@
     d:Visibility="Visible"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"
-    ui:WindowHelper.UseAcrylicBackdrop="True"
-    ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     Closed="Window_Closed"
     Closing="Window_Closing"
@@ -141,8 +139,8 @@
                 <ui:NavigationViewItem.InfoBadge>
                     <ui:InfoBadge
                         Name="HasNotifications"
-                        Foreground="White"
-                        Background="Red"/>
+                        Background="Red"
+                        Foreground="White" />
                 </ui:NavigationViewItem.InfoBadge>
             </ui:NavigationViewItem>
 

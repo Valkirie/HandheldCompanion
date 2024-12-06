@@ -143,7 +143,7 @@ public static class DynamicLightingManager
             if (ex.ResultCode == ResultCode.DeviceLost)
             {
                 while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
 
                 // Recreate the device and resources
                 ReleaseDirect3DDevice();

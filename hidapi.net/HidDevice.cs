@@ -86,7 +86,7 @@ namespace hidapi
         }
 
         public Task<int> ReadAsync(byte[] data) => Task.Run(() => Read(data));
-        public int Read(byte[] buffer, int timeout = 100)
+        public int Read(byte[] buffer, int timeout = 20)
         {
             if (buffer.Length < _inputBufferLen)
                 throw new ArgumentException("Buffer length is lower than input buffer length.");
@@ -161,7 +161,8 @@ namespace hidapi
             _reading = true;
             _readThread = new Thread(new ThreadStart(ReadLoop))
             {
-                IsBackground = true
+                IsBackground = true,
+                Priority = ThreadPriority.Highest
             };
             _readThread.Start();
         }

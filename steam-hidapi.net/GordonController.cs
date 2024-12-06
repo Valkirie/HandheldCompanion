@@ -20,7 +20,11 @@ namespace steam_hidapi.net
         {
             _hidDevice = new HidDevice(_vid, _pid, 64, index)
             {
-                OnInputReceived = input => Task.Run(() => OnInputReceived(input))
+                OnInputReceived = input =>
+                {
+                    OnInputReceived(input);
+                    return Task.CompletedTask;
+                }
             };
         }
 

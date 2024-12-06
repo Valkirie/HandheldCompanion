@@ -46,8 +46,9 @@ public static class HotkeysManager
             ProcessHotkey(fileName);
 
         // get latest known version
+        // if last time HC version used old hotkey engine and user has no defined hotkeys
         Version LastVersion = Version.Parse(SettingsManager.GetString("LastVersion"));
-        if (LastVersion < Version.Parse(Settings.VersionHotkeyManager))
+        if (LastVersion < Version.Parse(Settings.VersionHotkeyManager) && hotkeys.Count == 0)
         {
             // create a few defaults hotkeys
             if (!hotkeys.Values.Any(hotkey => hotkey.command is QuickToolsCommands quickToolsCommands))
@@ -152,6 +153,12 @@ public static class HotkeysManager
                     // too old
                     throw new Exception("Hotkey is outdated.");
                 }
+                else if (version <= Version.Parse("0.22.0.2"))
+                {
+                    outputraw = outputraw.Replace(
+                        "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"",
+                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+                }
                 else if (version <= Version.Parse("0.21.8.0"))
                 {
                     outputraw = outputraw.Replace(
@@ -178,8 +185,15 @@ public static class HotkeysManager
         if (hotkey is null)
             return;
 
-        if (CheckAvailableButtonFlag(hotkey.ButtonFlags))
+        // check if button flags is already used
+        if (IsUsedButtonFlag(hotkey.ButtonFlags))
+        {
+            // update button flags
             hotkey.ButtonFlags = GetAvailableButtonFlag();
+
+            // Delete the old file
+            File.Delete(fileName);
+        }
 
         if (hotkey.ButtonFlags == ButtonFlags.None)
             return;
@@ -281,15 +295,18 @@ public static class HotkeysManager
                 var isPinned = (bool)dictionary["IsPinned"];
                 hotkey.IsPinned = isPinned;
 
-                // Common ButtonFlags check
-                if (CheckAvailableButtonFlag(hotkey.ButtonFlags))
+                // check if button flags is already used
+                if (IsUsedButtonFlag(hotkey.ButtonFlags))
+                {
+                    // update button flags
                     hotkey.ButtonFlags = GetAvailableButtonFlag();
+
+                    // Delete the old file
+                    File.Delete(fileName);
+                }
 
                 if (hotkey.ButtonFlags == ButtonFlags.None)
                     return null;
-
-                // Delete the old file
-                File.Delete(fileName);
 
                 // Save new hotkey json
                 SerializeHotkey(hotkey);
@@ -301,7 +318,7 @@ public static class HotkeysManager
         return null;
     }
 
-    private static bool CheckAvailableButtonFlag(ButtonFlags buttonFlags)
+    private static bool IsUsedButtonFlag(ButtonFlags buttonFlags)
     {
         HashSet<ButtonFlags> usedFlags = hotkeys.Values.Select(h => h.ButtonFlags).ToHashSet();
         return usedFlags.Contains(buttonFlags);

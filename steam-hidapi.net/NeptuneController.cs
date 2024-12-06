@@ -18,7 +18,11 @@ namespace steam_hidapi.net
         {
             _hidDevice = new HidDevice(_vid, _pid, 64, index)
             {
-                OnInputReceived = input => Task.Run(() => OnInputReceived(input))
+                OnInputReceived = input =>
+                {
+                    OnInputReceived(input);
+                    return Task.CompletedTask;
+                }
             };
         }
 
@@ -76,7 +80,7 @@ namespace steam_hidapi.net
             while (_active)
             {
                 SetLizardMode(_lizard);
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
             }
         }
 

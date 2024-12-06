@@ -185,7 +185,7 @@ namespace HandheldCompanion.Managers
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
             AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
-            if (DisplayGPU.TryGetValue(key, out GPU gpu))
+            if (key is not null && DisplayGPU.TryGetValue(key, out GPU gpu))
             {
                 LogManager.LogError("Retrieved DisplayAdapter: {0} for screen: {1}", gpu.ToString(), screen.screen.DeviceName);
 

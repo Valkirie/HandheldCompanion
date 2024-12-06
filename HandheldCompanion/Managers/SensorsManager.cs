@@ -293,7 +293,7 @@ namespace HandheldCompanion.Managers
             for (int i = 4; i > 0; i--)
             {
                 dialog.UpdateContent($"Calibration will start in {i} seconds.");
-                await Task.Delay(1000);
+                await Task.Delay(1000); // Captures synchronization context
             }
 
             foreach (GamepadMotion gamepadMotion in gamepadMotions.Values)
@@ -306,7 +306,7 @@ namespace HandheldCompanion.Managers
                 // wait until device is steady
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
                 while (DateTime.Now < timeout && !gamepadMotion.GetAutoCalibrationIsSteady())
-                    await Task.Delay(100);
+                    await Task.Delay(100); // Captures synchronization context
 
                 // device is either too shaky or stalled
                 bool IsSteady = gamepadMotion.GetAutoCalibrationIsSteady();
@@ -321,7 +321,7 @@ namespace HandheldCompanion.Managers
                         dialog.UpdateContent($"Calibration device is silent or unsteady.");
 
                     // wait a bit
-                    await Task.Delay(2000);
+                    await Task.Delay(2000); // Captures synchronization context
 
                     break;
                 }
@@ -332,7 +332,7 @@ namespace HandheldCompanion.Managers
                 // give gamepad motion 3 seconds to get values
                 timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
                 while (DateTime.Now < timeout)
-                    await Task.Delay(100);
+                    await Task.Delay(100); // Captures synchronization context
 
                 // halt continuous calibration
                 gamepadMotion.PauseContinuousCalibration();
@@ -377,7 +377,7 @@ namespace HandheldCompanion.Managers
                 dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
 
                 // wait a bit
-                await Task.Delay(2000);
+                await Task.Delay(2000); // Captures synchronization context
             }
 
         Close:
