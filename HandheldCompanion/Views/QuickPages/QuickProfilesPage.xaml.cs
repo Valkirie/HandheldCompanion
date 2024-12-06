@@ -16,6 +16,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -547,7 +548,7 @@ public partial class QuickProfilesPage : Page
 
         if (realProfile.Default)
         {
-            CreateProfile();
+            new Thread(CreateProfile).Start();
         }
         else
         {
