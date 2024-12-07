@@ -518,18 +518,12 @@ public static class ProfileManager
                 // too old
                 throw new Exception("Profile is outdated.");
             }
-            else if (version <= Version.Parse("0.22.0.2"))
-            {
-                outputraw = outputraw.Replace(
+
+            // we've been doing back and forth on ButtonState State type
+            // let's make sure we get a ConcurrentDictionary
+            outputraw = outputraw.Replace(
                     "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"",
                     "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
-            }
-            else if (version <= Version.Parse("0.21.7.0"))
-            {
-                outputraw = outputraw.Replace(
-                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
-                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
-            }
 
             // parse profile
             profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
