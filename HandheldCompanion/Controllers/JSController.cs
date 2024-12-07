@@ -1,9 +1,6 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
-using System.Threading.Tasks;
 using static JSL;
 
 namespace HandheldCompanion.Controllers;

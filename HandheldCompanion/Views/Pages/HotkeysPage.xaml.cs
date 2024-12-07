@@ -24,5 +24,8 @@ public partial class HotkeysPage : Page
     {
     }
 
-    public void Page_Closed() { }
+    public void Page_Closed()
+    {
+        ((HotkeyPageViewModel)DataContext).Dispose();
+    }
 }

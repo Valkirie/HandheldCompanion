@@ -142,6 +142,12 @@ public partial class LayoutPage : Page
 
     public void Page_Closed()
     {
+        ((LayoutPageViewModel)DataContext).Dispose();
+
+        // manage events
+        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ProfileManager.Updated -= ProfileManager_Updated;
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)

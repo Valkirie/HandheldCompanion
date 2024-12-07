@@ -40,7 +40,7 @@ public partial class SettingsPage : Page
         cB_Language.Items.Add(new CultureInfo("zh-Hant"));
         cB_Language.Items.Add(new CultureInfo("ru-RU"));
 
-        // initialize manager(s)
+        // manage events
         UpdateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.ScreenConnected += MultimediaManager_ScreenConnected;
@@ -259,6 +259,12 @@ public partial class SettingsPage : Page
 
     public void Page_Closed()
     {
+        // manage events
+        UpdateManager.Updated -= UpdateManager_Updated;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        MultimediaManager.ScreenConnected -= MultimediaManager_ScreenConnected;
+        MultimediaManager.ScreenDisconnected -= MultimediaManager_ScreenDisconnected;
+        MultimediaManager.Initialized -= MultimediaManager_Initialized;
     }
 
     private async void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)

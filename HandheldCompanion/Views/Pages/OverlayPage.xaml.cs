@@ -21,6 +21,7 @@ public partial class OverlayPage : Page
     {
         InitializeComponent();
 
+        // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
@@ -144,6 +145,9 @@ public partial class OverlayPage : Page
 
     public void Page_Closed()
     {
+        // manage events
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        PlatformManager.RTSS.Updated -= RTSS_Updated;
     }
 
     private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)

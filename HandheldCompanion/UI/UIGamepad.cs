@@ -145,7 +145,7 @@ namespace HandheldCompanion.Managers
                     _focused[window] = false;
 
                     // raise event
-                    
+
                     LostFocus?.Invoke(window);
                 }
             }

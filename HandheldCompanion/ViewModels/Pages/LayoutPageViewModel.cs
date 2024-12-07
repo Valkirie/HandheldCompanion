@@ -108,5 +108,16 @@ namespace HandheldCompanion.ViewModels
                 layoutTemplate.Visibility = Visibility.Visible;
             }
         }
+
+        public override void Dispose()
+        {
+            // manage events
+            LayoutManager.Updated -= LayoutManager_Updated;
+            LayoutManager.Initialized -= LayoutManager_Initialized;
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+
+            base.Dispose();
+        }
     }
 }

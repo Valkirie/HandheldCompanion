@@ -231,6 +231,7 @@ public partial class ProfilesPage : Page
 
     public void Page_Closed()
     {
+        ((ProfilesPageViewModel)DataContext).Dispose();
     }
 
     private async void b_CreateProfile_Click(object sender, RoutedEventArgs e)

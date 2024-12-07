@@ -98,6 +98,7 @@ namespace HandheldCompanion.ViewModels
         {
             this.profilesPage = profilesPage;
 
+            // manage events
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
             PowerProfileManager.Initialized += PowerProfileManager_Initialized;
@@ -152,6 +153,16 @@ namespace HandheldCompanion.ViewModels
         {
             SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
             SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+        }
+
+        public override void Dispose()
+        {
+            // manage events
+            PowerProfileManager.Updated -= PowerProfileManager_Updated;
+            PowerProfileManager.Deleted -= PowerProfileManager_Deleted;
+            PowerProfileManager.Initialized -= PowerProfileManager_Initialized;
+
+            base.Dispose();
         }
     }
 }

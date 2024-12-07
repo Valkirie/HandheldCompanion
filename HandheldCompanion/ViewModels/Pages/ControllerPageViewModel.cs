@@ -74,5 +74,15 @@ namespace HandheldCompanion.ViewModels
             // do something
             controllerPage.ControllerRefresh();
         }
+
+        public override void Dispose()
+        {
+            // manage events
+            ControllerManager.ControllerPlugged -= ControllerPlugged;
+            ControllerManager.ControllerUnplugged -= ControllerUnplugged;
+            ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+
+            base.Dispose();
+        }
     }
 }

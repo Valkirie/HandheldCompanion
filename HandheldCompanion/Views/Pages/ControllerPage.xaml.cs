@@ -104,6 +104,7 @@ public partial class ControllerPage : Page
 
     public void Page_Closed()
     {
+        ((ControllerPageViewModel)DataContext).Dispose();
     }
 
     private Dialog dialog = new Dialog(MainWindow.GetCurrent())

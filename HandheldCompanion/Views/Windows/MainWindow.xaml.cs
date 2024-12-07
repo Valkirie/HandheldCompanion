@@ -626,10 +626,21 @@ public partial class MainWindow : GamepadWindow
         notifyIcon.Visible = false;
         notifyIcon.Dispose();
 
+        // stop windows
         overlayModel.Close();
         overlayTrackpad.Close();
         overlayquickTools.Close(true);
 
+        // stop pages
+        controllerPage.Page_Closed();
+        profilesPage.Page_Closed();
+        settingsPage.Page_Closed();
+        overlayPage.Page_Closed();
+        hotkeysPage.Page_Closed();
+        layoutPage.Page_Closed();
+        notificationsPage.Page_Closed();
+
+        // stop managers
         VirtualManager.Stop();
         MultimediaManager.Stop();
         GPUManager.Stop();
@@ -649,18 +660,6 @@ public partial class MainWindow : GamepadWindow
         TaskManager.Stop();
         PerformanceManager.Stop();
         UpdateManager.Stop();
-
-        // closing page(s)
-        controllerPage.Page_Closed();
-        profilesPage.Page_Closed();
-        settingsPage.Page_Closed();
-        overlayPage.Page_Closed();
-        hotkeysPage.Page_Closed();
-        layoutPage.Page_Closed();
-        notificationsPage.Page_Closed();
-
-        // force kill application
-        Environment.Exit(0);
     }
 
     private async void Window_Closing(object sender, CancelEventArgs e)
