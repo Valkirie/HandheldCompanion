@@ -149,7 +149,7 @@ public partial class QuickHomePage : Page
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             // deprecated

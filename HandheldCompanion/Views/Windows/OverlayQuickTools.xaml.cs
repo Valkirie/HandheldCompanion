@@ -195,7 +195,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             QTLB.Glyph = Controller.GetGlyph(ButtonFlags.L1);

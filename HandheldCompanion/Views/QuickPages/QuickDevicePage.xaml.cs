@@ -72,7 +72,7 @@ public partial class QuickDevicePage : Page
                 SetResolution(profileResolution.resolution);
         }
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             var canChangeDisplay = !profile.IntegerScalingEnabled;
@@ -87,7 +87,7 @@ public partial class QuickDevicePage : Page
         if (swapped)
             return;
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (profile.IntegerScalingEnabled)
@@ -104,7 +104,7 @@ public partial class QuickDevicePage : Page
 
     private void NightLight_Toggled(bool enabled)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             NightLightToggle.IsOn = enabled;

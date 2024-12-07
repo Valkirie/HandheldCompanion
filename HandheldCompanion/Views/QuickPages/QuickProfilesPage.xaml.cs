@@ -145,7 +145,7 @@ public partial class QuickProfilesPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
@@ -206,7 +206,7 @@ public partial class QuickProfilesPage : Page
         GPU.IntegerScalingChanged -= OnIntegerScalingChanged;
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             StackProfileRSR.IsEnabled = false;
@@ -237,7 +237,7 @@ public partial class QuickProfilesPage : Page
 
     private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             GPUScalingToggle.IsEnabled = Supported;
@@ -258,7 +258,7 @@ public partial class QuickProfilesPage : Page
 
     private void RTSS_Updated(PlatformStatus status)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
@@ -279,7 +279,7 @@ public partial class QuickProfilesPage : Page
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             cB_Framerate.Items.Clear();
@@ -321,7 +321,7 @@ public partial class QuickProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (AC)

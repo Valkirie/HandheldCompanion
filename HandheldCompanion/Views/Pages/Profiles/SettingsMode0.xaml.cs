@@ -47,7 +47,7 @@ public partial class SettingsMode0 : Page
         {
             try
             {
-                // UI thread (async)
+                // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     SliderSensitivityX.Value = ProfilesPage.selectedProfile.MotionSensivityX;
@@ -136,7 +136,7 @@ public partial class SettingsMode0 : Page
 
     private void Highlight_Thumb(float value)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             double dist_x = value / IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold();

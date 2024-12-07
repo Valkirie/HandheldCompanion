@@ -97,7 +97,7 @@ namespace HandheldCompanion.Controls.Hints
             bool hasTask = HasTask();
             bool hasProcesses = HasProcesses();
 
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = hasTask || hasProcesses ? Visibility.Visible : Visibility.Collapsed;

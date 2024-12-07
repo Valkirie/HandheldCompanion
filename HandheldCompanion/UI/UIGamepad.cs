@@ -251,7 +251,7 @@ namespace HandheldCompanion.Managers
             // stop listening for render events
             _gamepadFrame.ContentRendered -= _gamepadFrame_ContentRendered;
 
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // store top left navigation view item

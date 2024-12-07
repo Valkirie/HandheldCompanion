@@ -59,7 +59,7 @@ namespace HandheldCompanion.Controls.Hints
             HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity");
             VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable");
 
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 this.Visibility = Processor.GetCurrent() is IntelProcessor && (HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable) ? Visibility.Visible : Visibility.Collapsed;

@@ -141,7 +141,7 @@ internal static class LayoutManager
     // this event is called from non main thread and it creates LayoutTemplate which is a WPF element
     private static void LayoutWatcher_Template(object sender, FileSystemEventArgs e)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             ProcessLayoutTemplate(e.FullPath);

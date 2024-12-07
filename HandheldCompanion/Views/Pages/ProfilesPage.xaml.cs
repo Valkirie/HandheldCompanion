@@ -82,7 +82,7 @@ public partial class ProfilesPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
@@ -139,7 +139,7 @@ public partial class ProfilesPage : Page
         GPU.IntegerScalingChanged -= OnIntegerScalingChanged;
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             StackProfileRSR.IsEnabled = false;
@@ -191,7 +191,7 @@ public partial class ProfilesPage : Page
 
     private void RTSS_Updated(PlatformStatus status)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
@@ -212,7 +212,7 @@ public partial class ProfilesPage : Page
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             cB_Framerate.Items.Clear();
@@ -413,7 +413,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (AC)
@@ -447,7 +447,7 @@ public partial class ProfilesPage : Page
             if (action is not null && action.actionType != ActionType.Disabled)
                 MotionMapped = true;
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             MotionControlAdditional.IsEnabled = MotionMapped;

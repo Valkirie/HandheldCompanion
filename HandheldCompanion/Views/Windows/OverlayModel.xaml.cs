@@ -256,7 +256,7 @@ public partial class OverlayModel : OverlayWindow
 
         HighLightButtons();
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             // Define transformation group for model

@@ -48,7 +48,7 @@ public partial class SettingsMode1 : Page
         {
             try
             {
-                // UI thread (async)
+                // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     SliderDeadzoneAngle.Value = ProfilesPage.selectedProfile.SteeringDeadzone;
@@ -80,7 +80,7 @@ public partial class SettingsMode1 : Page
 
     private void Rotate_Needle(float y)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() => { lvAngularGauge.Value = y; });
     }
 

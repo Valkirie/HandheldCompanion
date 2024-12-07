@@ -467,7 +467,7 @@ public partial class MainWindow : GamepadWindow
         // hide splashscreen
         SplashScreen?.Close();
 
-        // load gamepad navigation maanger
+        // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
 
         HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
@@ -625,6 +625,13 @@ public partial class MainWindow : GamepadWindow
 
         notifyIcon.Visible = false;
         notifyIcon.Dispose();
+
+        // manage events
+        SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
+        DeviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
+        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         // stop windows
         overlayModel.Close();

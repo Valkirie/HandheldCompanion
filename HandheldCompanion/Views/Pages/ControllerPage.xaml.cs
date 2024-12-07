@@ -43,7 +43,7 @@ public partial class ControllerPage : Page
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             // disable emulated controller combobox if profile is not default or set to default controller
@@ -116,7 +116,7 @@ public partial class ControllerPage : Page
 
     private void ControllerManager_Working(ControllerManagerStatus status, int attempts)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(async () =>
         {
             switch (status)
@@ -198,7 +198,7 @@ public partial class ControllerPage : Page
         bool isPlugged = hasPhysical && hasTarget;
         bool isHidden = targetController is not null && targetController.IsHidden();
 
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;

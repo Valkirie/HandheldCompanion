@@ -60,7 +60,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            // UI thread (async)
+            // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 IEnumerable<IHint> notifications = Notifications.Children.OfType<IHint>();

@@ -37,7 +37,7 @@ public partial class OverlayPage : Page
 
     private void RTSS_Updated(PlatformStatus status)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)

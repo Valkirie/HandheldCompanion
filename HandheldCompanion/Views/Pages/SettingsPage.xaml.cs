@@ -114,7 +114,7 @@ public partial class SettingsPage : Page
 
     private void RTSS_Updated(PlatformStatus status)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
@@ -311,7 +311,7 @@ public partial class SettingsPage : Page
 
     private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
     {
-        // UI thread (async)
+        // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
             switch (status)
