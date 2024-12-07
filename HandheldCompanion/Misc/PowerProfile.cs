@@ -69,6 +69,11 @@ namespace HandheldCompanion.Misc
             return Default && Guid == Guid.Empty;
         }
 
+        public bool IsDeviceDefault()
+        {
+            return DeviceDefault;
+        }
+
         public override string ToString()
         {
             return $"{Name} - {Description}";
