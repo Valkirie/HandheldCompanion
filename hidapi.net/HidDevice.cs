@@ -161,7 +161,8 @@ namespace hidapi
             _reading = true;
             _readThread = new Thread(new ThreadStart(ReadLoop))
             {
-                IsBackground = true
+                IsBackground = true,
+                Priority = ThreadPriority.Highest
             };
             _readThread.Start();
         }
