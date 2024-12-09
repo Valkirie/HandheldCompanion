@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;

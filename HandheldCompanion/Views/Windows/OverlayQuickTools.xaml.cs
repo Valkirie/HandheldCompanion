@@ -18,7 +18,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.System.Power;
@@ -455,56 +454,6 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    private void SlideIn()
-    {
-        // set lock
-        if (Sliding.TryEnter())
-        {
-            DoubleAnimation animation = new DoubleAnimation
-            {
-                From = targetScreen.WpfBounds.Height,
-                To = _Top,
-                Duration = TimeSpan.FromSeconds(0.17),
-                AccelerationRatio = 0.25,
-                DecelerationRatio = 0.75,
-            };
-
-            animation.Completed += (s, e) =>
-            {
-                // release lock
-                Sliding.Exit();
-            };
-
-            this.BeginAnimation(Window.TopProperty, animation);
-        }
-    }
-
-    private void SlideOut()
-    {
-        // set lock
-        if (Sliding.TryEnter())
-        {
-            DoubleAnimation animation = new DoubleAnimation
-            {
-                From = _Top,
-                To = targetScreen.WpfBounds.Height,
-                Duration = TimeSpan.FromSeconds(0.17),
-                AccelerationRatio = 0.75,
-                DecelerationRatio = 0.25,
-            };
-
-            animation.Completed += (s, e) =>
-            {
-                this.Hide();
-
-                // release lock
-                Sliding.Exit();
-            };
-
-            this.BeginAnimation(Window.TopProperty, animation);
-        }
-    }
-
     private void GamepadWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         switch (Visibility)
@@ -542,6 +491,11 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         isClosing = v;
         Close();
+
+        homePage.Close();
+        devicePage.Close();
+        profilesPage.Close();
+        applicationsPage.Close();
     }
 
     #region navView

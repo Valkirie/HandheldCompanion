@@ -1,6 +1,6 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -112,16 +112,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public override void Dispose()
-        {
-            ProcessManager.ProcessStarted -= ProcessStarted;
-            ProcessManager.ProcessStopped -= ProcessStopped;
-
-            ProfileManager.Updated -= ProfileManager_Updated;
-            ProfileManager.Deleted -= ProfileManager_Deleted;
-            base.Dispose();
-        }
-
         private void OnRadioButtonChecked(object parameter)
         {
             if (parameter is string paramString && int.TryParse(paramString, out int value))
@@ -156,6 +146,17 @@ namespace HandheldCompanion.ViewModels
                 // Some apps might have the process come in twice, update the process on the viewmodel
                 foundProcess.Process = processEx;
             }
+        }
+
+        public override void Dispose()
+        {
+            // manage events
+            ProcessManager.ProcessStarted -= ProcessStarted;
+            ProcessManager.ProcessStopped -= ProcessStopped;
+            ProfileManager.Updated -= ProfileManager_Updated;
+            ProfileManager.Deleted -= ProfileManager_Deleted;
+
+            base.Dispose();
         }
     }
 }

@@ -1,4 +1,4 @@
-using HandheldCompanion.Controls;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
-using static HandheldCompanion.Controls.ProcessEx;
+using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.WinAPI;
 using Timer = System.Timers.Timer;
 
@@ -20,6 +20,7 @@ namespace HandheldCompanion.Managers;
 
 public static class ProcessManager
 {
+    #region imports
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool EnumWindows(WindowEnumCallback lpEnumFunc, int lParam);
@@ -30,12 +31,16 @@ public static class ProcessManager
 
     // Import the necessary user32.dll functions
     [DllImport("user32.dll")]
-    static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax,
-        IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc,
-        uint idProcess, uint idThread, uint dwFlags);
+    static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+    #endregion
 
     // Declare the WinEventDelegate
     private static WinEventDelegate winDelegate = null;
+    private static IntPtr m_hhook = IntPtr.Zero;
 
     // Define the WinEventDelegate
     delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
@@ -68,8 +73,7 @@ public static class ProcessManager
 
         // Set up the WinEvent hook
         winDelegate = new WinEventDelegate(WinEventProc);
-        IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
-            IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
+        m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
 
         ForegroundTimer = new Timer(2000);
         ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback();
@@ -101,11 +105,18 @@ public static class ProcessManager
         if (!IsInitialized)
             return;
 
-        IsInitialized = false;
+        // Unhook the event when no longer needed
+        if (m_hhook != IntPtr.Zero)
+        {
+            UnhookWinEvent(m_hhook);
+            m_hhook = IntPtr.Zero; // Reset handle to indicate it's unhooked
+        }
 
         // stop processes monitor
         ForegroundTimer.Stop();
         ProcessWatcher.Stop();
+
+        IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "ProcessManager");
     }

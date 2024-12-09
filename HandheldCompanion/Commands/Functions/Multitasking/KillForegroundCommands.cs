@@ -1,5 +1,5 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using System;
 
 namespace HandheldCompanion.Commands.Functions.Multitasking

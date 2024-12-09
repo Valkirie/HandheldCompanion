@@ -118,7 +118,7 @@ public static class SettingsManager
             Settings[name] = value;
 
             // raise event
-            if (IsInitialized)
+            if (IsInitialized || force)
                 SettingValueChanged?.Invoke(name, value, temporary);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);

@@ -15,4 +15,9 @@ public partial class QuickApplicationsPage : Page
         DataContext = new QuickApplicationsPageViewModel();
         InitializeComponent();
     }
+
+    public void Close()
+    {
+        ((QuickApplicationsPageViewModel)DataContext).Dispose();
+    }
 }

@@ -108,7 +108,7 @@
 
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="15,0,15,0">
+                                <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="30" />
                                         <ColumnDefinition />
@@ -122,7 +122,7 @@
                                         Glyph="&#xE7FC;"
                                         Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
-                                    <StackPanel Grid.Column="1">
+                                    <StackPanel Grid.Column="1" Margin="0,0,50,0">
                                         <Grid>
                                             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <ikw:SimpleStackPanel
@@ -134,10 +134,7 @@
                                                     FontStyle="Italic"
                                                     Style="{StaticResource BaseTextBlockStyle}"
                                                     Text="{Binding Product, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                <TextBlock
-                                                    Margin="5,0,5,0"
-                                                    Style="{StaticResource BaseTextBlockStyle}"
-                                                    Text="{Binding Author, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{Binding Author, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                             </ikw:SimpleStackPanel>
                                         </Grid>
                                         <TextBlock

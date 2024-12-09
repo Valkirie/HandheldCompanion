@@ -191,5 +191,18 @@ namespace HandheldCompanion.ViewModels
             HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
             hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
         }
+
+        public override void Dispose()
+        {
+            // manage events
+            HotkeysManager.Updated -= HotkeysManager_Updated;
+            InputsManager.StartedListening -= InputsManager_StartedListening;
+            InputsManager.StoppedListening -= InputsManager_StoppedListening;
+            PowerProfileManager.Updated -= PowerProfileManager_Updated;
+            PowerProfileManager.Deleted -= PowerProfileManager_Deleted;
+            PowerProfileManager.Initialized -= PowerProfileManager_Initialized;
+
+            base.Dispose();
+        }
     }
 }

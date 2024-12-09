@@ -1,8 +1,8 @@
 ﻿using HandheldCompanion.ADLX;
-using HandheldCompanion.Controls;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;

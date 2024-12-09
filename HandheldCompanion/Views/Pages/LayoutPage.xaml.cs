@@ -197,53 +197,45 @@ public partial class LayoutPage : Page
 
     private async void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)
     {
-        if (cB_Layouts.SelectedItem is null)
-            return;
-
-        if (cB_Layouts.SelectedItem is not ComboBoxItem)
-            return;
-
-        // get parent
-        var parent = cB_Layouts.SelectedItem as ComboBoxItem;
-
-        if (parent.Content is not LayoutTemplate)
-            return;
-
-        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        if (cB_Layouts.SelectedItem is LayoutTemplateViewModel layoutTemplateViewModel)
         {
-            Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
-            Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
-            DefaultButton = ContentDialogButton.Close,
-            CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
-            PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
-        }.ShowAsync();
+            // get template
+            LayoutTemplate layoutTemplate = layoutTemplateViewModel.LayoutTemplate;
 
-        await dialogTask; // sync call
+            Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+            {
+                Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
+                Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
+                DefaultButton = ContentDialogButton.Close,
+                CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+            }.ShowAsync();
 
-        switch (dialogTask.Result)
-        {
-            case ContentDialogResult.Primary:
-                {
-                    // do not overwrite currentTemplate and currentTemplate.Layout as a whole
-                    // because they both have important Update notifitications set
+            await dialogTask; // sync call
 
-                    // get template
-                    LayoutTemplate layoutTemplate = (LayoutTemplate)parent.Content;
-                    var newLayout = layoutTemplate.Layout.Clone() as Layout;
-                    currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
-                    currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
-                    currentTemplate.Layout.GyroLayout = newLayout.GyroLayout;
+            switch (dialogTask.Result)
+            {
+                case ContentDialogResult.Primary:
+                    {
+                        // do not overwrite currentTemplate and currentTemplate.Layout as a whole
+                        // because they both have important Update notifitications set
 
-                    currentTemplate.Name = layoutTemplate.Name;
-                    currentTemplate.Description = layoutTemplate.Description;
-                    currentTemplate.Guid = layoutTemplate.Guid; // not needed
+                        var newLayout = layoutTemplate.Layout.Clone() as Layout;
+                        currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
+                        currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
+                        currentTemplate.Layout.GyroLayout = newLayout.GyroLayout;
 
-                    // the whole layout has been updated without notification, trigger one
-                    currentTemplate.Layout.UpdateLayout();
+                        currentTemplate.Name = layoutTemplate.Name;
+                        currentTemplate.Description = layoutTemplate.Description;
+                        currentTemplate.Guid = layoutTemplate.Guid; // not needed
 
-                    UpdatePages();
-                }
-                break;
+                        // the whole layout has been updated without notification, trigger one
+                        currentTemplate.Layout.UpdateLayout();
+
+                        UpdatePages();
+                    }
+                    break;
+            }
         }
     }
 
@@ -262,6 +254,8 @@ public partial class LayoutPage : Page
 
     private void LayoutExportButton_Click(object sender, RoutedEventArgs e)
     {
+        LayoutFlyout.Hide();
+
         LayoutTemplate newLayout = new()
         {
             Layout = currentTemplate.Layout,
@@ -275,8 +269,6 @@ public partial class LayoutPage : Page
 
         if (newLayout.Name == string.Empty)
         {
-            LayoutFlyout.Hide();
-
             // todo: translate me
             _ = new Dialog(MainWindow.GetCurrent())
             {

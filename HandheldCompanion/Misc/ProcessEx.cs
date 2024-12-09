@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
@@ -14,113 +13,7 @@ using System.Linq;
 using System.Windows.Automation;
 using System.Windows.Media;
 
-namespace HandheldCompanion.Controls;
-
-public class ProcessWindow : IDisposable
-{
-    public AutomationElement Element;
-    public readonly int Hwnd;
-
-    private string _Name;
-    public string Name
-    {
-        get
-        {
-            return _Name;
-        }
-
-        set
-        {
-            if (!value.Equals(_Name))
-            {
-                _Name = value;
-
-                // raise event
-                Refreshed?.Invoke(this, EventArgs.Empty);
-            }
-        }
-    }
-
-    public EventHandler Refreshed;
-
-    public ProcessWindow(AutomationElement element, bool isPrimary)
-    {
-        this.Hwnd = element.Current.NativeWindowHandle;
-        this.Element = element;
-
-        if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
-        {
-            Automation.AddAutomationPropertyChangedEventHandler(
-            Element,
-            TreeScope.Element,
-            new AutomationPropertyChangedEventHandler(OnPropertyChanged),
-            AutomationElement.NameProperty,
-            AutomationElement.BoundingRectangleProperty);
-        }
-
-        RefreshName(false);
-    }
-
-    private void OnPropertyChanged(object sender, AutomationPropertyChangedEventArgs e)
-    {
-        // Handle the property change event
-        if (Element != null)
-        {
-            // Check if the Name property changed
-            if (e.Property == AutomationElement.NameProperty)
-            {
-                RefreshName(false);
-            }
-            // Check if the BoundingRectangle property changed
-            else if (e.Property == AutomationElement.BoundingRectangleProperty)
-            {
-                // raise event
-                Refreshed?.Invoke(this, EventArgs.Empty);
-            }
-        }
-    }
-
-    public void RefreshName(bool queryCache)
-    {
-        try
-        {
-            if (queryCache)
-            {
-                CacheRequest cacheRequest = new CacheRequest();
-                cacheRequest.Add(ValuePattern.ValueProperty);
-                Element = Element.GetUpdatedCache(cacheRequest);
-            }
-
-            if (Element.TryGetCurrentPattern(InvokePattern.Pattern, out _))
-            {
-                string ElementName = Element.Current.Name;
-                if (!string.IsNullOrEmpty(ElementName))
-                {
-                    // preferred method
-                    Name = ElementName;
-                    return;
-                }
-            }
-
-            // backup method
-            string title = ProcessUtils.GetWindowTitle(Hwnd);
-            if (!string.IsNullOrEmpty(title))
-                Name = title;
-        }
-        catch { }
-    }
-
-    public void Dispose()
-    {
-        try
-        {
-            // Remove the event handler when done
-            Automation.RemoveAllEventHandlers();
-        }
-        catch { }
-        GC.SuppressFinalize(this);
-    }
-}
+namespace HandheldCompanion.Misc;
 
 public class ProcessEx : IDisposable
 {
@@ -154,6 +47,7 @@ public class ProcessEx : IDisposable
     private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
 
     private static object registryLock = new();
+    private static bool IsDisposing = false;
 
     #region event
     public EventHandler Refreshed;
@@ -339,6 +233,9 @@ public class ProcessEx : IDisposable
 
     private void MainThread_Disposed(object sender, EventArgs e)
     {
+        if (IsDisposing)
+            return;
+
         // Update MainThread when disposed
         MainThread = GetMainThread(Process);
         // Subscribe to the new MainThread's Disposed event
@@ -451,6 +348,9 @@ public class ProcessEx : IDisposable
 
     public void Dispose()
     {
+        // set flag
+        IsDisposing = true;
+
         Process?.Dispose();
         MainThread?.Dispose();
         ChildrenProcessIds.Dispose();

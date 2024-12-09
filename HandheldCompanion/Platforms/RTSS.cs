@@ -1,6 +1,6 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using RTSSSharedMemoryNET;
@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -26,6 +26,8 @@ public class RTSS : IPlatform
     private const string GLOBAL_PROFILE = "";
 
     private int HookedProcessId = 0;
+    private int TargetProcessId = 0;
+
     private bool ProfileLoaded;
     private AppEntry appEntry;
 
@@ -161,41 +163,33 @@ public class RTSS : IPlatform
 
     private async void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
     {
-        if (processEx is null)
+        if (processEx is null || processEx.ProcessId == 0)
             return;
 
-        // hook new process
-        appEntry = null;
+        // unhook previous process
+        UnhookProcess(TargetProcessId);
 
-        var ProcessId = processEx.ProcessId;
-        var foregroundId = ProcessId;
-        if (ProcessId == 0)
-            return;
+        // update foreground process id
+        TargetProcessId = processEx.ProcessId;
 
+        // try to hook new process
+        new Thread(() => TryHookProcess(TargetProcessId)).Start();
+    }
+
+    private void TryHookProcess(int processId)
+    {
         do
         {
-            /*
-             * loop until we either:
-             * - got an RTSS entry
-             * - process no longer exists
-             * - RTSS was closed
-             */
-
-            ProcessEx foreground = ProcessManager.GetForegroundProcess();
-            foregroundId = foreground is not null ? foreground.ProcessId : 0;
-
             try
             {
-                appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == ProcessId).FirstOrDefault();
+                appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == processId).FirstOrDefault();
             }
-            catch (FileNotFoundException)
-            {
-                return;
-            }
+            catch (FileNotFoundException) { return; }
             catch { }
 
-            await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
-        } while (appEntry is null && foregroundId == ProcessId && KeepAlive);
+            // wait a bit
+            Thread.Sleep(1000);
+        } while (appEntry is null && TargetProcessId == processId && KeepAlive);
 
         if (appEntry is null)
             return;
@@ -207,17 +201,27 @@ public class RTSS : IPlatform
         Hooked?.Invoke(appEntry);
     }
 
-    private void ProcessManager_ProcessStopped(ProcessEx processEx)
+    private void UnhookProcess(int processId)
     {
-        var ProcessId = processEx.ProcessId;
-        if (ProcessId != HookedProcessId)
+        if (processId != HookedProcessId)
             return;
+
+        // clear RTSS target app
+        appEntry = null;
 
         // clear HookedProcessId
         HookedProcessId = 0;
 
         // raise event
-        Unhooked?.Invoke(ProcessId);
+        Unhooked?.Invoke(processId);
+    }
+
+    private void ProcessManager_ProcessStopped(ProcessEx processEx)
+    {
+        if (processEx is null || processEx.ProcessId == 0)
+            return;
+
+        UnhookProcess(processEx.ProcessId);
     }
 
     private void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)

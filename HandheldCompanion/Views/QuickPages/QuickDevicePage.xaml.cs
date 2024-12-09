@@ -29,12 +29,14 @@ public partial class QuickDevicePage : Page
     {
         InitializeComponent();
 
+        // manage events
         MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
+        NightLight.Toggled += NightLight_Toggled;
 
         // Device specific
         LegionGoPanel.Visibility = IDevice.GetCurrent() is LegionGo ? Visibility.Visible : Visibility.Collapsed;
@@ -46,13 +48,24 @@ public partial class QuickDevicePage : Page
         NightLightToggle.IsEnabled = NightLight.Supported;
         NightLightToggle.IsOn = NightLight.Enabled;
 
-        // manage events
-        NightLight.Toggled += NightLight_Toggled;
-
         // why is that part of a timer ?
         radioTimer = new(1000);
         radioTimer.Elapsed += RadioTimer_Elapsed;
         radioTimer.Start();
+    }
+
+    public void Close()
+    {
+        // manage events
+        MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        MultimediaManager.Initialized -= MultimediaManager_Initialized;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ProfileManager.Applied -= ProfileManager_Applied;
+        ProfileManager.Discarded -= ProfileManager_Discarded;
+        NightLight.Toggled -= NightLight_Toggled;
+
+        radioTimer.Stop();
     }
 
     public QuickDevicePage(string Tag) : this()
@@ -292,11 +305,6 @@ public partial class QuickDevicePage : Page
             return;
 
         SettingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
-    }
-
-    internal void Close()
-    {
-        radioTimer.Stop();
     }
 
     private void Toggle_LegionGoFanOverride_Toggled(object sender, RoutedEventArgs e)

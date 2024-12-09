@@ -1,7 +1,7 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Devices;
+﻿using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using LiveCharts;
 using System;

@@ -1,5 +1,4 @@
 using HandheldCompanion.Actions;
-using HandheldCompanion.Controls;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.GraphicsProcessingUnit;
@@ -141,6 +140,24 @@ public partial class QuickProfilesPage : Page
 
         // store hotkey to manager
         HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+    }
+
+    public void Close()
+    {
+        // manage events
+        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ProfileManager.Applied -= ProfileManager_Applied;
+        ProfileManager.Deleted -= ProfileManager_Deleted;
+        MultimediaManager.Initialized -= MultimediaManager_Initialized;
+        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        HotkeysManager.Updated -= HotkeysManager_Updated;
+        PlatformManager.RTSS.Updated -= RTSS_Updated;
+        GPUManager.Hooked -= GPUManager_Hooked;
+        GPUManager.Unhooked -= GPUManager_Unhooked;
+
+        ((QuickProfilesPageViewModel)DataContext).Dispose();
+
+        UpdateTimer.Stop();
     }
 
     private void MultimediaManager_Initialized()

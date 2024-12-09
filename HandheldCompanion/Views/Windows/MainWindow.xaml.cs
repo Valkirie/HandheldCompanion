@@ -90,18 +90,19 @@ public partial class MainWindow : GamepadWindow
         // initialize splash screen
         SplashScreen = new SplashScreen();
 
-        // get last version
-        Version LastVersion = Version.Parse(SettingsManager.GetString("LastVersion"));
-        bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
-#if !DEBUG
-        SplashScreen.Show();
-#endif
-
         InitializeComponent();
         this.Tag = "MainWindow";
 
         fileVersionInfo = _fileVersionInfo;
         CurrentWindow = this;
+
+        // get last version
+        Version LastVersion = Version.Parse(SettingsManager.GetString("LastVersion"));
+        bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
+        bool NewUpdate = LastVersion != Version.Parse(fileVersionInfo.FileVersion);
+#if !DEBUG
+        if (NewUpdate) SplashScreen.Show();
+#endif
 
         // used by system manager, controller manager
         uiSettings = new UISettings();
@@ -393,39 +394,36 @@ public partial class MainWindow : GamepadWindow
     {
         // initialize pages
         controllerPage = new ControllerPage("controller");
-        controllerPage.Loaded += ControllerPage_Loaded;
-
         devicePage = new DevicePage("device");
         profilesPage = new ProfilesPage("profiles");
         settingsPage = new SettingsPage("settings");
-
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
-
         notificationsPage = new NotificationsPage("notifications");
+
+        // manage events
+        controllerPage.Loaded += ControllerPage_Loaded;
         notificationsPage.StatusChanged += NotificationsPage_LayoutUpdated;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
         _pages.Add("DevicePage", devicePage);
-
         _pages.Add("ProfilesPage", profilesPage);
-
         _pages.Add("OverlayPage", overlayPage);
         _pages.Add("SettingsPage", settingsPage);
         _pages.Add("HotkeysPage", hotkeysPage);
-
         _pages.Add("NotificationsPage", notificationsPage);
     }
 
     private void LoadPages_MVVM()
     {
         layoutPage = new LayoutPage("layout", navView);
-        layoutPage.Initialize();
-
         performancePage = new PerformancePage();
         aboutPage = new AboutPage();
 
+        layoutPage.Initialize();
+
+        // storage pages
         _pages.Add("LayoutPage", layoutPage);
         _pages.Add("PerformancePage", performancePage);
         _pages.Add("AboutPage", aboutPage);
@@ -528,6 +526,7 @@ public partial class MainWindow : GamepadWindow
                         SensorsManager.Resume(true);
                         GPUManager.Start();
                         PerformanceManager.Resume(true);
+                        ControllerManager.StartWatchdog();
 
                         // resume platform(s)
                         PlatformManager.LibreHardwareMonitor.Start();
@@ -557,6 +556,7 @@ public partial class MainWindow : GamepadWindow
                     SensorsManager.Stop();
                     InputsManager.Stop();
                     GPUManager.Stop();
+                    ControllerManager.StopWatchdog();
 
                     // suspend platform(s)
                     PlatformManager.LibreHardwareMonitor.Stop();

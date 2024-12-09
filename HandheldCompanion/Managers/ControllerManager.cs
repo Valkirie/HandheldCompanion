@@ -1,8 +1,8 @@
 ﻿using HandheldCompanion.Controllers;
-using HandheldCompanion.Controls;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -63,15 +63,6 @@ public static class ControllerManager
         Busy = 1,
         Succeeded = 2,
         Failed = 3,
-    }
-
-    static ControllerManager()
-    {
-        watchdogThread = new Thread(watchdogThreadLoop)
-        {
-            IsBackground = true
-        };
-
     }
 
     public static async Task Start()
@@ -321,30 +312,12 @@ public static class ControllerManager
                     {
                         case true:
                             {
-                                if (!watchdogThreadRunning)
-                                {
-                                    watchdogThreadRunning = true;
-
-                                    watchdogThread = new Thread(watchdogThreadLoop)
-                                    {
-                                        IsBackground = true
-                                    };
-                                    watchdogThread.Start();
-                                }
+                                StartWatchdog();
                             }
                             break;
                         case false:
                             {
-                                // suspend watchdog
-                                if (watchdogThread is not null)
-                                {
-                                    watchdogThreadRunning = false;
-                                    // Ensure the thread has finished execution
-                                    if (watchdogThread.IsAlive)
-                                        watchdogThread.Join();
-                                    watchdogThread = null;
-                                }
-
+                                StopWatchdog();
                                 UpdateStatus(ControllerManagerStatus.Pending);
                             }
                             break;
@@ -360,6 +333,30 @@ public static class ControllerManager
                 CheckControllerScenario();
                 break;
         }
+    }
+
+    public static void StartWatchdog()
+    {
+        if (watchdogThreadRunning)
+            return;
+
+        bool ControllerManagement = SettingsManager.GetBoolean("ControllerManagement");
+        if (!ControllerManagement)
+            return;
+
+        watchdogThreadRunning = true;
+        watchdogThread = new Thread(watchdogThreadLoop) { IsBackground = true };
+        watchdogThread.Start();
+    }
+
+    public static void StopWatchdog()
+    {
+        if (watchdogThread is null)
+            return;
+
+        watchdogThreadRunning = false;
+        if (watchdogThread.IsAlive)
+            watchdogThread.Join();
     }
 
     private static void DeviceManager_Initialized()
@@ -685,11 +682,15 @@ public static class ControllerManager
 
     private static void watchdogThreadLoop(object? obj)
     {
+        HashSet<byte> UserIndexes = [];
+        bool XInputDrunk = false;
+
+        // monitoring unexpected slot changes
         while (watchdogThreadRunning)
         {
-            // monitoring unexpected slot changes
-            HashSet<byte> UserIndexes = [];
-            bool XInputDrunk = false;
+            // clear array
+            UserIndexes.Clear();
+            XInputDrunk = false;
 
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
@@ -711,29 +712,18 @@ public static class ControllerManager
                 foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
                     xInputController.AttachController(byte.MaxValue);
 
-                Thread.Sleep(2000);
+                goto Exit;
             }
 
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
                 if (HasVirtualController())
                 {
-                    // check if it is first controller
+                    // check if first controller is virtual
                     IController controller = GetControllerFromSlot(UserIndex.One, false);
                     if (controller is null)
                     {
-                        // disable that setting if we failed too many times
-                        if (ControllerManagementAttempts == ControllerManagementMaxAttempts)
-                        {
-                            // resume all physical controllers
-                            ResumeControllers();
-
-                            UpdateStatus(ControllerManagerStatus.Failed);
-                            ControllerManagementAttempts = 0;
-
-                            SettingsManager.SetProperty("ControllerManagement", false);
-                        }
-                        else
+                        if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
                         {
                             UpdateStatus(ControllerManagerStatus.Busy);
 
@@ -753,9 +743,6 @@ public static class ControllerManager
                                     goto Exit;
                             }
 
-                            // suspend virtual controller
-                            VirtualManager.Suspend(false);
-
                             // suspend all physical controllers
                             bool suspendedControllers = false;
                             foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
@@ -765,20 +752,19 @@ public static class ControllerManager
                                 suspendedControllers |= SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
                             }
 
-                            // wait a bit if none were suspended
-                            if (!suspendedControllers)
+                            if (suspendedControllers)
+                            {
+                                // suspend and resume virtual controller
+                                VirtualManager.Suspend(false);
                                 Thread.Sleep(2000);
-
-                            // resume virtual controller
-                            VirtualManager.Resume(false);
+                                VirtualManager.Resume(false);
+                            }
 
                             // resume all physical controllers
-                            // wait a bit if none were resumed
-                            if (!ResumeControllers())
+                            if (ResumeControllers())
                                 Thread.Sleep(2000);
 
                             // suspend and resume virtual controller
-                            // wait a bit between both
                             VirtualManager.Suspend(false);
                             Thread.Sleep(2000);
                             VirtualManager.Resume(false);
@@ -786,6 +772,17 @@ public static class ControllerManager
                             // increment attempt counter (if no wireless controller is power cycling)
                             if (!HasCyclingController)
                                 ControllerManagementAttempts++;
+                        }
+                        else
+                        {
+                            // disable controller management if it has failed too many times
+                            // resume all physical controllers
+                            ResumeControllers();
+
+                            UpdateStatus(ControllerManagerStatus.Failed);
+                            ControllerManagementAttempts = 0;
+
+                            SettingsManager.SetProperty("ControllerManagement", false);
                         }
                     }
                     else

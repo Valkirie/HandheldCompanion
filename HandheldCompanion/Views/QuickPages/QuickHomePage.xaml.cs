@@ -20,14 +20,24 @@ public partial class QuickHomePage : Page
     {
         this.Tag = Tag;
 
+        // manage events
         MultimediaManager.VolumeNotification += SystemManager_VolumeNotification;
         MultimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
         MultimediaManager.Initialized += SystemManager_Initialized;
-
         ProfileManager.Applied += ProfileManager_Applied;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         GPUManager.Hooked += GPUManager_Hooked;
+    }
+
+    public void Close()
+    {
+        // manage events
+        MultimediaManager.VolumeNotification -= SystemManager_VolumeNotification;
+        MultimediaManager.BrightnessNotification -= SystemManager_BrightnessNotification;
+        MultimediaManager.Initialized -= SystemManager_Initialized;
+        ProfileManager.Applied -= ProfileManager_Applied;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        GPUManager.Hooked -= GPUManager_Hooked;
     }
 
     private void GPUManager_Hooked(GraphicsProcessingUnit.GPU GPU)

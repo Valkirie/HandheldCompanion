@@ -67,10 +67,7 @@ public partial class ProfilesPage : Page
         GPUManager.Hooked += GPUManager_Hooked;
         GPUManager.Unhooked += GPUManager_Unhooked;
 
-        UpdateTimer = new Timer(UpdateInterval)
-        {
-            AutoReset = false
-        };
+        UpdateTimer = new Timer(UpdateInterval) { AutoReset = false };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // auto-sort
@@ -231,6 +228,19 @@ public partial class ProfilesPage : Page
 
     public void Page_Closed()
     {
+        // manage events
+        ProfileManager.Deleted -= ProfileDeleted;
+        ProfileManager.Updated -= ProfileUpdated;
+        ProfileManager.Applied -= ProfileApplied;
+        ProfileManager.Initialized -= ProfileManagerLoaded;
+        MultimediaManager.Initialized -= MultimediaManager_Initialized;
+        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        PlatformManager.RTSS.Updated -= RTSS_Updated;
+        GPUManager.Hooked -= GPUManager_Hooked;
+        GPUManager.Unhooked -= GPUManager_Unhooked;
+
+        UpdateTimer.Elapsed -= (sender, e) => SubmitProfile();
+
         ((ProfilesPageViewModel)DataContext).Dispose();
     }
 

@@ -254,12 +254,20 @@ internal static class LayoutManager
 
     public static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
     {
+        string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
+        if (File.Exists(fileName))
+        {
+            // get previous template with same name and author
+            LayoutTemplate template = Templates.FirstOrDefault(t => t.Name == layoutTemplate.Name && t.Author == layoutTemplate.Author);
+            if (template is not null)
+                layoutTemplate.Guid = template.Guid;
+        }
+
         var jsonString = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All
         });
 
-        string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
         if (FileUtils.IsFileWritable(fileName))
             File.WriteAllText(fileName, jsonString);
     }
@@ -270,8 +278,9 @@ internal static class LayoutManager
         {
             case "DesktopProfileOnStart":
                 {
+                    // only apply on startup
                     if (!SettingsManager.IsInitialized)
-                        SettingsManager.SetProperty("DesktopLayoutEnabled", value, false, true);
+                        SettingsManager.SetProperty("DesktopLayoutEnabled", value, true, true);
                 }
                 break;
 
