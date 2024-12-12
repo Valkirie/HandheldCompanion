@@ -16,10 +16,6 @@ namespace HandheldCompanion.Helpers
         IntPtr physicalHandle;
         InpOut? inpOut;
 
-        public RyzenSMU()
-        {
-        }
-
         ~RyzenSMU()
         {
             Dispose();

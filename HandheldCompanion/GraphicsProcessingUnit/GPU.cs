@@ -91,6 +91,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             this.adapterInformation = adapterInformation;
         }
 
+        ~GPU()
+        {
+            Dispose();
+        }
+
         public override string ToString()
         {
             return adapterInformation.Details.Description;

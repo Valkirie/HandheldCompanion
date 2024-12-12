@@ -81,6 +81,11 @@ public class ProcessEx : IDisposable
         }
     }
 
+    ~ProcessEx()
+    {
+        Dispose();
+    }
+
     public void AttachWindow(AutomationElement automationElement, bool primary = false)
     {
         int hwnd = automationElement.Current.NativeWindowHandle;

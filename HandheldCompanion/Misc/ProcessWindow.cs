@@ -32,7 +32,6 @@ namespace HandheldCompanion.Misc
             }
         }
 
-
         public ProcessWindow(AutomationElement element, bool isPrimary)
         {
             Hwnd = element.Current.NativeWindowHandle;
@@ -52,6 +51,11 @@ namespace HandheldCompanion.Misc
             }
 
             RefreshName(false);
+        }
+
+        ~ProcessWindow()
+        {
+            Dispose();
         }
 
         private void OnPropertyChanged(object sender, AutomationPropertyChangedEventArgs e)
@@ -114,10 +118,10 @@ namespace HandheldCompanion.Misc
                         Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler);
                 }
                 catch { }
-            }
 
-            // Clear the reference to the element
-            Element = null;
+                // Clear the reference to the element
+                Element = null;
+            }
 
             // Suppress finalization to optimize garbage collection
             GC.SuppressFinalize(this);

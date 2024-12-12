@@ -63,16 +63,17 @@ public class InpOut : IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        FreeLibrary(libraryHandle);
-        libraryHandle = IntPtr.Zero;
-    }
-
     ~InpOut()
     {
         Dispose();
+    }
+
+    public void Dispose()
+    {
+        FreeLibrary(libraryHandle);
+        libraryHandle = IntPtr.Zero;
+
+        GC.SuppressFinalize(this);
     }
 
     public byte[]? ReadMemory(IntPtr baseAddress, uint size)

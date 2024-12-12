@@ -24,8 +24,9 @@ namespace HandheldCompanion.Targets
 
         public bool IsConnected = false;
 
-        protected ViGEmTarget()
+        ~ViGEmTarget()
         {
+            Dispose();
         }
 
         public override string ToString()

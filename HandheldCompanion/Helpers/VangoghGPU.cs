@@ -138,8 +138,8 @@ namespace HandheldCompanion.Helpers
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             smu?.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         private static VangoghGPU? OpenMMIO(IntPtr mmioAddress, uint mmioSize)

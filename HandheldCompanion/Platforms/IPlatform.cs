@@ -146,6 +146,11 @@ public abstract class IPlatform : IDisposable
         }
     }
 
+    ~IPlatform()
+    {
+        Dispose();
+    }
+
     public virtual void Dispose()
     {
         if (PlatformWatchdog is not null)

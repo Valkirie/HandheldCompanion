@@ -18,13 +18,7 @@ public partial class Layout : ICloneable, IDisposable
 
     public bool IsDefaultLayout { get; set; }
 
-    // gyro related
-
-    public Layout()
-    {
-    }
-
-    public Layout(bool fill) : this()
+    public Layout(bool fill)
     {
         // reset layout(s)
         Dispose();
@@ -73,6 +67,11 @@ public partial class Layout : ICloneable, IDisposable
 
             AxisLayout[axis] = new TriggerActions { Axis = axis };
         }
+    }
+
+    ~Layout()
+    {
+        Dispose();
     }
 
     public object Clone()

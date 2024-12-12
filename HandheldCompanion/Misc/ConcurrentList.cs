@@ -17,8 +17,11 @@ public class ConcurrentList<T> : IList<T>, IDisposable
         _arr = new T[initialCapacity];
     }
 
-    public ConcurrentList() : this(4)
+    public ConcurrentList() : this(4) { }
+
+    ~ConcurrentList()
     {
+        Dispose();
     }
 
     public ConcurrentList(IEnumerable<T> items)

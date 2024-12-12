@@ -56,6 +56,11 @@ namespace HandheldCompanion.Commands
 
         public ICommands() { }
 
+        ~ICommands()
+        {
+            Dispose();
+        }
+
         public virtual void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             Executed?.Invoke(this);

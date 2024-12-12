@@ -22,6 +22,11 @@ namespace HandheldCompanion.Utils
             _semaphore = new SemaphoreSlim(initialCount, maxCount);
         }
 
+        ~CrossThreadLock()
+        {
+            Dispose();
+        }
+
         /// <summary>
         /// Attempts to enter the lock without blocking more than specified timeout. Returns a value indicating whether the lock was successfully entered.
         /// </summary>

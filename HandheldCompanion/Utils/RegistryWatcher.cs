@@ -72,6 +72,11 @@ namespace HandheldCompanion.Utils
             _query = new WqlEventQuery(queryString);
         }
 
+        ~RegistryWatcher()
+        {
+            Dispose();
+        }
+
         private static bool RegistryKeyExists(RegistryKey baseKey, string subKey, string valueName)
         {
             try

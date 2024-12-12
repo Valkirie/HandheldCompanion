@@ -36,7 +36,7 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_MENDOCINO:
                 case RyzenFamily.FAM_PHOENIX:
                 case RyzenFamily.FAM_HAWKPOINT:
-                // case RyzenFamily.FAM_STRIXPOINT:
+                    // case RyzenFamily.FAM_STRIXPOINT:
                     CanChangeGPU = true;
                     break;
                 case RyzenFamily.FAM_VANGOGH:

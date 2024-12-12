@@ -8,10 +8,15 @@ namespace HandheldCompanion.Utils
 
         public LambdaDisposable(Action action) => _action = action;
 
+        ~LambdaDisposable()
+        {
+            Dispose();
+        }
+
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             _action();
+            GC.SuppressFinalize(this);
         }
     }
 }

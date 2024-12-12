@@ -253,6 +253,11 @@ public class OpenLibSys : IDisposable
         }
     }
 
+    ~OpenLibSys()
+    {
+        Dispose();
+    }
+
     public OlsStatus GetStatus()
     {
         return status;

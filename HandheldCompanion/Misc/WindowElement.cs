@@ -3,8 +3,9 @@ using System.Windows.Automation;
 
 namespace HandheldCompanion.Misc
 {
-    public class WindowElement
+    public class WindowElement : IDisposable
     {
+        public AutomationElement _automationElement;
         public readonly IntPtr _hwnd;
         public readonly int _processId;
 
@@ -13,6 +14,7 @@ namespace HandheldCompanion.Misc
 
         public WindowElement(int processId, AutomationElement element)
         {
+            _automationElement = element;
             _hwnd = element.Current.NativeWindowHandle;
             _processId = processId;
 
@@ -26,9 +28,36 @@ namespace HandheldCompanion.Misc
             }
         }
 
+        ~WindowElement()
+        {
+            Dispose();
+        }
+
         private void OnWindowClosed(object sender, AutomationEventArgs e)
         {
             Closed?.Invoke(this);
+        }
+
+        public void Dispose()
+        {
+            // Remove the event handler
+            if (_automationElement != null)
+            {
+                try
+                {
+                    Automation.RemoveAutomationEventHandler(
+                        WindowPattern.WindowClosedEvent,
+                        _automationElement,
+                        OnWindowClosed);
+                }
+                catch { }
+
+                // Clear the reference to the element
+                _automationElement = null;
+            }
+
+            // Suppress finalization to optimize garbage collection
+            GC.SuppressFinalize(this);
         }
     }
 }

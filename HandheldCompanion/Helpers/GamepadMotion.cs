@@ -59,7 +59,7 @@ namespace HandheldCompanion.Helpers
 
         ~GamepadMotion()
         {
-            Dispose(false);
+            Dispose();
         }
 
         public void Reset()
@@ -250,17 +250,13 @@ namespace HandheldCompanion.Helpers
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
             if (handle != IntPtr.Zero)
             {
                 DeleteGamepadMotion(handle);
                 handle = IntPtr.Zero;
             }
+
+            GC.SuppressFinalize(this);
         }
 
         [DllImport(DllName)]

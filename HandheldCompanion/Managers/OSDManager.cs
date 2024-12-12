@@ -557,6 +557,11 @@ public class OverlayEntry : IDisposable
             Name = "<C=" + colorScheme + ">" + Name + "<C>";
     }
 
+    ~OverlayEntry()
+    {
+        Dispose();
+    }
+
     public string Name { get; set; }
 
     public void Dispose()
@@ -569,6 +574,11 @@ public class OverlayEntry : IDisposable
 public class OverlayRow : IDisposable
 {
     public List<OverlayEntry> entries = [];
+
+    ~OverlayRow()
+    {
+        Dispose();
+    }
 
     public void Dispose()
     {

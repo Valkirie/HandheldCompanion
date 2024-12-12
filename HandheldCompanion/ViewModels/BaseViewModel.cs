@@ -8,6 +8,11 @@ namespace HandheldCompanion.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        ~BaseViewModel()
+        {
+            Dispose();
+        }
+
         public virtual void Dispose()
         {
             GC.SuppressFinalize(this);

@@ -33,7 +33,6 @@ public class SensorReading
 
 public abstract class IMUSensor : IDisposable
 {
-    protected bool disposed;
     protected SensorReading reading = new();
 
     protected Dictionary<char, double> reading_axis = new()
@@ -51,14 +50,15 @@ public abstract class IMUSensor : IDisposable
     public event ReadingUpdatedEventHandler ReadingUpdated;
     public delegate void ReadingUpdatedEventHandler();
 
-    protected IMUSensor()
-    { }
+    ~IMUSensor()
+    {
+        Dispose();
+    }
 
     public virtual void Dispose()
     {
-        // Dispose of unmanaged resources.
-        Dispose(true);
-        // Suppress finalization.
+        StopListening();
+
         GC.SuppressFinalize(this);
     }
 
@@ -94,14 +94,5 @@ public abstract class IMUSensor : IDisposable
         }
 
         return string.Empty;
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-            if (disposing)
-                StopListening();
-        //dispose unmanaged resources
-        disposed = true;
     }
 }
