@@ -18,10 +18,10 @@ public partial class Layout : ICloneable, IDisposable
 
     public bool IsDefaultLayout { get; set; }
 
-    public Layout(bool fill)
+    public Layout(bool fill = false)
     {
-        // reset layout(s)
-        Dispose();
+        if (!fill)
+            return;
 
         // get current controller
         IController controller = ControllerManager.GetPlaceholderController();
