@@ -94,7 +94,7 @@ namespace HandheldCompanion.ViewModels
                 switch (dialogTask.Result)
                 {
                     case ContentDialogResult.Primary:
-                        Process.Process?.Kill();
+                        Process.Kill();
                         break;
                     default:
                         dialog.Hide();

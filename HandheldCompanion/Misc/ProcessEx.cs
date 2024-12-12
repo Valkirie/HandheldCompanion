@@ -166,6 +166,18 @@ public class ProcessEx : IDisposable
         }
     }
 
+    public void Kill()
+    {
+        try
+        {
+            if (Process.HasExited)
+                return;
+
+            Process.Kill();
+        }
+        catch { }
+    }
+
     public void Refresh()
     {
         try

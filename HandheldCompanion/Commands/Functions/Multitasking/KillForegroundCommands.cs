@@ -22,7 +22,7 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
                 // get current foreground process
                 ProcessEx fProcess = ProcessManager.GetForegroundProcess();
                 // kill if is alive
-                fProcess?.Process?.Kill();
+                fProcess?.Kill();
             }
             catch { }
 
