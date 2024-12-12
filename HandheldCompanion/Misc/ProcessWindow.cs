@@ -6,6 +6,9 @@ namespace HandheldCompanion.Misc
 {
     public class ProcessWindow : IDisposable
     {
+        private AutomationPropertyChangedEventHandler handler;
+        public EventHandler Refreshed;
+
         public AutomationElement Element;
         public readonly int Hwnd;
 
@@ -29,19 +32,21 @@ namespace HandheldCompanion.Misc
             }
         }
 
-        public EventHandler Refreshed;
 
         public ProcessWindow(AutomationElement element, bool isPrimary)
         {
             Hwnd = element.Current.NativeWindowHandle;
             Element = element;
 
+            // Create the event handler
+            handler = new AutomationPropertyChangedEventHandler(OnPropertyChanged);
+
             if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
             {
                 Automation.AddAutomationPropertyChangedEventHandler(
                 Element,
                 TreeScope.Element,
-                new AutomationPropertyChangedEventHandler(OnPropertyChanged),
+                handler,
                 AutomationElement.NameProperty,
                 AutomationElement.BoundingRectangleProperty);
             }
@@ -100,12 +105,21 @@ namespace HandheldCompanion.Misc
 
         public void Dispose()
         {
-            try
+            if (Element != null)
             {
-                // Remove the event handler when done
-                Automation.RemoveAllEventHandlers();
+                try
+                {
+                    // Remove the event handler safely
+                    if (handler != null)
+                        Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler);
+                }
+                catch { }
             }
-            catch { }
+
+            // Clear the reference to the element
+            Element = null;
+
+            // Suppress finalization to optimize garbage collection
             GC.SuppressFinalize(this);
         }
     }
