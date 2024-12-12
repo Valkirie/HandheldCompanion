@@ -34,8 +34,9 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_CEZANNE:
                 case RyzenFamily.FAM_REMBRANDT:
                 case RyzenFamily.FAM_MENDOCINO:
-                case RyzenFamily.FAM_PHEONIX:
+                case RyzenFamily.FAM_PHOENIX:
                 case RyzenFamily.FAM_HAWKPOINT:
+                // case RyzenFamily.FAM_STRIXPOINT:
                     CanChangeGPU = true;
                     break;
                 case RyzenFamily.FAM_VANGOGH:
@@ -58,8 +59,9 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_VANGOGH:
                 case RyzenFamily.FAM_REMBRANDT:
                 case RyzenFamily.FAM_MENDOCINO:
-                case RyzenFamily.FAM_PHEONIX:
+                case RyzenFamily.FAM_PHOENIX:
                 case RyzenFamily.FAM_HAWKPOINT:
+                case RyzenFamily.FAM_STRIXPOINT:
                     CanChangeTDP = true;
                     break;
             }

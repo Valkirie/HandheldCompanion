@@ -448,6 +448,17 @@ public abstract class IDevice
                                 }
                                 break;
                             }
+                        case "ONEXPLAYER F1Pro":
+                            {
+                                switch (Version)
+                                {
+                                    default:
+                                    case "Default string":
+                                        device = new OneXPlayerOneXFlyF1Pro();
+                                        break;
+                                }
+                                break;
+                            }
                         case "ONE XPLAYER":
                         case "ONEXPLAYER Mini Pro":
                             {

@@ -12,7 +12,7 @@ using static HandheldCompanion.Utils.DeviceUtils;
 namespace HandheldCompanion.Devices;
 public class OneXPlayerOneXFly : IDevice
 {
-    HidDevice hidDevice;
+    protected HidDevice hidDevice;
 
     public OneXPlayerOneXFly()
     {

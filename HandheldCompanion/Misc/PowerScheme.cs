@@ -14,7 +14,13 @@ public enum PowerIndexType
 
 public static class PowerSubGroup
 {
-    public static Guid SUB_PROCESSOR = new("54533251-82be-4824-96c1-47b60b740d00");
+    public static readonly Guid SUB_PROCESSOR = new("54533251-82be-4824-96c1-47b60b740d00");
+    public static readonly Guid SUB_SLEEP = new("238C9FA8-0AAD-41ED-83F4-97BE242C8F20");
+}
+
+public static class SleepSetting
+{
+    public static readonly Guid HIBERNATE_TIMEOUT = new Guid("9D7815A6-7EE4-497E-8888-515A05F02364");
 }
 
 public static class PowerSetting

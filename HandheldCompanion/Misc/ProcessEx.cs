@@ -163,40 +163,44 @@ public class ProcessEx : IDisposable
 
     public void Refresh()
     {
-        if (Process.HasExited)
-            return;
-
-        if (MainThread is null)
-            return;
-
-        switch (MainThread.ThreadState)
+        try
         {
-            case ThreadState.Wait:
-                {
-                    // monitor if the process main thread was suspended or resumed
-                    if (MainThread.WaitReason != prevThreadWaitReason)
+            if (Process.HasExited)
+                return;
+
+            if (MainThread is null)
+                return;
+
+            switch (MainThread.ThreadState)
+            {
+                case ThreadState.Wait:
                     {
-                        prevThreadWaitReason = MainThread.WaitReason;
-                        _isSuspended = prevThreadWaitReason == ThreadWaitReason.Suspended;
+                        // monitor if the process main thread was suspended or resumed
+                        if (MainThread.WaitReason != prevThreadWaitReason)
+                        {
+                            prevThreadWaitReason = MainThread.WaitReason;
+                            _isSuspended = prevThreadWaitReason == ThreadWaitReason.Suspended;
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case ThreadState.Terminated:
-                {
-                    // dispose from MainThread
-                    MainThread.Dispose();
-                    MainThread = null;
-                }
-                break;
+                case ThreadState.Terminated:
+                    {
+                        // dispose from MainThread
+                        MainThread.Dispose();
+                        MainThread = null;
+                    }
+                    break;
+            }
+
+            // refresh attached window names
+            foreach (ProcessWindow processWindow in ProcessWindows.Values)
+                processWindow.RefreshName(false);
+
+            // raise event
+            Refreshed?.Invoke(this, EventArgs.Empty);
         }
-
-        // refresh attached window names
-        foreach (ProcessWindow processWindow in ProcessWindows.Values)
-            processWindow.RefreshName(false);
-
-        // raise event
-        Refreshed?.Invoke(this, EventArgs.Empty);
+        catch (InvalidOperationException) { } // No process is associated with this object
     }
 
     public void RefreshChildProcesses()

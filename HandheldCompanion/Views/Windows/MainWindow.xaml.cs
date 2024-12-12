@@ -503,7 +503,8 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
-    // no code from the cases inside this function will be called on program start
+    private DateTime pendingTime = DateTime.Now;
+    private DateTime resumeTime = DateTime.Now;
     private async void OnSystemStatusChanged(SystemManager.SystemStatus status, SystemManager.SystemStatus prevStatus)
     {
         if (status == prevStatus)
@@ -516,20 +517,28 @@ public partial class MainWindow : GamepadWindow
                     if (prevStatus == SystemManager.SystemStatus.SystemPending)
                     {
                         // when device resumes from sleep
+                        resumeTime = DateTime.Now;
+
                         // use device-specific delay
                         await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
                         // resume manager(s)
                         InputsManager.Start();
                         TimerManager.Start();
-                        VirtualManager.Resume(true);
                         SensorsManager.Resume(true);
                         GPUManager.Start();
                         PerformanceManager.Resume(true);
-                        ControllerManager.StartWatchdog();
 
                         // resume platform(s)
                         PlatformManager.LibreHardwareMonitor.Start();
+
+                        // wait a bit more if device went to sleep for at least 30 minutes (arbitrary)
+                        TimeSpan sleepDuration = resumeTime - pendingTime;
+                        if (sleepDuration.TotalMinutes > 30)
+                            await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
+
+                        VirtualManager.Resume(true);
+                        ControllerManager.StartWatchdog();
                     }
 
                     // open device, when ready
@@ -548,7 +557,10 @@ public partial class MainWindow : GamepadWindow
             case SystemManager.SystemStatus.SystemPending:
                 {
                     // when device goes to sleep
+                    pendingTime = DateTime.Now;
+
                     // suspend manager(s)
+                    ControllerManager.StopWatchdog();
                     VirtualManager.Suspend(true);
                     await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
@@ -556,7 +568,6 @@ public partial class MainWindow : GamepadWindow
                     SensorsManager.Stop();
                     InputsManager.Stop();
                     GPUManager.Stop();
-                    ControllerManager.StopWatchdog();
 
                     // suspend platform(s)
                     PlatformManager.LibreHardwareMonitor.Stop();
