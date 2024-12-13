@@ -45,8 +45,11 @@ public class OverlayWindow : Window
 
         set
         {
-            _HorizontalAlignment = value;
-            UpdatePosition();
+            if (_HorizontalAlignment != value)
+            {
+                _HorizontalAlignment = value;
+                UpdatePosition();
+            }
         }
     }
 
@@ -56,8 +59,11 @@ public class OverlayWindow : Window
 
         set
         {
-            _VerticalAlignment = value;
-            UpdatePosition();
+            if (_VerticalAlignment != value)
+            {
+                _VerticalAlignment = value;
+                UpdatePosition();
+            }
         }
     }
 

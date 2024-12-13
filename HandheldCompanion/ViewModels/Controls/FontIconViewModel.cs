@@ -16,8 +16,11 @@ namespace HandheldCompanion.ViewModels.Controls
             }
             set
             {
-                _Glyph = value;
-                OnPropertyChanged(nameof(Glyph));
+                if (_Glyph != value)
+                {
+                    _Glyph = value;
+                    OnPropertyChanged(nameof(Glyph));
+                }
             }
         }
 
@@ -30,8 +33,11 @@ namespace HandheldCompanion.ViewModels.Controls
             }
             set
             {
-                _Foreground = value;
-                OnPropertyChanged(nameof(Foreground));
+                if (_Foreground != value)
+                {
+                    _Foreground = value;
+                    OnPropertyChanged(nameof(Foreground));
+                }
             }
         }
 

@@ -29,7 +29,9 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 _ProcessWindow = value;
-                OnPropertyChanged(nameof(ProcessWindow));
+
+                // refresh all properties
+                OnPropertyChanged(string.Empty);
             }
         }
 

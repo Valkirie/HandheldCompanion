@@ -50,7 +50,9 @@ namespace HandheldCompanion.ViewModels
                         return;
 
                     _selectedPresetIndexDC = value;
+
                     SelectedPresetDC = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexDC].LinkedPresetId.Value);
+                    OnPropertyChanged(nameof(SelectedPresetIndexDC));
                 }
             }
         }
@@ -89,7 +91,9 @@ namespace HandheldCompanion.ViewModels
                         return;
 
                     _selectedPresetIndexAC = value;
+
                     SelectedPresetAC = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexAC].LinkedPresetId.Value);
+                    OnPropertyChanged(nameof(SelectedPresetIndexAC));
                 }
             }
         }

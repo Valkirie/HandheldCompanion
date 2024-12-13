@@ -11,8 +11,11 @@
             }
             set
             {
-                _Text = value;
-                OnPropertyChanged(nameof(Text));
+                if (_Text != value)
+                {
+                    _Text = value;
+                    OnPropertyChanged(nameof(Text));
+                }
             }
         }
 
@@ -25,8 +28,11 @@
             }
             set
             {
-                _IsSeparator = value;
-                OnPropertyChanged(nameof(IsSeparator));
+                if (_IsSeparator != value)
+                {
+                    _IsSeparator = value;
+                    OnPropertyChanged(nameof(IsSeparator));
+                }
             }
         }
 
@@ -39,8 +45,11 @@
             }
             set
             {
-                _IsEnabled = value;
-                OnPropertyChanged(nameof(IsEnabled));
+                if (_IsEnabled != value)
+                {
+                    _IsEnabled = value;
+                    OnPropertyChanged(nameof(IsEnabled));
+                }
             }
         }
 

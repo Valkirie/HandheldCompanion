@@ -30,7 +30,8 @@ namespace HandheldCompanion.ViewModels
 
                 _Profile = value;
 
-                OnPropertyChanged(nameof(Profile));
+                // refresh all properties
+                OnPropertyChanged(string.Empty);
                 OnPropertyChanged(nameof(Name));
             }
         }

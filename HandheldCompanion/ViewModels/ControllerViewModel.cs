@@ -76,6 +76,8 @@ namespace HandheldCompanion.ViewModels
 
         public void Updated()
         {
+            // refresh all properties
+            OnPropertyChanged(string.Empty);
             OnPropertyChanged(nameof(Controller));
             OnPropertyChanged(nameof(IsHidden));
             OnPropertyChanged(nameof(IsPlugged));

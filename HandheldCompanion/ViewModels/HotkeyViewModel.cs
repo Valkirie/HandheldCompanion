@@ -44,6 +44,8 @@ namespace HandheldCompanion.ViewModels
                 _Hotkey.command.Executed += Command_Executed;
                 _Hotkey.command.Updated += Command_Updated;
 
+                // refresh all properties
+                OnPropertyChanged(string.Empty);
                 OnPropertyChanged(nameof(Hotkey));
                 OnPropertyChanged(nameof(IsPinned));
                 OnPropertyChanged(nameof(CommandTypeIndex));
@@ -353,10 +355,13 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Hotkey.command is ExecutableCommands executableCommand)
                 {
-                    executableCommand.Arguments = value;
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    if (executableCommand.Arguments != value)
+                    {
+                        executableCommand.Arguments = value;
+                        OnPropertyChanged(nameof(ExecutableArguments));
 
-                    // OnPropertyChanged(nameof(ExecutableArguments));
+                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
                 }
             }
         }
@@ -373,10 +378,13 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Hotkey.command is ExecutableCommands executableCommand)
                 {
-                    executableCommand.windowStyle = (ProcessWindowStyle)value;
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    if (executableCommand.windowStyle != (ProcessWindowStyle)value)
+                    {
+                        executableCommand.windowStyle = (ProcessWindowStyle)value;
+                        OnPropertyChanged(nameof(ExecutableWindowStyle));
 
-                    // OnPropertyChanged(nameof(ExecutableWindowStyle));
+                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
                 }
             }
         }
@@ -393,10 +401,13 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Hotkey.command is ExecutableCommands executableCommand)
                 {
-                    executableCommand.RunAs = value;
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    if (executableCommand.RunAs != value)
+                    {
+                        executableCommand.RunAs = value;
+                        OnPropertyChanged(nameof(ExecutableRunAs));
 
-                    // OnPropertyChanged(nameof(ExecutableRunAs));
+                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
                 }
             }
         }
@@ -413,8 +424,13 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Hotkey.command is OnScreenKeyboardLegacyCommands keyboardCommands)
                 {
-                    keyboardCommands.KeyboardPosition = value;
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    if (keyboardCommands.KeyboardPosition != value)
+                    {
+                        keyboardCommands.KeyboardPosition = value;
+                        OnPropertyChanged(nameof(OnScreenKeyboardLegacyPosition));
+
+                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
                 }
             }
         }

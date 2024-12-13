@@ -25,8 +25,11 @@ namespace HandheldCompanion.ViewModels
             get => _layoutTemplate is not null ? _layoutTemplate.Guid : _guid;
             set
             {
-                _guid = value;
-                OnPropertyChanged(nameof(Guid));
+                if (_guid != value)
+                {
+                    _guid = value;
+                    OnPropertyChanged(nameof(Guid));
+                }
             }
         }
 
@@ -36,8 +39,11 @@ namespace HandheldCompanion.ViewModels
             get => _layoutTemplate is not null ? _layoutTemplate.ControllerType : _controllerType;
             set
             {
-                _controllerType = value;
-                OnPropertyChanged(nameof(ControllerType));
+                if (_controllerType != value)
+                {
+                    _controllerType = value;
+                    OnPropertyChanged(nameof(ControllerType));
+                }
             }
         }
 
@@ -47,8 +53,11 @@ namespace HandheldCompanion.ViewModels
             get => _layoutTemplate is not null ? _layoutTemplate.Name : _name;
             set
             {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
             }
         }
 
@@ -62,8 +71,11 @@ namespace HandheldCompanion.ViewModels
             get => _visibility;
             set
             {
-                _visibility = value;
-                OnPropertyChanged(nameof(Visibility));
+                if (_visibility != value)
+                {
+                    _visibility = value;
+                    OnPropertyChanged(nameof(Visibility));
+                }
             }
         }
 

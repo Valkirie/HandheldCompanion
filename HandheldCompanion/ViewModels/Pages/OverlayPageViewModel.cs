@@ -26,8 +26,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayLevel)
                 {
                     _onScreenDisplayLevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayLevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayLevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayLevel, value);
                 }
             }
         }
@@ -41,8 +42,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayTimeLevel)
                 {
                     _onScreenDisplayTimeLevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayTimeLevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayTimeLevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayTimeLevel, value);
                 }
             }
         }
@@ -56,8 +58,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayFPSLevel)
                 {
                     _onScreenDisplayFPSLevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayFPSLevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayFPSLevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayFPSLevel, value);
                 }
             }
         }
@@ -71,8 +74,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayCPULevel)
                 {
                     _onScreenDisplayCPULevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayCPULevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayCPULevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayCPULevel, value);
                 }
             }
         }
@@ -86,8 +90,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayGPULevel)
                 {
                     _onScreenDisplayGPULevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayGPULevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayGPULevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayGPULevel, value);
                 }
             }
         }
@@ -101,8 +106,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayRAMLevel)
                 {
                     _onScreenDisplayRAMLevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayRAMLevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayRAMLevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayRAMLevel, value);
                 }
             }
         }
@@ -116,8 +122,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayVRAMLevel)
                 {
                     _onScreenDisplayVRAMLevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayVRAMLevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayVRAMLevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayVRAMLevel, value);
                 }
             }
         }
@@ -131,8 +138,9 @@ namespace HandheldCompanion.ViewModels
                 if (value != OnScreenDisplayBATTLevel)
                 {
                     _onScreenDisplayBATTLevel = value;
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayBATTLevel, value);
                     OnPropertyChanged(nameof(OnScreenDisplayBATTLevel));
+
+                    SettingsManager.SetProperty(Settings.OnScreenDisplayBATTLevel, value);
                 }
             }
         }
@@ -327,8 +335,11 @@ namespace HandheldCompanion.ViewModels
             get { return _framerateValues; }
             set
             {
-                _framerateValues = value;
-                OnPropertyChanged(nameof(FramerateValues));
+                if (value != _framerateValues)
+                {
+                    _framerateValues = value;
+                    OnPropertyChanged(nameof(FramerateValues));
+                }
             }
         }
 

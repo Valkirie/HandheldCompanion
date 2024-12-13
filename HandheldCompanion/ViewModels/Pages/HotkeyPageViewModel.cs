@@ -21,6 +21,7 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 SettingsManager.SetProperty("HotkeyRumbleOnExecution", value);
+                OnPropertyChanged(nameof(Rumble));
             }
         }
 
