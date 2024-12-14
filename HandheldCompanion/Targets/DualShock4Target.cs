@@ -50,24 +50,7 @@ namespace HandheldCompanion.Targets
                 // give controller manager enough time to mount the controller
                 Thread.Sleep(2000);
 
-                virtualController?.Disconnect();
-                return false;
-            }
-        }
-
-        public override bool Disconnect()
-        {
-            if (!IsConnected)
-                return true;
-
-            try
-            {
-                virtualController?.Disconnect();
-                return base.Disconnect();
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Failed to disconnect {0}. {1}", this.ToString(), ex.Message);
+                Disconnect();
                 return false;
             }
         }

@@ -50,6 +50,16 @@ namespace HandheldCompanion.Targets
 
         public virtual bool Disconnect()
         {
+            try
+            {
+                virtualController?.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to disconnect {0}. {1}", ToString(), ex.Message);
+                return false;
+            }
+
             IsConnected = false;
             Disconnected?.Invoke(this);
             LogManager.LogInformation("{0} disconnected", ToString());

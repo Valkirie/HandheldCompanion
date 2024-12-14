@@ -6,6 +6,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.ControllerManager;
@@ -18,6 +19,11 @@ namespace HandheldCompanion.Managers
         public static ViGEmClient vClient;
         public static ViGEmTarget vTarget;
 
+
+        // Check if the DLL is already loaded
+        private static string dllName = "vigemclient.dll";
+        private static IntPtr Module = IntPtr.Zero;
+
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
         private static HIDmode defaultHIDmode = HIDmode.NoController;
@@ -25,7 +31,6 @@ namespace HandheldCompanion.Managers
 
         public static ushort ProductId = 0x28E; // Xbox 360
         public static ushort VendorId = 0x45E;  // Microsoft
-        public static ushort FakeVendorId = 0x76B;  // HC
         private static object threadLock = new();
 
         public static bool IsInitialized;
@@ -48,6 +53,7 @@ namespace HandheldCompanion.Managers
             try
             {
                 vClient = new ViGEmClient();
+                Module = GetModuleHandle(dllName);
             }
             catch (Exception)
             {
@@ -99,16 +105,28 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "VirtualManager");
         }
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
         public static void Resume(bool OS)
         {
             lock (threadLock)
             {
+                if (Module == IntPtr.Zero)
+                    Module = LoadLibrary(dllName);
+
+                // create new ViGEm client
+                if (vClient is null)
+                    vClient = new ViGEmClient();
+
                 if (OS)
                 {
-                    // create new ViGEm client
-                    if (vClient is null)
-                        vClient = new ViGEmClient();
-
                     // update DSU status
                     SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
                 }
@@ -125,15 +143,21 @@ namespace HandheldCompanion.Managers
 
             lock (threadLock)
             {
+                // dispose ViGEm drivers
+                if (vClient is not null)
+                {
+                    vClient.Dispose();
+                    vClient = null;
+
+                    if (Module != IntPtr.Zero)
+                    {
+                        FreeLibrary(Module);
+                        Module = IntPtr.Zero;
+                    }
+                }
+
                 if (OS)
                 {
-                    // dispose ViGEm drivers
-                    if (vClient is not null)
-                    {
-                        vClient.Dispose();
-                        vClient = null;
-                    }
-
                     // halt DSU
                     SetDSUStatus(false);
                 }
@@ -238,7 +262,7 @@ namespace HandheldCompanion.Managers
 
                     case HIDmode.Xbox360Controller:
                         // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
-                        VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
+                        // VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
                         ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
                         vTarget = new Xbox360Target(VendorId, ProductId);
                         break;
