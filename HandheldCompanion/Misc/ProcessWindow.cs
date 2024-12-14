@@ -7,26 +7,20 @@ namespace HandheldCompanion.Misc
     public class ProcessWindow : IDisposable
     {
         private AutomationPropertyChangedEventHandler handler;
-        public EventHandler Refreshed;
+        public event EventHandler Refreshed;
 
-        public AutomationElement Element;
+        public AutomationElement Element { get; private set; }
         public readonly int Hwnd;
 
         private string _Name;
         public string Name
         {
-            get
-            {
-                return _Name;
-            }
-
+            get => _Name;
             set
             {
                 if (!value.Equals(_Name))
                 {
                     _Name = value;
-
-                    // raise event
                     Refreshed?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -37,20 +31,18 @@ namespace HandheldCompanion.Misc
             Hwnd = element.Current.NativeWindowHandle;
             Element = element;
 
-            // Create the event handler
             handler = new AutomationPropertyChangedEventHandler(OnPropertyChanged);
-
             if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
             {
                 Automation.AddAutomationPropertyChangedEventHandler(
-                Element,
-                TreeScope.Element,
-                handler,
-                AutomationElement.NameProperty,
-                AutomationElement.BoundingRectangleProperty);
+                    Element,
+                    TreeScope.Element,
+                    handler,
+                    AutomationElement.NameProperty,
+                    AutomationElement.BoundingRectangleProperty);
             }
 
-            RefreshName(false);
+            RefreshName();
         }
 
         ~ProcessWindow()
@@ -60,49 +52,38 @@ namespace HandheldCompanion.Misc
 
         private void OnPropertyChanged(object sender, AutomationPropertyChangedEventArgs e)
         {
-            // Handle the property change event
-            if (Element != null)
+            try
             {
-                // Check if the Name property changed
-                if (e.Property == AutomationElement.NameProperty)
+                if (Element != null)
                 {
-                    RefreshName(false);
-                }
-                // Check if the BoundingRectangle property changed
-                else if (e.Property == AutomationElement.BoundingRectangleProperty)
-                {
-                    // raise event
-                    Refreshed?.Invoke(this, EventArgs.Empty);
+                    if (e.Property == AutomationElement.NameProperty)
+                    {
+                        RefreshName();
+                    }
+                    else if (e.Property == AutomationElement.BoundingRectangleProperty)
+                    {
+                        Refreshed?.Invoke(this, EventArgs.Empty);
+                    }
                 }
             }
+            catch { }
         }
 
-        public void RefreshName(bool queryCache)
+        public void RefreshName()
         {
             try
             {
-                if (queryCache)
+                string elementName = Element.Current.Name;
+                if (!string.IsNullOrEmpty(elementName))
                 {
-                    CacheRequest cacheRequest = new CacheRequest();
-                    cacheRequest.Add(ValuePattern.ValueProperty);
-                    Element = Element.GetUpdatedCache(cacheRequest);
+                    Name = elementName;
                 }
-
-                if (Element.TryGetCurrentPattern(InvokePattern.Pattern, out _))
+                else
                 {
-                    string ElementName = Element.Current.Name;
-                    if (!string.IsNullOrEmpty(ElementName))
-                    {
-                        // preferred method
-                        Name = ElementName;
-                        return;
-                    }
+                    string title = ProcessUtils.GetWindowTitle(Hwnd);
+                    if (!string.IsNullOrEmpty(title))
+                        Name = title;
                 }
-
-                // backup method
-                string title = ProcessUtils.GetWindowTitle(Hwnd);
-                if (!string.IsNullOrEmpty(title))
-                    Name = title;
             }
             catch { }
         }
@@ -113,17 +94,15 @@ namespace HandheldCompanion.Misc
             {
                 try
                 {
-                    // Remove the event handler safely
                     if (handler != null)
                         Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler);
                 }
                 catch { }
 
-                // Clear the reference to the element
                 Element = null;
+                handler = null;
             }
 
-            // Suppress finalization to optimize garbage collection
             GC.SuppressFinalize(this);
         }
     }
