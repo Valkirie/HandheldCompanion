@@ -85,7 +85,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // get current controller
-                var controller = ControllerManager.GetPlaceholderController();
+                var controller = ControllerManager.GetDefault();
 
                 // Build Targets
                 var targets = new List<MappingTargetViewModel>();
@@ -108,6 +108,16 @@ namespace HandheldCompanion.ViewModels
 
                 Targets.ReplaceWith(targets);
                 SelectedTarget = matchingTargetVm ?? Targets.First();
+            }
+            else if (actionType == ActionType.Inherit)
+            {
+                if (Action is null || Action is not InheritActions)
+                {
+                    Action = new InheritActions();
+                }
+
+                // Update list and selected target
+                Targets.Clear();
             }
 
             // Refresh mapping

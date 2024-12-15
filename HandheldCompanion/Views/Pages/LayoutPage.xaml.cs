@@ -1,4 +1,5 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
@@ -158,18 +159,12 @@ public partial class LayoutPage : Page
     public void UpdateLayout(Layout layout)
     {
         currentTemplate.Layout = layout;
-
         UpdatePages();
     }
 
     public void UpdateLayoutTemplate(LayoutTemplate layoutTemplate)
     {
-        // TODO: Not entirely sure what is going on here, but the old templates were still sending
-        // events. Shouldn't they be destroyed? Either there is a bug or I don't understand something
-        // in C# (probably the latter). Either way this handles/fixes/workarounds the issue.
-        if (layoutTemplate.Layout != currentTemplate.Layout)
-            currentTemplate = layoutTemplate;
-
+        currentTemplate = layoutTemplate;
         UpdatePages();
     }
 
@@ -199,9 +194,6 @@ public partial class LayoutPage : Page
     {
         if (cB_Layouts.SelectedItem is LayoutTemplateViewModel layoutTemplateViewModel)
         {
-            // get template
-            LayoutTemplate layoutTemplate = layoutTemplateViewModel.LayoutTemplate;
-
             Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
             {
                 Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
@@ -217,13 +209,17 @@ public partial class LayoutPage : Page
             {
                 case ContentDialogResult.Primary:
                     {
+                        // get template
+                        LayoutTemplate layoutTemplate = layoutTemplateViewModel.LayoutTemplate;
+
                         // do not overwrite currentTemplate and currentTemplate.Layout as a whole
                         // because they both have important Update notifitications set
-
-                        var newLayout = layoutTemplate.Layout.Clone() as Layout;
-                        currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
-                        currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
-                        currentTemplate.Layout.GyroLayout = newLayout.GyroLayout;
+                        using (Layout? newLayout = layoutTemplate.Layout.Clone() as Layout)
+                        {
+                            currentTemplate.Layout.AxisLayout = CloningHelper.DeepClone(newLayout.AxisLayout);
+                            currentTemplate.Layout.ButtonLayout = CloningHelper.DeepClone(newLayout.ButtonLayout);
+                            currentTemplate.Layout.GyroLayout = CloningHelper.DeepClone(newLayout.GyroLayout);
+                        }
 
                         currentTemplate.Name = layoutTemplate.Name;
                         currentTemplate.Description = layoutTemplate.Description;
@@ -392,8 +388,8 @@ public partial class LayoutPage : Page
 
     private void CheckBoxDefaultLayout_Checked(object sender, RoutedEventArgs e)
     {
-        var isDefaultLayout = (bool)CheckBoxDefaultLayout.IsChecked;
-        var prevDefaultLayoutProfile = ProfileManager.GetProfileWithDefaultLayout();
+        bool isDefaultLayout = (bool)CheckBoxDefaultLayout.IsChecked;
+        Profile? prevDefaultLayoutProfile = ProfileManager.GetProfileWithDefaultLayout();
 
         currentTemplate.Layout.IsDefaultLayout = isDefaultLayout;
         currentTemplate.Layout.UpdateLayout();

@@ -1,5 +1,7 @@
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
@@ -62,7 +64,6 @@ public partial class Profile : ICloneable, IComparable
     public Version Version { get; set; } = new();
 
     public string LayoutTitle { get; set; } = string.Empty;
-    public bool LayoutEnabled { get; set; }
     public Layout Layout { get; set; } = new();
 
     public bool Whitelisted { get; set; } // if true, can see through the HidHide cloak
@@ -124,11 +125,13 @@ public partial class Profile : ICloneable, IComparable
     {
         // initialize aiming array
         if (MotionSensivityArray.Count == 0)
+        {
             for (var i = 0; i < SensivityArraySize; i++)
             {
                 var value = i / (double)(SensivityArraySize - 1);
                 MotionSensivityArray[value] = 0.5f;
             }
+        }
     }
 
     public Profile(string path) : this()
@@ -146,16 +149,17 @@ public partial class Profile : ICloneable, IComparable
             Path = path;
         }
 
+        // initialize layout
+        Layout.FillInherit();
+        LayoutTitle = LayoutTemplate.DefaultLayout.Name;
+
         // enable the below variables when profile is created
         Enabled = true;
     }
 
     public object Clone()
     {
-        var jsonString = JsonConvert.SerializeObject(this, Formatting.Indented,
-            new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
-        return JsonConvert.DeserializeObject<Profile>(jsonString,
-            new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+        return CloningHelper.DeepClone(this);
     }
 
     public int CompareTo(object obj)

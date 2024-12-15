@@ -41,8 +41,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly XInputController? emptyXInput = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
-    private static readonly DS4Controller? emptyDS4 = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
+    private static readonly XInputController? defaultXInput = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
+    private static readonly DS4Controller? defaultDS4 = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
 
     private static IController? targetController;
     private static FocusedWindow focusedWindows = FocusedWindow.None;
@@ -967,7 +967,7 @@ public static class ControllerManager
     {
         // summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/oem chords
         // todo: improve me
-        Controllers[string.Empty] = GetPlaceholderController();
+        Controllers[string.Empty] = GetDefault();
         SetTargetController(string.Empty, false);
     }
 
@@ -1205,7 +1205,7 @@ public static class ControllerManager
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
-    internal static IController GetPlaceholderController()
+    public static IController GetDefault()
     {
         // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
         HIDmode HIDmode = HIDmode.NoController;
@@ -1222,11 +1222,21 @@ public static class ControllerManager
             default:
             case HIDmode.NoController:
             case HIDmode.Xbox360Controller:
-                return emptyXInput;
+                return defaultXInput;
 
             case HIDmode.DualShock4Controller:
-                return emptyDS4;
+                return defaultDS4;
         }
+    }
+
+    public static IController GetDefaultXBOX()
+    {
+        return defaultXInput;
+    }
+
+    public static IController GetDefaultDualShock4()
+    {
+        return defaultDS4;
     }
 
     #region events

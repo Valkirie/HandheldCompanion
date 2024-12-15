@@ -475,6 +475,7 @@
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="False" />
                                 <ComboBoxItem Content="Shift" IsEnabled="True" />
+                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox
@@ -489,7 +490,12 @@
                                     <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                         <Setter Property="IsEnabled" Value="True" />
                                         <Style.Triggers>
+                                            <!--  Disable when ActionTypeIndex is 0  -->
                                             <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                            <!--  Disable when ActionTypeIndex is 7  -->
+                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
                                                 <Setter Property="IsEnabled" Value="False" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -747,7 +753,12 @@
                                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                                     <Setter Property="IsEnabled" Value="True" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding HapticModeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                                        <!--  Disable when ActionTypeIndex is 0  -->
+                                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
                                                             <Setter Property="IsEnabled" Value="False" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -825,6 +836,7 @@
                             <ComboBoxItem Content="Mouse" IsEnabled="True" />
                             <ComboBoxItem Content="Trigger" IsEnabled="False" />
                             <ComboBoxItem Content="Shift" IsEnabled="False" />
+                            <ComboBoxItem Content="Inherit" IsEnabled="False" />
                         </ComboBox>
 
                         <ComboBox
@@ -839,7 +851,12 @@
                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                     <Setter Property="IsEnabled" Value="True" />
                                     <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
                                         <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
                                             <Setter Property="IsEnabled" Value="False" />
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -1562,6 +1579,7 @@
                             <ComboBoxItem Content="Mouse" IsEnabled="True" />
                             <ComboBoxItem Content="Trigger" IsEnabled="False" />
                             <ComboBoxItem Content="Shift" IsEnabled="False" />
+                            <ComboBoxItem Content="Inherit" IsEnabled="True" />
                         </ComboBox>
 
                         <ComboBox
@@ -1576,7 +1594,12 @@
                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                     <Setter Property="IsEnabled" Value="True" />
                                     <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
                                         <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
                                             <Setter Property="IsEnabled" Value="False" />
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -2167,6 +2190,7 @@
                             <ComboBoxItem Content="Mouse" IsEnabled="False" />
                             <ComboBoxItem Content="Trigger" IsEnabled="True" />
                             <ComboBoxItem Content="Shift" IsEnabled="False" />
+                            <ComboBoxItem Content="Inherit" IsEnabled="True" />
                         </ComboBox>
 
                         <ComboBox
@@ -2181,7 +2205,12 @@
                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                     <Setter Property="IsEnabled" Value="True" />
                                     <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
                                         <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
                                             <Setter Property="IsEnabled" Value="False" />
                                         </DataTrigger>
                                     </Style.Triggers>

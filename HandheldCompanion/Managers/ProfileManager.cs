@@ -65,15 +65,16 @@ public static class ProfileManager
         // check for default profile
         if (!HasDefault())
         {
-            Layout deviceLayout = IDevice.GetCurrent().DefaultLayout.Clone() as Layout;
+            // get default layout
+            Layout defaultLayout = IDevice.GetCurrent().DefaultLayout.Clone() as Layout;
+
             Profile defaultProfile = new()
             {
                 Name = DefaultName,
                 Default = true,
                 Enabled = false,
-                Layout = deviceLayout,
+                Layout = defaultLayout,
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
-                LayoutEnabled = true
             };
 
             UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);

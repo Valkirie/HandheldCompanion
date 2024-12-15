@@ -332,14 +332,11 @@ public partial class ProfilesPage : Page
                         break;
                 }
 
+                // create profile
                 Profile profile = new Profile(path);
-                Layout toCloneLayout = ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout;
-                profile.Layout = toCloneLayout.Clone() as Layout;
-                profile.LayoutTitle = LayoutTemplate.DefaultLayout.Name;
-
-                var exists = false;
 
                 // check on path rather than profile
+                bool exists = false;
                 if (ProfileManager.Contains(path))
                 {
                     Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
@@ -482,8 +479,6 @@ public partial class ProfilesPage : Page
                     b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
                     // prevent user from disabling default profile
                     Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
-                    // prevent user from disabling default profile layout
-                    Toggle_ControllerLayout.IsEnabled = !selectedProfile.Default;
                     // prevent user from using Wrapper on default profile
                     cB_Wrapper.IsEnabled = !selectedProfile.Default;
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
@@ -568,9 +563,6 @@ public partial class ProfilesPage : Page
                     // Compatibility settings
                     UseFullscreenOptimizations.IsOn = selectedProfile.FullScreenOptimization;
                     UseHighDPIAwareness.IsOn = selectedProfile.HighDPIAware;
-
-                    // Layout settings
-                    Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
 
                     // power profile
                     PowerProfile powerProfileDC = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
@@ -766,10 +758,17 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
+    private LayoutTemplate selectedTemplate;
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (selectedTemplate is not null)
+        {
+            selectedTemplate.Updated -= Template_Updated;
+            selectedTemplate = null;
+        }
+
         // prepare layout editor
-        LayoutTemplate layoutTemplate = new(selectedProfile.Layout)
+        selectedTemplate = new(selectedProfile.Layout)
         {
             Name = selectedProfile.LayoutTitle,
             Description = Properties.Resources.ProfilesPage_Layout_Desc,
@@ -777,9 +776,9 @@ public partial class ProfilesPage : Page
             Executable = selectedProfile.Executable,
             Product = selectedProfile.Name,
         };
-        layoutTemplate.Updated += Template_Updated;
+        selectedTemplate.Updated += Template_Updated;
 
-        MainWindow.layoutPage.UpdateLayoutTemplate(layoutTemplate);
+        MainWindow.layoutPage.UpdateLayoutTemplate(selectedTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
@@ -791,7 +790,9 @@ public partial class ProfilesPage : Page
             selectedProfile.LayoutTitle = layoutTemplate.Name;
         });
 
-        selectedProfile.Layout = layoutTemplate.Layout;
+        selectedProfile.Layout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
+        selectedProfile.Layout.AxisLayout = layoutTemplate.Layout.AxisLayout;
+        selectedProfile.Layout.GyroLayout = layoutTemplate.Layout.GyroLayout;
         UpdateMotionControlsVisibility();
 
         UpdateProfile();
@@ -983,25 +984,6 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
-        UpdateProfile();
-    }
-
-    private void Toggle_ControllerLayout_Toggled(object sender, RoutedEventArgs e)
-    {
-        // prevent update loop
-        if (profileLock.IsEntered())
-            return;
-
-        // Layout settings
-        switch (selectedProfile.Default)
-        {
-            case true:
-                selectedProfile.LayoutEnabled = true;
-                break;
-            case false:
-                selectedProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
-                break;
-        }
         UpdateProfile();
     }
 

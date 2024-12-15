@@ -30,10 +30,13 @@ internal static class LayoutManager
     ];
 
     private static object updateLock = new();
+
     private static Layout currentLayout = new();
-    private static ScreenRotation currentOrientation = new();
-    private static Layout profileLayout;
+    private static Layout profileLayout = new();
+    private static Layout defaultLayout;
     private static Layout desktopLayout;
+
+    private static ScreenRotation currentOrientation = new();
     private static readonly string desktopLayoutFile = "desktop";
 
     public static string LayoutsPath;
@@ -95,6 +98,7 @@ internal static class LayoutManager
 
         // manage events
         ProfileManager.Applied += ProfileManager_Applied;
+        ProfileManager.Initialized += ProfileManager_Initialized;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.DisplayOrientationChanged += MultimediaManager_DisplayOrientationChanged;
 
@@ -130,6 +134,7 @@ internal static class LayoutManager
 
         // manage events
         ProfileManager.Applied -= ProfileManager_Applied;
+        ProfileManager.Initialized -= ProfileManager_Initialized;
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         MultimediaManager.DisplayOrientationChanged -= MultimediaManager_DisplayOrientationChanged;
 
@@ -211,19 +216,16 @@ internal static class LayoutManager
         SetProfileLayout(profile);
     }
 
+    private static void ProfileManager_Initialized()
+    {
+        // ref
+        defaultLayout = ProfileManager.GetDefault().Layout;
+    }
+
     private static void SetProfileLayout(Profile profile = null)
     {
-        var defaultProfile = ProfileManager.GetDefault();
-
-        if (profile.LayoutEnabled)
-            // use profile layout if enabled
-            profileLayout = profile.Layout.Clone() as Layout;
-        else if (defaultProfile.LayoutEnabled)
-            // fallback to default profile layout if enabled
-            profileLayout = defaultProfile.Layout.Clone() as Layout;
-        else
-            // this should not happen, defaultProfile LayoutEnabled should always be true 
-            profileLayout = null;
+        // use profile layout
+        profileLayout = profile.Layout.Clone() as Layout;
 
         // only update current layout if we're not into desktop layout mode
         if (!SettingsManager.GetBoolean("DesktopLayoutEnabled", true))
@@ -330,7 +332,7 @@ internal static class LayoutManager
     {
         lock (updateLock)
         {
-            currentLayout = layout;
+            currentLayout = layout.Clone() as Layout;
 
             // (re)apply orientation
             UpdateOrientation();
@@ -351,6 +353,17 @@ internal static class LayoutManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
+
+            // Check for inherit(s) and replace actions with default layout actions where necessary
+            foreach (var buttonState in controllerState.ButtonState.State.Keys.ToList())
+            {
+                if (currentLayout.ButtonLayout.TryGetValue(buttonState, out var actions) && actions.Any(action => action is InheritActions))
+                {
+                    // Replace with default layout actions
+                    if (defaultLayout.ButtonLayout.TryGetValue(buttonState, out var defaultActions))
+                        currentLayout.ButtonLayout[buttonState] = defaultActions;
+                }
+            }
 
             // we need to check for shifter(s) first
             ShiftSlot shiftSlot = ShiftSlot.None;
@@ -482,6 +495,17 @@ internal static class LayoutManager
                 }
             }
 
+            // Check for inherit(s) and replace actions with default layout actions where necessary
+            foreach (AxisLayoutFlags axisLayout in currentLayout.AxisLayout.Keys.ToList())
+            {
+                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out var actions) && actions is InheritActions)
+                {
+                    // Replace with default layout actions
+                    if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
+                        currentLayout.AxisLayout[axisLayout] = defaultActions;
+                }
+            }
+
             foreach (KeyValuePair<AxisLayoutFlags, IActions> axisLayout in currentLayout.AxisLayout)
             {
                 AxisLayoutFlags flags = axisLayout.Key;
@@ -512,10 +536,8 @@ internal static class LayoutManager
                             AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
                             AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                            outputState.AxisState[OutAxisX] =
-                                (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
-                            outputState.AxisState[OutAxisY] =
-                                (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
+                            outputState.AxisState[OutAxisX] = (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
+                            outputState.AxisState[OutAxisY] = (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
                         }
                         break;
 
@@ -528,7 +550,7 @@ internal static class LayoutManager
                             AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
                             AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                            outputState.AxisState[OutAxisY] = tAction.GetValue();
+                            outputState.AxisState[OutAxisY] = (short)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), short.MinValue, short.MaxValue);
                         }
                         break;
 

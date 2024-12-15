@@ -1,3 +1,4 @@
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System;
@@ -17,6 +18,7 @@ namespace HandheldCompanion.Actions
         Mouse = 4,
         Trigger = 5,
         Shift = 6,
+        Inherit = 7,
     }
 
     [Serializable]
@@ -389,10 +391,9 @@ namespace HandheldCompanion.Actions
             Orientation = orientation;
         }
 
-        // Improve me !
         public object Clone()
         {
-            return MemberwiseClone();
+            return CloningHelper.DeepClone(this);
         }
     }
 }

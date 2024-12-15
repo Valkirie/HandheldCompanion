@@ -384,8 +384,6 @@ public partial class QuickProfilesPage : Page
                 {
                     // update profile name
                     CurrentProfileName.Text = selectedProfile.Name;
-                    Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
-                    Toggle_ControllerLayout.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     cb_SubProfiles.Items.Clear();
@@ -580,11 +578,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // create profile
-        selectedProfile = new Profile(currentProcess.Path)
-        {
-            Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout,
-            LayoutTitle = LayoutTemplate.DesktopLayout.Name
-        };
+        selectedProfile = new Profile(currentProcess.Path);
 
         // if an update is pending, execute it and stop timer
         if (UpdateTimer.Enabled)
@@ -845,19 +839,6 @@ public partial class QuickProfilesPage : Page
             return;
 
         selectedProfile.RISSharpness = (int)RISSlider.Value;
-        UpdateProfile();
-    }
-
-    private void Toggle_ControllerLayout_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (selectedProfile is null)
-            return;
-
-        // prevent update loop
-        if (profileLock.IsEntered())
-            return;
-
-        selectedProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
         UpdateProfile();
     }
 
