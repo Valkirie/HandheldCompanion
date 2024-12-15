@@ -361,7 +361,7 @@ internal static class LayoutManager
                 {
                     // Replace with default layout actions
                     if (defaultLayout.ButtonLayout.TryGetValue(buttonState, out var defaultActions))
-                        currentLayout.ButtonLayout[buttonState] = defaultActions;
+                        currentLayout.ButtonLayout[buttonState].AddRange(defaultActions);
                 }
             }
 
