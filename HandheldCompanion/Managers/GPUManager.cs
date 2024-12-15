@@ -134,6 +134,8 @@ namespace HandheldCompanion.Managers
 
         private static void GPUConnect(GPU GPU)
         {
+            LogManager.LogInformation("Connecting DisplayAdapter {0}", GPU.ToString());
+
             // update current GPU
             currentGPU = GPU;
 
@@ -162,6 +164,8 @@ namespace HandheldCompanion.Managers
 
         private static void GPUDisconnect(GPU GPU)
         {
+            LogManager.LogInformation("Disconnecting DisplayAdapter {0}", GPU.ToString());
+
             if (currentGPU == GPU)
                 Unhooked?.Invoke(GPU);
 
@@ -191,7 +195,10 @@ namespace HandheldCompanion.Managers
 
                 // a new GPU was connected, disconnect from current gpu
                 if (currentGPU is not null && currentGPU != gpu)
+                {
+                    // disconnect previous gpu
                     GPUDisconnect(currentGPU);
+                }
 
                 // connect to new gpu
                 GPUConnect(gpu);
