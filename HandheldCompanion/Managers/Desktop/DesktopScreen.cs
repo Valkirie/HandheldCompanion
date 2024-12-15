@@ -253,7 +253,9 @@ public class DesktopScreen
             Limits.Add(new(i + 1, orderedFpsLimits.ElementAt(i)));
         }
 
-        _cachedFrameLimits.Add(dmDisplayFrequency, Limits);
+        if (!_cachedFrameLimits.ContainsKey(dmDisplayFrequency))
+            _cachedFrameLimits.Add(dmDisplayFrequency, Limits);
+
         // Return the list of quotients
         return Limits;
     }
