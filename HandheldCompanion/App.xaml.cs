@@ -61,7 +61,7 @@ public partial class App : Application
         LogManager.Initialize("HandheldCompanion");
         LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
-        using (var process = Process.GetCurrentProcess())
+        using (Process process = Process.GetCurrentProcess())
         {
             Process[] processes = Process.GetProcessesByName(process.ProcessName);
             if (processes.Length > 1)

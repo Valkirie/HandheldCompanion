@@ -8,12 +8,14 @@ using iNKORE.UI.WPF.Modern.Helpers.Styles;
 using Sentry;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Managers.UpdateManager;
+using static HandheldCompanion.WinAPI;
 using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 
@@ -247,6 +249,11 @@ public partial class SettingsPage : Page
                             cB_QuickToolsDevicePath.SelectedItem = selectedScreen;
                         else
                             cB_QuickToolsDevicePath.SelectedIndex = 0;
+                    }
+                    break;
+                case "ProcessPriority":
+                    {
+                        cB_Priority.SelectedIndex = Convert.ToInt32(value);
                     }
                     break;
             }
@@ -591,5 +598,29 @@ public partial class SettingsPage : Page
             SettingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.FriendlyName);
             SettingsManager.SetProperty("QuickToolsDevicePath", desktopScreen.DevicePath);
         }
+    }
+
+    private void cB_Priority_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        using (Process process = Process.GetCurrentProcess())
+        {
+            switch (cB_Priority.SelectedIndex)
+            {
+                case 0: // Normal
+                    SetPriorityClass(process.Handle, (int)PriorityClass.NORMAL_PRIORITY_CLASS);
+                    break;
+                case 1: // Above normal
+                    SetPriorityClass(process.Handle, (int)PriorityClass.ABOVE_NORMAL_PRIORITY_CLASS);
+                    break;
+                case 2: // High
+                    SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
+                    break;
+            }
+        }
+
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("ProcessPriority", cB_Priority.SelectedIndex);
     }
 }

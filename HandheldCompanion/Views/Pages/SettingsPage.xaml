@@ -501,6 +501,48 @@
                     </Grid>
                 </Border>
 
+                <!--  Process Priority  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE8D0;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Priority" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="The application process priority"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="cB_Priority"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="cB_Priority_SelectionChanged">
+                            <ComboBoxItem Content="Normal" />
+                            <ComboBoxItem Content="Above normal" />
+                            <ComboBoxItem Content="High" />
+                        </ComboBox>
+                    </Grid>
+                </Border>
+
             </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->

@@ -1200,5 +1200,17 @@ namespace HandheldCompanion.Properties {
                 this["HotkeyRumbleOnExecution"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ProcessPriority {
+            get {
+                return ((int)(this["ProcessPriority"]));
+            }
+            set {
+                this["ProcessPriority"] = value;
+            }
+        }
     }
 }
