@@ -68,8 +68,7 @@ namespace HandheldCompanion.Managers
             ProfileManager.Updated += ProfileManager_Updated;
             DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
             DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
-            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
-            MultimediaManager.Initialized += MultimediaManager_Initialized;
+            DeviceManager.Initialized += DeviceManager_Initialized;
 
             // raise events
             if (ProfileManager.IsInitialized)
@@ -81,11 +80,6 @@ namespace HandheldCompanion.Managers
             {
                 foreach (AdapterInformation displayAdapter in DeviceManager.displayAdapters.Values)
                     DeviceManager_DisplayAdapterArrived(displayAdapter);
-            }
-
-            if (MultimediaManager.IsInitialized && MultimediaManager.PrimaryDesktop is not null)
-            {
-                MultimediaManager_PrimaryScreenChanged(MultimediaManager.PrimaryDesktop);
             }
 
             IsInitialized = true;
@@ -106,8 +100,8 @@ namespace HandheldCompanion.Managers
             ProfileManager.Updated -= ProfileManager_Updated;
             DeviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
             DeviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
+            DeviceManager.Initialized -= DeviceManager_Initialized;
             MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
-            MultimediaManager.Initialized -= MultimediaManager_Initialized;
 
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
@@ -209,9 +203,12 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void MultimediaManager_Initialized()
+        private static void DeviceManager_Initialized()
         {
-            if (MultimediaManager.PrimaryDesktop is not null)
+            // we have to wait for a display adapter to arrive before trying to find the corresponding screen
+            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+
+            if (MultimediaManager.PrimaryDesktop != null)
                 MultimediaManager_PrimaryScreenChanged(MultimediaManager.PrimaryDesktop);
         }
 

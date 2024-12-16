@@ -273,12 +273,12 @@ public static class MultimediaManager
         // looks like we have a new primary screen
         if (PrimaryDesktop is null || !PrimaryDesktop.DevicePath.Equals(newPrimary.DevicePath))
         {
+            // set or update current primary
+            PrimaryDesktop = newPrimary;
+
             // raise event (New primary display)
             PrimaryScreenChanged?.Invoke(newPrimary);
         }
-
-        // set or update current primary
-        PrimaryDesktop = newPrimary;
 
         // raise event (New screen detected)
         foreach (DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
