@@ -264,6 +264,43 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return 0.0f;
         }
 
+        public static bool HasIntelGPU()
+        {
+            return CheckForGPU("intel");
+        }
+
+        public static bool HasAMDGPU()
+        {
+            return CheckForGPU("amd") || CheckForGPU("radeon");
+        }
+
+        public static bool HasNvidiaGPU()
+        {
+            return CheckForGPU("nvidia");
+        }
+
+        /// <summary>
+        /// Private helper method to check for a specific GPU vendor.
+        /// </summary>
+        private static bool CheckForGPU(string vendorKeyword)
+        {
+            string query = "SELECT Name FROM Win32_VideoController";
+
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            {
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    string name = obj["Name"]?.ToString()?.ToLower();
+
+                    if (!string.IsNullOrEmpty(name) && name.Contains(vendorKeyword.ToLower()))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public void Dispose()
         {
             UpdateTimer?.Dispose();
