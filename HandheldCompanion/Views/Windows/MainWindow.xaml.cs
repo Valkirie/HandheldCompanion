@@ -356,14 +356,6 @@ public partial class MainWindow : GamepadWindow
             case "ToastEnable":
                 ToastManager.IsEnabled = Convert.ToBoolean(value);
                 break;
-            case "TelemetryApproved":
-
-                // If the input is null or empty, return false or handle as needed
-                if (string.IsNullOrEmpty(Convert.ToString(value)))
-                    break;
-
-                bool test = Convert.ToBoolean(value);
-                break;
         }
     }
 
@@ -556,31 +548,34 @@ public partial class MainWindow : GamepadWindow
 
             case SystemManager.SystemStatus.SystemPending:
                 {
-                    // when device goes to sleep
-                    pendingTime = DateTime.Now;
+                    if (prevStatus == SystemManager.SystemStatus.SystemReady)
+                    {
+                        // when device goes to sleep
+                        pendingTime = DateTime.Now;
 
-                    // suspend manager(s)
-                    ControllerManager.StopWatchdog();
-                    VirtualManager.Suspend(true);
-                    await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
+                        // suspend manager(s)
+                        ControllerManager.StopWatchdog();
+                        VirtualManager.Suspend(true);
+                        await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
-                    TimerManager.Stop();
-                    SensorsManager.Stop();
-                    InputsManager.Stop();
-                    GPUManager.Stop();
+                        TimerManager.Stop();
+                        SensorsManager.Stop();
+                        InputsManager.Stop();
+                        GPUManager.Stop();
 
-                    // suspend platform(s)
-                    PlatformManager.LibreHardwareMonitor.Stop();
+                        // suspend platform(s)
+                        PlatformManager.LibreHardwareMonitor.Stop();
 
-                    // close current device
-                    CurrentDevice.Close();
+                        // close current device
+                        CurrentDevice.Close();
 
-                    // free memory
-                    GC.Collect();
+                        // free memory
+                        GC.Collect();
 
-                    // Allow system to sleep
-                    SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS);
-                    LogManager.LogDebug("Tasks completed. System can now suspend if needed.");
+                        // Allow system to sleep
+                        SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS);
+                        LogManager.LogDebug("Tasks completed. System can now suspend if needed.");
+                    }
                 }
                 break;
         }
@@ -696,7 +691,6 @@ public partial class MainWindow : GamepadWindow
                 SettingsManager.SetProperty("MainWindowTop", 0);
                 SettingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
                 SettingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
-
                 break;
         }
 
@@ -718,27 +712,30 @@ public partial class MainWindow : GamepadWindow
         switch (WindowState)
         {
             case WindowState.Minimized:
-                notifyIcon.Visible = true;
-                ShowInTaskbar = false;
-
-                if (!NotifyInTaskbar)
                 {
-                    ToastManager.SendToast(Title, "is running in the background");
-                    NotifyInTaskbar = true;
-                }
+                    notifyIcon.Visible = true;
+                    ShowInTaskbar = false;
 
+                    if (!NotifyInTaskbar)
+                    {
+                        ToastManager.SendToast(Title, "is running in the background");
+                        NotifyInTaskbar = true;
+                    }
+                }
                 break;
             case WindowState.Normal:
             case WindowState.Maximized:
-                notifyIcon.Visible = false;
-                ShowInTaskbar = true;
+                {
+                    notifyIcon.Visible = false;
+                    ShowInTaskbar = true;
 
-                Activate();
-                Topmost = true;  // important
-                Topmost = false; // important
-                Focus();
+                    Activate();
+                    Topmost = true;  // important
+                    Topmost = false; // important
+                    Focus();
 
-                prevWindowState = WindowState;
+                    prevWindowState = WindowState;
+                }
                 break;
         }
     }

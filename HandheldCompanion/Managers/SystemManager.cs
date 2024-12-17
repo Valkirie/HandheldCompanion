@@ -95,11 +95,7 @@ public static class SystemManager
         { "BatterySaver10", "\uEA95" }
     };
 
-    static SystemManager()
-    {
-        // listen to system events
-        SubscribeToSystemEvents();
-    }
+    static SystemManager() { }
 
     private static void SubscribeToSystemEvents()
     {
@@ -138,6 +134,9 @@ public static class SystemManager
         if (IsInitialized)
             return;
 
+        // listen to system events
+        SubscribeToSystemEvents();
+
         // Check if current session is locked
         IsSessionLocked = OpenInputDesktop(0, false, 0) == IntPtr.Zero;
 
@@ -157,10 +156,10 @@ public static class SystemManager
         if (!IsInitialized)
             return;
 
-        IsInitialized = false;
-
         // stop listening to system events
         UnsubscribeFromSystemEvents();
+
+        IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "PowerManager");
     }
