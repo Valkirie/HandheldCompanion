@@ -74,7 +74,7 @@ public static class MultimediaManager
         IsInitialized = true;
         Initialized?.Invoke();
 
-        LogManager.LogInformation("{0} has started", "SystemManager");
+        LogManager.LogInformation("{0} has started", "MultimediaManager");
         return;
     }
 
@@ -95,7 +95,7 @@ public static class MultimediaManager
 
         IsInitialized = false;
 
-        LogManager.LogInformation("{0} has stopped", "SystemManager");
+        LogManager.LogInformation("{0} has stopped", "MultimediaManager");
     }
 
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
@@ -269,24 +269,34 @@ public static class MultimediaManager
 
         // get refreshed primary screen (can't be null)
         DesktopScreen newPrimary = desktopScreens.Values.Where(a => a.IsPrimary).FirstOrDefault();
-
-        // looks like we have a new primary screen
-        if (PrimaryDesktop is null || !PrimaryDesktop.DevicePath.Equals(newPrimary.DevicePath))
+        if (newPrimary is not null)
         {
-            // set or update current primary
-            PrimaryDesktop = newPrimary;
+            // looks like we have a new primary screen
+            if (PrimaryDesktop is null || !PrimaryDesktop.DevicePath.Equals(newPrimary.DevicePath))
+            {
+                // set or update current primary
+                PrimaryDesktop = newPrimary;
 
-            // raise event (New primary display)
-            PrimaryScreenChanged?.Invoke(newPrimary);
+                LogManager.LogInformation("Primary screen set to {0}", newPrimary.ToString());
+
+                // raise event (New primary display)
+                PrimaryScreenChanged?.Invoke(newPrimary);
+            }
         }
 
         // raise event (New screen detected)
         foreach (DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
+        {
+            LogManager.LogInformation("Screen {0} connected", desktop.ToString());
             ScreenConnected?.Invoke(desktop);
+        }
 
         // raise event (New screen detected)
         foreach (DesktopScreen desktop in AllScreens.Values.Where(a => !desktopScreens.ContainsKey(a.DevicePath)))
+        {
+            LogManager.LogInformation("Screen {0} disconnected", desktop.ToString());
             ScreenDisconnected?.Invoke(desktop);
+        }
 
         // clear array and transfer screens
         AllScreens.Clear();
