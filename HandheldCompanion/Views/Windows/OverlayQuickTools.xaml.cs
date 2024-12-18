@@ -223,7 +223,7 @@ public partial class OverlayQuickTools : GamepadWindow
         string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
 
         // Attempt to find the screen with the specified friendly name
-        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.FriendlyName.Equals(DeviceName)) ?? MultimediaManager.PrimaryDesktop;
+        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.ToString().Equals(DeviceName)) ?? MultimediaManager.PrimaryDesktop;
         if (friendlyScreen is null)
             return;
 

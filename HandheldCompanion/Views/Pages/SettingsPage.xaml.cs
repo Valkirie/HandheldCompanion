@@ -243,7 +243,7 @@ public partial class SettingsPage : Page
                         string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
 
                         DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
-                        .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.FriendlyName.Equals(DeviceName));
+                        .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.ToString().Equals(DeviceName));
 
                         if (selectedScreen != null)
                             cB_QuickToolsDevicePath.SelectedItem = selectedScreen;
@@ -523,23 +523,15 @@ public partial class SettingsPage : Page
             {
                 case 0: // "None":
                     WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.None);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
-                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
                     break;
                 case 1: // "Mica":
                     WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Mica);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
-                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
                     break;
                 case 2: // "Tabbed":
                     WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Tabbed);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
-                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
                     break;
                 case 3: // "Acrylic":
                     WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Acrylic);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, true);
-                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
                     break;
             }
         }
@@ -595,7 +587,7 @@ public partial class SettingsPage : Page
 
         if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen desktopScreen)
         {
-            SettingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.FriendlyName);
+            SettingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.ToString());
             SettingsManager.SetProperty("QuickToolsDevicePath", desktopScreen.DevicePath);
         }
     }
