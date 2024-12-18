@@ -155,7 +155,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // manage gamepad motion
-            gamepadMotions[gamepadIndex] = new(details.deviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
         }
 
         public virtual void UpdateInputs(long ticks, float delta)

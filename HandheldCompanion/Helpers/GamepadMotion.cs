@@ -48,6 +48,9 @@ namespace HandheldCompanion.Helpers
         {
             handle = CreateGamepadMotion();
 
+            if (string.IsNullOrEmpty(deviceInstanceId))
+                return;
+
             // store device path
             this.deviceInstanceId = deviceInstanceId;
 
