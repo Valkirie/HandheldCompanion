@@ -99,12 +99,18 @@ public partial class SettingsPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        string QuickToolsDevicePath = SettingsManager.GetString("QuickToolsDevicePath");
+        string DevicePath = SettingsManager.GetString("QuickToolsDevicePath");
+        string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
 
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            if (string.IsNullOrEmpty(QuickToolsDevicePath))
+            DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
+                .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.ToString().Equals(DeviceName));
+
+            if (selectedScreen != null)
+                cB_QuickToolsDevicePath.SelectedItem = selectedScreen;
+            else
                 cB_QuickToolsDevicePath.SelectedIndex = 0;
         });
     }
@@ -235,20 +241,6 @@ public partial class SettingsPage : Page
 
                         if (SentrySdk.IsEnabled && IsSentryEnabled)
                             SentrySdk.CaptureMessage("Telemetry enabled on the device");
-                    }
-                    break;
-                case "QuickToolsDevicePath":
-                    {
-                        string DevicePath = Convert.ToString(value);
-                        string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
-
-                        DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
-                        .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.ToString().Equals(DeviceName));
-
-                        if (selectedScreen != null)
-                            cB_QuickToolsDevicePath.SelectedItem = selectedScreen;
-                        else
-                            cB_QuickToolsDevicePath.SelectedIndex = 0;
                     }
                     break;
                 case "ProcessPriority":
