@@ -60,13 +60,13 @@ namespace HandheldCompanion.Helpers
             return "xusb22.inf";
         }
 
-        public static void AddOrUpdateDriverStore(string path, string calibration)
+        public static void AddOrUpdateDriverStore(string path, string driverName)
         {
             // upcase
             path = path.ToUpper();
 
             // update array
-            Drivers[path] = calibration;
+            Drivers[path] = driverName;
 
             // serialize store
             SerializeDriverStore();
