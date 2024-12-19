@@ -11,7 +11,6 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace HandheldCompanion.Managers;
@@ -74,7 +73,7 @@ public static class UpdateManager
         webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;

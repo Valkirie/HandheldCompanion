@@ -62,7 +62,7 @@ public static class DynamicLightingManager
         DynamicLightingTimer.Elapsed += (sender, e) => UpdateLED();
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -82,7 +82,6 @@ public static class DynamicLightingManager
         }
 
         LogManager.LogInformation("{0} has started", "DynamicLightingManager");
-        return;
     }
 
     public static void Stop()

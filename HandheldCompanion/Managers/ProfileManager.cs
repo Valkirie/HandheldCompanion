@@ -52,7 +52,7 @@ public static class ProfileManager
         };
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -106,7 +106,6 @@ public static class ProfileManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ProfileManager");
-        return;
     }
 
     public static void Stop()

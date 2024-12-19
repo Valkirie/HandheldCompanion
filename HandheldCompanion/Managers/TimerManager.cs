@@ -2,7 +2,6 @@
 using PrecisionTiming;
 using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -30,7 +29,7 @@ public static class TimerManager
         Stopwatch = new Stopwatch();
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -42,7 +41,6 @@ public static class TimerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started with Period set to {1}", "TimerManager", GetPeriod());
-        return;
     }
 
     public static void Stop()

@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace HandheldCompanion.Managers;
@@ -68,7 +67,7 @@ internal static class LayoutManager
         };
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -117,7 +116,6 @@ internal static class LayoutManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "LayoutManager");
-        return;
     }
 
     public static void Stop()

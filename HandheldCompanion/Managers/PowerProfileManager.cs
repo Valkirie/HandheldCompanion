@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers
@@ -32,7 +31,7 @@ namespace HandheldCompanion.Managers
                 Directory.CreateDirectory(ProfilesPath);
         }
 
-        public static async Task Start()
+        public static void Start()
         {
             if (IsInitialized)
                 return;
@@ -64,7 +63,6 @@ namespace HandheldCompanion.Managers
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "PowerProfileManager");
-            return;
         }
 
         public static void Stop()

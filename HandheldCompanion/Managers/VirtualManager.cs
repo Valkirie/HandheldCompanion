@@ -65,7 +65,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public static async Task Start()
+        public static void Start()
         {
             if (IsInitialized)
                 return;
@@ -85,7 +85,6 @@ namespace HandheldCompanion.Managers
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "VirtualManager");
-            return;
         }
 
         public static void Stop()

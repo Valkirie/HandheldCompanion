@@ -65,7 +65,7 @@ public static class ControllerManager
         Failed = 3,
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -116,7 +116,6 @@ public static class ControllerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
-        return;
     }
 
     public static void Stop()

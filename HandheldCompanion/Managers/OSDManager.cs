@@ -5,7 +5,6 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -48,7 +47,7 @@ public static class OSDManager
         RefreshTimer.SetInterval(new Action(UpdateOSD), RefreshInterval, false, 0, TimerMode.Periodic, true);
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -81,7 +80,6 @@ public static class OSDManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "OSDManager");
-        return;
     }
 
     public static void Stop()

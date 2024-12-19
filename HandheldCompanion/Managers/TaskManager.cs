@@ -24,7 +24,7 @@ public static class TaskManager
     {
     }
 
-    public static async System.Threading.Tasks.Task Start(string Executable)
+    public static void Start(string Executable)
     {
         if (IsInitialized)
             return;

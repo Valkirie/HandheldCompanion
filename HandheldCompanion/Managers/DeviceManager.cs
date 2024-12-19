@@ -77,7 +77,7 @@ public static class DeviceManager
         adaptersTimer.Elapsed += (sender, e) => RefreshDisplayAdapters(true);
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -103,7 +103,6 @@ public static class DeviceManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "DeviceManager");
-        return;
     }
 
     private static void RefreshDrivers()

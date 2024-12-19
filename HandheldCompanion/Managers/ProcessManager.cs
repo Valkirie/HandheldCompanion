@@ -82,7 +82,7 @@ public static class ProcessManager
         ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;

@@ -196,18 +196,15 @@ public partial class MainWindow : GamepadWindow
         ToastManager.Start();
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
-        // start static managers
-        OSDManager.Start();
-        LayoutManager.Start();
-        SystemManager.Start();
-        DynamicLightingManager.Start();
-        VirtualManager.Start();
-        SensorsManager.Start();
-        TimerManager.Start();
-
         // non-STA threads
         List<Task> tasks = new List<Task>
         {
+            Task.Run(() => OSDManager.Start()),
+            Task.Run(() => LayoutManager.Start()),
+            Task.Run(() => SystemManager.Start()),
+            Task.Run(() => DynamicLightingManager.Start()),
+            Task.Run(() => VirtualManager.Start()),
+            Task.Run(() => SensorsManager.Start()),
             Task.Run(() => HotkeysManager.Start()),
             Task.Run(() => ProfileManager.Start()),
             Task.Run(() => PowerProfileManager.Start()),
@@ -224,6 +221,7 @@ public partial class MainWindow : GamepadWindow
 
         // those managers can't be threaded
         InputsManager.Start();
+        TimerManager.Start();
         SettingsManager.Start();
 
         // Load MVVM pages after the Models / data have been created.

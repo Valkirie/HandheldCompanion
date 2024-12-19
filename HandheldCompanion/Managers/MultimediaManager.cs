@@ -10,7 +10,6 @@ using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsDisplayAPI;
 using WindowsDisplayAPI.DisplayConfig;
@@ -55,7 +54,7 @@ public static class MultimediaManager
         BrightnessSupport = GetBrightness() != -1;
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -75,7 +74,6 @@ public static class MultimediaManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "MultimediaManager");
-        return;
     }
 
     public static void Stop()

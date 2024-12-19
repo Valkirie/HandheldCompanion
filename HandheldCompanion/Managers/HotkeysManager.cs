@@ -15,7 +15,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -35,7 +34,7 @@ public static class HotkeysManager
             Directory.CreateDirectory(HotkeysPath);
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
@@ -77,7 +76,6 @@ public static class HotkeysManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "HotkeysManager");
-        return;
     }
 
     public static void Stop()

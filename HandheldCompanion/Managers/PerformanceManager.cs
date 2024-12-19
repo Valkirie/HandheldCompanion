@@ -116,7 +116,7 @@ public static class PerformanceManager
         autotdpWatchdog.Elapsed += autotdpWatchdog_Elapsed;
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;

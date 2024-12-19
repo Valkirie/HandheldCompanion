@@ -7,7 +7,6 @@ using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
 {
@@ -31,7 +30,7 @@ namespace HandheldCompanion.Managers
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
 
-        public static async Task Start()
+        public static void Start()
         {
             if (IsInitialized)
                 return;
@@ -86,7 +85,6 @@ namespace HandheldCompanion.Managers
             Initialized?.Invoke(IsLoaded_IGCL, IsLoaded_ADLX);
 
             LogManager.LogInformation("{0} has started", "GPUManager");
-            return;
         }
 
         public static void Stop()

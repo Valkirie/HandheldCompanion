@@ -3,7 +3,6 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 
@@ -37,7 +36,7 @@ public static class PlatformManager
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
     }
 
-    public static async Task Start()
+    public static void Start()
     {
         if (IsInitialized)
             return;
