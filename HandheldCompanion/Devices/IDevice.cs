@@ -74,7 +74,7 @@ public abstract class IDevice
     private static IDevice device;
 
     protected ushort _vid, _pid;
-    public Dictionary<byte, HidDevice> hidDevices = [];
+    protected Dictionary<byte, HidDevice> hidDevices = [];
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()

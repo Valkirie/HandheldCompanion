@@ -71,7 +71,6 @@ public class ClawA1M : IDevice
     }
 
     private ManagementEventWatcher? specialKeyWatcher;
-    private Dictionary<byte, HidDevice> hidDevices = [];
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
