@@ -569,9 +569,6 @@ public partial class MainWindow : GamepadWindow
                         // close current device
                         CurrentDevice.Close();
 
-                        // free memory
-                        GC.Collect();
-
                         // Allow system to sleep
                         SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS);
                         LogManager.LogDebug("Tasks completed. System can now suspend if needed.");
