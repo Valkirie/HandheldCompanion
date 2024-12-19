@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
@@ -41,6 +42,20 @@ namespace HandheldCompanion.Targets
 
         public virtual bool Connect()
         {
+            if (IsConnected)
+                return true;
+
+            try
+            {
+                virtualController.Connect();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
+                SettingsManager.SetProperty("HIDstatus", 0); // Disable controller
+                return false;
+            }
+
             IsConnected = true;
             Connected?.Invoke(this);
             LogManager.LogInformation("{0} connected", ToString());
@@ -57,6 +72,7 @@ namespace HandheldCompanion.Targets
             catch (Exception ex)
             {
                 LogManager.LogWarning("Failed to disconnect {0}. {1}", ToString(), ex.Message);
+                SettingsManager.SetProperty("HIDstatus", 1); // Enable controller
                 return false;
             }
 

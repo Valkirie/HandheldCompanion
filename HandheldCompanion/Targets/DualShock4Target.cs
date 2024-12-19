@@ -8,9 +8,7 @@ using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
-using System;
 using System.Numerics;
-using System.Threading;
 using static HandheldCompanion.Inputs.GyroState;
 
 namespace HandheldCompanion.Targets
@@ -19,8 +17,6 @@ namespace HandheldCompanion.Targets
     {
         private DS4_REPORT_EX outDS4Report;
 
-        private new IDualShock4Controller virtualController;
-
         public DualShock4Target() : base()
         {
             // initialize controller
@@ -28,31 +24,9 @@ namespace HandheldCompanion.Targets
 
             virtualController = VirtualManager.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
             virtualController.AutoSubmitReport = false;
-            virtualController.FeedbackReceived += FeedbackReceived;
+            ((IDualShock4Controller)virtualController).FeedbackReceived += FeedbackReceived;
 
             LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
-        }
-
-        public override bool Connect()
-        {
-            if (IsConnected)
-                return true;
-
-            try
-            {
-                virtualController.Connect();
-                return base.Connect();
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
-
-                // give controller manager enough time to mount the controller
-                Thread.Sleep(2000);
-
-                Disconnect();
-                return false;
-            }
         }
 
         public void FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
@@ -188,7 +162,7 @@ namespace HandheldCompanion.Targets
 
             try
             {
-                virtualController.SubmitRawReport(rawOutReportEx);
+                ((IDualShock4Controller)virtualController).SubmitRawReport(rawOutReportEx);
             }
             catch (VigemBusNotFoundException ex)
             {

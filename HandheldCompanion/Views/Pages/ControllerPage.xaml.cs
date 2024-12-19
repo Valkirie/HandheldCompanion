@@ -19,10 +19,6 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ControllerPage : Page
 {
-    // controllers vars
-    private HIDmode controllerMode = HIDmode.NoController;
-    private HIDstatus controllerStatus = HIDstatus.Disconnected;
-
     public ControllerPage()
     {
         DataContext = new ControllerPageViewModel(this);
@@ -223,8 +219,6 @@ public partial class ControllerPage : Page
         if (cB_HidMode.SelectedIndex == -1)
             return;
 
-        controllerMode = (HIDmode)cB_HidMode.SelectedIndex;
-
         // only change HIDmode setting if current profile is default or set to default controller
         var currentProfile = ProfileManager.GetCurrent();
         if (currentProfile.Default || currentProfile.HID == HIDmode.NotSelected)
@@ -237,8 +231,6 @@ public partial class ControllerPage : Page
     {
         if (cB_HidMode.SelectedIndex == -1)
             return;
-
-        controllerStatus = (HIDstatus)cB_ServiceSwitch.SelectedIndex;
 
         SettingsManager.SetProperty("HIDstatus", cB_ServiceSwitch.SelectedIndex);
     }

@@ -75,7 +75,6 @@ public static class ControllerManager
         DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
         DeviceManager.HidDeviceArrived += HidDeviceArrived;
         DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
-        DeviceManager.Initialized += DeviceManager_Initialized;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
@@ -136,7 +135,6 @@ public static class ControllerManager
         DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
         DeviceManager.HidDeviceArrived -= HidDeviceArrived;
         DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
-        DeviceManager.Initialized -= DeviceManager_Initialized;
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
@@ -357,27 +355,6 @@ public static class ControllerManager
         watchdogThreadRunning = false;
         if (watchdogThread.IsAlive)
             watchdogThread.Join();
-    }
-
-    private static void DeviceManager_Initialized()
-    {
-        // todo: we might need to rethink this function
-        return;
-
-        // search for last known controller and connect
-        string path = SettingsManager.GetString("HIDInstancePath");
-
-        if (Controllers.ContainsKey(path))
-        {
-            // last known controller still is plugged, set as target
-            SetTargetController(path, false);
-        }
-        else if (HasPhysicalController())
-        {
-            // no known controller, connect to first available
-            path = GetPhysicalControllers().FirstOrDefault().GetContainerInstancePath();
-            SetTargetController(path, false);
-        }
     }
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
@@ -705,12 +682,20 @@ public static class ControllerManager
                     XInputDrunk = true;
 
                 xInputController.AttachController(UserIndex);
+
+                // wait a bit
+                Thread.Sleep(500);
             }
 
             if (XInputDrunk)
             {
-                foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
+                foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
+                {
                     xInputController.AttachController(byte.MaxValue);
+
+                    // wait a bit
+                    Thread.Sleep(500);
+                }
 
                 goto Exit;
             }
@@ -761,13 +746,7 @@ public static class ControllerManager
                             }
 
                             // resume all physical controllers
-                            if (ResumeControllers())
-                                Thread.Sleep(2000);
-
-                            // suspend and resume virtual controller
-                            VirtualManager.Suspend(false);
-                            Thread.Sleep(2000);
-                            VirtualManager.Resume(false);
+                            ResumeControllers();
 
                             // increment attempt counter (if no wireless controller is power cycling)
                             if (!HasCyclingController)
