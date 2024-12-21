@@ -35,6 +35,8 @@ internal static class LayoutManager
     private static Layout defaultLayout = null;
     private static Layout desktopLayout = null;
 
+    private static ControllerState outputState = new();
+
     private static ScreenRotation currentOrientation = new();
     private static readonly string desktopLayoutFile = "desktop";
 
@@ -377,7 +379,6 @@ internal static class LayoutManager
         }
     }
 
-    private static ControllerState outputState = new();
     public static ControllerState MapController(ControllerState controllerState)
     {
         // when no profile active and default is disabled, do 1:1 controller mapping
@@ -388,8 +389,9 @@ internal static class LayoutManager
         {
             // clean output state, there should be no leaking of current controller state,
             // only buttons/axes mapped from the layout should be passed on
-            outputState.ButtonState.Clear();
-            outputState.AxisState.Clear();
+            // according to ChatGPT, (re)initializing ConcurrentDictionary is faster than clearing it
+            outputState.ButtonState.State = new();
+            outputState.AxisState.State = new();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
 
             // we need to check for shifter(s) first
