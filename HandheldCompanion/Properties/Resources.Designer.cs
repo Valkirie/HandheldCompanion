@@ -790,7 +790,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Steam controller mode.
+        ///   Looks up a localized string similar to Controller mode.
         /// </summary>
         public static string ControllerPage_SteamControllerMode {
             get {
@@ -799,7 +799,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the Steam controller mode: Exclusive mode or Hybrid mode. Exclusive mode will ensure all inputs are managed by Handheld Companion (HC). Hybrid mode will let Steam manage inputs from Steam applications and HC manage inputs from other applications..
+        ///   Looks up a localized string similar to Change the controller mode: Exclusive mode or Hybrid mode. Exclusive mode will ensure all inputs are managed by Handheld Companion (HC). Hybrid mode will let Steam manage inputs from Steam applications and HC manage inputs from other applications..
         /// </summary>
         public static string ControllerPage_SteamControllerModeDesc {
             get {

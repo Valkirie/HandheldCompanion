@@ -1054,10 +1054,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Run this tool as Administrator to unlock these settings</value>
   </data>
   <data name="ControllerPage_SteamControllerMode" xml:space="preserve">
-    <value>Steam controller mode</value>
+    <value>Controller mode</value>
   </data>
   <data name="ControllerPage_SteamControllerModeDesc" xml:space="preserve">
-    <value>Change the Steam controller mode: Exclusive mode or Hybrid mode. Exclusive mode will ensure all inputs are managed by Handheld Companion (HC). Hybrid mode will let Steam manage inputs from Steam applications and HC manage inputs from other applications.</value>
+    <value>Change the controller mode: Exclusive mode or Hybrid mode. Exclusive mode will ensure all inputs are managed by Handheld Companion (HC). Hybrid mode will let Steam manage inputs from Steam applications and HC manage inputs from other applications.</value>
   </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Controller settings</value>

@@ -466,6 +466,66 @@
                         </ComboBox>
                     </Grid>
                 </Border>
+
+                <!--  Vibration Interval  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE877;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Vibration interval" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Change controller vibration interval"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} ms, ElementName=SliderInterval, Mode=OneWay}" />
+                            <Slider
+                                x:Name="SliderInterval"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="2"
+                                Maximum="20"
+                                Minimum="1"
+                                SmallChange="1"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="SliderInterval_ValueChanged"
+                                Value="100" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
             </ikw:SimpleStackPanel>
 
             <!--  Physical controller settings  -->

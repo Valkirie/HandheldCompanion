@@ -1212,5 +1212,17 @@ namespace HandheldCompanion.Properties {
                 this["ProcessPriority"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int SteamControllerRumbleInterval {
+            get {
+                return ((int)(this["SteamControllerRumbleInterval"]));
+            }
+            set {
+                this["SteamControllerRumbleInterval"] = value;
+            }
+        }
     }
 }

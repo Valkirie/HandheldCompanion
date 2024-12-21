@@ -28,6 +28,7 @@ public class NeptuneController : SteamController
     // TODO: why not use TimerManager.Tick?
     private Thread rumbleThread;
     private bool rumbleThreadRunning;
+    private int rumbleThreadInterval = 10;
 
     public NeptuneController()
     { }
@@ -335,8 +336,24 @@ public class NeptuneController : SteamController
         rumbleThread.Start();
 
         TimerManager.Tick += UpdateInputs;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", SettingsManager.GetInt("SteamControllerRumbleInterval"), false);
+        }
 
         base.Plug();
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "SteamControllerRumbleInterval":
+                rumbleThreadInterval = Convert.ToInt32(value);
+                break;
+        }
     }
 
     public override void Unplug()
@@ -362,6 +379,7 @@ public class NeptuneController : SteamController
         }
 
         TimerManager.Tick -= UpdateInputs;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         base.Unplug();
     }
@@ -393,7 +411,7 @@ public class NeptuneController : SteamController
             if (GetHapticIntensity(FeedbackSmallMotor, MinIntensity, MaxIntensity, out var rightIntensity))
                 Controller.SetHaptic2(SCHapticMotor.Right, NCHapticStyle.Weak, rightIntensity);
 
-            Thread.Sleep(TimerManager.GetPeriod() * 2);
+            Thread.Sleep(rumbleThreadInterval);
         }
     }
 

@@ -84,6 +84,9 @@ public partial class ControllerPage : Page
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
                     ControllerRefresh();
                     break;
+                case "SteamControllerRumbleInterval":
+                    SliderInterval.Value = Convert.ToDouble(value);
+                    break;
                 case "HIDmode":
                     cB_HidMode.SelectedIndex = Convert.ToInt32(value);
                     break;
@@ -253,16 +256,18 @@ public partial class ControllerPage : Page
 
     private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        var value = SliderStrength.Value;
-        if (double.IsNaN(value))
-            return;
-
-        SliderStrength.Value = value;
-
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("VibrationStrength", value);
+        SettingsManager.SetProperty("VibrationStrength", SliderStrength.Value);
+    }
+
+    private void SliderInterval_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("SteamControllerRumbleInterval", Convert.ToInt32(SliderInterval.Value));
     }
 
     private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)
