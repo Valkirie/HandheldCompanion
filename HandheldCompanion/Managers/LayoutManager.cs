@@ -32,8 +32,8 @@ internal static class LayoutManager
 
     private static Layout currentLayout = new();
     private static Layout profileLayout = new();
-    private static Layout defaultLayout;
-    private static Layout desktopLayout;
+    private static Layout defaultLayout = null;
+    private static Layout desktopLayout = null;
 
     private static ScreenRotation currentOrientation = new();
     private static readonly string desktopLayoutFile = "desktop";
@@ -218,12 +218,19 @@ internal static class LayoutManager
     {
         // ref
         defaultLayout = ProfileManager.GetDefault().Layout;
+        defaultLayout.Updated += DefaultLayout_Updated;
+    }
+
+    private static void DefaultLayout_Updated(Layout layout)
+    {
+        UpdateInherit();
     }
 
     private static void SetProfileLayout(Profile profile = null)
     {
-        // use profile layout
-        profileLayout = profile.Layout.Clone() as Layout;
+        // use profile layout (will be cloned during SetActiveLayout)
+        // ref
+        profileLayout = profile.Layout;
 
         // only update current layout if we're not into desktop layout mode
         if (!SettingsManager.GetBoolean("DesktopLayoutEnabled", true))
@@ -308,6 +315,21 @@ internal static class LayoutManager
         UpdateOrientation();
     }
 
+    private static void SetActiveLayout(Layout layout)
+    {
+        lock (updateLock)
+        {
+            // clone
+            currentLayout = layout.Clone() as Layout;
+
+            // (re)apply inheritance
+            UpdateInherit();
+
+            // (re)apply orientation
+            UpdateOrientation();
+        }
+    }
+
     private static void UpdateOrientation()
     {
         if (currentLayout is null)
@@ -326,14 +348,32 @@ internal static class LayoutManager
         }
     }
 
-    private static async void SetActiveLayout(Layout layout)
+    private static void UpdateInherit()
     {
         lock (updateLock)
         {
-            currentLayout = layout.Clone() as Layout;
+            // Check for inherit(s) and replace actions with default layout actions where necessary
+            IController controller = ControllerManager.GetTargetController();
+            foreach (ButtonFlags buttonFlags in controller.GetTargetButtons())
+            {
+                if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
+                {
+                    // Replace with default layout actions
+                    if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
+                        currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
+                }
+            }
 
-            // (re)apply orientation
-            UpdateOrientation();
+            // Check for inherit(s) and replace actions with default layout actions where necessary
+            foreach (AxisLayoutFlags axisLayout in controller.GetTargetAxis().Union(controller.GetTargetTriggers()))
+            {
+                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out var actions) && actions is InheritActions)
+                {
+                    // Replace with default layout actions
+                    if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
+                        currentLayout.AxisLayout[axisLayout] = defaultActions;
+                }
+            }
         }
     }
 
@@ -351,17 +391,6 @@ internal static class LayoutManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
-
-            // Check for inherit(s) and replace actions with default layout actions where necessary
-            foreach (var buttonState in controllerState.ButtonState.State.Keys.ToList())
-            {
-                if (currentLayout.ButtonLayout.TryGetValue(buttonState, out var actions) && actions.Any(action => action is InheritActions))
-                {
-                    // Replace with default layout actions
-                    if (defaultLayout.ButtonLayout.TryGetValue(buttonState, out var defaultActions))
-                        currentLayout.ButtonLayout[buttonState].AddRange(defaultActions);
-                }
-            }
 
             // we need to check for shifter(s) first
             ShiftSlot shiftSlot = ShiftSlot.None;
@@ -490,17 +519,6 @@ internal static class LayoutManager
                             }
                             break;
                     }
-                }
-            }
-
-            // Check for inherit(s) and replace actions with default layout actions where necessary
-            foreach (AxisLayoutFlags axisLayout in currentLayout.AxisLayout.Keys.ToList())
-            {
-                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out var actions) && actions is InheritActions)
-                {
-                    // Replace with default layout actions
-                    if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
-                        currentLayout.AxisLayout[axisLayout] = defaultActions;
                 }
             }
 
