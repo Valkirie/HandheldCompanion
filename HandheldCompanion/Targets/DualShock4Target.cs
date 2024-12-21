@@ -16,15 +16,19 @@ namespace HandheldCompanion.Targets
     internal class DualShock4Target : ViGEmTarget
     {
         private DS4_REPORT_EX outDS4Report;
+        private IDualShock4Controller dualShockController;
 
         public DualShock4Target() : base()
         {
             // initialize controller
+            virtualController = VirtualManager.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
+
+            // update HID
             HID = HIDmode.DualShock4Controller;
 
-            virtualController = VirtualManager.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
-            virtualController.AutoSubmitReport = false;
-            ((IDualShock4Controller)virtualController).FeedbackReceived += FeedbackReceived;
+            dualShockController = (IDualShock4Controller)virtualController;
+            dualShockController.AutoSubmitReport = false;
+            dualShockController.FeedbackReceived += FeedbackReceived;
 
             LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
         }
@@ -162,7 +166,7 @@ namespace HandheldCompanion.Targets
 
             try
             {
-                ((IDualShock4Controller)virtualController).SubmitRawReport(rawOutReportEx);
+                dualShockController.SubmitRawReport(rawOutReportEx);
             }
             catch (VigemBusNotFoundException ex)
             {
@@ -176,7 +180,9 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
-            virtualController?.Disconnect();
+            dualShockController?.Disconnect();
+            dualShockController?.Dispose();
+            dualShockController = null;
 
             base.Dispose();
         }
