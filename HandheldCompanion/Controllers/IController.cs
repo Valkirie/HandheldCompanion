@@ -336,6 +336,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             HideHID();
+            StateChanged?.Invoke();
 
             if (powerCycle)
                 CyclePort();
@@ -347,6 +348,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             UnhideHID();
+            StateChanged?.Invoke();
 
             if (powerCycle)
                 CyclePort();

@@ -67,6 +67,7 @@ namespace HandheldCompanion.ViewModels
         private void Controller_StateChanged()
         {
             OnPropertyChanged(nameof(IsBusy));
+            OnPropertyChanged(nameof(IsHidden));
         }
 
         private void Controller_UserIndexChanged(byte UserIndex)
