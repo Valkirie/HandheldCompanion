@@ -632,6 +632,11 @@ public static class ControllerManager
         // is controller current target ?
         bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
 
+        LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
+
+        // raise event
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
+
         // unhide on remove 
         if (!IsPowerCycling)
         {
@@ -644,16 +649,13 @@ public static class ControllerManager
                 SetPlaceholderController();
             }
             else
-                controller.Unplug();
+            {
+                controller.Dispose();
+            }
 
             // controller was unplugged
             Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
         }
-
-        LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
-
-        // raise event
-        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
     private static void watchdogThreadLoop(object? obj)
@@ -919,6 +921,11 @@ public static class ControllerManager
         // is controller current target ?
         bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
 
+        LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
+
+        // raise event
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
+
         // controller was unplugged
         if (!IsPowerCycling)
         {
@@ -932,13 +939,10 @@ public static class ControllerManager
                 SetPlaceholderController();
             }
             else
-                controller.Unplug();
+            {
+                controller.Dispose();
+            }
         }
-
-        LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
-
-        // raise event
-        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
     }
 
     private static void SetPlaceholderController()
@@ -960,7 +964,7 @@ public static class ControllerManager
             {
                 targetController.InputsUpdated -= UpdateInputs;
                 targetController.SetLightColor(0, 0, 0);
-                targetController.Unplug();
+                targetController.Dispose();
                 targetController = null;
 
                 // update HIDInstancePath

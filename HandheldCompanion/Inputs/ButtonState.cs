@@ -7,7 +7,7 @@ using System.Linq;
 namespace HandheldCompanion.Inputs;
 
 [Serializable]
-public partial class ButtonState : ICloneable
+public partial class ButtonState : ICloneable, IDisposable
 {
     public ConcurrentDictionary<ButtonFlags, bool> State = new();
 
@@ -90,5 +90,13 @@ public partial class ButtonState : ICloneable
         }
 
         return false;
+    }
+
+    public void Dispose()
+    {
+        State.Clear();
+        State = null;
+
+        GC.SuppressFinalize(this);
     }
 }

@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers
 {
-    public class IController
+    public class IController : IDisposable
     {
         #region events
         public event UserIndexChangedEventHandler UserIndexChanged;
@@ -631,6 +631,19 @@ namespace HandheldCompanion.Controllers
             if (Details is not null)
                 return Details.Name;
             return string.Empty;
+        }
+
+        public virtual void Dispose()
+        {
+            Details?.Dispose();
+            Details = null;
+            Inputs?.Dispose();
+            Inputs = null;
+
+            foreach (GamepadMotion gamepadMotion in gamepadMotions.Values)
+                gamepadMotion.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

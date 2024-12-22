@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace HandheldCompanion.Controllers
 {
     [Serializable]
-    public class ControllerState : ICloneable
+    public class ControllerState : ICloneable, IDisposable
     {
         public ButtonState ButtonState = new();
         public AxisState AxisState = new();
@@ -32,6 +32,15 @@ namespace HandheldCompanion.Controllers
                 AxisState = this.AxisState.Clone() as AxisState,
                 GyroState = this.GyroState.Clone() as GyroState,
             };
+        }
+
+        public void Dispose()
+        {
+            ButtonState.Dispose();
+            AxisState.Dispose();
+            GyroState.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -28,6 +28,25 @@ public class DInputController : IController
         joystick.Properties.BufferSize = 128;
     }
 
+    ~DInputController()
+    {
+        Dispose();
+    }
+
+    public override void Dispose()
+    {
+        Unplug();
+
+        // don't dispose our placeholders
+        if (isPlaceholder)
+            return;
+
+        joystick.Dispose();
+        joystick = null;
+
+        base.Dispose();
+    }
+
     public override string ToString()
     {
         string baseName = base.ToString();

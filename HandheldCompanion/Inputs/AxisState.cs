@@ -7,7 +7,7 @@ using System.Linq;
 namespace HandheldCompanion.Inputs;
 
 [Serializable]
-public partial class AxisState : ICloneable
+public partial class AxisState : ICloneable, IDisposable
 {
     public ConcurrentDictionary<AxisFlags, short> State = new();
 
@@ -91,5 +91,13 @@ public partial class AxisState : ICloneable
 
             return true;
         }
+    }
+
+    public void Dispose()
+    {
+        State.Clear();
+        State = null;
+
+        GC.SuppressFinalize(this);
     }
 }

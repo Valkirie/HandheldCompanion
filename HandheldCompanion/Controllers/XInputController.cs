@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
+using static HandheldCompanion.Managers.TimerManager;
 
 namespace HandheldCompanion.Controllers;
 
@@ -30,6 +31,23 @@ public class XInputController : IController
         ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 255, 200, 44));
     }
 
+    ~XInputController()
+    {
+        Dispose();
+    }
+
+    public override void Dispose()
+    {
+        Unplug();
+
+        // don't dispose our placeholders
+        if (isPlaceholder)
+            return;
+
+        Controller = null;
+        base.Dispose();
+    }
+
     public override string ToString()
     {
         var baseName = base.ToString();
@@ -40,9 +58,6 @@ public class XInputController : IController
 
     public virtual void UpdateInputs(long ticks, float delta, bool commit)
     {
-        // update secret state
-        XInputGetStateSecret14(UserIndex, out State);
-
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
         // skip if controller isn't connected
@@ -50,6 +65,9 @@ public class XInputController : IController
         {
             try
             {
+                // update secret state
+                XInputGetStateSecret14(UserIndex, out State);
+
                 // update gamepad state
                 Gamepad = Controller.GetState().Gamepad;
 
@@ -132,15 +150,27 @@ public class XInputController : IController
         catch { }
     }
 
+    private TickEventHandler _tickHandler;
     public override void Plug()
     {
-        TimerManager.Tick += (ticks, delta) => UpdateInputs(ticks, delta, true);
+        // Assign a handler to the delegate
+        _tickHandler = (ticks, delta) => UpdateInputs(ticks, delta, true);
+
+        // Subscribe to the event
+        Tick += _tickHandler;
+
         base.Plug();
     }
 
     public override void Unplug()
     {
-        TimerManager.Tick -= (ticks, delta) => UpdateInputs(ticks, delta, true);
+        if (_tickHandler != null)
+        {
+            // Unsubscribe from the event
+            Tick -= _tickHandler;
+            _tickHandler = null;
+        }
+
         base.Unplug();
     }
 

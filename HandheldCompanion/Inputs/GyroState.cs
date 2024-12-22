@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace HandheldCompanion.Inputs
 {
-    public class GyroState : ICloneable
+    public class GyroState : ICloneable, IDisposable
     {
         public Dictionary<SensorState, Vector3> Accelerometer = [];
         public Dictionary<SensorState, Vector3> Gyroscope = [];
@@ -64,6 +64,16 @@ namespace HandheldCompanion.Inputs
         public object Clone()
         {
             return new GyroState(Accelerometer, Gyroscope);
+        }
+
+        public void Dispose()
+        {
+            Accelerometer.Clear();
+            Accelerometer = null;
+            Gyroscope.Clear();
+            Gyroscope = null;
+
+            GC.SuppressFinalize(this);
         }
     }
 }
