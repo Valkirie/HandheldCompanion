@@ -3,7 +3,6 @@ using HandheldCompanion.Managers;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
-using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.System.Power;
 using WindowsInput.Events;
