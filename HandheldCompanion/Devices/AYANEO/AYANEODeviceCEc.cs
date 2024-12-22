@@ -1,8 +1,11 @@
 ﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using System.Windows.Forms;
 using System.Windows.Media;
+using Windows.System.Power;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -26,6 +29,8 @@ namespace HandheldCompanion.Devices.AYANEO
             this.Capabilities |= DeviceCapabilities.FanControl;
             this.Capabilities |= DeviceCapabilities.DynamicLighting;
             this.Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+            this.Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+
             this.DynamicLightingCapabilities = LEDLevel.SolidColor;
 
             this.ECDetails = new ECDetails
@@ -83,7 +88,31 @@ namespace HandheldCompanion.Devices.AYANEO
             {
                 this.CEcControl_RgbHoldControl();
             }
+
+            PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
+
             return true;
+        }
+
+        private void PowerManager_RemainingChargePercentChanged(object? sender, object e)
+        {
+            // Check if BatteryChargeLimit is enabled in SettingsManager
+            bool isBatteryChargeLimitEnabled = SettingsManager.GetBoolean("BatteryChargeLimit");
+            if (isBatteryChargeLimitEnabled)
+            {
+                // Get the current battery percentage
+                int batteryPercentage = PowerManager.RemainingChargePercent;
+                if (batteryPercentage >= 80)
+                {
+                    // Call the function to open the charge bypass
+                    CEcControl_BypassChargeOpen();
+                }
+                else if (batteryPercentage < 80)
+                {
+                    // Call the function to close the charge bypass
+                    CEcControl_BypassChargeClose();
+                }
+            }
         }
 
         public override void Close()
@@ -92,6 +121,9 @@ namespace HandheldCompanion.Devices.AYANEO
             {
                 this.CEcControl_RgbReleaseControl();
             }
+
+            PowerManager.RemainingChargePercentChanged -= PowerManager_RemainingChargePercentChanged;
+
             base.Close();
         }
 
@@ -238,6 +270,18 @@ namespace HandheldCompanion.Devices.AYANEO
         protected virtual void CEcControl_RgbReleaseControl()
         {
             this.ECRAMWrite(0xbf, 0x00);
+        }
+
+        protected virtual void CEcControl_BypassChargeOpen()
+        {
+            if (this.ECRamReadByte(0x1e) != 0x55)
+                this.ECRAMWrite(0x1e, 0x55);
+        }
+
+        protected virtual void CEcControl_BypassChargeClose()
+        {
+            if (this.ECRamReadByte(0x1e) != 0xaa)
+                this.ECRAMWrite(0x1e, 0xaa);
         }
     }
 }

@@ -61,6 +61,18 @@ namespace HandheldCompanion.Devices.AYANEO
             ));
         }
 
+        public byte ECRamDirectRead(byte address, byte offset = 0xd1)
+        {
+            ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
+            return base.ECRamReadByte(address2, this.ECDetails);
+        }
+
+        public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)
+        {
+            ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
+            return base.ECRamDirectWrite(address2, this.ECDetails, data);
+        }
+
         public override void SetFanDuty(double percent)
         {
             if (ECDetails.AddressFanDuty == 0)
@@ -99,12 +111,6 @@ namespace HandheldCompanion.Devices.AYANEO
             Thread.Sleep(10); // AYASpace does this so copied it here
         }
 
-        public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)
-        {
-            ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
-            return base.ECRamDirectWrite(address2, this.ECDetails, data);
-        }
-
         protected override void CEcControl_RgbHoldControl()
         {
             this.CEiiEcHelper_RgbStart();
@@ -123,6 +129,20 @@ namespace HandheldCompanion.Devices.AYANEO
         protected void CEiiEcHelper_RgbStop()
         {
             this.ECRamDirectWrite(0x87, 0x00);
+        }
+
+        // Based on CEiiEcHelper_BypassChargeOpen (AYASpace) but renamed to override existing function
+        protected override void CEcControl_BypassChargeOpen()
+        {
+            if (this.ECRamDirectRead(0xd1) != 0x65)
+                this.ECRamDirectWrite(0xd1, 0x65);
+        }
+
+        // Based on CEiiEcHelper_BypassChargeClose (AYASpace) but renamed to override existing function
+        protected override void CEcControl_BypassChargeClose()
+        {
+            if (this.ECRamDirectRead(0xd1) != 0x01)
+                this.ECRamDirectWrite(0xd1, 0x01);
         }
     }
 }

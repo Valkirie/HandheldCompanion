@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SystemPowerManager = Windows.System.Power.PowerManager;
+using Windows.System.Power;
 
 namespace HandheldCompanion.Managers;
 
@@ -101,11 +101,11 @@ public static class SystemManager
         // manage events
         SystemEvents.PowerModeChanged += OnPowerChange;
         SystemEvents.SessionSwitch += OnSessionSwitch;
-        SystemPowerManager.BatteryStatusChanged += BatteryStatusChanged;
-        SystemPowerManager.EnergySaverStatusChanged += BatteryStatusChanged;
-        SystemPowerManager.PowerSupplyStatusChanged += BatteryStatusChanged;
-        SystemPowerManager.RemainingChargePercentChanged += BatteryStatusChanged;
-        SystemPowerManager.RemainingDischargeTimeChanged += BatteryStatusChanged;
+        PowerManager.BatteryStatusChanged += BatteryStatusChanged;
+        PowerManager.EnergySaverStatusChanged += BatteryStatusChanged;
+        PowerManager.PowerSupplyStatusChanged += BatteryStatusChanged;
+        PowerManager.RemainingChargePercentChanged += BatteryStatusChanged;
+        PowerManager.RemainingDischargeTimeChanged += BatteryStatusChanged;
 
         // raise events
         BatteryStatusChanged(null, null);
@@ -116,11 +116,11 @@ public static class SystemManager
         // manage events
         SystemEvents.PowerModeChanged -= OnPowerChange;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
-        SystemPowerManager.BatteryStatusChanged -= BatteryStatusChanged;
-        SystemPowerManager.EnergySaverStatusChanged -= BatteryStatusChanged;
-        SystemPowerManager.PowerSupplyStatusChanged -= BatteryStatusChanged;
-        SystemPowerManager.RemainingChargePercentChanged -= BatteryStatusChanged;
-        SystemPowerManager.RemainingDischargeTimeChanged -= BatteryStatusChanged;
+        PowerManager.BatteryStatusChanged -= BatteryStatusChanged;
+        PowerManager.EnergySaverStatusChanged -= BatteryStatusChanged;
+        PowerManager.PowerSupplyStatusChanged -= BatteryStatusChanged;
+        PowerManager.RemainingChargePercentChanged -= BatteryStatusChanged;
+        PowerManager.RemainingDischargeTimeChanged -= BatteryStatusChanged;
     }
 
     private static void BatteryStatusChanged(object sender, object e)
