@@ -280,6 +280,7 @@ public abstract class IDevice
                             device = new AYANEOAIRPro();
                             break;
                         case "AIR 1S":
+                        case "AIR 1S Limited":
                             device = new AYANEOAIR1S();
                             break;
                         case "AIR Lite":
