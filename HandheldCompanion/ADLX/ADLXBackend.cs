@@ -1,4 +1,6 @@
-﻿using System.Runtime.ExceptionServices;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -8,50 +10,7 @@ namespace HandheldCompanion.ADLX
     public static class ADLXBackend
     {
         public const string ADLX_Wrapper = @"ADLX_Wrapper.dll";
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct AdlxTelemetryData
-        {
-            // GPU Usage
-            public bool gpuUsageSupported;
-            public double gpuUsageValue;
-
-            // GPU Core Frequency
-            public bool gpuClockSpeedSupported;
-            public double gpuClockSpeedValue;
-
-            // GPU VRAM Frequency
-            public bool gpuVRAMClockSpeedSupported;
-            public double gpuVRAMClockSpeedValue;
-
-            // GPU Core Temperature
-            public bool gpuTemperatureSupported;
-            public double gpuTemperatureValue;
-
-            // GPU Hotspot Temperature
-            public bool gpuHotspotTemperatureSupported;
-            public double gpuHotspotTemperatureValue;
-
-            // GPU Power
-            public bool gpuPowerSupported;
-            public double gpuPowerValue;
-
-            // Fan Speed
-            public bool gpuFanSpeedSupported;
-            public double gpuFanSpeedValue;
-
-            // VRAM Usage
-            public bool gpuVramSupported;
-            public double gpuVramValue;
-
-            // GPU Voltage
-            public bool gpuVoltageSupported;
-            public double gpuVoltageValue;
-
-            // GPU TBP
-            public bool gpuTotalBoardPowerSupported;
-            public double gpuTotalBoardPowerValue;
-        }
+        public const string ADLX_Probe = @"ADLX_Probe.exe";
 
         public enum ADLX_RESULT
         {
@@ -72,8 +31,8 @@ namespace HandheldCompanion.ADLX
             ADLX_GPU_INACTIVE               /**< @ENG_START_DOX This result indicates that the GPU is inactive. @ENG_END_DOX */
         }
 
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] private static extern bool IntializeAdlx();
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] private static extern bool InitializeAdlxWithIncompatibleDriver();
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool IntializeAdlx();
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool InitializeAdlxWithIncompatibleDriver();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool CloseAdlx();
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetNumberOfDisplays(ref int displayNum);
@@ -130,13 +89,29 @@ namespace HandheldCompanion.ADLX
 
         static ADLXBackend() { }
 
-        [HandleProcessCorruptedStateExceptions]
         [SecurityCritical]
         public static bool SafeIntializeAdlx()
         {
             try
             {
-                return IntializeAdlx();
+                Process process = new Process();
+                process.StartInfo.FileName = ADLX_Probe;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.WorkingDirectory = Path.Combine(System.Environment.CurrentDirectory, "Resources"); // Explicit working directory
+                process.Start();
+                process.WaitForExit();
+
+                int exitCode = process.ExitCode;
+                switch (process.ExitCode)
+                {
+                    case 0:
+                        return IntializeAdlx();
+                    case 1:
+                        return false;
+                    default:
+                        return false;
+                }
             }
             catch { }
 
