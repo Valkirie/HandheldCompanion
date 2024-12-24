@@ -88,6 +88,8 @@ namespace HandheldCompanion.ADLX
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetAdlxTelemetry(int GPU, ref AdlxTelemetryData adlxTelemetryData);
 
+        private static StringBuilder displayName = new StringBuilder(256);
+
         static ADLXBackend() { }
 
         [SecurityCritical]
@@ -107,7 +109,7 @@ namespace HandheldCompanion.ADLX
                 switch (process.ExitCode)
                 {
                     case 2:
-                        StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
+                         // Assume display name won't exceed 255 characters
                         bool success = IntializeAdlx(displayName, displayName.Capacity);
                         return success;
                 }
@@ -115,6 +117,11 @@ namespace HandheldCompanion.ADLX
             catch { }
 
             return false;
+        }
+
+        public static string GetVersion()
+        {
+            return displayName.ToString();
         }
     }
 }

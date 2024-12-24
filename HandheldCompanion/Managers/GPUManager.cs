@@ -52,7 +52,7 @@ namespace HandheldCompanion.Managers
                 IsLoaded_ADLX = ADLXBackend.SafeIntializeAdlx();
 
                 if (IsLoaded_ADLX)
-                    LogManager.LogInformation("ADLX was successfully initialized", "GPUManager");
+                    LogManager.LogInformation("ADLX {0} was successfully initialized", ADLXBackend.GetVersion(), "GPUManager");
                 else
                     LogManager.LogError("Failed to initialize ADLX", "GPUManager");
             }
