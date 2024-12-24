@@ -31,7 +31,8 @@ namespace HandheldCompanion.ADLX
             ADLX_GPU_INACTIVE               /**< @ENG_START_DOX This result indicates that the GPU is inactive. @ENG_END_DOX */
         }
 
-        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool IntializeAdlx();
+        [HandleProcessCorruptedStateExceptions]
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] public static extern bool IntializeAdlx(StringBuilder dispName, int nameLength);
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool InitializeAdlxWithIncompatibleDriver();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool CloseAdlx();
 
@@ -105,12 +106,10 @@ namespace HandheldCompanion.ADLX
                 int exitCode = process.ExitCode;
                 switch (process.ExitCode)
                 {
-                    case 0:
-                        return InitializeAdlxWithIncompatibleDriver();
-                    case 1:
-                        return false;
-                    default:
-                        return false;
+                    case 2:
+                        StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
+                        bool success = IntializeAdlx(displayName, displayName.Capacity);
+                        return success;
                 }
             }
             catch { }
