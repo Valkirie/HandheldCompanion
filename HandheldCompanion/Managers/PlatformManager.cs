@@ -1,10 +1,7 @@
-﻿using HandheldCompanion.Misc;
-using HandheldCompanion.Platforms;
+﻿using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using System;
 using System.Diagnostics;
-using System.Timers;
-using System.Windows;
 
 namespace HandheldCompanion.Managers;
 
@@ -19,22 +16,10 @@ public static class PlatformManager
     public static RTSS RTSS = new();
     public static Platforms.LibreHardwareMonitor LibreHardwareMonitor = new();
 
-    private const int UpdateInterval = 1000;
-    private static Timer UpdateTimer;
-
     public static bool IsInitialized;
-
-    private static PlatformNeeds CurrentNeeds = PlatformNeeds.None;
-    private static PlatformNeeds PreviousNeeds = PlatformNeeds.None;
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
-
-    static PlatformManager()
-    {
-        UpdateTimer = new() { Interval = UpdateInterval, AutoReset = false };
-        UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
-    }
 
     public static void Start()
     {
@@ -56,38 +41,12 @@ public static class PlatformManager
 
         if (RTSS.IsInstalled)
         {
-            UpdateCurrentNeeds_OnScreenDisplay(OSDManager.OverlayLevel);
+            RTSS.Start();
         }
 
         if (LibreHardwareMonitor.IsInstalled)
         {
             LibreHardwareMonitor.Start();
-        }
-
-        // manage update timer events
-        UpdateTimer.Start();
-
-        // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ProfileManager.Applied += ProfileManager_Applied;
-        PowerProfileManager.Applied += PowerProfileManager_Applied;
-
-        // raise events
-        if (ProfileManager.IsInitialized)
-        {
-            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
-        }
-
-        // raise events
-        if (PowerProfileManager.IsInitialized)
-        {
-            PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
-        }
-
-        // raise events
-        if (SettingsManager.IsInitialized)
-        {
-            SettingsManager_SettingValueChanged("OnScreenDisplayLevel", SettingsManager.GetString("OnScreenDisplayLevel"), false);
         }
 
         IsInitialized = true;
@@ -118,132 +77,9 @@ public static class PlatformManager
             LibreHardwareMonitor.Stop();
         }
 
-        // manage update timer events
-        UpdateTimer.Stop();
-
-        // manage events
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ProfileManager.Applied -= ProfileManager_Applied;
-        PowerProfileManager.Applied -= PowerProfileManager_Applied;
-
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "PlatformManager");
-    }
-
-    private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
-    {
-        // AutoTDP
-        if (profile.AutoTDPEnabled)
-            CurrentNeeds |= PlatformNeeds.AutoTDP;
-        else
-            CurrentNeeds &= ~PlatformNeeds.AutoTDP;
-
-        UpdateTimer.Stop();
-        UpdateTimer.Start();
-    }
-
-    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
-    {
-        // Framerate limiter
-        if (profile.FramerateValue != 0)
-            CurrentNeeds |= PlatformNeeds.FramerateLimiter;
-        else
-            CurrentNeeds &= ~PlatformNeeds.FramerateLimiter;
-
-        UpdateTimer.Stop();
-        UpdateTimer.Start();
-    }
-
-    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            switch (name)
-            {
-                case "OnScreenDisplayLevel":
-                    {
-                        UpdateCurrentNeeds_OnScreenDisplay(Convert.ToInt16(value));
-                        UpdateTimer.Stop();
-                        UpdateTimer.Start();
-                    }
-                    break;
-            }
-        });
-    }
-
-    private static void UpdateCurrentNeeds_OnScreenDisplay(short level)
-    {
-        switch (level)
-        {
-            case 0: // Disabled
-                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
-                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                break;
-            default:
-            case 1: // Minimal
-                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                break;
-            case 2: // Extended
-            case 3: // Full
-            case 4: // External
-                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
-                break;
-        }
-    }
-
-    private static void MonitorPlatforms()
-    {
-        /*
-         * Dependencies:
-         * RTSS: AutoTDP, framerate limiter, OSD
-         */
-
-        // Check if the current needs are the same as the previous needs
-        if (CurrentNeeds == PreviousNeeds) return;
-
-        // Start or stop LHM and RTSS based on the current and previous needs
-        if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
-        {
-            // If OSD is needed, start RTSS and start LHM only if OnScreenDisplayComplex is true
-            if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
-            {
-                // Only start RTSS if it was not running before and if it is installed
-                if (RTSS.IsInstalled)
-                {
-                    // Start RTSS
-                    RTSS.Start();
-                }
-            }
-        }
-        else if (CurrentNeeds.HasFlag(PlatformNeeds.AutoTDP) || CurrentNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
-        {
-            // If AutoTDP or framerate limiter is needed, start only RTSS and stop LHM
-            if (!PreviousNeeds.HasFlag(PlatformNeeds.AutoTDP) && !PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
-                // Only start RTSS if it was not running before and if it is installed
-                if (RTSS.IsInstalled)
-                    RTSS.Start();
-        }
-        else
-        {
-            // If none of the needs are present, stop both LHM and RTSS
-            if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) || PreviousNeeds.HasFlag(PlatformNeeds.AutoTDP) ||
-                PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
-            {
-                // Only stop LHM and RTSS if they were running before and if they are installed
-                if (RTSS.IsInstalled)
-                {
-                    // Stop RTSS
-                    RTSS.Stop();
-                }
-            }
-        }
-
-        // Store the current needs in the previous needs variable
-        PreviousNeeds = CurrentNeeds;
     }
 
     public static PlatformType GetPlatform(Process proc)
