@@ -58,6 +58,9 @@ public class XInputController : IController
 
     public virtual void UpdateInputs(long ticks, float delta, bool commit)
     {
+        if (Inputs is null || IsDisposing)
+            return;
+
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
         // skip if controller isn't connected

@@ -635,8 +635,12 @@ namespace HandheldCompanion.Controllers
             return string.Empty;
         }
 
+        protected bool IsDisposing = false;
         public virtual void Dispose()
         {
+            // set flag
+            IsDisposing = true;
+
             Details?.Dispose();
             Details = null;
             Inputs?.Dispose();

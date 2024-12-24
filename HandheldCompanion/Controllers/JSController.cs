@@ -49,6 +49,9 @@ public class JSController : IController
 
     public virtual void UpdateState(float delta)
     {
+        if (Inputs is null || IsDisposing)
+            return;
+
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
         // skip if controller isn't connected
