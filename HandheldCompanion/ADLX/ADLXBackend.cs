@@ -106,7 +106,7 @@ namespace HandheldCompanion.ADLX
                 switch (process.ExitCode)
                 {
                     case 0:
-                        return IntializeAdlx();
+                        return InitializeAdlxWithIncompatibleDriver();
                     case 1:
                         return false;
                     default:
