@@ -2,98 +2,106 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
-using Timer = System.Timers.Timer;
+using System.Threading.Tasks;
 
-namespace HandheldCompanion.Managers;
-
-public static class ToastManager
+namespace HandheldCompanion.Managers
 {
-    private const int m_Interval = 5000;
-    private const string m_Group = "HandheldCompanion";
-
-    private static readonly ConcurrentDictionary<string, Timer> m_Threads = new();
-
-    public static bool IsEnabled;
-    private static bool IsInitialized;
-
-    static ToastManager()
+    public static class ToastManager
     {
-    }
+        private const int Interval = 5000; // Milliseconds
+        private const string Group = "HandheldCompanion";
 
-    public static void SendToast(string title, string content = "", string img = "Toast")
-    {
-        if (!IsEnabled)
-            return;
+        private static readonly ConcurrentDictionary<string, CancellationTokenSource> ToastCancellationTokens = new();
 
-        var url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
-        var uri = new Uri(url);
+        public static bool IsEnabled { get; set; }
+        private static bool IsInitialized { get; set; }
 
-        // capricious ToastContentBuilder...
-        var ToastThread = new Thread(() =>
+        static ToastManager() { }
+
+        public static void SendToast(string title, string content = "", string img = "icon", bool isHero = false)
         {
-            try
+            if (!IsEnabled) return;
+
+            string imagePath = $"{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
+            Uri imageUri = new Uri($"file:///{imagePath}");
+
+            // Use Task to avoid manual thread management
+            Task.Run(async () =>
             {
-                var toast = new ToastContentBuilder()
-                    .AddText(title)
-                    .AddText(content)
-                    .AddAudio(new ToastAudio { Silent = true, Src = new Uri("ms-winsoundevent:Notification.Default") })
-                    .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
-                    .SetToastScenario(ToastScenario.Default);
-
-                if (toast is null)
-                    return;
-
-                toast.Show(toast =>
+                try
                 {
-                    toast.Tag = title;
-                    toast.Group = m_Group;
-                });
+                    ToastContentBuilder toast = new ToastContentBuilder()
+                        .AddText(title)
+                        .AddText(content)
+                        .AddAudio(new ToastAudio { Silent = true, Src = new Uri("ms-winsoundevent:Notification.Default") })
+                        .SetToastScenario(ToastScenario.Default);
 
-                var timer = new Timer(m_Interval)
+                    if (File.Exists(imagePath))
+                    {
+                        if (isHero)
+                            toast.AddHeroImage(imageUri);
+                        else
+                            toast.AddAppLogoOverride(imageUri, ToastGenericAppLogoCrop.Default);
+                    }
+
+                    if (toast == null) return;
+
+                    // Show the toast
+                    toast.Show(toastNotification =>
+                    {
+                        toastNotification.Tag = title;
+                        toastNotification.Group = Group;
+                    });
+
+                    // Manage toast lifetime
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    if (!ToastCancellationTokens.TryAdd(title, cts)) return;
+
+                    await Task.Delay(Interval, cts.Token);
+
+                    if (!cts.Token.IsCancellationRequested)
+                    {
+                        ToastNotificationManagerCompat.History.Remove(title, Group);
+                        ToastCancellationTokens.TryRemove(title, out _);
+                    }
+                }
+                catch (TaskCanceledException)
                 {
-                    Enabled = true,
-                    AutoReset = false
-                };
-
-                timer.Elapsed += (s, e) =>
+                    // Task was canceled - safe to ignore
+                }
+                catch (Exception ex)
                 {
-                    ToastNotificationManagerCompat.History.Remove(title, m_Group);
-                    m_Threads.TryRemove(title, out _);
-                };
+                    LogManager.LogError("Error in SendToast: {0}", ex.Message);
+                }
+            });
+        }
 
-                // add timer to bag
-                m_Threads.TryAdd(title, timer);
-            }
-            catch (AccessViolationException)
+        public static void Start()
+        {
+            if (IsInitialized)
+                return;
+
+            IsInitialized = true;
+            LogManager.LogInformation("{0} has started", nameof(ToastManager));
+        }
+
+        public static void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            IsInitialized = false;
+
+            foreach (CancellationTokenSource cts in ToastCancellationTokens.Values)
             {
+                cts.Cancel();
+                cts.Dispose();
             }
-            catch (Exception)
-            {
-            }
-        });
 
-        ToastThread.IsBackground = true;
-        ToastThread.Start();
-    }
-
-    public static void Start()
-    {
-        IsInitialized = true;
-
-        LogManager.LogInformation("{0} has started", "ToastManager");
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        IsInitialized = false;
-
-        foreach (var timer in m_Threads.Values)
-            timer.Stop();
-
-        LogManager.LogInformation("{0} has stopped", "ToastManager");
+            ToastCancellationTokens.Clear();
+            LogManager.LogInformation("{0} has stopped", nameof(ToastManager));
+        }
     }
 }
