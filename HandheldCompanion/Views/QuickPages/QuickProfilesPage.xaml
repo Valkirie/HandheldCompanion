@@ -816,7 +816,10 @@
 
                     <ikw:SimpleStackPanel Margin="0,-10,0,-4" Spacing="6">
                         <!--  GPU Scaling  -->
-                        <ikw:SimpleStackPanel Name="StackProfileGPUScaling" Spacing="6">
+                        <ikw:SimpleStackPanel
+                            Name="StackProfileGPUScaling"
+                            IsEnabled="False"
+                            Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" />
@@ -883,6 +886,7 @@
                             Name="StackProfileRSR"
                             d:Background="Red"
                             d:Visibility="Visible"
+                            IsEnabled="False"
                             Spacing="6"
                             Visibility="Collapsed">
                             <Grid>
@@ -956,6 +960,7 @@
                             Name="StackProfileAFMF"
                             d:Background="Red"
                             d:Visibility="Visible"
+                            IsEnabled="False"
                             Spacing="6"
                             Visibility="Collapsed">
                             <Grid>
@@ -991,7 +996,10 @@
                             Visibility="{Binding ElementName=StackProfileAFMF, Path=Visibility}" />
 
                         <!--  Integer Scaling  -->
-                        <ikw:SimpleStackPanel Name="StackProfileIS" Spacing="6">
+                        <ikw:SimpleStackPanel
+                            Name="StackProfileIS"
+                            IsEnabled="False"
+                            Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="7*" />
@@ -1112,7 +1120,10 @@
                         <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
                         <!--  RIS (AMD)  -->
-                        <ikw:SimpleStackPanel Name="StackProfileRIS" Spacing="6">
+                        <ikw:SimpleStackPanel
+                            Name="StackProfileRIS"
+                            IsEnabled="False"
+                            Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" />

@@ -203,10 +203,10 @@ public partial class QuickProfilesPage : Page
             StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
             StackProfileAFMF.IsEnabled = HasAFMFSupport;
 
+            StackProfileGPUScaling.IsEnabled = HasGPUScalingSupport;
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
-            GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
-            GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+            GPUScalingComboBox.IsEnabled = HasScalingModeSupport;
 
             CurrentDeviceName.Text = GPU.adapterInformation.Details.Description;
         });

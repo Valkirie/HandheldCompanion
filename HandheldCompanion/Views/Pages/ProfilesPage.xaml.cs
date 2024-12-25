@@ -119,9 +119,10 @@ public partial class ProfilesPage : Page
             StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
             StackProfileAFMF.IsEnabled = HasAFMFSupport;
 
+            StackProfileGPUScaling.IsEnabled = HasGPUScalingSupport;
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
-            GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
-            GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+            StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
+            GPUScalingComboBox.IsEnabled = HasScalingModeSupport;
         });
     }
 
