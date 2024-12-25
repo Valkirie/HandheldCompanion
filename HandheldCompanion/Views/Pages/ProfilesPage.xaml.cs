@@ -117,7 +117,7 @@ public partial class ProfilesPage : Page
         IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
@@ -155,7 +155,7 @@ public partial class ProfilesPage : Page
     private void UpdateGraphicsSettingsUI()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             StackProfileRSR.IsEnabled = HasRSRSupport;
             StackProfileAFMF.IsEnabled = HasAFMFSupport;
