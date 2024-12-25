@@ -411,12 +411,12 @@ public abstract class IDevice
                                 case "AMD Ryzen 5 8640U w/ Radeon 760M Graphics":
                                     device = new GPDWinMax2_2024_8640U();
                                     break;
+                                default:
                                 case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
                                     device = new GPDWinMax2_2024_8840U();
                                     break;
-                                // if none of those
-                                default:
-                                    device = new GPDWinMax2_2024_8840U(); // Assume newer device is similar to latest as of this commit
+                                case "AMD Ryzen AI 9 HX 370 w/ Radeon 890M":
+                                    device = new GPDWinMax2_2024_HX370();
                                     break;
                             }
                             break;
