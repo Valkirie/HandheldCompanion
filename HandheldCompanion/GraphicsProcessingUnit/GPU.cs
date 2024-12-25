@@ -60,7 +60,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected T Execute<T>(Func<T> func, T defaultValue)
         {
-            if (!halting && GPUManager.IsInitialized)
+            if (!halting && IsInitialized)
                 try
                 {
                     Task<T> task = Task.Run(() =>
@@ -69,7 +69,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         {
                             // make sure while we were waiting for the lock
                             // that someone else didn't unitialize the GPU backend
-                            if (!halting && GPUManager.IsInitialized)
+                            if (!halting && IsInitialized)
                                 return func();
                             else
                                 return defaultValue;
