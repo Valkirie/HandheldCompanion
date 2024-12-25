@@ -112,6 +112,8 @@ namespace HandheldCompanion.ADLX
                          // Assume display name won't exceed 255 characters
                         bool success = IntializeAdlx(displayName, displayName.Capacity);
                         return success;
+                    default:
+                        return InitializeAdlxWithIncompatibleDriver();
                 }
             }
             catch { }
