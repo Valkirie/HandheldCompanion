@@ -191,10 +191,8 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         ToastManager.Start();
-        ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         // non-STA threads
         List<Task> tasks = new List<Task>
@@ -345,16 +343,6 @@ public partial class MainWindow : GamepadWindow
     {
         var separator = new ToolStripSeparator();
         notifyIcon.ContextMenuStrip.Items.Add(separator);
-    }
-
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        switch (name)
-        {
-            case "ToastEnable":
-                ToastManager.IsEnabled = Convert.ToBoolean(value);
-                break;
-        }
     }
 
     public void SwapWindowState()
@@ -632,7 +620,6 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         // stop windows
         overlayModel.Close();

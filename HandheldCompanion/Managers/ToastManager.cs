@@ -83,6 +83,8 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
             IsInitialized = true;
             LogManager.LogInformation("{0} has started", nameof(ToastManager));
         }
@@ -92,7 +94,7 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            IsInitialized = false;
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
             foreach (CancellationTokenSource cts in ToastCancellationTokens.Values)
             {
@@ -101,7 +103,20 @@ namespace HandheldCompanion.Managers
             }
 
             ToastCancellationTokens.Clear();
+
+            IsInitialized = false;
+
             LogManager.LogInformation("{0} has stopped", nameof(ToastManager));
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch (name)
+            {
+                case "ToastEnable":
+                    IsEnabled = Convert.ToBoolean(value);
+                    break;
+            }
         }
     }
 }
