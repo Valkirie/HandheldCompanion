@@ -302,10 +302,12 @@ namespace HandheldCompanion.Managers
                 {
                     default:
                     case HIDstatus.Connected:
-                        success = vTarget.Connect();
+                        if (!vTarget.IsConnected)
+                            success = vTarget.Connect();
                         break;
                     case HIDstatus.Disconnected:
-                        success = vTarget.Disconnect();
+                        if (vTarget.IsConnected)
+                            success = vTarget.Disconnect();
                         break;
                 }
 
@@ -317,12 +319,12 @@ namespace HandheldCompanion.Managers
 
         private static void OnTargetConnected(ViGEmTarget target)
         {
-            ToastManager.SendToast($"{target}", "is now connected", $"HIDmode{(uint)target.HID}");
+            ToastManager.SendToast($"{target}", "is now connected", $"controller_{(uint)target.HID}_1", true);
         }
 
         private static void OnTargetDisconnected(ViGEmTarget target)
         {
-            ToastManager.SendToast($"{target}", "is now disconnected", $"HIDmode{(uint)target.HID}");
+            ToastManager.SendToast($"{target}", "is now disconnected", $"controller_{(uint)target.HID}_0", true);
         }
 
         private static void OnTargetVibrated(byte LargeMotor, byte SmallMotor)
