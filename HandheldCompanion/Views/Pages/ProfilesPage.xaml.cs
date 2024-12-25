@@ -87,10 +87,17 @@ public partial class ProfilesPage : Page
         });
     }
 
+    private bool HasRSRSupport = false;
+    private bool HasAFMFSupport = false;
+    private bool HasScalingModeSupport = false;
+    private bool HasIntegerScalingSupport = false;
+    private bool HasGPUScalingSupport = false;
+    private bool IsGPUScalingEnabled = false;
+
     private void GPUManager_Hooked(GPU GPU)
     {
-        bool HasRSRSupport = false;
-        bool HasAFMFSupport = false;
+        HasRSRSupport = false;
+        HasAFMFSupport = false;
 
         if (GPU is AMDGPU amdGPU)
         {
@@ -104,25 +111,17 @@ public partial class ProfilesPage : Page
         GPU.IntegerScalingChanged += OnIntegerScalingChanged;
         GPU.GPUScalingChanged += OnGPUScalingChanged;
 
-        bool HasScalingModeSupport = GPU.HasScalingModeSupport();
-        bool HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
-        bool HasGPUScalingSupport = GPU.HasGPUScalingSupport();
-        bool IsGPUScalingEnabled = GPU.GetGPUScaling();
+        HasScalingModeSupport = GPU.HasScalingModeSupport();
+        HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
+        HasGPUScalingSupport = GPU.HasGPUScalingSupport();
+        IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // GPU-specific settings
-            StackProfileRSR.Visibility = GPU is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
-            StackProfileAFMF.Visibility = GPU is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
-
-            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
-            StackProfileAFMF.IsEnabled = HasAFMFSupport;
-
-            StackProfileGPUScaling.IsEnabled = HasGPUScalingSupport;
-            StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
-            StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
-            GPUScalingComboBox.IsEnabled = HasScalingModeSupport;
+            StackProfileRSR.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
+            StackProfileAFMF.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 
@@ -140,51 +139,55 @@ public partial class ProfilesPage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
+            // GPU-specific settings
+            StackProfileRSR.Visibility = Visibility.Collapsed;
+            StackProfileAFMF.Visibility = Visibility.Collapsed;
+
             StackProfileRSR.IsEnabled = false;
             StackProfileAFMF.IsEnabled = false;
+            StackProfileGPUScaling.IsEnabled = false;
             StackProfileIS.IsEnabled = false;
-            GPUScalingToggle.IsEnabled = false;
+            StackProfileRIS.IsEnabled = false;
             GPUScalingComboBox.IsEnabled = false;
+        });
+    }
+
+    private void UpdateGraphicsSettingsUI()
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileRSR.IsEnabled = HasRSRSupport;
+            StackProfileAFMF.IsEnabled = HasAFMFSupport;
+            StackProfileGPUScaling.IsEnabled = HasGPUScalingSupport;
+            StackProfileIS.IsEnabled = HasIntegerScalingSupport;
+            StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
+            GPUScalingComboBox.IsEnabled = HasScalingModeSupport;
         });
     }
 
     private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            StackProfileRSR.IsEnabled = Supported;
-        });
+        HasRSRSupport = Supported;
+        UpdateGraphicsSettingsUI();
     }
 
     private void OnAFMFStateChanged(bool Supported, bool Enabled)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            StackProfileAFMF.IsEnabled = Supported;
-        });
+        HasAFMFSupport = Supported;
+        UpdateGraphicsSettingsUI();
     }
 
     private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            GPUScalingToggle.IsEnabled = Supported;
-            StackProfileRIS.IsEnabled = Supported; // check if processor is AMD should be enough
-            StackProfileRSR.IsEnabled = Supported;
-            StackProfileIS.IsEnabled = Supported;
-        });
+        HasGPUScalingSupport = Supported;
+        UpdateGraphicsSettingsUI();
     }
 
     private void OnIntegerScalingChanged(bool Supported, bool Enabled)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            StackProfileIS.IsEnabled = Supported;
-        });
+        HasIntegerScalingSupport = Supported;
+        UpdateGraphicsSettingsUI();
     }
 
     private void RTSS_Updated(PlatformStatus status)
