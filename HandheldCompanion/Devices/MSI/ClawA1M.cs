@@ -158,6 +158,84 @@ public class ClawA1M : IDevice
         ));
     }
 
+    public override bool Open()
+    {
+        var success = base.Open();
+        if (!success)
+            return false;
+
+        // start WMI event monitor
+        StartWatching();
+
+        // configure controller to XInput
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.XInput, (byte)MKeysFunction.Macro };
+            device.Write(msg);
+        }
+
+        return true;
+    }
+
+    public override void Close()
+    {
+        // stop WMI event monitor
+        StopWatching();
+
+        // configure controller to Desktop
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.Desktop, (byte)MKeysFunction.Macro };
+            device.Write(msg);
+        }
+
+        // close devices
+        foreach (HidDevice hidDevice in hidDevices.Values)
+        {
+            if (!hidDevice.IsConnected)
+                continue;
+
+            if (hidDevice.IsOpen)
+            {
+                hidDevice.MonitorDeviceEvents = false;
+                hidDevice.CloseDevice();
+            }
+        }
+
+        base.Close();
+    }
+
+    public override bool IsReady()
+    {
+        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
+        foreach (HidDevice device in devices)
+        {
+            if (!device.IsConnected)
+                continue;
+
+            // improve detection maybe using if device.ReadFeatureData() ?
+            if (device.Capabilities.InputReportByteLength != 64)
+                continue;
+
+            hidDevices[INPUT_HID_ID] = device;
+            break;
+        }
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+        {
+            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+
+            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+
+            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        }
+
+        return false;
+    }
+
     private void StartWatching()
     {
         try
@@ -221,84 +299,6 @@ public class ClawA1M : IDevice
                 }
                 break;
         }
-    }
-
-    public override bool IsReady()
-    {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
-        foreach (HidDevice device in devices)
-        {
-            if (!device.IsConnected)
-                continue;
-
-            // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64)
-                continue;
-
-            hidDevices[INPUT_HID_ID] = device;
-            break;
-        }
-
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
-        {
-            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-
-            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
-
-            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
-        }
-
-        return false;
-    }
-
-    public override bool Open()
-    {
-        var success = base.Open();
-        if (!success)
-            return false;
-
-        // start WMI event monitor
-        StartWatching();
-
-        // configure controller to XInput
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.XInput, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
-
-        return true;
-    }
-
-    public override void Close()
-    {
-        // stop WMI event monitor
-        StopWatching();
-
-        // configure controller to Desktop
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.Desktop, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
-
-        // close devices
-        foreach (HidDevice hidDevice in hidDevices.Values)
-        {
-            if (!hidDevice.IsConnected)
-                continue;
-
-            if (hidDevice.IsOpen)
-            {
-                hidDevice.MonitorDeviceEvents = false;
-                hidDevice.CloseDevice();
-            }
-        }
-
-        base.Close();
     }
 
     public override void SetKeyPressDelay(HIDmode controllerMode)

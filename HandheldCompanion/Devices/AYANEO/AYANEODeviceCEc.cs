@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
@@ -88,30 +89,17 @@ namespace HandheldCompanion.Devices.AYANEO
                 this.CEcControl_RgbHoldControl();
             }
 
+            // manage events
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
 
-            return true;
-        }
-
-        private void PowerManager_RemainingChargePercentChanged(object? sender, object e)
-        {
-            // Check if BatteryChargeLimit is enabled in SettingsManager
-            bool isBatteryChargeLimitEnabled = SettingsManager.GetBoolean("BatteryChargeLimit");
-            if (isBatteryChargeLimitEnabled)
+            // raise events
+            if (SettingsManager.IsInitialized)
             {
-                // Get the current battery percentage
-                int batteryPercentage = PowerManager.RemainingChargePercent;
-                if (batteryPercentage >= 80)
-                {
-                    // Call the function to open the charge bypass
-                    CEcControl_BypassChargeOpen();
-                }
-                else if (batteryPercentage < 80)
-                {
-                    // Call the function to close the charge bypass
-                    CEcControl_BypassChargeClose();
-                }
+                SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetString("BatteryChargeLimit"), false);
             }
+
+            return true;
         }
 
         public override void Close()
@@ -121,9 +109,52 @@ namespace HandheldCompanion.Devices.AYANEO
                 this.CEcControl_RgbReleaseControl();
             }
 
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             PowerManager.RemainingChargePercentChanged -= PowerManager_RemainingChargePercentChanged;
 
             base.Close();
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch (name)
+            {
+                case "BatteryChargeLimit":
+                    {
+                        bool enabled = Convert.ToBoolean(value);
+                        switch (enabled)
+                        {
+                            case true:
+                                CEcControl_BypassChargeOpen();
+                                break;
+                            case false:
+                                CEcControl_BypassChargeClose();
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void PowerManager_RemainingChargePercentChanged(object? sender, object e)
+        {
+            // Check if BatteryChargeLimit is enabled in SettingsManager
+            bool isBatteryChargeLimitEnabled = SettingsManager.GetBoolean("BatteryChargeLimit");
+            if (!isBatteryChargeLimitEnabled)
+                return;
+
+            // Get the current battery percentage
+            int batteryPercentage = PowerManager.RemainingChargePercent;
+            if (batteryPercentage >= 80)
+            {
+                // Call the function to open the charge bypass
+                CEcControl_BypassChargeOpen();
+            }
+            else if (batteryPercentage < 80)
+            {
+                // Call the function to close the charge bypass
+                CEcControl_BypassChargeClose();
+            }
         }
 
         public override bool SetLedStatus(bool status)

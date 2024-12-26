@@ -189,6 +189,9 @@ public class LegionGo : IDevice
     public const int LeftJoyconIndex = 3;
     public const int RightJoyconIndex = 4;
 
+    private LightionProfile lightProfileL = new();
+    private LightionProfile lightProfileR = new();
+
     public LegionGo()
     {
         // device specific settings
@@ -274,9 +277,6 @@ public class LegionGo : IDevice
             TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
         });
 
-        PowerProfileManager.Applied += PowerProfileManager_Applied;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         OEMChords.Add(new KeyboardChord("LegionR",
             [], [],
             false, ButtonFlags.OEM1
@@ -296,35 +296,6 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B6] = [new MouseActions { MouseType = MouseActionsType.MiddleButton }];
         DefaultLayout.ButtonLayout[ButtonFlags.B7] = [new MouseActions { MouseType = MouseActionsType.ScrollUp }];
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = [new MouseActions { MouseType = MouseActionsType.ScrollDown }];
-    }
-
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
-    {
-        FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
-        if (profile.FanProfile.fanMode != FanMode.Hardware)
-        {
-            fanTable = new(new ushort[] {
-                (ushort)profile.FanProfile.fanSpeeds[1],
-                (ushort)profile.FanProfile.fanSpeeds[2],
-                (ushort)profile.FanProfile.fanSpeeds[3],
-                (ushort)profile.FanProfile.fanSpeeds[4],
-                (ushort)profile.FanProfile.fanSpeeds[5],
-                (ushort)profile.FanProfile.fanSpeeds[6],
-                (ushort)profile.FanProfile.fanSpeeds[7],
-                (ushort)profile.FanProfile.fanSpeeds[8],
-                (ushort)profile.FanProfile.fanSpeeds[9],
-                (ushort)profile.FanProfile.fanSpeeds[10],
-            });
-        }
-
-        // update fan table
-        SetFanTable(fanTable);
-
-        Task<int> fanModeTask = Task.Run(async () => await GetSmartFanModeAsync());
-        int fanMode = fanModeTask.Result;
-
-        if (fanMode != profile.OEMPowerMode)
-            SetSmartFanMode(profile.OEMPowerMode);
     }
 
     public override bool Open()
@@ -360,9 +331,20 @@ public class LegionGo : IDevice
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
 
-        // Legion XInput controller and other Legion devices shares the same USBHUB
-        while (ControllerManager.PowerCyclers.Count > 0)
-            Thread.Sleep(100);
+        // manage events
+        PowerProfileManager.Applied += PowerProfileManager_Applied;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        if (PowerProfileManager.IsInitialized)
+        {
+            PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetBoolean("BatteryChargeLimit"), false);
+        }
 
         return true;
     }
@@ -385,6 +367,9 @@ public class LegionGo : IDevice
 
         // Reset the fan speed to default before device shutdown/restart
         SetFanFullSpeedAsync(false);
+
+        PowerProfileManager.Applied -= PowerProfileManager_Applied;
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         base.Close();
     }
@@ -412,11 +397,42 @@ public class LegionGo : IDevice
         Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
         string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
+        // Legion XInput controller and other Legion devices shares the same USBHUB
+        while (ControllerManager.PowerCyclers.Count > 0)
+            Thread.Sleep(100);
+
         return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
     }
 
-    private LightionProfile lightProfileL = new();
-    private LightionProfile lightProfileR = new();
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
+        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        {
+            fanTable = new(new ushort[] {
+                (ushort)profile.FanProfile.fanSpeeds[1],
+                (ushort)profile.FanProfile.fanSpeeds[2],
+                (ushort)profile.FanProfile.fanSpeeds[3],
+                (ushort)profile.FanProfile.fanSpeeds[4],
+                (ushort)profile.FanProfile.fanSpeeds[5],
+                (ushort)profile.FanProfile.fanSpeeds[6],
+                (ushort)profile.FanProfile.fanSpeeds[7],
+                (ushort)profile.FanProfile.fanSpeeds[8],
+                (ushort)profile.FanProfile.fanSpeeds[9],
+                (ushort)profile.FanProfile.fanSpeeds[10],
+            });
+        }
+
+        // update fan table
+        SetFanTable(fanTable);
+
+        Task<int> fanModeTask = Task.Run(async () => await GetSmartFanModeAsync());
+        int fanMode = fanModeTask.Result;
+
+        if (fanMode != profile.OEMPowerMode)
+            SetSmartFanMode(profile.OEMPowerMode);
+    }
+
     public override bool SetLedBrightness(int brightness)
     {
         lightProfileL.brightness = brightness;

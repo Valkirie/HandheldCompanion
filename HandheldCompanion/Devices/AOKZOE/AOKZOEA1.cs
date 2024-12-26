@@ -136,6 +136,9 @@ public class AOKZOEA1 : IDevice
 
     public override void Close()
     {
+        if (!IsOpen)
+            return;
+
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
         ECRamDirectWrite(0x4F1, ECDetails, 0x00);
         ECRamDirectWrite(0x4F2, ECDetails, 0x00);

@@ -95,8 +95,6 @@ public class SteamDeck : IDevice
             [], [],
             false, ButtonFlags.OEM1
         ));
-
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -145,6 +143,15 @@ public class SteamDeck : IDevice
             else
                 PDCS = 0xFF;
 
+            // manage events
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            if (SettingsManager.IsInitialized)
+            {
+                SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetBoolean("BatteryChargeLimit"), false);
+            }
+
             LogManager.LogInformation("FirmwareVersion: {0}, BoardID: {1}", FirmwareVersion, BoardID);
             return true;
         }
@@ -160,6 +167,8 @@ public class SteamDeck : IDevice
     {
         inpOut.Dispose();
         inpOut = null;
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         base.Close();
     }
