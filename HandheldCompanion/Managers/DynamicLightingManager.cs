@@ -3,6 +3,7 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
 using HandheldCompanion.Shared;
+using Microsoft.Win32;
 using SharpDX;
 using SharpDX.Direct3D9;
 using System;
@@ -44,6 +45,9 @@ public static class DynamicLightingManager
 
     private static bool VerticalBlackBarDetectionEnabled;
 
+    private static bool OSAmbientLightingEnabled = false;
+    private const string OSAmbientLightingEnabledKey = "AmbientLightingEnabled";
+
     static DynamicLightingManager()
     {
         // Keep track of left and right LEDs history
@@ -67,9 +71,6 @@ public static class DynamicLightingManager
         if (IsInitialized)
             return;
 
-        IsInitialized = true;
-        Initialized?.Invoke();
-
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
@@ -86,6 +87,13 @@ public static class DynamicLightingManager
             MultimediaManager_DisplaySettingsChanged(MultimediaManager.PrimaryDesktop, MultimediaManager.PrimaryDesktop.GetResolution());
         }
 
+        // store and disable system setting AmbientLightingEnabled
+        OSAmbientLightingEnabled = GetAmbientLightingEnabled();
+        SetAmbientLightingEnabled(false);
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
         LogManager.LogInformation("{0} has started", "DynamicLightingManager");
     }
 
@@ -94,17 +102,39 @@ public static class DynamicLightingManager
         if (!IsInitialized)
             return;
 
-        StopAmbilight();
-
-        ReleaseDirect3DDevice();
-
         // manage events
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
 
+        // restore system setting AmbientLightingEnabled
+        SetAmbientLightingEnabled(OSAmbientLightingEnabled);
+        StopAmbilight();
+        ReleaseDirect3DDevice();
+
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "DynamicLightingManager");
+    }
+
+    private static bool GetAmbientLightingEnabled()
+    {
+        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Lighting"))
+            if (key != null)
+                return Convert.ToBoolean(key.GetValue(OSAmbientLightingEnabledKey));
+
+        return false;
+    }
+
+    private static void SetAmbientLightingEnabled(bool enabled)
+    {
+        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Lighting", writable: true))
+        {
+            if (key != null)
+            {
+                // disable
+                key.SetValue(OSAmbientLightingEnabledKey, enabled ? 1 : 0);
+            }
+        }
     }
 
     private static void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)

@@ -650,6 +650,7 @@ public partial class MainWindow : GamepadWindow
         ProfileManager.Stop();
         LayoutManager.Stop();
         SystemManager.Stop();
+        DynamicLightingManager.Stop();
         ProcessManager.Stop();
         ToastManager.Stop();
         TaskManager.Stop();
