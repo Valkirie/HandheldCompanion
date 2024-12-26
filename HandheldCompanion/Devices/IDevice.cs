@@ -162,10 +162,79 @@ public abstract class IDevice
             OSPowerMode = OSPowerMode.BetterPerformance,
             TDPOverrideValues = new double[] { this.nTDP[0], this.nTDP[1], this.nTDP[2] }
         });
+    }
 
+    public virtual bool Open()
+    {
+        if (openLibSys != null)
+            return true;
+
+        try
+        {
+            // initialize OpenLibSys
+            openLibSys = new OpenLibSys();
+
+            // Check support library sutatus
+            var status = openLibSys.GetStatus();
+            switch (status)
+            {
+                case (uint)OlsStatus.NO_ERROR:
+                    break;
+                default:
+                    LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", status);
+                    return false;
+            }
+
+            // Check WinRing0 status
+            var dllstatus = (OlsDllStatus)openLibSys.GetDllStatus();
+            switch (dllstatus)
+            {
+                case (uint)OlsDllStatus.OLS_DLL_NO_ERROR:
+                    break;
+                default:
+                    LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", dllstatus);
+                    return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", ex.Message);
+            Close();
+            return false;
+        }
+
+        // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+
+        // raise events
+        if (VirtualManager.IsInitialized)
+        {
+            VirtualManager_ControllerSelected(VirtualManager.HIDmode);
+        }
+
+        if (DeviceManager.IsInitialized)
+        {
+            GenericDeviceUpdated(null, Guid.Empty);
+        }
+
+        return true;
+    }
+
+    public virtual void Close()
+    {
+        if (openLibSys is null)
+            return;
+
+        SetFanControl(false);
+
+        openLibSys.Dispose();
+        openLibSys = null;
+
+        VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
+        DeviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
@@ -601,59 +670,6 @@ public abstract class IDevice
         return Capabilities.HasFlag(DeviceCapabilities.InternalSensor) || Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
     }
 
-    public virtual bool Open()
-    {
-        if (openLibSys != null)
-            return true;
-
-        try
-        {
-            // initialize OpenLibSys
-            openLibSys = new OpenLibSys();
-
-            // Check support library sutatus
-            var status = openLibSys.GetStatus();
-            switch (status)
-            {
-                case (uint)OlsStatus.NO_ERROR:
-                    break;
-                default:
-                    LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", status);
-                    return false;
-            }
-
-            // Check WinRing0 status
-            var dllstatus = (OlsDllStatus)openLibSys.GetDllStatus();
-            switch (dllstatus)
-            {
-                case (uint)OlsDllStatus.OLS_DLL_NO_ERROR:
-                    break;
-                default:
-                    LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", dllstatus);
-                    return false;
-            }
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", ex.Message);
-            Close();
-            return false;
-        }
-
-        return true;
-    }
-
-    public virtual void Close()
-    {
-        if (openLibSys is null)
-            return;
-
-        SetFanControl(false);
-
-        openLibSys.Dispose();
-        openLibSys = null;
-    }
-
     public virtual bool IsReady()
     {
         return true;
@@ -760,14 +776,16 @@ public abstract class IDevice
     [Obsolete("ECRamReadByte is deprecated, please use ECRamReadByte with ECDetails instead.")]
     public virtual byte ECRamReadByte(ushort address)
     {
+        if (!IsOpen)
+            return 0;
+
         try
         {
             return openLibSys.ReadIoPortByte(address);
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Couldn't read byte from address {0} using OpenLibSys. ErrorCode: {1}", address,
-                ex.Message);
+            LogManager.LogError("Couldn't read byte from address {0} using OpenLibSys. ErrorCode: {1}", address, ex.Message);
             return 0;
         }
     }
@@ -775,6 +793,9 @@ public abstract class IDevice
     [Obsolete("ECRamWriteByte is deprecated, please use ECRamDirectWrite with ECDetails instead.")]
     public virtual bool ECRamWriteByte(ushort address, byte data)
     {
+        if (!IsOpen)
+            return false;
+
         try
         {
             openLibSys.WriteIoPortByte(address, data);
@@ -782,14 +803,16 @@ public abstract class IDevice
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Couldn't write byte to address {0} using OpenLibSys. ErrorCode: {1}", address,
-                ex.Message);
+            LogManager.LogError("Couldn't write byte to address {0} using OpenLibSys. ErrorCode: {1}", address, ex.Message);
             return false;
         }
     }
 
     public virtual byte ECRamReadByte(ushort address, ECDetails details)
     {
+        if (!IsOpen)
+            return 0;
+
         var addr_upper = (byte)((address >> 8) & byte.MaxValue);
         var addr_lower = (byte)(address & byte.MaxValue);
 
@@ -820,6 +843,9 @@ public abstract class IDevice
 
     public virtual bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
     {
+        if (!IsOpen)
+            return false;
+
         byte addr_upper = (byte)((address >> 8) & byte.MaxValue);
         byte addr_lower = (byte)(address & byte.MaxValue);
 
@@ -871,12 +897,9 @@ public abstract class IDevice
     {
         DateTime timeout = DateTime.Now.AddMilliseconds(250);
         while (DateTime.Now < timeout)
-        {
             if ((ECRamReadByte(EC_SC) & EC_IBF) == 0x0)
-            {
                 return true;
-            }
-        }
+
         return false;
     }
 

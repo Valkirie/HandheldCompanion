@@ -180,8 +180,6 @@ public class ROGAlly : IDevice
             [KeyCode.F17],
             false, ButtonFlags.OEM4
         ));
-
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     private byte[] flushBufferWriteChanges = new byte[64]
@@ -344,6 +342,15 @@ public class ROGAlly : IDevice
         // force M1/M2 to send F17 and F18
         ConfigureController(true);
 
+        // manage events
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetString("BatteryChargeLimit"), false);
+        }
+
         return true;
     }
 
@@ -369,6 +376,8 @@ public class ROGAlly : IDevice
         }
 
         hidDevices.Clear();
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         base.Close();
     }
