@@ -7,8 +7,6 @@ namespace HandheldCompanion.Commands.Functions.HC
     public class QuickOverlayCommands : FunctionCommands
     {
         private const string SettingsName = "OnScreenDisplayLevel";
-
-        private bool _IsToggled = false;
         private int prevDisplaylevel = 0;
 
         public QuickOverlayCommands()
@@ -28,31 +26,34 @@ namespace HandheldCompanion.Commands.Functions.HC
             switch (name)
             {
                 case SettingsName:
-                    if (!temporary)
-                        prevDisplaylevel = Convert.ToInt16(value);
+                    {
+                        if (!temporary)
+                            prevDisplaylevel = Convert.ToInt16(value);
+
+                        Update();
+                    }
                     break;
             }
         }
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            switch (_IsToggled)
+            switch (IsToggled)
             {
                 case true:
-                    SettingsManager.SetProperty(SettingsName, prevDisplaylevel, false, true);
-                    break;
-                case false:
                     SettingsManager.SetProperty(SettingsName, 0, false, true);
                     break;
+                case false:
+                    if (prevDisplaylevel == 0)
+                        prevDisplaylevel = 1;
+                    SettingsManager.SetProperty(SettingsName, prevDisplaylevel, false, true);
+                    break;
             }
-
-            // invert toggle
-            _IsToggled = !_IsToggled;
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => !_IsToggled;
+        public override bool IsToggled => SettingsManager.GetInt(SettingsName, true) != 0;
 
         public override object Clone()
         {
