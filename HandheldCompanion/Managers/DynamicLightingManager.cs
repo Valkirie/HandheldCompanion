@@ -129,13 +129,8 @@ public static class DynamicLightingManager
     private static void SetAmbientLightingEnabled(bool enabled)
     {
         using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Lighting", writable: true))
-        {
             if (key != null)
-            {
-                // disable
                 key.SetValue(OSAmbientLightingEnabledKey, enabled ? 1 : 0);
-            }
-        }
     }
 
     private static void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
