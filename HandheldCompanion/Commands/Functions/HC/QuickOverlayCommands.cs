@@ -27,9 +27,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 case SettingsName:
                     {
-                        if (!temporary)
-                            prevDisplaylevel = Convert.ToInt16(value);
-
+                        prevDisplaylevel = Convert.ToInt16(value);
                         Update();
                     }
                     break;
@@ -41,19 +39,19 @@ namespace HandheldCompanion.Commands.Functions.HC
             switch (IsToggled)
             {
                 case true:
-                    SettingsManager.SetProperty(SettingsName, 0, false, true);
+                    SettingsManager.SetProperty(SettingsName, 0, false);
                     break;
                 case false:
                     if (prevDisplaylevel == 0)
                         prevDisplaylevel = 1;
-                    SettingsManager.SetProperty(SettingsName, prevDisplaylevel, false, true);
+                    SettingsManager.SetProperty(SettingsName, prevDisplaylevel, false);
                     break;
             }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => SettingsManager.GetInt(SettingsName, true) != 0;
+        public override bool IsToggled => SettingsManager.GetInt(SettingsName) != 0;
 
         public override object Clone()
         {
