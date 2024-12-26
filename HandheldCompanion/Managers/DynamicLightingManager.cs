@@ -73,8 +73,6 @@ public static class DynamicLightingManager
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        // Some devices will modify the LED colors based on battery status, we need to overwrite it
-        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
 
         // raise events
         if (SettingsManager.IsInitialized)
@@ -103,7 +101,6 @@ public static class DynamicLightingManager
         // manage events
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
-        SystemManager.PowerStatusChanged -= PowerManager_PowerStatusChanged;
 
         IsInitialized = false;
 
@@ -133,11 +130,6 @@ public static class DynamicLightingManager
         {
             InitializeDirect3DDevice();
         }
-    }
-
-    private static void PowerManager_PowerStatusChanged(System.Windows.Forms.PowerStatus status)
-    {
-        RequestUpdate();
     }
 
     private static async void InitializeDirect3DDevice()
