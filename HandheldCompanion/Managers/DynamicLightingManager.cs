@@ -71,6 +71,10 @@ public static class DynamicLightingManager
         if (IsInitialized)
             return;
 
+        // store and disable system setting AmbientLightingEnabled
+        OSAmbientLightingEnabled = GetAmbientLightingEnabled();
+        SetAmbientLightingEnabled(false);
+
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
@@ -87,10 +91,6 @@ public static class DynamicLightingManager
             MultimediaManager_DisplaySettingsChanged(MultimediaManager.PrimaryDesktop, MultimediaManager.PrimaryDesktop.GetResolution());
         }
 
-        // store and disable system setting AmbientLightingEnabled
-        OSAmbientLightingEnabled = GetAmbientLightingEnabled();
-        SetAmbientLightingEnabled(false);
-
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -106,10 +106,11 @@ public static class DynamicLightingManager
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
 
-        // restore system setting AmbientLightingEnabled
-        SetAmbientLightingEnabled(OSAmbientLightingEnabled);
         StopAmbilight();
         ReleaseDirect3DDevice();
+
+        // restore system setting AmbientLightingEnabled
+        SetAmbientLightingEnabled(OSAmbientLightingEnabled);
 
         IsInitialized = false;
 
