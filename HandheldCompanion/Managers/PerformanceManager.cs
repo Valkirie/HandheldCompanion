@@ -6,6 +6,7 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
@@ -96,6 +97,8 @@ public static class PerformanceManager
     private static readonly double[] StoredTDP = new double[3]; // used to store TDP
     private static int tdpWatchdogCounter;
 
+    private const string dllName = "WinRing0x64.dll";
+
     private static bool IsInitialized;
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();
@@ -178,6 +181,11 @@ public static class PerformanceManager
         tdpWatchdog.Stop();
         gfxWatchdog.Stop();
         cpuWatchdog.Stop();
+
+        // dismount WinRing0x64.dll, and WinRing0x64.sys hopefully...
+        nint Module = GetModuleHandle(dllName);
+        if (Module != IntPtr.Zero)
+            FreeLibrary(Module);
 
         // manage events
         PowerProfileManager.Applied -= PowerProfileManager_Applied;
@@ -1048,6 +1056,15 @@ public static class PerformanceManager
     /// <returns>Returns zero if the call was successful, and a nonzero value if the call failed.</returns>
     [DllImportAttribute("powrprof.dll", EntryPoint = "PowerSetActiveOverlayScheme")]
     private static extern uint PowerSetActiveOverlayScheme(Guid OverlaySchemeGuid);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern IntPtr LoadLibrary(string lpFileName);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern bool FreeLibrary(IntPtr hModule);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr GetModuleHandle(string lpModuleName);
 
     #endregion
 
