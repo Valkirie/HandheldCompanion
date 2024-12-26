@@ -109,22 +109,23 @@ public static class DynamicLightingManager
         // Get the primary screen dimensions
         screenWidth = resolution.Width;
         screenHeight = resolution.Height;
-
         squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
-        LEDLevel LEDSettingsLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
-        bool ambilightOn = LEDSettingsLevel == LEDLevel.Ambilight;
+        // Check LED settings
+        bool LEDSettingsEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
+        bool IsAmbilightOn = SettingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
 
-        // stop ambilight if running
-        if (ambilightOn)
+        // Restart Ambilight if necessary
+        if (IsAmbilightOn && LEDSettingsEnabled)
+        {
             StopAmbilight();
-
-        // (re)create the Direct3D device
-        InitializeDirect3DDevice();
-
-        // restart ambilight if it was running
-        if (ambilightOn)
+            InitializeDirect3DDevice();
             StartAmbilight();
+        }
+        else
+        {
+            InitializeDirect3DDevice();
+        }
     }
 
     private static async void InitializeDirect3DDevice()
@@ -196,80 +197,62 @@ public static class DynamicLightingManager
     private static void UpdateLED()
     {
         bool LEDSettingsEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
-        IDevice.GetCurrent().SetLedStatus(LEDSettingsEnabled);
+        IDevice device = IDevice.GetCurrent();
+        device.SetLedStatus(LEDSettingsEnabled);
 
-        if (LEDSettingsEnabled)
-        {
-            LEDLevel LEDSettingsLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
-            int LEDBrightness = SettingsManager.GetInt("LEDBrightness");
-            int LEDSpeed = SettingsManager.GetInt("LEDSpeed");
-
-            // Set brightness and color based on settings
-            IDevice.GetCurrent().SetLedBrightness(LEDBrightness);
-
-            // Get colors
-            Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
-            Color LEDSecondColor = SettingsManager.GetColor("LEDSecondColor");
-            bool useSecondColor = SettingsManager.GetBoolean("LEDUseSecondColor");
-
-            // Get Preset
-            int LEDPresetIndex = SettingsManager.GetInt("LEDPresetIndex");
-            List<LEDPreset> presets = IDevice.GetCurrent().LEDPresets;
-            LEDPreset? selectedPreset = LEDPresetIndex < presets.Count ? presets[LEDPresetIndex] : null;
-
-            switch (LEDSettingsLevel)
-            {
-                case LEDLevel.SolidColor:
-                case LEDLevel.Breathing:
-                case LEDLevel.Rainbow:
-                    {
-                        StopAmbilight();
-
-                        IDevice.GetCurrent().SetLedColor(LEDMainColor, useSecondColor ? LEDSecondColor : LEDMainColor, LEDSettingsLevel, LEDSpeed);
-                    }
-                    break;
-
-                case LEDLevel.Wave:
-                case LEDLevel.Wheel:
-                case LEDLevel.Gradient:
-                    {
-                        StopAmbilight();
-
-                        IDevice.GetCurrent().SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel, LEDSpeed);
-                    }
-                    break;
-
-                case LEDLevel.Ambilight:
-                    {
-                        // Start adjusting LED colors based on screen content
-                        if (!ambilightThreadRunning)
-                        {
-                            StartAmbilight();
-
-                            // Provide LEDs with initial brightness
-                            IDevice.GetCurrent().SetLedBrightness(100);
-                            IDevice.GetCurrent().SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
-                        }
-
-                        ambilightThreadDelay = (int)(defaultThreadDelay / 100.0d * LEDSpeed);
-                    }
-                    break;
-                case LEDLevel.LEDPreset:
-                    {
-                        StopAmbilight();
-
-                        IDevice.GetCurrent().SetLEDPreset(selectedPreset);
-                    }
-                    break;
-            }
-        }
-        else
+        if (!LEDSettingsEnabled)
         {
             StopAmbilight();
+            device.SetLedBrightness(0);
+            device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+            return;
+        }
 
-            // Set both brightness to 0 and color to black
-            IDevice.GetCurrent().SetLedBrightness(0);
-            IDevice.GetCurrent().SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+        // Get LED settings
+        LEDLevel LEDSettingsLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
+        int LEDBrightness = SettingsManager.GetInt("LEDBrightness");
+        int LEDSpeed = SettingsManager.GetInt("LEDSpeed");
+        device.SetLedBrightness(LEDBrightness);
+
+        // Get colors
+        Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
+        Color LEDSecondColor = SettingsManager.GetColor("LEDSecondColor");
+        bool useSecondColor = SettingsManager.GetBoolean("LEDUseSecondColor");
+
+        // Get preset
+        int LEDPresetIndex = SettingsManager.GetInt("LEDPresetIndex");
+        List<LEDPreset> presets = device.LEDPresets;
+        LEDPreset? selectedPreset = LEDPresetIndex < presets.Count ? presets[LEDPresetIndex] : null;
+
+        // Stop Ambilight if needed
+        if (LEDSettingsLevel != LEDLevel.Ambilight)
+            StopAmbilight();
+
+        // Handle LED levels
+        switch (LEDSettingsLevel)
+        {
+            case LEDLevel.SolidColor:
+            case LEDLevel.Breathing:
+            case LEDLevel.Rainbow:
+            case LEDLevel.Wave:
+            case LEDLevel.Wheel:
+            case LEDLevel.Gradient:
+                device.SetLedColor(LEDMainColor, useSecondColor ? LEDSecondColor : LEDMainColor, LEDSettingsLevel, LEDSpeed);
+                break;
+
+            case LEDLevel.Ambilight:
+                if (!ambilightThreadRunning)
+                {
+                    StartAmbilight();
+                    device.SetLedBrightness(100);
+                    device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+                }
+                ambilightThreadDelay = (int)(defaultThreadDelay / 100.0 * LEDSpeed);
+                break;
+
+            case LEDLevel.LEDPreset:
+                device.SetLEDPreset(selectedPreset);
+                break;
         }
     }
 
