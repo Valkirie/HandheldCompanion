@@ -189,7 +189,6 @@ public abstract class IDevice
 
     public event KeyPressedEventHandler KeyPressed;
     public event KeyReleasedEventHandler KeyReleased;
-    public event PowerStatusChangedEventHandler PowerStatusChanged;
 
     public string ManufacturerName = string.Empty;
     public string ProductName = string.Empty;

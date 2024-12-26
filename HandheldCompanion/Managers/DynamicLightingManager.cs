@@ -73,9 +73,16 @@ public static class DynamicLightingManager
         // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        IDevice.GetCurrent().PowerStatusChanged += CurrentDevice_PowerStatusChanged;
+        // Some devices will modify the LED colors based on battery status, we need to overwrite it
+        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
 
         // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", SettingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false);
+            SettingsManager_SettingValueChanged("LEDSettingsEnabled", SettingsManager.GetString("LEDSettingsEnabled"), false);
+        }
+
         if (MultimediaManager.IsInitialized)
         {
             MultimediaManager_DisplaySettingsChanged(MultimediaManager.PrimaryDesktop, MultimediaManager.PrimaryDesktop.GetResolution());
@@ -96,7 +103,7 @@ public static class DynamicLightingManager
         // manage events
         SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
-        IDevice.GetCurrent().PowerStatusChanged -= CurrentDevice_PowerStatusChanged;
+        SystemManager.PowerStatusChanged -= PowerManager_PowerStatusChanged;
 
         IsInitialized = false;
 
@@ -126,6 +133,11 @@ public static class DynamicLightingManager
         {
             InitializeDirect3DDevice();
         }
+    }
+
+    private static void PowerManager_PowerStatusChanged(System.Windows.Forms.PowerStatus status)
+    {
+        RequestUpdate();
     }
 
     private static async void InitializeDirect3DDevice()
@@ -181,11 +193,6 @@ public static class DynamicLightingManager
                 VerticalBlackBarDetectionEnabled = Convert.ToBoolean(value);
                 break;
         }
-    }
-
-    private static void CurrentDevice_PowerStatusChanged(Devices.IDevice device)
-    {
-        RequestUpdate();
     }
 
     private static void RequestUpdate()
