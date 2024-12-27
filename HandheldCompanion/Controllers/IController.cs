@@ -325,9 +325,9 @@ namespace HandheldCompanion.Controllers
 
         public bool IsHidden()
         {
-            // bool hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
-            bool hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
-            return /* hide_device || */ hide_base;
+            if (Details is not null)
+                return HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
+            return false;
         }
 
         public virtual void Hide(bool powerCycle = true)
@@ -383,12 +383,18 @@ namespace HandheldCompanion.Controllers
 
         protected void HideHID()
         {
+            if (Details is null)
+                return;
+
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
             HidHide.HidePath(Details.deviceInstanceId);
         }
 
         protected void UnhideHID()
         {
+            if (Details is null)
+                return;
+
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
             HidHide.UnhidePath(Details.deviceInstanceId);
         }
