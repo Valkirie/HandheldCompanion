@@ -76,6 +76,13 @@ namespace HandheldCompanion.Managers
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             // raise events
+            if (SettingsManager.IsInitialized)
+            {
+                SettingsManager_SettingValueChanged("HIDmode", SettingsManager.GetString("HIDmode"), false);
+                SettingsManager_SettingValueChanged("HIDstatus", SettingsManager.GetString("HIDstatus"), false);
+                SettingsManager_SettingValueChanged("DSUEnabled", SettingsManager.GetString("DSUEnabled"), false);
+            }
+
             if (ProfileManager.IsInitialized)
             {
                 ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
