@@ -43,6 +43,14 @@ namespace HandheldCompanion.Managers
             ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
+            // raise events
+            if (SettingsManager.IsInitialized)
+            {
+                SettingsManager_SettingValueChanged("SensorPlacement", SettingsManager.GetString("SensorPlacement"), false);
+                SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", SettingsManager.GetString("SensorPlacementUpsideDown"), false);
+                SettingsManager_SettingValueChanged("SensorSelection", SettingsManager.GetString("SensorSelection"), false);
+            }
+
             if (DeviceManager.IsInitialized)
             {
                 DeviceManager_UsbDeviceArrived(null, Guid.Empty);

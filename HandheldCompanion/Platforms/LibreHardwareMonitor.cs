@@ -40,8 +40,6 @@ namespace HandheldCompanion.Platforms
                 IsMemoryEnabled = true,
                 IsBatteryEnabled = true,
             };
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -57,6 +55,15 @@ namespace HandheldCompanion.Platforms
 
         public override bool Start()
         {
+            // manage events
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            if (SettingsManager.IsInitialized)
+            {
+                SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", SettingsManager.GetString("OnScreenDisplayRefreshRate"), false);
+            }
+
             // open computer, slow
             computer?.Open();
 
@@ -67,6 +74,8 @@ namespace HandheldCompanion.Platforms
 
         public override bool Stop(bool kill = false)
         {
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
             updateTimer?.Stop();
 
             // wait until all tasks are complete

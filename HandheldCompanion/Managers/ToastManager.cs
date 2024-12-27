@@ -83,7 +83,14 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
+            // manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            if (SettingsManager.IsInitialized)
+            {
+                SettingsManager_SettingValueChanged("ToastEnable", SettingsManager.GetString("ToastEnable"), false);
+            }
 
             IsInitialized = true;
             LogManager.LogInformation("{0} has started", nameof(ToastManager));

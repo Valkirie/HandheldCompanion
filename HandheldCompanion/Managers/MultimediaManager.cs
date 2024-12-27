@@ -68,6 +68,11 @@ public static class MultimediaManager
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("NativeDisplayOrientation", SettingsManager.GetString("NativeDisplayOrientation"), false);
+        }
+
         SystemEvents_DisplaySettingsChanged(null, null);
 
         IsInitialized = true;

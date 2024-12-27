@@ -87,6 +87,14 @@ public static class ControllerManager
         IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
         // raise events
+        if (SettingsManager.IsInitialized)
+        {
+            SettingsManager_SettingValueChanged("VibrationStrength", SettingsManager.GetString("VibrationStrength"), false);
+            SettingsManager_SettingValueChanged("ControllerManagement", SettingsManager.GetString("ControllerManagement"), false);
+            SettingsManager_SettingValueChanged("SensorSelection", SettingsManager.GetString("SensorSelection"), false);
+            SettingsManager_SettingValueChanged("SteamControllerMode", SettingsManager.GetString("SteamControllerMode"), false);
+        }
+
         if (DeviceManager.IsInitialized)
         {
             foreach (PnPDetails? device in DeviceManager.PnPDevices.Values)
