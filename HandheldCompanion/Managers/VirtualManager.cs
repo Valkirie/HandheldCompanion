@@ -63,6 +63,9 @@ namespace HandheldCompanion.Managers
                 MessageBox.Show("Unable to start Handheld Companion, the ViGEm application is missing.\n\nPlease get it from: https://github.com/ViGEm/ViGEmBus/releases", "Error");
                 throw new InvalidOperationException();
             }
+
+            // load a few variables
+            HIDstatus = (HIDstatus)SettingsManager.GetInt("HIDstatus");
         }
 
         public static void Start()
@@ -78,15 +81,29 @@ namespace HandheldCompanion.Managers
             // raise events
             if (SettingsManager.IsInitialized)
             {
-                SettingsManager_SettingValueChanged("HIDmode", SettingsManager.GetString("HIDmode"), false);
-                SettingsManager_SettingValueChanged("HIDstatus", SettingsManager.GetString("HIDstatus"), false);
+                // Retrieve the default HID mode from settings
+                HIDmode selectedHIDMode = (HIDmode)SettingsManager.GetInt("HIDmode");
+
+                // Check if ProfileManager is initialized and a valid profile is available
+                if (ProfileManager.IsInitialized)
+                {
+                    Profile currentProfile = ProfileManager.GetCurrent();
+                    if (currentProfile != null && currentProfile.HID != HIDmode.NotSelected)
+                        selectedHIDMode = currentProfile.HID;
+                }
+
+                // Update the settings with the resolved HID mode
+                SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false);
+                // SettingsManager_SettingValueChanged("HIDstatus", SettingsManager.GetString("HIDstatus"), false);
                 SettingsManager_SettingValueChanged("DSUEnabled", SettingsManager.GetString("DSUEnabled"), false);
             }
 
+            /*
             if (ProfileManager.IsInitialized)
             {
                 ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
             }
+            */
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -175,11 +192,18 @@ namespace HandheldCompanion.Managers
             switch (name)
             {
                 case "HIDmode":
-                    defaultHIDmode = (HIDmode)Convert.ToInt32(value);
-                    SetControllerMode(defaultHIDmode);
+                    {
+                        // update variable
+                        defaultHIDmode = (HIDmode)Convert.ToInt32(value);
+                        SetControllerMode(defaultHIDmode);
+                    }
                     break;
                 case "HIDstatus":
-                    SetControllerStatus((HIDstatus)Convert.ToInt32(value));
+                    {
+                        // skip on cold boot, retrieved by Start() function and called by SetControllerMode()
+                        if (SettingsManager.IsInitialized)
+                            SetControllerStatus((HIDstatus)Convert.ToInt32(value));
+                    }
                     break;
                 case "DSUEnabled":
                     SetDSUStatus(Convert.ToBoolean(value));

@@ -65,6 +65,9 @@ namespace HandheldCompanion.Targets
 
         public virtual bool Disconnect()
         {
+            if (!IsConnected)
+                return false;
+
             try
             {
                 virtualController?.Disconnect();
