@@ -11,7 +11,7 @@ namespace HandheldCompanion.Managers
 {
     public static class ToastManager
     {
-        private const int Interval = 2500; // ms
+        private const int Interval = 5000; // ms
         private const string Group = "HandheldCompanion";
 
         private static readonly ConcurrentQueue<(string Title, string Content, string Img, bool IsHero)> ToastQueue = new();
@@ -79,29 +79,27 @@ namespace HandheldCompanion.Managers
                 toastNotification.Tag = title;
                 toastNotification.Group = Group;
 
-                // Set the expiration time
-                toastNotification.ExpirationTime = DateTimeOffset.Now.AddMilliseconds(Interval);
-
-                // Set the current toast notification
-                CurrentToastNotification = toastNotification;
+                // Set the expiration time (affects Action Center, not on-screen duration)
+                // toastNotification.ExpirationTime = DateTimeOffset.Now.AddMilliseconds(Interval);
 
                 // Attach event handlers
                 toastNotification.Dismissed += (sender, args) =>
                 {
-                    // Check if dismissed manually or timed out
                     if (args.Reason == ToastDismissalReason.UserCanceled ||
                         args.Reason == ToastDismissalReason.TimedOut)
                     {
-                        // Trigger the next toast immediately
                         TriggerNextToast();
                     }
                 };
 
-                toastNotification.Activated += (sender, args) =>
+                /*
+                // Manually remove the toast from the Action Center after the interval
+                _ = Task.Run(async () =>
                 {
-                    // Optionally handle user interaction with the toast
-                    LogManager.LogInformation("Toast activated by user: {0}", title);
-                };
+                    await Task.Delay(Interval);
+                    ToastNotificationManagerCompat.History.Remove(title, Group);
+                });
+                */
             });
         }
 
@@ -136,10 +134,7 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
-            foreach (var cts in ToastQueue)
-            {
-                // Clear the queue (ToastQueue itself doesn't have CancellationToken)
-            }
+            ToastQueue.Clear();
 
             IsInitialized = false;
 
