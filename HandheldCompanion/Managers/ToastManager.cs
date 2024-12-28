@@ -11,7 +11,7 @@ namespace HandheldCompanion.Managers
 {
     public static class ToastManager
     {
-        private const int Interval = 5000; // ms
+        private const int Interval = 1000; // ms
         private const string Group = "HandheldCompanion";
 
         private static readonly ConcurrentQueue<(string Title, string Content, string Img, bool IsHero)> ToastQueue = new();
