@@ -5,15 +5,20 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Notifications;
 
 namespace HandheldCompanion.Managers
 {
     public static class ToastManager
     {
-        private const int Interval = 5000; // Milliseconds
+        private const int Interval = 2500; // ms
         private const string Group = "HandheldCompanion";
 
-        private static readonly ConcurrentDictionary<string, CancellationTokenSource> ToastCancellationTokens = new();
+        private static readonly ConcurrentQueue<(string Title, string Content, string Img, bool IsHero)> ToastQueue = new();
+        private static readonly SemaphoreSlim QueueSemaphore = new(1, 1);
+        private static DateTime LastToastTime = DateTime.MinValue;
+
+        private static ToastNotification CurrentToastNotification;
 
         public static bool IsEnabled { get; set; }
         private static bool IsInitialized { get; set; }
@@ -24,58 +29,86 @@ namespace HandheldCompanion.Managers
         {
             if (!IsEnabled) return;
 
+            ToastQueue.Enqueue((title, content, img, isHero));
+            _ = ProcessToastQueue();
+        }
+
+        private static async Task ProcessToastQueue()
+        {
+            if (!QueueSemaphore.Wait(0)) return; // Prevent concurrent processing
+
+            try
+            {
+                while (ToastQueue.TryDequeue(out var toastData))
+                {
+                    TimeSpan timeSinceLastToast = DateTime.Now - LastToastTime;
+                    if (timeSinceLastToast.TotalMilliseconds < Interval)
+                        await Task.Delay(Interval - (int)timeSinceLastToast.TotalMilliseconds);
+
+                    DisplayToast(toastData.Title, toastData.Content, toastData.Img, toastData.IsHero);
+                    LastToastTime = DateTime.Now;
+                }
+            }
+            finally
+            {
+                QueueSemaphore.Release();
+            }
+        }
+
+        private static void DisplayToast(string title, string content, string img, bool isHero)
+        {
             string imagePath = $"{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
             Uri imageUri = new Uri($"file:///{imagePath}");
 
-            // Use Task to avoid manual thread management
-            Task.Run(async () =>
+            ToastContentBuilder toast = new ToastContentBuilder()
+                .AddText(title)
+                .AddText(content)
+                .AddAudio(new ToastAudio { Silent = true, Src = new Uri("ms-winsoundevent:Notification.Default") })
+                .SetToastScenario(ToastScenario.Default);
+
+            if (File.Exists(imagePath))
             {
-                try
-                {
-                    ToastContentBuilder toast = new ToastContentBuilder()
-                        .AddText(title)
-                        .AddText(content)
-                        .AddAudio(new ToastAudio { Silent = true, Src = new Uri("ms-winsoundevent:Notification.Default") })
-                        .SetToastScenario(ToastScenario.Default);
+                if (isHero)
+                    toast.AddHeroImage(imageUri);
+                else
+                    toast.AddAppLogoOverride(imageUri, ToastGenericAppLogoCrop.Default);
+            }
 
-                    if (File.Exists(imagePath))
+            toast.Show(toastNotification =>
+            {
+                toastNotification.Tag = title;
+                toastNotification.Group = Group;
+
+                // Set the expiration time
+                toastNotification.ExpirationTime = DateTimeOffset.Now.AddMilliseconds(Interval);
+
+                // Set the current toast notification
+                CurrentToastNotification = toastNotification;
+
+                // Attach event handlers
+                toastNotification.Dismissed += (sender, args) =>
+                {
+                    // Check if dismissed manually or timed out
+                    if (args.Reason == ToastDismissalReason.UserCanceled ||
+                        args.Reason == ToastDismissalReason.TimedOut)
                     {
-                        if (isHero)
-                            toast.AddHeroImage(imageUri);
-                        else
-                            toast.AddAppLogoOverride(imageUri, ToastGenericAppLogoCrop.Default);
+                        // Trigger the next toast immediately
+                        TriggerNextToast();
                     }
+                };
 
-                    if (toast == null) return;
-
-                    // Show the toast
-                    toast.Show(toastNotification =>
-                    {
-                        toastNotification.Tag = title;
-                        toastNotification.Group = Group;
-                    });
-
-                    // Manage toast lifetime
-                    CancellationTokenSource cts = new CancellationTokenSource();
-                    if (!ToastCancellationTokens.TryAdd(title, cts)) return;
-
-                    await Task.Delay(Interval, cts.Token);
-
-                    if (!cts.Token.IsCancellationRequested)
-                    {
-                        ToastNotificationManagerCompat.History.Remove(title, Group);
-                        ToastCancellationTokens.TryRemove(title, out _);
-                    }
-                }
-                catch (TaskCanceledException)
+                toastNotification.Activated += (sender, args) =>
                 {
-                    // Task was canceled - safe to ignore
-                }
-                catch (Exception ex)
-                {
-                    LogManager.LogError("Error in SendToast: {0}", ex.Message);
-                }
+                    // Optionally handle user interaction with the toast
+                    LogManager.LogInformation("Toast activated by user: {0}", title);
+                };
             });
+        }
+
+        private static void TriggerNextToast()
+        {
+            // Immediately process the next toast in the queue
+            _ = ProcessToastQueue();
         }
 
         public static void Start()
@@ -83,10 +116,10 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            // manage events
+            // Manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            // raise events
+            // Raise events
             if (SettingsManager.IsInitialized)
             {
                 SettingsManager_SettingValueChanged("ToastEnable", SettingsManager.GetString("ToastEnable"), false);
@@ -103,13 +136,10 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
-            foreach (CancellationTokenSource cts in ToastCancellationTokens.Values)
+            foreach (var cts in ToastQueue)
             {
-                cts.Cancel();
-                cts.Dispose();
+                // Clear the queue (ToastQueue itself doesn't have CancellationToken)
             }
-
-            ToastCancellationTokens.Clear();
 
             IsInitialized = false;
 
