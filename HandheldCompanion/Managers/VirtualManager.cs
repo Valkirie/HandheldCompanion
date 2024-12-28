@@ -214,7 +214,7 @@ namespace HandheldCompanion.Managers
         private static async void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             // SetControllerMode takes care of ignoring identical mode switching
-            if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
+            if (HIDmode == profile.HID || (profile.HID == HIDmode.NotSelected && HIDmode == defaultHIDmode))
                 return;
 
             while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
@@ -224,10 +224,12 @@ namespace HandheldCompanion.Managers
             {
                 case HIDmode.Xbox360Controller:
                 case HIDmode.DualShock4Controller:
-                    {
-                        SetControllerMode(profile.HID);
-                        break;
-                    }
+                    SetControllerMode(profile.HID);
+                    break;
+
+                case HIDmode.NotSelected:
+                    SetControllerMode(defaultHIDmode);
+                    break;
             }
         }
 
