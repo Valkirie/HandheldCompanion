@@ -147,7 +147,7 @@ public class SteamDeck : IDevice
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized)
+            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
             {
                 SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetBoolean("BatteryChargeLimit"), false);
             }

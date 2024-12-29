@@ -80,7 +80,7 @@ public static class DynamicLightingManager
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", SettingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false);
             SettingsManager_SettingValueChanged("LEDSettingsEnabled", SettingsManager.GetString("LEDSettingsEnabled"), false);

@@ -94,7 +94,7 @@ namespace HandheldCompanion.Devices.AYANEO
             PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized)
+            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
             {
                 SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetString("BatteryChargeLimit"), false);
             }

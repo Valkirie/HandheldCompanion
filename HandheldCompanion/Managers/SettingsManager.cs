@@ -32,36 +32,35 @@ public static class Settings
 public static class SettingsManager
 {
     public delegate void InitializedEventHandler();
+    public static event InitializedEventHandler Initialized;
 
     public delegate void SettingValueChangedEventHandler(string name, object value, bool temporary);
+    public static event SettingValueChangedEventHandler SettingValueChanged;
 
     private static readonly Dictionary<string, object> Settings = [];
 
-    static SettingsManager()
-    {
-    }
-
     public static bool IsInitialized { get; internal set; }
-
-    public static event SettingValueChangedEventHandler SettingValueChanged;
-
-    public static event InitializedEventHandler Initialized;
+    public static bool IsInitializing { get; internal set; }
 
     public static void Start()
     {
-        var properties = Properties.Settings
-            .Default
-            .Properties
-            .Cast<SettingsProperty>()
-            .OrderBy(s => s.Name);
+        if (IsInitialized || IsInitializing)
+            return;
 
+        // set flag(s)
+        IsInitializing = true;
+
+        IOrderedEnumerable<SettingsProperty> properties = Properties.Settings.Default.Properties.Cast<SettingsProperty>().OrderBy(s => s.Name);
         foreach (var property in properties)
             SettingValueChanged(property.Name, GetProperty(property.Name), false);
 
         if (GetBoolean("FirstStart"))
             SetProperty("FirstStart", false);
 
+        // set flag(s)
+        IsInitializing = false;
         IsInitialized = true;
+
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "SettingsManager");
@@ -72,6 +71,8 @@ public static class SettingsManager
         if (!IsInitialized)
             return;
 
+        // set flag(s)
+        IsInitializing = false;
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "SettingsManager");

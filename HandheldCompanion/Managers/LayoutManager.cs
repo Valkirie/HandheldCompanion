@@ -104,7 +104,7 @@ internal static class LayoutManager
         MultimediaManager.DisplayOrientationChanged += MultimediaManager_DisplayOrientationChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("DesktopProfileOnStart", SettingsManager.GetString("DesktopProfileOnStart"), false);
             SettingsManager_SettingValueChanged("DesktopLayoutEnabled", SettingsManager.GetString("DesktopLayoutEnabled"), false);

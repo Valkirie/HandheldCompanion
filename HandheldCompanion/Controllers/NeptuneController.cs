@@ -338,7 +338,7 @@ public class NeptuneController : SteamController
         TimerManager.Tick += UpdateInputs;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", SettingsManager.GetInt("SteamControllerRumbleInterval"), false);
         }

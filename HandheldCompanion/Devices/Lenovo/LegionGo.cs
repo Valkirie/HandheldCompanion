@@ -341,7 +341,7 @@ public class LegionGo : IDevice
             PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetBoolean("BatteryChargeLimit"), false);
         }

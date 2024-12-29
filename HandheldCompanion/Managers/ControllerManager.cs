@@ -87,7 +87,7 @@ public static class ControllerManager
         IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
         // raise events
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("VibrationStrength", SettingsManager.GetString("VibrationStrength"), false);
             SettingsManager_SettingValueChanged("ControllerManagement", SettingsManager.GetString("ControllerManagement"), false);

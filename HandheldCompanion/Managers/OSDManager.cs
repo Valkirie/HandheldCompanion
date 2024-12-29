@@ -60,7 +60,7 @@ public static class OSDManager
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             // timer used to monitor foreground application framerate
             RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");

@@ -152,7 +152,7 @@ public static class PerformanceManager
         }
 
         // raise events
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", SettingsManager.GetString("ConfigurableTDPOverrideDown"), false);
             SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", SettingsManager.GetString("ConfigurableTDPOverrideUp"), false);

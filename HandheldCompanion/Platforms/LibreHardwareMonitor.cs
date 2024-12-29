@@ -59,7 +59,7 @@ namespace HandheldCompanion.Platforms
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized)
+            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
             {
                 SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", SettingsManager.GetString("OnScreenDisplayRefreshRate"), false);
             }

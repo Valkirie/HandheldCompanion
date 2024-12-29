@@ -64,7 +64,7 @@ public static class TaskManager
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized)
+        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
         {
             SettingsManager_SettingValueChanged("RunAtStartup", SettingsManager.GetString("RunAtStartup"), false);
         }

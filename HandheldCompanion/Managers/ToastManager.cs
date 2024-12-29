@@ -118,7 +118,7 @@ namespace HandheldCompanion.Managers
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // Raise events
-            if (SettingsManager.IsInitialized)
+            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
             {
                 SettingsManager_SettingValueChanged("ToastEnable", SettingsManager.GetString("ToastEnable"), false);
             }

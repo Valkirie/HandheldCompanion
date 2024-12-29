@@ -7,6 +7,7 @@ using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
 using System.Runtime.InteropServices;
+using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.ControllerManager;
@@ -19,10 +20,12 @@ namespace HandheldCompanion.Managers
         public static ViGEmClient vClient;
         public static ViGEmTarget vTarget;
 
-
-        // Check if the DLL is already loaded
-        private static string dllName = "vigemclient.dll";
+        // dll vars
+        private const string dllName = "vigemclient.dll";
         private static IntPtr Module = IntPtr.Zero;
+
+        // drivers vars
+        private const string driverName = "ViGEmBus";
 
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
@@ -68,10 +71,15 @@ namespace HandheldCompanion.Managers
             HIDstatus = (HIDstatus)SettingsManager.GetInt("HIDstatus");
         }
 
-        public static void Start()
+        public static async void Start()
         {
             if (IsInitialized)
                 return;
+
+            // wait until drivers are fully loaded
+            using (ServiceController sc = new ServiceController(driverName))
+                while (sc.Status != ServiceControllerStatus.Running)
+                    await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context
 
             // manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -79,7 +87,7 @@ namespace HandheldCompanion.Managers
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             // raise events
-            if (SettingsManager.IsInitialized)
+            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
             {
                 // Retrieve the default HID mode from settings
                 HIDmode selectedHIDMode = (HIDmode)SettingsManager.GetInt("HIDmode");
@@ -201,7 +209,7 @@ namespace HandheldCompanion.Managers
                 case "HIDstatus":
                     {
                         // skip on cold boot, retrieved by Start() function and called by SetControllerMode()
-                        if (SettingsManager.IsInitialized)
+                        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
                             SetControllerStatus((HIDstatus)Convert.ToInt32(value));
                     }
                     break;
