@@ -340,10 +340,10 @@ namespace HandheldCompanion.Managers
 
                 // update current HIDmode
                 HIDmode = mode;
-
-                // update status
-                SetControllerStatus(HIDstatus);
             }
+
+            // update status
+            SetControllerStatus(HIDstatus);
         }
 
         public static void SetControllerStatus(HIDstatus status)
