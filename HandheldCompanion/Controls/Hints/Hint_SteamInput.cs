@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,7 +25,7 @@ namespace HandheldCompanion.Controls.Hints
         private void Steam_SettingValueChanged(string name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 if (name.Equals("UseSteamControllerConfig"))
                 {

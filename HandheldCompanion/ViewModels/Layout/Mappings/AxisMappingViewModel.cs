@@ -24,41 +24,6 @@ namespace HandheldCompanion.ViewModels
 
         #region Axis Action Properties
 
-        public bool Axis2AxisAutoRotate
-        {
-            get => (Action is AxisActions axisAction) && axisAction.AutoRotate;
-            set
-            {
-                if (Action is AxisActions axisAction && value != Axis2AxisAutoRotate)
-                {
-                    axisAction.AutoRotate = value;
-                    OnPropertyChanged(nameof(Axis2AxisAutoRotate));
-                }
-            }
-        }
-
-        public int Axis2AxisRotation
-        {
-            get
-            {
-                if (Action is AxisActions axisAction)
-                {
-                    return (axisAction.AxisInverted ? 180 : 0) + (axisAction.AxisRotated ? 90 : 0);
-                }
-
-                return 0;
-            }
-            set
-            {
-                if (Action is AxisActions axisAction && value != Axis2AxisRotation)
-                {
-                    axisAction.AxisInverted = ((value / 90) & 2) == 2;
-                    axisAction.AxisRotated = ((value / 90) & 1) == 1;
-                    OnPropertyChanged(nameof(Axis2AxisRotation));
-                }
-            }
-        }
-
         public int Axis2AxisInnerDeadzone
         {
             get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneInner : 0;
@@ -124,41 +89,6 @@ namespace HandheldCompanion.ViewModels
                 {
                     mouseAction.Sensivity = value;
                     OnPropertyChanged(nameof(Axis2MousePointerSpeed));
-                }
-            }
-        }
-
-        public bool Axis2MouseAutoRotate
-        {
-            get => (Action is MouseActions mouseAction) && mouseAction.AutoRotate;
-            set
-            {
-                if (Action is MouseActions mouseAction && value != Axis2MouseAutoRotate)
-                {
-                    mouseAction.AutoRotate = value;
-                    OnPropertyChanged(nameof(Axis2MouseAutoRotate));
-                }
-            }
-        }
-
-        public int Axis2MouseRotation
-        {
-            get
-            {
-                if (Action is MouseActions mouseAction)
-                {
-                    return (mouseAction.AxisInverted ? 180 : 0) + (mouseAction.AxisRotated ? 90 : 0);
-                }
-
-                return 0;
-            }
-            set
-            {
-                if (Action is MouseActions mouseAction && value != Axis2MouseRotation)
-                {
-                    mouseAction.AxisInverted = ((value / 90) & 2) == 2;
-                    mouseAction.AxisRotated = ((value / 90) & 1) == 1;
-                    OnPropertyChanged(nameof(Axis2MouseRotation));
                 }
             }
         }

@@ -26,14 +26,14 @@ namespace HandheldCompanion.ViewModels
 
         public AboutPageViewModel()
         {
-            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+            ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         }
 
         public override void Dispose()
         {
-            DeviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
+            ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
+            ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
             base.Dispose();
         }
 

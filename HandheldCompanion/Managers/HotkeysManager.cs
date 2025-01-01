@@ -46,7 +46,7 @@ public static class HotkeysManager
 
         // get latest known version
         // if last time HC version used old hotkey engine and user has no defined hotkeys
-        Version LastVersion = Version.Parse(SettingsManager.GetString("LastVersion"));
+        Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
         if (LastVersion < Version.Parse(Settings.VersionHotkeyManager) && hotkeys.Count == 0)
         {
             // create a few defaults hotkeys

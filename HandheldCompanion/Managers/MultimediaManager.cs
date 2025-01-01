@@ -13,32 +13,29 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WindowsDisplayAPI;
 using WindowsDisplayAPI.DisplayConfig;
+using DisplayDevice = HandheldCompanion.Misc.DisplayDevice;
 
 namespace HandheldCompanion.Managers;
 
-public static class MultimediaManager
+public class MultimediaManager : IManager
 {
-    public static Dictionary<string, DesktopScreen> AllScreens = [];
-    public static DesktopScreen PrimaryDesktop;
+    public Dictionary<string, DesktopScreen> AllScreens = [];
+    public DesktopScreen PrimaryDesktop;
 
-    private static ScreenRotation screenOrientation;
+    private readonly MMDeviceEnumerator DevEnum;
+    private MMDevice multimediaDevice;
+    private readonly MMDeviceNotificationClient notificationClient;
 
-    private static readonly MMDeviceEnumerator DevEnum;
-    private static MMDevice multimediaDevice;
-    private static readonly MMDeviceNotificationClient notificationClient;
+    private readonly ManagementEventWatcher BrightnessWatcher;
+    private readonly ManagementScope Scope;
 
-    private static readonly ManagementEventWatcher BrightnessWatcher;
-    private static readonly ManagementScope Scope;
+    private bool VolumeSupport;
+    private readonly bool BrightnessSupport;
 
-    private static bool VolumeSupport;
-    private static readonly bool BrightnessSupport;
-
-    public static bool IsInitialized;
-
-    static MultimediaManager()
+    public MultimediaManager()
     {
         // setup the multimedia device and get current volume value
-        notificationClient = new MMDeviceNotificationClient();
+        notificationClient = new MMDeviceNotificationClient(this);
         DevEnum = new MMDeviceEnumerator();
         DevEnum.RegisterEndpointNotificationCallback(notificationClient);
         SetDefaultAudioEndPoint();
@@ -54,10 +51,12 @@ public static class MultimediaManager
         BrightnessSupport = GetBrightness() != -1;
     }
 
-    public static void Start()
+    public override void Start()
     {
-        if (IsInitialized)
+        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
             return;
+
+        base.PrepareStart();
 
         // manage brightness watcher events
         BrightnessWatcher.EventArrived += onWMIEvent;
@@ -65,26 +64,40 @@ public static class MultimediaManager
 
         // manage events
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("NativeDisplayOrientation", SettingsManager.GetString("NativeDisplayOrientation"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         SystemEvents_DisplaySettingsChanged(null, null);
 
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "MultimediaManager");
+        base.Start();
     }
 
-    public static void Stop()
+    private void QuerySettings()
     {
-        if (!IsInitialized)
+        SettingsManager_SettingValueChanged("NativeDisplayOrientation", ManagerFactory.settingsManager.GetString("NativeDisplayOrientation"), false);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    public override void Stop()
+    {
+        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
             return;
+
+        base.PrepareStop();
 
         DevEnum.UnregisterEndpointNotificationCallback(notificationClient);
 
@@ -94,19 +107,18 @@ public static class MultimediaManager
 
         // manage events
         SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "MultimediaManager");
+        base.Stop();
     }
 
-    private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+    private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
     {
         VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
     }
 
-    private static void SetDefaultAudioEndPoint()
+    private void SetDefaultAudioEndPoint()
     {
         try
         {
@@ -133,29 +145,12 @@ public static class MultimediaManager
         }
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
-        switch (name)
-        {
-            case "NativeDisplayOrientation":
-                {
-                    ScreenRotation.Rotations nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
-
-                    if (!IsInitialized)
-                        return;
-
-                    ScreenRotation.Rotations oldOrientation = screenOrientation.rotation;
-                    screenOrientation = new ScreenRotation(screenOrientation.rotationUnnormalized, nativeOrientation);
-
-                    // Though the real orientation didn't change, raise event because the interpretation of it changed
-                    if (oldOrientation != screenOrientation.rotation)
-                        DisplayOrientationChanged?.Invoke(screenOrientation);
-                }
-                break;
-        }
+        // do something
     }
 
-    private static void onWMIEvent(object sender, EventArrivedEventArgs e)
+    private void onWMIEvent(object sender, EventArrivedEventArgs e)
     {
         int brightness = Convert.ToInt32(e.NewEvent.Properties["Brightness"].Value);
         BrightnessNotification?.Invoke(brightness);
@@ -182,7 +177,7 @@ public static class MultimediaManager
         return friendlyName;
     }
 
-    public static string GetAdapterFriendlyName(string DeviceName)
+    public string GetAdapterFriendlyName(string DeviceName)
     {
         string friendlyName = string.Empty;
 
@@ -211,13 +206,13 @@ public static class MultimediaManager
         return DevicePath;
     }
 
-    private static PathDisplayTarget? GetDisplayTarget(string DevicePath)
+    private PathDisplayTarget? GetDisplayTarget(string DevicePath)
     {
         PathDisplayTarget PrimaryTarget = PathDisplayTarget.GetDisplayTargets().Where(target => target.DevicePath.Equals(DevicePath)).FirstOrDefault();
         return PrimaryTarget;
     }
 
-    private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
+    private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
         // temporary array to store all current screens
         Dictionary<string, DesktopScreen> desktopScreens = [];
@@ -274,12 +269,12 @@ public static class MultimediaManager
         DesktopScreen newPrimary = desktopScreens.Values.Where(a => a.IsPrimary).FirstOrDefault();
         if (newPrimary is not null)
         {
+            // set or update current primary
+            PrimaryDesktop = newPrimary;
+
             // looks like we have a new primary screen
             if (PrimaryDesktop is null || !PrimaryDesktop.DevicePath.Equals(newPrimary.DevicePath))
             {
-                // set or update current primary
-                PrimaryDesktop = newPrimary;
-
                 LogManager.LogInformation("Primary screen set to {0}", newPrimary.ToString());
 
                 // raise event (New primary display)
@@ -310,38 +305,11 @@ public static class MultimediaManager
         ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
         if (screenResolution is not null)
             DisplaySettingsChanged?.Invoke(PrimaryDesktop, screenResolution);
-
-        /*
-        ScreenRotation.Rotations oldOrientation = screenOrientation.rotation;
-
-        if (!IsInitialized)
-        {
-            ScreenRotation.Rotations nativeScreenRotation = (ScreenRotation.Rotations)SettingsManager.GetInt("NativeDisplayOrientation");
-            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation, nativeScreenRotation);
-            oldOrientation = ScreenRotation.Rotations.UNSET;
-
-            if (nativeScreenRotation == ScreenRotation.Rotations.UNSET)
-                SettingsManager.SetProperty("NativeDisplayOrientation", (int)screenOrientation.rotationNativeBase, true);
-        }
-        else
-        {
-            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation, screenOrientation.rotationNativeBase);
-        }
-
-        // raise event
-        if (oldOrientation != screenOrientation.rotation)
-            DisplayOrientationChanged?.Invoke(screenOrientation);
-        */
     }
 
-    public static ScreenRotation GetScreenOrientation()
+    public bool SetResolution(int width, int height, int displayFrequency)
     {
-        return screenOrientation;
-    }
-
-    public static bool SetResolution(int width, int height, int displayFrequency)
-    {
-        if (!IsInitialized)
+        if (Status != ManagerStatus.Initialized)
             return false;
 
         bool ret = false;
@@ -364,9 +332,9 @@ public static class MultimediaManager
         return ret;
     }
 
-    public static bool SetResolution(int width, int height, int displayFrequency, int bitsPerPel)
+    public bool SetResolution(int width, int height, int displayFrequency, int bitsPerPel)
     {
-        if (!IsInitialized)
+        if (Status != ManagerStatus.Initialized)
             return false;
 
         bool ret = false;
@@ -400,7 +368,7 @@ public static class MultimediaManager
         return dm;
     }
 
-    public static List<DisplayDevice> GetResolutions(string DeviceName)
+    public List<DisplayDevice> GetResolutions(string DeviceName)
     {
         List<DisplayDevice> allMode = [];
         DisplayDevice dm = new DisplayDevice
@@ -417,19 +385,19 @@ public static class MultimediaManager
         return allMode;
     }
 
-    public static void PlayWindowsMedia(string file)
+    public void PlayWindowsMedia(string file)
     {
         string path = Path.Combine(@"c:\Windows\Media\", file);
         if (File.Exists(path))
             new SoundPlayer(path).Play();
     }
 
-    public static bool HasVolumeSupport()
+    public bool HasVolumeSupport()
     {
         return VolumeSupport;
     }
 
-    public static void SetVolume(double volume)
+    public void SetVolume(double volume)
     {
         if (!VolumeSupport)
             return;
@@ -437,7 +405,7 @@ public static class MultimediaManager
         multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar = (float)(volume / 100.0d);
     }
 
-    public static double GetVolume()
+    public double GetVolume()
     {
         if (!VolumeSupport)
             return 0.0d;
@@ -445,12 +413,12 @@ public static class MultimediaManager
         return multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100.0d;
     }
 
-    public static bool HasBrightnessSupport()
+    public bool HasBrightnessSupport()
     {
         return BrightnessSupport;
     }
 
-    public static void SetBrightness(double brightness)
+    public void SetBrightness(double brightness)
     {
         if (!BrightnessSupport)
             return;
@@ -475,35 +443,35 @@ public static class MultimediaManager
         }
     }
 
-    public static void IncreaseBrightness()
+    public void IncreaseBrightness()
     {
         int stepRoundDn = (int)Math.Floor(GetBrightness() / 2.0d);
         int brightness = stepRoundDn * 2 + 2;
         SetBrightness(brightness);
     }
 
-    public static void DecreaseBrightness()
+    public void DecreaseBrightness()
     {
         int stepRoundUp = (int)Math.Ceiling(GetBrightness() / 2.0d);
         int brightness = stepRoundUp * 2 - 2;
         SetBrightness(brightness);
     }
 
-    public static void IncreaseVolume()
+    public void IncreaseVolume()
     {
         int stepRoundDn = (int)Math.Ceiling(Math.Round(GetVolume() / 2.0d));
         int volume = stepRoundDn * 2 + 2;
         SetVolume(volume);
     }
 
-    public static void DecreaseVolume()
+    public void DecreaseVolume()
     {
         int stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 2.0d));
         int volume = stepRoundUp * 2 - 2;
         SetVolume(volume);
     }
 
-    public static void Mute()
+    public void Mute()
     {
         if (!VolumeSupport)
             return;
@@ -511,7 +479,7 @@ public static class MultimediaManager
         multimediaDevice.AudioEndpointVolume.Mute = true;
     }
 
-    public static void Unmute()
+    public void Unmute()
     {
         if (!VolumeSupport)
             return;
@@ -519,7 +487,7 @@ public static class MultimediaManager
         multimediaDevice.AudioEndpointVolume.Mute = false;
     }
 
-    public static void ToggleMute()
+    public void ToggleMute()
     {
         if (!VolumeSupport)
             return;
@@ -527,7 +495,7 @@ public static class MultimediaManager
         multimediaDevice.AudioEndpointVolume.Mute = !multimediaDevice.AudioEndpointVolume.Mute;
     }
 
-    public static bool IsMuted()
+    public bool IsMuted()
     {
         if (!VolumeSupport)
             return true;
@@ -535,7 +503,7 @@ public static class MultimediaManager
         return multimediaDevice.AudioEndpointVolume.Mute;
     }
 
-    public static short GetBrightness()
+    public short GetBrightness()
     {
         try
         {
@@ -560,9 +528,15 @@ public static class MultimediaManager
 
     private class MMDeviceNotificationClient : IMMNotificationClient
     {
+        private MultimediaManager MultimediaManager;
+        public MMDeviceNotificationClient(MultimediaManager multimediaManager)
+        {
+            this.MultimediaManager = multimediaManager;
+        }
+
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            SetDefaultAudioEndPoint();
+            MultimediaManager?.SetDefaultAudioEndPoint();
         }
 
         public void OnDeviceAdded(string deviceId)
@@ -598,59 +572,6 @@ public static class MultimediaManager
     public const int DISP_CHANGE_RESTART = 1;
     public const int DISP_CHANGE_FAILED = -1;
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    public struct DisplayDevice
-    {
-        public const int DM_DISPLAYFREQUENCY = 0x400000;
-        public const int DM_PELSWIDTH = 0x80000;
-        public const int DM_PELSHEIGHT = 0x100000;
-        private const int CCHDEVICENAME = 32;
-        private const int CCHFORMNAME = 32;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
-        public string dmDeviceName;
-
-        public short dmSpecVersion;
-        public short dmDriverVersion;
-        public short dmSize;
-        public short dmDriverExtra;
-        public int dmFields;
-
-        public int dmPositionX;
-        public int dmPositionY;
-        public DMDO dmDisplayOrientation;
-        public int dmDisplayFixedOutput;
-
-        public short dmColor;
-        public short dmDuplex;
-        public short dmYResolution;
-        public short dmTTOption;
-        public short dmCollate;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)]
-        public string dmFormName;
-
-        public short dmLogPixels;
-        public int dmBitsPerPel;
-        public int dmPelsWidth;
-        public int dmPelsHeight;
-        public int dmDisplayFlags;
-        public int dmDisplayFrequency;
-        public int dmICMMethod;
-        public int dmICMIntent;
-        public int dmMediaType;
-        public int dmDitherType;
-        public int dmReserved1;
-        public int dmReserved2;
-        public int dmPanningWidth;
-        public int dmPanningHeight;
-
-        public override string ToString()
-        {
-            return $"{dmPelsWidth}x{dmPelsHeight}, {dmDisplayFrequency}, {dmBitsPerPel}";
-        }
-    }
-
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern int ChangeDisplaySettings([In] ref DisplayDevice lpDevMode, int dwFlags);
 
@@ -660,29 +581,23 @@ public static class MultimediaManager
 
     #region events
 
-    public static event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
+    public event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
     public delegate void DisplaySettingsChangedEventHandler(DesktopScreen screen, ScreenResolution resolution);
 
-    public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
+    public event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
     public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
 
-    public static event ScreenConnectedEventHandler ScreenConnected;
+    public event ScreenConnectedEventHandler ScreenConnected;
     public delegate void ScreenConnectedEventHandler(DesktopScreen screen);
 
-    public static event ScreenDisconnectedEventHandler ScreenDisconnected;
+    public event ScreenDisconnectedEventHandler ScreenDisconnected;
     public delegate void ScreenDisconnectedEventHandler(DesktopScreen screen);
 
-    public static event DisplayOrientationChangedEventHandler DisplayOrientationChanged;
-    public delegate void DisplayOrientationChangedEventHandler(ScreenRotation rotation);
-
-    public static event VolumeNotificationEventHandler VolumeNotification;
+    public event VolumeNotificationEventHandler VolumeNotification;
     public delegate void VolumeNotificationEventHandler(float volume);
 
-    public static event BrightnessNotificationEventHandler BrightnessNotification;
+    public event BrightnessNotificationEventHandler BrightnessNotification;
     public delegate void BrightnessNotificationEventHandler(int brightness);
-
-    public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
 
     #endregion
 }

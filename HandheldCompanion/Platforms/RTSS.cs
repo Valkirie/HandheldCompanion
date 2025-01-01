@@ -140,7 +140,7 @@ public class RTSS : IPlatform
     {
         int frameLimit = 0;
 
-        DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
+        DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
 
         if (desktopScreen is not null)
         {

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
 using System.Windows;
 
@@ -34,7 +35,7 @@ namespace HandheldCompanion.Controls.Hints
             bool HasXboxDriversInstalled = PlatformManager.Steam.HasXboxDriversInstalled();
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 this.Visibility = HasXboxDriversInstalled ? Visibility.Visible : Visibility.Collapsed;
             });

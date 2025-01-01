@@ -17,20 +17,19 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public string Name => _controller is not null ? _controller.ToString() : "N/A";
-        public int UserIndex => _controller is not null ? _controller.GetUserIndex() : 0;
-
-        public bool CanCalibrate => _controller is not null && _controller.HasMotionSensor();
-        public string Enumerator => _controller is not null ? _controller.Details.EnumeratorName : "USB";
-
-        public bool IsBusy => _controller is not null && _controller.IsBusy;
-        public bool IsVirtual => _controller is not null && _controller.IsVirtual();
-        public bool IsPlugged => _controller is not null && ControllerManager.GetTargetController().GetInstancePath() == _controller.GetInstancePath();
-        public bool IsHidden => _controller is not null && _controller.IsHidden();
-
-        public bool IsInternal => _controller is not null && _controller.Details.isInternal;
-        public bool IsWireless => _controller is not null && _controller.IsWireless;
-        public bool IsDongle => _controller is not null && _controller.IsDongle;
+        // Encapsulating null checks for better readability
+        private bool HasController => _controller is not null;
+        public string Name => HasController ? _controller.ToString() : "N/A";
+        public int UserIndex => HasController ? _controller.GetUserIndex() : 0;
+        public bool CanCalibrate => HasController && _controller.HasMotionSensor();
+        public string Enumerator => HasController ? _controller.GetEnumerator() : "USB";
+        public bool IsBusy => HasController && _controller.IsBusy;
+        public bool IsVirtual => HasController && _controller.IsVirtual();
+        public bool IsPlugged => HasController && ControllerManager.IsTargetController(_controller.GetInstanceId());
+        public bool IsHidden => HasController && _controller.IsHidden();
+        public bool IsInternal => HasController && _controller.IsInternal();
+        public bool IsWireless => HasController && _controller.IsWireless();
+        public bool IsDongle => HasController && _controller.IsDongle();
 
         public ICommand ConnectCommand { get; private set; }
         public ICommand HideCommand { get; private set; }
@@ -46,7 +45,7 @@ namespace HandheldCompanion.ViewModels
 
             ConnectCommand = new DelegateCommand(async () =>
             {
-                string path = Controller.GetContainerInstancePath();
+                string path = Controller.GetContainerInstanceId();
                 ControllerManager.SetTargetController(path, false);
             });
 
@@ -66,13 +65,12 @@ namespace HandheldCompanion.ViewModels
 
         private void Controller_StateChanged()
         {
-            OnPropertyChanged(nameof(IsBusy));
-            OnPropertyChanged(nameof(IsHidden));
+            Updated();
         }
 
         private void Controller_UserIndexChanged(byte UserIndex)
         {
-            OnPropertyChanged(nameof(UserIndex));
+            Updated();
         }
 
         public void Updated()

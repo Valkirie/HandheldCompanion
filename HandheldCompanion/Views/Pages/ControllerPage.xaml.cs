@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -27,7 +28,7 @@ public partial class ControllerPage : Page
         SteamDeckPanel.Visibility = IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
 
         // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.StatusChanged += ControllerManager_Working;
         ProfileManager.Applied += ProfileManager_Applied;
     }
@@ -40,7 +41,7 @@ public partial class ControllerPage : Page
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // disable emulated controller combobox if profile is not default or set to default controller
             if (!profile.Default && profile.HID != HIDmode.NotSelected)
@@ -58,7 +59,7 @@ public partial class ControllerPage : Page
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -116,7 +117,7 @@ public partial class ControllerPage : Page
     private void ControllerManager_Working(ControllerManagerStatus status, int attempts)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(async () =>
+        UIHelper.TryInvoke(async () =>
         {
             switch (status)
             {
@@ -198,7 +199,7 @@ public partial class ControllerPage : Page
         bool isHidden = targetController is not null && targetController.IsHidden();
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
@@ -226,7 +227,7 @@ public partial class ControllerPage : Page
         var currentProfile = ProfileManager.GetCurrent();
         if (currentProfile.Default || currentProfile.HID == HIDmode.NotSelected)
         {
-            SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
+            ManagerFactory.settingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }
     }
 
@@ -235,7 +236,7 @@ public partial class ControllerPage : Page
         if (cB_HidMode.SelectedIndex == -1)
             return;
 
-        SettingsManager.SetProperty("HIDstatus", cB_ServiceSwitch.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("HIDstatus", cB_ServiceSwitch.SelectedIndex);
     }
 
     private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
@@ -243,7 +244,7 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("HIDcloakonconnect", Toggle_Cloaked.IsOn);
+        ManagerFactory.settingsManager.SetProperty("HIDcloakonconnect", Toggle_Cloaked.IsOn);
     }
 
     private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
@@ -251,7 +252,7 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("HIDuncloakonclose", Toggle_Uncloak.IsOn);
+        ManagerFactory.settingsManager.SetProperty("HIDuncloakonclose", Toggle_Uncloak.IsOn);
     }
 
     private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -259,7 +260,7 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("VibrationStrength", SliderStrength.Value);
+        ManagerFactory.settingsManager.SetProperty("VibrationStrength", SliderStrength.Value);
     }
 
     private void SliderInterval_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -267,7 +268,7 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("SteamControllerRumbleInterval", Convert.ToInt32(SliderInterval.Value));
+        ManagerFactory.settingsManager.SetProperty("SteamControllerRumbleInterval", Convert.ToInt32(SliderInterval.Value));
     }
 
     private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)
@@ -275,7 +276,7 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
+        ManagerFactory.settingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
     }
 
     private void Toggle_ControllerManagement_Toggled(object sender, RoutedEventArgs e)
@@ -283,13 +284,13 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("ControllerManagement", Toggle_ControllerManagement.IsOn);
+        ManagerFactory.settingsManager.SetProperty("ControllerManagement", Toggle_ControllerManagement.IsOn);
     }
 
     private void Button_Layout_Click(object sender, RoutedEventArgs e)
     {
         // prepare layout editor, desktopLayout gets saved automatically
-        LayoutTemplate desktopTemplate = new(LayoutManager.GetDesktop())
+        LayoutTemplate desktopTemplate = new(ManagerFactory.layoutManager.GetDesktop())
         {
             Name = LayoutTemplate.DesktopLayout.Name,
             Description = LayoutTemplate.DesktopLayout.Description,
@@ -307,7 +308,7 @@ public partial class ControllerPage : Page
             return;
 
         // temporary settings
-        SettingsManager.SetProperty("DesktopLayoutEnabled", Toggle_DesktopLayout.IsOn, false, true);
+        ManagerFactory.settingsManager.SetProperty("DesktopLayoutEnabled", Toggle_DesktopLayout.IsOn, false, true);
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -320,6 +321,6 @@ public partial class ControllerPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("SteamControllerMode", Convert.ToBoolean(cB_SCModeController.SelectedIndex));
+        ManagerFactory.settingsManager.SetProperty("SteamControllerMode", Convert.ToBoolean(cB_SCModeController.SelectedIndex));
     }
 }

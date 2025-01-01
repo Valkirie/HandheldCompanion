@@ -29,26 +29,19 @@ public static class Settings
     public static readonly string VersionHotkeyManager = "0.21.5.0";
 }
 
-public static class SettingsManager
+public class SettingsManager : IManager
 {
-    public delegate void InitializedEventHandler();
-    public static event InitializedEventHandler Initialized;
-
     public delegate void SettingValueChangedEventHandler(string name, object value, bool temporary);
-    public static event SettingValueChangedEventHandler SettingValueChanged;
+    public event SettingValueChangedEventHandler SettingValueChanged;
 
-    private static readonly Dictionary<string, object> Settings = [];
+    private readonly Dictionary<string, object> Settings = [];
 
-    public static bool IsInitialized { get; internal set; }
-    public static bool IsInitializing { get; internal set; }
-
-    public static void Start()
+    public override void Start()
     {
-        if (IsInitialized || IsInitializing)
+        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
             return;
 
-        // set flag(s)
-        IsInitializing = true;
+        base.PrepareStart();
 
         IOrderedEnumerable<SettingsProperty> properties = Properties.Settings.Default.Properties.Cast<SettingsProperty>().OrderBy(s => s.Name);
         foreach (var property in properties)
@@ -57,28 +50,19 @@ public static class SettingsManager
         if (GetBoolean("FirstStart"))
             SetProperty("FirstStart", false);
 
-        // set flag(s)
-        IsInitializing = false;
-        IsInitialized = true;
-
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "SettingsManager");
+        base.Start();
     }
 
-    public static void Stop()
+    public override void Stop()
     {
-        if (!IsInitialized)
+        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
             return;
 
-        // set flag(s)
-        IsInitializing = false;
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "SettingsManager");
+        base.PrepareStop();
+        base.Stop();
     }
 
-    public static void SetProperty(string name, object value, bool force = false, bool temporary = false)
+    public void SetProperty(string name, object value, bool force = false, bool temporary = false)
     {
         var prevValue = GetProperty(name, temporary);
 
@@ -119,7 +103,7 @@ public static class SettingsManager
             Settings[name] = value;
 
             // raise event
-            if (IsInitialized || force)
+            if (Status == ManagerStatus.Initialized || force)
                 SettingValueChanged?.Invoke(name, value, temporary);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);
@@ -127,12 +111,12 @@ public static class SettingsManager
         catch (Exception) { }
     }
 
-    private static bool PropertyExists(string name)
+    private bool PropertyExists(string name)
     {
         return Properties.Settings.Default.Properties.Cast<SettingsProperty>().Any(prop => prop.Name == name);
     }
 
-    public static SortedDictionary<string, object> GetProperties()
+    public SortedDictionary<string, object> GetProperties()
     {
         SortedDictionary<string, object> result = [];
 
@@ -142,7 +126,7 @@ public static class SettingsManager
         return result;
     }
 
-    private static object GetProperty(string name, bool temporary = false)
+    private object GetProperty(string name, bool temporary = false)
     {
         // used to handle cases
         switch (name)
@@ -196,10 +180,10 @@ public static class SettingsManager
                 }
 
             case "HasBrightnessSupport":
-                return MultimediaManager.HasBrightnessSupport();
+                return ManagerFactory.multimediaManager.HasBrightnessSupport();
 
             case "HasVolumeSupport":
-                return MultimediaManager.HasVolumeSupport();
+                return ManagerFactory.multimediaManager.HasVolumeSupport();
 
             default:
                 {
@@ -213,17 +197,17 @@ public static class SettingsManager
         }
     }
 
-    public static string GetString(string name, bool temporary = false)
+    public string GetString(string name, bool temporary = false)
     {
         return Convert.ToString(GetProperty(name, temporary));
     }
 
-    public static bool GetBoolean(string name, bool temporary = false)
+    public bool GetBoolean(string name, bool temporary = false)
     {
         return Convert.ToBoolean(GetProperty(name, temporary));
     }
 
-    public static Color GetColor(string name, bool temporary = false)
+    public Color GetColor(string name, bool temporary = false)
     {
         // Conver color, which is stored as a HEX string to a color datatype
         string hexColor = Convert.ToString(GetProperty(name, temporary));
@@ -243,27 +227,27 @@ public static class SettingsManager
         return color;
     }
 
-    public static int GetInt(string name, bool temporary = false)
+    public int GetInt(string name, bool temporary = false)
     {
         return Convert.ToInt32(GetProperty(name, temporary));
     }
 
-    public static uint GetUInt(string name, bool temporary = false)
+    public uint GetUInt(string name, bool temporary = false)
     {
         return Convert.ToUInt32(GetProperty(name, temporary));
     }
 
-    public static DateTime GetDateTime(string name, bool temporary = false)
+    public DateTime GetDateTime(string name, bool temporary = false)
     {
         return Convert.ToDateTime(GetProperty(name, temporary));
     }
 
-    public static double GetDouble(string name, bool temporary = false)
+    public double GetDouble(string name, bool temporary = false)
     {
         return Convert.ToDouble(GetProperty(name, temporary));
     }
 
-    public static StringCollection GetStringCollection(string name, bool temporary = false)
+    public StringCollection GetStringCollection(string name, bool temporary = false)
     {
         return (StringCollection)GetProperty(name, temporary);
     }

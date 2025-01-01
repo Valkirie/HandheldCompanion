@@ -27,7 +27,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
             false, ButtonFlags.OEM5
         ));
 
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.InputsUpdated += ControllerManager_InputsUpdated;
     }
 
@@ -43,9 +43,9 @@ public class AYANEOFlipDS : AYANEOFlipKB
         // if screen button is pressed, turn on bottom screen
         if (Inputs.ButtonState.Buttons.Contains(ButtonFlags.OEM5))
         {
-            bool enabled = SettingsManager.GetBoolean("AYANEOFlipScreenEnabled");
+            bool enabled = ManagerFactory.settingsManager.GetBoolean("AYANEOFlipScreenEnabled");
             if (!enabled)
-                SettingsManager.SetProperty("AYANEOFlipScreenEnabled", true);
+                ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenEnabled", true);
         }
     }
 
@@ -59,7 +59,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
                     switch (enabled)
                     {
                         case true:
-                            short brightness = (short)SettingsManager.GetDouble("AYANEOFlipScreenBrightness");
+                            short brightness = (short)ManagerFactory.settingsManager.GetDouble("AYANEOFlipScreenBrightness");
                             CEcControl_SetSecDispBrightness(brightness);
                             break;
 
@@ -72,7 +72,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
                 break;
             case "AYANEOFlipScreenBrightness":
                 {
-                    bool enabled = SettingsManager.GetBoolean("AYANEOFlipScreenEnabled");
+                    bool enabled = ManagerFactory.settingsManager.GetBoolean("AYANEOFlipScreenEnabled");
                     if (enabled)
                     {
                         short brightness = (short)Convert.ToDouble(value);

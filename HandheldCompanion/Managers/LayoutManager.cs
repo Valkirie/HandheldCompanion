@@ -1,7 +1,7 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -12,11 +12,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Windows;
 
 namespace HandheldCompanion.Managers;
 
-internal static class LayoutManager
+public class LayoutManager : IManager
 {
     public static List<LayoutTemplate> Templates =
     [
@@ -28,26 +27,23 @@ internal static class LayoutManager
         LayoutTemplate.GamepadJoystickLayout
     ];
 
-    private static object updateLock = new();
+    private object updateLock = new();
 
-    private static Layout currentLayout = new();
-    private static Layout profileLayout = new();
-    private static Layout defaultLayout = null;
-    private static Layout desktopLayout = null;
+    private Layout currentLayout = new();
+    private Layout profileLayout = new();
+    private Layout defaultLayout = null;
+    private Layout desktopLayout = null;
 
-    private static ControllerState outputState = new();
+    private ControllerState outputState = new();
 
-    private static ScreenRotation currentOrientation = new();
-    private static readonly string desktopLayoutFile = "desktop";
+    private const string desktopLayoutFile = "desktop";
 
-    public static string LayoutsPath;
-    public static string TemplatesPath;
+    public string LayoutsPath;
+    public string TemplatesPath;
 
-    public static FileSystemWatcher layoutWatcher { get; set; }
+    public FileSystemWatcher layoutWatcher { get; set; }
 
-    public static bool IsInitialized;
-
-    static LayoutManager()
+    public LayoutManager()
     {
         // initialiaze path
         LayoutsPath = Path.Combine(MainWindow.SettingsPath, "layouts");
@@ -69,16 +65,19 @@ internal static class LayoutManager
         };
     }
 
-    public static void Start()
+    public override void Start()
     {
-        if (IsInitialized)
+        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
             return;
+
+        base.PrepareStart();
 
         // process community templates
         string[] fileEntries = Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories);
         foreach (string fileName in fileEntries)
             ProcessLayoutTemplate(fileName);
 
+        // process default templates
         foreach (LayoutTemplate layoutTemplate in Templates)
             Updated?.Invoke(layoutTemplate);
 
@@ -100,14 +99,27 @@ internal static class LayoutManager
         // manage events
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Initialized += ProfileManager_Initialized;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplayOrientationChanged += MultimediaManager_DisplayOrientationChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("DesktopProfileOnStart", SettingsManager.GetString("DesktopProfileOnStart"), false);
-            SettingsManager_SettingValueChanged("DesktopLayoutEnabled", SettingsManager.GetString("DesktopLayoutEnabled"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
+        switch (ManagerFactory.multimediaManager.Status)
+        {
+            case ManagerStatus.Initializing:
+                ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryMedia();
+                break;
         }
 
         if (ProfileManager.IsInitialized)
@@ -115,21 +127,35 @@ internal static class LayoutManager
             ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
-        if (MultimediaManager.IsInitialized)
-        {
-            MultimediaManager_DisplayOrientationChanged(MultimediaManager.GetScreenOrientation());
-        }
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "LayoutManager");
+        base.Start();
     }
 
-    public static void Stop()
+    private void MultimediaManager_Initialized()
     {
-        if (!IsInitialized)
+        QueryMedia();
+    }
+
+    private void QueryMedia()
+    {
+        // do something
+    }
+
+    private void QuerySettings()
+    {
+        ManagerFactory.settingsManager.SetProperty("DesktopLayoutEnabled", ManagerFactory.settingsManager.GetBoolean("DesktopProfileOnStart"), false, true);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    public override void Stop()
+    {
+        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
             return;
+
+        base.PrepareStop();
 
         // manage desktop layout events
         desktopLayout.Updated -= DesktopLayout_Updated;
@@ -141,25 +167,23 @@ internal static class LayoutManager
         // manage events
         ProfileManager.Applied -= ProfileManager_Applied;
         ProfileManager.Initialized -= ProfileManager_Initialized;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplayOrientationChanged -= MultimediaManager_DisplayOrientationChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "LayoutManager");
+        base.Stop();
     }
 
     // this event is called from non main thread and it creates LayoutTemplate which is a WPF element
-    private static void LayoutWatcher_Template(object sender, FileSystemEventArgs e)
+    private void LayoutWatcher_Template(object sender, FileSystemEventArgs e)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             ProcessLayoutTemplate(e.FullPath);
         });
     }
 
-    private static Layout? ProcessLayout(string fileName)
+    private Layout? ProcessLayout(string fileName)
     {
         Layout layout = null;
 
@@ -183,7 +207,7 @@ internal static class LayoutManager
         return layout;
     }
 
-    private static void ProcessLayoutTemplate(string fileName)
+    private void ProcessLayoutTemplate(string fileName)
     {
         LayoutTemplate layoutTemplate = null;
 
@@ -212,50 +236,50 @@ internal static class LayoutManager
         Updated?.Invoke(layoutTemplate);
     }
 
-    private static void DesktopLayout_Updated(Layout layout)
+    private void DesktopLayout_Updated(Layout layout)
     {
         SerializeLayout(layout, desktopLayoutFile);
     }
 
-    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         SetProfileLayout(profile);
     }
 
-    private static void ProfileManager_Initialized()
+    private void ProfileManager_Initialized()
     {
         // ref
         defaultLayout = ProfileManager.GetDefault().Layout;
         defaultLayout.Updated += DefaultLayout_Updated;
     }
 
-    private static void DefaultLayout_Updated(Layout layout)
+    private void DefaultLayout_Updated(Layout layout)
     {
         UpdateInherit();
     }
 
-    private static void SetProfileLayout(Profile profile = null)
+    private void SetProfileLayout(Profile profile = null)
     {
         // use profile layout (will be cloned during SetActiveLayout)
         // ref
         profileLayout = profile.Layout;
 
         // only update current layout if we're not into desktop layout mode
-        if (!SettingsManager.GetBoolean("DesktopLayoutEnabled", true))
+        if (!ManagerFactory.settingsManager.GetBoolean("DesktopLayoutEnabled", true))
             SetActiveLayout(profileLayout);
     }
 
-    public static Layout GetCurrent()
+    public Layout GetCurrent()
     {
         return currentLayout;
     }
 
-    public static Layout GetDesktop()
+    public Layout GetDesktop()
     {
         return desktopLayout;
     }
 
-    public static void SerializeLayout(Layout layout, string fileName)
+    public void SerializeLayout(Layout layout, string fileName)
     {
         var jsonString = JsonConvert.SerializeObject(layout, Formatting.Indented, new JsonSerializerSettings
         {
@@ -267,7 +291,7 @@ internal static class LayoutManager
             File.WriteAllText(fileName, jsonString);
     }
 
-    public static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
+    public void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
     {
         string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
         if (File.Exists(fileName))
@@ -287,18 +311,10 @@ internal static class LayoutManager
             File.WriteAllText(fileName, jsonString);
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
-            case "DesktopProfileOnStart":
-                {
-                    // only apply on startup
-                    if (!SettingsManager.IsInitialized)
-                        SettingsManager.SetProperty("DesktopLayoutEnabled", value, true, true);
-                }
-                break;
-
             case "DesktopLayoutEnabled":
                 {
                     switch (Convert.ToBoolean(value))
@@ -315,15 +331,7 @@ internal static class LayoutManager
         }
     }
 
-    private static void MultimediaManager_DisplayOrientationChanged(ScreenRotation rotation)
-    {
-        currentOrientation = rotation;
-
-        // apply orientation
-        UpdateOrientation();
-    }
-
-    private static void SetActiveLayout(Layout layout)
+    private void SetActiveLayout(Layout layout)
     {
         lock (updateLock)
         {
@@ -332,31 +340,10 @@ internal static class LayoutManager
 
             // (re)apply inheritance
             UpdateInherit();
-
-            // (re)apply orientation
-            UpdateOrientation();
         }
     }
 
-    private static void UpdateOrientation()
-    {
-        if (currentLayout is null)
-            return;
-
-        foreach (var axisLayout in currentLayout.AxisLayout)
-        {
-            // pull action
-            var action = axisLayout.Value;
-
-            if (action is null)
-                continue;
-
-            if (action.AutoRotate)
-                action.SetOrientation(currentOrientation);
-        }
-    }
-
-    private static void UpdateInherit()
+    private void UpdateInherit()
     {
         lock (updateLock)
         {
@@ -385,7 +372,7 @@ internal static class LayoutManager
         }
     }
 
-    public static ControllerState MapController(ControllerState controllerState)
+    public ControllerState MapController(ControllerState controllerState)
     {
         // when no profile active and default is disabled, do 1:1 controller mapping
         if (currentLayout is null)
@@ -658,10 +645,7 @@ internal static class LayoutManager
 
     #region events
 
-    public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
-
-    public static event UpdatedEventHandler Updated;
+    public event UpdatedEventHandler Updated;
     public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
 
     #endregion

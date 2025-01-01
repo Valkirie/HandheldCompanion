@@ -16,7 +16,7 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            MultimediaManager.IncreaseBrightness();
+            ManagerFactory.multimediaManager.IncreaseBrightness();
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

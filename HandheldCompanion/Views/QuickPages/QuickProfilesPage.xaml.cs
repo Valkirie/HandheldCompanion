@@ -2,6 +2,7 @@ using HandheldCompanion.Actions;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.GraphicsProcessingUnit;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -58,8 +59,8 @@ public partial class QuickProfilesPage : Page
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Deleted += ProfileManager_Deleted;
-        MultimediaManager.Initialized += MultimediaManager_Initialized;
-        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         HotkeysManager.Updated += HotkeysManager_Updated;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Hooked += GPUManager_Hooked;
@@ -148,8 +149,8 @@ public partial class QuickProfilesPage : Page
         ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         ProfileManager.Applied -= ProfileManager_Applied;
         ProfileManager.Deleted -= ProfileManager_Deleted;
-        MultimediaManager.Initialized -= MultimediaManager_Initialized;
-        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         HotkeysManager.Updated -= HotkeysManager_Updated;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
         GPUManager.Hooked -= GPUManager_Hooked;
@@ -163,9 +164,9 @@ public partial class QuickProfilesPage : Page
     private void MultimediaManager_Initialized()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
-            DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
+            DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
             desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
         });
     }
@@ -200,7 +201,7 @@ public partial class QuickProfilesPage : Page
         IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
@@ -221,7 +222,7 @@ public partial class QuickProfilesPage : Page
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = Visibility.Collapsed;
@@ -240,7 +241,7 @@ public partial class QuickProfilesPage : Page
     private void UpdateGraphicsSettingsUI()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             StackProfileRSR.IsEnabled = HasRSRSupport;
             StackProfileAFMF.IsEnabled = HasAFMFSupport;
@@ -278,7 +279,7 @@ public partial class QuickProfilesPage : Page
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (status)
             {
@@ -299,7 +300,7 @@ public partial class QuickProfilesPage : Page
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             cB_Framerate.Items.Clear();
 
@@ -341,7 +342,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (AC)
             {
@@ -382,7 +383,7 @@ public partial class QuickProfilesPage : Page
                 selectedProfile = profile;
 
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     // update profile name
                     CurrentProfileName.Text = selectedProfile.Name;
@@ -458,7 +459,7 @@ public partial class QuickProfilesPage : Page
                     }
 
                     // Framerate limit
-                    DesktopScreen? desktopScreen = MultimediaManager.PrimaryDesktop;
+                    DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
                     if (desktopScreen is not null)
                         cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
@@ -516,7 +517,7 @@ public partial class QuickProfilesPage : Page
                 realProfile = ProfileManager.GetProfileFromPath(path, true);
 
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
                     ProfileIcon.Source = imageSource;

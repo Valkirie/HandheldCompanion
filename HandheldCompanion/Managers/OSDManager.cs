@@ -56,17 +56,19 @@ public static class OSDManager
             RefreshTimer.Start();
 
         // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
         {
-            // timer used to monitor foreground application framerate
-            RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
-
-            // OverlayLevel
-            OverlayLevel = (short)SettingsManager.GetInt("OnScreenDisplayLevel");
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         if (PlatformManager.IsInitialized)
@@ -82,6 +84,17 @@ public static class OSDManager
         LogManager.LogInformation("{0} has started", "OSDManager");
     }
 
+    private static void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayLevel"), false);
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
@@ -94,7 +107,8 @@ public static class OSDManager
             RTSS_Unhooked(processId);
 
         // manage events
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         PlatformManager.RTSS.Hooked -= RTSS_Hooked;
         PlatformManager.RTSS.Unhooked -= RTSS_Unhooked;
 
@@ -451,12 +465,12 @@ public static class OSDManager
                     OverlayLevel = Convert.ToInt16(value);
 
                     // set OSD toggle hotkey state
-                    SettingsManager.SetProperty("OnScreenDisplayToggle", Convert.ToBoolean(value));
+                    ManagerFactory.settingsManager.SetProperty("OnScreenDisplayToggle", OverlayLevel != 0);
 
                     if (OverlayLevel > 0)
                     {
                         // set lastOSDLevel to be used in OSD toggle hotkey
-                        SettingsManager.SetProperty("LastOnScreenDisplayLevel", value);
+                        ManagerFactory.settingsManager.SetProperty("LastOnScreenDisplayLevel", value);
 
                         if (OverlayLevel == 5)
                         {

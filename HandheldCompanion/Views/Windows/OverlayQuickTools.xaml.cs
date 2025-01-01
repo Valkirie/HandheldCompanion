@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -23,7 +24,6 @@ using System.Windows.Threading;
 using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
-using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
@@ -111,8 +111,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // manage events
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
-        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         // raise events
@@ -175,7 +175,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -195,7 +195,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void ControllerManager_ControllerSelected(IController Controller)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             QTLB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
             QTRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
@@ -218,12 +218,12 @@ public partial class OverlayQuickTools : GamepadWindow
     private void UpdateLocation()
     {
         // pull quicktools settings
-        int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
-        string DevicePath = SettingsManager.GetString("QuickToolsDevicePath");
-        string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
+        int QuickToolsLocation = ManagerFactory.settingsManager.GetInt("QuickToolsLocation");
+        string DevicePath = ManagerFactory.settingsManager.GetString("QuickToolsDevicePath");
+        string DeviceName = ManagerFactory.settingsManager.GetString("QuickToolsDeviceName");
 
         // Attempt to find the screen with the specified friendly name
-        DesktopScreen friendlyScreen = MultimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.ToString().Equals(DeviceName)) ?? MultimediaManager.PrimaryDesktop;
+        DesktopScreen friendlyScreen = ManagerFactory.multimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.ToString().Equals(DeviceName)) ?? ManagerFactory.multimediaManager.PrimaryDesktop;
         if (friendlyScreen is null)
             return;
 
@@ -233,11 +233,11 @@ public partial class OverlayQuickTools : GamepadWindow
             return;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // Common settings across cases 0 and 1
             MaxWidth = (int)Math.Min(_MaxWidth, targetScreen.WpfBounds.Width);
-            Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("QuickToolsWidth"));
+            Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("QuickToolsWidth"));
             MaxHeight = Math.Min(targetScreen.WpfBounds.Height - _Margin * 2, _MaxHeight);
             Height = MinHeight = MaxHeight;
             WindowStyle = _Style;
@@ -288,7 +288,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void PowerManager_PowerStatusChanged(PowerStatus status)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             var BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
             BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
@@ -439,7 +439,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public void ToggleVisibility()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (Visibility)
             {
@@ -474,7 +474,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void Window_Closing(object sender, CancelEventArgs e)
     {
         // position and size settings
-        SettingsManager.SetProperty("QuickToolsWidth", ActualWidth);
+        ManagerFactory.settingsManager.SetProperty("QuickToolsWidth", ActualWidth);
 
         e.Cancel = !isClosing;
 

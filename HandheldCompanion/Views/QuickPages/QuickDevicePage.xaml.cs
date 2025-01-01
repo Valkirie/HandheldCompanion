@@ -1,7 +1,9 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -30,10 +32,9 @@ public partial class QuickDevicePage : Page
         InitializeComponent();
 
         // manage events
-        MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
-        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        MultimediaManager.Initialized += MultimediaManager_Initialized;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
         NightLight.Toggled += NightLight_Toggled;
@@ -57,10 +58,9 @@ public partial class QuickDevicePage : Page
     public void Close()
     {
         // manage events
-        MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
-        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
-        MultimediaManager.Initialized -= MultimediaManager_Initialized;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ProfileManager.Applied -= ProfileManager_Applied;
         ProfileManager.Discarded -= ProfileManager_Discarded;
         NightLight.Toggled -= NightLight_Toggled;
@@ -78,7 +78,7 @@ public partial class QuickDevicePage : Page
         // Go to profile integer scaling resolution
         if (profile.IntegerScalingEnabled)
         {
-            DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
+            DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
 
             ScreenDivider? profileResolution = desktopScreen?.screenDividers.FirstOrDefault(d => d.divider == profile.IntegerScalingDivider);
             if (profileResolution is not null)
@@ -86,7 +86,7 @@ public partial class QuickDevicePage : Page
         }
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             var canChangeDisplay = !profile.IntegerScalingEnabled;
             DisplayStack.IsEnabled = canChangeDisplay;
@@ -101,7 +101,7 @@ public partial class QuickDevicePage : Page
             return;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             if (profile.IntegerScalingEnabled)
             {
@@ -118,7 +118,7 @@ public partial class QuickDevicePage : Page
     private void NightLight_Toggled(bool enabled)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             NightLightToggle.IsOn = enabled;
         });
@@ -127,7 +127,7 @@ public partial class QuickDevicePage : Page
     private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -155,7 +155,7 @@ public partial class QuickDevicePage : Page
             radios = await Radio.GetRadiosAsync();
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 if (radios is null)
                 {
@@ -178,50 +178,84 @@ public partial class QuickDevicePage : Page
         }).Start();
     }
 
-    private void MultimediaManager_Initialized()
-    {
-        // do something
-    }
-
+    private CrossThreadLock multimediaLock = new();
     private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        if (multimediaLock.TryEnter())
         {
-            ComboBoxResolution.Items.Clear();
-            foreach (ScreenResolution resolution in screen.screenResolutions)
-                ComboBoxResolution.Items.Add(resolution);
-        });
+            try
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    ComboBoxResolution.Items.Clear();
+                    foreach (ScreenResolution resolution in screen.screenResolutions)
+                        ComboBoxResolution.Items.Add(resolution);
+                });
+            }
+            finally
+            {
+                multimediaLock.Exit();
+            }
+        }
     }
 
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
-        // We don't want to change the combobox when it's changed from profile integer scaling
-        Profile? currentProfile = ProfileManager.GetCurrent();
-        if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
+        if (multimediaLock.TryEnter())
         {
-            ProfileManager_Applied(currentProfile, UpdateSource.Background);
-            return;
-        }
-
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            ComboBoxResolution.SelectedItem = resolution;
-
-            int screenFrequency = MultimediaManager.PrimaryDesktop.GetCurrentFrequency();
-            foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
+            try
             {
-                if (comboBoxItem.Tag is int frequency)
+                // We don't want to change the combobox when it's changed from profile integer scaling
+                Profile? currentProfile = ProfileManager.GetCurrent();
+                if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
                 {
-                    if (frequency == screenFrequency)
-                    {
-                        ComboBoxFrequency.SelectedItem = comboBoxItem;
-                        break;
-                    }
+                    ProfileManager_Applied(currentProfile, UpdateSource.Background);
+                    return;
                 }
+
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    if (resolution != ComboBoxResolution.SelectedItem)
+                    {
+                        // update target resolution
+                        ComboBoxResolution.SelectedItem = resolution;
+
+                        // update frequency list
+                        ComboBoxFrequency.Items.Clear();
+                        foreach (int frequency in resolution.Frequencies.Keys)
+                        {
+                            ComboBoxItem comboBoxItem = new()
+                            {
+                                Content = $"{frequency} Hz",
+                                Tag = frequency,
+                            };
+
+                            ComboBoxFrequency.Items.Add(comboBoxItem);
+                        }
+                    }
+
+                    // pick current frequency
+                    int screenFrequency = desktopScreen.GetCurrentFrequency();
+                    foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
+                    {
+                        if (comboBoxItem.Tag is int frequency)
+                        {
+                            if (frequency == screenFrequency)
+                            {
+                                ComboBoxFrequency.SelectedItem = comboBoxItem;
+                                break;
+                            }
+                        }
+                    }
+                });
             }
-        });
+            finally
+            {
+                multimediaLock.Exit();
+            }
+        }
     }
 
     private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -229,23 +263,9 @@ public partial class QuickDevicePage : Page
         if (ComboBoxResolution.SelectedItem is null)
             return;
 
-        ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
-        int screenFrequency = MultimediaManager.PrimaryDesktop.GetCurrentFrequency();
-
-        ComboBoxFrequency.Items.Clear();
-        foreach (int frequency in resolution.Frequencies.Keys)
-        {
-            ComboBoxItem comboBoxItem = new()
-            {
-                Content = $"{frequency} Hz",
-                Tag = frequency,
-            };
-
-            ComboBoxFrequency.Items.Add(comboBoxItem);
-
-            if (frequency == screenFrequency)
-                ComboBoxFrequency.SelectedItem = comboBoxItem;
-        }
+        // prevent update loop
+        if (multimediaLock.IsEntered())
+            return;
 
         SetResolution();
     }
@@ -253,6 +273,10 @@ public partial class QuickDevicePage : Page
     private void ComboBoxFrequency_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (ComboBoxFrequency.SelectedItem is null)
+            return;
+
+        // prevent update loop
+        if (multimediaLock.IsEntered())
             return;
 
         SetResolution();
@@ -270,7 +294,7 @@ public partial class QuickDevicePage : Page
         int frequency = (int)((ComboBoxItem)ComboBoxFrequency.SelectedItem).Tag;
 
         // update current screen resolution
-        DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
+        DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
 
         if (desktopScreen.devMode.dmPelsWidth == resolution.Width &&
             desktopScreen.devMode.dmPelsHeight == resolution.Height &&
@@ -278,13 +302,13 @@ public partial class QuickDevicePage : Page
             desktopScreen.devMode.dmBitsPerPel == resolution.BitsPerPel)
             return;
 
-        MultimediaManager.SetResolution(resolution.Width, resolution.Height, frequency, resolution.BitsPerPel);
+        ManagerFactory.multimediaManager.SetResolution(resolution.Width, resolution.Height, frequency, resolution.BitsPerPel);
     }
 
     public void SetResolution(ScreenResolution resolution)
     {
         // update current screen resolution
-        MultimediaManager.SetResolution(resolution.Width, resolution.Height, MultimediaManager.PrimaryDesktop.GetCurrentFrequency(), resolution.BitsPerPel);
+        ManagerFactory.multimediaManager.SetResolution(resolution.Width, resolution.Height, ManagerFactory.multimediaManager.PrimaryDesktop.GetCurrentFrequency(), resolution.BitsPerPel);
     }
 
     private void WIFIToggle_Toggled(object sender, RoutedEventArgs e)
@@ -304,7 +328,7 @@ public partial class QuickDevicePage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
+        ManagerFactory.settingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
     }
 
     private void Toggle_LegionGoFanOverride_Toggled(object sender, RoutedEventArgs e)
@@ -352,7 +376,7 @@ public partial class QuickDevicePage : Page
                     return;
             }
 
-            SettingsManager.SetProperty("AYANEOFlipScreenEnabled", enabled);
+            ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenEnabled", enabled);
         }
     }
 
@@ -365,6 +389,6 @@ public partial class QuickDevicePage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("AYANEOFlipScreenBrightness", value);
+        ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenBrightness", value);
     }
 }

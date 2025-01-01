@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HandheldCompanion.Helpers;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -137,7 +138,7 @@ public class OverlayWindow : Window
     public virtual void ToggleVisibility()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (Visibility)
             {

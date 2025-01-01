@@ -188,7 +188,7 @@ public class XInputController : IController
                 if (capabilitiesEx.ProductId != details.ProductID || capabilitiesEx.VendorId != details.VendorID)
                     continue;
 
-                var devices = DeviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
+                var devices = ManagerFactory.deviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
                 if (devices.FirstOrDefault() is not null)
                     return (UserIndex)idx;
             }
@@ -214,21 +214,6 @@ public class XInputController : IController
     public override void Unhide(bool powerCycle = true)
     {
         base.Unhide(powerCycle);
-    }
-
-    public virtual new bool IsWireless
-    {
-        get
-        {
-            string enumerator = Details.EnumeratorName;
-            switch (enumerator)
-            {
-                default:
-                    return false;
-                case "BTHENUM":
-                    return true;
-            }
-        }
     }
 
     public override string GetGlyph(ButtonFlags button)

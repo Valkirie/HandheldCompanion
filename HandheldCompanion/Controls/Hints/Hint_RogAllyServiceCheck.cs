@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -77,7 +78,7 @@ namespace HandheldCompanion.Controls.Hints
             }
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 this.Visibility = anyRunning ? Visibility.Visible : Visibility.Collapsed;
             });

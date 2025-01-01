@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
@@ -98,7 +99,7 @@ namespace HandheldCompanion.Controls.Hints
             bool hasProcesses = HasProcesses();
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 this.Visibility = hasTask || hasProcesses ? Visibility.Visible : Visibility.Collapsed;
             });

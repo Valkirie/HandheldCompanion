@@ -1,3 +1,4 @@
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Classes;
 using System;
@@ -6,7 +7,6 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static HandheldCompanion.DS4Touch;
-using Application = System.Windows.Application;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
 namespace HandheldCompanion.Views.Windows;
@@ -28,7 +28,7 @@ public partial class OverlayTrackpad : OverlayWindow
     {
         InitializeComponent();
 
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // touch vars
         dpiInput = GetWindowsScaling();
@@ -39,7 +39,7 @@ public partial class OverlayTrackpad : OverlayWindow
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {

@@ -114,17 +114,32 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            // Manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            // Raise events
-            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+            // raise events
+            switch (ManagerFactory.settingsManager.Status)
             {
-                SettingsManager_SettingValueChanged("ToastEnable", SettingsManager.GetString("ToastEnable"), false);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
             }
 
             IsInitialized = true;
             LogManager.LogInformation("{0} has started", nameof(ToastManager));
+        }
+
+        private static void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("ToastEnable", ManagerFactory.settingsManager.GetString("ToastEnable"), false);
+        }
+
+        private static void SettingsManager_Initialized()
+        {
+            QuerySettings();
         }
 
         public static void Stop()
@@ -132,7 +147,8 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
             ToastQueue.Clear();
 

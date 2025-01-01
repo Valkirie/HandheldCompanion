@@ -6,7 +6,6 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
@@ -143,7 +142,7 @@ public static class PerformanceManager
         // manage events
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         if (PowerProfileManager.IsInitialized)
@@ -151,17 +150,31 @@ public static class PerformanceManager
             PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
-        // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", SettingsManager.GetString("ConfigurableTDPOverrideDown"), false);
-            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", SettingsManager.GetString("ConfigurableTDPOverrideUp"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         IsInitialized = true;
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "PerformanceManager");
+    }
+
+    private static void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
     }
 
     public static void Stop()
@@ -190,7 +203,8 @@ public static class PerformanceManager
         // manage events
         PowerProfileManager.Applied -= PowerProfileManager_Applied;
         PowerProfileManager.Discarded -= PowerProfileManager_Discarded;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         IsInitialized = false;
 
@@ -273,7 +287,7 @@ public static class PerformanceManager
 
             // manual TDP override is not set
             // use the settings max limit for AutoTDP
-            AutoTDP = AutoTDPMax = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
+            AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetInt("ConfigurableTDPOverrideUp");
         }
 
         // apply profile defined AutoTDP

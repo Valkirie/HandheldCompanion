@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
@@ -42,7 +43,7 @@ namespace HandheldCompanion.Controls.Hints
             int EmbeddedIntegerScalingSupport = RegistryUtils.GetInt(@"SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000", "DalEmbeddedIntegerScalingSupport");
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 this.Visibility = EmbeddedIntegerScalingSupport != 1 ? Visibility.Visible : Visibility.Collapsed;
             });

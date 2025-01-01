@@ -16,7 +16,7 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            MultimediaManager.IncreaseVolume();
+            ManagerFactory.multimediaManager.IncreaseVolume();
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

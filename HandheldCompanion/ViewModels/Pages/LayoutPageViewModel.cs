@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
@@ -19,9 +20,8 @@ namespace HandheldCompanion.ViewModels
         public LayoutPageViewModel(LayoutPage layoutPage)
         {
             // manage events
-            LayoutManager.Updated += LayoutManager_Updated;
-            LayoutManager.Initialized += LayoutManager_Initialized;
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.layoutManager.Updated += LayoutManager_Updated;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
             // Enable thread-safe access to the collection
@@ -34,10 +34,14 @@ namespace HandheldCompanion.ViewModels
             LayoutList.Add(_layoutCommunity);
 
             // raise events
-            if (LayoutManager.IsInitialized)
+            switch (ManagerFactory.layoutManager.Status)
             {
-                foreach (LayoutTemplate template in LayoutManager.Templates)
-                    LayoutManager_Updated(template);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.layoutManager.Initialized += LayoutManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryLayouts();
+                    break;
             }
 
             if (ControllerManager.HasTargetController)
@@ -49,7 +53,7 @@ namespace HandheldCompanion.ViewModels
         private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 switch (name)
                 {
@@ -67,7 +71,14 @@ namespace HandheldCompanion.ViewModels
 
         private void LayoutManager_Initialized()
         {
+            QueryLayouts();
             RefreshLayoutList();
+        }
+
+        private void QueryLayouts()
+        {
+            foreach (LayoutTemplate template in LayoutManager.Templates)
+                LayoutManager_Updated(template);
         }
 
         private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
@@ -84,12 +95,14 @@ namespace HandheldCompanion.ViewModels
                 index = LayoutList.IndexOf(layoutTemplate.IsInternal ? _layoutTemplates : _layoutCommunity) + 1;
                 LayoutList.Insert(index, new(layoutTemplate));
             }
+
+            RefreshLayoutList();
         }
 
         private void RefreshLayoutList()
         {
             // Get filter settings
-            bool FilterOnDevice = SettingsManager.GetBoolean("LayoutFilterOnDevice");
+            bool FilterOnDevice = ManagerFactory.settingsManager.GetBoolean("LayoutFilterOnDevice");
 
             // Get current controller
             IController? controller = ControllerManager.GetTargetController();
@@ -112,9 +125,9 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             // manage events
-            LayoutManager.Updated -= LayoutManager_Updated;
-            LayoutManager.Initialized -= LayoutManager_Initialized;
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.layoutManager.Updated -= LayoutManager_Updated;
+            ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
 
             base.Dispose();

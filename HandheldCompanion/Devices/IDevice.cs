@@ -205,8 +205,8 @@ public abstract class IDevice
 
         // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+        ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
         // raise events
         if (VirtualManager.IsInitialized)
@@ -214,7 +214,7 @@ public abstract class IDevice
             VirtualManager_ControllerSelected(VirtualManager.HIDmode);
         }
 
-        if (DeviceManager.IsInitialized)
+        if (ManagerFactory.deviceManager.IsRunning)
         {
             GenericDeviceUpdated(null, Guid.Empty);
         }
@@ -233,8 +233,8 @@ public abstract class IDevice
         openLibSys = null;
 
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
-        DeviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
-        DeviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
+        ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
+        ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)

@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Managers;
-using SharpDX.Direct3D9;
+﻿using SharpDX.Direct3D9;
 using System;
 using System.Management;
 using System.Threading.Tasks;

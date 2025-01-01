@@ -144,12 +144,17 @@ public class SteamDeck : IDevice
                 PDCS = 0xFF;
 
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+            switch (ManagerFactory.settingsManager.Status)
             {
-                SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetBoolean("BatteryChargeLimit"), false);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
             }
 
             LogManager.LogInformation("FirmwareVersion: {0}, BoardID: {1}", FirmwareVersion, BoardID);
@@ -163,12 +168,23 @@ public class SteamDeck : IDevice
         }
     }
 
+    private void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public override void Close()
     {
         inpOut.Dispose();
         inpOut = null;
 
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Close();
     }

@@ -87,14 +87,11 @@ namespace HandheldCompanion.Controllers
             }
         }
 
-        public override bool IsWireless
+        public override bool IsWireless()
         {
-            get
-            {
-                byte LControllerState = GetStatus(LCONTROLLER_STATE_IDX);
-                byte RControllerState = GetStatus(RCONTROLLER_STATE_IDX);
-                return LControllerState == (byte)ControllerState.Wireless || RControllerState == (byte)ControllerState.Wireless;
-            }
+            byte LControllerState = GetStatus(LCONTROLLER_STATE_IDX);
+            byte RControllerState = GetStatus(RCONTROLLER_STATE_IDX);
+            return LControllerState == (byte)ControllerState.Wireless || RControllerState == (byte)ControllerState.Wireless;
         }
 
 
@@ -109,7 +106,7 @@ namespace HandheldCompanion.Controllers
             // get long press time from system settings
             SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
 
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             UpdateSettings();
         }
 
@@ -144,8 +141,8 @@ namespace HandheldCompanion.Controllers
 
         protected override void UpdateSettings()
         {
-            SetPassthrough(SettingsManager.GetBoolean("LegionControllerPassthrough"));
-            SetGyroIndex(SettingsManager.GetInt("LegionControllerGyroIndex"));
+            SetPassthrough(ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"));
+            SetGyroIndex(ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"));
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)

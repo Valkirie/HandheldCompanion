@@ -56,17 +56,22 @@ public static class TaskManager
             taskDefinition.Actions.Add(new ExecAction(TaskExecutable));
 
             task = TaskService.Instance.RootFolder.RegisterTaskDefinition(TaskName, taskDefinition);
-            task.Enabled = SettingsManager.GetBoolean("RunAtStartup");
+            task.Enabled = ManagerFactory.settingsManager.GetBoolean("RunAtStartup");
         }
         catch { }
 
         // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("RunAtStartup", SettingsManager.GetString("RunAtStartup"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         IsInitialized = true;
@@ -75,13 +80,24 @@ public static class TaskManager
         LogManager.LogInformation("{0} has started", "TaskManager");
     }
 
+    private static void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("RunAtStartup", ManagerFactory.settingsManager.GetString("RunAtStartup"), false);
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
 
         // manage events
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         IsInitialized = false;
 

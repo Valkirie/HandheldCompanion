@@ -37,21 +37,24 @@ namespace HandheldCompanion.Managers
                 return;
 
             // manage events
-            DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceArrived;
-            DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
+            ManagerFactory.deviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceArrived;
+            ManagerFactory.deviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
             ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+            switch (ManagerFactory.settingsManager.Status)
             {
-                SettingsManager_SettingValueChanged("SensorPlacement", SettingsManager.GetString("SensorPlacement"), false);
-                SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", SettingsManager.GetString("SensorPlacementUpsideDown"), false);
-                SettingsManager_SettingValueChanged("SensorSelection", SettingsManager.GetString("SensorSelection"), false);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
             }
 
-            if (DeviceManager.IsInitialized)
+            if (ManagerFactory.deviceManager.IsRunning)
             {
                 DeviceManager_UsbDeviceArrived(null, Guid.Empty);
             }
@@ -67,6 +70,18 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "SensorsManager");
         }
 
+        private static void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false);
+            SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false);
+            SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false);
+        }
+
+        private static void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         public static void Stop()
         {
             if (!IsInitialized)
@@ -75,11 +90,12 @@ namespace HandheldCompanion.Managers
             StopListening();
 
             // manage events
-            DeviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceArrived;
-            DeviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceRemoved;
+            ManagerFactory.deviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceArrived;
+            ManagerFactory.deviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceRemoved;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
             IsInitialized = false;
 
@@ -93,7 +109,7 @@ namespace HandheldCompanion.Managers
 
             // select controller as current sensor if current sensor selection is none
             if (Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
             else
                 PickNextSensor();
         }
@@ -129,13 +145,13 @@ namespace HandheldCompanion.Managers
             IController controller = ControllerManager.GetTargetController();
 
             if (controller is not null && controller.HasMotionSensor())
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
             else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
             else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
             else
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
         }
 
         private static void DeviceManager_UsbDeviceArrived(PnPDevice device, Guid IntefaceGuid)
@@ -145,7 +161,7 @@ namespace HandheldCompanion.Managers
 
             // select serial usb as current sensor if current sensor selection is none
             if (sensorFamily == SensorFamily.None)
-                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -198,8 +214,8 @@ namespace HandheldCompanion.Managers
                                         break;
                                     }
 
-                                    SerialPlacement placement = (SerialPlacement)SettingsManager.GetInt("SensorPlacement");
-                                    bool upsidedown = SettingsManager.GetBoolean("SensorPlacementUpsideDown");
+                                    SerialPlacement placement = (SerialPlacement)ManagerFactory.settingsManager.GetInt("SensorPlacement");
+                                    bool upsidedown = ManagerFactory.settingsManager.GetBoolean("SensorPlacementUpsideDown");
 
                                     USBSensor.Open();
                                     USBSensor.SetSensorPlacement(placement);

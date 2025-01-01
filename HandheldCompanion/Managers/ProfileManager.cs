@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
@@ -567,7 +568,7 @@ public static class ProfileManager
             ManualResetEventSlim waitHandle = new ManualResetEventSlim(false);
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(async () =>
+            UIHelper.TryInvoke(async () =>
             {
                 // todo: localize me
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())

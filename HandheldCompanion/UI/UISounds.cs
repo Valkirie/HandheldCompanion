@@ -182,7 +182,7 @@ namespace HandheldCompanion.UI
 
         public static void PlayOggFile(string fileName)
         {
-            bool Enabled = SettingsManager.GetBoolean("UISounds");
+            bool Enabled = ManagerFactory.settingsManager.GetBoolean("UISounds");
             if (!Enabled)
                 return;
 

@@ -3,6 +3,7 @@ using ColorPicker.Models;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using iNKORE.UI.WPF.Controls;
@@ -55,11 +56,11 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
 
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+            ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
             // raise events
             if (ControllerManager.HasTargetController)
@@ -76,7 +77,7 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
             });
@@ -126,7 +127,7 @@ namespace HandheldCompanion.Views.Pages
         private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 switch (name)
                 {
@@ -207,15 +208,15 @@ namespace HandheldCompanion.Views.Pages
                             {
                                 if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
                                 {
-                                    SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
+                                    ManagerFactory.settingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
                                 }
                                 else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
                                 {
-                                    SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorExternal));
+                                    ManagerFactory.settingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorExternal));
                                 }
                                 else
                                 {
-                                    SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
+                                    ManagerFactory.settingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
                                 }
 
                                 return;
@@ -241,7 +242,7 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateDevice(PnPDevice device = null)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 SensorInternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
                 SensorExternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
@@ -251,7 +252,7 @@ namespace HandheldCompanion.Views.Pages
         private void OnColorValuesChanged(UISettings sender, object args)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 if (MatchAccentColor.IsOn)
                     SetAccentColor();
@@ -289,9 +290,9 @@ namespace HandheldCompanion.Views.Pages
                 }
             }
 
-            SettingsManager.SetProperty("ConfigurableTDPOverride", enabled);
-            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
-            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverride", enabled);
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
         }
 
         private void NumberBox_TDPMax_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
@@ -308,7 +309,7 @@ namespace HandheldCompanion.Views.Pages
             // update current device cTDP
             IDevice.GetCurrent().cTDP[1] = value;
 
-            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
 
         private void NumberBox_TDPMin_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
@@ -325,7 +326,7 @@ namespace HandheldCompanion.Views.Pages
             // update current device cTDP
             IDevice.GetCurrent().cTDP[0] = value;
 
-            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
 
         private void UseDynamicLightingToggle_Toggled(object sender, RoutedEventArgs e)
@@ -333,7 +334,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
+            ManagerFactory.settingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
         }
 
         private void MatchAccentColor_Toggled(object sender, RoutedEventArgs e)
@@ -347,7 +348,7 @@ namespace HandheldCompanion.Views.Pages
             if (MatchAccentColor.IsOn)
                 SetAccentColor();
 
-            SettingsManager.SetProperty("LEDSettingsUseAccentColor", MatchAccentColor.IsOn);
+            ManagerFactory.settingsManager.SetProperty("LEDSettingsUseAccentColor", MatchAccentColor.IsOn);
         }
 
         private void SetAccentColor()
@@ -355,8 +356,8 @@ namespace HandheldCompanion.Views.Pages
             MainColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(MainWindow.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
             SecondColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(MainWindow.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
 
-            SettingsManager.SetProperty("LEDMainColor", MainColorPicker.SelectedColor);
-            SettingsManager.SetProperty("LEDSecondColor", MainColorPicker.SelectedColor);
+            ManagerFactory.settingsManager.SetProperty("LEDMainColor", MainColorPicker.SelectedColor);
+            ManagerFactory.settingsManager.SetProperty("LEDSecondColor", MainColorPicker.SelectedColor);
         }
 
         private void LEDSettingsLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -367,7 +368,7 @@ namespace HandheldCompanion.Views.Pages
             ComboBoxItem comboBoxItem = (ComboBoxItem)LEDSettingsLevel.SelectedItem;
             int level = Convert.ToInt32(comboBoxItem.Tag);
 
-            SettingsManager.SetProperty("LEDSettingsLevel", level);
+            ManagerFactory.settingsManager.SetProperty("LEDSettingsLevel", level);
         }
 
         private void LEDOEMPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -376,7 +377,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             int selectedIndex = LedPresetsComboBox.SelectedIndex;
-            SettingsManager.SetProperty("LEDPresetIndex", selectedIndex);
+            ManagerFactory.settingsManager.SetProperty("LEDPresetIndex", selectedIndex);
         }
 
         private void MainColorPicker_ColorChanged(object sender, RoutedEventArgs e)
@@ -393,7 +394,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDMainColor", prevMainColor.ToString());
+            ManagerFactory.settingsManager.SetProperty("LEDMainColor", prevMainColor.ToString());
         }
 
         private void SecondColorPicker_ColorChanged(object sender, RoutedEventArgs e)
@@ -410,7 +411,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDSecondColor", prevSecondColor.ToString());
+            ManagerFactory.settingsManager.SetProperty("LEDSecondColor", prevSecondColor.ToString());
         }
 
         private void SliderLEDBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -422,7 +423,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDBrightness", value);
+            ManagerFactory.settingsManager.SetProperty("LEDBrightness", value);
         }
 
         private async void Toggle_AmbilightVerticalBlackBarDetection_Toggled(object? sender, RoutedEventArgs? e)
@@ -430,7 +431,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDAmbilightVerticalBlackBarDetection", Toggle_AmbilightVerticalBlackBarDetection.IsOn);
+            ManagerFactory.settingsManager.SetProperty("LEDAmbilightVerticalBlackBarDetection", Toggle_AmbilightVerticalBlackBarDetection.IsOn);
         }
 
         private async void Toggle_UseSecondColor_Toggled(object? sender, RoutedEventArgs? e)
@@ -438,7 +439,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDUseSecondColor", Toggle_UseSecondColor.IsOn);
+            ManagerFactory.settingsManager.SetProperty("LEDUseSecondColor", Toggle_UseSecondColor.IsOn);
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -455,7 +456,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDSpeed", value);
+            ManagerFactory.settingsManager.SetProperty("LEDSpeed", value);
         }
 
         private void LEDDirection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -463,7 +464,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDDirection", LEDDirection.SelectedIndex);
+            ManagerFactory.settingsManager.SetProperty("LEDDirection", LEDDirection.SelectedIndex);
         }
 
         private void SetControlEnabledAndVisible(UIElement control, LEDLevel level)
@@ -487,7 +488,7 @@ namespace HandheldCompanion.Views.Pages
             ui_button_calibrate.IsEnabled = sensorFamily != SensorFamily.None;
 
             if (IsLoaded)
-                SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
+                ManagerFactory.settingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
         private void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
@@ -516,7 +517,7 @@ namespace HandheldCompanion.Views.Pages
             UpdateUI_SensorPlacement(Tag);
 
             if (IsLoaded)
-                SettingsManager.SetProperty("SensorPlacement", Tag);
+                ManagerFactory.settingsManager.SetProperty("SensorPlacement", Tag);
         }
 
         private void UpdateUI_SensorPlacement(int? SensorPlacement)
@@ -534,7 +535,7 @@ namespace HandheldCompanion.Views.Pages
             var isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 
             if (IsLoaded)
-                SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
+                ManagerFactory.settingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
         }
         #endregion
 
@@ -545,7 +546,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
+            ManagerFactory.settingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
         }
 
         private void Toggle_BatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)
@@ -553,7 +554,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("BatteryChargeLimit", Toggle_BatteryChargeLimit.IsOn);
+            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimit", Toggle_BatteryChargeLimit.IsOn);
         }
 
         private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -561,7 +562,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LegionControllerGyroIndex", ComboBox_GyroController.SelectedIndex);
+            ManagerFactory.settingsManager.SetProperty("LegionControllerGyroIndex", ComboBox_GyroController.SelectedIndex);
         }
 
         private void SliderLeftJoystickDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

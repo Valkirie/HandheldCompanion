@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using System;
@@ -21,28 +22,17 @@ public partial class QuickHomePage : Page
         this.Tag = Tag;
 
         // manage events
-        MultimediaManager.VolumeNotification += SystemManager_VolumeNotification;
-        MultimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
-        MultimediaManager.Initialized += SystemManager_Initialized;
-        ProfileManager.Applied += ProfileManager_Applied;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        GPUManager.Hooked += GPUManager_Hooked;
+        ManagerFactory.multimediaManager.VolumeNotification += SystemManager_VolumeNotification;
+        ManagerFactory.multimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
+        ManagerFactory.multimediaManager.Initialized += SystemManager_Initialized;
     }
 
     public void Close()
     {
         // manage events
-        MultimediaManager.VolumeNotification -= SystemManager_VolumeNotification;
-        MultimediaManager.BrightnessNotification -= SystemManager_BrightnessNotification;
-        MultimediaManager.Initialized -= SystemManager_Initialized;
-        ProfileManager.Applied -= ProfileManager_Applied;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        GPUManager.Hooked -= GPUManager_Hooked;
-    }
-
-    private void GPUManager_Hooked(GraphicsProcessingUnit.GPU GPU)
-    {
-        // do something
+        ManagerFactory.multimediaManager.VolumeNotification -= SystemManager_VolumeNotification;
+        ManagerFactory.multimediaManager.BrightnessNotification -= SystemManager_BrightnessNotification;
+        ManagerFactory.multimediaManager.Initialized -= SystemManager_Initialized;
     }
 
     public QuickHomePage()
@@ -59,28 +49,28 @@ public partial class QuickHomePage : Page
 
     private void SystemManager_Initialized()
     {
-        if (MultimediaManager.HasBrightnessSupport())
+        if (ManagerFactory.multimediaManager.HasBrightnessSupport())
         {
             lock (brightnessLock)
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     SliderBrightness.IsEnabled = true;
-                    SliderBrightness.Value = MultimediaManager.GetBrightness();
+                    SliderBrightness.Value = ManagerFactory.multimediaManager.GetBrightness();
                 });
             }
         }
 
-        if (MultimediaManager.HasVolumeSupport())
+        if (ManagerFactory.multimediaManager.HasVolumeSupport())
         {
             lock (volumeLock)
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     SliderVolume.IsEnabled = true;
-                    SliderVolume.Value = MultimediaManager.GetVolume();
+                    SliderVolume.Value = ManagerFactory.multimediaManager.GetVolume();
                     UpdateVolumeIcon((float)SliderVolume.Value);
                 });
             }
@@ -94,7 +84,7 @@ public partial class QuickHomePage : Page
             try
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     if (SliderBrightness.Value != brightness)
                         SliderBrightness.Value = brightness;
@@ -116,7 +106,7 @@ public partial class QuickHomePage : Page
                 int value = Convert.ToInt32(volume);
 
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     UpdateVolumeIcon(value);
 
@@ -141,7 +131,7 @@ public partial class QuickHomePage : Page
             return;
 
         lock (brightnessLock)
-            MultimediaManager.SetBrightness(SliderBrightness.Value);
+            ManagerFactory.multimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -154,45 +144,7 @@ public partial class QuickHomePage : Page
             return;
 
         lock (volumeLock)
-            MultimediaManager.SetVolume(SliderVolume.Value);
-    }
-
-    private void ProfileManager_Applied(Profile profile, UpdateSource source)
-    {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            // deprecated
-            // t_CurrentProfile.Text = profile.ToString();
-        });
-    }
-
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        string[] onScreenDisplayLevels = {
-            Properties.Resources.OverlayPage_OverlayDisplayLevel_Disabled,
-            Properties.Resources.OverlayPage_OverlayDisplayLevel_Minimal,
-            Properties.Resources.OverlayPage_OverlayDisplayLevel_Extended,
-            Properties.Resources.OverlayPage_OverlayDisplayLevel_Full,
-            Properties.Resources.OverlayPage_OverlayDisplayLevel_Custom,
-            Properties.Resources.OverlayPage_OverlayDisplayLevel_External,
-        };
-
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            switch (name)
-            {
-                case "OnScreenDisplayLevel":
-                    {
-                        var overlayLevel = Convert.ToInt16(value);
-
-                        // deprecated
-                        // t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
-                    }
-                    break;
-            }
-        });
+            ManagerFactory.multimediaManager.SetVolume(SliderVolume.Value);
     }
 
     private void UpdateVolumeIcon(float volume)

@@ -1,3 +1,4 @@
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Platforms;
@@ -16,7 +17,6 @@ using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Managers.UpdateManager;
 using static HandheldCompanion.WinAPI;
-using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -44,10 +44,10 @@ public partial class SettingsPage : Page
 
         // manage events
         UpdateManager.Updated += UpdateManager_Updated;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MultimediaManager.ScreenConnected += MultimediaManager_ScreenConnected;
-        MultimediaManager.ScreenDisconnected += MultimediaManager_ScreenDisconnected;
-        MultimediaManager.Initialized += MultimediaManager_Initialized;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.multimediaManager.ScreenConnected += MultimediaManager_ScreenConnected;
+        ManagerFactory.multimediaManager.ScreenDisconnected += MultimediaManager_ScreenDisconnected;
+        ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
@@ -59,7 +59,7 @@ public partial class SettingsPage : Page
     private void MultimediaManager_ScreenConnected(DesktopScreen screen)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             int idx = -1;
             foreach (DesktopScreen desktopScreen in cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>())
@@ -78,7 +78,7 @@ public partial class SettingsPage : Page
     private void MultimediaManager_ScreenDisconnected(DesktopScreen screen)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // check if current target was disconnected
             if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen targetScreen)
@@ -99,11 +99,11 @@ public partial class SettingsPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        string DevicePath = SettingsManager.GetString("QuickToolsDevicePath");
-        string DeviceName = SettingsManager.GetString("QuickToolsDeviceName");
+        string DevicePath = ManagerFactory.settingsManager.GetString("QuickToolsDevicePath");
+        string DeviceName = ManagerFactory.settingsManager.GetString("QuickToolsDeviceName");
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
                 .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.ToString().Equals(DeviceName));
@@ -123,7 +123,7 @@ public partial class SettingsPage : Page
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (status)
             {
@@ -140,7 +140,7 @@ public partial class SettingsPage : Page
     private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -183,29 +183,6 @@ public partial class SettingsPage : Page
                 case "DesktopProfileOnStart":
                     Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
                     break;
-                case "NativeDisplayOrientation":
-                    var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
-
-                    switch (nativeOrientation)
-                    {
-                        case ScreenRotation.Rotations.DEFAULT:
-                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_Landscape;
-                            break;
-                        case ScreenRotation.Rotations.D90:
-                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_Portrait;
-                            break;
-                        case ScreenRotation.Rotations.D180:
-                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_FlippedLandscape;
-                            break;
-                        case ScreenRotation.Rotations.D270:
-                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_FlippedPortrait;
-                            break;
-                        default:
-                            Text_NativeDisplayOrientation.Text = Properties.Resources.SettingsPage_ScreenRotation_NotSet;
-                            break;
-                    }
-
-                    break;
                 case "ToastEnable":
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
                     break;
@@ -226,7 +203,7 @@ public partial class SettingsPage : Page
                     Toggle_QuicktoolsAutoHide.IsOn = Convert.ToBoolean(value);
                     break;
                 case "UISounds":
-                    Toggle_UISounds.IsEnabled = MultimediaManager.HasVolumeSupport();
+                    Toggle_UISounds.IsEnabled = ManagerFactory.multimediaManager.HasVolumeSupport();
                     Toggle_UISounds.IsOn = Convert.ToBoolean(value);
                     break;
                 case "TelemetryEnabled":
@@ -235,8 +212,8 @@ public partial class SettingsPage : Page
                         bool IsSentryEnabled = Convert.ToBoolean(value);
                         Toggle_Telemetry.IsOn = IsSentryEnabled;
 
-                        // ignore if loading
-                        if (!SettingsManager.IsInitialized)
+                        // ignore if initializing
+                        if (ManagerFactory.settingsManager.Status == ManagerStatus.Initializing)
                             return;
 
                         if (SentrySdk.IsEnabled && IsSentryEnabled)
@@ -260,10 +237,10 @@ public partial class SettingsPage : Page
     {
         // manage events
         UpdateManager.Updated -= UpdateManager_Updated;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        MultimediaManager.ScreenConnected -= MultimediaManager_ScreenConnected;
-        MultimediaManager.ScreenDisconnected -= MultimediaManager_ScreenDisconnected;
-        MultimediaManager.Initialized -= MultimediaManager_Initialized;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.multimediaManager.ScreenConnected -= MultimediaManager_ScreenConnected;
+        ManagerFactory.multimediaManager.ScreenDisconnected -= MultimediaManager_ScreenDisconnected;
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
     }
 
     private async void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)
@@ -271,7 +248,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
+        ManagerFactory.settingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
     }
 
     private void Toggle_Background_Toggled(object? sender, RoutedEventArgs? e)
@@ -279,7 +256,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
+        ManagerFactory.settingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
     }
 
     private void Toggle_CloseMinimizes_Toggled(object? sender, RoutedEventArgs? e)
@@ -287,7 +264,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
+        ManagerFactory.settingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
     }
 
     private void Toggle_DesktopProfileOnStart_Toggled(object? sender, RoutedEventArgs? e)
@@ -295,23 +272,13 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
-    }
-
-    private void Button_DetectNativeDisplayOrientation_Click(object sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        var rotation = MultimediaManager.GetScreenOrientation();
-        rotation = new ScreenRotation(rotation.rotationUnnormalized, ScreenRotation.Rotations.UNSET);
-        SettingsManager.SetProperty("NativeDisplayOrientation", (int)rotation.rotationNativeBase);
+        ManagerFactory.settingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
     }
 
     private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (status)
             {
@@ -431,7 +398,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("CurrentCulture", culture.Name);
+        ManagerFactory.settingsManager.SetProperty("CurrentCulture", culture.Name);
 
         Localization.TranslationSource.Instance.CurrentCulture = CultureInfo.GetCultureInfo(culture.Name);
 
@@ -443,7 +410,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("ToastEnable", Toggle_Notification.IsOn);
+        ManagerFactory.settingsManager.SetProperty("ToastEnable", Toggle_Notification.IsOn);
     }
 
     private void cB_Theme_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
@@ -473,7 +440,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
     }
 
     private void cB_QuickToolsBackdrop_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
@@ -487,7 +454,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("QuicktoolsBackdrop", cB_QuickToolsBackdrop.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("QuicktoolsBackdrop", cB_QuickToolsBackdrop.SelectedIndex);
     }
 
     private void cB_Backdrop_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
@@ -501,7 +468,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
     }
 
     private void SwitchBackdrop(Window targetWindow, int idx)
@@ -537,7 +504,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("PlatformRTSSEnabled", Toggle_RTSS.IsOn);
+        ManagerFactory.settingsManager.SetProperty("PlatformRTSSEnabled", Toggle_RTSS.IsOn);
     }
 
     private void cB_QuicktoolsPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -545,7 +512,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("QuickToolsLocation", cB_QuicktoolsPosition.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", cB_QuicktoolsPosition.SelectedIndex);
     }
 
     private void Toggle_QuicktoolsAutoHide_Toggled(object sender, RoutedEventArgs e)
@@ -553,7 +520,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("QuickToolsAutoHide", Toggle_QuicktoolsAutoHide.IsOn);
+        ManagerFactory.settingsManager.SetProperty("QuickToolsAutoHide", Toggle_QuicktoolsAutoHide.IsOn);
     }
 
     private void Toggle_UISounds_Toggled(object sender, RoutedEventArgs e)
@@ -561,7 +528,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("UISounds", Toggle_UISounds.IsOn);
+        ManagerFactory.settingsManager.SetProperty("UISounds", Toggle_UISounds.IsOn);
     }
 
     private void Toggle_Telemetry_Toggled(object sender, RoutedEventArgs e)
@@ -569,7 +536,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("TelemetryEnabled", Toggle_Telemetry.IsOn);
+        ManagerFactory.settingsManager.SetProperty("TelemetryEnabled", Toggle_Telemetry.IsOn);
     }
 
     private void cB_QuickToolsDevicePath_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -579,8 +546,8 @@ public partial class SettingsPage : Page
 
         if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen desktopScreen)
         {
-            SettingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.ToString());
-            SettingsManager.SetProperty("QuickToolsDevicePath", desktopScreen.DevicePath);
+            ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.ToString());
+            ManagerFactory.settingsManager.SetProperty("QuickToolsDevicePath", desktopScreen.DevicePath);
         }
     }
 
@@ -605,6 +572,6 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("ProcessPriority", cB_Priority.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("ProcessPriority", cB_Priority.SelectedIndex);
     }
 }

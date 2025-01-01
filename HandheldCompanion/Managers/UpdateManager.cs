@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
@@ -11,7 +12,6 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Windows;
 
 namespace HandheldCompanion.Managers;
 
@@ -78,7 +78,7 @@ public static class UpdateManager
         if (IsInitialized)
             return;
 
-        DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
+        DateTime dateTime = ManagerFactory.settingsManager.GetDateTime("UpdateLastChecked");
 
         lastCheck = dateTime;
 
@@ -86,12 +86,17 @@ public static class UpdateManager
         Updated?.Invoke(updateStatus, null, null);
 
         // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("UpdateUrl", SettingsManager.GetString("UpdateUrl"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         IsInitialized = true;
@@ -100,13 +105,24 @@ public static class UpdateManager
         LogManager.LogInformation("{0} has started", "UpdateManager");
     }
 
+    private static void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
 
         // manage events
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         IsInitialized = false;
 
@@ -186,7 +202,7 @@ public static class UpdateManager
                     update = file;
 
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     _ = new Dialog(MainWindow.GetCurrent())
                     {
@@ -199,7 +215,7 @@ public static class UpdateManager
             else
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     _ = new Dialog(MainWindow.GetCurrent())
                     {
@@ -312,7 +328,7 @@ public static class UpdateManager
     private static void UpdateTime()
     {
         lastCheck = DateTime.Now;
-        SettingsManager.SetProperty("UpdateLastChecked", lastCheck);
+        ManagerFactory.settingsManager.SetProperty("UpdateLastChecked", lastCheck);
     }
 
     public static void StartProcess()
@@ -332,7 +348,7 @@ public static class UpdateManager
         if (!File.Exists(filename))
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 _ = new Dialog(MainWindow.GetCurrent())
                 {

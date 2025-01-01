@@ -293,7 +293,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             int adapterCount = 0;
             int UniqueId = 0;
             string dispName = string.Empty;
-            string friendlyName = MultimediaManager.GetAdapterFriendlyName(adapterInformation.Details.DeviceName);
+            string friendlyName = ManagerFactory.multimediaManager.GetAdapterFriendlyName(adapterInformation.Details.DeviceName);
 
             result = GetNumberOfDisplays(ref adapterCount);
             if (result != ADLX_RESULT.ADLX_OK)

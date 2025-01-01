@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
@@ -252,7 +253,7 @@ namespace HandheldCompanion.Managers
             _gamepadFrame.ContentRendered -= _gamepadFrame_ContentRendered;
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 // store top left navigation view item
                 if (prevNavigation is null)
@@ -309,7 +310,7 @@ namespace HandheldCompanion.Managers
         private void TooltipTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 tooltip.PlacementTarget = null;
                 tooltip.IsOpen = false;
@@ -495,7 +496,7 @@ namespace HandheldCompanion.Managers
             }
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 // get current focused element
                 Control focusedElement = GetFocusedElement();

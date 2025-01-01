@@ -54,8 +54,6 @@ namespace HandheldCompanion.Actions
         public int Deadzone = 15;           // stick only
         public bool Filtering = false;      // pad only
         public float FilterCutoff = 0.05f;  // pad only
-        public bool AxisRotated = false;
-        public bool AxisInverted = false;
 
         public MouseActions()
         {
@@ -181,11 +179,8 @@ namespace HandheldCompanion.Actions
                 sensitivityFinetune = (float)Math.Pow(sensitivityFinetune, Acceleration);
             }
 
-            // apply sensitivity, rotation and slider finetune
+            // apply sensitivity and slider finetune
             deltaVector *= Sensivity * sensitivityFinetune;
-            if (AxisRotated)
-                deltaVector = new(-deltaVector.Y, deltaVector.X);
-            deltaVector *= (AxisInverted ? -1.0f : 1.0f);
 
             // handle the fact that MoveBy()/*Scroll() are int only and we can have movement (0 < abs(delta) < 1)
             deltaVector += remainder;                                               // add partial previous step

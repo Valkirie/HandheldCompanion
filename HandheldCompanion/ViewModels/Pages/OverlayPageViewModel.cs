@@ -1,12 +1,12 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using LiveCharts;
 using System;
 using System.Timers;
-using System.Windows;
 using System.Windows.Media;
 
 namespace HandheldCompanion.ViewModels
@@ -28,7 +28,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayLevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayLevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayLevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayLevel, value);
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayTimeLevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayTimeLevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayTimeLevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayTimeLevel, value);
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayFPSLevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayFPSLevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayFPSLevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayFPSLevel, value);
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayCPULevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayCPULevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayCPULevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayCPULevel, value);
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayGPULevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayGPULevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayGPULevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayGPULevel, value);
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayRAMLevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayRAMLevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayRAMLevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayRAMLevel, value);
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayVRAMLevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayVRAMLevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayVRAMLevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayVRAMLevel, value);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace HandheldCompanion.ViewModels
                     _onScreenDisplayBATTLevel = value;
                     OnPropertyChanged(nameof(OnScreenDisplayBATTLevel));
 
-                    SettingsManager.SetProperty(Settings.OnScreenDisplayBATTLevel, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayBATTLevel, value);
                 }
             }
         }
@@ -399,19 +399,19 @@ namespace HandheldCompanion.ViewModels
             framerateTimer = new Timer(framerateInterval) { Enabled = true };
             framerateTimer.Elapsed += FramerateTimer_Elapsed;
 
-            _onScreenDisplayLevel = SettingsManager.GetInt(Settings.OnScreenDisplayLevel);
-            _onScreenDisplayTimeLevel = SettingsManager.GetInt(Settings.OnScreenDisplayTimeLevel);
-            _onScreenDisplayFPSLevel = SettingsManager.GetInt(Settings.OnScreenDisplayFPSLevel);
-            _onScreenDisplayCPULevel = SettingsManager.GetInt(Settings.OnScreenDisplayCPULevel);
-            _onScreenDisplayGPULevel = SettingsManager.GetInt(Settings.OnScreenDisplayGPULevel);
-            _onScreenDisplayRAMLevel = SettingsManager.GetInt(Settings.OnScreenDisplayRAMLevel);
-            _onScreenDisplayVRAMLevel = SettingsManager.GetInt(Settings.OnScreenDisplayVRAMLevel);
-            _onScreenDisplayBATTLevel = SettingsManager.GetInt(Settings.OnScreenDisplayBATTLevel);
+            _onScreenDisplayLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel);
+            _onScreenDisplayTimeLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayTimeLevel);
+            _onScreenDisplayFPSLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayFPSLevel);
+            _onScreenDisplayCPULevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCPULevel);
+            _onScreenDisplayGPULevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayGPULevel);
+            _onScreenDisplayRAMLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRAMLevel);
+            _onScreenDisplayVRAMLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayVRAMLevel);
+            _onScreenDisplayBATTLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayBATTLevel);
 
             CPUName = IDevice.GetCurrent().Processor;
 
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PlatformManager.RTSS.Updated += PlatformManager_RTSS_Updated;
             PlatformManager.LibreHardwareMonitor.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
             PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
@@ -438,7 +438,7 @@ namespace HandheldCompanion.ViewModels
             // get path
             string path = processEx != null ? processEx.Path : string.Empty;
 
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 ProcessIcon = processEx?.ProcessIcon;
 
@@ -542,7 +542,7 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             PlatformManager.RTSS.Updated -= PlatformManager_RTSS_Updated;
             base.Dispose();
         }

@@ -2,7 +2,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;
 using System.Numerics;
-using System.Windows.Forms;
 
 namespace HandheldCompanion.Actions
 {
@@ -16,8 +15,6 @@ namespace HandheldCompanion.Actions
         public int AxisAntiDeadZone = 0;
         public int AxisDeadZoneInner = 0;
         public int AxisDeadZoneOuter = 0;
-        public bool AxisRotated = false;
-        public bool AxisInverted = false;
 
         public AxisActions()
         {
@@ -38,16 +35,7 @@ namespace HandheldCompanion.Actions
             if (ImproveCircularity)
                 layout.vector = InputUtils.ImproveCircularity(layout.vector);
 
-            if (AutoRotate)
-                layout.vector = ((Orientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90
-                             ? new Vector2(layout.vector.Y, -layout.vector.X)
-                             : layout.vector)
-                         * ((Orientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180 ? -1.0f : 1.0f);
-            else
-                layout.vector = (AxisRotated ? new Vector2(layout.vector.Y, -layout.vector.X) : layout.vector)
-                         * (AxisInverted ? -1.0f : 1.0f);
-
-            this.Value = (AxisRotated ? new(layout.vector.Y, -layout.vector.X) : layout.vector) * (AxisInverted ? -1.0f : 1.0f);
+            this.Value = layout.vector;
         }
 
         public Vector2 GetValue()

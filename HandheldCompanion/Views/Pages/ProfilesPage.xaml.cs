@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.GraphicsProcessingUnit;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -61,8 +62,8 @@ public partial class ProfilesPage : Page
         ProfileManager.Updated += ProfileUpdated;
         ProfileManager.Applied += ProfileApplied;
         ProfileManager.Initialized += ProfileManagerLoaded;
-        MultimediaManager.Initialized += MultimediaManager_Initialized;
-        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Hooked += GPUManager_Hooked;
         GPUManager.Unhooked += GPUManager_Unhooked;
@@ -80,9 +81,9 @@ public partial class ProfilesPage : Page
     private void MultimediaManager_Initialized()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
-            DesktopScreen desktopScreen = MultimediaManager.PrimaryDesktop;
+            DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
             desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
         });
     }
@@ -117,7 +118,7 @@ public partial class ProfilesPage : Page
         IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
@@ -137,7 +138,7 @@ public partial class ProfilesPage : Page
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = Visibility.Collapsed;
@@ -155,7 +156,7 @@ public partial class ProfilesPage : Page
     private void UpdateGraphicsSettingsUI()
     {
         // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             StackProfileRSR.IsEnabled = HasRSRSupport;
             StackProfileAFMF.IsEnabled = HasAFMFSupport;
@@ -193,7 +194,7 @@ public partial class ProfilesPage : Page
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (status)
             {
@@ -214,7 +215,7 @@ public partial class ProfilesPage : Page
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             cB_Framerate.Items.Clear();
 
@@ -237,8 +238,8 @@ public partial class ProfilesPage : Page
         ProfileManager.Updated -= ProfileUpdated;
         ProfileManager.Applied -= ProfileApplied;
         ProfileManager.Initialized -= ProfileManagerLoaded;
-        MultimediaManager.Initialized -= MultimediaManager_Initialized;
-        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
         GPUManager.Hooked -= GPUManager_Hooked;
         GPUManager.Unhooked -= GPUManager_Unhooked;
@@ -425,7 +426,7 @@ public partial class ProfilesPage : Page
             return;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (AC)
             {
@@ -459,7 +460,7 @@ public partial class ProfilesPage : Page
                 MotionMapped = true;
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             MotionControlAdditional.IsEnabled = MotionMapped;
         });
@@ -474,7 +475,7 @@ public partial class ProfilesPage : Page
         {
             try
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     // disable delete button if is default profile or any sub profile is running
                     //TODO consider sub profiles pertaining to this main profile is running
@@ -539,7 +540,7 @@ public partial class ProfilesPage : Page
                     UpdateMotionControlsVisibility();
 
                     // Framerate limit
-                    DesktopScreen? desktopScreen = MultimediaManager.PrimaryDesktop;
+                    DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
                     if (desktopScreen is not null)
                         cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
@@ -789,7 +790,7 @@ public partial class ProfilesPage : Page
     private void Template_Updated(LayoutTemplate layoutTemplate)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             selectedProfile.LayoutTitle = layoutTemplate.Name;
         });
@@ -820,7 +821,7 @@ public partial class ProfilesPage : Page
             case UpdateSource.ProfilesPage:
             case UpdateSource.ProfilesPageUpdateOnly:
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     cB_Profiles.SelectedItem = profile;
                 });
@@ -834,7 +835,7 @@ public partial class ProfilesPage : Page
         }
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             var idx = -1;
             if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
@@ -875,7 +876,7 @@ public partial class ProfilesPage : Page
     public void ProfileDeleted(Profile profile)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             int prevIdx = cB_Profiles.SelectedIndex;
 
@@ -927,7 +928,7 @@ public partial class ProfilesPage : Page
     private void ProfileManagerLoaded()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() => { cB_Profiles.SelectedItem = ProfileManager.GetDefault(); });
+        UIHelper.TryInvoke(() => { cB_Profiles.SelectedItem = ProfileManager.GetDefault(); });
     }
 
     #endregion

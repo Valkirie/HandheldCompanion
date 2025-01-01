@@ -343,15 +343,30 @@ public class ROGAlly : IDevice
         ConfigureController(true);
 
         // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetString("BatteryChargeLimit"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         return true;
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
     }
 
     public override void Close()
@@ -377,7 +392,8 @@ public class ROGAlly : IDevice
 
         hidDevices.Clear();
 
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Close();
     }

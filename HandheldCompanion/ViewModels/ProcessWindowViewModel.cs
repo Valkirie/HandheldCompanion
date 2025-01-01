@@ -41,7 +41,7 @@ namespace HandheldCompanion.ViewModels
             ProcessWindow.Refreshed += ProcessRefreshed;
             ProcessExViewModel = processExViewModel;
 
-            MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+            ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
             BringProcessCommand = new DelegateCommand(async () =>
             {

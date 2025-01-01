@@ -81,7 +81,7 @@ public partial class LayoutPage : Page
 
         // manage events
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Updated += ProfileManager_Updated;
 
         // raise events
@@ -96,7 +96,7 @@ public partial class LayoutPage : Page
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
 
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (source)
             {
@@ -113,7 +113,7 @@ public partial class LayoutPage : Page
     private void ControllerManager_ControllerSelected(IController controller)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // cascade update to (sub)pages
             foreach (var page in pages.Values)
@@ -126,7 +126,7 @@ public partial class LayoutPage : Page
     private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -147,7 +147,7 @@ public partial class LayoutPage : Page
 
         // manage events
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ProfileManager.Updated -= ProfileManager_Updated;
     }
 
@@ -176,7 +176,7 @@ public partial class LayoutPage : Page
         lock (updateLock)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 // Invoke Layout Updated to trigger ViewModel updates
                 LayoutUpdated?.Invoke(currentTemplate.Layout);
@@ -185,7 +185,7 @@ public partial class LayoutPage : Page
                 cB_Layouts.SelectedValue = null;
 
                 CheckBoxDefaultLayout.IsChecked = currentTemplate.Layout.IsDefaultLayout;
-                CheckBoxDefaultLayout.IsEnabled = currentTemplate.Layout != LayoutManager.GetDesktop();
+                CheckBoxDefaultLayout.IsEnabled = currentTemplate.Layout != ManagerFactory.layoutManager.GetDesktop();
             });
         }
     }
@@ -245,7 +245,7 @@ public partial class LayoutPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("LayoutFilterOnDevice", CheckBoxDeviceLayouts.IsChecked);
+        ManagerFactory.settingsManager.SetProperty("LayoutFilterOnDevice", CheckBoxDeviceLayouts.IsChecked);
     }
 
     private void LayoutExportButton_Click(object sender, RoutedEventArgs e)
@@ -279,7 +279,7 @@ public partial class LayoutPage : Page
         if (ExportForCurrent.IsChecked == true)
             newLayout.ControllerType = ControllerManager.GetTargetController()?.GetType();
 
-        LayoutManager.SerializeLayoutTemplate(newLayout);
+        ManagerFactory.layoutManager.SerializeLayoutTemplate(newLayout);
 
         // todo: translate me
         _ = new Dialog(MainWindow.GetCurrent())

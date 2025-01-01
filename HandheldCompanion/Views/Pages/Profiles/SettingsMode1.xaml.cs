@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using LiveCharts;
 using LiveCharts.Defaults;
@@ -49,7 +50,7 @@ public partial class SettingsMode1 : Page
             try
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     SliderDeadzoneAngle.Value = ProfilesPage.selectedProfile.SteeringDeadzone;
                     SliderPower.Value = ProfilesPage.selectedProfile.SteeringPower;
@@ -81,7 +82,7 @@ public partial class SettingsMode1 : Page
     private void Rotate_Needle(float y)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() => { lvAngularGauge.Value = y; });
+        UIHelper.TryInvoke(() => { lvAngularGauge.Value = y; });
     }
 
     private void SliderSteeringAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -65,9 +65,9 @@ namespace HandheldCompanion.Managers
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
             ProfileManager.Updated += ProfileManager_Updated;
-            DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
-            DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
-            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+            ManagerFactory.deviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
+            ManagerFactory.deviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
+            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
 
             // raise events
             if (ProfileManager.IsInitialized)
@@ -75,10 +75,14 @@ namespace HandheldCompanion.Managers
                 ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
             }
 
-            if (DeviceManager.IsInitialized)
+            switch (ManagerFactory.deviceManager.Status)
             {
-                foreach (AdapterInformation displayAdapter in DeviceManager.displayAdapters.Values)
-                    DeviceManager_DisplayAdapterArrived(displayAdapter);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.deviceManager.Initialized += DeviceManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryDevices();
+                    break;
             }
 
             IsInitialized = true;
@@ -96,9 +100,10 @@ namespace HandheldCompanion.Managers
             ProfileManager.Applied -= ProfileManager_Applied;
             ProfileManager.Discarded -= ProfileManager_Discarded;
             ProfileManager.Updated -= ProfileManager_Updated;
-            DeviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
-            DeviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
-            MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+            ManagerFactory.deviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
+            ManagerFactory.deviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
+            ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
+            ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
 
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
@@ -121,6 +126,17 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "GPUManager");
+        }
+
+        private static void DeviceManager_Initialized()
+        {
+            QueryDevices();
+        }
+
+        private static void QueryDevices()
+        {
+            foreach (AdapterInformation displayAdapter in ManagerFactory.deviceManager.displayAdapters.Values)
+                DeviceManager_DisplayAdapterArrived(displayAdapter);
         }
 
         private static void GPUConnect(GPU GPU)
@@ -212,8 +228,8 @@ namespace HandheldCompanion.Managers
             DisplayGPU.TryAdd(adapterInformation, newGPU);
 
             // Force send an update
-            if (MultimediaManager.PrimaryDesktop != null)
-                MultimediaManager_PrimaryScreenChanged(MultimediaManager.PrimaryDesktop);
+            if (ManagerFactory.multimediaManager.PrimaryDesktop != null)
+                MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
         }
 
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)

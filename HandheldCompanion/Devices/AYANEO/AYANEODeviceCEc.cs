@@ -90,16 +90,31 @@ namespace HandheldCompanion.Devices.AYANEO
             }
 
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+            switch (ManagerFactory.settingsManager.Status)
             {
-                SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetString("BatteryChargeLimit"), false);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
             }
 
             return true;
+        }
+
+        private void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
         }
 
         public override void Close()
@@ -109,7 +124,8 @@ namespace HandheldCompanion.Devices.AYANEO
                 this.CEcControl_RgbReleaseControl();
             }
 
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             PowerManager.RemainingChargePercentChanged -= PowerManager_RemainingChargePercentChanged;
 
             base.Close();
@@ -139,7 +155,7 @@ namespace HandheldCompanion.Devices.AYANEO
         private void PowerManager_RemainingChargePercentChanged(object? sender, object e)
         {
             // Check if BatteryChargeLimit is enabled in SettingsManager
-            bool isBatteryChargeLimitEnabled = SettingsManager.GetBoolean("BatteryChargeLimit");
+            bool isBatteryChargeLimitEnabled = ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit");
             if (!isBatteryChargeLimitEnabled)
                 return;
 

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -60,7 +61,7 @@ namespace HandheldCompanion.Controls.Hints
             VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable");
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 this.Visibility = Processor.GetCurrent() is IntelProcessor && (HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable) ? Visibility.Visible : Visibility.Collapsed;
             });

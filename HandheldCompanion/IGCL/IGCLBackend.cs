@@ -322,7 +322,7 @@ namespace HandheldCompanion.IGCL
             public ctl_adapter_bdf_t adapter_bdf;                  // [out] Pci Bus, Device, Function. Supported only for Version > 1
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 112)]
             public string reserved;           // [out] Reserved
-        }        
+        }
 
         [DllImport("kernel32")]
         public static extern IntPtr LoadLibrary(string lpFileName);

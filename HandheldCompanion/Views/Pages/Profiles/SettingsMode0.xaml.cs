@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -48,7 +49,7 @@ public partial class SettingsMode0 : Page
             try
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     SliderSensitivityX.Value = ProfilesPage.selectedProfile.MotionSensivityX;
                     SliderSensitivityY.Value = ProfilesPage.selectedProfile.MotionSensivityY;
@@ -137,7 +138,7 @@ public partial class SettingsMode0 : Page
     private void Highlight_Thumb(float value)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             double dist_x = value / IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold();
 

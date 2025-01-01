@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HandheldCompanion.Helpers;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace HandheldCompanion.Extensions
 {
@@ -8,7 +8,7 @@ namespace HandheldCompanion.Extensions
     {
         public static void ReplaceWith<T>(this ObservableCollection<T> collection, List<T> list)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 collection.Clear();
                 foreach (var item in list)
@@ -20,7 +20,7 @@ namespace HandheldCompanion.Extensions
 
         public static void SafeAdd<T>(this ObservableCollection<T> collection, T item)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 collection.Add(item);
             });
@@ -28,7 +28,7 @@ namespace HandheldCompanion.Extensions
 
         public static void SafeRemove<T>(this ObservableCollection<T> collection, T item)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 collection.Remove(item);
             });

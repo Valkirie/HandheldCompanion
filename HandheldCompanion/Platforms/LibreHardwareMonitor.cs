@@ -56,12 +56,17 @@ namespace HandheldCompanion.Platforms
         public override bool Start()
         {
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+            switch (ManagerFactory.settingsManager.Status)
             {
-                SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", SettingsManager.GetString("OnScreenDisplayRefreshRate"), false);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
             }
 
             // open computer, slow
@@ -72,9 +77,20 @@ namespace HandheldCompanion.Platforms
             return base.Start();
         }
 
+        private void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         public override bool Stop(bool kill = false)
         {
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
             updateTimer?.Stop();
 

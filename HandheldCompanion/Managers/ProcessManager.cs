@@ -1,3 +1,4 @@
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -9,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
 using static HandheldCompanion.Misc.ProcessEx;
@@ -368,7 +368,7 @@ public static class ProcessManager
 
                     // create process 
                     // UI thread (synchronous)
-                    Application.Current.Dispatcher.Invoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
+                    UIHelper.TryInvoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
 
                     if (processEx is null)
                         return false;

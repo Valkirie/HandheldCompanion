@@ -109,7 +109,7 @@ namespace HandheldCompanion.ADLX
                 switch (process.ExitCode)
                 {
                     case 2:
-                         // Assume display name won't exceed 255 characters
+                        // Assume display name won't exceed 255 characters
                         bool success = IntializeAdlx(displayName, displayName.Capacity);
                         return success;
                     default:

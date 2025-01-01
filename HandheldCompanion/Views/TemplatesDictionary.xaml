@@ -327,6 +327,11 @@
                                 <DataTrigger Binding="{Binding Enumerator}" Value="BTHENUM">
                                     <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
                                 </DataTrigger>
+
+                                <!--  Trigger for BTHLEDEVICE  -->
+                                <DataTrigger Binding="{Binding Enumerator}" Value="BTHLEDEVICE">
+                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </TextBlock.Style>
@@ -1172,68 +1177,6 @@
                                     BorderThickness="0,1,0,0"
                                     Opacity="0.25" />
 
-                                <!--  Auto rotate  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="80" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Rotate to match screen orientation" />
-
-                                    <ui:ToggleSwitch
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Axis2AxisAutoRotate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Axis rotation  -->
-                                <Grid IsEnabled="{Binding Axis2AxisAutoRotate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}">
-                                    <ikw:SimpleStackPanel Spacing="6">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Rotate axis (degrees)" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2AxisRotation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            FlowDirection="LeftToRight"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="270"
-                                            Minimum="0"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            TickFrequency="90"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2AxisRotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
                                 <!--  Inner deadzone  -->
                                 <Grid>
                                     <ikw:SimpleStackPanel Spacing="6">
@@ -1349,69 +1292,6 @@
                     <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
                         <ikw:SimpleStackPanel Spacing="6">
                             <ikw:SimpleStackPanel Spacing="6">
-
-                                <!--  Auto rotate  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="80" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Rotate to match screen orientation" />
-
-                                    <ui:ToggleSwitch
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Axis2MouseAutoRotate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Axis rotation  -->
-                                <Grid IsEnabled="{Binding Axis2MouseAutoRotate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}">
-                                    <ikw:SimpleStackPanel Spacing="6">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Rotate axis (degrees)" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2MouseRotation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            FlowDirection="LeftToRight"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="270"
-                                            Minimum="0"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            TickFrequency="90"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2MouseRotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
                                 <!--  Pointer Speed  -->
                                 <Grid>
                                     <ikw:SimpleStackPanel Spacing="6">
@@ -1641,79 +1521,6 @@
                             BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                             BorderThickness="0,1,0,0" />
 
-                        <!--  Auto rotate  -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="80" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Rotate to match screen orientation" />
-
-                            <ui:ToggleSwitch
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                IsOn="{Binding Axis2AxisAutoRotate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                        </Grid>
-
-                        <!--  Axis rotation (hidden)  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2AxisAutoRotate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-
-                            <!--  Separator  -->
-                            <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Rotate axis" />
-
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBox
-                                        Height="32"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisRotation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} °}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        FlowDirection="LeftToRight"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="270"
-                                        Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="90"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisRotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Separator  -->
-                        <Separator
-                            Margin="-46,0,-16,0"
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0" />
-
                         <!--  Inner deadzone  -->
                         <Grid Height="40">
                             <Grid.ColumnDefinitions>
@@ -1851,79 +1658,6 @@
 
                     <!--  Axis 2 Mouse  -->
                     <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
-
-                        <!--  Auto rotate  -->
-                        <Grid Height="40">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Rotate to match screen orientation" />
-
-                            <ui:ToggleSwitch
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                IsOn="{Binding Axis2MouseAutoRotate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                        </Grid>
-
-                        <!--  Axis rotation (hidden)  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2MouseAutoRotate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <!--  Separator  -->
-                            <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Rotate axis" />
-
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBox
-                                        Height="32"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MouseRotation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} °}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        FlowDirection="LeftToRight"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="270"
-                                        Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="90"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MouseRotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Separator  -->
-                        <Separator
-                            Margin="-46,0,-16,0"
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0" />
 
                         <!--  Sensitivity  -->
                         <Grid Height="40">

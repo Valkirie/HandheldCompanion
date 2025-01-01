@@ -63,7 +63,7 @@ namespace HandheldCompanion
 
         public void Execute(bool onKeyDown, bool onKeyUp, bool IsBackground)
         {
-            bool Rumble = SettingsManager.GetBoolean("HotkeyRumbleOnExecution");
+            bool Rumble = ManagerFactory.settingsManager.GetBoolean("HotkeyRumbleOnExecution");
             if (Rumble && !IsBackground && !IsInternal)
                 ControllerManager.GetTargetController()?.Rumble();
 

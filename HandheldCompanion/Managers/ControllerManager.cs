@@ -41,8 +41,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly XInputController? defaultXInput = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
-    private static readonly DS4Controller? defaultDS4 = new() { Details = new() { isVirtual = true }, isPlaceholder = true };
+    private static readonly XInputController? defaultXInput = new(new() { isVirtual = true }) { isPlaceholder = true };
+    private static readonly DS4Controller? defaultDS4 = new(new(), new() { isVirtual = true }) { isPlaceholder = true };
 
     private static IController? targetController;
     private static FocusedWindow focusedWindows = FocusedWindow.None;
@@ -70,12 +70,14 @@ public static class ControllerManager
         if (IsInitialized)
             return;
 
+        PickTargetController(false);
+
         // manage events
-        DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
-        DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
-        DeviceManager.HidDeviceArrived += HidDeviceArrived;
-        DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
+        ManagerFactory.deviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
+        ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
+        ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
@@ -87,23 +89,24 @@ public static class ControllerManager
         IDevice.GetCurrent().KeyReleased += CurrentDevice_KeyReleased;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("VibrationStrength", SettingsManager.GetString("VibrationStrength"), false);
-            SettingsManager_SettingValueChanged("ControllerManagement", SettingsManager.GetString("ControllerManagement"), false);
-            SettingsManager_SettingValueChanged("SensorSelection", SettingsManager.GetString("SensorSelection"), false);
-            SettingsManager_SettingValueChanged("SteamControllerMode", SettingsManager.GetString("SteamControllerMode"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
-        if (DeviceManager.IsInitialized)
+        switch (ManagerFactory.deviceManager.Status)
         {
-            foreach (PnPDetails? device in DeviceManager.PnPDevices.Values)
-            {
-                if (device.isXInput)
-                    XUsbDeviceArrived(device, device.InterfaceGuid);
-                else if (device.isGaming)
-                    HidDeviceArrived(device, device.InterfaceGuid);
-            }
+            case ManagerStatus.Initializing:
+                ManagerFactory.deviceManager.Initialized += DeviceManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryDevices();
+                break;
         }
 
         if (ProcessManager.IsInitialized)
@@ -117,8 +120,6 @@ public static class ControllerManager
 
         // enable HidHide
         HidHide.SetCloaking(true);
-
-        SetPlaceholderController();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -135,14 +136,16 @@ public static class ControllerManager
         JslDisconnect();
 
         // unplug on close
-        ClearTargetController();
+        ClearTargetController(false);
 
         // manage events
-        DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
-        DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
-        DeviceManager.HidDeviceArrived -= HidDeviceArrived;
-        DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+        ManagerFactory.deviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+        ManagerFactory.deviceManager.HidDeviceArrived -= HidDeviceArrived;
+        ManagerFactory.deviceManager.HidDeviceRemoved -= HidDeviceRemoved;
+        ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
         ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
@@ -157,10 +160,16 @@ public static class ControllerManager
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
         scenarioTimer.Stop();
 
-        // uncloak on close, if requested
-        if (SettingsManager.GetBoolean("HIDuncloakonclose"))
-            foreach (var controller in GetPhysicalControllers())
+        bool HIDuncloakonclose = ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
+        foreach (IController controller in GetPhysicalControllers())
+        {
+            // uncloak on close, if requested
+            if (HIDuncloakonclose)
                 controller.Unhide(false);
+
+            // dispose controller
+            controller.Dispose();
+        }
 
         IsInitialized = false;
 
@@ -246,7 +255,7 @@ public static class ControllerManager
         // Steam Deck specific scenario
         if (IDevice.GetCurrent() is SteamDeck steamDeck)
         {
-            bool IsExclusiveMode = SettingsManager.GetBoolean("SteamControllerMode");
+            bool IsExclusiveMode = ManagerFactory.settingsManager.GetBoolean("SteamControllerMode");
 
             // Making sure current controller is embedded
             if (targetController is NeptuneController neptuneController)
@@ -307,7 +316,7 @@ public static class ControllerManager
         {
             case "VibrationStrength":
                 uint VibrationStrength = Convert.ToUInt32(value);
-                targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
+                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.Status == ManagerStatus.Initialized);
                 break;
 
             case "ControllerManagement":
@@ -340,12 +349,41 @@ public static class ControllerManager
         }
     }
 
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false);
+        SettingsManager_SettingValueChanged("ControllerManagement", ManagerFactory.settingsManager.GetString("ControllerManagement"), false);
+        SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false);
+        SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false);
+    }
+
+    private static void DeviceManager_Initialized()
+    {
+        QueryDevices();
+    }
+
+    private static void QueryDevices()
+    {
+        foreach (PnPDetails? device in ManagerFactory.deviceManager.PnPDevices.Values)
+        {
+            if (device.isXInput)
+                XUsbDeviceArrived(device, device.InterfaceGuid);
+            else if (device.isGaming)
+                HidDeviceArrived(device, device.InterfaceGuid);
+        }
+    }
+
     public static void StartWatchdog()
     {
         if (watchdogThreadRunning)
             return;
 
-        bool ControllerManagement = SettingsManager.GetBoolean("ControllerManagement");
+        bool ControllerManagement = ManagerFactory.settingsManager.GetBoolean("ControllerManagement");
         if (!ControllerManagement)
             return;
 
@@ -471,7 +509,7 @@ public static class ControllerManager
                 {
                     // Instantiate the joystick
                     Joystick lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                    string SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, InterfaceGuid.ToString());
+                    string SymLink = ManagerFactory.deviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, InterfaceGuid.ToString());
 
                     if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -587,7 +625,7 @@ public static class ControllerManager
         controller.IsBusy = false;
 
         // update or create controller
-        var path = controller.GetContainerInstancePath();
+        string path = controller.GetContainerInstanceId();
         Controllers[path] = controller;
 
         LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
@@ -598,17 +636,16 @@ public static class ControllerManager
         ToastManager.SendToast(controller.ToString(), "detected");
 
         // remove controller from powercyclers
-        PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
+        PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+
+        // is controller current target and power cycling ?
+        // if yes, don't pick a new controller
+        bool IsTarget = IsTargetController(controller.GetInstanceId());
+        if (IsTarget && IsPowerCycling)
+            return;
 
         // new controller logic
-        if (DeviceManager.IsInitialized)
-        {
-            if (controller.IsPhysical() && (targetController is null || targetController.IsVirtual()))
-                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
-
-            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
-            targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
-        }
+        PickTargetController(IsPowerCycling);
     }
 
     private static async void HidDeviceRemoved(PnPDetails details, Guid IntefaceGuid)
@@ -638,23 +675,25 @@ public static class ControllerManager
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // is controller current target ?
-        bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
+        bool WasTarget = IsTargetController(controller.GetInstanceId());
 
         LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
 
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
-        // unhide on remove 
+        // controller was unplugged
         if (!IsPowerCycling)
         {
-            controller.Unhide(false);
+            // unhide on remove
+            if (controller.IsPhysical())
+                controller.Unhide(false);
 
             // unplug controller, if needed
             if (WasTarget)
             {
-                ClearTargetController();
-                SetPlaceholderController();
+                ClearTargetController(false);
+                PickTargetController(false);
             }
             else
             {
@@ -678,9 +717,9 @@ public static class ControllerManager
             UserIndexes.Clear();
             XInputDrunk = false;
 
-            foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
+            foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput()))
             {
-                byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath, true);
+                byte UserIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
 
                 // controller is not ready yet
                 if (UserIndex == byte.MaxValue)
@@ -725,34 +764,31 @@ public static class ControllerManager
                             bool HasCyclingController = false;
 
                             // do we have a pending wireless controller ?
-                            XInputController wirelessController = GetPhysicalControllers().OfType<XInputController>().FirstOrDefault(controller => controller.IsWireless && controller.IsBusy);
+                            XInputController wirelessController = GetPhysicalControllers().OfType<XInputController>().FirstOrDefault(controller => controller.IsWireless() && controller.IsBusy);
                             if (wirelessController is not null)
                             {
                                 // update busy flag
                                 HasBusyWireless = true;
 
                                 // is the controller power cycling ?
-                                PowerCyclers.TryGetValue(wirelessController.Details.baseContainerDeviceInstanceId, out HasCyclingController);
+                                PowerCyclers.TryGetValue(wirelessController.GetContainerInstanceId(), out HasCyclingController);
                                 if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
                                     goto Exit;
                             }
 
                             // suspend all physical controllers
-                            bool suspendedControllers = false;
+                            bool HasSuspendedController = false;
                             foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
                             {
                                 // set flag(s)
                                 xInputController.IsBusy = true;
-                                suspendedControllers |= SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
+                                HasSuspendedController |= SuspendController(xInputController.GetContainerInstanceId());
                             }
 
-                            if (suspendedControllers)
-                            {
-                                // suspend and resume virtual controller
-                                VirtualManager.Suspend(false);
-                                Thread.Sleep(2000);
-                                VirtualManager.Resume(false);
-                            }
+                            // suspend and resume virtual controller
+                            VirtualManager.Suspend(false);
+                            Thread.Sleep(2000);
+                            VirtualManager.Resume(false);
 
                             // resume all physical controllers
                             ResumeControllers();
@@ -770,7 +806,7 @@ public static class ControllerManager
                             UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
 
-                            SettingsManager.SetProperty("ControllerManagement", false);
+                            ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                         }
                     }
                     else
@@ -804,18 +840,14 @@ public static class ControllerManager
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
-        // get details passed UserIndex
-        UserIndex userIndex = (UserIndex)details.XInputUserIndex;
-
-        // device manager failed to retrieve actual userIndex
-        // use backup method
-        if (userIndex == UserIndex.Any)
-            userIndex = XInputController.TryGetUserIndex(details);
+        // if device manager failed to retrieve actual userIndex, use backup method
+        if (details.XInputUserIndex == (byte)UserIndex.Any)
+            details.XInputUserIndex = (byte)XInputController.TryGetUserIndex(details);
 
         if (controller is not null)
         {
             ((XInputController)controller).AttachDetails(details);
-            ((XInputController)controller).AttachController((byte)userIndex);
+            ((XInputController)controller).AttachController(details.XInputUserIndex);
 
             // hide new InstanceID (HID)
             if (controller.IsHidden())
@@ -884,27 +916,16 @@ public static class ControllerManager
         ToastManager.SendToast(controller.ToString(), "detected");
 
         // remove controller from powercyclers
-        PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
+        PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+
+        // is controller current target and power cycling ?
+        // if yes, don't pick a new controller
+        bool IsTarget = IsTargetController(controller.GetInstanceId());
+        if (IsTarget && IsPowerCycling)
+            return;
 
         // new controller logic
-        if (DeviceManager.IsInitialized)
-        {
-            if (controller.IsPhysical() && (targetController is null || targetController.IsVirtual()))
-                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
-
-            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
-            targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
-
-            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            switch (ManufacturerName)
-            {
-                case "AOKZOE":
-                case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
-                case "ONE-NETBOOK":
-                    targetController?.Rumble();
-                    break;
-            }
-        }
+        PickTargetController(IsPowerCycling);
     }
 
     private static async void XUsbDeviceRemoved(PnPDetails details, Guid IntefaceGuid)
@@ -927,7 +948,7 @@ public static class ControllerManager
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // is controller current target ?
-        bool WasTarget = targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId;
+        bool WasTarget = IsTargetController(controller.GetInstanceId());
 
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
@@ -937,33 +958,29 @@ public static class ControllerManager
         // controller was unplugged
         if (!IsPowerCycling)
         {
-            controller.Unhide(false);
-            Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+            // unhide on remove
+            if (controller.IsPhysical())
+                controller.Unhide(false);
 
-            // controller is current target
+            // unplug controller, if needed
             if (WasTarget)
             {
-                ClearTargetController();
-                SetPlaceholderController();
+                ClearTargetController(false);
+                PickTargetController(false);
             }
             else
             {
                 controller.Dispose();
             }
-        }
-    }
 
-    private static void SetPlaceholderController()
-    {
-        // summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/oem chords
-        // todo: improve me
-        Controllers[string.Empty] = GetDefault();
-        SetTargetController(string.Empty, false);
+            // controller was unplugged
+            Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+        }
     }
 
     public static bool HasTargetController => GetTargetController() != null;
 
-    private static void ClearTargetController()
+    private static void ClearTargetController(bool IsPowerCycling)
     {
         lock (targetLock)
         {
@@ -972,11 +989,40 @@ public static class ControllerManager
             {
                 targetController.InputsUpdated -= UpdateInputs;
                 targetController.SetLightColor(0, 0, 0);
-                targetController.Dispose();
                 targetController = null;
 
                 // update HIDInstancePath
-                SettingsManager.SetProperty("HIDInstancePath", string.Empty);
+                ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
+            }
+        }
+    }
+
+    public static void PickTargetController(bool isPowerCycling)
+    {
+        lock (targetLock)
+        {
+            // pick last external controller
+            IController? externalController = GetPhysicalControllers().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless());
+
+            // pick first internal controller
+            IController? internalController = GetPhysicalControllers().FirstOrDefault(c => c.IsInternal());
+
+            if (externalController != null)
+            {
+                // only replace controller if current is not external
+                if (targetController == null || targetController.IsInternal())
+                    SetTargetController(externalController.GetContainerInstanceId(), isPowerCycling);
+            }
+            else if (internalController != null)
+            {
+                SetTargetController(internalController.GetContainerInstanceId(), isPowerCycling);
+            }
+            else
+            {
+                // Summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/OEM chords
+                // TODO: Consider refactoring this for better design
+                Controllers[string.Empty] = GetDefault();
+                SetTargetController(string.Empty, false);
             }
         }
     }
@@ -989,8 +1035,12 @@ public static class ControllerManager
             if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
                 return;
 
+            // already self
+            if (IsTargetController(controller.GetInstanceId()))
+                return;
+
             // clear current target
-            ClearTargetController();
+            ClearTargetController(IsPowerCycling);
 
             // update target controller
             targetController = controller;
@@ -1002,11 +1052,11 @@ public static class ControllerManager
             targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
             // update HIDInstancePath
-            SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
+            ManagerFactory.settingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
 
-            if (!IsPowerCycling)
+            if (!IsPowerCycling && !controller.IsVirtual())
             {
-                if (SettingsManager.GetBoolean("HIDcloakonconnect"))
+                if (ManagerFactory.settingsManager.GetBoolean("HIDcloakonconnect"))
                 {
                     bool powerCycle = true;
 
@@ -1014,7 +1064,7 @@ public static class ControllerManager
                     {
                         // todo:    Look for a byte within hid report that'd tend to mean both controllers are synced.
                         //          Then I guess we could try and power cycle them.
-                        powerCycle = !((LegionController)targetController).IsWireless;
+                        powerCycle = !((LegionController)targetController).IsWireless();
                     }
 
                     if (!targetController.IsHidden())
@@ -1028,10 +1078,18 @@ public static class ControllerManager
             // check if controller is about to power cycle
             PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
 
-            if (!IsPowerCycling)
+            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            switch (ManufacturerName)
             {
-                if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
+                case "AOKZOE":
+                case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
+                case "ONE-NETBOOK":
                     targetController.Rumble();
+                    break;
+                default:
+                    if (ManagerFactory.settingsManager.GetBoolean("HIDvibrateonconnect") && !IsPowerCycling)
+                        targetController.Rumble();
+                    break;
             }
 
             ControllerSelected?.Invoke(targetController);
@@ -1124,6 +1182,11 @@ public static class ControllerManager
         return targetController;
     }
 
+    public static bool IsTargetController(string InstanceId)
+    {
+        return targetController?.GetInstanceId() == InstanceId;
+    }
+
     public static bool HasPhysicalController()
     {
         return GetPhysicalControllers().Count() != 0;
@@ -1180,7 +1243,7 @@ public static class ControllerManager
         }
 
         // compute layout
-        controllerState = LayoutManager.MapController(controllerState);
+        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
         InputsUpdated2?.Invoke(controllerState);
 
         // controller is muted
@@ -1205,7 +1268,7 @@ public static class ControllerManager
 
         // if profile HID is NotSelected, use HIDmode from settings
         if (HIDmode == HIDmode.NotSelected)
-            HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+            HIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode", true);
 
         switch (HIDmode)
         {

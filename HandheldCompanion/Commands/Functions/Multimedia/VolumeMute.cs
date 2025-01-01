@@ -15,7 +15,7 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
 
             Update();
 
-            MultimediaManager.VolumeNotification += MultimediaManager_VolumeNotification;
+            ManagerFactory.multimediaManager.VolumeNotification += MultimediaManager_VolumeNotification;
         }
 
         private void MultimediaManager_VolumeNotification(float volume)
@@ -40,13 +40,13 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            MultimediaManager.ToggleMute();
+            ManagerFactory.multimediaManager.ToggleMute();
 
             Update();
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => MultimediaManager.IsMuted();
+        public override bool IsToggled => ManagerFactory.multimediaManager.IsMuted();
 
         public override object Clone()
         {
@@ -66,7 +66,7 @@ namespace HandheldCompanion.Commands.Functions.Multimedia
 
         public override void Dispose()
         {
-            MultimediaManager.VolumeNotification -= MultimediaManager_VolumeNotification;
+            ManagerFactory.multimediaManager.VolumeNotification -= MultimediaManager_VolumeNotification;
             base.Dispose();
         }
     }

@@ -3,6 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -16,17 +17,20 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                return SettingsManager.GetBoolean("HotkeyRumbleOnExecution");
+                return ManagerFactory.settingsManager.GetBoolean("HotkeyRumbleOnExecution");
             }
             set
             {
-                SettingsManager.SetProperty("HotkeyRumbleOnExecution", value);
+                ManagerFactory.settingsManager.SetProperty("HotkeyRumbleOnExecution", value);
                 OnPropertyChanged(nameof(Rumble));
             }
         }
 
         public HotkeyPageViewModel()
         {
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+
             // manage events
             HotkeysManager.Updated += HotkeysManager_Updated;
             HotkeysManager.Deleted += HotkeysManager_Deleted;
@@ -55,7 +59,7 @@ namespace HandheldCompanion.ViewModels
         private void ControllerManager_ControllerSelected(Controllers.IController Controller)
         {
             // (re)draw chords on controller update
-            foreach (HotkeyViewModel hotkeyViewModel in HotkeysList)
+            foreach (HotkeyViewModel hotkeyViewModel in HotkeysList.ToList())
                 hotkeyViewModel.DrawChords();
         }
 

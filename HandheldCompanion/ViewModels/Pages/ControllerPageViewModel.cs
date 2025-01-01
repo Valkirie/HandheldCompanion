@@ -35,35 +35,42 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private object lockcollection = new();
         private void ControllerPlugged(IController Controller, bool IsPowerCycling)
         {
-            ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-            ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstancePath() == Controller.GetInstancePath());
-            if (foundController is null)
+            lock (lockcollection)
             {
-                controllers.SafeAdd(new ControllerViewModel(Controller));
-            }
-            else
-            {
-                foundController.Controller = Controller;
-            }
+                ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
+                ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
+                if (foundController is null)
+                {
+                    controllers.SafeAdd(new ControllerViewModel(Controller));
+                }
+                else
+                {
+                    foundController.Controller = Controller;
+                }
 
-            controllerPage.ControllerRefresh();
+                controllerPage.ControllerRefresh();
+            }
         }
 
 
         private void ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
-            ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-            ControllerViewModel? foundController = controllers.ToList().FirstOrDefault(controller => controller.Controller.GetInstancePath() == Controller.GetInstancePath());
-            if (foundController is not null && !IsPowerCycling)
+            lock (lockcollection)
             {
-                controllers.SafeRemove(foundController);
-                foundController.Dispose();
-            }
+                ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
+                ControllerViewModel? foundController = controllers.ToList().FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
+                if (foundController is not null && !IsPowerCycling)
+                {
+                    controllers.SafeRemove(foundController);
+                    foundController.Dispose();
+                }
 
-            // do something
-            controllerPage.ControllerRefresh();
+                // do something
+                controllerPage.ControllerRefresh();
+            }
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)

@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controls.Hints;
+using HandheldCompanion.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,9 +36,7 @@ namespace HandheldCompanion.Views.Pages
         private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             // Calculate the number of visible notifications on a background thread
-            int notifications = Application.Current.Dispatcher.Invoke(() =>
-                Notifications.Children.OfType<IHint>().Count(element => element.Visibility == Visibility.Visible));
-
+            int notifications = UIHelper.TryInvoke(() => Notifications.Children.OfType<IHint>().Count(element => element.Visibility == Visibility.Visible));
             if (notifications != prevNotifications)
             {
                 // UI thread (async)
@@ -61,7 +60,7 @@ namespace HandheldCompanion.Views.Pages
         public void Page_Closed()
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 IEnumerable<IHint> notifications = Notifications.Children.OfType<IHint>();
                 foreach (IHint hint in notifications)

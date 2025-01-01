@@ -118,7 +118,7 @@ namespace HandheldCompanion.Managers
             SteeringAxis steeringAxis = current.SteeringAxis;
             if (steeringAxis == SteeringAxis.Auto)
             {
-                SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
+                SensorFamily sensorSelection = (SensorFamily)ManagerFactory.settingsManager.GetInt("SensorSelection");
                 if (sensorSelection == SensorFamily.Windows || sensorSelection == SensorFamily.SerialUSBIMU)
                 {
                     return SteeringAxis.Yaw;
@@ -168,7 +168,7 @@ namespace HandheldCompanion.Managers
         private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             // TODO: handle this race condition gracefully. LayoutManager might be updating currentlayout as we land here
-            Layout currentLayout = LayoutManager.GetCurrent();
+            Layout currentLayout = ManagerFactory.layoutManager.GetCurrent();
             if (currentLayout is null)
                 return;
 

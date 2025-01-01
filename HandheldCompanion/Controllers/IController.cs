@@ -74,7 +74,7 @@ namespace HandheldCompanion.Controllers
         protected SortedDictionary<AxisLayoutFlags, Color> ColoredAxis = [];
         protected SortedDictionary<ButtonFlags, Color> ColoredButtons = [];
 
-        public PnPDetails Details;
+        protected PnPDetails? Details;
 
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
@@ -88,10 +88,6 @@ namespace HandheldCompanion.Controllers
         protected object hidLock = new();
 
         public virtual bool IsReady => true;
-
-        public virtual bool IsWireless => Details.isBluetooth;
-        public virtual bool IsDongle => Details.isDongle;
-        public string Enumerator => Details.EnumeratorName;
 
         public bool isPlaceholder;
 
@@ -149,10 +145,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             this.Details = details;
-            Details.isHooked = true;
-
-            if (details.isVirtual)
-                return;
+            this.Details.isHooked = true;
 
             // manage gamepad motion
             gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
@@ -188,10 +181,43 @@ namespace HandheldCompanion.Controllers
             return true;
         }
 
+        public bool IsInternal()
+        {
+            return !IsExternal();
+        }
+
+        public bool IsExternal()
+        {
+            if (Details is not null)
+                return Details.isExternal;
+            return true;
+        }
+
+        public bool IsXInput()
+        {
+            if (Details is not null)
+                return Details.isXInput;
+            return false;
+        }
+
         public bool IsGaming()
         {
             if (Details is not null)
                 return Details.isGaming;
+            return false;
+        }
+
+        public virtual bool IsWireless()
+        {
+            if (Details is not null)
+                return Details.isBluetooth;
+            return false;
+        }
+
+        public bool IsDongle()
+        {
+            if (Details is not null)
+                return Details.isDongle;
             return false;
         }
 
@@ -200,18 +226,46 @@ namespace HandheldCompanion.Controllers
             return UserIndex;
         }
 
-        public string GetInstancePath()
+        public string GetInstanceId()
         {
             if (Details is not null)
                 return Details.deviceInstanceId;
             return string.Empty;
         }
 
-        public string GetContainerInstancePath()
+        public string GetPath()
+        {
+            if (Details is not null)
+                return Details.devicePath;
+            return string.Empty;
+        }
+
+        public string GetContainerInstanceId()
         {
             if (Details is not null)
                 return Details.baseContainerDeviceInstanceId;
             return string.Empty;
+        }
+
+        public string GetContainerPath()
+        {
+            if (Details is not null)
+                return Details.baseContainerDevicePath;
+            return string.Empty;
+        }
+
+        public string GetEnumerator()
+        {
+            if (Details is not null)
+                return Details.EnumeratorName;
+            return "USB";
+        }
+
+        public DateTimeOffset GetLastArrivalDate()
+        {
+            if (Details is not null)
+                return Details.GetLastArrivalDate();
+            return new();
         }
 
         public void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
@@ -311,7 +365,7 @@ namespace HandheldCompanion.Controllers
             if (isPlaceholder)
                 return;
 
-            SetVibrationStrength(SettingsManager.GetUInt("VibrationStrength"));
+            SetVibrationStrength(ManagerFactory.settingsManager.GetUInt("VibrationStrength"));
 
             InjectedButtons.Clear();
         }
@@ -356,14 +410,17 @@ namespace HandheldCompanion.Controllers
 
         public virtual void CyclePort()
         {
+            if (Details is null)
+                return;
+
             // set status
             IsBusy = true;
-            ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+            ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
 
-            switch (Enumerator)
+            switch (GetEnumerator())
             {
-                default:
                 case "BTHENUM":
+                case "BTHLEDEVICE":
                     Task.Run(async () =>
                     {
                         Details.Uninstall(false);
@@ -371,6 +428,7 @@ namespace HandheldCompanion.Controllers
                         Devcon.Refresh();
                     });
                     break;
+                default:
                 case "USB":
                     Details.CyclePort();
                     break;

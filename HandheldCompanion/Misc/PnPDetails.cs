@@ -18,7 +18,7 @@ public class PnPDetails : IDisposable
 
     public bool isVirtual;
     public bool isPhysical => !isVirtual;
-    public bool isBluetooth => EnumeratorName.Equals("BTHENUM");
+    public bool isBluetooth => EnumeratorName.Equals("BTHENUM") || EnumeratorName.Equals("BTHLEDEVICE");
     public bool isUSB => EnumeratorName.Equals("USB");
     public bool isDongle = false;
 
@@ -28,7 +28,6 @@ public class PnPDetails : IDisposable
     public string Name = string.Empty;
     public string SymLink = string.Empty;
     public string EnumeratorName = string.Empty;
-    public DateTimeOffset FirstInstallDate;
 
     public Guid InterfaceGuid;
 
@@ -62,6 +61,15 @@ public class PnPDetails : IDisposable
             return number;
 
         return -1;
+    }
+
+    public DateTimeOffset GetLastArrivalDate()
+    {
+        PnPDevice device = GetPnPDevice();
+        if (device is null)
+            return new();
+
+        return device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
     }
 
     public UsbPnPDevice GetUsbPnPDevice()

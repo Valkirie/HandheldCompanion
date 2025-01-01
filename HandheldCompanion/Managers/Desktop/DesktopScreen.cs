@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Misc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using static HandheldCompanion.Managers.MultimediaManager;
 
 namespace HandheldCompanion.Managers.Desktop;
 
@@ -95,65 +95,6 @@ public class ScreenDivider
     }
 }
 
-public struct ScreenRotation
-{
-    public enum Rotations
-    {
-        UNSET = -1,
-        DEFAULT = 0,
-        D90 = 1,
-        D180 = 2,
-        D270 = 3
-    }
-
-    public Rotations rotation;
-    public Rotations rotationNativeBase;
-    public Rotations rotationUnnormalized;
-
-    public ScreenRotation()
-    {
-        rotationUnnormalized = Rotations.DEFAULT;
-        rotationNativeBase = Rotations.DEFAULT;
-        rotation = Rotations.DEFAULT;
-    }
-
-    public ScreenRotation(Rotations unnormalized, Rotations native)
-    {
-        rotationUnnormalized = unnormalized;
-
-        if (native == Rotations.UNSET)
-            rotationNativeBase = (Rotations)((4 - (int)unnormalized) % 4);
-        else
-            rotationNativeBase = native;
-
-        rotation = (Rotations)(((int)unnormalized + (int)rotationNativeBase) % 4);
-    }
-
-    public static implicit operator Rotations(ScreenRotation r)
-    {
-        return r.rotation;
-    }
-
-    public static implicit operator ScreenOrientation(ScreenRotation r)
-    {
-        return (ScreenOrientation)r.rotation;
-    }
-
-    public override string ToString()
-    {
-        switch (rotation)
-        {
-            case Rotations.DEFAULT:
-            case Rotations.D90:
-            case Rotations.D180:
-            case Rotations.D270:
-                return $"{((int)rotation * 90).ToString()}°";
-            default:
-                return "undefined";
-        }
-    }
-}
-
 public class DesktopScreen
 {
     public DisplayDevice devMode;
@@ -171,9 +112,9 @@ public class DesktopScreen
     {
         this.screen = screen;
 
-        devMode = GetDisplay(screen.DeviceName);
-        FriendlyName = GetDisplayFriendlyName(screen.DeviceName);
-        DevicePath = GetDisplayPath(screen.DeviceName);
+        devMode = MultimediaManager.GetDisplay(screen.DeviceName);
+        FriendlyName = MultimediaManager.GetDisplayFriendlyName(screen.DeviceName);
+        DevicePath = MultimediaManager.GetDisplayPath(screen.DeviceName);
     }
 
     public override string ToString()

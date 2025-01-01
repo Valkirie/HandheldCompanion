@@ -58,7 +58,7 @@ public partial class OverlayModel : OverlayWindow
     {
         InitializeComponent();
 
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         float samplePeriod = TimerManager.GetPeriod() / 1000f;
         madgwickAHRS = new(samplePeriod, 0.01f);
@@ -76,7 +76,7 @@ public partial class OverlayModel : OverlayWindow
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -175,7 +175,7 @@ public partial class OverlayModel : OverlayWindow
     public override void ToggleVisibility()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (Visibility)
             {
@@ -257,7 +257,7 @@ public partial class OverlayModel : OverlayWindow
         HighLightButtons();
 
         // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             // Define transformation group for model
             var Transform3DGroupModel = new Transform3DGroup();
@@ -412,7 +412,7 @@ public partial class OverlayModel : OverlayWindow
                 continue;
 
             // Execute the following code on the UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 // Todo, there is a bug here when switching 3D overlay type that
                 // things are checked from a controller that does not exist or opposite

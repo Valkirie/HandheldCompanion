@@ -30,7 +30,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Update()
         {
-            HIDmode currentHIDmode = (HIDmode)SettingsManager.GetInt(SettingsName, true);
+            HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt(SettingsName, true);
             switch (currentHIDmode)
             {
                 case HIDmode.Xbox360Controller:
@@ -48,14 +48,14 @@ namespace HandheldCompanion.Commands.Functions.HC
         {
             if (IsEnabled)
             {
-                HIDmode currentHIDmode = (HIDmode)SettingsManager.GetInt(SettingsName, true);
+                HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt(SettingsName, true);
                 switch (currentHIDmode)
                 {
                     case HIDmode.Xbox360Controller:
-                        SettingsManager.SetProperty(SettingsName, (int)HIDmode.DualShock4Controller);
+                        ManagerFactory.settingsManager.SetProperty(SettingsName, (int)HIDmode.DualShock4Controller);
                         break;
                     case HIDmode.DualShock4Controller:
-                        SettingsManager.SetProperty(SettingsName, (int)HIDmode.Xbox360Controller);
+                        ManagerFactory.settingsManager.SetProperty(SettingsName, (int)HIDmode.Xbox360Controller);
                         break;
                     default:
                         break;

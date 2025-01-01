@@ -4,6 +4,7 @@ using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -22,7 +23,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Commands.ICommands;
-using Application = System.Windows.Application;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -553,7 +553,7 @@ namespace HandheldCompanion.ViewModels
                 controller = ControllerManager.GetDefault();
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
                 {

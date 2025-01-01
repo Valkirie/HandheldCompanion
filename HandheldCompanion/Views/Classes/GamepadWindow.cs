@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -60,7 +61,7 @@ namespace HandheldCompanion.Views.Classes
             else if (this is OverlayQuickTools)
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                UIHelper.TryInvoke(() =>
                 {
                     if (_highlightAdorner != null)
                     {

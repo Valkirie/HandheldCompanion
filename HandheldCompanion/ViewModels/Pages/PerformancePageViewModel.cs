@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
@@ -145,12 +146,12 @@ namespace HandheldCompanion.ViewModels
 
         public double TDPMinimum
         {
-            get => SettingsManager.GetDouble(Settings.ConfigurableTDPOverrideDown);
+            get => ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideDown);
             set
             {
                 if (value != TDPMinimum)
                 {
-                    SettingsManager.SetProperty(Settings.ConfigurableTDPOverrideDown, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.ConfigurableTDPOverrideDown, value);
                     OnPropertyChanged(nameof(TDPMinimum));
                 }
             }
@@ -158,12 +159,12 @@ namespace HandheldCompanion.ViewModels
 
         public double TDPMaximum
         {
-            get => SettingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
+            get => ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
             set
             {
                 if (value != TDPMaximum)
                 {
-                    SettingsManager.SetProperty(Settings.ConfigurableTDPOverrideUp, value);
+                    ManagerFactory.settingsManager.SetProperty(Settings.ConfigurableTDPOverrideUp, value);
                     OnPropertyChanged(nameof(TDPMaximum));
                 }
             }
@@ -173,10 +174,10 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (!MultimediaManager.IsInitialized)
+                if (ManagerFactory.multimediaManager.Status != ManagerStatus.Initialized)
                     return 60.0d;
 
-                return MultimediaManager.PrimaryDesktop.devMode.dmDisplayFrequency;
+                return ManagerFactory.multimediaManager.PrimaryDesktop.devMode.dmDisplayFrequency;
             }
         }
 
@@ -500,17 +501,22 @@ namespace HandheldCompanion.ViewModels
             #region General Setup
 
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
 
             // raise events
-            if (MultimediaManager.IsInitialized)
+            switch (ManagerFactory.multimediaManager.Status)
             {
-                MultimediaManager_PrimaryScreenChanged(MultimediaManager.PrimaryDesktop);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryMedia();
+                    break;
             }
 
             // Enable thread-safe access to the collection
@@ -521,10 +527,17 @@ namespace HandheldCompanion.ViewModels
                 if (SelectedPreset is null)
                     return;
 
+                switch (e.PropertyName)
+                {
+                    case "ModifyPresetName":
+                    case "ModifyPresetDescription":
+                        return;
+                }
+
                 // TODO: Get rid of UI update here of fan graph UI dependency
                 if (!IsQuickTools)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    UIHelper.TryInvoke(() =>
                     {
                         _updatingFanCurveUI = true;
                         // update charts
@@ -639,12 +652,13 @@ namespace HandheldCompanion.ViewModels
                         PresetDescription = ModifyPresetDescription;
 
                         selectedItem.Text = ModifyPresetName;
+                        OnPropertyChanged("ModifyPresets");
                     }
                 });
 
                 FanPresetSilentCommand = new DelegateCommand(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    UIHelper.TryInvoke(() =>
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
@@ -657,7 +671,7 @@ namespace HandheldCompanion.ViewModels
 
                 FanPresetPerformanceCommand = new DelegateCommand(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    UIHelper.TryInvoke(() =>
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
@@ -670,7 +684,7 @@ namespace HandheldCompanion.ViewModels
 
                 FanPresetTurboCommand = new DelegateCommand(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    UIHelper.TryInvoke(() =>
                     {
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
@@ -685,11 +699,21 @@ namespace HandheldCompanion.ViewModels
             #endregion
         }
 
+        private void QueryMedia()
+        {
+            MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
+        }
+
+        private void MultimediaManager_Initialized()
+        {
+            QueryMedia();
+        }
 
         public override void Dispose()
         {
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-            MultimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+            ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
             PerformanceManager.ProcessorStatusChanged -= PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             PowerProfileManager.Updated -= PowerProfileManager_Updated;

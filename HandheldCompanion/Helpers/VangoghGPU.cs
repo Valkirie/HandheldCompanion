@@ -58,10 +58,10 @@ namespace HandheldCompanion.Helpers
         {
             var discoveredDevices = new Dictionary<string, string>();
 
-            foreach (var pnp in DeviceManager.GetDevices(DeviceManager.GUID_DISPLAY) ?? new string[0])
+            foreach (var pnp in ManagerFactory.deviceManager.GetDevices(DeviceManager.GUID_DISPLAY) ?? new string[0])
             {
                 // Properly support many devices with the same name (pick the first one)
-                var name = DeviceManager.GetDeviceDesc(pnp);
+                var name = ManagerFactory.deviceManager.GetDeviceDesc(pnp);
                 if (name is not null && !discoveredDevices.ContainsKey(name))
                     discoveredDevices[name] = pnp;
             }
@@ -77,7 +77,7 @@ namespace HandheldCompanion.Helpers
                 }
 
                 var devicePNP = discoveredDevices[deviceName];
-                var ranges = DeviceManager.GetDeviceMemResources(devicePNP);
+                var ranges = ManagerFactory.deviceManager.GetDeviceMemResources(devicePNP);
                 if (ranges is null)
                 {
                     LogManager.LogDebug("GPU: {0}: {1}: No memory ranges", deviceName, devicePNP);

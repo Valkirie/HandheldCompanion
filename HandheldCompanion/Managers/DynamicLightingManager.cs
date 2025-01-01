@@ -76,19 +76,28 @@ public static class DynamicLightingManager
         SetAmbientLightingEnabled(false);
 
         // manage events
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
         // raise events
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", SettingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false);
-            SettingsManager_SettingValueChanged("LEDSettingsEnabled", SettingsManager.GetString("LEDSettingsEnabled"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
-        if (MultimediaManager.IsInitialized)
+        switch (ManagerFactory.multimediaManager.Status)
         {
-            MultimediaManager_DisplaySettingsChanged(MultimediaManager.PrimaryDesktop, MultimediaManager.PrimaryDesktop.GetResolution());
+            case ManagerStatus.Initializing:
+                ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryMedia();
+                break;
         }
 
         IsInitialized = true;
@@ -97,14 +106,37 @@ public static class DynamicLightingManager
         LogManager.LogInformation("{0} has started", "DynamicLightingManager");
     }
 
+    private static void QueryMedia()
+    {
+        MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
+    }
+
+    private static void MultimediaManager_Initialized()
+    {
+        QueryMedia();
+    }
+
+    private static void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", ManagerFactory.settingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false);
+        SettingsManager_SettingValueChanged("LEDSettingsEnabled", ManagerFactory.settingsManager.GetString("LEDSettingsEnabled"), false);
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
 
         // manage events
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
 
         StopAmbilight();
         ReleaseDirect3DDevice();
@@ -142,8 +174,8 @@ public static class DynamicLightingManager
         squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
         // Check LED settings
-        bool LEDSettingsEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
-        bool IsAmbilightOn = SettingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
+        bool LEDSettingsEnabled = ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
+        bool IsAmbilightOn = ManagerFactory.settingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
 
         // Restart Ambilight if necessary
         if (IsAmbilightOn && LEDSettingsEnabled)
@@ -221,7 +253,7 @@ public static class DynamicLightingManager
 
     private static void UpdateLED()
     {
-        bool LEDSettingsEnabled = SettingsManager.GetBoolean("LEDSettingsEnabled");
+        bool LEDSettingsEnabled = ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
         IDevice device = IDevice.GetCurrent();
         device.SetLedStatus(LEDSettingsEnabled);
 
@@ -234,18 +266,18 @@ public static class DynamicLightingManager
         }
 
         // Get LED settings
-        LEDLevel LEDSettingsLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
-        int LEDBrightness = SettingsManager.GetInt("LEDBrightness");
-        int LEDSpeed = SettingsManager.GetInt("LEDSpeed");
+        LEDLevel LEDSettingsLevel = (LEDLevel)ManagerFactory.settingsManager.GetInt("LEDSettingsLevel");
+        int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
+        int LEDSpeed = ManagerFactory.settingsManager.GetInt("LEDSpeed");
         device.SetLedBrightness(LEDBrightness);
 
         // Get colors
-        Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
-        Color LEDSecondColor = SettingsManager.GetColor("LEDSecondColor");
-        bool useSecondColor = SettingsManager.GetBoolean("LEDUseSecondColor");
+        Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
+        Color LEDSecondColor = ManagerFactory.settingsManager.GetColor("LEDSecondColor");
+        bool useSecondColor = ManagerFactory.settingsManager.GetBoolean("LEDUseSecondColor");
 
         // Get preset
-        int LEDPresetIndex = SettingsManager.GetInt("LEDPresetIndex");
+        int LEDPresetIndex = ManagerFactory.settingsManager.GetInt("LEDPresetIndex");
         List<LEDPreset> presets = device.LEDPresets;
         LEDPreset? selectedPreset = LEDPresetIndex < presets.Count ? presets[LEDPresetIndex] : null;
 

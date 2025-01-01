@@ -300,7 +300,7 @@ public class NeptuneController : SteamController
     public override void Unhide(bool powerCycle = true)
     {
         // you shouldn't unhide the controller if steam mode is set to: exclusive
-        bool IsExclusiveMode = SettingsManager.GetBoolean("SteamControllerMode");
+        bool IsExclusiveMode = ManagerFactory.settingsManager.GetBoolean("SteamControllerMode");
         if (IsExclusiveMode)
             return;
 
@@ -335,15 +335,32 @@ public class NeptuneController : SteamController
         };
         rumbleThread.Start();
 
+        // manage events
         TimerManager.Tick += UpdateInputs;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", SettingsManager.GetInt("SteamControllerRumbleInterval"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         base.Plug();
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetInt("SteamControllerRumbleInterval"), false);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -379,7 +396,8 @@ public class NeptuneController : SteamController
         }
 
         TimerManager.Tick -= UpdateInputs;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Unplug();
     }

@@ -333,7 +333,7 @@ public class LegionGo : IDevice
 
         // manage events
         PowerProfileManager.Applied += PowerProfileManager_Applied;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         if (PowerProfileManager.IsInitialized)
@@ -341,12 +341,27 @@ public class LegionGo : IDevice
             PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
-        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+        switch (ManagerFactory.settingsManager.Status)
         {
-            SettingsManager_SettingValueChanged("BatteryChargeLimit", SettingsManager.GetBoolean("BatteryChargeLimit"), false);
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
         }
 
         return true;
+    }
+
+    private void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
     }
 
     public override void Close()
@@ -369,7 +384,8 @@ public class LegionGo : IDevice
         SetFanFullSpeedAsync(false);
 
         PowerProfileManager.Applied -= PowerProfileManager_Applied;
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Close();
     }

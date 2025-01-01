@@ -66,9 +66,6 @@ namespace HandheldCompanion.Managers
                 MessageBox.Show("Unable to start Handheld Companion, the ViGEm application is missing.\n\nPlease get it from: https://github.com/ViGEm/ViGEmBus/releases", "Error");
                 throw new InvalidOperationException();
             }
-
-            // load a few variables
-            HIDstatus = (HIDstatus)SettingsManager.GetInt("HIDstatus");
         }
 
         public static async void Start()
@@ -82,28 +79,19 @@ namespace HandheldCompanion.Managers
                     await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context
 
             // manage events
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             // raise events
-            if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+            switch (ManagerFactory.settingsManager.Status)
             {
-                // Retrieve the default HID mode from settings
-                HIDmode selectedHIDMode = (HIDmode)SettingsManager.GetInt("HIDmode");
-
-                // Check if ProfileManager is initialized and a valid profile is available
-                if (ProfileManager.IsInitialized)
-                {
-                    Profile currentProfile = ProfileManager.GetCurrent();
-                    if (currentProfile != null && currentProfile.HID != HIDmode.NotSelected)
-                        selectedHIDMode = currentProfile.HID;
-                }
-
-                // Update the settings with the resolved HID mode
-                SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false);
-                // SettingsManager_SettingValueChanged("HIDstatus", SettingsManager.GetString("HIDstatus"), false);
-                SettingsManager_SettingValueChanged("DSUEnabled", SettingsManager.GetString("DSUEnabled"), false);
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
             }
 
             /*
@@ -119,6 +107,32 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "VirtualManager");
         }
 
+        private static void QuerySettings()
+        {
+            // Retrieve the default HID mode from settings
+            HIDmode selectedHIDMode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode");
+
+            // Check if ProfileManager is initialized and a valid profile is available
+            if (ProfileManager.IsInitialized)
+            {
+                Profile currentProfile = ProfileManager.GetCurrent();
+                if (currentProfile != null && currentProfile.HID != HIDmode.NotSelected)
+                    selectedHIDMode = currentProfile.HID;
+            }
+
+            // load a few variables
+            HIDstatus = (HIDstatus)ManagerFactory.settingsManager.GetInt("HIDstatus");
+
+            // apply settings
+            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false);
+            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false);
+        }
+
+        private static void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         public static void Stop()
         {
             if (!IsInitialized)
@@ -127,7 +141,8 @@ namespace HandheldCompanion.Managers
             Suspend(true);
 
             // manage events
-            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ProfileManager.Applied -= ProfileManager_Applied;
             ProfileManager.Discarded -= ProfileManager_Discarded;
 
@@ -159,7 +174,7 @@ namespace HandheldCompanion.Managers
                 if (OS)
                 {
                     // update DSU status
-                    SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+                    SetDSUStatus(ManagerFactory.settingsManager.GetBoolean("DSUEnabled"));
                 }
             }
 
@@ -209,7 +224,7 @@ namespace HandheldCompanion.Managers
                 case "HIDstatus":
                     {
                         // skip on cold boot, retrieved by Start() function and called by SetControllerMode()
-                        if (SettingsManager.IsInitialized || SettingsManager.IsInitializing)
+                        if (ManagerFactory.settingsManager.Status == ManagerStatus.Initialized)
                             SetControllerStatus((HIDstatus)Convert.ToInt32(value));
                     }
                     break;
