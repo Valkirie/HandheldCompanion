@@ -269,11 +269,13 @@ public class MultimediaManager : IManager
         DesktopScreen newPrimary = desktopScreens.Values.Where(a => a.IsPrimary).FirstOrDefault();
         if (newPrimary is not null)
         {
+            bool IsNew = PrimaryDesktop?.DevicePath != newPrimary.DevicePath;
+
             // set or update current primary
             PrimaryDesktop = newPrimary;
 
             // looks like we have a new primary screen
-            if (PrimaryDesktop is null || !PrimaryDesktop.DevicePath.Equals(newPrimary.DevicePath))
+            if (IsNew)
             {
                 LogManager.LogInformation("Primary screen set to {0}", newPrimary.ToString());
 
