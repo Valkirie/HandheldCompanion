@@ -178,9 +178,7 @@ public static class ControllerManager
 
     private static void OnColorValuesChanged(UISettings sender, object args)
     {
-        var _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-        var _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
-
+        Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.AccentDark1);
         targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
     }
 
@@ -1047,8 +1045,7 @@ public static class ControllerManager
             targetController.InputsUpdated += UpdateInputs;
             targetController.Plug();
 
-            Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.AccentDark1);
             targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
             // update HIDInstancePath

@@ -125,6 +125,7 @@ namespace HandheldCompanion.Managers
 
             // apply settings
             SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false);
+            SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false);
             SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false);
         }
 
