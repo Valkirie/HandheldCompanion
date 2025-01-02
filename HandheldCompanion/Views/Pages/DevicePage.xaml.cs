@@ -87,6 +87,7 @@ namespace HandheldCompanion.Views.Pages
         {
             if (IDevice.GetCurrent() is LegionGo)
             {
+                // make panel visible
                 LegionGoPanel.Visibility = Visibility.Visible;
 
                 // Left joycon settings
@@ -119,6 +120,8 @@ namespace HandheldCompanion.Views.Pages
                 LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
                 LedPresetsComboBox.SelectedIndex = currentSelected;
             }
+
+            DeviceSettingsPanel.Visibility = LegionGoPanel.Visibility == Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
         }
 
         public void Page_Closed()

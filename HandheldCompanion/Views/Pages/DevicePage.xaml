@@ -909,7 +909,12 @@
             </ikw:SimpleStackPanel>
 
             <!--  Device settings  -->
-            <ikw:SimpleStackPanel Grid.Row="1" Spacing="6">
+            <ikw:SimpleStackPanel
+                Name="DeviceSettingsPanel"
+                Grid.Row="1"
+                d:Visibility="Visible"
+                Spacing="6"
+                Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
                 <!--  Lenovo Legion Go  -->
