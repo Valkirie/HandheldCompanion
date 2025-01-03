@@ -16,6 +16,17 @@ namespace HandheldCompanion.Managers
 {
     public static class VirtualManager
     {
+        #region imports
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+        #endregion
+
         // controllers vars
         public static ViGEmClient vClient;
         public static ViGEmTarget vTarget;
@@ -33,7 +44,11 @@ namespace HandheldCompanion.Managers
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         public static ushort ProductId = 0x28E; // Xbox 360
+        private static ushort prevProductId = ProductId;
+
         public static ushort VendorId = 0x45E;  // Microsoft
+        private static ushort prevVendorId = VendorId;
+
         private static object threadLock = new();
 
         public static bool IsInitialized;
@@ -152,15 +167,6 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "VirtualManager");
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr LoadLibrary(string lpFileName);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool FreeLibrary(IntPtr hModule);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-
         public static void Resume(bool OS)
         {
             lock (threadLock)
@@ -180,7 +186,7 @@ namespace HandheldCompanion.Managers
             }
 
             // set controller mode
-            SetControllerMode(HIDmode);
+            SetControllerMode(HIDmode, prevProductId);
         }
 
         public static void Suspend(bool OS)
@@ -207,6 +213,9 @@ namespace HandheldCompanion.Managers
                 {
                     // halt DSU
                     SetDSUStatus(false);
+
+                    // store ProductID
+                    prevProductId = ProductId;
                 }
             }
         }
@@ -279,7 +288,7 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-        public static void SetControllerMode(HIDmode mode)
+        public static void SetControllerMode(HIDmode mode, ushort RestoreID = 0)
         {
             lock (threadLock)
             {
@@ -319,7 +328,11 @@ namespace HandheldCompanion.Managers
                     case HIDmode.Xbox360Controller:
                         // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
                         // VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
-                        ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
+                        if (RestoreID != 0)
+                            ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
+                        else
+                            ProductId = RestoreID;
+
                         vTarget = new Xbox360Target(VendorId, ProductId);
                         break;
                 }
