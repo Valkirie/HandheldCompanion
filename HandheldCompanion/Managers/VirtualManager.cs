@@ -186,7 +186,7 @@ namespace HandheldCompanion.Managers
             }
 
             // set controller mode
-            SetControllerMode(HIDmode, prevProductId);
+            SetControllerMode(HIDmode, (ushort)(OS ? prevProductId : 0));
         }
 
         public static void Suspend(bool OS)
