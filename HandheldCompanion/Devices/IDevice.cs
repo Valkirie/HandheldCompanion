@@ -458,13 +458,16 @@ public abstract class IDevice
                                 case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
                                     device = new GPDWin4_2024_8840U();
                                     break;
-
+                                case "AMD Ryzen AI 9 HX 370 w/ Radeon 890M":
+                                    device = new GPDWin4_2024_HX370();
+                                    break;
                             }
                             break;
                         case "G1619-03":
                             device = new GPDWinMax2Intel();
                             break;
                         case "G1619-04":
+                        case "G1619-05":
                             switch (Processor)
                             {
                                 case "AMD Ryzen 7 6800U with Radeon Graphics":
