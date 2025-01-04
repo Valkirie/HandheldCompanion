@@ -1252,30 +1252,6 @@
   <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>需要重新啟動</value>
   </data>
-  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
-    <value>是</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
-    <value>否</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
-    <value>停用該設定亦將同時停用"改進虛擬手柄偵測"，是否繼續？</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
-    <value>警告</value>
-  </data>
-  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
-    <value>是</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
-    <value>否</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
-    <value>如果您關閉掌機伴侶，改進虛擬手柄偵測可能無法運作。確定關閉？</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
-    <value>警告</value>
-  </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>製造商</value>
   </data>
@@ -2857,261 +2833,261 @@
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Trigger Margin</value>
   </data>
-  <data name='DevicePage_DeviceSettings' xml:space='preserve'>
+  <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>裝置設定</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
-  <data name='Enum_LegionController_ButtonFlags_RightPadClick' xml:space='preserve'>
+  <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
   </data>
-  <data name='Enum_LegionController_ButtonFlags_RightPadClickDown' xml:space='preserve'>
+  <data name="Enum_LegionController_ButtonFlags_RightPadClickDown" xml:space="preserve">
     <value>Hold</value>
   </data>
-  <data name='Enum_LegionController_ButtonFlags_RightPadTouch' xml:space='preserve'>
+  <data name="Enum_LegionController_ButtonFlags_RightPadTouch" xml:space="preserve">
     <value>Touch</value>
   </data>
-  <data name='Enum_Input_LocalSpace' xml:space='preserve'>
+  <data name="Enum_Input_LocalSpace" xml:space="preserve">
     <value>Local space</value>
   </data>
-  <data name='Enum_MotionInput_LocalSpace' xml:space='preserve'>
+  <data name="Enum_MotionInput_LocalSpace" xml:space="preserve">
     <value>Local space</value>
   </data>
-  <data name='Enum_MotionInput_LocalSpace_Desc' xml:space='preserve'>
+  <data name="Enum_MotionInput_LocalSpace_Desc" xml:space="preserve">
     <value>Input is based on the controllerâ€™s orientation, independent of the game world or character.</value>
   </data>
-  <data name='SettingsPage_SensorCalibration' xml:space='preserve'>
+  <data name="SettingsPage_SensorCalibration" xml:space="preserve">
     <value>傳感器校准</value>
   </data>
-  <data name='SettingsPage_SensorCalibrationDesc' xml:space='preserve'>
+  <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
     <value>將校準您裝置的IMU傳感器</value>
   </data>
-  <data name='OverlayPage_DualShock4Controller' xml:space='preserve'>
+  <data name="OverlayPage_DualShock4Controller" xml:space="preserve">
     <value>DualShock 4</value>
   </data>
-  <data name='OverlayPage_SteamDeck' xml:space='preserve'>
+  <data name="OverlayPage_SteamDeck" xml:space="preserve">
     <value>Steam Deck</value>
   </data>
-  <data name='OverlayPage_Xbox360Controller' xml:space='preserve'>
+  <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
     <value>Xbox 360</value>
   </data>
-  <data name='ProfilesPage_RollYawAuto' xml:space='preserve'>
+  <data name="ProfilesPage_RollYawAuto" xml:space="preserve">
     <value>Auto</value>
   </data>
-  <data name='Hint_MSIClawCenterCheck' xml:space='preserve'>
+  <data name="Hint_MSIClawCenterCheck" xml:space="preserve">
     <value>MSI Center is running</value>
   </data>
-  <data name='Hint_MSIClawCenterCheckAction' xml:space='preserve'>
+  <data name="Hint_MSIClawCenterCheckAction" xml:space="preserve">
     <value>Disable MSI Center</value>
   </data>
-  <data name='Hint_MSIClawCenterCheckDesc' xml:space='preserve'>
+  <data name="Hint_MSIClawCenterCheckDesc" xml:space="preserve">
     <value>MSI Center is running on your device. This may interfere with the application</value>
   </data>
-  <data name='Hint_MSIClawCenterCheckReadme' xml:space='preserve'>
+  <data name="Hint_MSIClawCenterCheckReadme" xml:space="preserve">
     <value>You should disable MSI Center, so that the application can run smoothly and without any conflicts</value>
   </data>
-  <data name='PowerProfileMSIClawBestPerformance' xml:space='preserve'>
+  <data name="PowerProfileMSIClawBestPerformance" xml:space="preserve">
     <value>Extreme Performance</value>
   </data>
-  <data name='PowerProfileMSIClawBestPerformanceDesc' xml:space='preserve'>
+  <data name="PowerProfileMSIClawBestPerformanceDesc" xml:space="preserve">
     <value>The best system performance for multi-tasking and heavy duty.</value>
   </data>
-  <data name='PowerProfileMSIClawBetterBattery' xml:space='preserve'>
+  <data name="PowerProfileMSIClawBetterBattery" xml:space="preserve">
     <value>Super Battery</value>
   </data>
-  <data name='PowerProfileMSIClawBetterBatteryDesc' xml:space='preserve'>
+  <data name="PowerProfileMSIClawBetterBatteryDesc" xml:space="preserve">
     <value>The longest possible battery life.</value>
   </data>
-  <data name='PowerProfileMSIClawBetterPerformance' xml:space='preserve'>
+  <data name="PowerProfileMSIClawBetterPerformance" xml:space="preserve">
     <value>Balanced</value>
   </data>
-  <data name='PowerProfileMSIClawBetterPerformanceDesc' xml:space='preserve'>
+  <data name="PowerProfileMSIClawBetterPerformanceDesc" xml:space="preserve">
     <value>The best system settings that MSI recommends.</value>
   </data>
-  <data name='Enum_InputsHotkeyType_Profiles' xml:space='preserve'>
+  <data name="Enum_InputsHotkeyType_Profiles" xml:space="preserve">
     <value>設定檔</value>
   </data>
-  <data name='Enum_MotionOutput_Disabled' xml:space='preserve'>
+  <data name="Enum_MotionOutput_Disabled" xml:space="preserve">
     <value>停用</value>
   </data>
-  <data name='Enum_MotionOutput_MoveCursor' xml:space='preserve'>
+  <data name="Enum_MotionOutput_MoveCursor" xml:space="preserve">
     <value>移動滑鼠</value>
   </data>
-  <data name='Enum_MotionOutput_ScrollWheel' xml:space='preserve'>
+  <data name="Enum_MotionOutput_ScrollWheel" xml:space="preserve">
     <value>滾輪</value>
   </data>
-  <data name='Enum_XInputController_AxisLayoutFlags_Gyroscope' xml:space='preserve'>
+  <data name="Enum_XInputController_AxisLayoutFlags_Gyroscope" xml:space="preserve">
     <value>陀螺儀</value>
   </data>
-  <data name='Enum_XInputController_ButtonFlags_Special2' xml:space='preserve'>
+  <data name="Enum_XInputController_ButtonFlags_Special2" xml:space="preserve">
     <value>Special 2</value>
   </data>
-  <data name='DevicePage_BatteryChargeLimit' xml:space='preserve'>
+  <data name="DevicePage_BatteryChargeLimit" xml:space="preserve">
     <value>電池充電限制</value>
   </data>
-  <data name='DevicePage_BatteryChargeLimit_Desc' xml:space='preserve'>
+  <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
     <value>將電池最大充電水平設定為80%以延長電池壽命</value>
   </data>
-  <data name='PowerProfileOneXPlayerX1IntelBestPerformance' xml:space='preserve'>
+  <data name="PowerProfileOneXPlayerX1IntelBestPerformance" xml:space="preserve">
     <value>Super Performance</value>
   </data>
-  <data name='PowerProfileOneXPlayerX1IntelBestPerformanceDesc' xml:space='preserve'>
+  <data name="PowerProfileOneXPlayerX1IntelBestPerformanceDesc" xml:space="preserve">
     <value>The optimum performance for Intel Core Ultra.</value>
   </data>
-  <data name='PowerProfileOneXPlayerX1IntelBetterBattery' xml:space='preserve'>
+  <data name="PowerProfileOneXPlayerX1IntelBetterBattery" xml:space="preserve">
     <value>Efficiency</value>
   </data>
-  <data name='PowerProfileOneXPlayerX1IntelBetterBatteryDesc' xml:space='preserve'>
+  <data name="PowerProfileOneXPlayerX1IntelBetterBatteryDesc" xml:space="preserve">
     <value>Lowest TDP for long battery life.</value>
   </data>
-  <data name='PowerProfileOneXPlayerX1IntelBetterPerformance' xml:space='preserve'>
+  <data name="PowerProfileOneXPlayerX1IntelBetterPerformance" xml:space="preserve">
     <value>Performance</value>
   </data>
-  <data name='PowerProfileOneXPlayerX1IntelBetterPerformanceDesc' xml:space='preserve'>
+  <data name="PowerProfileOneXPlayerX1IntelBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
-  <data name='SettingsPage_Telemetry' xml:space='preserve'>
+  <data name="SettingsPage_Telemetry" xml:space="preserve">
     <value>遙測</value>
   </data>
-  <data name='SettingsPage_TelemetryDesc' xml:space='preserve'>
+  <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>啟用遙測以自動傳送程式崩潰數據</value>
   </data>
-  <data name='ControllerPage_ControllerManagement_Content' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
     <value>正在初始化手柄配置，請稍候...</value>
   </data>
-  <data name='ControllerPage_ControllerManagment_Attempting' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
     <value>正在嘗試重新排序手柄，請稍候...</value>
   </data>
-  <data name='ControllerPage_ControllerManagment_Done' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
     <value>手柄已重新排序完成，感謝耐心等候</value>
   </data>
-  <data name='ControllerPage_ControllerManagment_Failed' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
     <value>未能重新排序手柄。為了最佳相容性，我們建議您重新啟動掌機伴侶</value>
   </data>
-  <data name='ControllerPage_ControllerManagment_FinalAttempt' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
     <value>最終嘗試排序手柄，請稍候...</value>
   </data>
-  <data name='ControllerPage_ControllerManagment_RedOrGreen' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
     <value>Red or green, red or green, which do I cut?!</value>
   </data>
-  <data name='ControllerPage_ControllerManagment_Reordering' xml:space='preserve'>
+  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
     <value>正在排序中，請稍候...</value>
   </data>
-  <data name='SettingsPage_ScreenRotation_FlippedLandscape' xml:space='preserve'>
+  <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>横屏（翻转）</value>
   </data>
-  <data name='SettingsPage_ScreenRotation_FlippedPortrait' xml:space='preserve'>
+  <data name="SettingsPage_ScreenRotation_FlippedPortrait" xml:space="preserve">
     <value>豎屏（翻转）</value>
   </data>
-  <data name='SettingsPage_ScreenRotation_Landscape' xml:space='preserve'>
+  <data name="SettingsPage_ScreenRotation_Landscape" xml:space="preserve">
     <value>横屏</value>
   </data>
-  <data name='SettingsPage_ScreenRotation_NotSet' xml:space='preserve'>
+  <data name="SettingsPage_ScreenRotation_NotSet" xml:space="preserve">
     <value>未設定</value>
   </data>
-  <data name='SettingsPage_ScreenRotation_Portrait' xml:space='preserve'>
+  <data name="SettingsPage_ScreenRotation_Portrait" xml:space="preserve">
     <value>豎屏</value>
   </data>
-  <data name='DevicePage_DynamicLightDesc' xml:space='preserve'>
+  <data name="DevicePage_DynamicLightDesc" xml:space="preserve">
     <value>在我的裝置上使用動態光源</value>
   </data>
-  <data name='DevicePage_DynamicLightTitle' xml:space='preserve'>
+  <data name="DevicePage_DynamicLightTitle" xml:space="preserve">
     <value>動態光源設定</value>
   </data>
-  <data name='DevicePage_SensorCalibration_Button' xml:space='preserve'>
+  <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校準</value>
   </data>
-  <data name='LayoutPage_Export' xml:space='preserve'>
+  <data name="LayoutPage_Export" xml:space="preserve">
     <value>匯出佈局</value>
   </data>
-  <data name='PerformancePage_CPUBoost_Aggressive' xml:space='preserve'>
+  <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
     <value>激進</value>
   </data>
-  <data name='PerformancePage_CPUBoost_Disabled' xml:space='preserve'>
+  <data name="PerformancePage_CPUBoost_Disabled" xml:space="preserve">
     <value>停用</value>
   </data>
-  <data name='PerformancePage_CPUBoost_EfficientAggressive' xml:space='preserve'>
+  <data name="PerformancePage_CPUBoost_EfficientAggressive" xml:space="preserve">
     <value>激進節能</value>
   </data>
-  <data name='PerformancePage_CPUBoost_EfficientEnabled' xml:space='preserve'>
+  <data name="PerformancePage_CPUBoost_EfficientEnabled" xml:space="preserve">
     <value>節能</value>
   </data>
-  <data name='PerformancePage_CPUBoost_Enabled' xml:space='preserve'>
+  <data name="PerformancePage_CPUBoost_Enabled" xml:space="preserve">
     <value>啟用</value>
   </data>
-  <data name='PerformancePage_FanMode_Desc' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
     <value>修改該設定檔的風扇模式</value>
   </data>
-  <data name='PerformancePage_FanMode_Hardware' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Hardware" xml:space="preserve">
     <value>硬體</value>
   </data>
-  <data name='PerformancePage_FanMode_Preset_Aggressive' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Preset_Aggressive" xml:space="preserve">
     <value>激進</value>
   </data>
-  <data name='PerformancePage_FanMode_Preset_Default' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Preset_Default" xml:space="preserve">
     <value>預設</value>
   </data>
-  <data name='PerformancePage_FanMode_Preset_Quiet' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Preset_Quiet" xml:space="preserve">
     <value>安靜</value>
   </data>
-  <data name='PerformancePage_FanMode_Software' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Software" xml:space="preserve">
     <value>軟體</value>
   </data>
-  <data name='PerformancePage_FanMode_Title' xml:space='preserve'>
+  <data name="PerformancePage_FanMode_Title" xml:space="preserve">
     <value>風扇模式</value>
   </data>
-  <data name='PerformancePage_MaxCPU_Desc' xml:space='preserve'>
+  <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
     <value>限制CPU所使用的核心數量</value>
   </data>
-  <data name='PerformancePage_MaxCPU_Title' xml:space='preserve'>
+  <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
     <value>CPU最大數量</value>
   </data>
-  <data name='PerformangePage_Preset_Cancel' xml:space='preserve'>
+  <data name="PerformangePage_Preset_Cancel" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name='PerformangePage_Preset_Description' xml:space='preserve'>
+  <data name="PerformangePage_Preset_Description" xml:space="preserve">
     <value>描述</value>
   </data>
-  <data name='PerformangePage_Preset_Name' xml:space='preserve'>
+  <data name="PerformangePage_Preset_Name" xml:space="preserve">
     <value>電源預設名稱</value>
   </data>
-  <data name='PerformangePage_Preset_Rename' xml:space='preserve'>
+  <data name="PerformangePage_Preset_Rename" xml:space="preserve">
     <value>重新命名</value>
   </data>
-  <data name='ProfilesPage_Compatibility' xml:space='preserve'>
+  <data name="ProfilesPage_Compatibility" xml:space="preserve">
     <value>相容性設定</value>
   </data>
-  <data name='ProfilesPage_Compatibility_Fullscreen' xml:space='preserve'>
+  <data name="ProfilesPage_Compatibility_Fullscreen" xml:space="preserve">
     <value>使用全螢幕最佳化</value>
   </data>
-  <data name='ProfilesPage_Compatibility_HighDPI' xml:space='preserve'>
+  <data name="ProfilesPage_Compatibility_HighDPI" xml:space="preserve">
     <value>使用高DPI感知</value>
   </data>
-  <data name='ProfilesPage_Dialogue_Cancel' xml:space='preserve'>
+  <data name="ProfilesPage_Dialogue_Cancel" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name='ProfilesPage_Dialogue_Rename' xml:space='preserve'>
+  <data name="ProfilesPage_Dialogue_Rename" xml:space="preserve">
     <value>重新命名</value>
   </data>
-  <data name='ProfilesPage_GraphicsSetting_Desc' xml:space='preserve'>
+  <data name="ProfilesPage_GraphicsSetting_Desc" xml:space="preserve">
     <value>改變圖形設定</value>
   </data>
-  <data name='ProfilesPage_GraphicsSetting_Title' xml:space='preserve'>
+  <data name="ProfilesPage_GraphicsSetting_Title" xml:space="preserve">
     <value>圖形設定</value>
   </data>
-  <data name='ProfilesPage_Layout_Desc' xml:space='preserve'>
+  <data name="ProfilesPage_Layout_Desc" xml:space="preserve">
     <value>對此程序使用的佈局</value>
   </data>
-  <data name='ProfilesPage_NewSubProfile' xml:space='preserve'>
+  <data name="ProfilesPage_NewSubProfile" xml:space="preserve">
     <value>(新子設定檔)</value>
   </data>
-  <data name='ProfilesPage_ProfileRenamingDialogue_Name' xml:space='preserve'>
+  <data name="ProfilesPage_ProfileRenamingDialogue_Name" xml:space="preserve">
     <value>設定檔名稱</value>
   </data>
-  <data name='ProfilesPage_SubProfileRenamingDialogue_Name' xml:space='preserve'>
+  <data name="ProfilesPage_SubProfileRenamingDialogue_Name" xml:space="preserve">
     <value>子設定檔名稱</value>
-  </data>  
+  </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>預設效果</value>
   </data>
@@ -3151,16 +3127,16 @@
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>冬日暖陽</value>
   </data>
-  <data name='SettingsPage_QuickToolsWindowLocationMaximized' xml:space='preserve'>
+  <data name="SettingsPage_QuickToolsWindowLocationMaximized" xml:space="preserve">
     <value>最大化</value>
   </data>
-  <data name='SettingsPage_QuickToolsDevicePath' xml:space='preserve'>
+  <data name="SettingsPage_QuickToolsDevicePath" xml:space="preserve">
     <value>顯示</value>
   </data>
-  <data name='SettingsPage_QuickToolsDevicePathDesc' xml:space='preserve'>
+  <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
     <value>快速窗口顯示的螢幕</value>
   </data>
-  <data name='MainWindow_TelemetryText' xml:space='preserve'>
+  <data name="MainWindow_TelemetryText" xml:space="preserve">
     <value>您是否授權掌機伴侶向開發團隊回報資訊? 
 
 
@@ -3175,70 +3151,74 @@
 
 感謝您使用掌機伴侶並協助我們做得更好。</value>
   </data>
-  <data name='MainWindow_TelemetryTitle' xml:space='preserve'>
+  <data name="MainWindow_TelemetryTitle" xml:space="preserve">
     <value>遙測</value>
   </data>
-  <data name='ProfilesPage_ProfileArguments' xml:space='preserve'>
+  <data name="ProfilesPage_ProfileArguments" xml:space="preserve">
     <value>參數</value>
   </data>
-  <data name='Enum_InputsChordType_Click' xml:space='preserve'>
+  <data name="Enum_InputsChordType_Click" xml:space="preserve">
     <value>點擊</value>
   </data>
-  <data name='Enum_InputsChordType_Long' xml:space='preserve'>
+  <data name="Enum_InputsChordType_Long" xml:space="preserve">
     <value>長按</value>
   </data>
-  <data name='Enum_InputsChordType_None' xml:space='preserve'>
+  <data name="Enum_InputsChordType_None" xml:space="preserve">
     <value>按下按鍵以定義熱鍵</value>
   </data>
-  <data name='Hotkey_Keystrokes' xml:space='preserve'>
+  <data name="Hotkey_Keystrokes" xml:space="preserve">
     <value>按鍵</value>
   </data>
-  <data name='Hotkey_KeystrokesDesc' xml:space='preserve'>
+  <data name="Hotkey_KeystrokesDesc" xml:space="preserve">
     <value>發送自訂的鍵盤按鍵組合</value>
   </data>
-  <data name='Hotkey_Executable' xml:space='preserve'>
+  <data name="Hotkey_Executable" xml:space="preserve">
     <value>應用程序</value>
   </data>
-  <data name='Hotkey_ExecutableDesc' xml:space='preserve'>
+  <data name="Hotkey_ExecutableDesc" xml:space="preserve">
     <value>以特殊參數執行應用程序</value>
   </data>
-  <data name='Hotkey_Function' xml:space='preserve'>
+  <data name="Hotkey_Function" xml:space="preserve">
     <value>功能</value>
   </data>
-  <data name='Hotkey_FunctionDesc' xml:space='preserve'>
+  <data name="Hotkey_FunctionDesc" xml:space="preserve">
     <value>按下按鈕或特殊鍵以更改熱鍵</value>
   </data>
-  <data name='Hotkey_None' xml:space='preserve'>
+  <data name="Hotkey_None" xml:space="preserve">
     <value>未指定</value>
   </data>
-  <data name='Hotkey_NoneDesc' xml:space='preserve'>
+  <data name="Hotkey_NoneDesc" xml:space="preserve">
     <value>按下按鈕或特殊鍵以更改熱鍵</value>
   </data>
-  <data name='Hotkey_ActionCenter' xml:space='preserve'>
+  <data name="Hotkey_ActionCenter" xml:space="preserve">
     <value>開啟Windows操作中心</value>
   </data>
-  <data name='Hotkey_ActionCenterDesc' xml:space='preserve'>
+  <data name="Hotkey_ActionCenterDesc" xml:space="preserve">
     <value>顯示/隱藏操作中心</value>
   </data>
-  <data name='Hotkey_Settings' xml:space='preserve'>
+  <data name="Hotkey_Settings" xml:space="preserve">
     <value>開啟Windows設定</value>
   </data>
-  <data name='Hotkey_SettingsDesc' xml:space='preserve'>
+  <data name="Hotkey_SettingsDesc" xml:space="preserve">
     <value>按下按鈕或特殊鍵以更改熱鍵</value>
   </data>
-  <data name='Hotkey_KeyboardLegacy' xml:space='preserve'>
+  <data name="Hotkey_KeyboardLegacy" xml:space="preserve">
     <value>顯示觸控鍵盤 (傳統)</value>
   </data>
-  <data name='Hotkey_KeyboardLegacyDesc' xml:space='preserve'>
+  <data name="Hotkey_KeyboardLegacyDesc" xml:space="preserve">
     <value>按下按鈕或特殊鍵以更改熱鍵</value>
   </data>
-  <data name='Hotkey_OnScreenDisplay' xml:space='preserve'>
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
     <value>覆蓋窗</value>
   </data>
-  <data name='ControllerPage_SteamControllerModeHybrid' xml:space='preserve'>
+  <data name="ControllerPage_SteamControllerModeHybrid" xml:space="preserve">
     <value>混合</value>
   </data>
-  <data name='ControllerPage_SteamControllerModeExclusive' xml:space='preserve'>
+  <data name="ControllerPage_SteamControllerModeExclusive" xml:space="preserve">
     <value>專用</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>

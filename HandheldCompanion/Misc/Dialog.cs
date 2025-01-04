@@ -14,7 +14,7 @@ public class Dialog
     private ContentDialog dialog;
 
     public string Title;
-    public string Content;
+    public object Content;
     public ContentDialogButton DefaultButton = ContentDialogButton.Primary;
     public string PrimaryButtonText = string.Empty;
     public string SecondaryButtonText = string.Empty;

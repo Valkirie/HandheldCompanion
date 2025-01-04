@@ -1272,30 +1272,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Necessário reiniciar</value>
   </data>
-  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
-    <value>Sim</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
-    <value>Não</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
-    <value>Desabilitar esta configuração irá também desabilitar a configuração "Melhorar detecção de controle virtual". Você deseja continuar?</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
-    <value>Aviso</value>
-  </data>
-  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
-    <value>Sim</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
-    <value>Não</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
-    <value>Melhoria da detecção de controle virtual pode não funcionar se você encerrar o Handheld Companion. Tem certeza?</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
-    <value>Aviso</value>
-  </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>Fabricante</value>
   </data>
@@ -2893,6 +2869,9 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
   <data name="ProfilesPage_NewSubProfile" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

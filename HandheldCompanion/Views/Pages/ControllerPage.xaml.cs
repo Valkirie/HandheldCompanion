@@ -7,9 +7,11 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using static HandheldCompanion.Managers.ControllerManager;
 using Page = System.Windows.Controls.Page;
 
@@ -131,19 +133,13 @@ public partial class ControllerPage : Page
                                 dialog.DefaultButton = ContentDialogButton.Primary;
                                 dialog.CloseButtonText = string.Empty;
                                 dialog.PrimaryButtonText = string.Empty;
-
-                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Attempting;
-                                break;
-                            case 1:
-                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Reordering;
-                                break;
-                            case 2:
-                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_RedOrGreen;
-                                break;
-                            case 3:
-                                dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_FinalAttempt;
                                 break;
                         }
+
+                        // update content
+                        dialog.Content = CreateFormattedContent(
+                            string.Format(Properties.Resources.ControllerPage_ControllerManagement_Attempt, attempts + 1),
+                            GetResourceString("ControllerPage_ControllerManagement_Attempt", attempts));
 
                         dialog.Show();
                     }
@@ -151,7 +147,7 @@ public partial class ControllerPage : Page
 
                 case ControllerManagerStatus.Succeeded:
                     {
-                        dialog.UpdateContent(Properties.Resources.ControllerPage_ControllerManagment_Done);
+                        dialog.UpdateContent(Properties.Resources.ControllerPage_ControllerManagement_Success);
                         await Task.Delay(2000); // Captures synchronization context
                         dialog.Hide();
                     }
@@ -165,7 +161,7 @@ public partial class ControllerPage : Page
                         dialog.CloseButtonText = Properties.Resources.ControllerPage_Close;
                         dialog.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
 
-                        dialog.Content = Properties.Resources.ControllerPage_ControllerManagment_Failed;
+                        dialog.Content = Properties.Resources.ControllerPage_ControllerManagement_Failed;
 
                         Task<ContentDialogResult> dialogTask = dialog.ShowAsync();
 
@@ -186,6 +182,27 @@ public partial class ControllerPage : Page
             // here ?
             ControllerRefresh();
         });
+    }
+
+    private string GetResourceString(string baseKey, int attempts)
+    {
+        // Combine the base key with the attempts number to form the resource key
+        string resourceKey = $"{baseKey}{attempts}";
+        return Properties.Resources.ResourceManager.GetString(resourceKey, CultureInfo.CurrentUICulture);
+    }
+
+    private TextBlock CreateFormattedContent(string title, string description)
+    {
+        TextBlock textBlock = new TextBlock
+        {
+            TextWrapping = TextWrapping.Wrap
+        };
+
+        textBlock.Inlines.Add(new Run { Text = title, FontWeight = FontWeights.Bold });
+        //textBlock.Inlines.Add(new LineBreak());
+        textBlock.Inlines.Add(new Run { Text = description });
+
+        return textBlock;
     }
 
     public void ControllerRefresh()

@@ -1278,30 +1278,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
-  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
-    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
-    <value>Warning</value>
-  </data>
-  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
-    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
-    <value>Warning</value>
-  </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>Manufacturer</value>
   </data>
@@ -2614,7 +2590,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Controller management</value>
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage your controllers for greater compatibility</value>
+    <value>Automatically manage controller order for greater compatibility</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -3024,23 +3000,23 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
     <value>Initializing controller reconfiguration… Please wait.</value>
   </data>
-  <data name="ControllerPage_ControllerManagment_Attempting" xml:space="preserve">
-    <value>Attempting to reorder controllers, please hold on...</value>
+  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
+    <value>We are reordering controllers to improve game compatibility. Please wait a moment.</value>
   </data>
-  <data name="ControllerPage_ControllerManagment_Done" xml:space="preserve">
+  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
     <value>Controller reordering complete. Thank you for your patience.</value>
   </data>
-  <data name="ControllerPage_ControllerManagment_Failed" xml:space="preserve">
-    <value>We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion</value>
+  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
+    <value>We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart Handheld Companion.</value>
   </data>
-  <data name="ControllerPage_ControllerManagment_FinalAttempt" xml:space="preserve">
-    <value>Final attempt to reorder controllers, stand by...</value>
+  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
+    <value>One last attempt to reorder controllers. We’re doing everything we can!</value>
   </data>
-  <data name="ControllerPage_ControllerManagment_RedOrGreen" xml:space="preserve">
-    <value>Red or green, red or green, which do I cut?!</value>
+  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
+    <value>Almost there! We’re making another adjustment to optimize controller settings.</value>
   </data>
-  <data name="ControllerPage_ControllerManagment_Reordering" xml:space="preserve">
-    <value>Reordering in progress, hang tight...</value>
+  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
+    <value>Adjustments are still in progress. We’ll get this right for your games.</value>
   </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>Flipped Landscape</value>
@@ -3356,5 +3332,8 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrate</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value>Attempt {0}: </value>
   </data>
 </root>

@@ -430,6 +430,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attempt {0}: .
+        /// </summary>
+        public static string ControllerPage_ControllerManagement_Attempt {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We are reordering controllers to improve game compatibility. Please wait a moment..
+        /// </summary>
+        public static string ControllerPage_ControllerManagement_Attempt0 {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjustments are still in progress. We’ll get this right for your games..
+        /// </summary>
+        public static string ControllerPage_ControllerManagement_Attempt1 {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Almost there! We’re making another adjustment to optimize controller settings..
+        /// </summary>
+        public static string ControllerPage_ControllerManagement_Attempt2 {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One last attempt to reorder controllers. We’re doing everything we can!.
+        /// </summary>
+        public static string ControllerPage_ControllerManagement_Attempt3 {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Initializing controller reconfiguration… Please wait..
         /// </summary>
         public static string ControllerPage_ControllerManagement_Content {
@@ -439,65 +484,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Automatically manage your controllers for greater compatibility.
+        ///   Looks up a localized string similar to We&apos;ve failed to reorder your controllers. For maximum compatibility, we encourage you to restart Handheld Companion..
         /// </summary>
-        public static string ControllerPage_ControllerManagementDesc {
+        public static string ControllerPage_ControllerManagement_Failed {
             get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagementDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Attempting to reorder controllers, please hold on....
-        /// </summary>
-        public static string ControllerPage_ControllerManagment_Attempting {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagment_Attempting", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Failed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Controller reordering complete. Thank you for your patience..
         /// </summary>
-        public static string ControllerPage_ControllerManagment_Done {
+        public static string ControllerPage_ControllerManagement_Success {
             get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagment_Done", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_ControllerManagement_Success", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We&apos;ve failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion.
+        ///   Looks up a localized string similar to Automatically manage controller order for greater compatibility.
         /// </summary>
-        public static string ControllerPage_ControllerManagment_Failed {
+        public static string ControllerPage_ControllerManagementDesc {
             get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagment_Failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Final attempt to reorder controllers, stand by....
-        /// </summary>
-        public static string ControllerPage_ControllerManagment_FinalAttempt {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagment_FinalAttempt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Red or green, red or green, which do I cut?!.
-        /// </summary>
-        public static string ControllerPage_ControllerManagment_RedOrGreen {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagment_RedOrGreen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reordering in progress, hang tight....
-        /// </summary>
-        public static string ControllerPage_ControllerManagment_Reordering {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagment_Reordering", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_ControllerManagementDesc", resourceCulture);
             }
         }
         
@@ -5048,42 +5057,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string MainWindow_ControllerManagementClosePrimary {
-            get {
-                return ResourceManager.GetString("MainWindow_ControllerManagementClosePrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string MainWindow_ControllerManagementCloseSecondary {
-            get {
-                return ResourceManager.GetString("MainWindow_ControllerManagementCloseSecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?.
-        /// </summary>
-        public static string MainWindow_ControllerManagementCloseText {
-            get {
-                return ResourceManager.GetString("MainWindow_ControllerManagementCloseText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string MainWindow_ControllerManagementCloseTitle {
-            get {
-                return ResourceManager.GetString("MainWindow_ControllerManagementCloseTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MainWindow_Exit {
@@ -8875,42 +8848,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_CloseMinimizesDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_CloseMinimizesDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string SettingsPage_ControllerManagementDependencyPrimary {
-            get {
-                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyPrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string SettingsPage_ControllerManagementDependencySecondary {
-            get {
-                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencySecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
-        /// </summary>
-        public static string SettingsPage_ControllerManagementDependencyText {
-            get {
-                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string SettingsPage_ControllerManagementDependencyTitle {
-            get {
-                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyTitle", resourceCulture);
             }
         }
         

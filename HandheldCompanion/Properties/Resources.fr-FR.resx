@@ -1260,30 +1260,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Redémarrage requis</value>
   </data>
-  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
-    <value>Oui</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
-    <value>Non</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
-    <value>Si vous désactivez ce paramètre, le paramètre "Amélioration de la détection du contrôleur virtuel" sera aussi désactivé. Voulez-vous continuer?</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
-    <value>Avertissement</value>
-  </data>
-  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
-    <value>Oui</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
-    <value>Non</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
-    <value>Améliorer la détection du controlleur ne fonctionnera pas si vous fermez Handheld Companion. Êtes-vous sûr?</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
-    <value>Avertissement</value>
-  </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>Manufacturer</value>
   </data>
@@ -2586,7 +2562,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Controller management</value>
+    <value />
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
     <value>Automatically manage your controllers for greater compatibility</value>
@@ -2872,6 +2848,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Hotkey_OnScreenDisplay" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

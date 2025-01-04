@@ -1264,30 +1264,6 @@
   <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
-  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
-    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
-  </data>
-  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
-    <value>Warning</value>
-  </data>
-  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
-    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
-  </data>
-  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
-    <value>Warning</value>
-  </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>Produttore</value>
   </data>
@@ -2588,7 +2564,7 @@
     <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Controller management</value>
+    <value />
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
     <value>Automatically manage your controllers for greater compatibility</value>
@@ -2871,5 +2847,8 @@
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>
