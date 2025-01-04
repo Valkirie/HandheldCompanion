@@ -77,6 +77,7 @@ namespace HandheldCompanion.Managers
 
             switch (ManagerFactory.deviceManager.Status)
             {
+                default:
                 case ManagerStatus.Initializing:
                     ManagerFactory.deviceManager.Initialized += DeviceManager_Initialized;
                     break;

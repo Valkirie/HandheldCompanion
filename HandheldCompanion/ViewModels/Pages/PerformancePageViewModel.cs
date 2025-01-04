@@ -511,6 +511,7 @@ namespace HandheldCompanion.ViewModels
             // raise events
             switch (ManagerFactory.multimediaManager.Status)
             {
+                default:
                 case ManagerStatus.Initializing:
                     ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
                     break;

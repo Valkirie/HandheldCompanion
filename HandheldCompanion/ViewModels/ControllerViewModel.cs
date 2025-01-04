@@ -42,6 +42,7 @@ namespace HandheldCompanion.ViewModels
             Controller = controller;
             Controller.UserIndexChanged += Controller_UserIndexChanged;
             Controller.StateChanged += Controller_StateChanged;
+            Controller.VisibilityChanged += Controller_VisibilityChanged;
 
             ConnectCommand = new DelegateCommand(async () =>
             {
@@ -61,6 +62,8 @@ namespace HandheldCompanion.ViewModels
             {
                 Controller.Calibrate();
             });
+
+            Updated();
         }
 
         private void Controller_StateChanged()
@@ -70,7 +73,12 @@ namespace HandheldCompanion.ViewModels
 
         private void Controller_UserIndexChanged(byte UserIndex)
         {
-            Updated();
+            OnPropertyChanged(nameof(UserIndex));
+        }
+
+        private void Controller_VisibilityChanged()
+        {
+            OnPropertyChanged(nameof(IsHidden));
         }
 
         public void Updated()
@@ -89,6 +97,8 @@ namespace HandheldCompanion.ViewModels
         {
             Controller.UserIndexChanged -= Controller_UserIndexChanged;
             Controller.StateChanged -= Controller_StateChanged;
+            Controller.VisibilityChanged -= Controller_VisibilityChanged;
+
             base.Dispose();
         }
     }

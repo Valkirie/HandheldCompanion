@@ -43,11 +43,10 @@ namespace HandheldCompanion.Managers
         private static HIDmode defaultHIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
+        private static readonly Random ProductGenerator = new Random();
         public static ushort ProductId = 0x28E; // Xbox 360
-        private static ushort prevProductId = ProductId;
 
         public static ushort VendorId = 0x45E;  // Microsoft
-        private static ushort prevVendorId = VendorId;
 
         private static object threadLock = new();
 
@@ -101,6 +100,7 @@ namespace HandheldCompanion.Managers
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
+                default:
                 case ManagerStatus.Initializing:
                     ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                     break;
@@ -186,7 +186,7 @@ namespace HandheldCompanion.Managers
             }
 
             // set controller mode
-            SetControllerMode(HIDmode, (ushort)(OS ? prevProductId : 0));
+            SetControllerMode(HIDmode, OS);
         }
 
         public static void Suspend(bool OS)
@@ -213,9 +213,6 @@ namespace HandheldCompanion.Managers
                 {
                     // halt DSU
                     SetDSUStatus(false);
-
-                    // store ProductID
-                    prevProductId = ProductId;
                 }
             }
         }
@@ -288,7 +285,7 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-        public static void SetControllerMode(HIDmode mode, ushort RestoreID = 0)
+        public static void SetControllerMode(HIDmode mode, bool OS = false)
         {
             lock (threadLock)
             {
@@ -327,11 +324,9 @@ namespace HandheldCompanion.Managers
 
                     case HIDmode.Xbox360Controller:
                         // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
-                        // VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
-                        if (RestoreID != 0)
-                            ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
-                        else
-                            ProductId = RestoreID;
+                        // Unless, last ProductId was known as slot 0
+                        if (!OS)
+                            ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
 
                         vTarget = new Xbox360Target(VendorId, ProductId);
                         break;

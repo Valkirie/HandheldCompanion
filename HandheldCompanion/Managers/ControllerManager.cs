@@ -70,8 +70,6 @@ public static class ControllerManager
         if (IsInitialized)
             return;
 
-        PickTargetController(false);
-
         // manage events
         ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
         ManagerFactory.deviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
@@ -91,6 +89,7 @@ public static class ControllerManager
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                 break;
@@ -101,6 +100,7 @@ public static class ControllerManager
 
         switch (ManagerFactory.deviceManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.deviceManager.Initialized += DeviceManager_Initialized;
                 break;
@@ -121,6 +121,11 @@ public static class ControllerManager
         // enable HidHide
         HidHide.SetCloaking(true);
 
+        // Summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/OEM chords
+        // TODO: Consider refactoring this for better design
+        Controllers[string.Empty] = GetDefault();
+        PickTargetController();
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -136,7 +141,7 @@ public static class ControllerManager
         JslDisconnect();
 
         // unplug on close
-        ClearTargetController(false);
+        ClearTargetController();
 
         // manage events
         ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
@@ -376,13 +381,29 @@ public static class ControllerManager
         }
     }
 
+    private static bool IsOS = false;
+    public static void Resume(bool OS)
+    {
+        // update flag
+        IsOS = OS;
+
+        if (ManagerFactory.settingsManager.GetBoolean("ControllerManagement"))
+            StartWatchdog();
+
+        PickTargetController();
+    }
+
+    public static void Suspend(bool OS)
+    {
+        if (ManagerFactory.settingsManager.GetBoolean("ControllerManagement"))
+            StopWatchdog();
+
+        ClearTargetController();
+    }
+
     public static void StartWatchdog()
     {
         if (watchdogThreadRunning)
-            return;
-
-        bool ControllerManagement = ManagerFactory.settingsManager.GetBoolean("ControllerManagement");
-        if (!ControllerManagement)
             return;
 
         watchdogThreadRunning = true;
@@ -537,13 +558,18 @@ public static class ControllerManager
             {
                 controller.AttachDetails(details);
 
-                // hide new InstanceID (HID)
-                if (controller.IsHidden())
-                    controller.Hide(false);
-                else
-                    controller.Unhide(false);
+                // hide or unhide "new" InstanceID (HID)
+                if (controller.GetInstanceId() != details.deviceInstanceId)
+                {
+                    if (controller.IsHidden())
+                        controller.Hide(false);
+                    else
+                        controller.Unhide(false);
+                }
 
+                // force set flag
                 IsPowerCycling = true;
+                PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
             }
             else
             {
@@ -633,17 +659,11 @@ public static class ControllerManager
 
         ToastManager.SendToast(controller.ToString(), "detected");
 
+        // new controller logic
+        PickTargetController();
+
         // remove controller from powercyclers
         PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
-
-        // is controller current target and power cycling ?
-        // if yes, don't pick a new controller
-        bool IsTarget = IsTargetController(controller.GetInstanceId());
-        if (IsTarget && IsPowerCycling)
-            return;
-
-        // new controller logic
-        PickTargetController(IsPowerCycling);
     }
 
     private static async void HidDeviceRemoved(PnPDetails details, Guid IntefaceGuid)
@@ -690,8 +710,8 @@ public static class ControllerManager
             // unplug controller, if needed
             if (WasTarget)
             {
-                ClearTargetController(false);
-                PickTargetController(false);
+                ClearTargetController();
+                PickTargetController();
             }
             else
             {
@@ -715,7 +735,7 @@ public static class ControllerManager
             UserIndexes.Clear();
             XInputDrunk = false;
 
-            foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput()))
+            foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
             {
                 byte UserIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
 
@@ -728,22 +748,13 @@ public static class ControllerManager
                     XInputDrunk = true;
 
                 xInputController.AttachController(UserIndex);
-
-                // wait a bit
-                Thread.Sleep(500);
             }
 
             if (XInputDrunk)
             {
-                foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
-                {
+                // (re)init controller userIndex
+                foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
                     xInputController.AttachController(byte.MaxValue);
-
-                    // wait a bit
-                    Thread.Sleep(500);
-                }
-
-                goto Exit;
             }
 
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
@@ -786,9 +797,10 @@ public static class ControllerManager
                             // suspend and resume virtual controller
                             VirtualManager.Suspend(false);
                             Thread.Sleep(2000);
-                            VirtualManager.Resume(false);
+                            VirtualManager.Resume(IsOS);
 
-                            // resume all physical controllers
+                            // resume all physical controllers, after a few seconds
+                            Thread.Sleep(4000);
                             ResumeControllers();
 
                             // increment attempt counter (if no wireless controller is power cycling)
@@ -803,6 +815,7 @@ public static class ControllerManager
 
                             UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
+                            IsOS = false;
 
                             ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                         }
@@ -813,9 +826,9 @@ public static class ControllerManager
                         ResumeControllers();
 
                         // give us one extra loop to make sure we're good
-                        if (managerStatus != ControllerManagerStatus.Succeeded)
-                            UpdateStatus(ControllerManagerStatus.Succeeded);
+                        UpdateStatus(ControllerManagerStatus.Succeeded);
                         ControllerManagementAttempts = 0;
+                        IsOS = false;
                     }
                 }
             }
@@ -847,13 +860,18 @@ public static class ControllerManager
             ((XInputController)controller).AttachDetails(details);
             ((XInputController)controller).AttachController(details.XInputUserIndex);
 
-            // hide new InstanceID (HID)
-            if (controller.IsHidden())
-                controller.Hide(false);
-            else
-                controller.Unhide(false);
+            // hide or unhide "new" InstanceID (HID)
+            if (controller.GetInstanceId() != details.deviceInstanceId)
+            {
+                if (controller.IsHidden())
+                    controller.Hide(false);
+                else
+                    controller.Unhide(false);
+            }
 
+            // force set flag
             IsPowerCycling = true;
+            PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
         }
         else
         {
@@ -913,17 +931,11 @@ public static class ControllerManager
 
         ToastManager.SendToast(controller.ToString(), "detected");
 
+        // new controller logic
+        PickTargetController();
+
         // remove controller from powercyclers
         PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
-
-        // is controller current target and power cycling ?
-        // if yes, don't pick a new controller
-        bool IsTarget = IsTargetController(controller.GetInstanceId());
-        if (IsTarget && IsPowerCycling)
-            return;
-
-        // new controller logic
-        PickTargetController(IsPowerCycling);
     }
 
     private static async void XUsbDeviceRemoved(PnPDetails details, Guid IntefaceGuid)
@@ -963,8 +975,8 @@ public static class ControllerManager
             // unplug controller, if needed
             if (WasTarget)
             {
-                ClearTargetController(false);
-                PickTargetController(false);
+                ClearTargetController();
+                PickTargetController();
             }
             else
             {
@@ -978,7 +990,7 @@ public static class ControllerManager
 
     public static bool HasTargetController => GetTargetController() != null;
 
-    private static void ClearTargetController(bool IsPowerCycling)
+    private static void ClearTargetController()
     {
         lock (targetLock)
         {
@@ -995,33 +1007,34 @@ public static class ControllerManager
         }
     }
 
-    public static void PickTargetController(bool isPowerCycling)
+    public static void PickTargetController()
     {
         lock (targetLock)
         {
             // pick last external controller
-            IController? externalController = GetPhysicalControllers().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless());
+            IController? externalController = GetPhysicalControllers().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless() || c.IsDongle());
 
             // pick first internal controller
             IController? internalController = GetPhysicalControllers().FirstOrDefault(c => c.IsInternal());
+
+            string baseContainerDeviceInstanceId = string.Empty;
 
             if (externalController != null)
             {
                 // only replace controller if current is not external
                 if (targetController == null || targetController.IsInternal())
-                    SetTargetController(externalController.GetContainerInstanceId(), isPowerCycling);
+                    baseContainerDeviceInstanceId = externalController.GetContainerInstanceId();
+                else
+                    baseContainerDeviceInstanceId = targetController.GetContainerInstanceId();
             }
             else if (internalController != null)
             {
-                SetTargetController(internalController.GetContainerInstanceId(), isPowerCycling);
+                baseContainerDeviceInstanceId = internalController.GetContainerInstanceId();
             }
-            else
-            {
-                // Summon an empty controller, used to feed Layout UI and receive injected inputs from keyboard/OEM chords
-                // TODO: Consider refactoring this for better design
-                Controllers[string.Empty] = GetDefault();
-                SetTargetController(string.Empty, false);
-            }
+
+            // are we power cycling ?
+            PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out bool IsPowerCycling);
+            SetTargetController(baseContainerDeviceInstanceId, IsPowerCycling);
         }
     }
 
@@ -1038,7 +1051,7 @@ public static class ControllerManager
                 return;
 
             // clear current target
-            ClearTargetController(IsPowerCycling);
+            ClearTargetController();
 
             // update target controller
             targetController = controller;

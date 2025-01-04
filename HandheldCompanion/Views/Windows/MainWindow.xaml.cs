@@ -517,7 +517,7 @@ public partial class MainWindow : GamepadWindow
                             await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
                         VirtualManager.Resume(true);
-                        ControllerManager.StartWatchdog();
+                        ControllerManager.Resume(true);
                     }
 
                     // open device, when ready
@@ -541,13 +541,13 @@ public partial class MainWindow : GamepadWindow
                         pendingTime = DateTime.Now;
 
                         // suspend manager(s)
-                        ControllerManager.StopWatchdog();
+                        ControllerManager.Suspend(true);
                         VirtualManager.Suspend(true);
                         await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
                         TimerManager.Stop();
                         SensorsManager.Stop();
-                        InputsManager.Stop();
+                        InputsManager.Stop(false);
                         GPUManager.Stop();
 
                         // suspend platform(s)
@@ -643,7 +643,7 @@ public partial class MainWindow : GamepadWindow
         MotionManager.Stop();
         SensorsManager.Stop();
         ControllerManager.Stop();
-        InputsManager.Stop();
+        InputsManager.Stop(true);
         ManagerFactory.deviceManager.Stop();
         PlatformManager.Stop();
         OSDManager.Stop();

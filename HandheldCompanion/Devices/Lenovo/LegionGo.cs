@@ -343,6 +343,7 @@ public class LegionGo : IDevice
 
         switch (ManagerFactory.settingsManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                 break;

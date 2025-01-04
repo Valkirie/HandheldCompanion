@@ -88,6 +88,8 @@ public static class InputsManager
         BufferFlushTimer = new PrecisionTimer();
         BufferFlushTimer.SetInterval(new Action(ReleaseKeyboardBuffer), TIME_FLUSH, false, 0, TimerMode.OneShot, true);
 
+        InitGlobalHook();
+
         InputsChordHoldTimer = new Timer(TIME_LONG)
         {
             AutoReset = false
@@ -514,9 +516,12 @@ public static class InputsManager
 
     public static void Start()
     {
-        InitGlobalHook();
+        if (IsInitialized)
+            return;
 
         ControllerManager.InputsUpdated += UpdateInputs;
+        m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
+        m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -524,16 +529,19 @@ public static class InputsManager
         LogManager.LogInformation("{0} has started", "InputsManager");
     }
 
-    public static void Stop()
+    public static void Stop(bool OS)
     {
         if (!IsInitialized)
             return;
 
         ControllerManager.InputsUpdated -= UpdateInputs;
+        m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
+        m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+
+        if (OS)
+            DisposeGlobalHook();
 
         IsInitialized = false;
-
-        DisposeGlobalHook();
 
         LogManager.LogInformation("{0} has stopped", "InputsManager");
     }
@@ -544,8 +552,6 @@ public static class InputsManager
             return;
 
         m_GlobalHook = Hook.GlobalEvents();
-        m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
-        m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
     }
 
     private static void DisposeGlobalHook()
@@ -553,8 +559,6 @@ public static class InputsManager
         if (m_GlobalHook is null)
             return;
 
-        m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
-        m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
         m_GlobalHook.Dispose();
         m_GlobalHook = null;
     }

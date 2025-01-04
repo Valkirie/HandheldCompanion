@@ -69,6 +69,7 @@ public class MultimediaManager : IManager
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                 break;

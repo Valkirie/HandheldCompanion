@@ -152,6 +152,7 @@ public static class PerformanceManager
 
         switch (ManagerFactory.settingsManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                 break;

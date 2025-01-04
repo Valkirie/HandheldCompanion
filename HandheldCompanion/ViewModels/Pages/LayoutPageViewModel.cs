@@ -36,6 +36,7 @@ namespace HandheldCompanion.ViewModels
             // raise events
             switch (ManagerFactory.layoutManager.Status)
             {
+                default:
                 case ManagerStatus.Initializing:
                     ManagerFactory.layoutManager.Initialized += LayoutManager_Initialized;
                     break;

@@ -96,6 +96,7 @@ namespace HandheldCompanion.Devices.AYANEO
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
+                default:
                 case ManagerStatus.Initializing:
                     ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                     break;

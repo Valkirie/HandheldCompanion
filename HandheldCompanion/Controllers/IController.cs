@@ -23,6 +23,9 @@ namespace HandheldCompanion.Controllers
         public event StateChangedEventHandler StateChanged;
         public delegate void StateChangedEventHandler();
 
+        public event VisibilityChangedEventHandler VisibilityChanged;
+        public delegate void VisibilityChangedEventHandler();
+
         public event InputsUpdatedEventHandler InputsUpdated;
         public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
         #endregion
@@ -390,7 +393,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             HideHID();
-            StateChanged?.Invoke();
+            VisibilityChanged?.Invoke();
 
             if (powerCycle)
                 CyclePort();
@@ -402,7 +405,7 @@ namespace HandheldCompanion.Controllers
                 return;
 
             UnhideHID();
-            StateChanged?.Invoke();
+            VisibilityChanged?.Invoke();
 
             if (powerCycle)
                 CyclePort();

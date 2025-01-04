@@ -82,6 +82,7 @@ public static class DynamicLightingManager
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                 break;
@@ -92,6 +93,7 @@ public static class DynamicLightingManager
 
         switch (ManagerFactory.multimediaManager.Status)
         {
+            default:
             case ManagerStatus.Initializing:
                 ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
                 break;
