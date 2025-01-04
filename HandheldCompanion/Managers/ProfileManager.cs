@@ -100,7 +100,7 @@ public static class ProfileManager
 
         if (ControllerManager.IsInitialized)
         {
-            ControllerManager_ControllerPlugged(ControllerManager.GetTargetController(), false);
+            ControllerManager_ControllerPlugged(ControllerManager.GetTarget(), false);
         }
 
         IsInitialized = true;

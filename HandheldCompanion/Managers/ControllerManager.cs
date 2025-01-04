@@ -988,7 +988,7 @@ public static class ControllerManager
         }
     }
 
-    public static bool HasTargetController => GetTargetController() != null;
+    public static bool HasTargetController => GetTarget() != null;
 
     private static void ClearTargetController()
     {
@@ -1187,9 +1187,14 @@ public static class ControllerManager
         return false;
     }
 
-    public static IController GetTargetController()
+    public static IController GetTarget()
     {
         return targetController;
+    }
+
+    public static IController GetTargetOrDefault()
+    {
+        return targetController is not null ? targetController : GetDefault();
     }
 
     public static bool IsTargetController(string InstanceId)

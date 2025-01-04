@@ -87,7 +87,7 @@ public partial class LayoutPage : Page
         // raise events
         if (ControllerManager.HasTargetController)
         {
-            ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+            ControllerManager_ControllerSelected(ControllerManager.GetTarget());
         }
     }
 
@@ -277,7 +277,7 @@ public partial class LayoutPage : Page
         }
 
         if (ExportForCurrent.IsChecked == true)
-            newLayout.ControllerType = ControllerManager.GetTargetController()?.GetType();
+            newLayout.ControllerType = ControllerManager.GetTarget()?.GetType();
 
         ManagerFactory.layoutManager.SerializeLayoutTemplate(newLayout);
 

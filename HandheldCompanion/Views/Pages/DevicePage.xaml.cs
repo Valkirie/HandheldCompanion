@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Pages
             // raise events
             if (ControllerManager.HasTargetController)
             {
-                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
             }
         }
 
@@ -507,7 +507,7 @@ namespace HandheldCompanion.Views.Pages
                     break;
 
                 case SensorFamily.Controller:
-                    IController controller = ControllerManager.GetTargetController();
+                    IController controller = ControllerManager.GetTarget();
                     controller?.Calibrate();
                     break;
             }

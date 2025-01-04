@@ -47,7 +47,7 @@ namespace HandheldCompanion.ViewModels
 
             if (ControllerManager.HasTargetController)
             {
-                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
             }
         }
 
@@ -106,7 +106,7 @@ namespace HandheldCompanion.ViewModels
             bool FilterOnDevice = ManagerFactory.settingsManager.GetBoolean("LayoutFilterOnDevice");
 
             // Get current controller
-            IController? controller = ControllerManager.GetTargetController();
+            IController? controller = ControllerManager.GetTarget();
 
             foreach (LayoutTemplateViewModel layoutTemplate in LayoutList)
             {

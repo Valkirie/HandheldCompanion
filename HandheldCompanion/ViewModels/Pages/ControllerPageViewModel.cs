@@ -31,7 +31,7 @@ namespace HandheldCompanion.ViewModels
             // send events
             if (ControllerManager.HasTargetController)
             {
-                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
             }
         }
 

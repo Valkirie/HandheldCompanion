@@ -548,9 +548,7 @@ namespace HandheldCompanion.ViewModels
             foreach (FontIconViewModel FontIconViewModel in ButtonGlyphs.ToList())
                 ButtonGlyphs.SafeRemove(FontIconViewModel);
 
-            IController? controller = ControllerManager.GetTargetController();
-            if (controller is null)
-                controller = ControllerManager.GetDefault();
+            IController controller = ControllerManager.GetTargetOrDefault();
 
             // UI thread
             UIHelper.TryInvoke(() =>

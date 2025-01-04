@@ -174,7 +174,7 @@ public partial class OverlayTrackpad : OverlayWindow
                     LeftTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
                     // send vibration (todo: make it a setting)
-                    ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
+                    ControllerManager.GetTarget()?.Rumble(); // (1, 25, 0, 60);
                 }
                 break;
             case "RightTrackpad":
@@ -188,7 +188,7 @@ public partial class OverlayTrackpad : OverlayWindow
                     RightTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
                     // send vibration (todo: make it a setting)
-                    ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
+                    ControllerManager.GetTarget()?.Rumble(); // (1, 25, 0, 60);
                 }
                 break;
         }

@@ -65,7 +65,7 @@ namespace HandheldCompanion
         {
             bool Rumble = ManagerFactory.settingsManager.GetBoolean("HotkeyRumbleOnExecution");
             if (Rumble && !IsBackground && !IsInternal)
-                ControllerManager.GetTargetController()?.Rumble();
+                ControllerManager.GetTarget()?.Rumble();
 
             command?.Execute(command.OnKeyDown, command.OnKeyUp, IsBackground);
         }

@@ -62,7 +62,7 @@ namespace HandheldCompanion.Managers
 
             if (ControllerManager.HasTargetController)
             {
-                ControllerManager_ControllerSelected(ControllerManager.GetTargetController());
+                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
             }
 
             IsInitialized = true;
@@ -143,7 +143,7 @@ namespace HandheldCompanion.Managers
         private static void PickNextSensor()
         {
             // get current controller
-            IController controller = ControllerManager.GetTargetController();
+            IController controller = ControllerManager.GetTarget();
 
             if (controller is not null && controller.HasMotionSensor())
                 ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
@@ -227,7 +227,7 @@ namespace HandheldCompanion.Managers
                             case SensorFamily.Controller:
                                 {
                                     // get current controller
-                                    IController controller = ControllerManager.GetTargetController();
+                                    IController controller = ControllerManager.GetTarget();
                                     if (controller is null || !controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
                                     {
                                         PickNextSensor();

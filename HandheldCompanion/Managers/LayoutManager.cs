@@ -350,25 +350,28 @@ public class LayoutManager : IManager
         lock (updateLock)
         {
             // Check for inherit(s) and replace actions with default layout actions where necessary
-            IController controller = ControllerManager.GetTargetController();
-            foreach (ButtonFlags buttonFlags in controller.GetTargetButtons())
+            IController controller = ControllerManager.GetTargetOrDefault();
+            if (controller is not null)
             {
-                if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
+                foreach (ButtonFlags buttonFlags in controller.GetTargetButtons())
                 {
-                    // Replace with default layout actions
-                    if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
-                        currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
+                    if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
+                    {
+                        // Replace with default layout actions
+                        if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
+                            currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
+                    }
                 }
-            }
 
-            // Check for inherit(s) and replace actions with default layout actions where necessary
-            foreach (AxisLayoutFlags axisLayout in controller.GetTargetAxis().Union(controller.GetTargetTriggers()))
-            {
-                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out var actions) && actions is InheritActions)
+                // Check for inherit(s) and replace actions with default layout actions where necessary
+                foreach (AxisLayoutFlags axisLayout in controller.GetTargetAxis().Union(controller.GetTargetTriggers()))
                 {
-                    // Replace with default layout actions
-                    if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
-                        currentLayout.AxisLayout[axisLayout] = defaultActions;
+                    if (currentLayout.AxisLayout.TryGetValue(axisLayout, out var actions) && actions is InheritActions)
+                    {
+                        // Replace with default layout actions
+                        if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
+                            currentLayout.AxisLayout[axisLayout] = defaultActions;
+                    }
                 }
             }
         }

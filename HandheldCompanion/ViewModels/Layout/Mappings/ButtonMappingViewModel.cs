@@ -257,7 +257,7 @@ namespace HandheldCompanion.ViewModels
 
             if (isInitialMapping)
             {
-                var controller = ControllerManager.GetTargetController();
+                var controller = ControllerManager.GetTarget();
                 if (controller is not null) UpdateController(controller);
             }
 

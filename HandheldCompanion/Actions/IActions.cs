@@ -125,7 +125,7 @@ namespace HandheldCompanion.Actions
             if (this.HapticMode == HapticMode.Down && up) return;
             if (this.HapticMode == HapticMode.Up && !up) return;
 
-            ControllerManager.GetTargetController()?.SetHaptic(this.HapticStrength, button);
+            ControllerManager.GetTarget()?.SetHaptic(this.HapticStrength, button);
         }
 
         public virtual void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)
