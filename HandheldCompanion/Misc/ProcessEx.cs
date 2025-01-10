@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
 using System;
@@ -11,6 +10,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Media;
 
@@ -81,12 +82,31 @@ public class ProcessEx : IDisposable
         "QtWebEngineProcess.exe"
     };
 
-    private static readonly string[] gameRelatedModules = new[]
+    private static readonly string[] inputRelatedModules = new[]
     {
         // Input Libraries
-        "xinput1_1.dll", "xinput1_2.dll", "xinput1_3.dll", "xinput1_4.dll", "xinput9_1_0.dll", // XInput
-        "dinput.dll", "dinput8.dll", // DirectInput
-    
+        "xinput1_1.dll", "xinput1_2.dll", "xinput1_3.dll", "xinput1_4.dll", "xinput9_1_0.dll",
+        "dinput.dll", "dinput8.dll", "GameInput.dll",
+    };
+
+    private static readonly string[] renderingRelatedModules = new[]
+    {
+        // DirectX
+        "d3d9.dll", "d3d11.dll", "d3d12.dll", // Direct3D
+        "dxgi.dll", // DirectX Graphics Infrastructure
+        "d3dcompiler_43.dll", "d3dcompiler_47.dll", // Direct3D Shader Compiler
+
+        // OpenGL
+        "opengl32.dll", // Core OpenGL functionality
+        "glu32.dll", // OpenGL Utility Library
+
+        // Vulkan
+        "vulkan-1.dll", // Vulkan API loader
+        "vulkan-1-999-0-0-0.dll" // Vulkan API loader
+    };
+
+    private static readonly string[] gameRelatedModules = new[]
+    {    
         // Unreal Engine DLLs
         "UE4Editor-Core.dll", "UE4Editor-CoreUObject.dll", "UE4Editor-Engine.dll",
         "UE4Editor-Renderer.dll", "UE4Editor-RHI.dll", "UE4Editor-PhysicsCore.dll",
@@ -193,6 +213,11 @@ public class ProcessEx : IDisposable
         // Itch.io App
         "itch.dll", "butler.exe", "itch-setup.exe",
     };
+    
+    private static HashSet<string> launcherSet = new HashSet<string>(launcherExecutables, StringComparer.OrdinalIgnoreCase);
+    private static HashSet<string> gameModulesSet = new HashSet<string>(gameRelatedModules, StringComparer.OrdinalIgnoreCase);
+    private static HashSet<string> inputModulesSet = new HashSet<string>(inputRelatedModules, StringComparer.OrdinalIgnoreCase);
+    private static HashSet<string> renderingModulesSet = new HashSet<string>(renderingRelatedModules, StringComparer.OrdinalIgnoreCase);
 
     public const string AppCompatRegistry = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
     public const string RunAsAdminRegistryValue = "RUNASADMIN";
@@ -259,15 +284,33 @@ public class ProcessEx : IDisposable
     {
         try
         {
-            // Check if the current process executable matches any known launcher executable;
-            // Todo: implement missing platforms as IPlatform and compare IPlatform.Executables variable against process Executable
-            if (launcherExecutables.Any(launcher => Executable.Equals(launcher, StringComparison.OrdinalIgnoreCase)))
-                return false; // Exclude launcher executables
+            // avoid launchers
+            if (launcherSet.Contains(Executable))
+                return false;
 
-            // Check if any module matches common game-related libraries
-            foreach (ProcessModule module in Process.Modules)
-                if (gameRelatedModules.Any(m => module.ModuleName.Equals(m, StringComparison.OrdinalIgnoreCase)))
-                    return true;
+            // some gaming platforms won't let us read modules, try the certificate instead
+            if (IsGamesSigned(Path))
+                return true;
+            else
+            {
+                bool isGame = false;
+                Parallel.ForEach(Process.Modules.Cast<ProcessModule>(), (module, state) =>
+                {
+                    string moduleName = module.ModuleName;
+                    if (gameModulesSet.Contains(moduleName))
+                    {
+                        isGame = true;
+                        state.Break(); // Exit loop early
+                    }
+                    else if (inputModulesSet.Contains(moduleName) && renderingModulesSet.Contains(moduleName))
+                    {
+                        isGame = true;
+                        state.Break(); // Exit loop early
+                    }
+                });
+
+                return isGame;
+            }
         }
         catch (Win32Exception)
         {
@@ -276,6 +319,33 @@ public class ProcessEx : IDisposable
         catch (InvalidOperationException)
         {
             // Handle cases where the process exits during iteration
+        }
+
+        return false;
+    }
+
+    private static readonly string[] certificateRelatedModules = new[]
+    {
+        "Epic Games", "Ubisoft", "Blizzard", "Valve Corp", "Electronic Arts", "GOG  sp"
+    };
+
+    public bool IsGamesSigned(string executablePath)
+    {
+        try
+        {
+            // Load the signed file and extract the signer information
+            X509Certificate cert = X509Certificate.CreateFromSignedFile(executablePath);
+
+            // Get the signing certificate
+            X509Certificate2 cert2 = new X509Certificate2(cert);
+
+            foreach (string certificate in certificateRelatedModules)
+                if (cert2.Subject.Contains(certificate, StringComparison.OrdinalIgnoreCase))
+                    return true;
+        }
+        catch (Exception)
+        {
+            // Handle cases where signature is missing or inaccessible
         }
 
         return false;
