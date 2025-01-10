@@ -45,12 +45,13 @@ public class LayoutManager : IManager
 
     public LayoutManager()
     {
-        // initialiaze path
-        LayoutsPath = Path.Combine(MainWindow.SettingsPath, "layouts");
+        // initialize path(s)
+        LayoutsPath = Path.Combine(App.SettingsPath, "layouts");
+        TemplatesPath = Path.Combine(App.SettingsPath, "templates");
+
+        // create path(s)
         if (!Directory.Exists(LayoutsPath))
             Directory.CreateDirectory(LayoutsPath);
-
-        TemplatesPath = Path.Combine(MainWindow.SettingsPath, "templates");
         if (!Directory.Exists(TemplatesPath))
             Directory.CreateDirectory(TemplatesPath);
 

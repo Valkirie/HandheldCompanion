@@ -13,7 +13,7 @@ namespace HandheldCompanion.ViewModels
 
         public SettingsMode0ViewModel()
         {
-            HotkeysManager.Updated += HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
         }

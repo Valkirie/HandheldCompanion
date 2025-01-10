@@ -9,7 +9,7 @@ namespace HandheldCompanion.Sensors
     public class IMUCalibration
     {
         private static Dictionary<string, IMUCalibration> Calibrations = [];
-        public static string CalibrationPath = Path.Combine(MainWindow.SettingsPath, "calibration.json");
+        public static string CalibrationPath = Path.Combine(App.SettingsPath, "calibration.json");
 
         public float xOffset;
         public float yOffset;
@@ -23,8 +23,8 @@ namespace HandheldCompanion.Sensors
 
         static IMUCalibration()
         {
-            // initialiaze path
-            CalibrationPath = Path.Combine(MainWindow.SettingsPath, "calibration.json");
+            // initialize path
+            CalibrationPath = Path.Combine(App.SettingsPath, "calibration.json");
             Calibrations = DeserializeCollection();
         }
 

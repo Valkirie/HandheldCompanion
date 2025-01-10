@@ -9,7 +9,7 @@ namespace HandheldCompanion.Helpers
 {
     public static class DriverStore
     {
-        private static string DriversPath = Path.Combine(MainWindow.SettingsPath, "drivers.json");
+        private static string DriversPath = Path.Combine(App.SettingsPath, "drivers.json");
         private static Dictionary<string, string> Drivers = [];
 
         static DriverStore()

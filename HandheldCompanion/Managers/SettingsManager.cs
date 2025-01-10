@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Windows.Media;
 
@@ -42,6 +43,12 @@ public class SettingsManager : IManager
     public event SettingValueChangedEventHandler SettingValueChanged;
 
     private readonly Dictionary<string, object> Settings = [];
+
+    public SettingsManager()
+    {
+        if (!Directory.Exists(App.SettingsPath))
+            Directory.CreateDirectory(App.SettingsPath);
+    }
 
     public override void Start()
     {

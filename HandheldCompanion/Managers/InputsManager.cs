@@ -155,7 +155,7 @@ public static class InputsManager
             // set flag
             bool success = false;
 
-            IEnumerable<Hotkey> hotkeys = HotkeysManager.GetHotkeys().Where(hk => ((hk.inputsChord.ButtonState.Equals(currentChord.ButtonState) && !hk.inputsChord.ButtonState.IsEmpty()) || currentChord.ButtonState[hk.ButtonFlags]) && hk.inputsChord.chordType == currentChord.chordType);
+            IEnumerable<Hotkey> hotkeys = ManagerFactory.hotkeysManager.GetHotkeys().Where(hk => ((hk.inputsChord.ButtonState.Equals(currentChord.ButtonState) && !hk.inputsChord.ButtonState.IsEmpty()) || currentChord.ButtonState[hk.ButtonFlags]) && hk.inputsChord.chordType == currentChord.chordType);
             foreach (Hotkey hotkey in hotkeys)
             {
                 switch (currentChord.chordType)
@@ -336,7 +336,7 @@ public static class InputsManager
             }
 
             // check if key is used by hotkey chords
-            foreach (Hotkey hotkey in HotkeysManager.GetHotkeys())
+            foreach (Hotkey hotkey in ManagerFactory.hotkeysManager.GetHotkeys())
             {
                 KeyboardChord pair = hotkey.keyChord;
 
@@ -407,7 +407,7 @@ public static class InputsManager
                 {
                     if (args.IsKeyDown)
                     {
-                        foreach (Hotkey hotkey in HotkeysManager.GetHotkeys().Where(h => h.keyChord.chords[args.IsKeyDown].Count == buffer_keys.Count))
+                        foreach (Hotkey hotkey in ManagerFactory.hotkeysManager.GetHotkeys().Where(h => h.keyChord.chords[args.IsKeyDown].Count == buffer_keys.Count))
                         {
                             KeyboardChord? chord = hotkey.keyChord;
 

@@ -14,14 +14,31 @@ namespace HandheldCompanion.ViewModels
         public QuickHomePageViewModel()
         {
             // manage events
-            HotkeysManager.Updated += HotkeysManager_Updated;
-            HotkeysManager.Deleted += HotkeysManager_Deleted;
-            HotkeysManager.Initialized += HotkeysManager_Initialized;
+            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Deleted += HotkeysManager_Deleted;
 
-            if (HotkeysManager.IsInitialized)
+            // raise events
+            switch (ManagerFactory.hotkeysManager.Status)
             {
-                HotkeysManager_Initialized();
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.hotkeysManager.Initialized += HotkeysManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryHotkeys();
+                    break;
             }
+        }
+
+        private void HotkeysManager_Initialized()
+        {
+            QueryHotkeys();
+        }
+
+        private void QueryHotkeys()
+        {
+            foreach (Hotkey hotkey in ManagerFactory.hotkeysManager.GetHotkeys())
+                HotkeysManager_Updated(hotkey);
         }
 
         void IDropTarget.DragOver(IDropInfo dropInfo)
@@ -54,17 +71,11 @@ namespace HandheldCompanion.ViewModels
                         for (int i = start; i <= end; i++)
                         {
                             HotkeysList[i].Hotkey.PinIndex = i;
-                            HotkeysManager.UpdateOrCreateHotkey(HotkeysList[i].Hotkey);
+                            ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(HotkeysList[i].Hotkey);
                         }
                     }
                 }
             }
-        }
-
-        private void HotkeysManager_Initialized()
-        {
-            foreach (Hotkey hotkey in HotkeysManager.GetHotkeys().OrderBy(hotkey => hotkey.PinIndex))
-                HotkeysManager_Updated(hotkey);
         }
 
         private void HotkeysManager_Updated(Hotkey hotkey)

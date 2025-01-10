@@ -55,7 +55,7 @@ public static class UpdateManager
         assembly = Assembly.GetExecutingAssembly();
         build = assembly.GetName().Version;
 
-        InstallPath = Path.Combine(MainWindow.SettingsPath, "cache");
+        InstallPath = Path.Combine(App.SettingsPath, "cache");
 
         // initialize folder
         if (!Directory.Exists(InstallPath))

@@ -18,26 +18,27 @@ using System.Linq;
 
 namespace HandheldCompanion.Managers;
 
-public static class HotkeysManager
+public class HotkeysManager : IManager
 {
-    public static ConcurrentDictionary<ButtonFlags, Hotkey> hotkeys = new();
+    public ConcurrentDictionary<ButtonFlags, Hotkey> hotkeys = new();
+    private readonly string HotkeysPath;
 
-    private static readonly string HotkeysPath;
-
-    public static bool IsInitialized;
-
-    static HotkeysManager()
+    public HotkeysManager()
     {
         // initialize path
-        HotkeysPath = Path.Combine(MainWindow.SettingsPath, "hotkeys");
+        HotkeysPath = Path.Combine(App.SettingsPath, "hotkeys");
+
+        // create path
         if (!Directory.Exists(HotkeysPath))
             Directory.CreateDirectory(HotkeysPath);
     }
 
-    public static void Start()
+    public void Start()
     {
-        if (IsInitialized)
+        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
             return;
+
+        base.PrepareStart();
 
         // process existing hotkeys
         string[] fileEntries = Directory.GetFiles(HotkeysPath, "*.json", SearchOption.AllDirectories);
@@ -72,26 +73,23 @@ public static class HotkeysManager
         // manage events
         InputsManager.StoppedListening += InputsManager_StoppedListening;
 
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "HotkeysManager");
+        base.Start();
     }
 
-    public static void Stop()
+    public void Stop()
     {
-        if (!IsInitialized)
+        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
             return;
+
+        base.PrepareStop();
 
         // manage events
         InputsManager.StoppedListening -= InputsManager_StoppedListening;
 
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "HotkeysManager");
+        base.Stop();
     }
 
-    private static void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
+    private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
     {
         // update chord(s)
         if (storedChord.KeyState.Count != 0 || storedChord.ButtonState.Buttons.Count() != 0)
@@ -114,12 +112,12 @@ public static class HotkeysManager
         }
     }
 
-    public static ICollection<Hotkey> GetHotkeys()
+    public IEnumerable<Hotkey> GetHotkeys()
     {
-        return hotkeys.Values;
+        return hotkeys.Values.OrderBy(hotkey => hotkey.PinIndex);
     }
 
-    private static void ProcessHotkey(string fileName)
+    private void ProcessHotkey(string fileName)
     {
         Hotkey? hotkey = null;
 
@@ -193,7 +191,7 @@ public static class HotkeysManager
         UpdateOrCreateHotkey(hotkey);
     }
 
-    private static Hotkey? MigrateFrom0_21_4_1(string fileName, JObject? dictionary)
+    private Hotkey? MigrateFrom0_21_4_1(string fileName, JObject? dictionary)
     {
         ICommands command = new EmptyCommands();
 
@@ -310,13 +308,13 @@ public static class HotkeysManager
         return null;
     }
 
-    private static bool IsUsedButtonFlag(ButtonFlags buttonFlags)
+    private bool IsUsedButtonFlag(ButtonFlags buttonFlags)
     {
         HashSet<ButtonFlags> usedFlags = hotkeys.Values.Select(h => h.ButtonFlags).ToHashSet();
         return usedFlags.Contains(buttonFlags);
     }
 
-    public static ButtonFlags GetAvailableButtonFlag()
+    public ButtonFlags GetAvailableButtonFlag()
     {
         HashSet<ButtonFlags> usedFlags = hotkeys.Values.Select(h => h.ButtonFlags).ToHashSet();
         foreach (byte flagValue in Enumerable.Range((int)ButtonFlags.HOTKEY_START + 1, (int)ButtonFlags.HOTKEY_END - (int)ButtonFlags.HOTKEY_START + 2))
@@ -331,7 +329,7 @@ public static class HotkeysManager
         return ButtonFlags.None;
     }
 
-    public static void UpdateOrCreateHotkey(Hotkey hotkey)
+    public void UpdateOrCreateHotkey(Hotkey hotkey)
     {
         hotkeys[hotkey.ButtonFlags] = hotkey;
         Updated?.Invoke(hotkey);
@@ -341,7 +339,7 @@ public static class HotkeysManager
             SerializeHotkey(hotkey);
     }
 
-    public static void SerializeHotkey(Hotkey hotkey)
+    public void SerializeHotkey(Hotkey hotkey)
     {
         string hotkeyPath = Path.Combine(HotkeysPath, $"{hotkey.ButtonFlags}.json");
 
@@ -356,7 +354,7 @@ public static class HotkeysManager
             File.WriteAllText(hotkeyPath, jsonString);
     }
 
-    public static void DeleteHotkey(Hotkey hotkey)
+    public void DeleteHotkey(Hotkey hotkey)
     {
         var hotkeyPath = Path.Combine(HotkeysPath, $"{hotkey.ButtonFlags}.json");
 
@@ -373,13 +371,10 @@ public static class HotkeysManager
 
     #region events
 
-    public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
-
-    public static event DeletedEventHandler Deleted;
+    public event DeletedEventHandler Deleted;
     public delegate void DeletedEventHandler(Hotkey hotkey);
 
-    public static event UpdatedEventHandler Updated;
+    public event UpdatedEventHandler Updated;
     public delegate void UpdatedEventHandler(Hotkey hotkey);
 
     #endregion

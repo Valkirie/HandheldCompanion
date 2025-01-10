@@ -38,7 +38,7 @@ namespace HandheldCompanion
 
         public Hotkey()
         {
-            this.ButtonFlags = HotkeysManager.GetAvailableButtonFlag();
+            this.ButtonFlags = ManagerFactory.hotkeysManager.GetAvailableButtonFlag();
             if (this.ButtonFlags == ButtonFlags.None)
                 throw new InvalidOperationException("No available ButtonFlags.");
         }

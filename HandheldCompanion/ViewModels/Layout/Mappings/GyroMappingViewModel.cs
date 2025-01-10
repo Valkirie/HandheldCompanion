@@ -179,13 +179,13 @@ namespace HandheldCompanion.ViewModels
                 });
             }
 
-            HotkeysManager.Updated += HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
 
             // store hotkey to manager
             HotkeysList.SafeAdd(new HotkeyViewModel(GyroHotkey));
-            HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+            ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
         }
 
         private void HotkeysManager_Updated(Hotkey hotkey)
@@ -226,7 +226,7 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
-            HotkeysManager.Updated -= HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
             InputsManager.StartedListening -= InputsManager_StartedListening;
             InputsManager.StoppedListening -= InputsManager_StoppedListening;
             base.Dispose();

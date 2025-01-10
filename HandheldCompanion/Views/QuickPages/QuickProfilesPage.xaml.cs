@@ -61,7 +61,7 @@ public partial class QuickProfilesPage : Page
         ProfileManager.Deleted += ProfileManager_Deleted;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        HotkeysManager.Updated += HotkeysManager_Updated;
+        ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Hooked += GPUManager_Hooked;
         GPUManager.Unhooked += GPUManager_Unhooked;
@@ -140,7 +140,7 @@ public partial class QuickProfilesPage : Page
         RTSS_Updated(PlatformManager.RTSS.Status);
 
         // store hotkey to manager
-        HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
     }
 
     public void Close()
@@ -151,7 +151,7 @@ public partial class QuickProfilesPage : Page
         ProfileManager.Deleted -= ProfileManager_Deleted;
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
-        HotkeysManager.Updated -= HotkeysManager_Updated;
+        ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
         GPUManager.Hooked -= GPUManager_Hooked;
         GPUManager.Unhooked -= GPUManager_Unhooked;
@@ -455,7 +455,7 @@ public partial class QuickProfilesPage : Page
                         SliderSensitivityY.Value = selectedProfile.MotionSensivityY;
 
                         GyroHotkey.inputsChord.ButtonState = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
-                        HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
                     }
 
                     // Framerate limit

@@ -37,8 +37,8 @@ public static class ProfileManager
 
     static ProfileManager()
     {
-        // initialiaze path(s)
-        ProfilesPath = Path.Combine(MainWindow.SettingsPath, "profiles");
+        // initialize path(s)
+        ProfilesPath = Path.Combine(App.SettingsPath, "profiles");
         if (!Directory.Exists(ProfilesPath))
             Directory.CreateDirectory(ProfilesPath);
 

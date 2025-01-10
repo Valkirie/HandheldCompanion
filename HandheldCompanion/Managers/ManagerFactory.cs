@@ -6,5 +6,6 @@
         public static DeviceManager deviceManager = new();
         public static LayoutManager layoutManager = new();
         public static MultimediaManager multimediaManager = new();
+        public static HotkeysManager hotkeysManager = new();
     }
 }

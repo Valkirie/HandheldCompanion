@@ -26,7 +26,7 @@ namespace HandheldCompanion.Managers
         static PowerProfileManager()
         {
             // initialize path(s)
-            ProfilesPath = Path.Combine(MainWindow.SettingsPath, "powerprofiles");
+            ProfilesPath = Path.Combine(App.SettingsPath, "powerprofiles");
             if (!Directory.Exists(ProfilesPath))
                 Directory.CreateDirectory(ProfilesPath);
         }

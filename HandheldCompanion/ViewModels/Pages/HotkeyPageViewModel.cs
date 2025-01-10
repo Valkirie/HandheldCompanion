@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -32,9 +33,8 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
 
             // manage events
-            HotkeysManager.Updated += HotkeysManager_Updated;
-            HotkeysManager.Deleted += HotkeysManager_Deleted;
-            HotkeysManager.Initialized += HotkeysManager_Initialized;
+            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Deleted += HotkeysManager_Deleted;
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
@@ -45,14 +45,21 @@ namespace HandheldCompanion.ViewModels
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
             }
 
-            if (HotkeysManager.IsInitialized)
+            // raise events
+            switch (ManagerFactory.hotkeysManager.Status)
             {
-                HotkeysManager_Initialized();
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.hotkeysManager.Initialized += HotkeysManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryHotkeys();
+                    break;
             }
 
             CreateHotkeyCommand = new DelegateCommand(async () =>
             {
-                HotkeysManager.UpdateOrCreateHotkey(new Hotkey());
+                ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(new Hotkey());
             });
         }
 
@@ -65,7 +72,12 @@ namespace HandheldCompanion.ViewModels
 
         private void HotkeysManager_Initialized()
         {
-            foreach (Hotkey hotkey in HotkeysManager.GetHotkeys())
+            QueryHotkeys();
+        }
+
+        private void QueryHotkeys()
+        {
+            foreach (Hotkey hotkey in ManagerFactory.hotkeysManager.GetHotkeys())
                 HotkeysManager_Updated(hotkey);
         }
 
@@ -110,9 +122,9 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             // manage events
-            HotkeysManager.Updated -= HotkeysManager_Updated;
-            HotkeysManager.Deleted -= HotkeysManager_Deleted;
-            HotkeysManager.Initialized -= HotkeysManager_Initialized;
+            ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Deleted -= HotkeysManager_Deleted;
+            ManagerFactory.hotkeysManager.Initialized -= HotkeysManager_Initialized;
             InputsManager.StartedListening -= InputsManager_StartedListening;
             InputsManager.StoppedListening -= InputsManager_StoppedListening;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;

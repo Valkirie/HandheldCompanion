@@ -6,6 +6,7 @@ using Sentry;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -20,6 +21,8 @@ namespace HandheldCompanion;
 public partial class App : Application
 {
     public static bool IsMultiThreaded { get; } = false;
+    public static string InstallPath = string.Empty;
+    public static string SettingsPath = string.Empty;
 
     [return: MarshalAs(UnmanagedType.Bool)]
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -36,6 +39,10 @@ public partial class App : Application
     {
         InitializeSentry();
         InitializeComponent();
+
+        // initialize path(s)
+        InstallPath = AppDomain.CurrentDomain.BaseDirectory;
+        SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion");
     }
 
     /// <summary>

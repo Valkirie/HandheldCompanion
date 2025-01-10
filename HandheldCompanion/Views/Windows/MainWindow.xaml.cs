@@ -68,8 +68,6 @@ public partial class MainWindow : GamepadWindow
     private static MainWindow CurrentWindow;
     public static FileVersionInfo fileVersionInfo;
 
-    public static string InstallPath = string.Empty;
-    public static string SettingsPath = string.Empty;
     public static string CurrentPageName = string.Empty;
 
     private bool appClosing;
@@ -112,14 +110,6 @@ public partial class MainWindow : GamepadWindow
         TabletDeviceCollection tabletDevices = Tablet.TabletDevices;
 
         // define current directory
-        InstallPath = AppDomain.CurrentDomain.BaseDirectory;
-        SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            "HandheldCompanion");
-
-        // initialize path
-        if (!Directory.Exists(SettingsPath))
-            Directory.CreateDirectory(SettingsPath);
-
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
         // initialize XInputWrapper
@@ -204,7 +194,7 @@ public partial class MainWindow : GamepadWindow
             Task.Run(() => DynamicLightingManager.Start()),
             Task.Run(() => VirtualManager.Start()),
             Task.Run(() => SensorsManager.Start()),
-            Task.Run(() => HotkeysManager.Start()),
+            Task.Run(() => ManagerFactory.hotkeysManager.Start()),
             Task.Run(() => ProfileManager.Start()),
             Task.Run(() => PowerProfileManager.Start()),
             Task.Run(() => GPUManager.Start()),

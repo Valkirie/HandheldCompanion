@@ -93,7 +93,7 @@ namespace HandheldCompanion.ViewModels
                         cycleSubProfileCommands.CycleIndex = value;
 
                     OnPropertyChanged(nameof(CyclingDirection));
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     Hotkey.Name = value;
                     OnPropertyChanged(nameof(CustomName));
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             }
         }
@@ -287,7 +287,7 @@ namespace HandheldCompanion.ViewModels
                     CustomName = Hotkey.command.Name;
 
                     OnPropertyChanged(nameof(CommandTypeIndex));
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             }
         }
@@ -313,7 +313,7 @@ namespace HandheldCompanion.ViewModels
                     CustomName = Hotkey.command.Name;
 
                     OnPropertyChanged(nameof(FunctionIndex));
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             }
         }
@@ -362,7 +362,7 @@ namespace HandheldCompanion.ViewModels
                         executableCommand.Arguments = value;
                         OnPropertyChanged(nameof(ExecutableArguments));
 
-                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                     }
                 }
             }
@@ -385,7 +385,7 @@ namespace HandheldCompanion.ViewModels
                         executableCommand.windowStyle = (ProcessWindowStyle)value;
                         OnPropertyChanged(nameof(ExecutableWindowStyle));
 
-                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                     }
                 }
             }
@@ -408,7 +408,7 @@ namespace HandheldCompanion.ViewModels
                         executableCommand.RunAs = value;
                         OnPropertyChanged(nameof(ExecutableRunAs));
 
-                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                     }
                 }
             }
@@ -431,7 +431,7 @@ namespace HandheldCompanion.ViewModels
                         keyboardCommands.KeyboardPosition = value;
                         OnPropertyChanged(nameof(OnScreenKeyboardLegacyPosition));
 
-                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                     }
                 }
             }
@@ -492,12 +492,12 @@ namespace HandheldCompanion.ViewModels
             PinButtonCommand = new DelegateCommand(async () =>
             {
                 Hotkey.IsPinned = !Hotkey.IsPinned;
-                HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
             });
 
             DeleteHotkeyCommand = new DelegateCommand(async () =>
             {
-                HotkeysManager.DeleteHotkey(Hotkey);
+                ManagerFactory.hotkeysManager.DeleteHotkey(Hotkey);
             });
 
             DefineOutputCommand = new DelegateCommand(async () =>
@@ -520,7 +520,7 @@ namespace HandheldCompanion.ViewModels
                     if (Hotkey.command is ExecutableCommands executableCommand)
                     {
                         executableCommand.Path = openFileDialog.FileName;
-                        HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                     }
                 }
             });
@@ -533,7 +533,7 @@ namespace HandheldCompanion.ViewModels
             EraseButtonCommand = new DelegateCommand(async () =>
             {
                 Hotkey.inputsChord = new();
-                HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
             });
 
             EraseOutputButtonCommand = new DelegateCommand(async () =>
@@ -541,7 +541,7 @@ namespace HandheldCompanion.ViewModels
                 if (Hotkey.command is KeyboardCommands keyboardCommands)
                 {
                     keyboardCommands.outputChord = new();
-                    HotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
             });
         }

@@ -36,10 +36,10 @@ public partial class SettingsMode0 : Page
         this.Tag = Tag;
 
         MotionManager.SettingsMode0Update += MotionManager_SettingsMode0Update;
-        HotkeysManager.Updated += HotkeysManager_Updated;
+        ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
 
         // store hotkey to manager
-        HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
     }
 
     public void SetProfile()
@@ -59,7 +59,7 @@ public partial class SettingsMode0 : Page
                     tb_ProfileStickSensitivity.Value = ProfilesPage.selectedProfile.FlickstickSensivity;
 
                     GyroHotkey.inputsChord.ButtonState = ProfilesPage.selectedProfile.AimingSightsTrigger.Clone() as ButtonState;
-                    HotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
 
                     // temp
                     StackCurve.Children.Clear();

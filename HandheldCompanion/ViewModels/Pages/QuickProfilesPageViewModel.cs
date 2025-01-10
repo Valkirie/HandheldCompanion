@@ -107,7 +107,7 @@ namespace HandheldCompanion.ViewModels
             this.quickProfilesPage = quickProfilesPage;
 
             // manage events
-            HotkeysManager.Updated += HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
             InputsManager.StartedListening += InputsManager_StartedListening;
             InputsManager.StoppedListening += InputsManager_StoppedListening;
             PowerProfileManager.Updated += PowerProfileManager_Updated;
@@ -199,7 +199,7 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             // manage events
-            HotkeysManager.Updated -= HotkeysManager_Updated;
+            ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
             InputsManager.StartedListening -= InputsManager_StartedListening;
             InputsManager.StoppedListening -= InputsManager_StoppedListening;
             PowerProfileManager.Updated -= PowerProfileManager_Updated;
