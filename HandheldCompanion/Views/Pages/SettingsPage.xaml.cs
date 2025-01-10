@@ -180,8 +180,8 @@ public partial class SettingsPage : Page
                 case "CloseMinimises":
                     Toggle_CloseMinimizes.IsOn = Convert.ToBoolean(value);
                     break;
-                case "DesktopProfileOnStart":
-                    Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
+                case "DesktopLayoutOnStart":
+                    Toggle_DesktopLayoutOnStart.IsOn = Convert.ToBoolean(value);
                     break;
                 case "ToastEnable":
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
@@ -267,12 +267,12 @@ public partial class SettingsPage : Page
         ManagerFactory.settingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
     }
 
-    private void Toggle_DesktopProfileOnStart_Toggled(object? sender, RoutedEventArgs? e)
+    private void Toggle_DesktopLayoutOnStart_Toggled(object? sender, RoutedEventArgs? e)
     {
         if (!IsLoaded)
             return;
 
-        ManagerFactory.settingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
+        ManagerFactory.settingsManager.SetProperty("DesktopLayoutOnStart", Toggle_DesktopLayoutOnStart.IsOn);
     }
 
     private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)

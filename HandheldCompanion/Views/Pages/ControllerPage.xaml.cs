@@ -80,9 +80,6 @@ public partial class ControllerPage : Page
                 case "VibrationStrength":
                     SliderStrength.Value = Convert.ToDouble(value);
                     break;
-                case "DesktopLayoutEnabled":
-                    Toggle_DesktopLayout.IsOn = Convert.ToBoolean(value);
-                    break;
                 case "SteamControllerMode":
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
                     ControllerRefresh();
@@ -317,15 +314,6 @@ public partial class ControllerPage : Page
         };
         MainWindow.layoutPage.UpdateLayoutTemplate(desktopTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
-    }
-
-    private void Toggle_DesktopLayout_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        // temporary settings
-        ManagerFactory.settingsManager.SetProperty("DesktopLayoutEnabled", Toggle_DesktopLayout.IsOn, false, true);
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)

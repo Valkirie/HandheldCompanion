@@ -144,7 +144,9 @@ public class LayoutManager : IManager
 
     private void QuerySettings()
     {
-        ManagerFactory.settingsManager.SetProperty("DesktopLayoutEnabled", ManagerFactory.settingsManager.GetBoolean("DesktopProfileOnStart"), false, true);
+        bool DesktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
+        if (DesktopLayoutOnStart)
+            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
     }
 
     private void SettingsManager_Initialized()
@@ -245,7 +247,11 @@ public class LayoutManager : IManager
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
-        SetProfileLayout(profile);
+        // use profile layout (will be cloned during SetActiveLayout)
+        // ref
+        profileLayout = profile.Layout;
+
+        CheckProfileLayout();
     }
 
     private void ProfileManager_Initialized()
@@ -260,15 +266,23 @@ public class LayoutManager : IManager
         UpdateInherit();
     }
 
-    private void SetProfileLayout(Profile profile = null)
+    private void CheckProfileLayout()
     {
-        // use profile layout (will be cloned during SetActiveLayout)
-        // ref
-        profileLayout = profile.Layout;
+        LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
 
-        // only update current layout if we're not into desktop layout mode
-        if (!ManagerFactory.settingsManager.GetBoolean("DesktopLayoutEnabled", true))
+        if (layoutMode == LayoutModes.Gamepad)
+        {
             SetActiveLayout(profileLayout);
+        }
+        else if (layoutMode == LayoutModes.Desktop)
+        {
+            SetActiveLayout(desktopLayout);
+        }
+        else if (layoutMode == LayoutModes.Auto)
+        {
+            ProcessEx processEx = ProcessManager.GetForegroundProcess();
+            SetActiveLayout(processEx?.IsGame() == true ? profileLayout : desktopLayout);
+        }
     }
 
     public Layout GetCurrent()
@@ -317,18 +331,8 @@ public class LayoutManager : IManager
     {
         switch (name)
         {
-            case "DesktopLayoutEnabled":
-                {
-                    switch (Convert.ToBoolean(value))
-                    {
-                        case true:
-                            SetActiveLayout(desktopLayout);
-                            break;
-                        case false:
-                            SetActiveLayout(profileLayout);
-                            break;
-                    }
-                }
+            case "LayoutMode":
+                CheckProfileLayout();
                 break;
         }
     }

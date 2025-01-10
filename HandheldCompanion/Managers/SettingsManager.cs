@@ -29,6 +29,13 @@ public static class Settings
     public static readonly string VersionHotkeyManager = "0.21.5.0";
 }
 
+public enum LayoutModes
+{
+    Gamepad = 0,
+    Desktop = 1,
+    Auto = 2
+}
+
 public class SettingsManager : IManager
 {
     public delegate void SettingValueChangedEventHandler(string name, object value, bool temporary);

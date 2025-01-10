@@ -914,10 +914,10 @@
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>アプリケーションを閉じずに最小化</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStart" xml:space="preserve">
     <value>起動時にデスクトップ プロファイルを有効にする</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStartDesc" xml:space="preserve">
     <value>デスクトップ プロファイルはアプリケーションの起動時に自動的に有効になります</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
@@ -1097,10 +1097,10 @@
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>接続時に物理コントローラーを振動させる</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_LayoutMode" xml:space="preserve">
     <value>デスクトップレイアウト</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
     <value>デスクトップ コントローラーのレイアウトを切り替え</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">

@@ -27,12 +27,15 @@ namespace HandheldCompanion.UI
         public const string Select = "switch_007";
         public const string Slide = "glitch_004";
 
+        private const int LONG_INTERVAL = 120;
+        private const int SHORT_INTERVAL = 10;
+
         static UISounds()
         {
             // Get the current application folder
             appFolder = AppDomain.CurrentDomain.BaseDirectory;
 
-            soundTimer = new(100) { AutoReset = false };
+            soundTimer = new(LONG_INTERVAL) { AutoReset = false };
             soundTimer.Elapsed += SoundTimer_Elapsed;
 
             // Register the class handler for the Click event
@@ -50,19 +53,15 @@ namespace HandheldCompanion.UI
 
         private static async void SoundTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            using (VorbisWaveReader waveReader = new VorbisWaveReader(audioFilePath))
+            using (var vorbis = new VorbisWaveReader(audioFilePath))
+            using (var output = new WaveOutEvent())
             {
-                using (WaveOutEvent waveOut = new WaveOutEvent())
+                output.Init(vorbis);
+                output.Play();
+
+                while (output.PlaybackState == PlaybackState.Playing)
                 {
-                    if (waveOut.DeviceNumber == -1)
-                        return;
-
-                    waveOut.Init(waveReader);
-                    waveOut.Play();
-
-                    // wait here until playback stops or should stop
-                    while (waveOut.PlaybackState == PlaybackState.Playing)
-                        await Task.Delay(1).ConfigureAwait(false); // Avoid blocking the synchronization context
+                    await Task.Delay(10); // Non-blocking delay
                 }
             }
         }
@@ -191,11 +190,24 @@ namespace HandheldCompanion.UI
             if (!File.Exists(audioFilePath))
                 return;
 
+            // stop timer
+            soundTimer.Stop();
+
             // update file path
             UISounds.audioFilePath = audioFilePath;
 
-            // reset timer
-            soundTimer.Stop();
+            switch(fileName)
+            {
+                case UISounds.Focus:
+                    soundTimer.Interval = LONG_INTERVAL;
+                    break;
+
+                default:
+                    soundTimer.Interval = SHORT_INTERVAL;
+                    break;
+            }
+
+            // (re)start
             soundTimer.Start();
         }
     }

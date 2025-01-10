@@ -4167,18 +4167,18 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Desktop layout.
         /// </summary>
-        public static string Hotkey_DesktopLayoutEnabled {
+        public static string Hotkey_LayoutMode {
             get {
-                return ResourceManager.GetString("Hotkey_DesktopLayoutEnabled", resourceCulture);
+                return ResourceManager.GetString("Hotkey_LayoutMode", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Toggle Desktop controller layout.
         /// </summary>
-        public static string Hotkey_DesktopLayoutEnabledDesc {
+        public static string Hotkey_LayoutModeDesc {
             get {
-                return ResourceManager.GetString("Hotkey_DesktopLayoutEnabledDesc", resourceCulture);
+                return ResourceManager.GetString("Hotkey_LayoutModeDesc", resourceCulture);
             }
         }
         
@@ -8890,18 +8890,18 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Enable desktop profile on start.
         /// </summary>
-        public static string SettingsPage_EnableDesktopProfileOnStart {
+        public static string SettingsPage_EnableDesktopLayoutOnStart {
             get {
-                return ResourceManager.GetString("SettingsPage_EnableDesktopProfileOnStart", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_EnableDesktopLayoutOnStart", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The desktop profile will be automatically enabled on application start.
         /// </summary>
-        public static string SettingsPage_EnableDesktopProfileOnStartDesc {
+        public static string SettingsPage_EnableDesktopLayoutOnStartDesc {
             get {
-                return ResourceManager.GetString("SettingsPage_EnableDesktopProfileOnStartDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_EnableDesktopLayoutOnStartDesc", resourceCulture);
             }
         }
         

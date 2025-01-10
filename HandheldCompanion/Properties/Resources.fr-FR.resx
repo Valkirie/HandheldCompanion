@@ -902,10 +902,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>L'application sera réduite au lieu d'être fermée</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStart" xml:space="preserve">
     <value>Enable desktop profile on start</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStartDesc" xml:space="preserve">
     <value>The desktop profile will be automatically enabled on application start</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
@@ -1092,10 +1092,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>Vibrate physical controller when connected</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_LayoutMode" xml:space="preserve">
     <value>Desktop layout</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
     <value>Toggle Desktop controller layout</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">

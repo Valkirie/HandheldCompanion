@@ -113,6 +113,7 @@ namespace HandheldCompanion.ViewModels
         private void Command_Updated(ICommands command)
         {
             OnPropertyChanged(nameof(LiveGlyph));
+            OnPropertyChanged(nameof(LiveName));
             OnPropertyChanged(nameof(IsEnabled));
             OnPropertyChanged(nameof(IsToggled));
         }
@@ -126,6 +127,7 @@ namespace HandheldCompanion.ViewModels
 
         public string Glyph => Hotkey.command.Glyph;
         public string LiveGlyph => Hotkey.command.LiveGlyph;
+        public string LiveName => CanCustom ? CustomName : Hotkey.command.LiveName;
         public string FontFamily => Hotkey.command.FontFamily;
 
         public string CustomName
@@ -437,6 +439,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsToggled => Hotkey.command.IsToggled;
         public bool IsEnabled => Hotkey.command.IsEnabled;
+        public bool CanCustom => Hotkey.command.CanCustom;
 
         public ICommand DefineButtonCommand { get; private set; }
         public ICommand PinButtonCommand { get; private set; }

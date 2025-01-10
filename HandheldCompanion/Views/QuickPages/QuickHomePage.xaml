@@ -41,7 +41,7 @@
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="4" />
+                        <UniformGrid Columns="3" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -76,7 +76,7 @@
 
                                 <TextBlock
                                     FontSize="12"
-                                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Text="{Binding LiveName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap" />
                             </StackPanel>

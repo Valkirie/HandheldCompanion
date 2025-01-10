@@ -50,6 +50,24 @@ namespace HandheldCompanion.Commands
             }
         }
 
+        [JsonIgnore] private string _LiveName = string.Empty;
+        [JsonIgnore]
+        public string LiveName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_LiveName))
+                    return Glyph;
+
+                return _LiveName;
+            }
+            set
+            {
+                if (value != _LiveName)
+                    _LiveName = value;
+            }
+        }
+
         [JsonIgnore] public string FontFamily = "Segoe Fluent Icons";
 
         public CommandType commandType;
@@ -73,6 +91,7 @@ namespace HandheldCompanion.Commands
 
         [JsonIgnore] public virtual bool IsToggled => false;
         [JsonIgnore] public bool IsEnabled = true;
+        [JsonIgnore] public bool CanCustom = true;
 
         public virtual object Clone()
         {

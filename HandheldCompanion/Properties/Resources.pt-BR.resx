@@ -921,10 +921,10 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>A aplicação será minimizada ao invés de encerrada ao clicar no botão fechar janela</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStart" xml:space="preserve">
     <value>Ligar o perfil de área de trabalho ao iniciar</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStartDesc" xml:space="preserve">
     <value>O perfil de área de trabalho será ligado automaticamente no início da aplicação</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
@@ -1104,10 +1104,10 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>Vibrar o controle físico quando conectado</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_LayoutMode" xml:space="preserve">
     <value>Layout de área de trabalho</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
     <value>Ligar e desligar o layout de controle para área de trabalho</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">

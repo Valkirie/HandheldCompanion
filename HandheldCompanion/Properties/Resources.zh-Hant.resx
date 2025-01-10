@@ -901,10 +901,10 @@
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>當點擊右上角關閉按鈕時，程序將會以最小化代替退出</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStart" xml:space="preserve">
     <value>自動應用桌面布局</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStartDesc" xml:space="preserve">
     <value>當程序啟動時自動應用桌面布局</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
@@ -1084,10 +1084,10 @@
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>手柄連接時實體手柄震動提示</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_LayoutMode" xml:space="preserve">
     <value>桌面布局</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
     <value>激活桌面布局</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">

@@ -16,7 +16,7 @@ public enum PlatformType
 {
     Windows = 0,
     Steam = 1,
-    Origin = 2,
+    Origin = 2, // Implement me !
     UbisoftConnect = 3,
     GOG = 4,
     RTSS = 5
@@ -44,6 +44,8 @@ public abstract class IPlatform : IDisposable
     protected string RunningName;
     protected string ExecutablePath;
     protected Version ExpectedVersion;
+
+    public List<string> Executables => new() { ExecutableName, RunningName };
 
     protected string InstallPath;
     protected bool IsStarting;

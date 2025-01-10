@@ -291,9 +291,10 @@
                                         <Separator
                                             Margin="-46,0,-16,0"
                                             BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                            BorderThickness="0,1,0,0" />
+                                            BorderThickness="0,1,0,0"
+                                            Visibility="{Binding CanCustom, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                        <Grid>
+                                        <Grid Visibility="{Binding CanCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="5*" />
                                                 <ColumnDefinition Width="5*" />

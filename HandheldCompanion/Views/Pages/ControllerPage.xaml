@@ -651,13 +651,18 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_NonGameControllerLayouts}" />
 
-                <Expander
-                    Name="GlobalSettings"
-                    HorizontalAlignment="Stretch"
-                    Expanded="Expander_Expanded"
-                    IsExpanded="{Binding ElementName=Toggle_DesktopLayout, Path=IsOn, UpdateSourceTrigger=Explicit}">
-                    <Expander.Header>
-                        <DockPanel Margin="0,12,12,12">
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
                             <ui:FontIcon
                                 Height="40"
                                 HorizontalAlignment="Center"
@@ -673,57 +678,17 @@
                                     TextWrapping="Wrap" />
                             </ikw:SimpleStackPanel>
                         </DockPanel>
-                    </Expander.Header>
 
-                    <Expander.Content>
-                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="8*" MinWidth="200" />
-                                    <ColumnDefinition Width="2*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_DesktopLayoutEnable}" />
-
-                                <ui:ToggleSwitch
-                                    Name="Toggle_DesktopLayout"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                    Toggled="Toggle_DesktopLayout_Toggled" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="8*" MinWidth="200" />
-                                    <ColumnDefinition Width="2*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_DesktopLayoutDefine}" />
-
-                                <Button
-                                    Name="Button_Layout"
-                                    Grid.Column="1"
-                                    Width="120"
-                                    Height="40"
-                                    HorizontalAlignment="Right"
-                                    Click="Button_Layout_Click"
-                                    Content="{l:Static resx:Resources.ControllerPage_DesktopLayoutEdit}" />
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-                    </Expander.Content>
-                </Expander>
+                        <Button
+                            Name="Button_Layout"
+                            Grid.Column="1"
+                            Width="120"
+                            Height="40"
+                            HorizontalAlignment="Right"
+                            Click="Button_Layout_Click"
+                            Content="{l:Static resx:Resources.ControllerPage_DesktopLayoutEdit}" />
+                    </Grid>
+                </Border>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

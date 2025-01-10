@@ -913,10 +913,10 @@
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>La aplicación se minimizará en lugar de cerrarse</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStart" xml:space="preserve">
     <value>Habilitar perfil de escritorio al inicio</value>
   </data>
-  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopLayoutOnStartDesc" xml:space="preserve">
     <value>El perfil de escritorio se habilitará automáticamente al iniciar la aplicación</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
@@ -1096,10 +1096,10 @@
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>Vibración del mando cuando esta conectado</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="Hotkey_LayoutMode" xml:space="preserve">
     <value>Diseño de escritorio</value>
   </data>
-  <data name="Hotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
     <value>Cambiar el diseño del controlador de escritorio</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">

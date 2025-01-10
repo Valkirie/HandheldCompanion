@@ -149,7 +149,7 @@
     <Setting Name="MainWindowIsPaneOpen" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="DesktopProfileOnStart" Type="System.Boolean" Scope="User">
+    <Setting Name="DesktopLayoutOnStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="QuietModeDisclosure" Type="System.Boolean" Scope="User">
@@ -301,6 +301,9 @@
     </Setting>
     <Setting Name="SteamControllerRumbleInterval" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="LayoutMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>
