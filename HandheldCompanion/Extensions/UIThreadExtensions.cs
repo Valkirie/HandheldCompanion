@@ -26,6 +26,18 @@ namespace HandheldCompanion.Extensions
             });
         }
 
+        public static void SafeInsert<T>(this ObservableCollection<T> collection, int index, T item)
+        {
+            UIHelper.TryInvoke(() =>
+            {
+                // Ensure the index is within valid bounds
+                if (index > collection.Count || index < 0)
+                    index = collection.Count;
+
+                collection.Insert(index, item);
+            });
+        }
+
         public static void SafeRemove<T>(this ObservableCollection<T> collection, T item)
         {
             UIHelper.TryInvoke(() =>

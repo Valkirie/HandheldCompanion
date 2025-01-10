@@ -76,7 +76,7 @@ namespace HandheldCompanion.ViewModels
             if (foundHotkey is null)
             {
                 HotkeyViewModel hotkeyViewModel = new HotkeyViewModel(hotkey);
-                HotkeysList.SafeAdd(hotkeyViewModel);
+                HotkeysList.SafeInsert(hotkey.PinIndex, hotkeyViewModel);
             }
             else
             {
