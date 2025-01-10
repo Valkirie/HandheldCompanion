@@ -265,7 +265,7 @@ public class ProcessEx : IDisposable
                 return false; // Exclude launcher executables
 
             // Check if any module matches common game-related libraries
-            foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
+            foreach (ProcessModule module in Process.Modules)
                 if (gameRelatedModules.Any(m => module.ModuleName.Equals(m, StringComparison.OrdinalIgnoreCase)))
                     return true;
         }
