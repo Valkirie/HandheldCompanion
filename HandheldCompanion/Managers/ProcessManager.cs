@@ -275,7 +275,7 @@ public static class ProcessManager
             {
                 // do nothing on QuickTools window, current process is kept
                 case ProcessFilter.HandheldCompanion:
-                // case ProcessFilter.Desktop:
+                    // case ProcessFilter.Desktop:
                     return;
                 // update foreground process
                 default:

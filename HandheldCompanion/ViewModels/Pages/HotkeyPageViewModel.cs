@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;

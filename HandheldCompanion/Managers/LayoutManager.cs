@@ -5,7 +5,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

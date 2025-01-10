@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 using System;
 
 namespace HandheldCompanion.Commands.Functions.HC
@@ -24,7 +23,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
-            switch(name)
+            switch (name)
             {
                 case SettingsName:
                     Update();
@@ -74,7 +73,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             get
             {
                 LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
-                switch(LayoutMode)
+                switch (LayoutMode)
                 {
                     case LayoutModes.Gamepad:
                     case LayoutModes.Desktop:

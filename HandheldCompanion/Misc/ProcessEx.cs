@@ -213,7 +213,7 @@ public class ProcessEx : IDisposable
         // Itch.io App
         "itch.dll", "butler.exe", "itch-setup.exe",
     };
-    
+
     private static HashSet<string> launcherSet = new HashSet<string>(launcherExecutables, StringComparer.OrdinalIgnoreCase);
     private static HashSet<string> gameModulesSet = new HashSet<string>(gameRelatedModules, StringComparer.OrdinalIgnoreCase);
     private static HashSet<string> inputModulesSet = new HashSet<string>(inputRelatedModules, StringComparer.OrdinalIgnoreCase);

@@ -196,7 +196,7 @@ namespace HandheldCompanion.UI
             // update file path
             UISounds.audioFilePath = audioFilePath;
 
-            switch(fileName)
+            switch (fileName)
             {
                 case UISounds.Focus:
                     soundTimer.Interval = LONG_INTERVAL;

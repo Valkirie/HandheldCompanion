@@ -1,9 +1,4 @@
-﻿using HandheldCompanion.Inputs;
-using System.Collections.Generic;
-using System.Numerics;
-using WindowsInput.Events;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class GPDWin4_2024_HX370 : GPDWin4_2024_8840U
 {
