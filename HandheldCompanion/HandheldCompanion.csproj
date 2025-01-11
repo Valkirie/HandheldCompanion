@@ -2401,7 +2401,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist &quot;.\SentryConfig.cs.bak&quot; (&#xA;    copy &quot;.\SentryConfig.cs.bak&quot; &quot;.\SentryConfig.cs&quot;&#xA;    del &quot;.\SentryConfig.cs.bak&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /fd SHA256 /f &quot;$(ProjectDir)\..\Certificate.pfx&quot; /p HandheldCompanion /d &quot;Handheld Companion&quot; /du &quot;https://github.com/Valkirie/HandheldCompanion&quot; /t http://timestamp.digicert.com &quot;$(OutDir)HandheldCompanion.exe&quot;" />
+    <Exec Command="if exist &quot;.\SentryConfig.cs.bak&quot; (&#xA;    copy &quot;.\SentryConfig.cs.bak&quot; &quot;.\SentryConfig.cs&quot;&#xA;    del &quot;.\SentryConfig.cs.bak&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /fd SHA256 /f &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; /p HandheldCompanion /d &quot;Handheld Companion&quot; /du &quot;https://github.com/Valkirie/HandheldCompanion&quot; /t http://timestamp.digicert.com &quot;$(OutDir)HandheldCompanion.exe&quot;" />
   </Target>
 
 </Project>
