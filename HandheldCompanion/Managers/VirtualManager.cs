@@ -3,7 +3,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using Nefarius.ViGEm.Client;
 using System;
 using System.Runtime.InteropServices;
@@ -92,8 +91,8 @@ namespace HandheldCompanion.Managers
 
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
 
             // raise events
             switch (ManagerFactory.settingsManager.Status)
@@ -108,9 +107,9 @@ namespace HandheldCompanion.Managers
             }
 
             /*
-            if (ProfileManager.IsInitialized)
+            if (ManagerFactory.profileManager.IsInitialized)
             {
-                ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+                ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
             }
             */
 
@@ -126,9 +125,9 @@ namespace HandheldCompanion.Managers
             HIDmode selectedHIDMode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode");
 
             // Check if ProfileManager is initialized and a valid profile is available
-            if (ProfileManager.IsInitialized)
+            if (ManagerFactory.profileManager.Status == ManagerStatus.Initialized)
             {
-                Profile currentProfile = ProfileManager.GetCurrent();
+                Profile currentProfile = ManagerFactory.profileManager.GetCurrent();
                 if (currentProfile != null && currentProfile.HID != HIDmode.NotSelected)
                     selectedHIDMode = currentProfile.HID;
             }
@@ -157,8 +156,8 @@ namespace HandheldCompanion.Managers
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-            ProfileManager.Applied -= ProfileManager_Applied;
-            ProfileManager.Discarded -= ProfileManager_Discarded;
+            ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
 
             IsInitialized = false;
 

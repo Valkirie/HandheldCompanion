@@ -70,8 +70,8 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(Processes, new object());
 
             // manage events
-            ProfileManager.Updated += ProfileManager_Updated;
-            ProfileManager.Deleted += ProfileManager_Deleted;
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+            ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
@@ -153,8 +153,8 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ProcessManager.ProcessStarted -= ProcessStarted;
             ProcessManager.ProcessStopped -= ProcessStopped;
-            ProfileManager.Updated -= ProfileManager_Updated;
-            ProfileManager.Deleted -= ProfileManager_Deleted;
+            ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
+            ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
 
             base.Dispose();
         }

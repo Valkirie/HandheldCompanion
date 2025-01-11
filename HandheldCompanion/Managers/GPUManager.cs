@@ -62,17 +62,23 @@ namespace HandheldCompanion.Managers
             currentGPU?.Start();
 
             // manage events
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
-            ProfileManager.Updated += ProfileManager_Updated;
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.deviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
             ManagerFactory.deviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
 
             // raise events
-            if (ProfileManager.IsInitialized)
+            switch (ManagerFactory.profileManager.Status)
             {
-                ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfile();
+                    break;
             }
 
             switch (ManagerFactory.deviceManager.Status)
@@ -92,15 +98,26 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "GPUManager");
         }
 
+        private static void QueryProfile()
+        {
+            ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        private static void ProfileManager_Initialized()
+        {
+            QueryProfile();
+        }
+
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
 
             // manage events
-            ProfileManager.Applied -= ProfileManager_Applied;
-            ProfileManager.Discarded -= ProfileManager_Discarded;
-            ProfileManager.Updated -= ProfileManager_Updated;
+            ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
+            ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
+            ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
             ManagerFactory.deviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
             ManagerFactory.deviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
             ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
@@ -276,7 +293,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // todo: use ProfileMager events
-            Profile profile = ProfileManager.GetCurrent();
+            Profile profile = ManagerFactory.profileManager.GetCurrent();
             AMDGPU amdGPU = (AMDGPU)currentGPU;
 
             if (Enabled != profile.RSREnabled)
@@ -291,7 +308,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // todo: use ProfileMager events
-            Profile profile = ProfileManager.GetCurrent();
+            Profile profile = ManagerFactory.profileManager.GetCurrent();
             AMDGPU amdGPU = (AMDGPU)currentGPU;
 
             if (Enabled != profile.AFMFEnabled)
@@ -304,7 +321,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // todo: use ProfileMager events
-            Profile profile = ProfileManager.GetCurrent();
+            Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             if (Enabled != profile.IntegerScalingEnabled)
                 currentGPU.SetIntegerScaling(profile.IntegerScalingEnabled, profile.IntegerScalingType);
@@ -316,7 +333,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // todo: use ProfileMager events
-            Profile profile = ProfileManager.GetCurrent();
+            Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             if (Enabled != profile.GPUScaling)
                 currentGPU.SetGPUScaling(profile.GPUScaling);
@@ -330,7 +347,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // todo: use ProfileMager events
-            Profile profile = ProfileManager.GetCurrent();
+            Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             if (Enabled != profile.RISEnabled)
                 currentGPU.SetImageSharpening(profile.RISEnabled);

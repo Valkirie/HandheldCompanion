@@ -1287,7 +1287,7 @@ public static class ControllerManager
         HIDmode HIDmode = HIDmode.NoController;
 
         // if profile is selected, get its HIDmode
-        HIDmode = ProfileManager.GetCurrent().HID;
+        HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
 
         // if profile HID is NotSelected, use HIDmode from settings
         if (HIDmode == HIDmode.NotSelected)

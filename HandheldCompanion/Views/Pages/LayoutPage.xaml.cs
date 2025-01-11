@@ -82,7 +82,7 @@ public partial class LayoutPage : Page
         // manage events
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ProfileManager.Updated += ProfileManager_Updated;
+        ManagerFactory.profileManager.Updated += ProfileManager_Updated;
 
         // raise events
         if (ControllerManager.HasTargetController)
@@ -148,7 +148,7 @@ public partial class LayoutPage : Page
         // manage events
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ProfileManager.Updated -= ProfileManager_Updated;
+        ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -389,7 +389,7 @@ public partial class LayoutPage : Page
     private void CheckBoxDefaultLayout_Checked(object sender, RoutedEventArgs e)
     {
         bool isDefaultLayout = (bool)CheckBoxDefaultLayout.IsChecked;
-        Profile? prevDefaultLayoutProfile = ProfileManager.GetProfileWithDefaultLayout();
+        Profile? prevDefaultLayoutProfile = ManagerFactory.profileManager.GetProfileWithDefaultLayout();
 
         currentTemplate.Layout.IsDefaultLayout = isDefaultLayout;
         currentTemplate.Layout.UpdateLayout();
@@ -398,7 +398,7 @@ public partial class LayoutPage : Page
         if (isDefaultLayout && prevDefaultLayoutProfile != null && prevDefaultLayoutProfile.Layout != currentTemplate.Layout)
         {
             prevDefaultLayoutProfile.Layout.IsDefaultLayout = false;
-            ProfileManager.UpdateOrCreateProfile(prevDefaultLayoutProfile);
+            ManagerFactory.profileManager.UpdateOrCreateProfile(prevDefaultLayoutProfile);
         }
     }
 }

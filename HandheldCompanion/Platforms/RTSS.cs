@@ -105,7 +105,7 @@ public class RTSS : IPlatform
         // manage events
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
-        ProfileManager.Applied += ProfileManager_Applied;
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
 
         // raise events
         if (ProcessManager.IsInitialized)
@@ -113,12 +113,28 @@ public class RTSS : IPlatform
             ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
         }
 
-        if (ProfileManager.IsInitialized)
+        switch (ManagerFactory.profileManager.Status)
         {
-            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryProfile();
+                break;
         }
 
         return base.Start();
+    }
+
+    private void QueryProfile()
+    {
+        ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    private void ProfileManager_Initialized()
+    {
+        QueryProfile();
     }
 
     public override bool Stop(bool kill = false)
@@ -126,7 +142,8 @@ public class RTSS : IPlatform
         // manage events
         ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
-        ProfileManager.Applied -= ProfileManager_Applied;
+        ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+        ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
 
         return base.Stop(kill);
     }

@@ -97,8 +97,7 @@ public class LayoutManager : IManager
         layoutWatcher.Changed += LayoutWatcher_Template;
 
         // manage events
-        ProfileManager.Applied += ProfileManager_Applied;
-        ProfileManager.Initialized += ProfileManager_Initialized;
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
@@ -124,12 +123,27 @@ public class LayoutManager : IManager
                 break;
         }
 
-        if (ProfileManager.IsInitialized)
+        switch (ManagerFactory.profileManager.Status)
         {
-            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryProfile();
+                break;
         }
 
         base.Start();
+    }
+
+    private void QueryProfile()
+    {
+        // ref
+        defaultLayout = ManagerFactory.profileManager.GetDefault().Layout;
+        defaultLayout.Updated += DefaultLayout_Updated;
+
+        ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
     }
 
     private void MultimediaManager_Initialized()
@@ -169,8 +183,8 @@ public class LayoutManager : IManager
         layoutWatcher.Changed -= LayoutWatcher_Template;
 
         // manage events
-        ProfileManager.Applied -= ProfileManager_Applied;
-        ProfileManager.Initialized -= ProfileManager_Initialized;
+        ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+        ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
@@ -256,9 +270,7 @@ public class LayoutManager : IManager
 
     private void ProfileManager_Initialized()
     {
-        // ref
-        defaultLayout = ProfileManager.GetDefault().Layout;
-        defaultLayout.Updated += DefaultLayout_Updated;
+        QueryProfile();
     }
 
     private void DefaultLayout_Updated(Layout layout)

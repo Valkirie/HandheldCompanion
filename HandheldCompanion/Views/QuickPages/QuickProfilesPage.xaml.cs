@@ -57,8 +57,8 @@ public partial class QuickProfilesPage : Page
 
         // manage events
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        ProfileManager.Applied += ProfileManager_Applied;
-        ProfileManager.Deleted += ProfileManager_Deleted;
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+        ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
@@ -147,8 +147,8 @@ public partial class QuickProfilesPage : Page
     {
         // manage events
         ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
-        ProfileManager.Applied -= ProfileManager_Applied;
-        ProfileManager.Deleted -= ProfileManager_Deleted;
+        ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+        ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
@@ -317,7 +317,7 @@ public partial class QuickProfilesPage : Page
         if (selectedProfile is null)
             return;
 
-        ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+        ManagerFactory.profileManager.UpdateOrCreateProfile(selectedProfile, source);
     }
 
     private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
@@ -399,8 +399,8 @@ public partial class QuickProfilesPage : Page
                     }
                     else
                     {
-                        Profile mainProfile = ProfileManager.GetProfileForSubProfile(selectedProfile);
-                        Profile[] subProfiles = ProfileManager.GetSubProfilesFromPath(selectedProfile.Path, false);
+                        Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
+                        Profile[] subProfiles = ManagerFactory.profileManager.GetSubProfilesFromPath(selectedProfile.Path, false);
 
                         cb_SubProfiles.Items.Add(mainProfile);
                         foreach (Profile subProfile in subProfiles)
@@ -514,7 +514,7 @@ public partial class QuickProfilesPage : Page
                 ImageSource imageSource = currentProcess?.ProcessIcon;
 
                 // update real profile
-                realProfile = ProfileManager.GetProfileFromPath(path, true);
+                realProfile = ManagerFactory.profileManager.GetProfileFromPath(path, true);
 
                 // UI thread
                 UIHelper.TryInvoke(() =>
@@ -560,7 +560,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // update real profile
-        realProfile = ProfileManager.GetProfileFromPath(realProfile.Path, true);
+        realProfile = ManagerFactory.profileManager.GetProfileFromPath(realProfile.Path, true);
         if (realProfile is null)
             return;
 
@@ -571,7 +571,7 @@ public partial class QuickProfilesPage : Page
         else
         {
             realProfile.Enabled = ProfileToggle.IsOn;
-            ProfileManager.UpdateOrCreateProfile(realProfile, UpdateSource.QuickProfilesCreation);
+            ManagerFactory.profileManager.UpdateOrCreateProfile(realProfile, UpdateSource.QuickProfilesCreation);
         }
     }
 

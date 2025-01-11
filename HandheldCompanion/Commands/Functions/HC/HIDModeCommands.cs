@@ -19,7 +19,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
             Update();
 
-            ProfileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
         }
 
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
@@ -85,7 +85,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Dispose()
         {
-            ProfileManager.Applied -= ProfileManager_Applied;
+            ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             base.Dispose();
         }
     }

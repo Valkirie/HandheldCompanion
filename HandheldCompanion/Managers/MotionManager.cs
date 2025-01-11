@@ -85,7 +85,7 @@ namespace HandheldCompanion.Managers
             }
 
             // Default: based on GamepadMotionHelpers values with profile settings applied
-            Profile current = ProfileManager.GetCurrent();
+            Profile current = ManagerFactory.profileManager.GetCurrent();
 
             controllerState.GyroState.Gyroscope[SensorState.Default] = controllerState.GyroState.Gyroscope[SensorState.GamepadMotion] * current.GyrometerMultiplier;
             controllerState.GyroState.Accelerometer[SensorState.Default] = controllerState.GyroState.Accelerometer[SensorState.GamepadMotion] * current.AccelerometerMultiplier;
@@ -227,7 +227,7 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            Profile currentProfile = ProfileManager.GetCurrent();
+            Profile currentProfile = ManagerFactory.profileManager.GetCurrent();
             Vector2 output = Vector2.Zero;
             switch (gyroAction.MotionInput)
             {

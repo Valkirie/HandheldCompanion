@@ -133,7 +133,7 @@ public static class XInputPlus
         try
         {
             // get related profile
-            Profile profile = ProfileManager.GetProfileFromPath(processEx.Path, true);
+            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
 
             if (profile.XInputPlus != XInputPlusMethod.Injection)
                 return;

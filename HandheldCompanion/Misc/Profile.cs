@@ -192,7 +192,7 @@ public partial class Profile : ICloneable, IComparable
         // if sub profile, return the following (mainprofile.name - subprofile.name)
         if (IsSubProfile)
         {
-            string mainProfileName = ProfileManager.GetProfileForSubProfile(this).Name;
+            string mainProfileName = ManagerFactory.profileManager.GetProfileForSubProfile(this).Name;
             return $"{mainProfileName} - {Name}";
         }
         else

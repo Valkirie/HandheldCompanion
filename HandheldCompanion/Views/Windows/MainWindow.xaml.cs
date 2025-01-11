@@ -195,7 +195,7 @@ public partial class MainWindow : GamepadWindow
             Task.Run(() => VirtualManager.Start()),
             Task.Run(() => SensorsManager.Start()),
             Task.Run(() => ManagerFactory.hotkeysManager.Start()),
-            Task.Run(() => ProfileManager.Start()),
+            Task.Run(() => ManagerFactory.profileManager.Start()),
             Task.Run(() => PowerProfileManager.Start()),
             Task.Run(() => GPUManager.Start()),
             Task.Run(() => ManagerFactory.multimediaManager.Start()),
@@ -638,7 +638,7 @@ public partial class MainWindow : GamepadWindow
         PlatformManager.Stop();
         OSDManager.Stop();
         PowerProfileManager.Stop();
-        ProfileManager.Stop();
+        ManagerFactory.profileManager.Stop();
         ManagerFactory.layoutManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();

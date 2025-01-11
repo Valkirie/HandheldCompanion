@@ -35,8 +35,8 @@ public partial class QuickDevicePage : Page
         ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ProfileManager.Applied += ProfileManager_Applied;
-        ProfileManager.Discarded += ProfileManager_Discarded;
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+        ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
         NightLight.Toggled += NightLight_Toggled;
 
         // Device specific
@@ -61,8 +61,8 @@ public partial class QuickDevicePage : Page
         ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ProfileManager.Applied -= ProfileManager_Applied;
-        ProfileManager.Discarded -= ProfileManager_Discarded;
+        ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+        ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
         NightLight.Toggled -= NightLight_Toggled;
 
         radioTimer.Stop();
@@ -207,7 +207,7 @@ public partial class QuickDevicePage : Page
             try
             {
                 // We don't want to change the combobox when it's changed from profile integer scaling
-                Profile? currentProfile = ProfileManager.GetCurrent();
+                Profile? currentProfile = ManagerFactory.profileManager.GetCurrent();
                 if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
                 {
                     ProfileManager_Applied(currentProfile, UpdateSource.Background);

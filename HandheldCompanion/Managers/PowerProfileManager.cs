@@ -49,20 +49,36 @@ namespace HandheldCompanion.Managers
 
             // manage events
             PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
             SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
 
             // raise events
-            if (ProfileManager.IsInitialized)
+            switch (ManagerFactory.profileManager.Status)
             {
-                ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfile();
+                    break;
             }
 
             IsInitialized = true;
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "PowerProfileManager");
+        }
+
+        private static void QueryProfile()
+        {
+            ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        private static void ProfileManager_Initialized()
+        {
+            QueryProfile();
         }
 
         public static void Stop()
@@ -72,8 +88,9 @@ namespace HandheldCompanion.Managers
 
             // manage events
             PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
-            ProfileManager.Applied -= ProfileManager_Applied;
-            ProfileManager.Discarded -= ProfileManager_Discarded;
+            ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
+            ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
             SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged;
 
             IsInitialized = false;
@@ -104,7 +121,7 @@ namespace HandheldCompanion.Managers
         private static void SystemManager_PowerLineStatusChanged(PowerLineStatus powerLineStatus)
         {
             // Get current profile
-            Profile profile = ProfileManager.GetCurrent();
+            Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             ProfileManager_Applied(profile, UpdateSource.Background);
         }

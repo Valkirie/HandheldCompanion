@@ -21,10 +21,10 @@ namespace HandheldCompanion.Commands.Functions.HC
             switch (CycleIndex)
             {
                 case 0:
-                    ProfileManager.CycleSubProfiles(true);
+                    ManagerFactory.profileManager.CycleSubProfiles(true);
                     break;
                 case 1:
-                    ProfileManager.CycleSubProfiles(false);
+                    ManagerFactory.profileManager.CycleSubProfiles(false);
                     break;
             }
 

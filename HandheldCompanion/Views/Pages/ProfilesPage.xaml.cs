@@ -58,10 +58,10 @@ public partial class ProfilesPage : Page
         InitializeComponent();
 
         // manage events
-        ProfileManager.Deleted += ProfileDeleted;
-        ProfileManager.Updated += ProfileUpdated;
-        ProfileManager.Applied += ProfileApplied;
-        ProfileManager.Initialized += ProfileManagerLoaded;
+        ManagerFactory.profileManager.Deleted += ProfileDeleted;
+        ManagerFactory.profileManager.Updated += ProfileUpdated;
+        ManagerFactory.profileManager.Applied += ProfileApplied;
+        ManagerFactory.profileManager.Initialized += ProfileManagerLoaded;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
@@ -234,10 +234,10 @@ public partial class ProfilesPage : Page
     public void Page_Closed()
     {
         // manage events
-        ProfileManager.Deleted -= ProfileDeleted;
-        ProfileManager.Updated -= ProfileUpdated;
-        ProfileManager.Applied -= ProfileApplied;
-        ProfileManager.Initialized -= ProfileManagerLoaded;
+        ManagerFactory.profileManager.Deleted -= ProfileDeleted;
+        ManagerFactory.profileManager.Updated -= ProfileUpdated;
+        ManagerFactory.profileManager.Applied -= ProfileApplied;
+        ManagerFactory.profileManager.Initialized -= ProfileManagerLoaded;
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
@@ -342,7 +342,7 @@ public partial class ProfilesPage : Page
 
                 // check on path rather than profile
                 bool exists = false;
-                if (ProfileManager.Contains(path))
+                if (ManagerFactory.profileManager.Contains(path))
                 {
                     Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
                     {
@@ -366,7 +366,7 @@ public partial class ProfilesPage : Page
                 }
 
                 if (!exists)
-                    ProfileManager.UpdateOrCreateProfile(profile, UpdateSource.Creation);
+                    ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Creation);
             }
             catch (Exception ex)
             {
@@ -651,7 +651,7 @@ public partial class ProfilesPage : Page
                 // if main profile is not default, occupy sub profiles dropdown list
                 if (!selectedMainProfile.Default)
                 {
-                    foreach (Profile subprofile in ProfileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
+                    foreach (Profile subprofile in ManagerFactory.profileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
                     {
                         cb_SubProfilePicker.Items.Add(subprofile);
 
@@ -695,7 +695,7 @@ public partial class ProfilesPage : Page
         switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
-                ProfileManager.DeleteProfile(selectedMainProfile);
+                ManagerFactory.profileManager.DeleteProfile(selectedMainProfile);
                 cB_Profiles.SelectedIndex = 0;
                 break;
         }
@@ -865,7 +865,7 @@ public partial class ProfilesPage : Page
 
             else // TODO updateUI to show main & sub profile selected
             {
-                Profile mainProfile = ProfileManager.GetProfileForSubProfile(profile);
+                Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(profile);
                 cB_Profiles.SelectedItem = mainProfile;
             }
 
@@ -928,7 +928,7 @@ public partial class ProfilesPage : Page
     private void ProfileManagerLoaded()
     {
         // UI thread
-        UIHelper.TryInvoke(() => { cB_Profiles.SelectedItem = ProfileManager.GetDefault(); });
+        UIHelper.TryInvoke(() => { cB_Profiles.SelectedItem = ManagerFactory.profileManager.GetDefault(); });
     }
 
     #endregion
@@ -1009,10 +1009,10 @@ public partial class ProfilesPage : Page
         switch (source)
         {
             case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile, update main profile only but don't apply it
-                ProfileManager.UpdateOrCreateProfile(selectedMainProfile, source);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(selectedMainProfile, source);
                 break;
             default:
-                ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(selectedProfile, source);
                 break;
         }
     }
@@ -1203,7 +1203,7 @@ public partial class ProfilesPage : Page
         newSubProfile.Guid = Guid.NewGuid(); // must be unique
         newSubProfile.IsSubProfile = true;
         newSubProfile.IsFavoriteSubProfile = true;
-        ProfileManager.UpdateOrCreateProfile(newSubProfile);
+        ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
         UpdateSubProfiles();
     }
 
@@ -1230,7 +1230,7 @@ public partial class ProfilesPage : Page
         switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
-                ProfileManager.DeleteSubProfile(subProfile);
+                ManagerFactory.profileManager.DeleteSubProfile(subProfile);
                 break;
         }
     }

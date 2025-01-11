@@ -32,7 +32,7 @@ public partial class ControllerPage : Page
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.StatusChanged += ControllerManager_Working;
-        ProfileManager.Applied += ProfileManager_Applied;
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
     }
 
     public ControllerPage(string Tag) : this()
@@ -238,7 +238,7 @@ public partial class ControllerPage : Page
             return;
 
         // only change HIDmode setting if current profile is default or set to default controller
-        var currentProfile = ProfileManager.GetCurrent();
+        var currentProfile = ManagerFactory.profileManager.GetCurrent();
         if (currentProfile.Default || currentProfile.HID == HIDmode.NotSelected)
         {
             ManagerFactory.settingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
