@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -62,13 +63,11 @@ namespace HandheldCompanion.ViewModels
             {
                 Controller.Calibrate();
             });
-
-            Updated();
         }
 
         private void Controller_StateChanged()
         {
-            Updated();
+            OnPropertyChanged(nameof(IsBusy));
         }
 
         private void Controller_UserIndexChanged(byte UserIndex)
@@ -76,8 +75,9 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(UserIndex));
         }
 
-        private void Controller_VisibilityChanged()
+        private async void Controller_VisibilityChanged(bool status)
         {
+            await Task.Delay(1000).ConfigureAwait(false);
             OnPropertyChanged(nameof(IsHidden));
         }
 
