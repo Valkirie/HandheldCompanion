@@ -538,21 +538,6 @@
   <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>正確</value>
   </data>
-  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
-    <value>フリック時間</value>
-  </data>
-  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>フリック時間を変更し、180 度回転するように調整</value>
-  </data>
-  <data name="SettingsMode0_FlickStick" xml:space="preserve">
-    <value>フリックスティック (実験的)</value>
-  </data>
-  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>ジョイスティックの（右）フリックの方向にカメラを向け、回転させることでカメラを純粋に水平面内で回転</value>
-  </data>
-  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>フリックスティック有効</value>
-  </data>
   <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>感度</value>
   </data>

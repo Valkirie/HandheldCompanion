@@ -90,11 +90,6 @@ public partial class Profile : ICloneable, IComparable
     public float AimingSightsMultiplier { get; set; } = 1.0f;
     public ButtonState AimingSightsTrigger { get; set; } = new();
 
-    // flickstick
-    public bool FlickstickEnabled { get; set; }
-    public float FlickstickDuration { get; set; } = 0.1f;
-    public float FlickstickSensivity { get; set; } = 3.0f;
-
     // power & graphics
     public Dictionary<int, Guid> PowerProfiles { get; set; } = new()
     {

@@ -525,21 +525,6 @@
   <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>高精度</value>
   </data>
-  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
-    <value>转向速度</value>
-  </data>
-  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>180度转向所需时间（毫秒为单位）</value>
-  </data>
-  <data name="SettingsMode0_FlickStick" xml:space="preserve">
-    <value>快速转向（实验性功能）</value>
-  </data>
-  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>将视角快速转向右摇杆方向，视野只会进行竖直方向（Y轴）旋转</value>
-  </data>
-  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>启用快速转向</value>
-  </data>
   <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>灵敏度</value>
   </data>

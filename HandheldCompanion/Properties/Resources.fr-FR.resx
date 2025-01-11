@@ -525,21 +525,6 @@
   <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>Précis</value>
   </data>
-  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
-    <value>Durée du mouvement</value>
-  </data>
-  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>Modifier la durée du mouvement, calibrée à un virage de 180 degrés, en millisecondes</value>
-  </data>
-  <data name="SettingsMode0_FlickStick" xml:space="preserve">
-    <value>Flick stick (expérimental)</value>
-  </data>
-  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>Pointer la caméra dans la direction du mouvement du joystick droit, faites pivoter la caméra purement dans le plan horizontal en tournant le joystick</value>
-  </data>
-  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>Activer flick stick</value>
-  </data>
   <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>Sensibilité</value>
   </data>

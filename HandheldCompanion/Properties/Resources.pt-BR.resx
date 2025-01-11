@@ -544,21 +544,6 @@
   <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>Precisa</value>
   </data>
-  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
-    <value>Duração da virada</value>
-  </data>
-  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>Alterar a duração da virada, calibrar a virada em 180 graus, em milissegundos</value>
-  </data>
-  <data name="SettingsMode0_FlickStick" xml:space="preserve">
-    <value>Analógio de virada (experimental)</value>
-  </data>
-  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>Apontar a câmera na direção do analógico de virada (direito), rotacionar a câmera puramente no plano horizontal por rotação</value>
-  </data>
-  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>Habilitar analógico de virada</value>
-  </data>
   <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>Sensibilidade</value>
   </data>

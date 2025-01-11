@@ -525,21 +525,6 @@
   <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>高精度</value>
   </data>
-  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
-    <value>轉向速度</value>
-  </data>
-  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>180度轉向所需時間（毫秒為單位）</value>
-  </data>
-  <data name="SettingsMode0_FlickStick" xml:space="preserve">
-    <value>快速轉向（實驗性功能）</value>
-  </data>
-  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>將視角快速轉向右搖杆方向，視野只會進行豎直方向（Y軸）旋轉</value>
-  </data>
-  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>啟用快速轉向</value>
-  </data>
   <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>靈敏度</value>
   </data>

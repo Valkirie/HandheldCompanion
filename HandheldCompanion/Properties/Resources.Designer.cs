@@ -4165,24 +4165,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Desktop layout.
-        /// </summary>
-        public static string Hotkey_LayoutMode {
-            get {
-                return ResourceManager.GetString("Hotkey_LayoutMode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle Desktop controller layout.
-        /// </summary>
-        public static string Hotkey_LayoutModeDesc {
-            get {
-                return ResourceManager.GetString("Hotkey_LayoutModeDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Escape.
         /// </summary>
         public static string Hotkey_ESC {
@@ -4431,6 +4413,24 @@ namespace HandheldCompanion.Properties {
         public static string Hotkey_KillAppDesc {
             get {
                 return ResourceManager.GetString("Hotkey_KillAppDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desktop layout.
+        /// </summary>
+        public static string Hotkey_LayoutMode {
+            get {
+                return ResourceManager.GetString("Hotkey_LayoutMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Desktop controller layout.
+        /// </summary>
+        public static string Hotkey_LayoutModeDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_LayoutModeDesc", resourceCulture);
             }
         }
         
@@ -8479,51 +8479,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsMode0_CustomResponsePresetPrecise {
             get {
                 return ResourceManager.GetString("SettingsMode0_CustomResponsePresetPrecise", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Flick duration.
-        /// </summary>
-        public static string SettingsMode0_FlickDuration {
-            get {
-                return ResourceManager.GetString("SettingsMode0_FlickDuration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the flick duration, calibrate to 180 degree turn, in milliseconds.
-        /// </summary>
-        public static string SettingsMode0_FlickDurationDesc {
-            get {
-                return ResourceManager.GetString("SettingsMode0_FlickDurationDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Flick stick (experimental).
-        /// </summary>
-        public static string SettingsMode0_FlickStick {
-            get {
-                return ResourceManager.GetString("SettingsMode0_FlickStick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating.
-        /// </summary>
-        public static string SettingsMode0_FlickStickDesc {
-            get {
-                return ResourceManager.GetString("SettingsMode0_FlickStickDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable flick stick.
-        /// </summary>
-        public static string SettingsMode0_FlickStickEnable {
-            get {
-                return ResourceManager.GetString("SettingsMode0_FlickStickEnable", resourceCulture);
             }
         }
         
