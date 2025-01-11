@@ -426,7 +426,7 @@ namespace HandheldCompanion.ViewModels
                 if (value != _selectedPresetIndex && value >= 0 && value < ProfilePickerItems.Count)
                 {
                     _selectedPresetIndex = value;
-                    SelectedPreset = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndex].LinkedPresetId.Value);
+                    SelectedPreset = ManagerFactory.powerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndex].LinkedPresetId.Value);
                 }
             }
         }
@@ -491,7 +491,7 @@ namespace HandheldCompanion.ViewModels
 
         public PerformancePageViewModel(bool isQuickTools)
         {
-            _selectedPreset = PowerProfileManager.GetProfile(Guid.Empty);
+            _selectedPreset = ManagerFactory.powerProfileManager.GetProfile(Guid.Empty);
             _selectedPresetIndex = 1;
 
             IsQuickTools = isQuickTools;
@@ -505,8 +505,8 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
-            PowerProfileManager.Updated += PowerProfileManager_Updated;
-            PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+            ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
+            ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
             // raise events
             switch (ManagerFactory.multimediaManager.Status)
@@ -557,7 +557,7 @@ namespace HandheldCompanion.ViewModels
                 _updatingProfile = true;
 
                 // trigger power profile update
-                PowerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
+                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
 
                 // set flag
                 _updatingProfile = false;
@@ -566,14 +566,14 @@ namespace HandheldCompanion.ViewModels
             CreatePresetCommand = new DelegateCommand(() =>
             {
                 // Get the count of profiles that are not default, then start with +1 of that
-                int count = PowerProfileManager.profiles.Values.Count(p => !p.IsDefault());
+                int count = ManagerFactory.powerProfileManager.profiles.Values.Count(p => !p.IsDefault());
                 int idx = count + 1;
 
                 // Create a base name for the new profile
                 string baseName = Resources.PowerProfileManualName;
 
                 // Check for duplicates and increment the index
-                while (PowerProfileManager.profiles.Values.Any(p => p.Name == string.Format(baseName, idx)))
+                while (ManagerFactory.powerProfileManager.profiles.Values.Any(p => p.Name == string.Format(baseName, idx)))
                     idx++;
 
                 // Format the name with the updated index
@@ -586,7 +586,7 @@ namespace HandheldCompanion.ViewModels
                 };
 
                 // Update or create the profile
-                PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
+                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
             });
 
             DeletePresetCommand = new DelegateCommand(async () =>
@@ -606,7 +606,7 @@ namespace HandheldCompanion.ViewModels
                         dialog.Hide();
                         break;
                     case ContentDialogResult.Primary:
-                        PowerProfileManager.DeleteProfile(SelectedPreset);
+                        ManagerFactory.powerProfileManager.DeleteProfile(SelectedPreset);
                         break;
                 }
             });
@@ -624,7 +624,7 @@ namespace HandheldCompanion.ViewModels
                 ProfilePickerItems.Add(_userPresetsPickerVM);
 
                 // Fill initial data
-                foreach (var preset in PowerProfileManager.profiles.Values)
+                foreach (var preset in ManagerFactory.powerProfileManager.profiles.Values)
                 {
                     var index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
                     ProfilePickerItems.Insert(index, new ProfilesPickerViewModel { Text = preset.Name, LinkedPresetId = preset.Guid });
@@ -717,8 +717,8 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
             PerformanceManager.ProcessorStatusChanged -= PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
-            PowerProfileManager.Updated -= PowerProfileManager_Updated;
-            PowerProfileManager.Deleted -= PowerProfileManager_Deleted;
+            ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
+            ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
 
             if (!IsQuickTools)
             {

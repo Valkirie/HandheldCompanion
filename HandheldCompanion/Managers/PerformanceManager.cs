@@ -140,14 +140,20 @@ public static class PerformanceManager
         }
 
         // manage events
-        PowerProfileManager.Applied += PowerProfileManager_Applied;
-        PowerProfileManager.Discarded += PowerProfileManager_Discarded;
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (PowerProfileManager.IsInitialized)
+        switch (ManagerFactory.powerProfileManager.Status)
         {
-            PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
         }
 
         switch (ManagerFactory.settingsManager.Status)
@@ -165,6 +171,16 @@ public static class PerformanceManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "PerformanceManager");
+    }
+
+    private static void QueryPowerProfile()
+    {
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    private static void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
     }
 
     private static void QuerySettings()
@@ -202,8 +218,9 @@ public static class PerformanceManager
             FreeLibrary(Module);
 
         // manage events
-        PowerProfileManager.Applied -= PowerProfileManager_Applied;
-        PowerProfileManager.Discarded -= PowerProfileManager_Discarded;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Discarded -= PowerProfileManager_Discarded;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
@@ -424,7 +441,7 @@ public static class PerformanceManager
     private static void RestoreTDP(bool immediate)
     {
         // On power status change, force refresh TDP and AutoTDP
-        PowerProfile profile = PowerProfileManager.GetDefault();
+        PowerProfile profile = ManagerFactory.powerProfileManager.GetDefault();
         RequestTDP(profile.TDPOverrideValues, immediate);
 
         if (profile.TDPOverrideValues is not null)

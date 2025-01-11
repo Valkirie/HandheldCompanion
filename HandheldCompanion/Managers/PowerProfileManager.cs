@@ -13,28 +13,30 @@ using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers
 {
-    static class PowerProfileManager
+    public class PowerProfileManager : IManager
     {
-        private static PowerProfile currentProfile;
+        private PowerProfile currentProfile;
 
-        public static Dictionary<Guid, PowerProfile> profiles = [];
+        public Dictionary<Guid, PowerProfile> profiles = [];
 
-        private static string ProfilesPath;
+        private string ProfilesPath;
 
-        public static bool IsInitialized;
-
-        static PowerProfileManager()
+        public PowerProfileManager()
         {
-            // initialize path(s)
+            // initialize path
             ProfilesPath = Path.Combine(App.SettingsPath, "powerprofiles");
+
+            // create path
             if (!Directory.Exists(ProfilesPath))
                 Directory.CreateDirectory(ProfilesPath);
         }
 
-        public static void Start()
+        public override void Start()
         {
-            if (IsInitialized)
+            if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
                 return;
+
+            base.PrepareStart();
 
             // process existing profiles
             string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
@@ -65,26 +67,25 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            IsInitialized = true;
-            Initialized?.Invoke();
-
-            LogManager.LogInformation("{0} has started", "PowerProfileManager");
+            base.Start();
         }
 
-        private static void QueryProfile()
+        private void QueryProfile()
         {
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
-        private static void ProfileManager_Initialized()
+        private void ProfileManager_Initialized()
         {
             QueryProfile();
         }
 
-        public static void Stop()
+        public override void Stop()
         {
-            if (!IsInitialized)
+            if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
                 return;
+
+            base.PrepareStop();
 
             // manage events
             PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
@@ -93,12 +94,10 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
             SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged;
 
-            IsInitialized = false;
-
-            LogManager.LogInformation("{0} has stopped", "PowerProfileManager");
+            base.Stop();
         }
 
-        private static void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
+        private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
             if (currentProfile is null || currentProfile.FanProfile is null || value is null)
                 return;
@@ -118,7 +117,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void SystemManager_PowerLineStatusChanged(PowerLineStatus powerLineStatus)
+        private void SystemManager_PowerLineStatusChanged(PowerLineStatus powerLineStatus)
         {
             // Get current profile
             Profile profile = ManagerFactory.profileManager.GetCurrent();
@@ -126,7 +125,7 @@ namespace HandheldCompanion.Managers
             ProfileManager_Applied(profile, UpdateSource.Background);
         }
 
-        private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+        private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             // Get the power status
             PowerStatus powerStatus = SystemInformation.PowerStatus;
@@ -142,7 +141,7 @@ namespace HandheldCompanion.Managers
             Applied?.Invoke(powerProfile, source);
         }
 
-        private static void ProfileManager_Discarded(Profile profile, bool swapped)
+        private void ProfileManager_Discarded(Profile profile, bool swapped)
         {
             // reset current profile
             currentProfile = null;
@@ -160,7 +159,7 @@ namespace HandheldCompanion.Managers
                 Discarded?.Invoke(powerProfile);
         }
 
-        private static void ProcessProfile(string fileName)
+        private void ProcessProfile(string fileName)
         {
             PowerProfile profile = null;
 
@@ -198,7 +197,7 @@ namespace HandheldCompanion.Managers
             UpdateOrCreateProfile(profile, UpdateSource.Serializer);
         }
 
-        public static void UpdateOrCreateProfile(PowerProfile profile, UpdateSource source)
+        public void UpdateOrCreateProfile(PowerProfile profile, UpdateSource source)
         {
             switch (source)
             {
@@ -230,17 +229,17 @@ namespace HandheldCompanion.Managers
             SerializeProfile(profile);
         }
 
-        public static bool Contains(Guid guid)
+        public bool Contains(Guid guid)
         {
             return profiles.ContainsKey(guid);
         }
 
-        public static bool Contains(PowerProfile profile)
+        public bool Contains(PowerProfile profile)
         {
             return profiles.ContainsValue(profile);
         }
 
-        public static PowerProfile GetProfile(Guid guid)
+        public PowerProfile GetProfile(Guid guid)
         {
             if (profiles.TryGetValue(guid, out var profile))
                 return profile;
@@ -248,19 +247,19 @@ namespace HandheldCompanion.Managers
             return GetDefault();
         }
 
-        private static bool HasDefault()
+        private bool HasDefault()
         {
             return profiles.Values.Count(a => a.Default && a.Guid == Guid.Empty) != 0;
         }
 
-        public static PowerProfile GetDefault()
+        public PowerProfile GetDefault()
         {
             if (HasDefault())
                 return profiles.Values.FirstOrDefault(a => a.Default && a.Guid == Guid.Empty);
             return new PowerProfile();
         }
 
-        public static PowerProfile GetCurrent()
+        public PowerProfile GetCurrent()
         {
             if (currentProfile is not null)
                 return currentProfile;
@@ -268,7 +267,7 @@ namespace HandheldCompanion.Managers
             return GetDefault();
         }
 
-        public static void SerializeProfile(PowerProfile profile)
+        public void SerializeProfile(PowerProfile profile)
         {
             // update profile version to current build
             profile.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
@@ -289,7 +288,7 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        public static void DeleteProfile(PowerProfile profile)
+        public void DeleteProfile(PowerProfile profile)
         {
             string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
 
@@ -317,20 +316,17 @@ namespace HandheldCompanion.Managers
         }
 
         #region events
-        public static event DeletedEventHandler Deleted;
+        public event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(PowerProfile profile);
 
-        public static event UpdatedEventHandler Updated;
+        public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(PowerProfile profile, UpdateSource source);
 
-        public static event AppliedEventHandler Applied;
+        public event AppliedEventHandler Applied;
         public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
 
-        public static event DiscardedEventHandler Discarded;
+        public event DiscardedEventHandler Discarded;
         public delegate void DiscardedEventHandler(PowerProfile profile);
-
-        public static event InitializedEventHandler Initialized;
-        public delegate void InitializedEventHandler();
         #endregion
     }
 }

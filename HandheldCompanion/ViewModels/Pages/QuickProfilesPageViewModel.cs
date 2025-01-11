@@ -55,7 +55,7 @@ namespace HandheldCompanion.ViewModels
 
                     _selectedPresetIndexDC = value;
 
-                    SelectedPresetDC = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexDC].LinkedPresetId.Value);
+                    SelectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexDC].LinkedPresetId.Value);
                     OnPropertyChanged(nameof(SelectedPresetIndexDC));
                 }
             }
@@ -96,7 +96,7 @@ namespace HandheldCompanion.ViewModels
 
                     _selectedPresetIndexAC = value;
 
-                    SelectedPresetAC = PowerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexAC].LinkedPresetId.Value);
+                    SelectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndexAC].LinkedPresetId.Value);
                     OnPropertyChanged(nameof(SelectedPresetIndexAC));
                 }
             }
@@ -106,20 +106,6 @@ namespace HandheldCompanion.ViewModels
         {
             this.quickProfilesPage = quickProfilesPage;
 
-            // manage events
-            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
-            InputsManager.StartedListening += InputsManager_StartedListening;
-            InputsManager.StoppedListening += InputsManager_StoppedListening;
-            PowerProfileManager.Updated += PowerProfileManager_Updated;
-            PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-            PowerProfileManager.Initialized += PowerProfileManager_Initialized;
-
-            // raise events
-            if (PowerProfileManager.IsInitialized)
-            {
-                PowerProfileManager_Initialized();
-            }
-
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
 
@@ -128,12 +114,36 @@ namespace HandheldCompanion.ViewModels
 
             ProfilePickerItems.Add(_devicePresetsPickerVM);
             ProfilePickerItems.Add(_userPresetsPickerVM);
+
+            // manage events
+            ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
+            InputsManager.StartedListening += InputsManager_StartedListening;
+            InputsManager.StoppedListening += InputsManager_StoppedListening;
+            ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
+            ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
+
+            // raise events
+            switch (ManagerFactory.powerProfileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPowerProfile();
+                    break;
+            }
+        }
+
+        private void QueryPowerProfile()
+        {
+            SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+            SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
         }
 
         private void PowerProfileManager_Initialized()
         {
-            SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == PowerProfileManager.GetDefault().Guid));
-            SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == PowerProfileManager.GetDefault().Guid));
+            QueryPowerProfile();
         }
 
         private void PowerProfileManager_Deleted(PowerProfile profile)
@@ -144,9 +154,9 @@ namespace HandheldCompanion.ViewModels
                 ProfilePickerItems.Remove(foundPreset);
 
                 if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
-                    SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == PowerProfileManager.GetDefault().Guid));
+                    SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
                 if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
-                    SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == PowerProfileManager.GetDefault().Guid));
+                    SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
             }
         }
 
@@ -202,9 +212,9 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
             InputsManager.StartedListening -= InputsManager_StartedListening;
             InputsManager.StoppedListening -= InputsManager_StoppedListening;
-            PowerProfileManager.Updated -= PowerProfileManager_Updated;
-            PowerProfileManager.Deleted -= PowerProfileManager_Deleted;
-            PowerProfileManager.Initialized -= PowerProfileManager_Initialized;
+            ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
+            ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
+            ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
             base.Dispose();
         }

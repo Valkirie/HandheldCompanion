@@ -398,7 +398,7 @@ public partial class ProfilesPage : Page
 
     private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
-        PowerProfile powerProfile = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
+        PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         if (powerProfile is null)
             return;
 
@@ -408,7 +408,7 @@ public partial class ProfilesPage : Page
 
     private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
     {
-        PowerProfile powerProfile = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
+        PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
         if (powerProfile is null)
             return;
 
@@ -570,8 +570,8 @@ public partial class ProfilesPage : Page
                     UseHighDPIAwareness.IsOn = selectedProfile.HighDPIAware;
 
                     // power profile
-                    PowerProfile powerProfileDC = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
-                    PowerProfile powerProfileAC = PowerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
+                    PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
+                    PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
 
                     SelectedPowerProfileName.Text = powerProfileDC?.Name;
                     SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;

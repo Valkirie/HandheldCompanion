@@ -8,5 +8,6 @@
         public static MultimediaManager multimediaManager = new();
         public static HotkeysManager hotkeysManager = new();
         public static ProfileManager profileManager = new();
+        public static PowerProfileManager powerProfileManager = new();
     }
 }

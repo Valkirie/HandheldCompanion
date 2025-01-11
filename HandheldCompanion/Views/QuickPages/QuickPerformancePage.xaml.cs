@@ -16,6 +16,6 @@ public partial class QuickPerformancePage : Page
 
     public void SelectionChanged(Guid guid)
     {
-        ((PerformancePageViewModel)DataContext).SelectedPreset = PowerProfileManager.GetProfile(guid);
+        ((PerformancePageViewModel)DataContext).SelectedPreset = ManagerFactory.powerProfileManager.GetProfile(guid);
     }
 }

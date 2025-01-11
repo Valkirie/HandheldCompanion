@@ -415,8 +415,8 @@ public partial class QuickProfilesPage : Page
                     cb_SubProfiles.SelectedIndex = selectedIndex;
 
                     // power profile
-                    PowerProfile powerProfileDC = PowerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Offline]);
-                    PowerProfile powerProfileAC = PowerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Online]);
+                    PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Offline]);
+                    PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Online]);
 
                     SelectedPowerProfileName.Text = powerProfileDC?.Name;
                     SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;
@@ -928,7 +928,7 @@ public partial class QuickProfilesPage : Page
 
     private void Button_PowerSettings_Create_Click(object sender, RoutedEventArgs e)
     {
-        int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
+        int idx = ManagerFactory.powerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
 
         string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
         PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription)
@@ -936,7 +936,7 @@ public partial class QuickProfilesPage : Page
             TDPOverrideValues = IDevice.GetCurrent().nTDP
         };
 
-        PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
+        ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
 
         // localize me
         new Dialog(OverlayQuickTools.GetCurrent())

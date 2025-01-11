@@ -53,7 +53,7 @@ public class ProfileManager : IManager
         };
     }
 
-    public void Start()
+    public override void Start()
     {
         if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
             return;
@@ -91,7 +91,7 @@ public class ProfileManager : IManager
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
         ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
-        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+        ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
         // raise events
@@ -108,7 +108,7 @@ public class ProfileManager : IManager
         base.Start();
     }
 
-    public void Stop()
+    public override void Stop()
     {
         if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
             return;
@@ -123,7 +123,7 @@ public class ProfileManager : IManager
         ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         ProcessManager.ProcessStarted -= ProcessManager_ProcessStarted;
         ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
-        PowerProfileManager.Deleted -= PowerProfileManager_Deleted;
+        ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
 
         base.Stop();
@@ -778,7 +778,7 @@ public class ProfileManager : IManager
             if (powerProfile == Guid.Empty)
                 continue;
 
-            if (!PowerProfileManager.Contains(powerProfile))
+            if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
                 profile.PowerProfiles[idx] = Guid.Empty;
         }
     }
@@ -927,24 +927,16 @@ public class ProfileManager : IManager
     #region events
 
     public event DeletedEventHandler Deleted;
-
     public delegate void DeletedEventHandler(Profile profile);
 
     public event UpdatedEventHandler Updated;
-
     public delegate void UpdatedEventHandler(Profile profile, UpdateSource source, bool isCurrent);
 
     public event AppliedEventHandler Applied;
-
     public delegate void AppliedEventHandler(Profile profile, UpdateSource source);
 
     public event DiscardedEventHandler Discarded;
-
     public delegate void DiscardedEventHandler(Profile profile, bool swapped);
-
-    public event InitializedEventHandler Initialized;
-
-    public delegate void InitializedEventHandler();
 
     #endregion
 }

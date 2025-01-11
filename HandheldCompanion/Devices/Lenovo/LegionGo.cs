@@ -332,13 +332,19 @@ public class LegionGo : IDevice
         lightProfileR = GetCurrentLightProfile(4);
 
         // manage events
-        PowerProfileManager.Applied += PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        if (PowerProfileManager.IsInitialized)
+        switch (ManagerFactory.powerProfileManager.Status)
         {
-            PowerProfileManager_Applied(PowerProfileManager.GetCurrent(), UpdateSource.Background);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
         }
 
         switch (ManagerFactory.settingsManager.Status)
@@ -353,6 +359,16 @@ public class LegionGo : IDevice
         }
 
         return true;
+    }
+
+    private void QueryPowerProfile()
+    {
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    private void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
     }
 
     private void QuerySettings()
@@ -384,7 +400,8 @@ public class LegionGo : IDevice
         // Reset the fan speed to default before device shutdown/restart
         SetFanFullSpeedAsync(false);
 
-        PowerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 

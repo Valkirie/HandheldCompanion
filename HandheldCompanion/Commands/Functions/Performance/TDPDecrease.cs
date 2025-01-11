@@ -19,14 +19,14 @@ namespace HandheldCompanion.Commands.Functions.Performance
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            PowerProfile powerProfile = PowerProfileManager.GetCurrent();
+            PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetCurrent();
             if (powerProfile.TDPOverrideEnabled && !powerProfile.DeviceDefault)
             {
                 double TPDMin = PerformanceManager.GetMinimumTDP();
                 for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
                     powerProfile.TDPOverrideValues[idx] = Math.Max(TPDMin, powerProfile.TDPOverrideValues[idx] - 1);
 
-                PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
+                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
             }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
