@@ -185,6 +185,7 @@ public class HotkeysManager : IManager
             File.Delete(fileName);
         }
 
+        // we couldn't find a free hotkey slot
         if (hotkey.ButtonFlags == ButtonFlags.None)
             return;
 
@@ -264,39 +265,29 @@ public class HotkeysManager : IManager
                 Hotkey hotkey = new Hotkey();
                 hotkey.command = command;
 
+                // we couldn't find a free hotkey slot
+                if (hotkey.ButtonFlags == ButtonFlags.None)
+                    return null;
+
                 // Migrate InputsType
-                var oldInputsType = (int)dictionary["inputsChord"]["InputsType"];
+                int oldInputsType = (int)dictionary["inputsChord"]["InputsType"];
                 if (Enum.TryParse(oldInputsType.ToString(), out InputsChordType oldType))
                 {
                     hotkey.inputsChord.chordType = oldType;
                 }
 
                 // Migrate Old State
-                var oldState = (JObject)dictionary["inputsChord"]["State"]["State"];
+                JObject? oldState = (JObject)dictionary["inputsChord"]["State"]["State"];
                 foreach (var keyValuePair in oldState)
-                {
                     if (Enum.TryParse(keyValuePair.Key, out ButtonFlags flag))
-                    {
                         hotkey.inputsChord.ButtonState.State[flag] = (bool)keyValuePair.Value;
-                    }
-                }
 
                 // Migrate IsPinned
-                var isPinned = (bool)dictionary["IsPinned"];
+                bool isPinned = (bool)dictionary["IsPinned"];
                 hotkey.IsPinned = isPinned;
 
-                // check if button flags is already used
-                if (IsUsedButtonFlag(hotkey.ButtonFlags))
-                {
-                    // update button flags
-                    hotkey.ButtonFlags = GetAvailableButtonFlag();
-
-                    // Delete the old file
-                    File.Delete(fileName);
-                }
-
-                if (hotkey.ButtonFlags == ButtonFlags.None)
-                    return null;
+                // Delete the old file
+                File.Delete(fileName);
 
                 // Save new hotkey json
                 SerializeHotkey(hotkey);
