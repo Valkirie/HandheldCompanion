@@ -688,7 +688,7 @@ public class DeviceManager : IManager
         return XINPUT_LED_TO_PORT_MAP[ledState];
     }
 
-    public Dictionary<Guid, AdapterInformation> displayAdapters = [];
+    public ConcurrentDictionary<Guid, AdapterInformation> displayAdapters = [];
     public void RefreshDisplayAdapters(bool elapsed = false)
     {
         if (elapsed)
