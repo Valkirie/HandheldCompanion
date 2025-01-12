@@ -208,6 +208,8 @@ public partial class QuickProfilesPage : Page
             StackProfileAFMF.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
             IntegerScalingTypeGrid.Visibility = GPU is IntelGPU ? Visibility.Visible : Visibility.Collapsed;
         });
+
+        UpdateGraphicsSettingsUI();
     }
 
     private void GPUManager_Unhooked(GPU GPU)
@@ -254,26 +256,38 @@ public partial class QuickProfilesPage : Page
 
     private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
     {
-        HasRSRSupport = Supported;
-        UpdateGraphicsSettingsUI();
+        if (Supported != HasRSRSupport)
+        {
+            HasRSRSupport = Supported;
+            UpdateGraphicsSettingsUI();
+        }
     }
 
     private void OnAFMFStateChanged(bool Supported, bool Enabled)
     {
-        HasAFMFSupport = Supported;
-        UpdateGraphicsSettingsUI();
+        if (Supported != HasAFMFSupport)
+        {
+            HasAFMFSupport = Supported;
+            UpdateGraphicsSettingsUI();
+        }
     }
 
     private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
-        HasGPUScalingSupport = Supported;
-        UpdateGraphicsSettingsUI();
+        if (Supported != HasGPUScalingSupport)
+        {
+            HasGPUScalingSupport = Supported;
+            UpdateGraphicsSettingsUI();
+        }
     }
 
     private void OnIntegerScalingChanged(bool Supported, bool Enabled)
     {
-        HasIntegerScalingSupport = Supported;
-        UpdateGraphicsSettingsUI();
+        if (Supported != HasIntegerScalingSupport)
+        {
+            HasIntegerScalingSupport = Supported;
+            UpdateGraphicsSettingsUI();
+        }
     }
 
     private void RTSS_Updated(PlatformStatus status)
