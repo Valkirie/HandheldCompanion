@@ -1,6 +1,7 @@
 ﻿using SharpDX.Direct3D9;
 using System;
 using System.Management;
+using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using Timer = System.Timers.Timer;
@@ -43,10 +44,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevImageSharpening = false;
         protected int prevImageSharpeningSharpness = -1;
 
-        protected static bool halting = false;
-        protected static object updateLock = new();
-        protected static object telemetryLock = new();
-        public static object functionLock = new();
+        protected bool halting = false;
+        protected object updateLock = new();
+        protected object telemetryLock = new();
+        public object functionLock = new();
 
         public enum UpdateGraphicsSettingsSource
         {
@@ -60,27 +61,29 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected T Execute<T>(Func<T> func, T defaultValue)
         {
             if (!halting && IsInitialized)
+            {
                 try
                 {
-                    Task<T> task = Task.Run(() =>
+                    using (CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(1)))
                     {
-                        lock (functionLock)
+                        Task<T> task = Task.Run(() =>
                         {
-                            // make sure while we were waiting for the lock
-                            // that someone else didn't unitialize the GPU backend
-                            if (!halting && IsInitialized)
-                                return func();
-                            else
-                                return defaultValue;
-                        }
-                    });
-                    if (task.Wait(TimeSpan.FromSeconds(1)))
-                        return task.Result;
+                            lock (functionLock)
+                            {
+                                if (!halting && IsInitialized)
+                                    return func();
+                                else
+                                    return defaultValue;
+                            }
+                        }, cts.Token);
+
+                        return task.GetAwaiter().GetResult();
+                    }
                 }
-                catch (AccessViolationException)
-                { }
-                catch (Exception)
-                { }
+                catch (OperationCanceledException) { }
+                catch (AccessViolationException) { }
+                catch (Exception) { }
+            }
 
             return defaultValue;
         }

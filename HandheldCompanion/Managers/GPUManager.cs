@@ -126,19 +126,16 @@ namespace HandheldCompanion.Managers
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
 
-            lock (GPU.functionLock)
+            if (IsLoaded_IGCL)
             {
-                if (IsLoaded_IGCL)
-                {
-                    IGCLBackend.Terminate();
-                    IsLoaded_IGCL = false;
-                }
+                IGCLBackend.Terminate();
+                IsLoaded_IGCL = false;
+            }
 
-                if (IsLoaded_ADLX)
-                {
-                    ADLXBackend.CloseAdlx();
-                    IsLoaded_ADLX = false;
-                }
+            if (IsLoaded_ADLX)
+            {
+                ADLXBackend.CloseAdlx();
+                IsLoaded_ADLX = false;
             }
 
             IsInitialized = false;
