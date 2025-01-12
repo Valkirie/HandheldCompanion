@@ -471,7 +471,13 @@ namespace HandheldCompanion.Controllers
 
         public virtual async void Calibrate()
         {
+            // set flag
+            IsBusy = true;
+
             SensorsManager.Calibrate(gamepadMotions);
+
+            // set flag
+            IsBusy = false;
         }
 
         public virtual string GetGlyph(ButtonFlags button)
