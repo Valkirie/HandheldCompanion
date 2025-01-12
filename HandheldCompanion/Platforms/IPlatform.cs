@@ -211,18 +211,17 @@ public abstract class IPlatform : IDisposable
 
     public virtual bool IsRelated(Process proc)
     {
-        try
+        // Loop through the modules of the process
+        foreach (ProcessModule module in proc.Modules)
         {
-            foreach (ProcessModule module in proc.Modules)
-                if (Modules.Contains(module.ModuleName))
+            try
+            {
+                if (Modules.Contains(module.ModuleName, StringComparer.InvariantCultureIgnoreCase))
                     return true;
-        }
-        catch (Win32Exception)
-        {
-        }
-        catch (InvalidOperationException)
-        {
-        }
+            }
+            catch (Win32Exception) { }
+            catch (InvalidOperationException) { }
+        };
 
         return false;
     }

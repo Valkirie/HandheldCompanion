@@ -11,7 +11,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Media;
 
@@ -82,14 +81,14 @@ public class ProcessEx : IDisposable
         "QtWebEngineProcess.exe"
     };
 
-    private static readonly string[] inputRelatedModules = new[]
+    private static readonly string[] inputModules = new[]
     {
         // Input Libraries
         "xinput1_1.dll", "xinput1_2.dll", "xinput1_3.dll", "xinput1_4.dll", "xinput9_1_0.dll",
         "dinput.dll", "dinput8.dll", "GameInput.dll", "SDL2.DLL"
     };
 
-    private static readonly string[] renderingRelatedModules = new[]
+    private static readonly string[] renderModules = new[]
     {
         // DirectX
         "d3d9.dll", "d3d11.dll", "d3d12.dll", // Direct3D
@@ -105,7 +104,7 @@ public class ProcessEx : IDisposable
         "vulkan-1-999-0-0-0.dll" // Vulkan API loader
     };
 
-    private static readonly string[] gameRelatedModules = new[]
+    private static readonly string[] gameModules = new[]
     {    
         // Unreal Engine DLLs
         "UE4Editor-Core.dll", "UE4Editor-CoreUObject.dll", "UE4Editor-Engine.dll",
@@ -214,11 +213,6 @@ public class ProcessEx : IDisposable
         "itch.dll", "butler.exe", "itch-setup.exe",
     };
 
-    private static HashSet<string> launcherSet = new HashSet<string>(launcherExecutables, StringComparer.OrdinalIgnoreCase);
-    private static HashSet<string> gameModulesSet = new HashSet<string>(gameRelatedModules, StringComparer.OrdinalIgnoreCase);
-    private static HashSet<string> inputModulesSet = new HashSet<string>(inputRelatedModules, StringComparer.OrdinalIgnoreCase);
-    private static HashSet<string> renderingModulesSet = new HashSet<string>(renderingRelatedModules, StringComparer.OrdinalIgnoreCase);
-
     public const string AppCompatRegistry = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
     public const string RunAsAdminRegistryValue = "RUNASADMIN";
     public const string DisabledMaximizedWindowedValue = "DISABLEDXMAXIMIZEDWINDOWEDMODE";
@@ -282,43 +276,53 @@ public class ProcessEx : IDisposable
 
     public bool IsGame()
     {
-        try
+        switch (Filter)
         {
-            // avoid launchers
-            if (launcherSet.Contains(Executable))
+            case ProcessFilter.Desktop:
                 return false;
+        }
 
-            // some gaming platforms won't let us read modules, try the certificate instead
-            if (IsGamesSigned(Path))
-                return true;
-            else
+        // avoid launchers
+        if (launcherExecutables.Contains(Executable, StringComparer.InvariantCultureIgnoreCase))
+            return false;
+
+        // some gaming platforms won't let us read modules, try the certificate instead
+        if (IsGamesSigned(Path))
+        {
+            return true;
+        }
+        else
+        {
+            bool hasInput = false;
+            bool hasRender = false;
+
+            // Loop through the modules of the process
+            foreach (ProcessModule module in Process.Modules)
             {
-                bool isGame = false;
-                Parallel.ForEach(Process.Modules.Cast<ProcessModule>(), (module, state) =>
+                try
                 {
+                    // Get the name of the module
                     string moduleName = module.ModuleName;
-                    if (gameModulesSet.Contains(moduleName))
-                    {
-                        isGame = true;
-                        state.Break(); // Exit loop early
-                    }
-                    else if (inputModulesSet.Contains(moduleName) && renderingModulesSet.Contains(moduleName))
-                    {
-                        isGame = true;
-                        state.Break(); // Exit loop early
-                    }
-                });
 
-                return isGame;
-            }
-        }
-        catch (Win32Exception)
-        {
-            // Handle access denial to certain modules gracefully
-        }
-        catch (InvalidOperationException)
-        {
-            // Handle cases where the process exits during iteration
+                    if (gameModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        if (inputModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                            hasInput = true;
+                        else if (renderModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                            hasRender = true;
+
+                        // If both conditions are met, we can exit early.
+                        if (hasInput && hasRender)
+                            return true;
+                    }
+                }
+                catch (Win32Exception) { }
+                catch (InvalidOperationException) { }
+            };
         }
 
         return false;

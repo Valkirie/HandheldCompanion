@@ -5,6 +5,7 @@ using HandheldCompanion.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -557,18 +558,19 @@ public static class ProcessManager
         // Loop through the modules of the process
         foreach (ProcessModule module in process.Modules)
         {
-            // Get the name of the module
-            string moduleName = module.ModuleName.ToLower();
-
-            // Check if the name contains "xinput"
-            if (moduleName.Contains("xinput"))
+            try
             {
-                // Return true if found
-                return true;
-            }
-        }
+                // Get the name of the module
+                string moduleName = module.ModuleName.ToLower();
 
-        // Return false if not found
+                // Check if the name contains "xinput"
+                if (moduleName.Contains("xinput", StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            }
+            catch (Win32Exception) { }
+            catch (InvalidOperationException) { }
+        };
+
         return false;
     }
 
