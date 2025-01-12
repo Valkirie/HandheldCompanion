@@ -86,7 +86,7 @@ public class ProcessEx : IDisposable
     {
         // Input Libraries
         "xinput1_1.dll", "xinput1_2.dll", "xinput1_3.dll", "xinput1_4.dll", "xinput9_1_0.dll",
-        "dinput.dll", "dinput8.dll", "GameInput.dll",
+        "dinput.dll", "dinput8.dll", "GameInput.dll", "SDL2.DLL"
     };
 
     private static readonly string[] renderingRelatedModules = new[]
