@@ -70,8 +70,6 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int GWL_STYLE = -16;
     private const int GWL_EXSTYLE = -20;
 
-    private CrossThreadLock Sliding = new();
-
     // page vars
     private readonly Dictionary<string, Page> _pages = [];
 
@@ -376,9 +374,6 @@ public partial class OverlayQuickTools : GamepadWindow
 
             case WM_PAINT:
                 {
-                    if (Sliding.IsEntered())
-                        break;
-
                     DateTime drawTime = DateTime.Now;
 
                     double drawDiff = Math.Abs((prevDraw - drawTime).TotalMilliseconds);
