@@ -417,7 +417,7 @@ public partial class ProfilesPage : Page
             return;
 
         MainWindow.performancePage.SelectionChanged(powerProfile);
-        MainWindow.GetCurrent().NavView_Navigate("PerformancePage");
+        MainWindow.GetCurrent().NavigateToPage("PerformancePage");
     }
 
     private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
@@ -427,7 +427,7 @@ public partial class ProfilesPage : Page
             return;
 
         MainWindow.performancePage.SelectionChanged(powerProfile);
-        MainWindow.GetCurrent().NavView_Navigate("PerformancePage");
+        MainWindow.GetCurrent().NavigateToPage("PerformancePage");
     }
 
     public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)

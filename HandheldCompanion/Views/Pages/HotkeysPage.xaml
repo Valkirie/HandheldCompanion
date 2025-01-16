@@ -371,6 +371,87 @@
                                                 </ComboBox>
                                             </Grid>
 
+                                            <!--  QuickToolsCommands  -->
+                                            <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:QuickToolsCommands}}">
+                                                <!--  Separator  -->
+                                                <Separator
+                                                    Margin="-46,0,-16,0"
+                                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                    BorderThickness="0,1,0,0" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="5*" />
+                                                        <ColumnDefinition Width="5*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Page" />
+                                                        <TextBlock
+                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="Define the page to navigate when opening Quick Tools"
+                                                            TextWrapping="Wrap" />
+                                                    </ikw:SimpleStackPanel>
+
+                                                    <ComboBox
+                                                        Grid.Column="1"
+                                                        Margin="12,0,0,0"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Center"
+                                                        SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        <ComboBoxItem Content="Current" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.QuickHomePage_Title}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.QuickDevicePage_Title}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.QuickProfilesPage_Title}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.QuickApplicationsPage_Title}" />
+                                                    </ComboBox>
+                                                </Grid>
+                                            </ikw:SimpleStackPanel>
+
+                                            <!--  MainWindowCommands  -->
+                                            <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:MainWindowCommands}}">
+                                                <!--  Separator  -->
+                                                <Separator
+                                                    Margin="-46,0,-16,0"
+                                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                    BorderThickness="0,1,0,0" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="5*" />
+                                                        <ColumnDefinition Width="5*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Page" />
+                                                        <TextBlock
+                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="Define the page to navigate when opening the main window"
+                                                            TextWrapping="Wrap" />
+                                                    </ikw:SimpleStackPanel>
+
+                                                    <ComboBox
+                                                        Grid.Column="1"
+                                                        Margin="12,0,0,0"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Center"
+                                                        SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        <ComboBoxItem Content="Current" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navController}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navDevice}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navPerformance}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navProfiles}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navOverlay}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navHotkeys}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navAbout}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navNotifications}" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_Settings}" />
+                                                    </ComboBox>
+                                                </Grid>
+                                            </ikw:SimpleStackPanel>
+
                                             <!--  OnScreenKeyboardLegacyCommands  -->
                                             <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdWIN:OnScreenKeyboardLegacyCommands}}">
                                                 <!--  Separator  -->

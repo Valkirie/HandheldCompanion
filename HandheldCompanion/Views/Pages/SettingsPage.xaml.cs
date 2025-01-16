@@ -448,7 +448,7 @@ public partial class SettingsPage : Page
         if (cB_QuickToolsBackdrop.SelectedIndex == -1)
             return;
 
-        var targetWindow = MainWindow.overlayquickTools;
+        var targetWindow = OverlayQuickTools.GetCurrent();
         SwitchBackdrop(targetWindow, cB_QuickToolsBackdrop.SelectedIndex);
 
         if (!IsLoaded)

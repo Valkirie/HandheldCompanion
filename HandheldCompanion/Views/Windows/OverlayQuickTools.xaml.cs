@@ -86,7 +86,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public QuickApplicationsPage applicationsPage;
 
     private static OverlayQuickTools CurrentWindow;
-    private string preNavItemTag;
+    public string prevNavItemTag;
 
     public OverlayQuickTools()
     {
@@ -499,31 +499,43 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         if (args.InvokedItemContainer is not null)
         {
-            var navItem = (NavigationViewItem)args.InvokedItemContainer;
-            var navItemTag = (string)navItem.Tag;
+            NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
+            string navItemTag = (string)navItem.Tag;
 
-            switch (navItemTag)
-            {
-                default:
-                    preNavItemTag = navItemTag;
-                    break;
-            }
+            // update prev
+            prevNavItemTag = navItemTag;
 
-            NavView_Navigate(preNavItemTag);
+            // navigate
+            NavView_Navigate(prevNavItemTag);
         }
     }
 
-    public void NavView_Navigate(string navItemTag)
+    private void NavView_Navigate(string navItemTag)
     {
-        var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
-        var _page = item.Value;
+        KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
+        Page? _page = item.Value;
 
         // Get the page type before navigation so you can prevent duplicate
         // entries in the backstack.
-        var preNavPageType = ContentFrame.CurrentSourcePageType;
+        Type preNavPageType = ContentFrame.CurrentSourcePageType;
 
         // Only navigate if the selected page isn't currently loaded.
-        if (!(_page is null) && !Equals(preNavPageType, _page)) NavView_Navigate(_page);
+        if (!(_page is null) && !Equals(preNavPageType, _page))
+            NavView_Navigate(_page);
+    }
+
+    public void NavigateToPage(string navItemTag)
+    {
+        // Update previous navigation item
+        prevNavItemTag = navItemTag;
+
+        // Find and select the matching menu item
+        navView.SelectedItem = navView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Navigate to the specified page
+        NavView_Navigate(navItemTag);
     }
 
     public void NavView_Navigate(Page _page)
@@ -536,14 +548,8 @@ public partial class OverlayQuickTools : GamepadWindow
         // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
-        // NavView doesn't load any page by default, so load home page.
-        navView.SelectedItem = navView.MenuItems[1];
-
-        // If navigation occurs on SelectionChanged, this isn't needed.
-        // Because we use ItemInvoked to navigate, we need to call Navigate
-        // here to load the home page.
-        preNavItemTag = "QuickHomePage";
-        NavView_Navigate(preNavItemTag);
+        // navigate
+        NavigateToPage("QuickHomePage");
     }
 
     private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

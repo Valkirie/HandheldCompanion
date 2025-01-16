@@ -73,7 +73,7 @@ public partial class MainWindow : GamepadWindow
     private bool appClosing;
     private readonly NotifyIcon notifyIcon;
     private bool NotifyInTaskbar;
-    private string preNavItemTag;
+    public string prevNavItemTag;
 
     private WindowState prevWindowState;
     public static SplashScreen SplashScreen;
@@ -561,31 +561,46 @@ public partial class MainWindow : GamepadWindow
     {
         if (args.InvokedItemContainer is not null)
         {
-            var navItem = (NavigationViewItem)args.InvokedItemContainer;
-            var navItemTag = (string)navItem.Tag;
+            NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
+            string navItemTag = (string)navItem.Tag;
 
             switch (navItemTag)
             {
                 default:
-                    preNavItemTag = navItemTag;
+                    prevNavItemTag = navItemTag;
                     break;
             }
 
-            NavView_Navigate(preNavItemTag);
+            NavView_Navigate(prevNavItemTag);
         }
     }
 
-    public void NavView_Navigate(string navItemTag)
+    private void NavView_Navigate(string navItemTag)
     {
-        var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
-        var _page = item.Value;
+        KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
+        Page? _page = item.Value;
 
         // Get the page type before navigation so you can prevent duplicate
         // entries in the backstack.
-        var preNavPageType = ContentFrame.CurrentSourcePageType;
+        Type preNavPageType = ContentFrame.CurrentSourcePageType;
 
         // Only navigate if the selected page isn't currently loaded.
-        if (!(_page is null) && !Equals(preNavPageType, _page)) NavView_Navigate(_page);
+        if (!(_page is null) && !Equals(preNavPageType, _page))
+            NavView_Navigate(_page);
+    }
+
+    public void NavigateToPage(string navItemTag)
+    {
+        // Update previous navigation item
+        prevNavItemTag = navItemTag;
+
+        // Find and select the matching menu item
+        navView.SelectedItem = navView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Navigate to the specified page
+        NavView_Navigate(navItemTag);
     }
 
     public static void NavView_Navigate(Page _page)
@@ -719,14 +734,8 @@ public partial class MainWindow : GamepadWindow
         // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
-        // NavView doesn't load any page by default, so load home page.
-        navView.SelectedItem = navView.MenuItems[0];
-
-        // If navigation occurs on SelectionChanged, this isn't needed.
-        // Because we use ItemInvoked to navigate, we need to call Navigate
-        // here to load the home page.
-        preNavItemTag = "ControllerPage";
-        NavView_Navigate(preNavItemTag);
+        // navigate
+        NavigateToPage("ControllerPage");
     }
 
     private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

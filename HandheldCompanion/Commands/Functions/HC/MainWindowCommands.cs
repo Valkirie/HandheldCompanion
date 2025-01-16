@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Views;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Views;
 using System;
 
 namespace HandheldCompanion.Commands.Functions.HC
@@ -6,6 +7,8 @@ namespace HandheldCompanion.Commands.Functions.HC
     [Serializable]
     public class MainWindowCommands : FunctionCommands
     {
+        public int PageIndex { get; set; } = 0;
+
         public MainWindowCommands()
         {
             base.Name = Properties.Resources.Hotkey_Mainwindow;
@@ -23,7 +26,36 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            MainWindow.GetCurrent().SwapWindowState();
+            string pageTag = PageIndex switch
+            {
+                // 0 => "Current",
+                1 => "ControllerPage",
+                2 => "DevicePage",
+                3 => "PerformancePage",
+                4 => "ProfilesPage",
+                5 => "OverlayPage",
+                6 => "HotkeysPage",
+                7 => "AboutPage",
+                8 => "NotificationsPage",
+                9 => "SettingsPage",
+                _ => string.Empty
+            };
+
+            var mainWindow = MainWindow.GetCurrent();
+
+            // Toggle visibility if no page change or the page being navigated to is different from the current one
+            if (string.IsNullOrEmpty(pageTag) || pageTag == mainWindow.prevNavItemTag)
+                mainWindow.SwapWindowState();
+
+            // Navigate to the specified page if valid
+            if (!string.IsNullOrEmpty(pageTag))
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    mainWindow.NavigateToPage(pageTag);
+                });
+            }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

@@ -335,6 +335,29 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int WindowPageIndex
+        {
+            get
+            {
+                if (Hotkey.command is QuickToolsCommands quickToolsCommands)
+                    return quickToolsCommands.PageIndex;
+                else if (Hotkey.command is MainWindowCommands windowCommands)
+                    return windowCommands.PageIndex;
+
+                return 0;
+            }
+            set
+            {
+                if (Hotkey.command is QuickToolsCommands quickToolsCommands)
+                    quickToolsCommands.PageIndex = value;
+                else if (Hotkey.command is MainWindowCommands windowCommands)
+                    windowCommands.PageIndex = value;
+
+                OnPropertyChanged(nameof(WindowPageIndex));
+                ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+            }
+        }
+
         public string ExecutablePath
         {
             get

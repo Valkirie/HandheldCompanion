@@ -336,14 +336,14 @@ public partial class QuickProfilesPage : Page
 
     private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
-        MainWindow.overlayquickTools.performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
-        MainWindow.overlayquickTools.NavView_Navigate("QuickPerformancePage");
+        OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
+        OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
 
     private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
     {
-        MainWindow.overlayquickTools.performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
-        MainWindow.overlayquickTools.NavView_Navigate("QuickPerformancePage");
+        OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
+        OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
 
     public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)

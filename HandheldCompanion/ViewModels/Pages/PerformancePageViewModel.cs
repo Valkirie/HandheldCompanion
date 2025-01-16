@@ -799,8 +799,8 @@ namespace HandheldCompanion.ViewModels
         {
             if (IsQuickTools)
             {
-                if (SelectedPreset?.Guid == preset.Guid && MainWindow.overlayquickTools.ContentFrame.CanGoBack)
-                    MainWindow.overlayquickTools.ContentFrame.GoBack();
+                if (SelectedPreset?.Guid == preset.Guid && OverlayQuickTools.GetCurrent().ContentFrame.CanGoBack)
+                    OverlayQuickTools.GetCurrent().ContentFrame.GoBack();
             }
             else
             {

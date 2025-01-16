@@ -2,6 +2,7 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
+using HandheldCompanion.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,7 +45,7 @@ public partial class QuickHomePage : Page
     private void QuickButton_Click(object sender, RoutedEventArgs e)
     {
         Button button = (Button)sender;
-        MainWindow.overlayquickTools.NavView_Navigate(button.Name);
+        OverlayQuickTools.GetCurrent().NavigateToPage(button.Name);
     }
 
     private void SystemManager_Initialized()
