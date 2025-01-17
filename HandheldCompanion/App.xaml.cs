@@ -31,6 +31,12 @@ public partial class App : Application
     [DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool AllocConsole();
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool FreeConsole();
+
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
     ///     executed, and as such is the logical equivalent of main() or WinMain().
@@ -39,6 +45,10 @@ public partial class App : Application
     {
         InitializeSentry();
         InitializeComponent();
+
+#if DEBUG
+        AllocConsole();
+#endif
 
         // initialize path(s)
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;

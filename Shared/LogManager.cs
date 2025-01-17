@@ -22,41 +22,77 @@ public static class LogManager
             .CreateLogger();
 
         logger = new SerilogLoggerFactory(serilogLogger).CreateLogger(name);
+
+#if DEBUG
+        // Redirect standard input, output, and error to the new console
+        StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput())
+        {
+            AutoFlush = true
+        };
+        Console.SetOut(standardOutput);
+
+        StreamReader standardInput = new StreamReader(Console.OpenStandardInput());
+        Console.SetIn(standardInput);
+#endif
     }
 
     public static void LogInformation(string message, params object[] args)
     {
         Trace.TraceInformation(message, args);
         logger.LogInformation(message, args);
+
+#if DEBUG
+        Console.WriteLine(message, args);
+#endif
     }
 
     public static void LogWarning(string message, params object[] args)
     {
         Trace.TraceWarning(message, args);
         logger.LogWarning(message, args);
+
+#if DEBUG
+        Console.WriteLine(message, args);
+#endif
     }
 
     public static void LogCritical(string message, params object[] args)
     {
         Trace.TraceError(message, args);
         logger.LogCritical(message, args);
+
+#if DEBUG
+        Console.WriteLine(message, args);
+#endif
     }
 
     public static void LogDebug(string message, params object[] args)
     {
         Trace.TraceInformation(message, args);
         logger.LogDebug(message, args);
+
+#if DEBUG
+        Console.WriteLine(message, args);
+#endif
     }
 
     public static void LogError(string message, params object[] args)
     {
         Trace.TraceError(message, args);
         logger.LogError(message, args);
+
+#if DEBUG
+        Console.WriteLine(message, args);
+#endif
     }
 
     public static void LogTrace(string message, params object[] args)
     {
         Trace.TraceInformation(message, args);
         logger.LogTrace(message, args);
+
+#if DEBUG
+        Console.WriteLine(message, args);
+#endif
     }
 }
