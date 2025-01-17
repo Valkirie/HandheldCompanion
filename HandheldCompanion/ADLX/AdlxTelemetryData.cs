@@ -44,5 +44,9 @@ namespace HandheldCompanion.ADLX
         // GPU TBP
         public bool gpuTotalBoardPowerSupported;
         public double gpuTotalBoardPowerValue;
+
+        // Framerate
+        public long timeStamp;
+        public int fpsData;
     }
 }
