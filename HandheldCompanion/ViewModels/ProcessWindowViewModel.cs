@@ -101,6 +101,15 @@ namespace HandheldCompanion.ViewModels
             if (ProcessWindow is not null)
                 ProcessWindow.Refreshed -= ProcessRefreshed;
 
+            ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+
+            // dispose commands
+            BringProcessCommand = null;
+            SwapScreenCommand = null;
+
+            ProcessWindow = null;
+            ProcessExViewModel = null;
+
             base.Dispose();
         }
     }

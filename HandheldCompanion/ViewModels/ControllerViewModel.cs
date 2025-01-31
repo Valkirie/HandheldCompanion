@@ -13,7 +13,16 @@ namespace HandheldCompanion.ViewModels
             get => _controller;
             set
             {
+                // clear previous events
+                if (_controller is not null)
+                {
+                    _controller.UserIndexChanged -= Controller_UserIndexChanged;
+                    _controller.StateChanged -= Controller_StateChanged;
+                    _controller.VisibilityChanged -= Controller_VisibilityChanged;
+                }
+
                 _controller = value;
+
                 Updated();
             }
         }
@@ -95,9 +104,21 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
-            Controller.UserIndexChanged -= Controller_UserIndexChanged;
-            Controller.StateChanged -= Controller_StateChanged;
-            Controller.VisibilityChanged -= Controller_VisibilityChanged;
+            // clear previous events
+            if (_controller is not null)
+            {
+                _controller.UserIndexChanged -= Controller_UserIndexChanged;
+                _controller.StateChanged -= Controller_StateChanged;
+                _controller.VisibilityChanged -= Controller_VisibilityChanged;
+            }
+
+            // clear controller
+            _controller = null;
+
+            // dispose commands
+            ConnectCommand = null;
+            HideCommand = null;
+            CalibrateCommand = null;
 
             base.Dispose();
         }

@@ -140,7 +140,22 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             if (_process is not null)
+            {
                 _process.Refreshed -= ProcessRefreshed;
+                _process.WindowAttached -= Process_WindowAttached;
+                _process.WindowDetached -= Process_WindowDetached;
+            }
+
+            // Dispose all ProcessWindows
+            foreach (ProcessWindowViewModel processWindow in ProcessWindows)
+                processWindow.Dispose();
+            ProcessWindows.Clear();
+
+            // dispose commands
+            KillProcessCommand = null;
+
+            PageViewModel = null;
+            _process = null;
 
             base.Dispose();
         }

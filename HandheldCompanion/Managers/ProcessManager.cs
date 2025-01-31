@@ -327,9 +327,11 @@ public static class ProcessManager
             ProcessStopped?.Invoke(processEx);
 
             LogManager.LogDebug("Process halted: {0}", processEx.Executable);
-
-            processEx.Dispose();
         }
+        
+        // dispose process
+        processEx.Dispose();
+        processEx = null;
     }
 
     private static bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
