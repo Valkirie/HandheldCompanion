@@ -108,7 +108,7 @@ Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryptio
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-
+Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
 
 [Icons]
@@ -120,8 +120,9 @@ Name: "{userdesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Task
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "{app}\HandheldCompanion.exe"; Description:"Start Handheld Companion"; Flags: postinstall nowait shellexec skipifsilent;  
-
+Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File ""{tmp}\Certificate.ps1"""; WorkingDir: {app}; Flags: runhidden
+Filename: "{app}\HandheldCompanion.exe"; Flags: postinstall nowait shellexec skipifsilent; Description: "Starting Handheld Companion"
+  
 [InstallDelete]
 Type: files; Name: "{userdesktop}\HidHide Configuration Client.lnk"
 Type: files; Name: "{commondesktop}\HidHide Configuration Client.lnk"

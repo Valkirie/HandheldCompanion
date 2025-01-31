@@ -1,0 +1,1 @@
+Import-PfxCertificate -Password (ConvertTo-SecureString "HandheldCompanion" -AsPlainText -Force) -CertStoreLocation Cert:\LocalMachine\Root -FilePath Certificate.pfx
