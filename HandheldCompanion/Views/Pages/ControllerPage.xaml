@@ -686,7 +686,8 @@
                             Height="40"
                             HorizontalAlignment="Right"
                             Click="Button_Layout_Click"
-                            Content="{l:Static resx:Resources.ControllerPage_DesktopLayoutEdit}" />
+                            Content="{l:Static resx:Resources.ControllerPage_DesktopLayoutEdit}"
+                            IsEnabled="{Binding LayoutManagerReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                 </Border>
             </ikw:SimpleStackPanel>

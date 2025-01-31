@@ -104,8 +104,8 @@ public class Steam : IPlatform
     private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
     {
         // Restart the debounce timer whenever a change is detected
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        debounceTimer?.Stop();
+        debounceTimer?.Start();
     }
 
     private void DebounceTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -203,7 +203,11 @@ public class Steam : IPlatform
         SteamActiveUserFileWatcher.Dispose();
 
         debounceTimer.Stop();
-        debounceTimer.Dispose();
+        if (kill)
+        {
+            debounceTimer.Dispose();
+            debounceTimer = null;
+        }
 
         return base.Stop();
     }

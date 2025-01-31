@@ -12,6 +12,8 @@ namespace HandheldCompanion.ViewModels
     {
         private ControllerPage controllerPage;
 
+        public bool LayoutManagerReady => ManagerFactory.layoutManager.Status == ManagerStatus.Initialized;
+
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
 
@@ -28,11 +30,33 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
+            // raise events
+            switch (ManagerFactory.layoutManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.layoutManager.Initialized += LayoutManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryLayouts();
+                    break;
+            }
+
             // send events
             if (ControllerManager.HasTargetController)
             {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
             }
+        }
+
+        private void QueryLayouts()
+        {
+            OnPropertyChanged(nameof(LayoutManagerReady));
+        }
+
+        private void LayoutManager_Initialized()
+        {
+            QueryLayouts();
         }
 
         private object lockcollection = new();
@@ -75,8 +99,11 @@ namespace HandheldCompanion.ViewModels
 
         private void ControllerManager_ControllerSelected(IController Controller)
         {
-            foreach (ControllerViewModel controller in PhysicalControllers)
-                controller.Updated();
+            lock (lockcollection)
+            {
+                foreach (ControllerViewModel controller in PhysicalControllers)
+                    controller.Updated();
+            }
 
             // do something
             controllerPage.ControllerRefresh();
@@ -88,6 +115,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerPlugged -= ControllerPlugged;
             ControllerManager.ControllerUnplugged -= ControllerUnplugged;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+            ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;
 
             base.Dispose();
         }

@@ -21,7 +21,7 @@ namespace HandheldCompanion.Inputs
     }
 
     [Serializable]
-    public class InputsChord : ICloneable
+    public class InputsChord : ICloneable, IDisposable
     {
         public InputsChord(ButtonState buttonState, List<InputsKey> keyState, InputsChordType InputsType)
         {
@@ -32,8 +32,14 @@ namespace HandheldCompanion.Inputs
 
         public InputsChord() { }
 
+        ~InputsChord()
+        {
+            Dispose(false);
+        }
+
         public ButtonState ButtonState { get; set; } = new();
         public List<InputsKey> KeyState { get; set; } = [];
+        private bool _disposed = false;
 
         private InputsChordType _chordType { get; set; } = InputsChordType.Click;
         public InputsChordType chordType
@@ -81,6 +87,26 @@ namespace HandheldCompanion.Inputs
             inputsChord.chordType = this.chordType;
 
             return inputsChord;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free managed resources
+                ButtonState?.Dispose();
+                KeyState?.Clear();
+            }
+
+            _disposed = true;
         }
     }
 }

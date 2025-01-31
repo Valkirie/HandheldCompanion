@@ -234,6 +234,8 @@ public class ProcessEx : IDisposable
     private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
 
     private static object registryLock = new();
+
+    private bool _disposed = false; // Prevent multiple disposals
     private bool IsDisposing = false;
 
     #region event
@@ -271,7 +273,7 @@ public class ProcessEx : IDisposable
 
     ~ProcessEx()
     {
-        Dispose();
+        Dispose(false);
     }
 
     public bool IsGame()
@@ -644,18 +646,48 @@ public class ProcessEx : IDisposable
 
     public void Dispose()
     {
-        // set flag
-        IsDisposing = true;
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        Process?.Dispose();
-        MainThread?.Dispose();
-        ChildrenProcessIds.Dispose();
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
 
-        foreach (ProcessWindow window in ProcessWindows.Values)
-            window.Dispose();
+        if (disposing)
+        {
+            // set flag
+            IsDisposing = true;
 
-        ProcessWindows.Clear();
+            // Free managed resources
+            Process?.Dispose();
+            Process = null;
 
-        GC.SuppressFinalize(this); //now, the finalizer won't be called
+            // Unsubscribe from MainThread's event
+            if (MainThread != null)
+            {
+                MainThread.Disposed -= MainThread_Disposed;
+                MainThread.Dispose();
+                MainThread = null;
+            }
+
+            // Unsubscribe from prevThread's event
+            if (prevThread != null)
+            {
+                prevThread.Disposed -= MainThread_Disposed;
+                prevThread.Dispose();
+                prevThread = null;
+            }
+
+            // Dispose of child process list safely
+            ChildrenProcessIds?.Clear();
+
+            // Dispose of all windows
+            foreach (ProcessWindow window in ProcessWindows.Values)
+                window.Dispose();
+            ProcessWindows.Clear();
+        }
+
+        _disposed = true;
     }
 }

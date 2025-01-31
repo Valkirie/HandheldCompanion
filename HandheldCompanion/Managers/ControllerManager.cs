@@ -988,8 +988,11 @@ public static class ControllerManager
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
-        managerStatus = status;
-        StatusChanged?.Invoke(status, ControllerManagementAttempts);
+        if (status != managerStatus)
+        {
+            managerStatus = status;
+            StatusChanged?.Invoke(status, ControllerManagementAttempts);
+        }
     }
 
     private static void PickTimer_Elapsed(object? sender, ElapsedEventArgs e)

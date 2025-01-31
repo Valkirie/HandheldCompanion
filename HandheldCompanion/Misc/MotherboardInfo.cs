@@ -371,22 +371,26 @@ public static class MotherboardInfo
     {
         lock (cacheLock)
         {
-            string cacheFile = Path.Combine(cacheDirectory, fileName);
-            if (File.Exists(cacheFile))
+            try
             {
-                string cacheJSON = File.ReadAllText(cacheFile);
-
-                Dictionary<string, object>? cache = JsonConvert.DeserializeObject<Dictionary<string, object>>(cacheJSON, new JsonSerializerSettings
+                string cacheFile = Path.Combine(cacheDirectory, fileName);
+                if (File.Exists(cacheFile))
                 {
-                    TypeNameHandling = TypeNameHandling.All
-                });
+                    string cacheJSON = File.ReadAllText(cacheFile);
 
-                if (cache is not null)
-                {
-                    MotherboardInfo.cache = cache;
-                    return true;
+                    Dictionary<string, object>? cache = JsonConvert.DeserializeObject<Dictionary<string, object>>(cacheJSON, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    });
+
+                    if (cache is not null)
+                    {
+                        MotherboardInfo.cache = cache;
+                        return true;
+                    }
                 }
             }
+            catch { }
 
             return false;
         }
@@ -396,14 +400,18 @@ public static class MotherboardInfo
     {
         lock (cacheLock)
         {
-            string cacheFile = Path.Combine(cacheDirectory, fileName);
-
-            string jsonString = JsonConvert.SerializeObject(cache, Formatting.Indented, new JsonSerializerSettings
+            try
             {
-                TypeNameHandling = TypeNameHandling.All
-            });
+                string cacheFile = Path.Combine(cacheDirectory, fileName);
 
-            File.WriteAllText(cacheFile, jsonString);
+                string jsonString = JsonConvert.SerializeObject(cache, Formatting.Indented, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
+                File.WriteAllText(cacheFile, jsonString);
+            }
+            catch { }
         }
     }
 }

@@ -5,7 +5,9 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HandheldCompanion.Managers
@@ -150,8 +152,9 @@ namespace HandheldCompanion.Managers
 
         private static void QueryDevices()
         {
-            foreach (AdapterInformation displayAdapter in ManagerFactory.deviceManager.displayAdapters.Values)
-                DeviceManager_DisplayAdapterArrived(displayAdapter);
+            // use ConcurrentDictionary's thread-safe operations to avoid collection errors
+            foreach (KeyValuePair<Guid, AdapterInformation> kvp in ManagerFactory.deviceManager.displayAdapters)
+                DeviceManager_DisplayAdapterArrived(kvp.Value);
         }
 
         private static void GPUConnect(GPU GPU)

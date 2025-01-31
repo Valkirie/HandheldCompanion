@@ -11,7 +11,7 @@ using WindowsInput.Events;
 namespace HandheldCompanion
 {
     [Serializable]
-    public class Hotkey : ICloneable
+    public class Hotkey : ICloneable, IDisposable
     {
         public ButtonFlags ButtonFlags { get; set; }
 
@@ -24,6 +24,8 @@ namespace HandheldCompanion
 
         public string Name { get; set; } = string.Empty;
         public Version Version { get; set; } = new();
+
+        private bool _disposed = false; // Prevent multiple disposals
 
         [JsonIgnore]
         public KeyboardChord keyChord
@@ -48,12 +50,17 @@ namespace HandheldCompanion
             this.ButtonFlags = buttonFlags;
         }
 
+        ~Hotkey()
+        {
+            Dispose(false);
+        }
+
         public object Clone()
         {
             Hotkey hotkey = new(ButtonFlags)
             {
-                command = this.command.Clone() as ICommands,
-                inputsChord = this.inputsChord.Clone() as InputsChord,
+                command = this.command?.Clone() as ICommands,
+                inputsChord = this.inputsChord?.Clone() as InputsChord,
                 IsPinned = this.IsPinned,
                 IsInternal = this.IsInternal
             };
@@ -68,6 +75,29 @@ namespace HandheldCompanion
                 ControllerManager.GetTarget()?.Rumble();
 
             command?.Execute(command.OnKeyDown, command.OnKeyUp, IsBackground);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free managed resources
+                command?.Dispose();
+                command = null;
+
+                inputsChord.Dispose();
+                inputsChord = null;
+            }
+
+            _disposed = true;
         }
     }
 }

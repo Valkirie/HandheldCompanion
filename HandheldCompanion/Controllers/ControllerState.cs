@@ -21,26 +21,49 @@ namespace HandheldCompanion.Controllers
             { AxisLayoutFlags.LeftPad, ButtonFlags.LeftPadTouch },
         };
 
-        public ControllerState()
-        { }
+        private bool _disposed = false; // Prevent multiple disposals
+
+        public ControllerState() { }
 
         public object Clone()
         {
             return new ControllerState()
             {
-                ButtonState = this.ButtonState.Clone() as ButtonState,
-                AxisState = this.AxisState.Clone() as AxisState,
-                GyroState = this.GyroState.Clone() as GyroState,
+                ButtonState = this.ButtonState?.Clone() as ButtonState,
+                AxisState = this.AxisState?.Clone() as AxisState,
+                GyroState = this.GyroState?.Clone() as GyroState,
             };
         }
 
         public void Dispose()
         {
-            ButtonState.Dispose();
-            AxisState.Dispose();
-            GyroState.Dispose();
-
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free managed resources
+                ButtonState?.Dispose();
+                ButtonState = null;
+
+                AxisState?.Dispose();
+                AxisState = null;
+
+                GyroState?.Dispose();
+                GyroState = null;
+            }
+
+            _disposed = true;
+        }
+
+        ~ControllerState()
+        {
+            Dispose(false);
         }
     }
 }

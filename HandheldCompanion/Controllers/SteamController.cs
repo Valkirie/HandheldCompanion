@@ -5,7 +5,6 @@ namespace HandheldCompanion.Controllers
 {
     public abstract class SteamController : IController
     {
-        protected bool isConnected = false;
         protected bool isVirtualMuted = false;
 
         public SteamController() : base()
@@ -16,11 +15,6 @@ namespace HandheldCompanion.Controllers
         public override void AttachDetails(PnPDetails details)
         {
             base.AttachDetails(details);
-        }
-
-        public override bool IsConnected()
-        {
-            return isConnected;
         }
 
         public override string GetGlyph(ButtonFlags button)

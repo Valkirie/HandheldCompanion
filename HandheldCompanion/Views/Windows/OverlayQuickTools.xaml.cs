@@ -220,8 +220,20 @@ public partial class OverlayQuickTools : GamepadWindow
         string DevicePath = ManagerFactory.settingsManager.GetString("QuickToolsDevicePath");
         string DeviceName = ManagerFactory.settingsManager.GetString("QuickToolsDeviceName");
 
-        // Attempt to find the screen with the specified friendly name
-        DesktopScreen friendlyScreen = ManagerFactory.multimediaManager.AllScreens.Values.FirstOrDefault(a => a.DevicePath.Equals(DevicePath) || a.ToString().Equals(DeviceName)) ?? ManagerFactory.multimediaManager.PrimaryDesktop;
+        // Use a thread-safe enumeration to find the screen with the specified friendly name
+        DesktopScreen friendlyScreen = null;
+        foreach (KeyValuePair<string, DesktopScreen> screen in ManagerFactory.multimediaManager.AllScreens)
+        {
+            if (screen.Value.DevicePath.Equals(DevicePath) || screen.Value.ToString().Equals(DeviceName))
+            {
+                friendlyScreen = screen.Value;
+                break;
+            }
+        }
+
+        // Default to PrimaryDesktop if no matching screen is found
+        friendlyScreen ??= ManagerFactory.multimediaManager.PrimaryDesktop;
+
         if (friendlyScreen is null)
             return;
 

@@ -413,15 +413,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         if (ScalingSupport)
                             ScalingMode = GetScalingMode();
 
+                        // raise event
                         if (GPUScalingSupport != prevGPUScalingSupport || GPUScaling != prevGPUScaling || ScalingMode != prevScalingMode)
-                        {
-                            // raise event
                             base.OnGPUScalingChanged(GPUScalingSupport, GPUScaling, ScalingMode);
-
-                            prevGPUScaling = GPUScaling;
-                            prevScalingMode = ScalingMode;
-                            prevGPUScalingSupport = GPUScalingSupport;
-                        }
                     }
                     catch { }
 
@@ -436,7 +430,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         while (DateTime.Now < timeout && !RSRSupport)
                         {
                             RSRSupport = HasRSRSupport();
-                            Thread.Sleep(250);
+                            if (!RSRSupport) Thread.Sleep(1000);
                         }
                         RSR = GetRSR();
 
@@ -462,7 +456,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         while (DateTime.Now < timeout && !AFMFSupport)
                         {
                             AFMFSupport = HasAFMFSupport();
-                            Thread.Sleep(250);
+                            if (!AFMFSupport) Thread.Sleep(1000);
                         }
                         AFMF = GetAFMF();
 
@@ -484,21 +478,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         bool IntegerScaling = false;
 
                         DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(2));
-                        while (DateTime.Now < timeout && !IntegerScalingSupport)
+                        while (DateTime.Now < timeout && !IntegerScalingSupport && GPUScaling)
                         {
                             IntegerScalingSupport = HasIntegerScalingSupport();
-                            Thread.Sleep(250);
+                            if (!IntegerScalingSupport) Thread.Sleep(1000);
                         }
                         IntegerScaling = GetIntegerScaling();
 
+                        // raise event
                         if (IntegerScalingSupport != prevIntegerScalingSupport || IntegerScaling != prevIntegerScaling)
-                        {
-                            // raise event
                             base.OnIntegerScalingChanged(IntegerScalingSupport, IntegerScaling);
-
-                            prevIntegerScalingSupport = IntegerScalingSupport;
-                            prevIntegerScaling = IntegerScaling;
-                        }
                     }
                     catch { }
 
@@ -507,14 +496,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         bool ImageSharpening = GetImageSharpening();
                         int ImageSharpeningSharpness = GetImageSharpeningSharpness();
 
+                        // raise event
                         if (ImageSharpening != prevImageSharpening || ImageSharpeningSharpness != prevImageSharpeningSharpness)
-                        {
-                            // raise event
                             base.OnImageSharpeningChanged(ImageSharpening, ImageSharpeningSharpness);
-
-                            prevImageSharpening = ImageSharpening;
-                            prevImageSharpeningSharpness = ImageSharpeningSharpness;
-                        }
                     }
                     catch { }
                 }

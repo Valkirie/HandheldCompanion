@@ -48,16 +48,21 @@ namespace HandheldCompanion.Helpers
         {
             handle = CreateGamepadMotion();
 
-            if (string.IsNullOrEmpty(deviceInstanceId))
-                return;
-
             // store device path
             this.deviceInstanceId = deviceInstanceId;
 
             // get previous calibration
-            calibration = IMUCalibration.GetCalibration(deviceInstanceId.ToUpper());
-            SetCalibrationOffset(calibration.xOffset, calibration.yOffset, calibration.zOffset, calibration.weight);
-            SetCalibrationMode(calibrationMode);
+            string deviceId = deviceInstanceId.ToUpper();
+            if (IMUCalibration.HasCalibration(deviceId))
+            {
+                calibration = IMUCalibration.GetCalibration(deviceId);
+                SetCalibrationOffset(calibration.xOffset, calibration.yOffset, calibration.zOffset, calibration.weight);
+                SetCalibrationMode(calibrationMode);
+            }
+            else
+            {
+                calibration = new();
+            }
         }
 
         ~GamepadMotion()

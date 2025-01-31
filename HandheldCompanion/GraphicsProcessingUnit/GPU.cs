@@ -1,8 +1,7 @@
-﻿using SharpDX.Direct3D9;
+﻿using HandheldCompanion.Utils;
+using SharpDX.Direct3D9;
 using System;
 using System.Management;
-using System.Threading;
-using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using Timer = System.Timers.Timer;
 
@@ -47,7 +46,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool halting = false;
         protected object updateLock = new();
         protected object telemetryLock = new();
-        public object functionLock = new();
+        public CrossThreadLock functionLock = new();
+
+        private bool _disposed = false; // Prevent multiple disposals
 
         public enum UpdateGraphicsSettingsSource
         {
@@ -64,23 +65,22 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             {
                 try
                 {
-                    using (CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(1)))
+                    if (functionLock.TryEnter(1000))
                     {
-                        Task<T> task = Task.Run(() =>
+                        try
                         {
-                            lock (functionLock)
-                            {
-                                if (!halting && IsInitialized)
-                                    return func();
-                                else
-                                    return defaultValue;
-                            }
-                        }, cts.Token);
-
-                        return task.GetAwaiter().GetResult();
+                            var task = Task.Run(func);
+                            if (task.Wait(1000))
+                                return task.Result;
+                            else
+                                return defaultValue;
+                        }
+                        finally
+                        {
+                            functionLock.Exit();
+                        }
                     }
                 }
-                catch (OperationCanceledException) { }
                 catch (AccessViolationException) { }
                 catch (Exception) { }
             }
@@ -130,16 +130,26 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
         {
             IntegerScalingChanged?.Invoke(supported, enabled);
+
+            prevIntegerScalingSupport = supported;
+            prevIntegerScaling = enabled;
         }
 
         protected virtual void OnImageSharpeningChanged(bool enabled, int sharpness)
         {
             ImageSharpeningChanged?.Invoke(enabled, sharpness);
+
+            prevImageSharpening = enabled;
+            prevImageSharpeningSharpness = sharpness;
         }
 
         protected virtual void OnGPUScalingChanged(bool supported, bool enabled, int mode)
         {
             GPUScalingChanged?.Invoke(supported, enabled, mode);
+
+            prevGPUScalingSupport = supported;
+            prevGPUScaling = enabled;
+            prevScalingMode = mode;
         }
 
         public virtual bool SetImageSharpening(bool enabled)
@@ -305,10 +315,34 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public void Dispose()
         {
-            UpdateTimer?.Dispose();
-            TelemetryTimer?.Dispose();
-
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free managed resources
+                UpdateTimer?.Stop();
+                UpdateTimer?.Dispose();
+                UpdateTimer = null;
+
+                TelemetryTimer?.Stop();
+                TelemetryTimer?.Dispose();
+                TelemetryTimer = null;
+
+                functionLock?.Dispose();
+
+                // Clear event handlers to prevent memory leaks
+                IntegerScalingChanged = null;
+                ImageSharpeningChanged = null;
+                GPUScalingChanged = null;
+            }
+
+            _disposed = true;
         }
     }
 }

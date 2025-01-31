@@ -466,8 +466,8 @@ namespace HandheldCompanion.Managers
                     // check if the button state has been the same for at least 600ms
                     if ((currentTime - lastChangeTime).TotalMilliseconds >= 600)
                     {
-                        // check if the function has been called within the last 100ms
-                        if ((currentTime - lastCallTime).TotalMilliseconds >= 100)
+                        // check if the function has been called within the last 25ms
+                        if ((currentTime - lastCallTime).TotalMilliseconds >= 25)
                         {
                             // update the last call time
                             lastCallTime = currentTime;

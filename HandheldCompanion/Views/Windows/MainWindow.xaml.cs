@@ -628,7 +628,7 @@ public partial class MainWindow : GamepadWindow
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
 
         // stop windows
-        overlayModel.Close();
+        overlayModel.Close(true);
         overlayTrackpad.Close();
         overlayquickTools.Close(true);
 

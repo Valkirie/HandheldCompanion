@@ -65,15 +65,15 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool Axis2AxisImproveCircularity
+        public int Axis2AxisOutputShapeIndex
         {
-            get => (Action is AxisActions axisAction) && axisAction.ImproveCircularity;
+            get => (Action is AxisActions axisAction) ? (int)axisAction.OutputShape : 0;
             set
             {
-                if (Action is AxisActions axisAction && value != Axis2AxisImproveCircularity)
+                if (Action is AxisActions axisAction && value != Axis2AxisOutputShapeIndex)
                 {
-                    axisAction.ImproveCircularity = value;
-                    OnPropertyChanged(nameof(Axis2AxisImproveCircularity));
+                    axisAction.OutputShape = (OutputShape)value;
+                    OnPropertyChanged(nameof(Axis2AxisOutputShapeIndex));
                 }
             }
         }

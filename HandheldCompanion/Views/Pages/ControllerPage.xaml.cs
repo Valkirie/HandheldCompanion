@@ -303,8 +303,12 @@ public partial class ControllerPage : Page
 
     private void Button_Layout_Click(object sender, RoutedEventArgs e)
     {
+        Layout desktopLayout = ManagerFactory.layoutManager.GetDesktop();
+        if (desktopLayout is null)
+            return;
+
         // prepare layout editor, desktopLayout gets saved automatically
-        LayoutTemplate desktopTemplate = new(ManagerFactory.layoutManager.GetDesktop())
+        LayoutTemplate desktopTemplate = new(desktopLayout)
         {
             Name = LayoutTemplate.DesktopLayout.Name,
             Description = LayoutTemplate.DesktopLayout.Description,

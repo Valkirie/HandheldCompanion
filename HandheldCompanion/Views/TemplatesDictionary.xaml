@@ -1152,23 +1152,31 @@
                                     BorderThickness="0,1,0,0"
                                     Opacity="0.25" />
 
-                                <!--  Improve circularity  -->
+                                <!--  Output shape  -->
+                                <!--  TODO: Translate me  -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="80" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Improve circularity" />
+                                        Text="Output shape" />
 
-                                    <ui:ToggleSwitch
+                                    <ComboBox
                                         Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Axis2AxisImproveCircularity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Left"
+                                        SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <ComboBoxItem>Default</ComboBoxItem>
+                                        <ComboBoxItem>Circle</ComboBoxItem>
+                                        <ComboBoxItem>Cross</ComboBoxItem>
+                                        <ComboBoxItem>Square</ComboBoxItem>
+                                    </ComboBox>
                                 </Grid>
 
                                 <!--  Separator  -->
@@ -1194,14 +1202,14 @@
                                         </Grid>
 
                                         <Slider
-                                            FlowDirection="LeftToRight"
                                             IsMoveToPointEnabled="True"
                                             IsSnapToTickEnabled="True"
-                                            Maximum="100"
+                                            Maximum="25"
                                             Minimum="0"
                                             ScrollViewer.PanningMode="HorizontalOnly"
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
+                                            TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </ikw:SimpleStackPanel>
@@ -1230,14 +1238,14 @@
                                         </Grid>
 
                                         <Slider
-                                            FlowDirection="RightToLeft"
                                             IsMoveToPointEnabled="True"
                                             IsSnapToTickEnabled="True"
-                                            Maximum="100"
+                                            Maximum="25"
                                             Minimum="0"
                                             ScrollViewer.PanningMode="HorizontalOnly"
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
+                                            TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </ikw:SimpleStackPanel>
@@ -1268,11 +1276,12 @@
                                         <Slider
                                             IsMoveToPointEnabled="True"
                                             IsSnapToTickEnabled="True"
-                                            Maximum="100"
+                                            Maximum="25"
                                             Minimum="0"
                                             ScrollViewer.PanningMode="HorizontalOnly"
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
+                                            TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </ikw:SimpleStackPanel>
@@ -1496,7 +1505,8 @@
                     <!--  Axis 2 Axis  -->
                     <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
 
-                        <!--  Improve circularity  -->
+                        <!--  Output shape  -->
+                        <!--  TODO: Translate me  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5*" MinWidth="200" />
@@ -1506,13 +1516,68 @@
                             <TextBlock
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Improve circularity" />
+                                Text="Output shape" />
 
-                            <ui:ToggleSwitch
+                            <ComboBox
                                 Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                IsOn="{Binding Axis2AxisImproveCircularity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem>Default</ComboBoxItem>
+                                <ComboBoxItem>Circle</ComboBoxItem>
+                                <ComboBoxItem>Cross</ComboBoxItem>
+                                <ComboBoxItem>Square</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+
+                        <!--  Separator  -->
+                        <Separator
+                            Margin="-46,0,-16,0"
+                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                            BorderThickness="0,1,0,0" />
+
+                        <!--  Invert horizontal  -->
+                        <!--  TODO: Translate me  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                Content="Invert horizontal axis"
+                                IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+
+                        <!--  Separator  -->
+                        <Separator
+                            Margin="-46,0,-16,0"
+                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                            BorderThickness="0,1,0,0" />
+
+                        <!--  Invert vertical  -->
+                        <!--  TODO: Translate me  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                Content="Invert vertical axis"
+                                IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
 
                         <!--  Separator  -->
@@ -1549,14 +1614,14 @@
                                 <Slider
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
-                                    FlowDirection="LeftToRight"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    Maximum="100"
+                                    Maximum="25"
                                     Minimum="0"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
+                                    TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>
@@ -1596,14 +1661,14 @@
                                 <Slider
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
-                                    FlowDirection="RightToLeft"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    Maximum="100"
+                                    Maximum="25"
                                     Minimum="0"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
+                                    TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>
@@ -1645,11 +1710,12 @@
                                     VerticalAlignment="Center"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    Maximum="100"
+                                    Maximum="25"
                                     Minimum="0"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
+                                    TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>
@@ -1988,14 +2054,14 @@
                                 <Slider
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
-                                    FlowDirection="LeftToRight"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    Maximum="100"
+                                    Maximum="25"
                                     Minimum="0"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
+                                    TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     Value="{Binding Trigger2TriggerInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>
@@ -2035,14 +2101,14 @@
                                 <Slider
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
-                                    FlowDirection="RightToLeft"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    Maximum="100"
+                                    Maximum="25"
                                     Minimum="0"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
+                                    TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     Value="{Binding Trigger2TriggerOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>
@@ -2084,11 +2150,12 @@
                                     VerticalAlignment="Center"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    Maximum="100"
+                                    Maximum="25"
                                     Minimum="0"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
+                                    TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     Value="{Binding Trigger2TriggerAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>

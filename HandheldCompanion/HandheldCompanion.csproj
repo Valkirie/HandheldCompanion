@@ -13,7 +13,7 @@
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
     <Version>0.22.0.5</Version>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
 	<PublishReadyToRun>true</PublishReadyToRun>
@@ -26,46 +26,18 @@
 	<ApplicationManifest>RELEASE.manifest</ApplicationManifest>
   </PropertyGroup>
   
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
     <DebugType>full</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x86'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x86'">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
@@ -199,9 +171,9 @@
     <PackageReference Include="Fastenshtein" Version="1.0.10" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
-    <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.25.0" />
-    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.30" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
+    <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.26.0" />
+    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.0" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre380" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.1" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
@@ -213,14 +185,14 @@
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
     <PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
-    <PackageReference Include="Sentry" Version="4.13.0" />
+    <PackageReference Include="Sentry" Version="5.0.1" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.1" />
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
     <PackageReference Include="WindowsAPICodePack" Version="8.0.6" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
@@ -228,6 +200,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\controller-hidapi.net\controller-hidapi.net.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
     <ProjectReference Include="..\steam-hidapi.net\steam-hidapi.net.csproj" />
   </ItemGroup>

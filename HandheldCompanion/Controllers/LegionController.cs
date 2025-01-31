@@ -2,13 +2,12 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 
 namespace HandheldCompanion.Controllers
@@ -47,7 +46,6 @@ namespace HandheldCompanion.Controllers
             Wireless = 3,
         }
 
-        private HidDevice hidDevice;
         private const byte FRONT_IDX = 17;
         private const byte BACK_IDX = 19;
         private const byte STATUS_IDX = 0;
@@ -56,8 +54,7 @@ namespace HandheldCompanion.Controllers
 
         private HashSet<int> READY_STATES = [25, 60];
 
-        private Thread dataThread;
-        private bool dataThreadRunning;
+        private controller_hidapi.net.LegionController Controller;
         private byte[] Data = new byte[64];
 
         #region TouchVariables
@@ -78,22 +75,14 @@ namespace HandheldCompanion.Controllers
         private Vector2 lastKnownPosition;
         #endregion
 
-        public override bool IsReady
-        {
-            get
-            {
-                byte status = GetStatus(STATUS_IDX);
-                return READY_STATES.Contains(status);
-            }
-        }
+        public override bool IsReady => Controller?.GetStatus(STATUS_IDX) is byte status && READY_STATES.Contains(status);
 
         public override bool IsWireless()
         {
-            byte LControllerState = GetStatus(LCONTROLLER_STATE_IDX);
-            byte RControllerState = GetStatus(RCONTROLLER_STATE_IDX);
-            return LControllerState == (byte)ControllerState.Wireless || RControllerState == (byte)ControllerState.Wireless;
+            return Controller != null &&
+                   (Controller.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
+                    Controller.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless);
         }
-
 
         public LegionController() : base()
         { }
@@ -162,60 +151,79 @@ namespace HandheldCompanion.Controllers
         {
             base.AttachDetails(details);
 
+            // (un)plug controller if needed
+            bool WasPlugged = Controller?.Reading == true && Controller?.IsDeviceValid == true;
+            if (WasPlugged) Close();
+
+            // create controller
+            Controller = new(details.VendorID, details.ProductID);
+
+            // (re)plug controller if needed
+            if (WasPlugged) Open();
+
             // manage gamepad motion from right controller
             gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
-
-            hidDevice = GetHidDevice();
-            hidDevice?.OpenDevice();
         }
 
-        private HidDevice GetHidDevice()
+        /*
+        public override void Hide(bool powerCycle = true)
         {
-            IEnumerable<HidDevice> devices = IDevice.GetHidDevices(Details.VendorID, Details.ProductID, 0);
-            foreach (HidDevice device in devices)
+            lock (hidLock)
             {
-                if (!device.IsConnected)
-                    continue;
-
-                if (device.Capabilities.InputReportByteLength == 64)
-                    return device;  // HID-compliant vendor-defined device
+                Close();
+                base.Hide(powerCycle);
+                Open();
             }
-
-            return null;
         }
 
-        private byte GetStatus(int idx)
+        public override void Unhide(bool powerCycle = true)
         {
-            if (hidDevice is not null)
+            lock (hidLock)
             {
-                HidReport report = hidDevice.ReadReport();
-                if (report.Data is not null)
-                    return report.Data[idx];
+                Close();
+                base.Unhide(powerCycle);
+                Open();
             }
+        }
+        */
 
-            return 0;
+        private void Open()
+        {
+            lock (hidLock)
+            {
+                try
+                {
+                    if (Controller is not null)
+                    {
+                        // open controller
+                        Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
+                        Controller.Open();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
+                    return;
+                }
+            }
+        }
+
+        private void Close()
+        {
+            lock (hidLock)
+            {
+                if (Controller is not null)
+                {
+                    // close controller
+                    Controller.OnControllerInputReceived -= Controller_OnControllerInputReceived;
+                    Controller.Close();
+                }
+            }
         }
 
         public override void Plug()
         {
-            hidDevice = GetHidDevice();
-            if (hidDevice is not null && hidDevice.IsConnected)
-            {
-                if (!hidDevice.IsOpen)
-                    hidDevice.OpenDevice();
-
-                // start data thread
-                if (dataThread is null)
-                {
-                    dataThreadRunning = true;
-                    dataThread = new Thread(dataThreadLoop)
-                    {
-                        IsBackground = true,
-                        Priority = ThreadPriority.Highest
-                    };
-                    dataThread.Start();
-                }
-            }
+            Open();
 
             base.Plug();
         }
@@ -223,27 +231,14 @@ namespace HandheldCompanion.Controllers
         public override void Unplug()
         {
             SetPassthrough(true);
-
-            // Kill data thread
-            if (dataThread is not null)
-            {
-                dataThreadRunning = false;
-                // Ensure the thread has finished execution
-                if (dataThread.IsAlive)
-                    dataThread.Join();
-                dataThread = null;
-            }
-
-            if (hidDevice is not null)
-            {
-                if (hidDevice.IsConnected && hidDevice.IsOpen)
-                    hidDevice.CloseDevice();
-
-                hidDevice.Dispose();
-                hidDevice = null;
-            }
+            Close();
 
             base.Unplug();
+        }
+
+        private void Controller_OnControllerInputReceived(byte[] Data)
+        {
+            Buffer.BlockCopy(Data, 1, this.Data, 0, Data.Length - 1);
         }
 
         protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
@@ -252,7 +247,7 @@ namespace HandheldCompanion.Controllers
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
-            if (!IsConnected())
+            if (!IsConnected() || IsDisposing)
                 return;
 
             base.UpdateInputs(ticks, delta, false);
@@ -325,17 +320,6 @@ namespace HandheldCompanion.Controllers
             }
 
             base.UpdateInputs(ticks, delta);
-        }
-
-        private void dataThreadLoop(object? obj)
-        {
-            // pull latest Data
-            while (dataThreadRunning)
-            {
-                HidDeviceData report = hidDevice?.ReadData(0);
-                if (report is not null)
-                    Buffer.BlockCopy(report.Data, 1, Data, 0, report.Data.Length - 1);
-            }
         }
 
         public override string GetGlyph(ButtonFlags button)

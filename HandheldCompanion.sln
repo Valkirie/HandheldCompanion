@@ -11,6 +11,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandheldCompanion", "HandheldCompanion\HandheldCompanion.csproj", "{AD4B9060-93FE-4FD2-B64D-4D31EABC7C4D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{430DD98B-FF67-42A2-9996-D2F90369E625} = {430DD98B-FF67-42A2-9996-D2F90369E625}
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34} = {62E9B011-2D07-4A7E-8C71-33A26A5E5B34}
 		{F7283783-81EF-4CD2-BD86-598FE193C11F} = {F7283783-81EF-4CD2-BD86-598FE193C11F}
 	EndProjectSection
 EndProject
@@ -22,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "steam-hidapi.net", "steam-h
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{430DD98B-FF67-42A2-9996-D2F90369E625}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "controller-hidapi.net", "controller-hidapi.net\controller-hidapi.net.csproj", "{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +66,14 @@ Global
 		{430DD98B-FF67-42A2-9996-D2F90369E625}.Release|Any CPU.Build.0 = Release|Any CPU
 		{430DD98B-FF67-42A2-9996-D2F90369E625}.Release|x64.ActiveCfg = Release|Any CPU
 		{430DD98B-FF67-42A2-9996-D2F90369E625}.Release|x64.Build.0 = Release|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Debug|x64.Build.0 = Debug|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Release|x64.ActiveCfg = Release|Any CPU
+		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

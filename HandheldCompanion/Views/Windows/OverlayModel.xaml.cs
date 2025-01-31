@@ -106,6 +106,11 @@ public partial class OverlayModel : OverlayWindow
         madgwickAHRS.Reset();
     }
 
+    public void Close(bool v)
+    {
+        Close();
+    }
+
     private void Window_Closing(object sender, CancelEventArgs e)
     {
         UpdateTimer.Elapsed -= DrawModel;

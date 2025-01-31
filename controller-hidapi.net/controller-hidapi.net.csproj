@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9B860078-9AD1-45DD-8F85-E6D806E5DC9B}</ProjectGuid>
+    <ProjectGuid>{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>hidapi</RootNamespace>
-    <AssemblyName>hidapi.net</AssemblyName>
+    <RootNamespace>controller_hidapi.net</RootNamespace>
+    <AssemblyName>controller-hidapi.net</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -34,10 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,23 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HidDeviceCaps.cs" />
-    <Compile Include="HidDeviceInvalidException.cs" />
-    <Compile Include="HidDeviceInfo.cs" />
-    <Compile Include="HidDevice.cs" />
-    <Compile Include="HidDeviceInputReceivedEventArgs.cs" />
-    <Compile Include="Native\HidApiNative.cs" />
-    <Compile Include="Native\HidDeviceInfoStruct.cs" />
+    <Compile Include="GenericController.cs" />
+    <Compile Include="LegionController.cs" />
+    <Compile Include="TarantulaProController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\ColorUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="hidapi.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\hidapi.net\hidapi.net.csproj">
+      <Project>{9b860078-9ad1-45dd-8f85-e6d806e5dc9b}</Project>
+      <Name>hidapi.net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
 </Project>

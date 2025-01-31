@@ -35,20 +35,21 @@ namespace HandheldCompanion.Helpers
 
         private static Dictionary<string, string> DeserializeDriverStore()
         {
+            Dictionary<string, string>? result = new();
             if (!File.Exists(DriversPath))
-                return [];
+                return result;
 
             try
             {
                 string json = File.ReadAllText(DriversPath);
-                return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                result = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Could not retrieve drivers store {0}", ex.Message);
             }
 
-            return [];
+            return result ?? new Dictionary<string, string>(); // Ensure it's never null
         }
 
         public static string GetDriverFromDriverStore(string path)

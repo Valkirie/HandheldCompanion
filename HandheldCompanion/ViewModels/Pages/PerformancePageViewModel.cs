@@ -764,6 +764,7 @@ namespace HandheldCompanion.ViewModels
                 EPPOverrideValue = epp;
         }
 
+        private object lockcollection = new();
         private void PowerProfileManager_Updated(PowerProfile preset, UpdateSource source)
         {
             // skip if self update
@@ -777,21 +778,24 @@ namespace HandheldCompanion.ViewModels
             // Main Window only
             if (!IsQuickTools)
             {
-                int index;
-                var foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == preset.Guid);
-                if (foundPreset is not null)
+                lock (lockcollection)
                 {
-                    index = ProfilePickerItems.IndexOf(foundPreset);
-                    foundPreset.Text = preset.Name;
-                }
-                else
-                {
-                    index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
-                    ProfilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name });
-                }
+                    int index;
+                    ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == preset.Guid);
+                    if (foundPreset is not null)
+                    {
+                        index = ProfilePickerItems.IndexOf(foundPreset);
+                        foundPreset.Text = preset.Name;
+                    }
+                    else
+                    {
+                        index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
+                        ProfilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name });
+                    }
 
-                OnPropertyChanged(nameof(ProfilePickerItems));
-                SelectedPresetIndex = index;
+                    OnPropertyChanged(nameof(ProfilePickerItems));
+                    SelectedPresetIndex = index;
+                }
             }
         }
 
@@ -804,10 +808,13 @@ namespace HandheldCompanion.ViewModels
             }
             else
             {
-                var foundVm = ProfilePickerItems.First(p => p.LinkedPresetId == preset.Guid);
-                ProfilePickerItems.Remove(foundVm);
-                OnPropertyChanged(nameof(ProfilePickerItems));
-                SelectedPresetIndex = 1;
+                lock (lockcollection)
+                {
+                    ProfilesPickerViewModel foundVm = ProfilePickerItems.First(p => p.LinkedPresetId == preset.Guid);
+                    ProfilePickerItems.Remove(foundVm);
+                    OnPropertyChanged(nameof(ProfilePickerItems));
+                    SelectedPresetIndex = 1;
+                }
             }
         }
 

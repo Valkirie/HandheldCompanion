@@ -63,11 +63,16 @@ public class NeptuneController : SteamController
     {
         base.AttachDetails(details);
 
-        Controller = new(details.VendorID, details.ProductID, details.GetMI());
-        UserIndex = 0;
+        // (un)plug controller if needed
+        bool WasPlugged = IsConnected();
+        if (WasPlugged) Unplug();
 
-        // open controller
-        Open();
+        // create controller
+        Controller = new(details.VendorID, details.ProductID, details.GetMI());
+        UserIndex = (byte)details.GetMI();
+
+        // (re)plug controller if needed or open it
+        if (WasPlugged) Plug(); else Open();
     }
 
     public override string ToString()
@@ -250,22 +255,26 @@ public class NeptuneController : SteamController
         base.UpdateInputs(ticks, delta);
     }
 
+    private Task HandleControllerInput(NeptuneControllerInputEventArgs input)
+    {
+        this.input = input;
+        return Task.CompletedTask;
+    }
+
     private void Open()
     {
         try
         {
-            Controller.Open();
-            isConnected = true;
-
-            // disable lizard state
-            Controller.RequestLizardMode(false);
-
-            // create handler
-            Controller.OnControllerInputReceived += input =>
+            if (Controller is not null)
             {
-                this.input = input;
-                return Task.CompletedTask;
-            };
+                Controller.OnControllerInputReceived += HandleControllerInput;
+
+                // open controller
+                Controller.Open();
+
+                // disable lizard state
+                Controller.RequestLizardMode(false);
+            }
         }
         catch { }
     }
@@ -274,14 +283,16 @@ public class NeptuneController : SteamController
     {
         try
         {
-            // disable lizard state
-            Controller.RequestLizardMode(true);
+            if (Controller is not null)
+            {
+                Controller.OnControllerInputReceived -= HandleControllerInput;
 
-            // remove handler
-            Controller.OnControllerInputReceived = null;
+                // disable lizard state
+                Controller.RequestLizardMode(true);
 
-            Controller.Close();
-            isConnected = false;
+                // close controller
+                Controller.Close();
+            }
         }
         catch { }
     }

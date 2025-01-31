@@ -27,7 +27,7 @@ public static class DynamicLightingManager
 
     private static readonly Timer DynamicLightingTimer;
 
-    private static Device device;
+    private static Device? device;
     private static Surface surface;
     private static DataRectangle dataRectangle;
     private static IntPtr dataPointer;
@@ -222,7 +222,10 @@ public static class DynamicLightingManager
 
     private static void ReleaseDirect3DDevice()
     {
-        device?.Dispose();
+        if (device is null || device.IsDisposed)
+            return;
+
+        device.Dispose();
         device = null;
     }
 

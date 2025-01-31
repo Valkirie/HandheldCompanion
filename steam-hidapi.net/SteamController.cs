@@ -14,6 +14,9 @@ namespace steam_hidapi.net
         // subclass is responsible for opening the device
         protected HidDevice _hidDevice;
 
+        public bool Reading => _hidDevice.Reading;
+        public bool IsDeviceValid => _hidDevice.IsDeviceValid;
+
         // device configuration
         protected bool _lizard = true;
 

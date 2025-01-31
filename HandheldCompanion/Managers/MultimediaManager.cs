@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace HandheldCompanion.Managers;
 
 public class MultimediaManager : IManager
 {
-    public Dictionary<string, DesktopScreen> AllScreens = [];
+    public ConcurrentDictionary<string, DesktopScreen> AllScreens = [];
     public DesktopScreen PrimaryDesktop;
 
     private readonly MMDeviceEnumerator DevEnum;
@@ -302,7 +303,7 @@ public class MultimediaManager : IManager
         // clear array and transfer screens
         AllScreens.Clear();
         foreach (DesktopScreen desktop in desktopScreens.Values)
-            AllScreens.Add(desktop.DevicePath, desktop);
+            AllScreens.TryAdd(desktop.DevicePath, desktop);
 
         // raise event (Display settings were updated)
         ScreenResolution screenResolution = PrimaryDesktop.GetResolution();

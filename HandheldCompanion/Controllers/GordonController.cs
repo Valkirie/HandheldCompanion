@@ -68,11 +68,16 @@ namespace HandheldCompanion.Controllers
         {
             base.AttachDetails(details);
 
+            // (un)plug controller if needed
+            bool WasPlugged = IsConnected();
+            if (WasPlugged) Close();
+
+            // create controller
             Controller = new(details.VendorID, details.ProductID, details.GetMI());
             UserIndex = (byte)details.GetMI();
 
-            // open controller
-            Open();
+            // (re)plug controller if needed
+            if (WasPlugged) Open();
         }
 
         public override string ToString()
@@ -81,6 +86,11 @@ namespace HandheldCompanion.Controllers
             if (!string.IsNullOrEmpty(baseName))
                 return baseName;
             return "Steam Controller Gordon";
+        }
+
+        public override bool IsConnected()
+        {
+            return Controller?.Reading == true && Controller?.IsDeviceValid == true;
         }
 
         public override void UpdateInputs(long ticks, float delta)
@@ -222,28 +232,55 @@ namespace HandheldCompanion.Controllers
             base.UpdateInputs(ticks, delta);
         }
 
-        public override void Plug()
+        private void Open()
         {
             try
             {
-                Controller.OnControllerInputReceived += input =>
+                if (Controller is not null)
                 {
-                    this.input = input;
-                    return Task.CompletedTask;
-                };
+                    Controller.OnControllerInputReceived += HandleControllerInput;
 
-                // open controller
-                Open();
+                    Controller.SetLizardMode(false);
+                    Controller.SetGyroscope(true);
+                    Controller.SetIdleTimeout(300);  // ~5 min
+
+                    // open controller
+                    Controller.Open();
+                }
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
                 return;
             }
+        }
 
-            Controller.SetLizardMode(false);
-            Controller.SetGyroscope(true);
-            Controller.SetIdleTimeout(300);  // ~5 min
+        private void Close()
+        {
+            try
+            {
+                if (Controller is not null)
+                {
+                    Controller.OnControllerInputReceived -= HandleControllerInput;
+
+                    // restore lizard state
+                    Controller.SetLizardMode(true);
+                    Controller.SetGyroscope(false);
+                    Controller.SetIdleTimeout(0);
+
+                    // close controller
+                    Controller.Close();
+                }
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        public override void Plug()
+        {
+            Open();
 
             TimerManager.Tick += UpdateInputs;
 
@@ -252,44 +289,16 @@ namespace HandheldCompanion.Controllers
 
         public override void Unplug()
         {
-            try
-            {
-                // restore lizard state
-                Controller.SetLizardMode(true);
-                Controller.SetGyroscope(false);
-                Controller.SetIdleTimeout(0);
-                //Controller.TurnOff();  // TODO: why not?
-
-                // close controller
-                Close();
-            }
-            catch
-            {
-                return;
-            }
+            Close();
 
             TimerManager.Tick -= UpdateInputs;
             base.Unplug();
         }
 
-        private void Open()
+        private Task HandleControllerInput(GordonControllerInputEventArgs input)
         {
-            try
-            {
-                Controller.Open();
-                isConnected = true;
-            }
-            catch { }
-        }
-
-        private void Close()
-        {
-            try
-            {
-                Controller.Close();
-                isConnected = false;
-            }
-            catch { }
+            this.input = input;
+            return Task.CompletedTask;
         }
 
         public ushort GetHapticIntensity(byte input, ushort maxIntensity)

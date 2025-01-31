@@ -2,7 +2,6 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client.Exceptions;
@@ -135,20 +134,15 @@ namespace HandheldCompanion.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(DS4Touch.RightPadTouch.Y >> 4);
             }
 
-            // pull calibration data
-            IMUCalibration calibration;
-            if (gamepadMotion is not null)
-                calibration = gamepadMotion.GetCalibration();
-
             // Use gyro sensor data, map to proper range, invert where needed
-            if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.GamepadMotion, out Vector3 gyrometer))
+            if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out Vector3 gyrometer))
             {
                 outDS4Report.wGyroX = (short)InputUtils.rangeMap(gyrometer.X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
                 outDS4Report.wGyroY = (short)InputUtils.rangeMap(gyrometer.Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
                 outDS4Report.wGyroZ = (short)InputUtils.rangeMap(gyrometer.Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
             }
 
-            if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.GamepadMotion, out Vector3 accelerometer))
+            if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out Vector3 accelerometer))
             {
                 outDS4Report.wAccelX = (short)InputUtils.rangeMap(accelerometer.X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
                 outDS4Report.wAccelY = (short)InputUtils.rangeMap(accelerometer.Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);

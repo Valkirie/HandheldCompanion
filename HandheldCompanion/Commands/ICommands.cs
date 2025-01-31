@@ -26,7 +26,6 @@ namespace HandheldCompanion.Commands
 
         [JsonIgnore] public bool OnKeyDown = false;
         [JsonIgnore] public bool OnKeyUp = false;
-        [JsonIgnore] public Hotkey Hotkey;
 
         [JsonIgnore] public string Name = "Empty hotkey";
         [JsonIgnore] public string Description = "Please pick a command type";
@@ -72,11 +71,13 @@ namespace HandheldCompanion.Commands
 
         public CommandType commandType;
 
+        private bool _disposed = false; // Prevent multiple disposals
+
         public ICommands() { }
 
         ~ICommands()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public virtual void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
@@ -95,12 +96,27 @@ namespace HandheldCompanion.Commands
 
         public virtual object Clone()
         {
-            return this;
+            return MemberwiseClone();
         }
 
         public virtual void Dispose()
         {
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Release managed resources
+                Executed = null;
+                Updated = null;
+            }
+
+            _disposed = true;
         }
     }
 }

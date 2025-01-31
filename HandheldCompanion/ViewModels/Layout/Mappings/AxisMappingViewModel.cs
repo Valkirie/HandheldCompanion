@@ -63,15 +63,41 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool Axis2AxisImproveCircularity
+        public int Axis2AxisOutputShapeIndex
         {
-            get => (Action is AxisActions axisAction) && axisAction.ImproveCircularity;
+            get => (Action is AxisActions axisAction) ? (int)axisAction.OutputShape : 0;
             set
             {
-                if (Action is AxisActions axisAction && value != Axis2AxisImproveCircularity)
+                if (Action is AxisActions axisAction && value != Axis2AxisOutputShapeIndex)
                 {
-                    axisAction.ImproveCircularity = value;
-                    OnPropertyChanged(nameof(Axis2AxisImproveCircularity));
+                    axisAction.OutputShape = (OutputShape)value;
+                    OnPropertyChanged(nameof(Axis2AxisOutputShapeIndex));
+                }
+            }
+        }
+
+        public bool Axis2AxisInvertHorizontal
+        {
+            get => (Action is AxisActions axisAction) ? axisAction.InvertHorizontal : false;
+            set
+            {
+                if (Action is AxisActions axisAction && value != Axis2AxisInvertHorizontal)
+                {
+                    axisAction.InvertHorizontal = value;
+                    OnPropertyChanged(nameof(Axis2AxisInvertHorizontal));
+                }
+            }
+        }
+
+        public bool Axis2AxisInvertVertical
+        {
+            get => (Action is AxisActions axisAction) ? axisAction.InvertVertical : false;
+            set
+            {
+                if (Action is AxisActions axisAction && value != Axis2AxisInvertVertical)
+                {
+                    axisAction.InvertVertical = value;
+                    OnPropertyChanged(nameof(Axis2AxisInvertVertical));
                 }
             }
         }

@@ -84,22 +84,26 @@ namespace HandheldCompanion.ViewModels
 
         private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
         {
-            int index;
-            LayoutTemplateViewModel? foundPreset = LayoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
-            if (foundPreset is not null)
+            lock (lockcollection)
             {
-                index = LayoutList.IndexOf(foundPreset);
-                foundPreset = new(layoutTemplate);
-            }
-            else
-            {
-                index = LayoutList.IndexOf(layoutTemplate.IsInternal ? _layoutTemplates : _layoutCommunity) + 1;
-                LayoutList.Insert(index, new(layoutTemplate));
+                int index;
+                LayoutTemplateViewModel? foundPreset = LayoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
+                if (foundPreset is not null)
+                {
+                    index = LayoutList.IndexOf(foundPreset);
+                    foundPreset = new(layoutTemplate);
+                }
+                else
+                {
+                    index = LayoutList.IndexOf(layoutTemplate.IsInternal ? _layoutTemplates : _layoutCommunity) + 1;
+                    LayoutList.Insert(index, new(layoutTemplate));
+                }
             }
 
             RefreshLayoutList();
         }
 
+        private object lockcollection = new();
         private void RefreshLayoutList()
         {
             // Get filter settings
@@ -108,18 +112,21 @@ namespace HandheldCompanion.ViewModels
             // Get current controller
             IController? controller = ControllerManager.GetTarget();
 
-            foreach (LayoutTemplateViewModel layoutTemplate in LayoutList)
+            lock (lockcollection)
             {
-                if (layoutTemplate.ControllerType is not null && FilterOnDevice)
+                foreach (LayoutTemplateViewModel layoutTemplate in LayoutList)
                 {
-                    if (layoutTemplate.ControllerType != controller?.GetType())
+                    if (layoutTemplate.ControllerType is not null && FilterOnDevice)
                     {
-                        layoutTemplate.Visibility = Visibility.Collapsed;
-                        continue;
+                        if (layoutTemplate.ControllerType != controller?.GetType())
+                        {
+                            layoutTemplate.Visibility = Visibility.Collapsed;
+                            continue;
+                        }
                     }
-                }
 
-                layoutTemplate.Visibility = Visibility.Visible;
+                    layoutTemplate.Visibility = Visibility.Visible;
+                }
             }
         }
 

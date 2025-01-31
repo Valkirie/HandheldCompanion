@@ -10,6 +10,7 @@ namespace HandheldCompanion.Inputs;
 public partial class AxisState : ICloneable, IDisposable
 {
     public ConcurrentDictionary<AxisFlags, short> State = new();
+    private bool _disposed = false; // Prevent multiple disposals
 
     public AxisState(ConcurrentDictionary<AxisFlags, short> State)
     {
@@ -23,9 +24,14 @@ public partial class AxisState : ICloneable, IDisposable
             State[flags] = 0;
     }
 
+    ~AxisState()
+    {
+        Dispose(false);
+    }
+
     public short this[AxisFlags axis]
     {
-        get => State.TryGetValue(axis, out short value) ? value : (short)0;
+        get => State != null && State.TryGetValue(axis, out short value) ? value : (short)0;
 
         set => State[axis] = value;
     }
@@ -95,9 +101,21 @@ public partial class AxisState : ICloneable, IDisposable
 
     public void Dispose()
     {
-        State.Clear();
-        State = null;
-
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+
+        if (disposing)
+        {
+            // Free managed resources
+            State?.Clear();
+            State = null;
+        }
+
+        _disposed = true;
     }
 }

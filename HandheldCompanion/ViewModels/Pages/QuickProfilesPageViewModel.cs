@@ -146,64 +146,84 @@ namespace HandheldCompanion.ViewModels
             QueryPowerProfile();
         }
 
+        private object ProfilePickerLock = new();
         private void PowerProfileManager_Deleted(PowerProfile profile)
         {
-            ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
-            if (foundPreset is not null)
+            lock (ProfilePickerLock)
             {
-                ProfilePickerItems.Remove(foundPreset);
+                ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
+                if (foundPreset is not null)
+                {
+                    ProfilePickerItems.Remove(foundPreset);
 
-                if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
-                    SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
-                if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
-                    SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+                    if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
+                        SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+                    if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
+                        SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+                }
             }
         }
 
         private void PowerProfileManager_Updated(PowerProfile profile, UpdateSource source)
         {
-            int index;
-            ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
-            if (foundPreset is not null)
+            lock (ProfilePickerLock)
             {
-                index = ProfilePickerItems.IndexOf(foundPreset);
-                foundPreset.Text = profile.Name;
-            }
-            else
-            {
-                index = ProfilePickerItems.IndexOf(profile.IsDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
-                ProfilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name });
+                int index;
+                ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
+                if (foundPreset is not null)
+                {
+                    index = ProfilePickerItems.IndexOf(foundPreset);
+                    foundPreset.Text = profile.Name;
+                }
+                else
+                {
+                    index = ProfilePickerItems.IndexOf(profile.IsDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
+                    ProfilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name });
+                }
             }
         }
 
         public void PowerProfileChanged(PowerProfile powerProfileAC, PowerProfile powerProfileDC)
         {
-            SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
-            SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+            lock (ProfilePickerLock)
+            {
+                SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
+                SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+            }
         }
 
+        private object HotkeyListLock = new();
         private void HotkeysManager_Updated(Hotkey hotkey)
         {
             if (hotkey.ButtonFlags != gyroButtonFlags)
                 return;
 
-            HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-            if (foundHotkey is null)
-                HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
-            else
-                foundHotkey.Hotkey = hotkey;
+            lock (HotkeyListLock)
+            {
+                HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is null)
+                    HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
+                else
+                    foundHotkey.Hotkey = hotkey;
+            }
         }
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
-            HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
-            hotkeyViewModel?.SetListening(true, chordTarget);
+            lock (HotkeyListLock)
+            {
+                HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
+                hotkeyViewModel?.SetListening(true, chordTarget);
+            }
         }
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
-            HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
-            hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
+            lock (HotkeyListLock)
+            {
+                HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
+                hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
+            }
         }
 
         public override void Dispose()

@@ -8,6 +8,7 @@ namespace HandheldCompanion.Inputs
     {
         public Dictionary<SensorState, Vector3> Accelerometer = [];
         public Dictionary<SensorState, Vector3> Gyroscope = [];
+        private bool _disposed = false; // Prevent multiple disposals
 
         public static readonly SensorState[] SensorStates = (SensorState[])Enum.GetValues(typeof(SensorState));
         public enum SensorState
@@ -24,6 +25,11 @@ namespace HandheldCompanion.Inputs
                 Accelerometer[state] = new();
                 Gyroscope[state] = new();
             }
+        }
+
+        ~GyroState()
+        {
+            Dispose(false);
         }
 
         public GyroState(Dictionary<SensorState, Vector3> accelerometer, Dictionary<SensorState, Vector3> gyroscope)
@@ -68,12 +74,25 @@ namespace HandheldCompanion.Inputs
 
         public void Dispose()
         {
-            Accelerometer.Clear();
-            Accelerometer = null;
-            Gyroscope.Clear();
-            Gyroscope = null;
-
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free managed resources
+                Accelerometer?.Clear();
+                Accelerometer = null;
+
+                Gyroscope?.Clear();
+                Gyroscope = null;
+            }
+
+            _disposed = true;
         }
     }
 }

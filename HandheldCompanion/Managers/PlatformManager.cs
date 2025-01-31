@@ -58,13 +58,13 @@ public static class PlatformManager
     public static void Stop()
     {
         if (Steam.IsInstalled)
-            Steam.Stop();
+            Steam.Stop(true);
 
         if (GOGGalaxy.IsInstalled)
-            GOGGalaxy.Stop();
+            GOGGalaxy.Stop(true);
 
         if (UbisoftConnect.IsInstalled)
-            UbisoftConnect.Stop();
+            UbisoftConnect.Stop(true);
 
         if (RTSS.IsInstalled)
         {

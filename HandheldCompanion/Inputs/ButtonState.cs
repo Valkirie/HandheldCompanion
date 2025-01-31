@@ -10,6 +10,7 @@ namespace HandheldCompanion.Inputs;
 public partial class ButtonState : ICloneable, IDisposable
 {
     public ConcurrentDictionary<ButtonFlags, bool> State = new();
+    private bool _disposed = false; // Prevent multiple disposals
 
     public ButtonState(ConcurrentDictionary<ButtonFlags, bool> State)
     {
@@ -23,9 +24,14 @@ public partial class ButtonState : ICloneable, IDisposable
             State[flags] = false;
     }
 
+    ~ButtonState()
+    {
+        Dispose(false);
+    }
+
     public bool this[ButtonFlags button]
     {
-        get => State.TryGetValue(button, out bool value) && value;
+        get => State != null && State.TryGetValue(button, out bool value) && value;
 
         set => State[button] = value;
     }
@@ -94,9 +100,21 @@ public partial class ButtonState : ICloneable, IDisposable
 
     public void Dispose()
     {
-        State.Clear();
-        State = null;
-
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+
+        if (disposing)
+        {
+            // Free managed resources
+            State?.Clear();
+            State = null;
+        }
+
+        _disposed = true;
     }
 }

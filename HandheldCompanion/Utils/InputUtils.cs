@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -9,7 +9,7 @@ public enum MotionInput
 {
     /// <summary>
     /// Local space: A gyro control method commonly used in games on devices like the Nintendo Switch and PS4.
-    /// In local space, the game disregards the controllerís real-world orientation and focuses solely on its angular velocity around its local axes.
+    /// In local space, the game disregards the controller's real-world orientation and focuses solely on its angular velocity around its local axes.
     /// This approach is simple to implement, highly accurate, and works consistently regardless of player posture or environment.
     /// However, some players may find it less intuitive, especially when pitching the controller up or down.
     /// Despite this, local gyro controls are ideal for handheld devices like phones and tablets.
@@ -25,8 +25,8 @@ public enum MotionInput
     /// </summary>
     PlayerSpace = 1,
     /// <summary>
-    /// World Space: Gyro controls calculate the direction of gravity to determine the playerís ìupî orientation.
-    /// The yaw axis remains aligned with this ìupî direction, regardless of the controllerís physical orientation.
+    /// World Space: Gyro controls calculate the direction of gravity to determine the player‚Äôs ‚Äúup‚Äù orientation.
+    /// The yaw axis remains aligned with this ‚Äúup‚Äù direction, regardless of the controller‚Äôs physical orientation.
     /// By using the accelerometer, local space inputs are converted to world space.
     /// Players can consistently turn the camera left and right by rotating the controller relative to themselves.
     /// While more intuitive, world space controls are challenging to implement and less suitable for handheld devices.
@@ -205,6 +205,83 @@ public static class InputUtils
 
         // Convert -1 to 1 back to short value and return
         return StickInput * Multiplier * short.MaxValue;
+    }
+
+    public static Vector2 ImproveSquare(Vector2 ThumbValue)
+    {
+        // Convert short value input to the range [-1..1]
+        Vector2 stickInput = ThumbValue / (float)short.MaxValue;
+
+        float length = stickInput.Length();
+
+        // Early out if stick is near zero (to avoid divide-by-zero issues)
+        if (length < 1e-5f)
+            return Vector2.Zero;
+
+        // For safety, clamp the length to 1 if it somehow goes above 1 
+        // (you may or may not want this, depending on your hardware read)
+        if (length > 1.0f)
+        {
+            stickInput /= length; // Normalize
+            length = 1.0f;
+        }
+
+        // Extract normalized X and Y (cosŒ∏, sinŒ∏)
+        float c = stickInput.X;
+        float s = stickInput.Y;
+
+        float denom = MathF.Max(MathF.Abs(c), MathF.Abs(s));
+        if (denom > 1e-5f)
+        {
+            float scale = length / denom;
+            stickInput = new Vector2(c * scale, s * scale);
+        }
+
+        // Convert back to short range
+        stickInput *= short.MaxValue;
+
+        // Return the Vector2 short result
+        return stickInput;
+    }
+
+    /// <summary>
+    /// Applies a "plus" or "cross" shaped deadzone to a single float axis.
+    /// If |value| < deadzone, then output = 0. 
+    /// If |value| >= deadzone, then output is remapped to the range [0..1].
+    /// </summary>
+    public static float ApplyAxisDeadzone(float value, float deadzone)
+    {
+        float absVal = MathF.Abs(value);
+
+        // If within the deadzone, output zero
+        if (absVal < deadzone)
+            return 0.0f;
+
+        // Otherwise, remap from [deadzone..1] to [0..1]
+        float sign = MathF.Sign(value);
+        float range = 1.0f - deadzone;          // e.g. if deadzone=0.2, then range=0.8
+        float scaled = (absVal - deadzone) / range;
+        return scaled * sign;
+    }
+
+    /// <summary>
+    /// Applies a cross / plus-shaped deadzone mapping:
+    ///   - X has its own deadzone band
+    ///   - Y has its own deadzone band
+    /// Result is scaled back into the short [-32768..32767] range.
+    /// </summary>
+    public static Vector2 CrossDeadzoneMapping(Vector2 thumbValue, float xDeadzone, float yDeadzone)
+    {
+        // Convert short range to [-1..1]
+        Vector2 stickInput = thumbValue / (float)short.MaxValue;
+
+        // Apply cross-deadzone logic to each axis
+        float newX = ApplyAxisDeadzone(stickInput.X, xDeadzone);
+        float newY = ApplyAxisDeadzone(stickInput.Y, yDeadzone);
+
+        // Scale back to short range
+        Vector2 output = new Vector2(newX, newY) * short.MaxValue;
+        return output;
     }
 
     // Triggers, inner and outer deadzone

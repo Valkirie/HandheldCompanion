@@ -418,6 +418,9 @@ public static class DSUServer
 
     public static bool Start()
     {
+        if (IsInitialized)
+            return false;
+
         try
         {
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -427,7 +430,8 @@ public static class DSUServer
         {
             LogManager.LogCritical("DSUServer couldn't listen to port: {0}", serverPort);
             Stop();
-            return IsInitialized;
+
+            return false;
         }
         catch (Exception /*ex*/) { }
 
@@ -447,8 +451,11 @@ public static class DSUServer
         return IsInitialized;
     }
 
-    public static void Stop()
+    public static bool Stop()
     {
+        if (!IsInitialized)
+            return false;
+
         if (udpSock is not null)
         {
             if (udpSock.Connected)
@@ -465,6 +472,8 @@ public static class DSUServer
 
         LogManager.LogInformation("DSUServer has stopped");
         Stopped?.Invoke();
+
+        return true;
     }
 
     private static ControllerState Inputs = new();

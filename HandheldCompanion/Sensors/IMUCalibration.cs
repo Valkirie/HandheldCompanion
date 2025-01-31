@@ -70,6 +70,11 @@ namespace HandheldCompanion.Sensors
             return JsonConvert.DeserializeObject<Dictionary<string, IMUCalibration>>(json);
         }
 
+        public static bool HasCalibration(string path)
+        {
+            return Calibrations.ContainsKey(path);
+        }
+
         public static IMUCalibration GetCalibration(string path)
         {
             if (Calibrations.TryGetValue(path, out IMUCalibration calibration))

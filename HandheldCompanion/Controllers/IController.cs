@@ -90,6 +90,9 @@ namespace HandheldCompanion.Controllers
 
         protected object hidLock = new();
 
+        private bool _disposed = false; // Prevent multiple disposals
+        protected bool IsDisposing = false;
+
         public virtual bool IsReady => true;
 
         public bool isPlaceholder;
@@ -134,6 +137,11 @@ namespace HandheldCompanion.Controllers
         {
             gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
             InitializeInputOutput();
+        }
+
+        ~IController()
+        {
+            Dispose(false);
         }
 
         protected virtual void UpdateSettings()
@@ -712,21 +720,47 @@ namespace HandheldCompanion.Controllers
             return string.Empty;
         }
 
-        protected bool IsDisposing = false;
         public virtual void Dispose()
         {
-            // set flag
-            IsDisposing = true;
-
-            Details?.Dispose();
-            Details = null;
-            Inputs?.Dispose();
-            Inputs = null;
-
-            foreach (GamepadMotion gamepadMotion in gamepadMotions.Values)
-                gamepadMotion.Dispose();
-
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free managed resources
+                IsDisposing = true;
+
+                // Dispose PnPDetails if applicable
+                Details?.Dispose();
+                Details = null;
+
+                // Dispose Inputs
+                Inputs?.Dispose();
+                Inputs = null;
+
+                // Dispose gamepad motions
+                foreach (var gamepadMotion in gamepadMotions.Values)
+                    gamepadMotion.Dispose();
+                gamepadMotions.Clear();
+
+                // Clear event handlers to prevent memory leaks
+                UserIndexChanged = null;
+                StateChanged = null;
+                VisibilityChanged = null;
+                InputsUpdated = null;
+
+                // Dispose rumble task properly
+                if (rumbleTask is { Status: TaskStatus.Running })
+                    rumbleTask.Wait(); // Ensure task completes
+                rumbleTask = null;
+            }
+
+            _disposed = true;
         }
     }
 }

@@ -144,5 +144,26 @@ namespace hidapi.Native
         [DllImport(DLL_FILE_NAME, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
         public static extern IntPtr hid_error(IntPtr device);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateFile(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("hid.dll", SetLastError = true)]
+        public static extern bool HidD_GetPreparsedData(IntPtr hDevice, out IntPtr preparsedData);
+
+        [DllImport("hid.dll", SetLastError = true)]
+        public static extern bool HidD_FreePreparsedData(IntPtr preparsedData);
+
+        [DllImport("hid.dll", SetLastError = true)]
+        public static extern int HidP_GetCaps(IntPtr preparsedData, out HIDP_CAPS capabilities);
     }
 }

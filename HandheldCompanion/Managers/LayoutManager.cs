@@ -54,6 +54,10 @@ public class LayoutManager : IManager
         if (!Directory.Exists(TemplatesPath))
             Directory.CreateDirectory(TemplatesPath);
 
+        // Ensure the path exists before setting FileSystemWatcher
+        if (!Directory.Exists(TemplatesPath))
+            return;
+
         // monitor layout files
         layoutWatcher = new FileSystemWatcher
         {
@@ -257,6 +261,10 @@ public class LayoutManager : IManager
     private void DesktopLayout_Updated(Layout layout)
     {
         SerializeLayout(layout, desktopLayoutFile);
+
+        // update desktop layout
+        // ref
+        desktopLayout = layout;
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
