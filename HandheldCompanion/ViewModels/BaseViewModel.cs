@@ -7,15 +7,31 @@ namespace HandheldCompanion.ViewModels
     public class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+        private bool _disposed = false; // Track whether Dispose has been called
 
         ~BaseViewModel()
         {
-            Dispose();
+            Dispose(false);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                // Free any managed resources here
+                PropertyChanged = null; // Unsubscribe all event handlers to avoid memory leaks
+            }
+
+            // Free unmanaged resources here (if any)
+            _disposed = true;
         }
 
         public virtual void Dispose()
         {
-            GC.SuppressFinalize(this);
+            Dispose(true);
+            GC.SuppressFinalize(this); // Suppress finalization
         }
 
         public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
