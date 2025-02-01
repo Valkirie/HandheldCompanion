@@ -254,7 +254,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override bool HasLoad()
         {
-            return TelemetryData.gpuUsageSupported;
+            switch (adapterInformation.Details.Description)
+            {
+                case "AMD Custom GPU 0932":
+                case "AMD Custom GPU 0405":
+                    return false;
+                default:
+                    return TelemetryData.gpuUsageSupported;
+            }
         }
 
         public override float GetLoad()
@@ -264,7 +271,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override bool HasPower()
         {
-            return TelemetryData.gpuPowerSupported;
+            switch(adapterInformation.Details.Description)
+            {
+                case "AMD Custom GPU 0932":
+                case "AMD Custom GPU 0405":
+                    return false;
+                default:
+                    return TelemetryData.gpuPowerSupported;
+            }
         }
 
         public override float GetPower()
@@ -274,7 +288,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override bool HasTemperature()
         {
-            return TelemetryData.gpuTemperatureSupported;
+            switch (adapterInformation.Details.Description)
+            {
+                case "AMD Custom GPU 0932":
+                case "AMD Custom GPU 0405":
+                    return false;
+                default:
+                    return TelemetryData.gpuTemperatureSupported;
+            }
         }
 
         public override float GetTemperature()

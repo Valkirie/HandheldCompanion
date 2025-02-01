@@ -461,19 +461,13 @@ namespace HandheldCompanion.ViewModels
             if (gpu is not null)
             {
                 if (gpu.HasPower())
-                {
                     GPUPower = (float)Math.Round((float)gpu.GetPower());
-                }
 
                 if (gpu.HasLoad())
-                {
                     GPULoad = (float)Math.Round((float)gpu.GetLoad());
-                }
 
                 if (gpu.HasTemperature())
-                {
                     GPUTemperature = (float)Math.Round((float)gpu.GetTemperature());
-                }
             }
         }
 
@@ -514,6 +508,15 @@ namespace HandheldCompanion.ViewModels
             HasGPUPower = GPU is not null && GPU.HasPower();
             HasGPUTemperature = GPU is not null && GPU.HasTemperature();
             HasGPULoad = GPU is not null && GPU.HasLoad();
+
+            if (!HasGPUPower)
+                PlatformManager.LibreHardwareMonitor.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
+
+            if (!HasGPUTemperature)
+                PlatformManager.LibreHardwareMonitor.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
+
+            if (!HasGPULoad)
+                PlatformManager.LibreHardwareMonitor.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
         }
 
         private void LibreHardwareMonitor_CPULoadChanged(float? value)
@@ -538,6 +541,33 @@ namespace HandheldCompanion.ViewModels
                 return;
 
             CPUPower = (float)Math.Round((float)value);
+        }
+
+        private void LibreHardwareMonitor_GPULoadChanged(float? value)
+        {
+            if (value is null)
+                return;
+
+            HasGPULoad = !HasGPULoad && value != 0.0f;
+            GPULoad = (float)Math.Round((float)value);
+        }
+
+        private void LibreHardwareMonitor_GPUTemperatureChanged(float? value)
+        {
+            if (value is null)
+                return;
+
+            HasGPUTemperature = !HasGPUTemperature && value != 0.0f;
+            GPUTemperature = (float)Math.Round((float)value);
+        }
+
+        private void LibreHardwareMonitor_GPUPowerChanged(float? value)
+        {
+            if (value is null)
+                return;
+
+            HasGPUPower = !HasGPUPower && value != 0.0f;
+            GPUPower = (float)Math.Round((float)value);
         }
 
         public override void Dispose()
