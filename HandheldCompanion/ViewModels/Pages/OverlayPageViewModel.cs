@@ -548,7 +548,10 @@ namespace HandheldCompanion.ViewModels
             if (value is null)
                 return;
 
-            HasGPULoad = !HasGPULoad && value != 0.0f;
+            // todo: improve me
+            if (!HasGPULoad)
+                HasGPULoad = value != 0.0f;
+
             GPULoad = (float)Math.Round((float)value);
         }
 
@@ -557,7 +560,10 @@ namespace HandheldCompanion.ViewModels
             if (value is null)
                 return;
 
-            HasGPUTemperature = !HasGPUTemperature && value != 0.0f;
+            // todo: improve me
+            if (!HasGPUTemperature)
+                HasGPUTemperature = value != 0.0f;
+
             GPUTemperature = (float)Math.Round((float)value);
         }
 
@@ -566,7 +572,10 @@ namespace HandheldCompanion.ViewModels
             if (value is null)
                 return;
 
-            HasGPUPower = !HasGPUPower && value != 0.0f;
+            // todo: improve me
+            if (!HasGPUPower)
+                HasGPUPower = value != 0.0f;
+
             GPUPower = (float)Math.Round((float)value);
         }
 
