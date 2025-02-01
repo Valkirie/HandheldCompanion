@@ -265,6 +265,8 @@ public class LayoutManager : IManager
         // update desktop layout
         // ref
         desktopLayout = layout;
+
+        CheckProfileLayout();
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
