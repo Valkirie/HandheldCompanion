@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Automation;
 using System.Windows.Media;
@@ -278,6 +279,9 @@ public class ProcessEx : IDisposable
 
     public bool IsGame()
     {
+        if (IsDisposing)
+            return false;
+
         switch (Filter)
         {
             case ProcessFilter.Desktop:
@@ -349,10 +353,8 @@ public class ProcessEx : IDisposable
                 if (cert2.Subject.Contains(certificate, StringComparison.OrdinalIgnoreCase))
                     return true;
         }
-        catch (Exception)
-        {
-            // Handle cases where signature is missing or inaccessible
-        }
+        catch (CryptographicException) { }
+        catch (Exception) { }
 
         return false;
     }
