@@ -413,9 +413,14 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PlatformManager.RTSS.Updated += PlatformManager_RTSS_Updated;
-            PlatformManager.LibreHardwareMonitor.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
-            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
-            PlatformManager.LibreHardwareMonitor.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
+
+            if (IDevice.GetCurrent().CpuMonitor)
+            {
+                PlatformManager.LibreHardwareMonitor.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
+                PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
+                PlatformManager.LibreHardwareMonitor.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
+            }
+
             GPUManager.Hooked += GPUManager_Hooked;
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
@@ -509,14 +514,12 @@ namespace HandheldCompanion.ViewModels
             HasGPUTemperature = GPU is not null && GPU.HasTemperature();
             HasGPULoad = GPU is not null && GPU.HasLoad();
 
-            if (!HasGPUPower)
-                PlatformManager.LibreHardwareMonitor.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
-
-            if (!HasGPUTemperature)
-                PlatformManager.LibreHardwareMonitor.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
-
-            if (!HasGPULoad)
-                PlatformManager.LibreHardwareMonitor.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
+            if (IDevice.GetCurrent().GpuMonitor)
+            {
+                if (!HasGPUPower) PlatformManager.LibreHardwareMonitor.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
+                if (!HasGPUTemperature) PlatformManager.LibreHardwareMonitor.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
+                if (!HasGPULoad) PlatformManager.LibreHardwareMonitor.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
+            }
         }
 
         private void LibreHardwareMonitor_CPULoadChanged(float? value)

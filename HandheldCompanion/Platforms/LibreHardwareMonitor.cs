@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using LibreHardwareMonitor.Hardware;
 using System;
@@ -13,21 +14,29 @@ namespace HandheldCompanion.Platforms
         private int updateInterval = 1000;
         private object updateLock = new();
 
-        public float? CPULoad;
-        public float? CPUClock;
-        public float? CPUPower;
-        public float? CPUTemperature;
+        // CPU
+        private float? CPULoad;
+        private float? CPUClock;
+        private float? CPUPower;
+        private float? CPUTemperature;
 
-        public float? GPULoad;
-        public float? GPUClock;
-        public float? GPUPower;
-        public float? GPUTemperature;
+        // GPU
+        private float? GPULoad;
+        private float? GPUClock;
+        private float? GPUPower;
+        private float? GPUTemperature;
+        private float? GPUMemory;
+        private float? GPUMemoryDedicated;
+        private float? GPUMemoryShared;
 
-        public float? MemoryUsage;
+        // MEMORY
+        private float? MemoryUsage;
+        private float? MemoryAvailable;
 
-        public float? BatteryLevel;
-        public float? BatteryPower;
-        public float? BatteryTimeSpan;
+        // BATTERY
+        private float? BatteryLevel;
+        private float? BatteryPower;
+        private float? BatteryTimeSpan;
 
         public LibreHardwareMonitor()
         {
@@ -41,10 +50,10 @@ namespace HandheldCompanion.Platforms
             // prepare for sensors reading
             computer = new Computer
             {
-                IsCpuEnabled = true,
-                IsGpuEnabled = true,
-                IsMemoryEnabled = true,
-                IsBatteryEnabled = true,
+                IsCpuEnabled = IDevice.GetCurrent().CpuMonitor,
+                IsGpuEnabled = IDevice.GetCurrent().GpuMonitor,
+                IsMemoryEnabled = IDevice.GetCurrent().MemoryMonitor,
+                IsBatteryEnabled = IDevice.GetCurrent().BatteryMonitor,
             };
         }
 
@@ -141,6 +150,13 @@ namespace HandheldCompanion.Platforms
         }
 
         #region gpu updates
+        public float? GetGPULoad() => (computer?.IsGpuEnabled ?? false) ? GPULoad : null;
+        public float? GetGPUPower() => (computer?.IsGpuEnabled ?? false) ? GPUPower : null;
+        public float? GetGPUTemperature() => (computer?.IsGpuEnabled ?? false) ? GPUTemperature : null;
+        public float? GetGPUMemory() => (computer?.IsGpuEnabled ?? false) ? GPUMemory : null;
+        public float? GetGPUMemoryDedicated() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryDedicated : null;
+        public float? GetGPUMemoryShared() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryShared : null;
+
         private void HandleGPU(IHardware gpu)
         {
             float highestClock = 0;
@@ -162,9 +178,32 @@ namespace HandheldCompanion.Platforms
                         HandleGPU_Power(sensor);
                         break;
                     case SensorType.Temperature:
-                        HandleGPU_Temperatur(sensor);
+                        HandleGPU_Temperature(sensor);
+                        break;
+                    case SensorType.Data:
+                    case SensorType.SmallData:
+                        HandleGPU_Data(sensor);
                         break;
                 }
+            }
+        }
+
+        private void HandleGPU_Data(ISensor sensor)
+        {
+            if (sensor.Name == "GPU Memory Used")
+            {
+                GPUMemory = (float)sensor.Value;
+                GPUMemoryChanged?.Invoke(GPUMemory);
+            }
+            else if (sensor.Name == "D3D Dedicated Memory Used")
+            {
+                GPUMemoryDedicated = (float)sensor.Value;
+                GPUMemoryDedicatedChanged?.Invoke(GPUMemoryDedicated);
+            }
+            else if (sensor.Name == "D3D Dedicated Memory Shared")
+            {
+                GPUMemoryShared = (float)sensor.Value;
+                GPUMemorySharedChanged?.Invoke(GPUMemoryShared);
             }
         }
 
@@ -204,7 +243,7 @@ namespace HandheldCompanion.Platforms
             }
         }
 
-        private void HandleGPU_Temperatur(ISensor sensor)
+        private void HandleGPU_Temperature(ISensor sensor)
         {
             if (sensor.Name == "GPU Core")
             {
@@ -215,6 +254,10 @@ namespace HandheldCompanion.Platforms
         #endregion
 
         #region cpu updates
+        public float? GetCPULoad() => (computer?.IsCpuEnabled ?? false) ? CPULoad : null;
+        public float? GetCPUPower() => (computer?.IsCpuEnabled ?? false) ? CPUPower : null;
+        public float? GetCPUTemperature() => (computer?.IsCpuEnabled ?? false) ? CPUTemperature : null;
+
         private void HandleCPU(IHardware cpu)
         {
             float highestClock = 0;
@@ -236,7 +279,7 @@ namespace HandheldCompanion.Platforms
                         HandleCPU_Power(sensor);
                         break;
                     case SensorType.Temperature:
-                        HandleCPU_Temperatur(sensor);
+                        HandleCPU_Temperature(sensor);
                         break;
                 }
             }
@@ -278,7 +321,7 @@ namespace HandheldCompanion.Platforms
             }
         }
 
-        private void HandleCPU_Temperatur(ISensor sensor)
+        private void HandleCPU_Temperature(ISensor sensor)
         {
             if (sensor.Name == "CPU Package" || sensor.Name == "Core (Tctl/Tdie)")
             {
@@ -289,6 +332,9 @@ namespace HandheldCompanion.Platforms
         #endregion
 
         #region memory updates
+        public float? GetMemoryUsage() => (computer?.IsMemoryEnabled ?? false) ? MemoryUsage : null;
+        public float? GetMemoryAvailable() => (computer?.IsMemoryEnabled ?? false) ? MemoryAvailable : null;
+
         private void HandleMemory(IHardware cpu)
         {
             foreach (var sensor in cpu.Sensors)
@@ -306,13 +352,22 @@ namespace HandheldCompanion.Platforms
         {
             if (sensor.Name == "Memory Used")
             {
-                MemoryUsage = ((float)sensor.Value) * 1024;
+                MemoryUsage = ((float)sensor.Value);
                 MemoryUsageChanged?.Invoke(MemoryUsage);
+            }
+            else if (sensor.Name == "Memory Available")
+            {
+                MemoryAvailable = ((float)sensor.Value);
+                MemoryAvailableChanged?.Invoke(MemoryAvailable);
             }
         }
         #endregion
 
         #region battery updates
+        public float? GetBatteryLevel() => (computer?.IsBatteryEnabled ?? false) ? BatteryLevel : null;
+        public float? GetBatteryPower() => (computer?.IsBatteryEnabled ?? false) ? BatteryPower : null;
+        public float? GetBatteryTimeSpan() => (computer?.IsBatteryEnabled ?? false) ? BatteryTimeSpan : null;
+
         private void HandleBattery(IHardware cpu)
         {
             foreach (var sensor in cpu.Sensors)
@@ -377,8 +432,12 @@ namespace HandheldCompanion.Platforms
         public event ChangedHandler GPUPowerChanged;
         public event ChangedHandler GPUClockChanged;
         public event ChangedHandler GPUTemperatureChanged;
+        public event ChangedHandler GPUMemoryChanged;
+        public event ChangedHandler GPUMemoryDedicatedChanged;
+        public event ChangedHandler GPUMemorySharedChanged;
 
         public event ChangedHandler MemoryUsageChanged;
+        public event ChangedHandler MemoryAvailableChanged;
 
         public event ChangedHandler BatteryLevelChanged;
         public event ChangedHandler BatteryPowerChanged;

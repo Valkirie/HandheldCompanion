@@ -150,6 +150,12 @@ public abstract class IDevice
     // key press delay to use for certain scenarios
     public short KeyPressDelay = 20;
 
+    // LibreHardwareMonitor
+    public bool CpuMonitor = true;
+    public bool GpuMonitor = true;
+    public bool MemoryMonitor = true;
+    public bool BatteryMonitor = true;
+
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual | CalibrationMode.SensorFusion);

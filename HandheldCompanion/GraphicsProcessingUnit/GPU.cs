@@ -257,22 +257,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return 0.0f;
         }
 
+        // todo: replace me with LHM readings
         public virtual float GetVRAMUsage()
         {
-            ObjectQuery query = new ObjectQuery("SELECT AdapterRAM FROM Win32_VideoController");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-            ManagementObjectCollection queryCollection = searcher.Get();
-
-            // todo: we shouldn't loop through all video controllers but instead only look for "main" one
-            foreach (ManagementObject m in queryCollection)
-            {
-                object AdapterRAM = m["AdapterRAM"];
-                if (AdapterRAM is null)
-                    continue;
-
-                return Convert.ToUInt64(m["AdapterRAM"].ToString()) / 1024 / 1024;
-            }
-
             return 0.0f;
         }
 
