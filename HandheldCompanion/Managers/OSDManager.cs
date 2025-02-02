@@ -220,7 +220,7 @@ public static class OSDManager
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry VRAMentry = new("VRAM", "8000FF");
-                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "MiB");
+                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "GB");
                     row1.entries.Add(VRAMentry);
 
                     OverlayEntry CPUentry = new("CPU", "80FF");
@@ -228,7 +228,7 @@ public static class OSDManager
                     AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
                     row1.entries.Add(CPUentry);
                     OverlayEntry RAMentry = new("RAM", "FF80C0");
-                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB", 1);
+                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB");
                     row1.entries.Add(RAMentry);
 
                     OverlayEntry BATTentry = new("BATT", "FF8000");
@@ -257,7 +257,7 @@ public static class OSDManager
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry VRAMentry = new("VRAM", "8000FF", true);
-                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "MiB");
+                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), PlatformManager.LibreHardwareMonitor.GetGPUMemoryTotal(), "GB");
                     row4.entries.Add(VRAMentry);
 
                     OverlayEntry CPUentry = new("CPU", "80FF", true);
@@ -267,7 +267,7 @@ public static class OSDManager
                     row2.entries.Add(CPUentry);
 
                     OverlayEntry RAMentry = new("RAM", "FF80C0", true);
-                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB", 1);
+                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), PlatformManager.LibreHardwareMonitor.GetMemoryTotal(), "GB");
                     row3.entries.Add(RAMentry);
 
                     OverlayEntry BATTentry = new("BATT", "FF8000", true);
@@ -366,7 +366,7 @@ public static class OSDManager
                 {
                     case 2:
                     case 1:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB", 1);
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB");
                         break;
                 }
                 break;
@@ -388,8 +388,10 @@ public static class OSDManager
                 switch (OverlayVRAMLevel)
                 {
                     case 1:
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "GB");
+                        break;
                     case 2:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "MiB");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), PlatformManager.LibreHardwareMonitor.GetGPUMemoryTotal(), "GB");
                         break;
                 }
                 break;
@@ -436,10 +438,16 @@ public static class OSDManager
         }
     }
 
-    private static void AddElementIfNotNull(OverlayEntry entry, float? value, string unit, int dec = 0)
+    private static void AddElementIfNotNull(OverlayEntry entry, float? value, string unit)
     {
         if (value is not null)
-            entry.elements.Add(new OverlayEntryElement((float)value, unit, dec));
+            entry.elements.Add(new OverlayEntryElement((float)value, unit));
+    }
+
+    private static void AddElementIfNotNull(OverlayEntry entry, float? value, float? available, string unit)
+    {
+        if (value is not null && available is not null)
+            entry.elements.Add(new OverlayEntryElement((float)value, (float)available, unit));
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -543,11 +551,31 @@ public struct OverlayEntryElement
         return string.Format("<C0>{0:00}<S1>{1}<S><C>", Value, SzUnit);
     }
 
-    public OverlayEntryElement(float value, string unit, int dec)
+    public OverlayEntryElement(float value, string unit)
     {
-        string format = "00." + new string('0', dec);
-        Value = value.ToString(format);
+        Value = FormatValue(value, unit);
         SzUnit = unit;
+    }
+
+    public OverlayEntryElement(float value, float available, string unit)
+    {
+        Value = FormatValue(value, unit) + "/" + FormatValue(available, unit);
+        SzUnit = unit;
+    }
+
+    private static string FormatValue(float value, string unit)
+    {
+        string format = unit switch
+        {
+            "GB" => "0.0", // One decimal
+            "W" => "00",   // Two digits forced, no decimal
+            "%" => "00",   // Two digits forced, no decimal
+            "C" => "00",   // Two digits forced, no decimal
+            "MB" => "0",   // No leading zeros, no decimal
+            _ => "0.##"    // Default format (no leading zeros, up to 2 decimals)
+        };
+
+        return value.ToString(format);
     }
 
     public OverlayEntryElement(string value, string unit)

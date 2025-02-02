@@ -28,6 +28,9 @@ namespace HandheldCompanion.Platforms
         private float? GPUMemory;
         private float? GPUMemoryDedicated;
         private float? GPUMemoryShared;
+        private float? GPUMemoryTotal;
+        private float? GPUMemoryDedicatedTotal;
+        private float? GPUMemorySharedTotal;
 
         // MEMORY
         private float? MemoryUsage;
@@ -153,9 +156,14 @@ namespace HandheldCompanion.Platforms
         public float? GetGPULoad() => (computer?.IsGpuEnabled ?? false) ? GPULoad : null;
         public float? GetGPUPower() => (computer?.IsGpuEnabled ?? false) ? GPUPower : null;
         public float? GetGPUTemperature() => (computer?.IsGpuEnabled ?? false) ? GPUTemperature : null;
+
         public float? GetGPUMemory() => (computer?.IsGpuEnabled ?? false) ? GPUMemory : null;
         public float? GetGPUMemoryDedicated() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryDedicated : null;
         public float? GetGPUMemoryShared() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryShared : null;
+
+        public float? GetGPUMemoryTotal() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryTotal : null;
+        public float? GetGPUMemoryDedicatedTotal() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryDedicatedTotal : null;
+        public float? GetGPUMemorySharedTotal() => (computer?.IsGpuEnabled ?? false) ? GPUMemorySharedTotal : null;
 
         private void HandleGPU(IHardware gpu)
         {
@@ -192,18 +200,30 @@ namespace HandheldCompanion.Platforms
         {
             if (sensor.Name == "GPU Memory Used")
             {
-                GPUMemory = (float)sensor.Value;
+                GPUMemory = (float)sensor.Value / 1024.0f; // MB to GB
                 GPUMemoryChanged?.Invoke(GPUMemory);
             }
             else if (sensor.Name == "D3D Dedicated Memory Used")
             {
-                GPUMemoryDedicated = (float)sensor.Value;
+                GPUMemoryDedicated = (float)sensor.Value / 1024.0f; // MB to GB
                 GPUMemoryDedicatedChanged?.Invoke(GPUMemoryDedicated);
             }
             else if (sensor.Name == "D3D Dedicated Memory Shared")
             {
-                GPUMemoryShared = (float)sensor.Value;
+                GPUMemoryShared = (float)sensor.Value / 1024.0f; // MB to GB
                 GPUMemorySharedChanged?.Invoke(GPUMemoryShared);
+            }
+            else if (sensor.Name == "GPU Memory Total")
+            {
+                GPUMemoryTotal = (float)sensor.Value / 1024.0f; // MB to GB
+            }
+            else if (sensor.Name == "D3D Dedicated Memory Total")
+            {
+                GPUMemoryDedicatedTotal = (float)sensor.Value / 1024.0f; // MB to GB
+            }
+            else if (sensor.Name == "D3D Dedicated Memory Total")
+            {
+                GPUMemorySharedTotal = (float)sensor.Value / 1024.0f; // MB to GB
             }
         }
 
@@ -334,6 +354,7 @@ namespace HandheldCompanion.Platforms
         #region memory updates
         public float? GetMemoryUsage() => (computer?.IsMemoryEnabled ?? false) ? MemoryUsage : null;
         public float? GetMemoryAvailable() => (computer?.IsMemoryEnabled ?? false) ? MemoryAvailable : null;
+        public float? GetMemoryTotal() => GetMemoryUsage() + GetMemoryAvailable();
 
         private void HandleMemory(IHardware cpu)
         {
