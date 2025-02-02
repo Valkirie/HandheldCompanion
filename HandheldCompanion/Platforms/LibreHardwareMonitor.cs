@@ -363,6 +363,7 @@ namespace HandheldCompanion.Platforms
                 switch (sensor.SensorType)
                 {
                     case SensorType.Data:
+                    case SensorType.SmallData:
                         HandleMemory_Data(sensor);
                         break;
                 }
