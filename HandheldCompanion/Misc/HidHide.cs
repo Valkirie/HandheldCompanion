@@ -14,10 +14,11 @@ namespace HandheldCompanion;
 public static class HidHide
 {
     private static readonly Process process;
+    private static object hidLock = new();
 
     static HidHide()
     {
-        var service = new HidHideControlService();
+        HidHideControlService service = new HidHideControlService();
 
         // verifying HidHide is installed
         if (!service.IsInstalled)
@@ -52,12 +53,13 @@ public static class HidHide
     {
         try
         {
-            var service = new HidHideControlService();
-            return service.ApplicationPaths.ToList();
+            lock (hidLock)
+            {
+                HidHideControlService service = new HidHideControlService();
+                return service.ApplicationPaths.ToList();
+            }
         }
-        catch
-        {
-        }
+        catch { }
 
         return [];
     }
@@ -66,12 +68,13 @@ public static class HidHide
     {
         try
         {
-            var service = new HidHideControlService();
-            return service.BlockedInstanceIds.Select(x => x.ToUpper()).ToList();
+            lock (hidLock)
+            {
+                HidHideControlService service = new HidHideControlService();
+                return service.BlockedInstanceIds.Select(x => x.ToUpper()).ToList();
+            }
         }
-        catch
-        {
-        }
+        catch { }
 
         return [];
     }
@@ -80,12 +83,10 @@ public static class HidHide
     {
         try
         {
-            var registered = GetRegisteredDevices();
+            List<string> registered = GetRegisteredDevices();
             return registered.Contains(InstanceId.ToUpper());
         }
-        catch
-        {
-        }
+        catch { }
 
         return false;
     }
@@ -94,11 +95,14 @@ public static class HidHide
     {
         try
         {
-            var service = new HidHideControlService();
-            if (service.ApplicationPaths.Contains(fileName))
+            lock (hidLock)
             {
-                service.RemoveApplicationPath(fileName);
-                LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
+                HidHideControlService service = new HidHideControlService();
+                if (service.ApplicationPaths.Contains(fileName))
+                {
+                    service.RemoveApplicationPath(fileName);
+                    LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
+                }
             }
         }
         catch
@@ -126,11 +130,14 @@ public static class HidHide
     {
         try
         {
-            var service = new HidHideControlService();
-            if (!service.ApplicationPaths.Contains(fileName))
+            lock (hidLock)
             {
-                service.AddApplicationPath(fileName);
-                LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+                HidHideControlService service = new HidHideControlService();
+                if (!service.ApplicationPaths.Contains(fileName))
+                {
+                    service.AddApplicationPath(fileName);
+                    LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+                }
             }
         }
         catch
@@ -158,11 +165,11 @@ public static class HidHide
     {
         try
         {
-            var service = new HidHideControlService
+            lock (hidLock)
             {
-                IsActive = status
-            };
-            LogManager.LogInformation("HideDevice IsActive: {0}", status);
+                HidHideControlService service = new HidHideControlService { IsActive = status };
+                LogManager.LogInformation("HideDevice IsActive: {0}", status);
+            }
         }
         catch
         {
@@ -200,11 +207,14 @@ public static class HidHide
 
         try
         {
-            var service = new HidHideControlService();
-            if (service.BlockedInstanceIds.Contains(deviceInstancePath))
+            lock (hidLock)
             {
-                service.RemoveBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
+                HidHideControlService service = new HidHideControlService();
+                if (service.BlockedInstanceIds.Contains(deviceInstancePath))
+                {
+                    service.RemoveBlockedInstanceId(deviceInstancePath);
+                    LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
+                }
             }
         }
         catch
@@ -235,11 +245,14 @@ public static class HidHide
 
         try
         {
-            var service = new HidHideControlService();
-            if (!service.BlockedInstanceIds.Contains(deviceInstancePath))
+            lock (hidLock)
             {
-                service.AddBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+                HidHideControlService service = new HidHideControlService();
+                if (!service.BlockedInstanceIds.Contains(deviceInstancePath))
+                {
+                    service.AddBlockedInstanceId(deviceInstancePath);
+                    LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+                }
             }
         }
         catch
