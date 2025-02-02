@@ -360,7 +360,7 @@ public class ProfileManager : IManager
             bool isCurrent = profile.ErrorCode.HasFlag(ProfileErrorCode.Running);
 
             // raise event
-            Discarded?.Invoke(profile, isCurrent);
+            Discarded?.Invoke(profile, isCurrent, GetDefault());
 
             if (isCurrent)
             {
@@ -421,7 +421,7 @@ public class ProfileManager : IManager
                 Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
 
                 if (!backProfile.Guid.Equals(profile.Guid))
-                    Discarded?.Invoke(backProfile, true);
+                    Discarded?.Invoke(backProfile, true, profile);
             }
 
             ApplyProfile(profile);
@@ -665,7 +665,7 @@ public class ProfileManager : IManager
                 isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
             // raise event
-            Discarded?.Invoke(profile, isCurrent);
+            Discarded?.Invoke(profile, isCurrent, GetDefault());
 
             // raise event(s)
             Deleted?.Invoke(profile);
@@ -700,8 +700,11 @@ public class ProfileManager : IManager
             if (currentProfile != null)
                 isCurrent = subProfile.Guid == currentProfile.Guid;
 
+            // get original profile (if still exists)
+            Profile originalProfile = profiles.Values.FirstOrDefault(p => p.Path == subProfile.Path, GetDefault());
+
             // raise event
-            Discarded?.Invoke(subProfile, isCurrent);
+            Discarded?.Invoke(subProfile, isCurrent, originalProfile);
 
             // raise event(s)
             Deleted?.Invoke(subProfile);
@@ -715,8 +718,7 @@ public class ProfileManager : IManager
             // restore main profile as favorite
             if (isCurrent)
             {
-                // apply the main profile if it still exists
-                Profile originalProfile = profiles.Values.FirstOrDefault(p => p.Path == subProfile.Path, GetDefault());
+                // apply backup profile
                 ApplyProfile(originalProfile);
             }
         }
@@ -936,7 +938,7 @@ public class ProfileManager : IManager
     public delegate void AppliedEventHandler(Profile profile, UpdateSource source);
 
     public event DiscardedEventHandler Discarded;
-    public delegate void DiscardedEventHandler(Profile profile, bool swapped);
+    public delegate void DiscardedEventHandler(Profile profile, bool swapped, Profile nextProfile);
 
     #endregion
 }

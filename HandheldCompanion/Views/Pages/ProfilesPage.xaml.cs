@@ -80,12 +80,22 @@ public partial class ProfilesPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        if (profileLock.TryEnter())
         {
-            DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-            desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
-        });
+            try
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                    desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
+                });
+            }
+            finally
+            {
+                profileLock.Exit();
+            }
+        }
     }
 
     private bool HasRSRSupport = false;
@@ -572,7 +582,7 @@ public partial class ProfilesPage : Page
                     // Integer Scaling
                     IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
 
-                    if (desktopScreen is not null)
+                    if (desktopScreen is not null && selectedProfile.IntegerScalingEnabled)
                         IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
 
                     // RIS
@@ -1126,9 +1136,7 @@ public partial class ProfilesPage : Page
 
         var divider = 1;
         if (IntegerScalingComboBox.SelectedItem is ScreenDivider screenDivider)
-        {
             divider = screenDivider.divider;
-        }
 
         selectedProfile.IntegerScalingDivider = divider;
         UpdateProfile();

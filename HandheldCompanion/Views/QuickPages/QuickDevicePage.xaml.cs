@@ -94,16 +94,16 @@ public partial class QuickDevicePage : Page
         });
     }
 
-    private void ProfileManager_Discarded(Profile profile, bool swapped)
+    private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
     {
         // don't bother discarding settings, new one will be enforce shortly
-        if (swapped)
+        if (swapped && nextProfile.IntegerScalingEnabled)
             return;
 
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        if (profile.IntegerScalingEnabled)
         {
-            if (profile.IntegerScalingEnabled)
+            // UI thread
+            UIHelper.TryInvoke(() =>
             {
                 DisplayStack.IsEnabled = true;
                 ResolutionOverrideStack.Visibility = Visibility.Collapsed;
@@ -111,8 +111,8 @@ public partial class QuickDevicePage : Page
                 // restore default resolution
                 if (profile.IntegerScalingDivider != 1)
                     SetResolution();
-            }
-        });
+            });
+        }
     }
 
     private void NightLight_Toggled(bool enabled)

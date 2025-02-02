@@ -435,7 +435,7 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        private static void ProfileManager_Discarded(Profile profile, bool swapped)
+        private static void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
         {
             if (!IsInitialized || currentGPU is null)
                 return;

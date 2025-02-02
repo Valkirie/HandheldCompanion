@@ -141,7 +141,7 @@ namespace HandheldCompanion.Managers
             Applied?.Invoke(powerProfile, source);
         }
 
-        private void ProfileManager_Discarded(Profile profile, bool swapped)
+        private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
         {
             // reset current profile
             currentProfile = null;

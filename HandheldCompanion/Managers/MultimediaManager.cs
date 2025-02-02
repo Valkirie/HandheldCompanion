@@ -11,6 +11,7 @@ using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using WindowsDisplayAPI;
 using WindowsDisplayAPI.DisplayConfig;
@@ -246,16 +247,28 @@ public class MultimediaManager : IManager
             // sort resolutions
             desktopScreen.screenResolutions.Sort();
 
-            // get native resolution
+            // get native resolution (old)
             ScreenResolution nativeResolution = desktopScreen.screenResolutions.First();
+            int nativeWidth = nativeResolution.Width;
+            int nativeHeight = nativeResolution.Height;
+
+            // get native resolution (new)
+            Regex regex = new Regex(@"^\\\\\?\\DISPLAY#[^#]+#(?<instance>[^#]+)(?=[#\{])", RegexOptions.IgnoreCase);
+            Match match = regex.Match(desktopScreen.DevicePath);
+            if (match.Success)
+            {
+                string instanceKeyName = match.Groups["instance"].Value;
+                GetNativeResolutions(instanceKeyName, ref nativeWidth, ref nativeHeight);
+            }
 
             // get integer scaling dividers
             int idx = 1;
-
             while (true)
             {
-                int height = nativeResolution.Height / idx;
-                ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(r => r.Height == height);
+                int height = nativeHeight / idx;
+                int width = nativeWidth;
+
+                ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(res => res.Height == height && res.Width <= width);
                 if (dividedRes is null)
                     break;
 
@@ -268,7 +281,7 @@ public class MultimediaManager : IManager
         }
 
         // get refreshed primary screen (can't be null)
-        DesktopScreen newPrimary = desktopScreens.Values.Where(a => a.IsPrimary).FirstOrDefault();
+        DesktopScreen newPrimary = desktopScreens.Values.FirstOrDefault(a => a.IsPrimary);
         if (newPrimary is not null)
         {
             bool IsNew = PrimaryDesktop?.DevicePath != newPrimary.DevicePath;
@@ -309,6 +322,86 @@ public class MultimediaManager : IManager
         ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
         if (screenResolution is not null)
             DisplaySettingsChanged?.Invoke(PrimaryDesktop, screenResolution);
+    }
+
+    /// <summary>
+    /// Finds all EDID entries in the registry that match the provided lookupKeyName,
+    /// and returns (via ref parameters) the maximum horizontal (width) and vertical (height)
+    /// native resolutions found.
+    /// </summary>
+    /// <param name="lookupKeyName">
+    /// The instance key name to match (for example, "5&11494a2a&0&UID265").
+    /// </param>
+    /// <param name="maxWidth">Returns the maximum width found (in pixels).</param>
+    /// <param name="maxHeight">Returns the maximum height found (in pixels).</param>
+    public static void GetNativeResolutions(string lookupKeyName, ref int maxWidth, ref int maxHeight)
+    {
+        // Initialize the max values.
+        maxWidth = 0;
+        maxHeight = 0;
+
+        // Open the DISPLAY key in the registry.
+        using (RegistryKey displayKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Enum\DISPLAY"))
+        {
+            if (displayKey == null)
+                return;
+
+            // Each subkey here represents a monitor model.
+            foreach (string monitorKeyName in displayKey.GetSubKeyNames())
+            {
+                using (RegistryKey monitorKey = displayKey.OpenSubKey(monitorKeyName))
+                {
+                    if (monitorKey == null)
+                        continue;
+
+                    // Under each monitor model there are one or more instances.
+                    foreach (string instanceKeyName in monitorKey.GetSubKeyNames())
+                    {
+                        // Only process keys that match our lookupKeyName.
+                        if (!string.Equals(instanceKeyName, lookupKeyName, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        // Build the path to "Device Parameters".
+                        string deviceParamsPath = instanceKeyName + @"\Device Parameters";
+                        using (RegistryKey deviceKey = monitorKey.OpenSubKey(deviceParamsPath))
+                        {
+                            if (deviceKey == null)
+                                continue;
+
+                            // Retrieve the EDID data.
+                            byte[] edidData = deviceKey.GetValue("EDID") as byte[];
+                            if (edidData == null || edidData.Length < 128)
+                                continue;
+
+                            // Detailed Timing Descriptors (DTDs) start at offset 54.
+                            const int dtdStart = 54;
+                            // If the first DTD is empty, skip this entry.
+                            if (edidData[dtdStart] == 0 && edidData[dtdStart + 1] == 0)
+                                continue;
+
+                            // According to the EDID spec:
+                            //   Byte 56: Horizontal active pixels (lower 8 bits)
+                            //   Byte 58: Upper 4 bits for horizontal active (bits 7–4)
+                            //   Byte 59: Vertical active pixels (lower 8 bits)
+                            //   Byte 61: Upper 4 bits for vertical active (bits 7–4)
+                            int hActiveLow = edidData[dtdStart + 2];
+                            int hActiveHigh = (edidData[dtdStart + 4] >> 4) & 0x0F;
+                            int hActive = (hActiveHigh << 8) | hActiveLow;
+
+                            int vActiveLow = edidData[dtdStart + 5];
+                            int vActiveHigh = (edidData[dtdStart + 7] >> 4) & 0x0F;
+                            int vActive = (vActiveHigh << 8) | vActiveLow;
+
+                            // Update maximum width and height if necessary.
+                            if (hActive > maxWidth)
+                                maxWidth = hActive;
+                            if (vActive > maxHeight)
+                                maxHeight = vActive;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public bool SetResolution(int width, int height, int displayFrequency)

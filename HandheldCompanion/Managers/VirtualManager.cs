@@ -260,7 +260,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static async void ProfileManager_Discarded(Profile profile, bool swapped)
+        private static async void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
         {
             // don't bother discarding settings, new one will be enforce shortly
             if (swapped)
