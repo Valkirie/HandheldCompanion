@@ -209,10 +209,10 @@ public abstract class IPlatform : IDisposable
         return string.Empty;
     }
 
-    public virtual bool IsRelated(Process proc)
+    public virtual bool IsRelated(Process process)
     {
         // Loop through the modules of the process
-        foreach (ProcessModule module in proc.Modules)
+        foreach (ProcessModule module in process.Modules)
         {
             try
             {
