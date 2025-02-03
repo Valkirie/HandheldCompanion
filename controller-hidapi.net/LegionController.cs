@@ -19,7 +19,7 @@ namespace controller_hidapi.net
 
         public byte GetStatus(int idx)
         {
-            if (_hidDevice != null)
+            if (_hidDevice != null && IsDeviceValid)
             {
                 byte[] Data = _hidDevice.Read();
                 if (Data != null)

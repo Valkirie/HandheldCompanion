@@ -48,7 +48,7 @@ namespace HandheldCompanion.Controllers
 
         private const byte FRONT_IDX = 17;
         private const byte BACK_IDX = 19;
-        private const byte STATUS_IDX = 0;
+        private const byte STATUS_IDX = 1;
         private const byte LCONTROLLER_STATE_IDX = 11;
         private const byte RCONTROLLER_STATE_IDX = 12;
 
@@ -158,8 +158,8 @@ namespace HandheldCompanion.Controllers
             // create controller
             Controller = new(details.VendorID, details.ProductID);
 
-            // (re)plug controller if needed
-            if (WasPlugged) Open();
+            // open controller as we need to check if it's ready by polling the hiddevice
+            Open();
 
             // manage gamepad motion from right controller
             gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
