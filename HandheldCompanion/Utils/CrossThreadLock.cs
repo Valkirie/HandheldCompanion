@@ -11,31 +11,43 @@ namespace HandheldCompanion.Utils
     public class CrossThreadLock : IDisposable
     {
         private readonly SemaphoreSlim _semaphore;
-        private bool _isEntered;
+        private bool _isEntered;    // indicates if the lock is currently held
+        private bool _disposed;     // tracks whether Dispose has been called
 
         /// <summary>
         /// Initializes a new instance of the CrossThreadLock class.
         /// </summary>
+        /// <param name="initialCount">Initial count for the semaphore (default is 1).</param>
+        /// <param name="maxCount">Maximum count for the semaphore (default is 1).</param>
         public CrossThreadLock(int initialCount = 1, int maxCount = 1)
         {
-            // Initialize the semaphore with a capacity of 1, allowing only one thread to enter at a time.
             _semaphore = new SemaphoreSlim(initialCount, maxCount);
         }
 
+        /// <summary>
+        /// Finalizer to clean up resources if Dispose was not called.
+        /// </summary>
         ~CrossThreadLock()
         {
-            Dispose();
+            Dispose(false);
         }
 
         /// <summary>
-        /// Attempts to enter the lock without blocking more than specified timeout. Returns a value indicating whether the lock was successfully entered.
+        /// Attempts to enter the lock without blocking more than the specified timeout.
+        /// Returns a value indicating whether the lock was successfully entered.
         /// </summary>
-        /// <returns>True if the lock was successfully acquired; otherwise, false.</returns>
+        /// <param name="millisecondsTimeout">Timeout in milliseconds.</param>
+        /// <returns>True if the lock was acquired; otherwise, false.</returns>
         public bool TryEnter(int millisecondsTimeout = 0)
         {
-            // Attempt to enter the semaphore without blocking. If successful, set _isEntered to true.
-            _isEntered = _semaphore.Wait(millisecondsTimeout);
-            return _isEntered;
+            ThrowIfDisposed();
+
+            bool acquired = _semaphore.Wait(millisecondsTimeout);
+            if (acquired)
+            {
+                _isEntered = true;
+            }
+            return acquired;
         }
 
         /// <summary>
@@ -43,16 +55,17 @@ namespace HandheldCompanion.Utils
         /// </summary>
         public void Enter()
         {
-            // Block until the semaphore can be entered, then set _isEntered to true.
+            ThrowIfDisposed();
+
             _semaphore.Wait();
             _isEntered = true;
         }
 
         /// <summary>
-        /// Returns current lock status.
+        /// Returns the current lock status.
         /// </summary>
-        /// <returns>True if the lock is set; otherwise, false.</returns>
-        public bool IsLocked()
+        /// <returns>True if the lock is held; otherwise, false.</returns>
+        public bool IsEntered()
         {
             return _isEntered;
         }
@@ -62,9 +75,12 @@ namespace HandheldCompanion.Utils
         /// </summary>
         public void Exit()
         {
-            // If the lock has been entered, release the semaphore and reset _isEntered to false.
-            _semaphore.Release();
-            _isEntered = false;
+            // Only call Release if the lock was acquired.
+            if (_isEntered)
+            {
+                _semaphore.Release();
+                _isEntered = false;
+            }
         }
 
         /// <summary>
@@ -72,15 +88,39 @@ namespace HandheldCompanion.Utils
         /// </summary>
         public void Dispose()
         {
-            // Ensure the lock is released if it has been entered, then dispose of the semaphore.
-            Exit();
-            _semaphore.Dispose();
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        public bool IsEntered()
+        /// <summary>
+        /// Protected implementation of Dispose to free both managed and unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">True if called from Dispose; false if called from the finalizer.</param>
+        protected virtual void Dispose(bool disposing)
         {
-            return _isEntered;
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Ensure that if the lock was held, we release it.
+                    Exit();
+
+                    // Dispose of the semaphore.
+                    _semaphore.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Throws an ObjectDisposedException if the object has already been disposed.
+        /// </summary>
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(CrossThreadLock));
+            }
         }
     }
 }
