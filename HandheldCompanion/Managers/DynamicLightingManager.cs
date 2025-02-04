@@ -225,8 +225,12 @@ public static class DynamicLightingManager
         if (device is null || device.IsDisposed)
             return;
 
-        device.Dispose();
-        device = null;
+        try
+        {
+            device.Dispose();
+            device = null;
+        }
+        catch { }
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
