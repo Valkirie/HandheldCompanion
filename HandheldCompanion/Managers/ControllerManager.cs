@@ -1035,6 +1035,7 @@ public static class ControllerManager
             {
                 targetController.InputsUpdated -= UpdateInputs;
                 targetController.SetLightColor(0, 0, 0);
+                targetController.Dispose();
                 targetController = null;
 
                 // update HIDInstancePath
