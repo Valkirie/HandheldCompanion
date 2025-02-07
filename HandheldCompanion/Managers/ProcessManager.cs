@@ -106,6 +106,12 @@ public static class ProcessManager
         if (!IsInitialized)
             return;
 
+        // Remove the WindowOpened event handler
+        Automation.RemoveAutomationEventHandler(
+            WindowPattern.WindowOpenedEvent,
+            AutomationElement.RootElement,
+            OnWindowOpened);
+
         // Unhook the event when no longer needed
         if (m_hhook != IntPtr.Zero)
         {

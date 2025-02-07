@@ -8,6 +8,7 @@ namespace HandheldCompanion.Misc
     {
         private AutomationPropertyChangedEventHandler handler;
         public event EventHandler Refreshed;
+        public event EventHandler Closed;
 
         public AutomationElement Element { get; private set; }
         public readonly int Hwnd;
@@ -40,9 +41,20 @@ namespace HandheldCompanion.Misc
                     handler,
                     AutomationElement.NameProperty,
                     AutomationElement.BoundingRectangleProperty);
+
+                Automation.AddAutomationEventHandler(
+                    WindowPattern.WindowClosedEvent,
+                    element,
+                    TreeScope.Subtree,
+                    OnWindowClosed);
             }
 
             RefreshName();
+        }
+
+        private void OnWindowClosed(object sender, AutomationEventArgs e)
+        {
+            Closed?.Invoke(this, EventArgs.Empty);
         }
 
         ~ProcessWindow()
@@ -96,6 +108,12 @@ namespace HandheldCompanion.Misc
                 {
                     if (handler != null)
                         Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler);
+
+                    // Remove the WindowClosed event handler
+                    Automation.RemoveAutomationEventHandler(
+                        WindowPattern.WindowClosedEvent,
+                        Element,
+                        OnWindowClosed);
                 }
                 catch { }
 

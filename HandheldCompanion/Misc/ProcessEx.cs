@@ -372,6 +372,7 @@ public class ProcessEx : IDisposable
         {
             // create new window object
             window = new(automationElement, primary);
+            window.Closed += Window_Closed;
 
             if (string.IsNullOrEmpty(window.Name))
                 return;
@@ -380,23 +381,21 @@ public class ProcessEx : IDisposable
             ProcessWindows[hwnd] = window;
         }
 
-        // listen for window closed event
-        WindowElement windowElement = new(ProcessId, automationElement);
-        windowElement.Closed += (sender) =>
-        {
-            DetachWindow((int)sender._hwnd);
-        };
-
         // raise event
         WindowAttached?.Invoke(window);
     }
 
-    public void DetachWindow(int hwnd)
+    private void Window_Closed(object? sender, EventArgs e)
     {
+        // get object
+        ProcessWindow processWindow = (ProcessWindow)sender;
+
         // raise event
-        if (ProcessWindows.TryRemove(hwnd, out ProcessWindow processWindow))
+        if (ProcessWindows.TryRemove(processWindow.Hwnd, out _))
         {
             WindowDetached?.Invoke(processWindow);
+
+            processWindow.Closed -= Window_Closed;
             processWindow.Dispose();
         }
     }
