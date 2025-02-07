@@ -2,6 +2,7 @@
 using SharpDX.Direct3D9;
 using System;
 using System.Management;
+using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using Timer = System.Timers.Timer;
 
@@ -46,7 +47,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool halting = false;
         protected object updateLock = new();
         protected object telemetryLock = new();
-        public CrossThreadLock functionLock = new();
+        protected object functionLock = new();
 
         private bool _disposed = false; // Prevent multiple disposals
 
@@ -63,26 +64,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             if (!halting && IsInitialized)
             {
-                try
+                lock(functionLock)
                 {
-                    if (functionLock.TryEnter(1000))
+                    try
                     {
-                        try
-                        {
-                            var task = Task.Run(func);
-                            if (task.Wait(1000))
-                                return task.Result;
-                            else
-                                return defaultValue;
-                        }
-                        finally
-                        {
-                            functionLock.Exit();
-                        }
+                        return func();
                     }
+                    catch { }
                 }
-                catch (AccessViolationException) { }
-                catch (Exception) { }
             }
 
             return defaultValue;
@@ -320,8 +309,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 TelemetryTimer?.Stop();
                 TelemetryTimer?.Dispose();
                 TelemetryTimer = null;
-
-                functionLock?.Dispose();
 
                 // Clear event handlers to prevent memory leaks
                 IntegerScalingChanged = null;
