@@ -80,6 +80,9 @@ namespace HandheldCompanion.ViewModels
 
         private void MultimediaManager_DisplaySettingsChanged(Managers.Desktop.DesktopScreen screen, Managers.Desktop.ScreenResolution resolution)
         {
+            if (ProcessWindow is null)
+                return;
+
             // update current screen
             CurrentScreen = Screen.FromHandle(ProcessWindow.Hwnd);
 
@@ -89,6 +92,9 @@ namespace HandheldCompanion.ViewModels
 
         private void ProcessRefreshed(object? sender, EventArgs e)
         {
+            if (ProcessWindow is null)
+                return;
+
             // update current screen
             CurrentScreen = Screen.FromHandle(ProcessWindow.Hwnd);
 
