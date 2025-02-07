@@ -37,6 +37,7 @@ public partial class QuickProfilesPage : Page
     private Profile selectedProfile;
 
     private CrossThreadLock profileLock = new();
+    private CrossThreadLock multimediaLock = new();
     private CrossThreadLock foregroundLock = new();
     private CrossThreadLock graphicLock = new();
 
@@ -163,7 +164,7 @@ public partial class QuickProfilesPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        if (profileLock.TryEnter())
+        if (multimediaLock.TryEnter())
         {
             try
             {
@@ -176,7 +177,7 @@ public partial class QuickProfilesPage : Page
             }
             finally
             {
-                profileLock.Exit();
+                multimediaLock.Exit();
             }
         }
     }
@@ -502,7 +503,7 @@ public partial class QuickProfilesPage : Page
                     IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
                     IntegerScalingTypeComboBox.SelectedIndex = selectedProfile.IntegerScalingType;
 
-                    if (desktopScreen is not null && selectedProfile.IntegerScalingEnabled)
+                    if (desktopScreen is not null)
                         IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
 
                     // RIS
@@ -924,7 +925,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // prevent update loop
-        if (profileLock.IsEntered() || graphicLock.IsEntered())
+        if (profileLock.IsEntered() || graphicLock.IsEntered() || multimediaLock.IsEntered())
             return;
 
         var divider = 1;
