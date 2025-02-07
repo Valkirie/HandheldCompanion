@@ -170,6 +170,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
+            /*
             // mutually exclusive
             if (enable)
             {
@@ -179,6 +180,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 if (GetImageSharpening())
                     SetImageSharpening(false);
             }
+            */
 
             return Execute(() => ADLXBackend.SetRSR(enable), false);
         }
@@ -204,12 +206,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
+            /*
             // mutually exclusive
             if (enabled)
             {
                 if (GetRSR())
                     SetRSR(false);
             }
+            */
 
             return Execute(() => ADLXBackend.SetIntegerScaling(displayIdx, enabled), false);
         }
