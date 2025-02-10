@@ -205,8 +205,8 @@ public partial class ControllerPage : Page
     public void ControllerRefresh()
     {
         IController targetController = ControllerManager.GetTarget();
-        bool hasPhysical = ControllerManager.HasPhysicalController();
-        bool hasVirtual = ControllerManager.HasVirtualController();
+        bool hasPhysical = ControllerManager.HasPhysicalController<IController>();
+        bool hasVirtual = ControllerManager.HasVirtualController<IController>();
         bool hasTarget = targetController != null;
 
         bool isPlugged = hasPhysical && hasTarget;

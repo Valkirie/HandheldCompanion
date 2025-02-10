@@ -383,7 +383,7 @@ public static class XInputPlus
                     IniFile.Write($"Controller{i + 1}", "0", "ControllerNumber");
 
                 // we need to define Controller index overwrite
-                XInputController vController = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
+                XInputController vController = ControllerManager.GetVirtualControllers<XInputController>().FirstOrDefault();
                 if (vController is null)
                     return false;
 
@@ -395,7 +395,7 @@ public static class XInputPlus
                 userIndex.Remove(idx);
 
                 // remove all hidden physical controllers from the list
-                foreach (XInputController pController in ControllerManager.GetPhysicalControllers().OfType<XInputController>().Where(c => c.IsHidden()))
+                foreach (XInputController pController in ControllerManager.GetPhysicalControllers<XInputController>().Where(c => c.IsHidden()))
                     userIndex.Remove(pController.GetUserIndex() + 1);
 
                 for (int i = 0; i < userIndex.Count; i++)

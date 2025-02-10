@@ -172,7 +172,7 @@ public static class ControllerManager
         scenarioTimer.Stop();
 
         bool HIDuncloakonclose = ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
-        foreach (IController controller in GetPhysicalControllers())
+        foreach (IController controller in GetPhysicalControllers<IController>())
         {
             // uncloak on close, if requested
             if (HIDuncloakonclose)
@@ -905,12 +905,13 @@ public static class ControllerManager
                     xInputController.AttachController(byte.MaxValue);
             }
 
+            // user is emulating an Xbox360Controller
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
-                if (HasVirtualController())
+                if (HasVirtualController<XInputController>() && HasPhysicalController<XInputController>())
                 {
                     // check if first controller is virtual
-                    IController controller = GetControllerFromSlot(UserIndex.One, false);
+                    XInputController controller = GetControllerFromSlot<XInputController>(UserIndex.One, false);
                     if (controller is null)
                     {
                         if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
@@ -921,7 +922,7 @@ public static class ControllerManager
                             bool HasCyclingController = false;
 
                             // do we have a pending wireless controller ?
-                            XInputController wirelessController = GetPhysicalControllers().OfType<XInputController>().FirstOrDefault(controller => controller.IsWireless() && controller.IsBusy);
+                            XInputController wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsWireless() && controller.IsBusy);
                             if (wirelessController is not null)
                             {
                                 // update busy flag
@@ -935,7 +936,7 @@ public static class ControllerManager
 
                             // suspend all physical controllers
                             bool HasSuspendedController = false;
-                            foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
+                            foreach (XInputController xInputController in GetPhysicalControllers<XInputController>())
                             {
                                 // set flag(s)
                                 xInputController.IsBusy = true;
@@ -952,7 +953,7 @@ public static class ControllerManager
                             ResumeControllers();
 
                             // increment attempt counter (if no wireless controller is power cycling)
-                            if (!HasCyclingController)
+                            if (!(HasBusyWireless && HasCyclingController))
                                 ControllerManagementAttempts++;
                         }
                         else
@@ -1000,10 +1001,10 @@ public static class ControllerManager
         lock (targetLock)
         {
             // pick last external controller
-            IController? externalController = GetPhysicalControllers().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless() || c.IsDongle());
+            IController? externalController = GetPhysicalControllers<IController>().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless() || c.IsDongle());
 
             // pick first internal controller
-            IController? internalController = GetPhysicalControllers().FirstOrDefault(c => c.IsInternal());
+            IController? internalController = GetPhysicalControllers<IController>().FirstOrDefault(c => c.IsInternal());
 
             string baseContainerDeviceInstanceId = string.Empty;
 
@@ -1214,29 +1215,29 @@ public static class ControllerManager
         return targetController?.GetInstanceId() == InstanceId;
     }
 
-    public static bool HasPhysicalController()
+    public static bool HasPhysicalController<T>() where T : IController
     {
-        return GetPhysicalControllers().Count() != 0;
+        return GetPhysicalControllers<T>().Any(c => c is T);
     }
 
-    public static bool HasVirtualController()
+    public static bool HasVirtualController<T>() where T : IController
     {
-        return GetVirtualControllers().Count() != 0;
+        return GetVirtualControllers<T>().Any(c => c is T);
     }
 
-    public static IEnumerable<IController> GetPhysicalControllers()
+    public static IEnumerable<T> GetPhysicalControllers<T>() where T : IController
     {
-        return Controllers.Values.Where(a => !a.IsVirtual() && !a.isPlaceholder).ToList();
+        return Controllers.Values.Where(a => a is T && !a.IsVirtual() && !a.isPlaceholder).Cast<T>();
     }
 
-    public static IEnumerable<IController> GetVirtualControllers()
+    public static IEnumerable<T> GetVirtualControllers<T>() where T : IController
     {
-        return Controllers.Values.Where(a => a.IsVirtual() && !a.isPlaceholder).ToList();
+        return Controllers.Values.Where(a => a is T && a.IsVirtual() && !a.isPlaceholder).Cast<T>();
     }
 
-    public static XInputController GetControllerFromSlot(UserIndex userIndex = 0, bool physical = true)
+    public static T GetControllerFromSlot<T>(UserIndex userIndex = 0, bool physical = true) where T : IController
     {
-        return Controllers.Values.FirstOrDefault(c => c is XInputController && ((physical && c.IsPhysical()) || !physical && c.IsVirtual()) && c.GetUserIndex() == (int)userIndex) as XInputController;
+        return Controllers.Values.FirstOrDefault(c => c is T && ((physical && c.IsPhysical()) || (!physical && c.IsVirtual())) && c.GetUserIndex() == (int)userIndex) as T;
     }
 
     public static List<IController> GetControllers()
