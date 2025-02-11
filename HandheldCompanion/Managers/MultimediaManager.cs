@@ -261,6 +261,10 @@ public class MultimediaManager : IManager
                 GetNativeResolutions(instanceKeyName, ref nativeWidth, ref nativeHeight);
             }
 
+            // some devices have portrait-native display and therefore reversed width/height
+            if (nativeHeight > nativeWidth)
+                (nativeWidth, nativeHeight) = (nativeHeight, nativeWidth);
+
             // get integer scaling dividers
             int idx = 1;
             while (true)
