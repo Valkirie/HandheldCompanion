@@ -1240,9 +1240,9 @@ public static class ControllerManager
         return Controllers.Values.FirstOrDefault(c => c is T && ((physical && c.IsPhysical()) || (!physical && c.IsVirtual())) && c.GetUserIndex() == (int)userIndex) as T;
     }
 
-    public static List<IController> GetControllers()
+    public static IEnumerable<T> GetControllers<T>() where T : IController
     {
-        return Controllers.Values.ToList();
+        return Controllers.Values.Where(a => a is T).Cast<T>();
     }
 
     private static ControllerState mutedState = new ControllerState();
