@@ -18,13 +18,12 @@ namespace HandheldCompanion.Actions
         // settings
         public ModifierSet Modifiers = ModifierSet.None;
 
-        // override Value
-        public new bool Value = false;
-        public new bool prevValue = false;
-
         public KeyboardActions()
         {
             this.actionType = ActionType.Keyboard;
+
+            this.Value = false;
+            this.prevValue = false;
         }
 
         public KeyboardActions(VirtualKeyCode key) : this()
