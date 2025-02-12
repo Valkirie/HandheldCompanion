@@ -256,7 +256,7 @@ namespace HandheldCompanion.Platforms
             switch (sensor.Name)
             {
                 case "GPU SoC":
-                //case "GPU Package":
+                    //case "GPU Package":
                     GPUPower = (float)sensor.Value;
                     GPUPowerChanged?.Invoke(GPUPower);
                     break;

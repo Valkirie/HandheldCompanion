@@ -1,9 +1,6 @@
-﻿using HandheldCompanion.Utils;
-using SharpDX.Direct3D9;
+﻿using SharpDX.Direct3D9;
 using System;
 using System.Management;
-using System.Threading.Tasks;
-using Task = System.Threading.Tasks.Task;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
@@ -64,7 +61,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             if (!halting && IsInitialized)
             {
-                lock(functionLock)
+                lock (functionLock)
                 {
                     try
                     {

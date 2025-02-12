@@ -275,7 +275,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override bool HasPower()
         {
-            switch(adapterInformation.Details.Description)
+            switch (adapterInformation.Details.Description)
             {
                 case "AMD Custom GPU 0932":
                 case "AMD Custom GPU 0405":

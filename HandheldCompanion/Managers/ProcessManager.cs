@@ -334,7 +334,7 @@ public static class ProcessManager
 
             LogManager.LogDebug("Process halted: {0}", processEx.Executable);
         }
-        
+
         // dispose process
         processEx.Dispose();
         processEx = null;
