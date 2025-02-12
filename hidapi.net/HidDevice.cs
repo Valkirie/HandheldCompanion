@@ -10,6 +10,7 @@ namespace hidapi
     public class HidDevice : IDisposable
     {
         private ushort _vid, _pid, _inputBufferLen;
+        private byte[] _buffer;
         private short _mi;
         private IntPtr _deviceHandle;
         private object _lock = new object();
@@ -26,6 +27,7 @@ namespace hidapi
             _vid = vendorId;
             _pid = productId;
             _inputBufferLen = inputBufferLen;
+            _buffer = new byte[inputBufferLen];
             _mi = mi;
         }
 
@@ -123,9 +125,8 @@ namespace hidapi
             ThrowIfDeviceInvalid();
             lock (_lock)
             {
-                byte[] buffer = new byte[_inputBufferLen];
-                int length = HidApiNative.hid_read_timeout(_deviceHandle, buffer, (uint)buffer.Length, timeout);
-                return buffer;
+                int length = HidApiNative.hid_read_timeout(_deviceHandle, _buffer, (uint)_buffer.Length, timeout);
+                return _buffer;
             }
         }
 
@@ -183,10 +184,9 @@ namespace hidapi
 
             lock (_lock)
             {
-                byte[] buffer = new byte[_inputBufferLen];
-                Array.Copy(data, buffer, data.Length);
+                Array.Copy(data, _buffer, data.Length);
 
-                int err = HidApiNative.hid_write(_deviceHandle, buffer, (uint)buffer.Length);
+                int err = HidApiNative.hid_write(_deviceHandle, _buffer, (uint)_buffer.Length);
                 if (err < 0)
                     throw new Exception($"Failed to write to HID device. Error: {err}");
             }
@@ -194,10 +194,9 @@ namespace hidapi
 
         private void ReadLoop()
         {
-            byte[] buffer = new byte[_inputBufferLen];
             while (_reading && !_halting)
-                if (Read(buffer) > 0 && OnInputReceived != null)
-                    _ = OnInputReceived(new HidDeviceInputReceivedEventArgs(this, buffer));
+                if (Read(_buffer) > 0 && OnInputReceived != null)
+                    _ = OnInputReceived(new HidDeviceInputReceivedEventArgs(this, _buffer));
         }
 
         public void BeginRead()
