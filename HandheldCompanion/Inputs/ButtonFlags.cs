@@ -16,8 +16,8 @@ public enum ButtonFlags : byte
     [Description("Start")] Start = 5,
     [Description("Back")] Back = 6,
 
-    [Description("Left Thumb Click")] LeftStickClick = 7,
-    [Description("Right Thumb Click")] RightStickClick = 8,
+    [Description("Left Thumb")] LeftStickClick = 7,
+    [Description("Right Thumb")] RightStickClick = 8,
 
     L1 = 9,
     R1 = 10,

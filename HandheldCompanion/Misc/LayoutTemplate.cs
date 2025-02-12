@@ -67,24 +67,12 @@ namespace HandheldCompanion.Misc
 
                 case "Desktop":
                     {
-                        Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
+                        Layout.AxisLayout = new()
                         {
-                            {
-                                AxisLayoutFlags.LeftStick,
-                                new MouseActions { MouseType = MouseActionsType.Scroll }
-                            },
-                            {
-                                AxisLayoutFlags.RightStick,
-                                new MouseActions { MouseType = MouseActionsType.Move }
-                            },
-                            {
-                                AxisLayoutFlags.LeftPad,
-                                new MouseActions { MouseType = MouseActionsType.Scroll }
-                            },
-                            {
-                                AxisLayoutFlags.RightPad,
-                                new MouseActions { MouseType = MouseActionsType.Move }
-                            }
+                            { AxisLayoutFlags.LeftStick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Scroll } } },
+                            { AxisLayoutFlags.RightStick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } },
+                            { AxisLayoutFlags.LeftPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Scroll } } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } }
                         };
 
                         Layout.ButtonLayout = new()
@@ -125,16 +113,10 @@ namespace HandheldCompanion.Misc
 
                 case "Keyboard (WASD) and Mouse":
                     {
-                        Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
+                        Layout.AxisLayout = new()
                         {
-                            {
-                                AxisLayoutFlags.RightStick,
-                                new MouseActions { MouseType = MouseActionsType.Move }
-                            },
-                            {
-                                AxisLayoutFlags.RightPad,
-                                new MouseActions { MouseType = MouseActionsType.Move }
-                            }
+                            { AxisLayoutFlags.RightStick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } }
                         };
 
                         Layout.ButtonLayout = new()
@@ -178,13 +160,13 @@ namespace HandheldCompanion.Misc
 
                 case "Gamepad with Mouse Trackpad":
                     {
-                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } };
                     }
                     break;
 
                 case "Gamepad with Joystick Trackpad":
                     {
-                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightStick };
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { new AxisActions { Axis = AxisLayoutFlags.RightStick } };
                     }
                     break;
             }

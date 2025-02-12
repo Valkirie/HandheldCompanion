@@ -5,7 +5,7 @@ using System.Numerics;
 namespace HandheldCompanion.Inputs;
 
 [Serializable]
-public struct AxisLayout
+public class AxisLayout
 {
     public static AxisLayout None = new(AxisLayoutFlags.None);
     public static AxisLayout LeftThumb = new(AxisLayoutFlags.LeftStick, AxisFlags.LeftStickX, AxisFlags.LeftStickY);

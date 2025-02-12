@@ -23,9 +23,9 @@ namespace HandheldCompanion.ViewModels
         private static readonly List<AxisLayoutFlags> _rightAxis = [AxisLayoutFlags.RightPad];
 
         public List<ButtonStackViewModel> LeftButtonsMappings { get; private set; } = [];
-        public List<AxisMappingViewModel> LeftAxisMappings { get; private set; } = [];
+        public List<AxisStackViewModel> LeftAxisMappings { get; private set; } = [];
         public List<ButtonStackViewModel> RightButtonsMappings { get; private set; } = [];
-        public List<AxisMappingViewModel> RightAxisMappings { get; private set; } = [];
+        public List<AxisStackViewModel> RightAxisMappings { get; private set; } = [];
 
         private bool _isLeftPadEnabled;
         public bool IsLeftPadEnabled
@@ -64,7 +64,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _leftAxis)
             {
-                LeftAxisMappings.Add(new AxisMappingViewModel(flag));
+                LeftAxisMappings.Add(new AxisStackViewModel(flag));
             }
 
             foreach (var flag in _rightButtons)
@@ -74,7 +74,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _rightAxis)
             {
-                RightAxisMappings.Add(new AxisMappingViewModel(flag));
+                RightAxisMappings.Add(new AxisStackViewModel(flag));
             }
         }
 

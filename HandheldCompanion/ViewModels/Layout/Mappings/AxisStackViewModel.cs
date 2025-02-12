@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class ButtonStackViewModel : BaseViewModel
+    public class AxisStackViewModel : BaseViewModel
     {
-        public ObservableCollection<ButtonMappingViewModel> ButtonMappings { get; private set; } = [];
+        public ObservableCollection<AxisMappingViewModel> AxisMappings { get; private set; } = [];
 
         private bool _isSupported;
         public bool IsSupported
@@ -27,12 +27,12 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private ButtonFlags _flag;
+        private AxisLayoutFlags _flag;
 
-        public ButtonStackViewModel(ButtonFlags flag)
+        public AxisStackViewModel(AxisLayoutFlags flag)
         {
             _flag = flag;
-            ButtonMappings.Add(new ButtonMappingViewModel(this, flag, isInitialMapping: true));
+            AxisMappings.Add(new AxisMappingViewModel(this, flag, isInitialMapping: true));
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
@@ -50,30 +50,32 @@ namespace HandheldCompanion.ViewModels
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
             ControllerManager.ControllerSelected -= UpdateController;
 
-            foreach (var buttonMapping in ButtonMappings)
+            foreach (var buttonMapping in AxisMappings)
             {
                 buttonMapping.Dispose();
             }
 
-            ButtonMappings.Clear();
+            AxisMappings.Clear();
 
             base.Dispose();
         }
 
+
+
         public void AddMapping()
         {
-            ButtonMappings.SafeAdd(new ButtonMappingViewModel(this, _flag));
+            AxisMappings.SafeAdd(new AxisMappingViewModel(this, _flag));
         }
 
-        public void RemoveMapping(ButtonMappingViewModel mapping)
+        public void RemoveMapping(AxisMappingViewModel mapping)
         {
-            ButtonMappings.SafeRemove(mapping);
+            AxisMappings.SafeRemove(mapping);
             mapping.Dispose();
         }
 
         public void UpdateFromMapping()
         {
-            var actions = ButtonMappings.Where(b => b.Action is not null)
+            var actions = AxisMappings.Where(b => b.Action is not null)
                                         .Select(b => b.Action!).ToList();
 
             if (actions.Count > 0)
@@ -88,15 +90,15 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateMapping(Layout layout)
         {
-            if (layout.ButtonLayout.TryGetValue(_flag, out var actions))
+            if (layout.AxisLayout.TryGetValue(_flag, out var actions))
             {
-                foreach (var mapping in ButtonMappings)
+                foreach (var mapping in AxisMappings)
                     mapping.Dispose();
 
-                var newMappings = new List<ButtonMappingViewModel>();
+                var newMappings = new List<AxisMappingViewModel>();
                 foreach (var action in actions.OrderBy(a => a.ShiftSlot))
                 {
-                    var newMapping = new ButtonMappingViewModel(this, _flag, isInitialMapping: newMappings.Count == 0);
+                    var newMapping = new AxisMappingViewModel(this, _flag, isInitialMapping: newMappings.Count == 0);
                     newMappings.Add(newMapping);
 
                     // Model update should not go through as on update the entire stack is being recreated
@@ -105,20 +107,20 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                ButtonMappings.ReplaceWith(newMappings);
+                AxisMappings.ReplaceWith(newMappings);
             }
             else
             {
-                foreach (var mapping in ButtonMappings)
+                foreach (var mapping in AxisMappings)
                     mapping.Dispose();
 
-                ButtonMappings.ReplaceWith([new ButtonMappingViewModel(this, _flag, isInitialMapping: true)]);
+                AxisMappings.ReplaceWith([new AxisMappingViewModel(this, _flag, isInitialMapping: true)]);
             }
         }
 
         private void UpdateController(IController controller)
         {
-            IsSupported = controller.HasSourceButton(_flag) || MappingViewModel.OEM.Contains(_flag);
+            IsSupported = controller.HasSourceAxis(_flag);
         }
     }
 }

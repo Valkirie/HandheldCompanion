@@ -28,7 +28,7 @@
 
             <!--  LEFT JOYSTICK  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Left}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding LeftThumbAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftThumbAxisMappings}" />
         </ikw:SimpleStackPanel>
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -42,7 +42,7 @@
 
             <!--  RIGHT JOYSTICK  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Right}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding RightThumbAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding RightThumbAxisMappings}" />
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
 </local:ILayoutPage>

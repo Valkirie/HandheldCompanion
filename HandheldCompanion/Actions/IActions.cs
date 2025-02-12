@@ -3,6 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -92,6 +93,9 @@ namespace HandheldCompanion.Actions
         protected object Value;
         protected object prevValue;
 
+        protected Vector2 Vector = new();
+        protected Vector2 prevVector = new();
+
         public int ActionTimer = 200; // default value for steam
         public int pressTimer = -1; // -1 inactive, >= 0 active
 
@@ -126,6 +130,40 @@ namespace HandheldCompanion.Actions
             if (this.HapticMode == HapticMode.Up && !up) return;
 
             ControllerManager.GetTarget()?.SetHaptic(this.HapticStrength, button);
+        }
+
+        public virtual void Execute(AxisFlags axis, ShiftSlot shiftSlot)
+        {
+            // manage shift slot
+            switch (ShiftSlot)
+            {
+                case ShiftSlot.None:
+                    if (shiftSlot != ShiftSlot.None)
+                        this.Value = (short)0;
+                    break;
+
+                default:
+                    if (!shiftSlot.HasFlag(ShiftSlot))
+                        this.Value = (short)0;
+                    break;
+            }
+        }
+
+        public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot)
+        {
+            // manage shift slot
+            switch (ShiftSlot)
+            {
+                case ShiftSlot.None:
+                    if (shiftSlot != ShiftSlot.None)
+                        this.Vector = Vector2.Zero;
+                    break;
+
+                default:
+                    if (!shiftSlot.HasFlag(ShiftSlot))
+                        this.Vector = Vector2.Zero;
+                    break;
+            }
         }
 
         public virtual void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)

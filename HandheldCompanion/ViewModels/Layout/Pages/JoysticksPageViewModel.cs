@@ -23,9 +23,9 @@ namespace HandheldCompanion.ViewModels
         private static readonly List<AxisLayoutFlags> _rightThumbAxis = [AxisLayoutFlags.RightStick];
 
         public List<ButtonStackViewModel> LeftThumbMappings { get; private set; } = [];
-        public List<AxisMappingViewModel> LeftThumbAxisMappings { get; private set; } = [];
+        public List<AxisStackViewModel> LeftThumbAxisMappings { get; private set; } = [];
         public List<ButtonStackViewModel> RightThumbMappings { get; private set; } = [];
-        public List<AxisMappingViewModel> RightThumbAxisMappings { get; private set; } = [];
+        public List<AxisStackViewModel> RightThumbAxisMappings { get; private set; } = [];
 
         private bool _isLeftThumbEnabled;
         public bool IsLeftThumbEnabled
@@ -64,7 +64,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _leftThumbAxis)
             {
-                LeftThumbAxisMappings.Add(new AxisMappingViewModel(flag));
+                LeftThumbAxisMappings.Add(new AxisStackViewModel(flag));
             }
 
             foreach (var flag in _rightThumbButtons)
@@ -74,7 +74,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _rightThumbAxis)
             {
-                RightThumbAxisMappings.Add(new AxisMappingViewModel(flag));
+                RightThumbAxisMappings.Add(new AxisStackViewModel(flag));
             }
         }
 

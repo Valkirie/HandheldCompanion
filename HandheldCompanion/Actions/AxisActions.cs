@@ -30,7 +30,6 @@ namespace HandheldCompanion.Actions
         public AxisActions()
         {
             this.actionType = ActionType.Joystick;
-            this.Value = new Vector2();
         }
 
         public AxisActions(AxisLayoutFlags axis) : this()
@@ -38,36 +37,47 @@ namespace HandheldCompanion.Actions
             this.Axis = axis;
         }
 
-        public void Execute(AxisLayout layout)
+        public float XOuput => this.Vector.X;
+        public float YOuput => this.Vector.Y;
+
+        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot)
         {
-            layout.vector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(layout.vector, AxisDeadZoneInner, AxisDeadZoneOuter);
-            layout.vector = InputUtils.ApplyAntiDeadzone(layout.vector, AxisAntiDeadZone);
+            // update value
+            this.Vector = layout.vector;
+
+            // call parent, check shiftSlot
+            base.Execute(layout, shiftSlot);
+
+            // skip if zero
+            if (this.Vector == Vector2.Zero)
+                return;
+
+            this.Vector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(this.Vector, AxisDeadZoneInner, AxisDeadZoneOuter);
+            this.Vector = InputUtils.ApplyAntiDeadzone(this.Vector, AxisAntiDeadZone);
 
             switch (OutputShape)
             {
                 default:
                     break;
                 case OutputShape.Circle:
-                    layout.vector = InputUtils.ImproveCircularity(layout.vector);
+                    this.Vector = InputUtils.ImproveCircularity(this.Vector);
                     break;
                 case OutputShape.Cross:
-                    layout.vector = InputUtils.CrossDeadzoneMapping(layout.vector, AxisDeadZoneInner, AxisDeadZoneOuter);
-                    layout.vector = InputUtils.ImproveCircularity(layout.vector);
+                    this.Vector = InputUtils.CrossDeadzoneMapping(this.Vector, AxisDeadZoneInner, AxisDeadZoneOuter);
+                    this.Vector = InputUtils.ImproveCircularity(this.Vector);
                     break;
                 case OutputShape.Square:
-                    layout.vector = InputUtils.ImproveSquare(layout.vector);
+                    this.Vector = InputUtils.ImproveSquare(this.Vector);
                     break;
             }
 
             // invert axis
-            layout.vector = new(InvertHorizontal ? -layout.vector.X : layout.vector.X, InvertVertical ? -layout.vector.Y : layout.vector.Y);
-
-            this.Value = layout.vector;
+            this.Vector = new Vector2(InvertHorizontal ? -this.Vector.X : this.Vector.X, InvertVertical ? -this.Vector.Y : this.Vector.Y);
         }
 
         public Vector2 GetValue()
         {
-            return (Vector2)this.Value;
+            return this.Vector;
         }
     }
 }

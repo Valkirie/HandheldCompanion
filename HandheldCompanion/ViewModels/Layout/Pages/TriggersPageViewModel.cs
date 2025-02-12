@@ -12,9 +12,9 @@ namespace HandheldCompanion.ViewModels
         private static readonly List<AxisLayoutFlags> _rightTriggerAxis = [AxisLayoutFlags.R2];
 
         public List<ButtonStackViewModel> LeftTriggerMappings { get; private set; } = [];
-        public List<TriggerMappingViewModel> LeftTriggerAxisMappings { get; private set; } = [];
+        public List<TriggerStackViewModel> LeftTriggerAxisMappings { get; private set; } = [];
         public List<ButtonStackViewModel> RightTriggerMappings { get; private set; } = [];
-        public List<TriggerMappingViewModel> RightTriggerAxisMappings { get; private set; } = [];
+        public List<TriggerStackViewModel> RightTriggerAxisMappings { get; private set; } = [];
 
         private bool _isLeftTriggerEnabled;
         public bool IsLeftTriggerEnabled
@@ -53,7 +53,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _leftTriggerAxis)
             {
-                LeftTriggerAxisMappings.Add(new TriggerMappingViewModel(flag));
+                LeftTriggerAxisMappings.Add(new TriggerStackViewModel(flag));
             }
 
             foreach (var flag in _rightTrigger)
@@ -63,7 +63,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _rightTriggerAxis)
             {
-                RightTriggerAxisMappings.Add(new TriggerMappingViewModel(flag));
+                RightTriggerAxisMappings.Add(new TriggerStackViewModel(flag));
             }
         }
 

@@ -29,7 +29,7 @@
 
             <!--  LEFT TRACKPAD  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
         </ikw:SimpleStackPanel>
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -43,7 +43,7 @@
 
             <!--  RIGHT TRACKPAD  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding RightAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding RightAxisMappings}" />
         </ikw:SimpleStackPanel>
 
     </ikw:SimpleStackPanel>

@@ -423,7 +423,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-
         protected override void Update()
         {
             _parentStack.UpdateFromMapping();
@@ -434,7 +433,6 @@ namespace HandheldCompanion.ViewModels
             Action = null;
             _parentStack.UpdateFromMapping();
         }
-
 
         // Done from ButtonStack
         protected override void UpdateMapping(Layout layout)

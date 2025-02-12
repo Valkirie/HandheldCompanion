@@ -29,7 +29,7 @@
 
             <!--  LEFT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding LeftTriggerAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerStackTemplate}" ItemsSource="{Binding LeftTriggerAxisMappings}" />
         </ikw:SimpleStackPanel>
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -43,7 +43,7 @@
 
             <!--  RIGHT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Right}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding RightTriggerAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerStackTemplate}" ItemsSource="{Binding RightTriggerAxisMappings}" />
         </ikw:SimpleStackPanel>
 
     </ikw:SimpleStackPanel>

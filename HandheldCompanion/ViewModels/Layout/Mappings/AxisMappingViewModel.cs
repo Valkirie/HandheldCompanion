@@ -4,10 +4,10 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -23,6 +23,23 @@ namespace HandheldCompanion.ViewModels
         ];
 
         #region Axis Action Properties
+
+        // default mapping can't be shifted
+        public int ShiftIndex
+        {
+            get => IsInitialMapping ? 0 : Action is not null ? (int)Action.ShiftSlot : 0;
+            set
+            {
+                if (IsInitialMapping)
+                    return;
+
+                if (Action is not null && value != ShiftIndex)
+                {
+                    Action.ShiftSlot = (ShiftSlot)value;
+                    OnPropertyChanged(nameof(ShiftIndex));
+                }
+            }
+        }
 
         public int Axis2AxisInnerDeadzone
         {
@@ -173,8 +190,33 @@ namespace HandheldCompanion.ViewModels
 
         #endregion
 
-        public AxisMappingViewModel(AxisLayoutFlags value) : base(value)
+        private AxisStackViewModel _parentStack;
+
+        public bool IsInitialMapping { get; set; } = false;
+
+        public ICommand ButtonCommand { get; private set; }
+
+        public AxisMappingViewModel(AxisStackViewModel parentStack, AxisLayoutFlags value, bool isInitialMapping = false) : base(value)
         {
+            _parentStack = parentStack;
+            IsInitialMapping = isInitialMapping;
+
+            ButtonCommand = new DelegateCommand(() =>
+            {
+                if (IsInitialMapping)
+                    _parentStack.AddMapping();
+                else
+                {
+                    if (Action is not null) Delete();
+                    _parentStack.RemoveMapping(this);
+                }
+            });
+
+            if (isInitialMapping)
+            {
+                var controller = ControllerManager.GetTarget();
+                if (controller is not null) UpdateController(controller);
+            }
         }
 
         protected override void UpdateController(IController controller)
@@ -296,22 +338,18 @@ namespace HandheldCompanion.ViewModels
 
         protected override void Update()
         {
-            if (Action is null) return;
-            MainWindow.layoutPage.CurrentLayout.UpdateLayout((AxisLayoutFlags)Value, Action);
+            _parentStack.UpdateFromMapping();
         }
 
         protected override void Delete()
         {
             Action = null;
-            MainWindow.layoutPage.CurrentLayout.RemoveLayout((AxisLayoutFlags)Value);
+            _parentStack.UpdateFromMapping();
         }
 
+        // Done from AxisStack
         protected override void UpdateMapping(Layout layout)
         {
-            if (layout.AxisLayout.TryGetValue((AxisLayoutFlags)Value, out var newAction))
-                SetAction(newAction, false);
-            else
-                Reset();
         }
     }
 }

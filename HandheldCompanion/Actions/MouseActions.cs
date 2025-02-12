@@ -43,7 +43,6 @@ namespace HandheldCompanion.Actions
         private Vector2 remainder = new();
         private KeyCode[] pressed;
         private OneEuroFilterPair mouseFilter;
-        private Vector2 prevVector = new();
 
         // settings click
         public ModifierSet Modifiers = ModifierSet.None;
@@ -111,15 +110,23 @@ namespace HandheldCompanion.Actions
             return false;
         }
 
-        public void Execute(AxisLayout layout, bool touched)
+        public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
         {
             // this line needs to be before the next vector zero check
             bool newTouch = IsNewTouch(touched);
 
-            if (layout.vector == Vector2.Zero)
+            // update value
+            this.Vector = layout.vector;
+
+            // call parent, check shiftSlot
+            base.Execute(layout, shiftSlot);
+
+            // skip if zero
+            if (this.Vector == Vector2.Zero)
                 return;
 
-            layout.vector.Y *= -1;
+            // invert axis
+            this.Vector.Y *= -1;
 
             Vector2 deltaVector;
             float sensitivityFinetune;
@@ -132,7 +139,7 @@ namespace HandheldCompanion.Actions
                 default:
                     {
                         // convert to <0.0-1.0> values
-                        deltaVector = layout.vector / short.MaxValue;
+                        deltaVector = this.Vector / short.MaxValue;
                         float deadzone = Deadzone / 100.0f;
 
                         // apply deadzone
@@ -152,13 +159,13 @@ namespace HandheldCompanion.Actions
                         // touchpad was touched, update entry point for delta calculations
                         if (newTouch)
                         {
-                            prevVector = layout.vector;
+                            prevVector = this.Vector;
                             return;
                         }
 
                         // calculate delta and convert to <0.0-1.0> values
-                        deltaVector = (layout.vector - prevVector) / short.MaxValue;
-                        prevVector = layout.vector;
+                        deltaVector = (this.Vector - prevVector) / short.MaxValue;
+                        prevVector = this.Vector;
 
                         sensitivityFinetune = (MouseType == MouseActionsType.Move ? 9.0f : 3.0f);
                     }
