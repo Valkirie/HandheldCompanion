@@ -88,8 +88,16 @@ namespace HandheldCompanion.Platforms
                     break;
             }
 
-            // open computer, slow
-            computer?.Open();
+            if (computer is not null)
+            {
+                // open computer, slow task
+                computer.Open();
+
+                // prevent sensor from being stored to memory for too long
+                foreach (var hardware in computer.Hardware)
+                    foreach (var sensor in hardware.Sensors)
+                        sensor.ValuesTimeWindow = new(0, 0, 10);
+            }
 
             updateTimer?.Start();
 
