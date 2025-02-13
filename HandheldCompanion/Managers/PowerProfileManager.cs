@@ -202,11 +202,11 @@ namespace HandheldCompanion.Managers
             switch (source)
             {
                 case UpdateSource.Serializer:
-                    LogManager.LogInformation($"Loaded power profile: {profile.Name}");
+                    LogManager.LogInformation("Loaded power profile: {0}", profile.Name);
                     break;
 
                 default:
-                    LogManager.LogInformation($"Attempting to update/create power profile: {profile.Name}");
+                    LogManager.LogInformation("Attempting to update/create power profile: {0}", profile.Name);
                     break;
             }
 

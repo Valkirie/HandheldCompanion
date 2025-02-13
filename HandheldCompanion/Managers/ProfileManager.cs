@@ -281,24 +281,21 @@ public class ProfileManager : IManager
         // raise event
         Applied?.Invoke(profile, source);
 
-        // todo: localize me
         if (announce)
         {
-            string announcement = string.Empty;
-            switch (profile.IsSubProfile)
+            if (!profile.IsSubProfile)
             {
-                case false:
-                    announcement = $"Profile {profile.Name} applied";
-                    break;
-                case true:
-                    string mainProfileName = GetProfileForSubProfile(profile).Name;
-                    announcement = $"Subprofile {mainProfileName} {profile.Name} applied";
-                    break;
+                // Log and toast a regular profile announcement
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
+                ToastManager.SendToast($"Profile {profile.Name} applied");
             }
-
-            // push announcement
-            LogManager.LogInformation(announcement);
-            ToastManager.SendToast(announcement);
+            else
+            {
+                // For subprofiles, get the main profile name first
+                string mainProfileName = GetProfileForSubProfile(profile).Name;
+                LogManager.LogInformation("Subprofile {0} {1} applied", mainProfileName, profile.Name);
+                ToastManager.SendToast($"Subprofile {mainProfileName} {profile.Name} applied");
+            }
         }
     }
 
@@ -863,11 +860,11 @@ public class ProfileManager : IManager
         switch (source)
         {
             case UpdateSource.Serializer:
-                LogManager.LogInformation($"Loaded {(profile.IsSubProfile ? "subprofile" : "profile")}: {profile.Name}");
+                LogManager.LogInformation("Loaded {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
                 break;
 
             default:
-                LogManager.LogInformation($"Attempting to update/create {(profile.IsSubProfile ? "subprofile" : "profile")}: {profile.Name}");
+                LogManager.LogInformation("Attempting to update/create {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
                 break;
         }
 
