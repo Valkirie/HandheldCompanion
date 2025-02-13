@@ -504,6 +504,13 @@ public class ProfileManager : IManager
             }
 
             string outputraw = File.ReadAllText(fileName);
+
+            // we've been doing back and forth on ButtonState State type
+            // let's make sure we get a ConcurrentDictionary
+            outputraw = outputraw.Replace(
+                "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"",
+                "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+
             JObject jObject = JObject.Parse(outputraw);
 
             // latest pre-versionning release
@@ -517,12 +524,62 @@ public class ProfileManager : IManager
                 // too old
                 throw new Exception("Profile is outdated.");
             }
+            else if (version <= Version.Parse("0.22.1.5"))
+            {
+                // Navigate to the Layout object.
+                JObject layout = jObject["Layout"] as JObject;
+                if (layout != null)
+                {
+                    // Navigate to the AxisLayout section.
+                    JObject axisLayout = layout["AxisLayout"] as JObject;
+                    if (axisLayout != null)
+                    {
+                        // Replace the overall "$type" if it matches the old type.
+                        string oldAxisLayoutType = "System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.AxisLayoutFlags, HandheldCompanion],[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Collections";
+                        string newAxisLayoutType = "System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.AxisLayoutFlags, HandheldCompanion],[System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib]], System.Collections";
+                        if (axisLayout["$type"] != null && axisLayout["$type"].Type == JTokenType.String)
+                        {
+                            string currentType = axisLayout["$type"].ToString();
+                            if (currentType == oldAxisLayoutType)
+                            {
+                                axisLayout["$type"] = newAxisLayoutType;
+                            }
+                        }
 
-            // we've been doing back and forth on ButtonState State type
-            // let's make sure we get a ConcurrentDictionary
-            outputraw = outputraw.Replace(
-                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"",
-                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+                        // Process each property in AxisLayout (skip "$type").
+                        foreach (var property in axisLayout.Properties().Where(p => p.Name != "$type").ToList())
+                        {
+                            // If the value is a JObject, check if it already has a "$values" array.
+                            if (property.Value.Type == JTokenType.Object)
+                            {
+                                JObject valueObj = (JObject)property.Value;
+                                if (valueObj["$values"] == null)
+                                {
+                                    // It is a single IActions object, so wrap it.
+                                    JToken singleValue = valueObj.DeepClone();
+                                    JObject newArrayObj = new JObject();
+                                    newArrayObj["$type"] = "System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib";
+                                    newArrayObj["$values"] = new JArray(singleValue);
+                                    property.Value = newArrayObj;
+                                }
+                                // If it already has "$values", assume it's in the new format.
+                            }
+                            else
+                            {
+                                // For any other token type, wrap it in the new array format.
+                                JToken singleValue = property.Value.DeepClone();
+                                JObject newArrayObj = new JObject();
+                                newArrayObj["$type"] = "System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib";
+                                newArrayObj["$values"] = new JArray(singleValue);
+                                property.Value = newArrayObj;
+                            }
+                        }
+
+                        // Convert the modified JObject back to a JSON string.
+                        outputraw = jObject.ToString();
+                    }
+                }
+            }
 
             // parse profile
             profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
