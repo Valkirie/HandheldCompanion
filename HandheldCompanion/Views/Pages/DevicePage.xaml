@@ -148,7 +148,7 @@
                 </Border>
 
                 <Border
-                    Name="BatteryChargeLimit"
+                    Name="BatteryChargeLimitToggle"
                     Padding="15,12,12,12"
                     d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
@@ -184,6 +184,119 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_BatteryChargeLimit_Toggled" />
+                    </Grid>
+                </Border>
+
+                <Border
+                    Name="BatteryChargeLimitPercent"
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Collapsed">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE862;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit_Desc_NoPercent}"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Slider_BatteryChargeLimitPercent, Mode=OneWay}" />
+                            <Slider
+                                x:Name="Slider_BatteryChargeLimitPercent"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="100"
+                                Minimum="70"
+                                SmallChange="5"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="Slider_BatteryChargeLimitPercent_OnValueChanged"
+                                Value="100" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+                <Border
+                    Name="BatteryBypassCharging"
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Collapsed">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE862;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryBypassCharging}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.DevicePage_BatteryBypassCharging_Desc}"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="CB_BatteryBypassCharging"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
+                            <ComboBox.ItemTemplate>
+                                <ItemContainerTemplate>
+                                    <WrapPanel>
+                                        <TextBlock
+                                            Height="25"
+                                            Margin="10,6,0,0"
+                                            Text="{Binding DisplayName}" />
+                                    </WrapPanel>
+                                </ItemContainerTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </Border>
             </ikw:SimpleStackPanel>

@@ -115,7 +115,8 @@ public class ROGAlly : IDevice
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
-        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimitToggle;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
@@ -367,7 +368,8 @@ public class ROGAlly : IDevice
 
     private void QuerySettings()
     {
-        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
+        // SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
+        SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
     }
 
     public override void Close()
@@ -765,18 +767,10 @@ public class ROGAlly : IDevice
     {
         switch (name)
         {
-            case "BatteryChargeLimit":
+            case "BatteryChargeLimitPercent":
                 {
-                    bool enabled = Convert.ToBoolean(value);
-                    switch (enabled)
-                    {
-                        case true:
-                            SetBatteryChargeLimit(80);
-                            break;
-                        case false:
-                            SetBatteryChargeLimit(100);
-                            break;
-                    }
+                    int percent = Convert.ToInt32(value);
+                    SetBatteryChargeLimit(percent);
                 }
                 break;
         }

@@ -12,4 +12,9 @@ public class OneXPlayerX1Mini : OneXPlayerX1
 
         EnableSerialPort = false;
     }
+
+    public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+    {
+        return majorVersion >= 1 && minorVersion >= 3;
+    }
 }

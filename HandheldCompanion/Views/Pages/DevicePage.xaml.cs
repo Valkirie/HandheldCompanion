@@ -39,7 +39,9 @@ namespace HandheldCompanion.Views.Pages
             DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
             LEDBrightness.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
             StackSecondColor.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryChargeLimit.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimit) ? Visibility.Visible : Visibility.Collapsed;
+            BatteryChargeLimitToggle.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitToggle) ? Visibility.Visible : Visibility.Collapsed;
+            BatteryChargeLimitPercent.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent) ? Visibility.Visible : Visibility.Collapsed;
+            BatteryBypassCharging.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
 
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
@@ -119,6 +121,22 @@ namespace HandheldCompanion.Views.Pages
                 LedPresetsComboBox.ItemsSource = null;
                 LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
                 LedPresetsComboBox.SelectedIndex = currentSelected;
+            }
+            
+            BatteryChargeLimitToggle.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitToggle) ? Visibility.Visible : Visibility.Collapsed;
+            BatteryChargeLimitPercent.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent) ? Visibility.Visible : Visibility.Collapsed;
+            BatteryBypassCharging.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
+            
+            if (CB_BatteryBypassCharging.ItemsSource is null)
+            {
+                CB_BatteryBypassCharging.ItemsSource = IDevice.GetCurrent().BatteryBypassPresets;
+            }
+            else
+            {
+                int currentSelected = CB_BatteryBypassCharging.SelectedIndex;
+                CB_BatteryBypassCharging.ItemsSource = null;
+                CB_BatteryBypassCharging.ItemsSource = IDevice.GetCurrent().BatteryBypassPresets;
+                CB_BatteryBypassCharging.SelectedIndex = currentSelected;
             }
 
             DeviceSettingsPanel.Visibility = LegionGoPanel.Visibility == Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
@@ -201,6 +219,12 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "BatteryChargeLimit":
                         Toggle_BatteryChargeLimit.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "BatteryChargeLimitPercent":
+                        Slider_BatteryChargeLimitPercent.Value = Convert.ToInt32(value);
+                        break;
+                    case "BatteryBypassChargingMode":
+                        CB_BatteryBypassCharging.SelectedIndex = Convert.ToInt32(value);
                         break;
                     case "SensorSelection":
                         {
@@ -475,6 +499,26 @@ namespace HandheldCompanion.Views.Pages
             bool isCapabilitySupported = IDevice.GetCurrent().DynamicLightingCapabilities.HasFlag(level);
             control.IsEnabled = isCapabilitySupported;
             control.Visibility = isCapabilitySupported ? Visibility.Visible : Visibility.Collapsed;
+        }
+        
+        private void Slider_BatteryChargeLimitPercent_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var value = Slider_BatteryChargeLimitPercent.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", (int) value);
+        }
+        
+        private void CB_BatteryBypassCharging_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CB_BatteryBypassCharging.SelectedIndex == -1)
+                return;
+            
+            ManagerFactory.settingsManager.SetProperty("BatteryBypassChargingMode", CB_BatteryBypassCharging.SelectedIndex);
         }
 
         #region Sensor

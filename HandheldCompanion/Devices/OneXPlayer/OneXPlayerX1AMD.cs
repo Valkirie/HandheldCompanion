@@ -10,4 +10,9 @@ public class OneXPlayerX1AMD : OneXPlayerX1
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
     }
+
+    public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+    {
+        return majorVersion >=1 && minorVersion >= 3;
+    }
 }

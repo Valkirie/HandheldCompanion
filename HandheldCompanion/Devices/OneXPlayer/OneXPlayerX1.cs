@@ -7,12 +7,14 @@ using HandheldCompanion.Shared;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
+using System;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
+using System.Management;
 
 namespace HandheldCompanion.Devices;
 
@@ -39,6 +41,11 @@ public class OneXPlayerX1 : IDevice
     private Color LEDControllerColor;
     private Color LEDBackColor;
     private LEDPreset? LEDPreset;
+
+    // Battery Protection
+    public ushort ECBatteryLimitAddress = 0x4A3;
+    public ushort ECBypassChargingAddress = 0x4A4;
+    public bool EnableBatteryProtection = false;
 
     public OneXPlayerX1()
     {
@@ -69,6 +76,21 @@ public class OneXPlayerX1 : IDevice
         Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.LEDPreset;
+
+        if (CheckIsBatteryProtectionSupported())
+        {
+            EnableBatteryProtection = true;
+            Capabilities |= DeviceCapabilities.BatteryChargeLimitToggle;
+            Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
+            Capabilities |= DeviceCapabilities.BatteryBypassCharging;
+
+            BatteryBypassPresets =
+            [
+                new("BatteryBypassPreset_Disabled"),
+                new("BatteryBypassPreset_ResumeOnSleepShutdown"),
+                new("BatteryBypassPreset_AlwaysOn"),
+            ];
+        }
 
         LEDPresets =
         [
@@ -154,12 +176,42 @@ public class OneXPlayerX1 : IDevice
             }
         }
 
-        // allow OneX button to pass key inputs
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+		// manage events
+		ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        ECRamDirectWrite(0x4EB, ECDetails, 0x40);
+		// raise events
+		switch (ManagerFactory.settingsManager.Status)
+		{
+			default:
+			case ManagerStatus.Initializing:
+				ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+				break;
+			case ManagerStatus.Initialized:
+				QuerySettings();
+				break;
+		}
 
-        return ECRamReadByte(0x4EB, ECDetails) == 0x40;
+		// allow OneX button to pass key inputs
+		ECRamDirectWrite(0x4EB, ECDetails, 0x40);
+        if (ECRamReadByte(0x4EB, ECDetails) == 0x40)
+            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+
+        return true;
+    }
+
+    private void QuerySettings()
+	{
+        // Check Battery Protection Supported
+        if (EnableBatteryProtection)
+        {
+            SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
+            SettingsManager_SettingValueChanged("BatteryBypassChargingMode", ManagerFactory.settingsManager.GetString("BatteryBypassChargingMode"), false);
+        }
+	}
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
     }
 
     public override void Close()
@@ -169,8 +221,15 @@ public class OneXPlayerX1 : IDevice
             _serialPort.Close();
         }
 
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWrite(0x4EB, ECDetails, 0x00);
+        if (EnableBatteryProtection)
+        {
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        }
+
+		ECRamDirectWrite(0x4EB, ECDetails, 0x00);
+		if (ECRamReadByte(0x4EB, ECDetails) == 0x00)
+			LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+
         base.Close();
     }
 
@@ -339,6 +398,89 @@ public class OneXPlayerX1 : IDevice
                 _serialPort.Write(data, 0, data.Length);
                 Task.Delay(TaskDelay).Wait();
             });
+        }
+    }
+
+    private bool CheckIsBatteryProtectionSupported()
+    {
+        try
+        {
+            // Create a ManagementObjectSearcher to query the Win32_BIOS class
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BIOS");
+
+            // Get the collection of ManagementObject instances
+            ManagementObjectCollection collection = searcher.Get();
+
+            // Iterate through the collection and access properties
+            foreach (ManagementObject obj in collection)
+            {
+                int majorVersion = Convert.ToInt32(obj["EmbeddedControllerMajorVersion"]);
+                int minorVersion = Convert.ToInt32(obj["EmbeddedControllerMinorVersion"]);
+                return IsBatteryProtectionSupported(majorVersion, minorVersion);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Cannot found ECVersion: " + ex.Message);
+        }
+
+        return false;
+    }
+
+    public virtual bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+    {
+        return false;
+    }
+
+    public void SetBatteryChargeLimit(int chargeLimit)
+    {
+        if (!IsOpen)
+            return;
+
+        if (chargeLimit < 0 || chargeLimit > 100)
+            return;
+
+        ECRamDirectWrite(ECBatteryLimitAddress, ECDetails, (byte)chargeLimit);
+    }
+
+    public void SetBatteryBypassChargingMode(int modeIndex)
+    {
+        if (!IsOpen)
+            return;
+
+        if (modeIndex < 0 || modeIndex > 4)
+            return;
+
+        int modeValue = 0;
+
+        switch (modeIndex)
+        {
+            case 0:
+                modeValue = 0x00; // Disabled
+                break;
+            case 1:
+                modeValue = 0x01; // Disabled on Sleep and Reboot
+                break;
+            case 2:
+                modeValue = 0x03; // Always On
+                break;
+        }
+
+        ECRamDirectWrite(ECBypassChargingAddress, ECDetails, (byte)modeValue);
+    }
+
+    public void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "BatteryChargeLimitPercent":
+                int percent = Convert.ToInt32(value);
+                SetBatteryChargeLimit(percent);
+                break;
+            case "BatteryBypassChargingMode":
+                int modeIndex = Convert.ToInt32(value);
+                SetBatteryBypassChargingMode(modeIndex);
+                break;
         }
     }
 }

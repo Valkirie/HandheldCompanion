@@ -2958,6 +2958,24 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
     <value>Extend the battery lifespan by setting the maximum charge level of the battery to 80%</value>
   </data>
+  <data name="DevicePage_BatteryChargeLimit_Desc_NoPercent" xml:space="preserve">
+    <value>Extend the battery lifespan by setting the maximum charge level of the battery</value>
+  </data>
+  <data name="DevicePage_BatteryBypassCharging" xml:space="preserve">
+    <value>Battery Bypass Charging</value>
+  </data>
+  <data name="DevicePage_BatteryBypassCharging_Desc" xml:space="preserve">
+    <value>Extend the battery lifespan by setting bypass charging</value>
+  </data>
+  <data name="BatteryBypassPreset_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="BatteryBypassPreset_ResumeOnSleepShutdown" xml:space="preserve">
+    <value>Enabled (Resume charging on Sleep and Shutdown)</value>
+  </data>
+  <data name="BatteryBypassPreset_AlwaysOn" xml:space="preserve">
+    <value>Always On</value>
+  </data>
   <data name="PowerProfileOneXPlayerX1IntelBestPerformance" xml:space="preserve">
     <value>Super Performance</value>
   </data>

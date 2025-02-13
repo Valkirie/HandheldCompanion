@@ -2914,6 +2914,24 @@
   <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
     <value>將電池最大充電水平設定為80%以延長電池壽命</value>
   </data>
+  <data name='DevicePage_BatteryChargeLimit_Desc_NoPercent' xml:space='preserve'>
+    <value>設定電池最大充電水平以延長電池壽命</value>
+  </data>
+  <data name='DevicePage_BatteryBypassCharging' xml:space='preserve'>
+    <value>旁路供電</value>
+  </data>
+  <data name='DevicePage_BatteryBypassCharging_Desc' xml:space='preserve'>
+    <value>設定旁路供電以延長電池壽命</value>
+  </data>
+  <data name="BatteryBypassPreset_Disabled" xml:space="preserve">
+    <value>不啟用</value>
+  </data>
+  <data name="BatteryBypassPreset_ResumeOnSleepShutdown" xml:space="preserve">
+    <value>啟用 (在睡眠和關機時恢復充電)</value>
+  </data>
+  <data name="BatteryBypassPreset_AlwaysOn" xml:space="preserve">
+    <value>長期啟用</value>
+  </data>
   <data name="PowerProfileOneXPlayerX1IntelBestPerformance" xml:space="preserve">
     <value>Super Performance</value>
   </data>

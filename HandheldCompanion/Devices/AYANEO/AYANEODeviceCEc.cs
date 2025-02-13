@@ -29,7 +29,8 @@ namespace HandheldCompanion.Devices.AYANEO
             this.Capabilities |= DeviceCapabilities.FanControl;
             this.Capabilities |= DeviceCapabilities.DynamicLighting;
             this.Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
-            this.Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+            this.Capabilities |= DeviceCapabilities.BatteryChargeLimitToggle;
+            this.Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
             this.DynamicLightingCapabilities = LEDLevel.SolidColor;
 
@@ -160,14 +161,16 @@ namespace HandheldCompanion.Devices.AYANEO
             if (!isBatteryChargeLimitEnabled)
                 return;
 
+            int BatteryChargeLimit = ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent");
+
             // Get the current battery percentage
             int batteryPercentage = PowerManager.RemainingChargePercent;
-            if (batteryPercentage >= 80)
+            if (batteryPercentage >= BatteryChargeLimit)
             {
                 // Call the function to open the charge bypass
                 CEcControl_BypassChargeOpen();
             }
-            else if (batteryPercentage < 80)
+            else if (batteryPercentage < BatteryChargeLimit)
             {
                 // Call the function to close the charge bypass
                 CEcControl_BypassChargeClose();

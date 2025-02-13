@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using System;
@@ -80,7 +80,8 @@ public class SteamDeck : IDevice
         {
             bool maxBatteryCharge = SupportedDevice?.MaxBatteryCharge ?? false;
             Capabilities |= DeviceCapabilities.FanControl;
-            Capabilities |= maxBatteryCharge ? DeviceCapabilities.BatteryChargeLimit : DeviceCapabilities.None;
+            Capabilities |= maxBatteryCharge ? DeviceCapabilities.BatteryChargeLimitToggle : DeviceCapabilities.None;
+            Capabilities |= maxBatteryCharge ? DeviceCapabilities.BatteryChargeLimitPercent : DeviceCapabilities.None;
         }
 
         // https://www.steamdeck.com/en/tech
@@ -171,7 +172,8 @@ public class SteamDeck : IDevice
 
     private void QuerySettings()
     {
-        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+        // SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+        SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimitPercent"), false);
     }
 
     private void SettingsManager_Initialized()
@@ -277,18 +279,10 @@ public class SteamDeck : IDevice
     {
         switch (name)
         {
-            case "BatteryChargeLimit":
+            case "BatteryChargeLimitPercent":
                 {
-                    bool enabled = Convert.ToBoolean(value);
-                    switch (enabled)
-                    {
-                        case true:
-                            SetMaxBatteryCharge(80);
-                            break;
-                        case false:
-                            SetMaxBatteryCharge(100);
-                            break;
-                    }
+                    int percent = Convert.ToInt32(value);
+                    SetMaxBatteryCharge(percent);
                 }
                 break;
         }

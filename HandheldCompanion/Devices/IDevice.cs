@@ -31,7 +31,9 @@ public enum DeviceCapabilities : ushort
     DynamicLighting = 8,
     DynamicLightingBrightness = 16,
     DynamicLightingSecondLEDColor = 32,
-    BatteryChargeLimit = 64,
+    BatteryChargeLimitToggle = 64,
+    BatteryChargeLimitPercent = 128,
+    BatteryBypassCharging = 256,
 }
 
 public struct ECDetails
@@ -97,6 +99,7 @@ public abstract class IDevice
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
     public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
     public List<LEDPreset> LEDPresets { get; protected set; } = [];
+    public List<BatteryBypassPreset> BatteryBypassPresets { get; protected set; } = [];
 
     protected const byte EC_OBF = 0x01;  // Output Buffer Full
     protected const byte EC_IBF = 0x02;  // Input Buffer Full
