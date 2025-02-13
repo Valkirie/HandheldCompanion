@@ -12,8 +12,10 @@ using Color = System.Drawing.Color;
 
 namespace HandheldCompanion;
 
-public abstract class IModel
+public abstract class IModel : IDisposable
 {
+    public static ModelImporter ModelImporter = new();
+
     public ConcurrentDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
     // Materials
@@ -35,7 +37,6 @@ public abstract class IModel
 
     // Model3D vars
     public Model3DGroup model3DGroup = new();
-    protected ModelImporter modelImporter = new();
 
     public string ModelName;
     public Model3DGroup RightMotor;
@@ -55,13 +56,13 @@ public abstract class IModel
         this.ModelName = ModelName;
 
         // load model(s)
-        LeftThumbRing = modelImporter.Load($"3DModels/{ModelName}/Joystick-Left-Ring.obj");
-        RightThumbRing = modelImporter.Load($"3DModels/{ModelName}/Joystick-Right-Ring.obj");
-        LeftMotor = modelImporter.Load($"3DModels/{ModelName}/MotorLeft.obj");
-        RightMotor = modelImporter.Load($"3DModels/{ModelName}/MotorRight.obj");
-        MainBody = modelImporter.Load($"3DModels/{ModelName}/MainBody.obj");
-        LeftShoulderTrigger = modelImporter.Load($"3DModels/{ModelName}/Shoulder-Left-Trigger.obj");
-        RightShoulderTrigger = modelImporter.Load($"3DModels/{ModelName}/Shoulder-Right-Trigger.obj");
+        LeftThumbRing = ModelImporter.Load($"3DModels/{ModelName}/Joystick-Left-Ring.obj");
+        RightThumbRing = ModelImporter.Load($"3DModels/{ModelName}/Joystick-Right-Ring.obj");
+        LeftMotor = ModelImporter.Load($"3DModels/{ModelName}/MotorLeft.obj");
+        RightMotor = ModelImporter.Load($"3DModels/{ModelName}/MotorRight.obj");
+        MainBody = ModelImporter.Load($"3DModels/{ModelName}/MainBody.obj");
+        LeftShoulderTrigger = ModelImporter.Load($"3DModels/{ModelName}/Shoulder-Left-Trigger.obj");
+        RightShoulderTrigger = ModelImporter.Load($"3DModels/{ModelName}/Shoulder-Right-Trigger.obj");
 
         // map model(s)
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
@@ -69,7 +70,7 @@ public abstract class IModel
             var filename = $"3DModels/{ModelName}/{button}.obj";
             if (File.Exists(filename))
             {
-                var model = modelImporter.Load(filename);
+                var model = ModelImporter.Load(filename);
                 ButtonMap.TryAdd(button, [model]);
 
                 switch (button)
@@ -130,4 +131,43 @@ public abstract class IModel
             // generic material(s)
             HighlightMaterials[model3D] = MaterialHighlight;
     }
+
+    #region IDisposable Support
+
+    private bool disposedValue = false; // To detect redundant calls
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                // Clear any collections holding references to 3D models or materials.
+                ButtonMap?.Clear();
+                DefaultMaterials?.Clear();
+                HighlightMaterials?.Clear();
+
+                // Remove all children from the model group.
+                model3DGroup?.Children.Clear();
+            }
+
+            // Free unmanaged resources (if any) here.
+
+            disposedValue = true;
+        }
+    }
+
+    // This code added to correctly implement the disposable pattern.
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~IModel()
+    {
+        Dispose(false);
+    }
+
+    #endregion
 }

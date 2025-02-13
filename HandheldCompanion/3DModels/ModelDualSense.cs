@@ -78,35 +78,35 @@ internal class ModelDualSense : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(60.83f, -26.2f, 60.9f);
 
         // load model(s)
-        AudioJack = modelImporter.Load($"3DModels/{ModelName}/AudioJack.obj");
-        Charger = modelImporter.Load($"3DModels/{ModelName}/Charger.obj");
-        LED1 = modelImporter.Load($"3DModels/{ModelName}/LED1.obj");
-        LED2 = modelImporter.Load($"3DModels/{ModelName}/LED2.obj");
-        LED3 = modelImporter.Load($"3DModels/{ModelName}/LED3.obj");
-        MainBodyBack = modelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
-        MainBodyFront = modelImporter.Load($"3DModels/{ModelName}/MainBodyFront.obj");
-        Special = modelImporter.Load($"3DModels/{ModelName}/Special.obj");
-        USBPort = modelImporter.Load($"3DModels/{ModelName}/USBPort.obj");
-        ShareSymbol = modelImporter.Load($"3DModels/{ModelName}/ShareSymbol.obj");
-        MenuSymbol = modelImporter.Load($"3DModels/{ModelName}/MenuSymbol.obj");
+        AudioJack = ModelImporter.Load($"3DModels/{ModelName}/AudioJack.obj");
+        Charger = ModelImporter.Load($"3DModels/{ModelName}/Charger.obj");
+        LED1 = ModelImporter.Load($"3DModels/{ModelName}/LED1.obj");
+        LED2 = ModelImporter.Load($"3DModels/{ModelName}/LED2.obj");
+        LED3 = ModelImporter.Load($"3DModels/{ModelName}/LED3.obj");
+        MainBodyBack = ModelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
+        MainBodyFront = ModelImporter.Load($"3DModels/{ModelName}/MainBodyFront.obj");
+        Special = ModelImporter.Load($"3DModels/{ModelName}/Special.obj");
+        USBPort = ModelImporter.Load($"3DModels/{ModelName}/USBPort.obj");
+        ShareSymbol = ModelImporter.Load($"3DModels/{ModelName}/ShareSymbol.obj");
+        MenuSymbol = ModelImporter.Load($"3DModels/{ModelName}/MenuSymbol.obj");
 
-        DPadDownCover = modelImporter.Load($"3DModels/{ModelName}/DPadDownCover.obj");
-        DPadUpCover = modelImporter.Load($"3DModels/{ModelName}/DPadUpCover.obj");
-        DPadLeftCover = modelImporter.Load($"3DModels/{ModelName}/DPadLeftCover.obj");
-        DPadRightCover = modelImporter.Load($"3DModels/{ModelName}/DPadRightCover.obj");
-        DPadDownArrow = modelImporter.Load($"3DModels/{ModelName}/DPadDownArrow.obj");
-        DPadUpArrow = modelImporter.Load($"3DModels/{ModelName}/DPadUpArrow.obj");
-        DPadLeftArrow = modelImporter.Load($"3DModels/{ModelName}/DPadLeftArrow.obj");
-        DPadRightArrow = modelImporter.Load($"3DModels/{ModelName}/DPadRightArrow.obj");
+        DPadDownCover = ModelImporter.Load($"3DModels/{ModelName}/DPadDownCover.obj");
+        DPadUpCover = ModelImporter.Load($"3DModels/{ModelName}/DPadUpCover.obj");
+        DPadLeftCover = ModelImporter.Load($"3DModels/{ModelName}/DPadLeftCover.obj");
+        DPadRightCover = ModelImporter.Load($"3DModels/{ModelName}/DPadRightCover.obj");
+        DPadDownArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadDownArrow.obj");
+        DPadUpArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadUpArrow.obj");
+        DPadLeftArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadLeftArrow.obj");
+        DPadRightArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadRightArrow.obj");
 
-        B1Button = modelImporter.Load($"3DModels/{ModelName}/B1Button.obj");
-        B2Button = modelImporter.Load($"3DModels/{ModelName}/B2Button.obj");
-        B3Button = modelImporter.Load($"3DModels/{ModelName}/B3Button.obj");
-        B4Button = modelImporter.Load($"3DModels/{ModelName}/B4Button.obj");
-        B1ButtonSymbolx = modelImporter.Load($"3DModels/{ModelName}/B1ButtonSymbol.obj");
-        B2ButtonSymbolx = modelImporter.Load($"3DModels/{ModelName}/B2ButtonSymbol.obj");
-        B3ButtonSymbolx = modelImporter.Load($"3DModels/{ModelName}/B3ButtonSymbol.obj");
-        B4ButtonSymbolx = modelImporter.Load($"3DModels/{ModelName}/B4ButtonSymbol.obj");
+        B1Button = ModelImporter.Load($"3DModels/{ModelName}/B1Button.obj");
+        B2Button = ModelImporter.Load($"3DModels/{ModelName}/B2Button.obj");
+        B3Button = ModelImporter.Load($"3DModels/{ModelName}/B3Button.obj");
+        B4Button = ModelImporter.Load($"3DModels/{ModelName}/B4Button.obj");
+        B1ButtonSymbolx = ModelImporter.Load($"3DModels/{ModelName}/B1ButtonSymbol.obj");
+        B2ButtonSymbolx = ModelImporter.Load($"3DModels/{ModelName}/B2ButtonSymbol.obj");
+        B3ButtonSymbolx = ModelImporter.Load($"3DModels/{ModelName}/B3ButtonSymbol.obj");
+        B4ButtonSymbolx = ModelImporter.Load($"3DModels/{ModelName}/B4ButtonSymbol.obj");
 
         // pull model(s)
         model3DGroup.Children.Add(AudioJack);

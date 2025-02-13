@@ -52,20 +52,20 @@ internal class ModelSteamDeck : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(102.528f, 0.0f, 58.365f);
 
         // load model(s)
-        BackIcon = modelImporter.Load($"3DModels/{ModelName}/BackIcon.obj");
-        VolumeUp = modelImporter.Load($"3DModels/{ModelName}/VolumeUp.obj");
-        VolumeDown = modelImporter.Load($"3DModels/{ModelName}/VolumeDown.obj");
-        ThreeDots = modelImporter.Load($"3DModels/{ModelName}/ThreeDots.obj");
-        MainBodyLeftOver = modelImporter.Load($"3DModels/{ModelName}/MainBodyLeftOver.obj");
-        SteamText = modelImporter.Load($"3DModels/{ModelName}/SteamText.obj");
-        StartIcon = modelImporter.Load($"3DModels/{ModelName}/StartIcon.obj");
-        Screen = modelImporter.Load($"3DModels/{ModelName}/Screen.obj");
-        PowerButton = modelImporter.Load($"3DModels/{ModelName}/PowerButton.obj");
+        BackIcon = ModelImporter.Load($"3DModels/{ModelName}/BackIcon.obj");
+        VolumeUp = ModelImporter.Load($"3DModels/{ModelName}/VolumeUp.obj");
+        VolumeDown = ModelImporter.Load($"3DModels/{ModelName}/VolumeDown.obj");
+        ThreeDots = ModelImporter.Load($"3DModels/{ModelName}/ThreeDots.obj");
+        MainBodyLeftOver = ModelImporter.Load($"3DModels/{ModelName}/MainBodyLeftOver.obj");
+        SteamText = ModelImporter.Load($"3DModels/{ModelName}/SteamText.obj");
+        StartIcon = ModelImporter.Load($"3DModels/{ModelName}/StartIcon.obj");
+        Screen = ModelImporter.Load($"3DModels/{ModelName}/Screen.obj");
+        PowerButton = ModelImporter.Load($"3DModels/{ModelName}/PowerButton.obj");
 
-        B1Symbol = modelImporter.Load($"3DModels/{ModelName}/B1-Symbol.obj");
-        B2Symbol = modelImporter.Load($"3DModels/{ModelName}/B2-Symbol.obj");
-        B3Symbol = modelImporter.Load($"3DModels/{ModelName}/B3-Symbol.obj");
-        B4Symbol = modelImporter.Load($"3DModels/{ModelName}/B4-Symbol.obj");
+        B1Symbol = ModelImporter.Load($"3DModels/{ModelName}/B1-Symbol.obj");
+        B2Symbol = ModelImporter.Load($"3DModels/{ModelName}/B2-Symbol.obj");
+        B3Symbol = ModelImporter.Load($"3DModels/{ModelName}/B3-Symbol.obj");
+        B4Symbol = ModelImporter.Load($"3DModels/{ModelName}/B4-Symbol.obj");
 
         // pull model(s)
         model3DGroup.Children.Add(BackIcon);

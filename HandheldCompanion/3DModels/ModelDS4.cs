@@ -62,16 +62,16 @@ internal class ModelDS4 : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(48.868f, -13f, 29.62f);
 
         // load model(s)
-        LeftShoulderMiddle = modelImporter.Load($"3DModels/{ModelName}/Shoulder-Left-Middle.obj");
-        RightShoulderMiddle = modelImporter.Load($"3DModels/{ModelName}/Shoulder-Right-Middle.obj");
-        Screen = modelImporter.Load($"3DModels/{ModelName}/Screen.obj");
-        MainBodyBack = modelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
-        AuxPort = modelImporter.Load($"3DModels/{ModelName}/Aux-Port.obj");
-        Triangle = modelImporter.Load($"3DModels/{ModelName}/Triangle.obj");
-        DPadDownArrow = modelImporter.Load($"3DModels/{ModelName}/DPadDownArrow.obj");
-        DPadUpArrow = modelImporter.Load($"3DModels/{ModelName}/DPadUpArrow.obj");
-        DPadLeftArrow = modelImporter.Load($"3DModels/{ModelName}/DPadLeftArrow.obj");
-        DPadRightArrow = modelImporter.Load($"3DModels/{ModelName}/DPadRightArrow.obj");
+        LeftShoulderMiddle = ModelImporter.Load($"3DModels/{ModelName}/Shoulder-Left-Middle.obj");
+        RightShoulderMiddle = ModelImporter.Load($"3DModels/{ModelName}/Shoulder-Right-Middle.obj");
+        Screen = ModelImporter.Load($"3DModels/{ModelName}/Screen.obj");
+        MainBodyBack = ModelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
+        AuxPort = ModelImporter.Load($"3DModels/{ModelName}/Aux-Port.obj");
+        Triangle = ModelImporter.Load($"3DModels/{ModelName}/Triangle.obj");
+        DPadDownArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadDownArrow.obj");
+        DPadUpArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadUpArrow.obj");
+        DPadLeftArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadLeftArrow.obj");
+        DPadRightArrow = ModelImporter.Load($"3DModels/{ModelName}/DPadRightArrow.obj");
 
         // map model(s)
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
@@ -85,7 +85,7 @@ internal class ModelDS4 : IModel
                     var filename = $"3DModels/{ModelName}/{button}-Symbol.obj";
                     if (File.Exists(filename))
                     {
-                        var model = modelImporter.Load(filename);
+                        var model = ModelImporter.Load(filename);
                         ButtonMap[button].Add(model);
 
                         // pull model

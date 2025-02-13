@@ -73,16 +73,16 @@ internal class ModelXBOX360 : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(36.226f, -14.26f, 47.332f);
 
         // load model(s)
-        MainBodyCharger = modelImporter.Load($"3DModels/{ModelName}/MainBody-Charger.obj");
-        SpecialRing = modelImporter.Load($"3DModels/{ModelName}/SpecialRing.obj");
-        SpecialLED = modelImporter.Load($"3DModels/{ModelName}/SpecialLED.obj");
-        LeftShoulderBottom = modelImporter.Load($"3DModels/{ModelName}/LeftShoulderBottom.obj");
-        RightShoulderBottom = modelImporter.Load($"3DModels/{ModelName}/RightShoulderBottom.obj");
+        MainBodyCharger = ModelImporter.Load($"3DModels/{ModelName}/MainBody-Charger.obj");
+        SpecialRing = ModelImporter.Load($"3DModels/{ModelName}/SpecialRing.obj");
+        SpecialLED = ModelImporter.Load($"3DModels/{ModelName}/SpecialLED.obj");
+        LeftShoulderBottom = ModelImporter.Load($"3DModels/{ModelName}/LeftShoulderBottom.obj");
+        RightShoulderBottom = ModelImporter.Load($"3DModels/{ModelName}/RightShoulderBottom.obj");
 
-        B1Button = modelImporter.Load($"3DModels/{ModelName}/B1Button.obj");
-        B2Button = modelImporter.Load($"3DModels/{ModelName}/B2Button.obj");
-        B3Button = modelImporter.Load($"3DModels/{ModelName}/B3Button.obj");
-        B4Button = modelImporter.Load($"3DModels/{ModelName}/B4Button.obj");
+        B1Button = ModelImporter.Load($"3DModels/{ModelName}/B1Button.obj");
+        B2Button = ModelImporter.Load($"3DModels/{ModelName}/B2Button.obj");
+        B3Button = ModelImporter.Load($"3DModels/{ModelName}/B3Button.obj");
+        B4Button = ModelImporter.Load($"3DModels/{ModelName}/B4Button.obj");
 
         // pull model(s)
         model3DGroup.Children.Add(MainBodyCharger);

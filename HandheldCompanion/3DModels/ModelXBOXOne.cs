@@ -77,34 +77,34 @@ internal class ModelXBOXOne : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(28.7f, -20.3f, 52.8f);
 
         // load models
-        BackSymbol = modelImporter.Load($"3DModels/{ModelName}/BackSymbol.obj");
-        BatteryDoor = modelImporter.Load($"3DModels/{ModelName}/BatteryDoor.obj");
-        BatteryDoorInner = modelImporter.Load($"3DModels/{ModelName}/BatteryDoorInner.obj");
-        SpecialOuter = modelImporter.Load($"3DModels/{ModelName}/SpecialOuter.obj");
-        MainBodyBack = modelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
-        MainBodyTop = modelImporter.Load($"3DModels/{ModelName}/MainBodyTop.obj");
-        MainBodySide = modelImporter.Load($"3DModels/{ModelName}/MainBodySide.obj");
-        ShareButton = modelImporter.Load($"3DModels/{ModelName}/ShareButton.obj");
-        ShareButtonSymbol = modelImporter.Load($"3DModels/{ModelName}/ShareButtonSymbol.obj");
-        StartSymbol = modelImporter.Load($"3DModels/{ModelName}/StartSymbol.obj");
-        USBPortInner = modelImporter.Load($"3DModels/{ModelName}/USBPortInner.obj");
-        USBPortOuter = modelImporter.Load($"3DModels/{ModelName}/USBPortOuter.obj");
+        BackSymbol = ModelImporter.Load($"3DModels/{ModelName}/BackSymbol.obj");
+        BatteryDoor = ModelImporter.Load($"3DModels/{ModelName}/BatteryDoor.obj");
+        BatteryDoorInner = ModelImporter.Load($"3DModels/{ModelName}/BatteryDoorInner.obj");
+        SpecialOuter = ModelImporter.Load($"3DModels/{ModelName}/SpecialOuter.obj");
+        MainBodyBack = ModelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
+        MainBodyTop = ModelImporter.Load($"3DModels/{ModelName}/MainBodyTop.obj");
+        MainBodySide = ModelImporter.Load($"3DModels/{ModelName}/MainBodySide.obj");
+        ShareButton = ModelImporter.Load($"3DModels/{ModelName}/ShareButton.obj");
+        ShareButtonSymbol = ModelImporter.Load($"3DModels/{ModelName}/ShareButtonSymbol.obj");
+        StartSymbol = ModelImporter.Load($"3DModels/{ModelName}/StartSymbol.obj");
+        USBPortInner = ModelImporter.Load($"3DModels/{ModelName}/USBPortInner.obj");
+        USBPortOuter = ModelImporter.Load($"3DModels/{ModelName}/USBPortOuter.obj");
 
-        B1Interior = modelImporter.Load($"3DModels/{ModelName}/B1-Interior.obj");
-        B1Interior2 = modelImporter.Load($"3DModels/{ModelName}/B1-Interior2.obj");
-        B1Button = modelImporter.Load($"3DModels/{ModelName}/B1-Button.obj");
+        B1Interior = ModelImporter.Load($"3DModels/{ModelName}/B1-Interior.obj");
+        B1Interior2 = ModelImporter.Load($"3DModels/{ModelName}/B1-Interior2.obj");
+        B1Button = ModelImporter.Load($"3DModels/{ModelName}/B1-Button.obj");
 
-        B2Interior = modelImporter.Load($"3DModels/{ModelName}/B2-Interior.obj");
-        B2Interior2 = modelImporter.Load($"3DModels/{ModelName}/B2-Interior2.obj");
-        B2Button = modelImporter.Load($"3DModels/{ModelName}/B2-Button.obj");
+        B2Interior = ModelImporter.Load($"3DModels/{ModelName}/B2-Interior.obj");
+        B2Interior2 = ModelImporter.Load($"3DModels/{ModelName}/B2-Interior2.obj");
+        B2Button = ModelImporter.Load($"3DModels/{ModelName}/B2-Button.obj");
 
-        B3Interior = modelImporter.Load($"3DModels/{ModelName}/B3-Interior.obj");
-        B3Interior2 = modelImporter.Load($"3DModels/{ModelName}/B3-Interior2.obj");
-        B3Button = modelImporter.Load($"3DModels/{ModelName}/B3-Button.obj");
+        B3Interior = ModelImporter.Load($"3DModels/{ModelName}/B3-Interior.obj");
+        B3Interior2 = ModelImporter.Load($"3DModels/{ModelName}/B3-Interior2.obj");
+        B3Button = ModelImporter.Load($"3DModels/{ModelName}/B3-Button.obj");
 
-        B4Interior = modelImporter.Load($"3DModels/{ModelName}/B4-Interior.obj");
-        B4Interior2 = modelImporter.Load($"3DModels/{ModelName}/B4-Interior2.obj");
-        B4Button = modelImporter.Load($"3DModels/{ModelName}/B4-Button.obj");
+        B4Interior = ModelImporter.Load($"3DModels/{ModelName}/B4-Interior.obj");
+        B4Interior2 = ModelImporter.Load($"3DModels/{ModelName}/B4-Interior2.obj");
+        B4Button = ModelImporter.Load($"3DModels/{ModelName}/B4-Button.obj");
 
         /*
          * TODO: @CasperH can you please help me figure out which object is the xbox button and rename it to Special.obj

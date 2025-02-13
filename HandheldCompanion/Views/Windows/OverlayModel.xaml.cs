@@ -170,6 +170,7 @@ public partial class OverlayModel : OverlayWindow
         {
             ResetModelPose();
 
+            CurrentModel?.Dispose();
             CurrentModel = newModel;
 
             ModelVisual3D.Content = CurrentModel.model3DGroup;

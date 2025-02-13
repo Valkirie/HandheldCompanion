@@ -57,23 +57,23 @@ internal class Model8BitDoLite2 : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(34.90f, -5.0f, 28.0f);
 
         // load model(s)
-        BodyBack = modelImporter.Load($"3DModels/{ModelName}/BodyBack.obj");
-        ChargerConnector = modelImporter.Load($"3DModels/{ModelName}/ChargerConnector.obj");
-        ChargerPort = modelImporter.Load($"3DModels/{ModelName}/ChargerPort.obj");
-        Logo = modelImporter.Load($"3DModels/{ModelName}/Logo.obj");
-        Home = modelImporter.Load($"3DModels/{ModelName}/Home.obj");
-        JoystickLeftCover = modelImporter.Load($"3DModels/{ModelName}/JoystickLeftCover.obj");
-        JoystickRightCover = modelImporter.Load($"3DModels/{ModelName}/JoystickRightCover.obj");
-        LED1 = modelImporter.Load($"3DModels/{ModelName}/LED1.obj");
-        LED2 = modelImporter.Load($"3DModels/{ModelName}/LED2.obj");
-        LED3 = modelImporter.Load($"3DModels/{ModelName}/LED3.obj");
-        LED4 = modelImporter.Load($"3DModels/{ModelName}/LED4.obj");
-        Pair = modelImporter.Load($"3DModels/{ModelName}/Pair.obj");
-        Power = modelImporter.Load($"3DModels/{ModelName}/Power.obj");
-        Reset = modelImporter.Load($"3DModels/{ModelName}/Reset.obj");
-        Star = modelImporter.Load($"3DModels/{ModelName}/Star.obj");
-        ShoulderRightMiddle = modelImporter.Load($"3DModels/{ModelName}/Shoulder-Left-Middle.obj");
-        ShoulderLeftMiddle = modelImporter.Load($"3DModels/{ModelName}/Shoulder-Right-Middle.obj");
+        BodyBack = ModelImporter.Load($"3DModels/{ModelName}/BodyBack.obj");
+        ChargerConnector = ModelImporter.Load($"3DModels/{ModelName}/ChargerConnector.obj");
+        ChargerPort = ModelImporter.Load($"3DModels/{ModelName}/ChargerPort.obj");
+        Logo = ModelImporter.Load($"3DModels/{ModelName}/Logo.obj");
+        Home = ModelImporter.Load($"3DModels/{ModelName}/Home.obj");
+        JoystickLeftCover = ModelImporter.Load($"3DModels/{ModelName}/JoystickLeftCover.obj");
+        JoystickRightCover = ModelImporter.Load($"3DModels/{ModelName}/JoystickRightCover.obj");
+        LED1 = ModelImporter.Load($"3DModels/{ModelName}/LED1.obj");
+        LED2 = ModelImporter.Load($"3DModels/{ModelName}/LED2.obj");
+        LED3 = ModelImporter.Load($"3DModels/{ModelName}/LED3.obj");
+        LED4 = ModelImporter.Load($"3DModels/{ModelName}/LED4.obj");
+        Pair = ModelImporter.Load($"3DModels/{ModelName}/Pair.obj");
+        Power = ModelImporter.Load($"3DModels/{ModelName}/Power.obj");
+        Reset = ModelImporter.Load($"3DModels/{ModelName}/Reset.obj");
+        Star = ModelImporter.Load($"3DModels/{ModelName}/Star.obj");
+        ShoulderRightMiddle = ModelImporter.Load($"3DModels/{ModelName}/Shoulder-Left-Middle.obj");
+        ShoulderLeftMiddle = ModelImporter.Load($"3DModels/{ModelName}/Shoulder-Right-Middle.obj");
 
         // map model(s)
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
@@ -87,7 +87,7 @@ internal class Model8BitDoLite2 : IModel
                     var filename = $"3DModels/{ModelName}/{button}-Symbol.obj";
                     if (File.Exists(filename))
                     {
-                        var model = modelImporter.Load(filename);
+                        var model = ModelImporter.Load(filename);
                         ButtonMap[button].Add(model);
 
                         // pull model

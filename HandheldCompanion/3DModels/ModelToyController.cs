@@ -77,30 +77,30 @@ internal class ModelToyController : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(62.3f, -6.3f, 62.526f);
 
         // load model(s)
-        JoystickLeftCover = modelImporter.Load($"3DModels/{ModelName}/Joystick-Left-Cover.obj");
-        JoystickRightCover = modelImporter.Load($"3DModels/{ModelName}/Joystick-Right-Cover.obj");
-        MainBodyBack = modelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
+        JoystickLeftCover = ModelImporter.Load($"3DModels/{ModelName}/Joystick-Left-Cover.obj");
+        JoystickRightCover = ModelImporter.Load($"3DModels/{ModelName}/Joystick-Right-Cover.obj");
+        MainBodyBack = ModelImporter.Load($"3DModels/{ModelName}/MainBodyBack.obj");
 
-        Smile1 = modelImporter.Load($"3DModels/{ModelName}/Smile1.obj");
-        Smile2 = modelImporter.Load($"3DModels/{ModelName}/Smile2.obj");
-        Smile3 = modelImporter.Load($"3DModels/{ModelName}/Smile3.obj");
-        Smile4 = modelImporter.Load($"3DModels/{ModelName}/Smile4.obj");
-        Smile5 = modelImporter.Load($"3DModels/{ModelName}/Smile5.obj");
-        Smile6 = modelImporter.Load($"3DModels/{ModelName}/Smile6.obj");
+        Smile1 = ModelImporter.Load($"3DModels/{ModelName}/Smile1.obj");
+        Smile2 = ModelImporter.Load($"3DModels/{ModelName}/Smile2.obj");
+        Smile3 = ModelImporter.Load($"3DModels/{ModelName}/Smile3.obj");
+        Smile4 = ModelImporter.Load($"3DModels/{ModelName}/Smile4.obj");
+        Smile5 = ModelImporter.Load($"3DModels/{ModelName}/Smile5.obj");
+        Smile6 = ModelImporter.Load($"3DModels/{ModelName}/Smile6.obj");
 
-        B1Letter = modelImporter.Load($"3DModels/{ModelName}/B1Letter.obj");
-        B1LetterInside = modelImporter.Load($"3DModels/{ModelName}/B1LetterInside.obj");
-        B2Letter = modelImporter.Load($"3DModels/{ModelName}/B2Letter.obj");
-        B3Letter = modelImporter.Load($"3DModels/{ModelName}/B3Letter.obj");
-        B3LetterInside = modelImporter.Load($"3DModels/{ModelName}/B3LetterInside.obj");
-        B4Letter = modelImporter.Load($"3DModels/{ModelName}/B4Letter.obj");
-        B4LetterInside1 = modelImporter.Load($"3DModels/{ModelName}/B4LetterInside1.obj");
-        B4LetterInside2 = modelImporter.Load($"3DModels/{ModelName}/B4LetterInside2.obj");
+        B1Letter = ModelImporter.Load($"3DModels/{ModelName}/B1Letter.obj");
+        B1LetterInside = ModelImporter.Load($"3DModels/{ModelName}/B1LetterInside.obj");
+        B2Letter = ModelImporter.Load($"3DModels/{ModelName}/B2Letter.obj");
+        B3Letter = ModelImporter.Load($"3DModels/{ModelName}/B3Letter.obj");
+        B3LetterInside = ModelImporter.Load($"3DModels/{ModelName}/B3LetterInside.obj");
+        B4Letter = ModelImporter.Load($"3DModels/{ModelName}/B4Letter.obj");
+        B4LetterInside1 = ModelImporter.Load($"3DModels/{ModelName}/B4LetterInside1.obj");
+        B4LetterInside2 = ModelImporter.Load($"3DModels/{ModelName}/B4LetterInside2.obj");
 
-        DPadLeft1 = modelImporter.Load($"3DModels/{ModelName}/DPadLeft1.obj");
-        DPadUp2 = modelImporter.Load($"3DModels/{ModelName}/DPadUp2.obj");
-        DPadRight3 = modelImporter.Load($"3DModels/{ModelName}/DPadRight3.obj");
-        DPadDown4 = modelImporter.Load($"3DModels/{ModelName}/DPadDown4.obj");
+        DPadLeft1 = ModelImporter.Load($"3DModels/{ModelName}/DPadLeft1.obj");
+        DPadUp2 = ModelImporter.Load($"3DModels/{ModelName}/DPadUp2.obj");
+        DPadRight3 = ModelImporter.Load($"3DModels/{ModelName}/DPadRight3.obj");
+        DPadDown4 = ModelImporter.Load($"3DModels/{ModelName}/DPadDown4.obj");
 
         // map model(s)
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
@@ -114,7 +114,7 @@ internal class ModelToyController : IModel
                     var filename = $"3DModels/{ModelName}/{button}-Letter.obj";
                     if (File.Exists(filename))
                     {
-                        var model = modelImporter.Load(filename);
+                        var model = ModelImporter.Load(filename);
                         ButtonMap[button].Add(model);
 
                         // pull model

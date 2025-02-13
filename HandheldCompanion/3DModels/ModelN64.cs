@@ -46,7 +46,7 @@ internal class ModelN64 : IModel
         UpwardVisibilityRotationPointRight = new Vector3D(26.4f, -7.5f, 39.2f);
 
         // load model(s)
-        JoystickShield = modelImporter.Load($"3DModels/{ModelName}/JoystickShield.obj");
+        JoystickShield = ModelImporter.Load($"3DModels/{ModelName}/JoystickShield.obj");
 
         // pull model(s)
         model3DGroup.Children.Add(JoystickShield);
