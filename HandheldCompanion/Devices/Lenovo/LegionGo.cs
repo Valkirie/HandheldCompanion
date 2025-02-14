@@ -232,7 +232,11 @@ public class LegionGo : IDevice
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
-        Capabilities |= DeviceCapabilities.BatteryChargeLimitToggle;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+
+        // battery bypass settings
+        BatteryBypassMin = 80;
+        BatteryBypassMax = 80;
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;

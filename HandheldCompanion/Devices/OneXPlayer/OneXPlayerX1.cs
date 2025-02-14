@@ -4,17 +4,17 @@ using HandheldCompanion.Misc.Threading.Tasks;
 using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
-using System;
+using System.Management;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
-using System.Management;
 
 namespace HandheldCompanion.Devices;
 
@@ -80,7 +80,7 @@ public class OneXPlayerX1 : IDevice
         if (CheckIsBatteryProtectionSupported())
         {
             EnableBatteryProtection = true;
-            Capabilities |= DeviceCapabilities.BatteryChargeLimitToggle;
+            Capabilities |= DeviceCapabilities.BatteryChargeLimit;
             Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
             Capabilities |= DeviceCapabilities.BatteryBypassCharging;
 
@@ -176,23 +176,23 @@ public class OneXPlayerX1 : IDevice
             }
         }
 
-		// manage events
-		ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-		// raise events
-		switch (ManagerFactory.settingsManager.Status)
-		{
-			default:
-			case ManagerStatus.Initializing:
-				ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-				break;
-			case ManagerStatus.Initialized:
-				QuerySettings();
-				break;
-		}
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
 
-		// allow OneX button to pass key inputs
-		ECRamDirectWrite(0x4EB, ECDetails, 0x40);
+        // allow OneX button to pass key inputs
+        ECRamDirectWrite(0x4EB, ECDetails, 0x40);
         if (ECRamReadByte(0x4EB, ECDetails) == 0x40)
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
@@ -200,14 +200,14 @@ public class OneXPlayerX1 : IDevice
     }
 
     private void QuerySettings()
-	{
+    {
         // Check Battery Protection Supported
         if (EnableBatteryProtection)
         {
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
             SettingsManager_SettingValueChanged("BatteryBypassChargingMode", ManagerFactory.settingsManager.GetString("BatteryBypassChargingMode"), false);
         }
-	}
+    }
 
     private void SettingsManager_Initialized()
     {
@@ -226,9 +226,9 @@ public class OneXPlayerX1 : IDevice
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         }
 
-		ECRamDirectWrite(0x4EB, ECDetails, 0x00);
-		if (ECRamReadByte(0x4EB, ECDetails) == 0x00)
-			LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+        ECRamDirectWrite(0x4EB, ECDetails, 0x00);
+        if (ECRamReadByte(0x4EB, ECDetails) == 0x00)
+            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
         base.Close();
     }

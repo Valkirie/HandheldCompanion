@@ -49,7 +49,7 @@ public class OneXPlayerX1Intel : OneXPlayerX1
             TDPOverrideValues = new[] { 35.0d, 35.0d, 64.0d },
             EPPOverrideEnabled = true,
             EPPOverrideValue = 32,
-        });        
+        });
     }
 
     public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)

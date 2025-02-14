@@ -2956,10 +2956,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Battery Charge Limit</value>
   </data>
   <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
-    <value>Extend the battery lifespan by setting the maximum charge level of the battery to 80%</value>
-  </data>
-  <data name="DevicePage_BatteryChargeLimit_Desc_NoPercent" xml:space="preserve">
     <value>Extend the battery lifespan by setting the maximum charge level of the battery</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent_Desc" xml:space="preserve">
+    <value>Define maximum battery charge level percentage</value>
   </data>
   <data name="DevicePage_BatteryBypassCharging" xml:space="preserve">
     <value>Battery Bypass Charging</value>
@@ -3338,5 +3338,11 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
     <value>Attempt {0}: </value>
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value>Battery options</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
+    <value>Maximum battery charge level</value>
   </data>
 </root>

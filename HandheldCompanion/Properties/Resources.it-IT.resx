@@ -2833,7 +2833,13 @@
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

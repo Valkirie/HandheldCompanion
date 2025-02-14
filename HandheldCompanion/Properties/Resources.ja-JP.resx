@@ -2873,7 +2873,13 @@
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>暖かい陽</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

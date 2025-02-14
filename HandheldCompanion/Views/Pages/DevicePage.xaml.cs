@@ -6,6 +6,7 @@ using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Controls;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -30,18 +31,16 @@ namespace HandheldCompanion.Views.Pages
 
         public DevicePage()
         {
+            DataContext = new DevicePageViewModel();
             InitializeComponent();
 
             // call function
             UpdateDevice();
 
             // Adjust UI element availability based on device capabilities
-            DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+            DynamicLightingPanel.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting) ? Visibility.Visible : Visibility.Collapsed;
             LEDBrightness.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
             StackSecondColor.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryChargeLimitToggle.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitToggle) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryChargeLimitPercent.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryBypassCharging.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
 
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
@@ -122,11 +121,8 @@ namespace HandheldCompanion.Views.Pages
                 LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
                 LedPresetsComboBox.SelectedIndex = currentSelected;
             }
-            
-            BatteryChargeLimitToggle.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitToggle) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryChargeLimitPercent.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent) ? Visibility.Visible : Visibility.Collapsed;
-            BatteryBypassCharging.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
-            
+
+            // Battery Charge settings
             if (CB_BatteryBypassCharging.ItemsSource is null)
             {
                 CB_BatteryBypassCharging.ItemsSource = IDevice.GetCurrent().BatteryBypassPresets;
@@ -500,7 +496,15 @@ namespace HandheldCompanion.Views.Pages
             control.IsEnabled = isCapabilitySupported;
             control.Visibility = isCapabilitySupported ? Visibility.Visible : Visibility.Collapsed;
         }
-        
+
+        private void Toggle_BatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimit", Toggle_BatteryChargeLimit.IsOn);
+        }
+
         private void Slider_BatteryChargeLimitPercent_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             var value = Slider_BatteryChargeLimitPercent.Value;
@@ -510,14 +514,14 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", (int) value);
+            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", (int)value);
         }
-        
+
         private void CB_BatteryBypassCharging_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CB_BatteryBypassCharging.SelectedIndex == -1)
                 return;
-            
+
             ManagerFactory.settingsManager.SetProperty("BatteryBypassChargingMode", CB_BatteryBypassCharging.SelectedIndex);
         }
 
@@ -594,14 +598,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ManagerFactory.settingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
-        }
-
-        private void Toggle_BatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (!IsLoaded)
-                return;
-
-            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimit", Toggle_BatteryChargeLimit.IsOn);
         }
 
         private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)

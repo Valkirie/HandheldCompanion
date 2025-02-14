@@ -2831,11 +2831,17 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Hotkey_OnScreenDisplay" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
     <value />
   </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value />
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

@@ -29,7 +29,7 @@ namespace HandheldCompanion.Devices.AYANEO
             this.Capabilities |= DeviceCapabilities.FanControl;
             this.Capabilities |= DeviceCapabilities.DynamicLighting;
             this.Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
-            this.Capabilities |= DeviceCapabilities.BatteryChargeLimitToggle;
+            this.Capabilities |= DeviceCapabilities.BatteryChargeLimit;
             this.Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
             this.DynamicLightingCapabilities = LEDLevel.SolidColor;

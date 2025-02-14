@@ -2914,13 +2914,13 @@
   <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
     <value>將電池最大充電水平設定為80%以延長電池壽命</value>
   </data>
-  <data name='DevicePage_BatteryChargeLimit_Desc_NoPercent' xml:space='preserve'>
+  <data name="DevicePage_BatteryChargeLimitPercent_Desc" xml:space="preserve">
     <value>設定電池最大充電水平以延長電池壽命</value>
   </data>
-  <data name='DevicePage_BatteryBypassCharging' xml:space='preserve'>
+  <data name="DevicePage_BatteryBypassCharging" xml:space="preserve">
     <value>旁路供電</value>
   </data>
-  <data name='DevicePage_BatteryBypassCharging_Desc' xml:space='preserve'>
+  <data name="DevicePage_BatteryBypassCharging_Desc" xml:space="preserve">
     <value>設定旁路供電以延長電池壽命</value>
   </data>
   <data name="BatteryBypassPreset_Disabled" xml:space="preserve">
@@ -3220,8 +3220,14 @@
   <data name="ControllerPage_SteamControllerModeExclusive" xml:space="preserve">
     <value>專用</value>
   </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value />
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

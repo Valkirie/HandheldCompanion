@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
     d:Background="White"
@@ -22,7 +23,7 @@
     <Grid Name="MainGrid" Margin="20">
         <ikw:SimpleStackPanel Spacing="24">
             <!--  Power options  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PowerOptions}" />
 
                 <!--  Configurable TDP  -->
@@ -33,8 +34,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -146,19 +147,27 @@
                             ValueChanged="NumberBox_TDPMax_ValueChanged" />
                     </Grid>
                 </Border>
+            </ikw:SimpleStackPanel>
 
+            <!--  Battery options  -->
+            <ikw:SimpleStackPanel
+                Name="BatteryChargeStack"
+                d:Visibility="Visible"
+                Spacing="6"
+                Visibility="{Binding BatteryBypassVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryOptions}" />
+
+                <!--  Battery Charge  -->
                 <Border
                     Name="BatteryChargeLimitToggle"
                     Padding="15,12,12,12"
-                    d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Collapsed">
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -190,10 +199,9 @@
                 <Border
                     Name="BatteryChargeLimitPercent"
                     Padding="15,12,12,12"
-                    d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Collapsed">
+                    IsEnabled="{Binding BatteryChargeLimitPercent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -209,11 +217,11 @@
                                 Glyph="&#xE862;" />
 
                             <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit_Desc_NoPercent}"
+                                    Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent_Desc}"
                                     TextWrapping="Wrap" />
                             </ikw:SimpleStackPanel>
                         </DockPanel>
@@ -236,8 +244,8 @@
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 LargeChange="10"
-                                Maximum="100"
-                                Minimum="70"
+                                Maximum="{Binding BatteryBypassMax, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Minimum="{Binding BatteryBypassMin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 SmallChange="5"
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="5"
@@ -255,7 +263,7 @@
                     d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Collapsed">
+                    Visibility="{Binding BatteryBypassModeVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -302,7 +310,11 @@
             </ikw:SimpleStackPanel>
 
             <!--  Dynamic lighting settings  -->
-            <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
+            <ikw:SimpleStackPanel
+                Name="DynamicLightingPanel"
+                d:Visibility="Visible"
+                Spacing="6"
+                Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLightTitle}" />
 
                 <!--  Use Dynamic lighting  -->
@@ -313,8 +325,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -787,7 +799,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Sensor options  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Name="SensorOptionsStack" Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorOptions}" />
 
                 <!--  Sensor Selection  -->
@@ -989,8 +1001,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -1046,7 +1058,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="8*" MinWidth="200" />
-                                <ColumnDefinition Width="2*" MinWidth="200" />
+                                <ColumnDefinition Width="2*" MinWidth="120" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>

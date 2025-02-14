@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices.Valve;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
@@ -28,27 +29,6 @@ public class SteamDeck : IDevice
     private static readonly IntPtr PDCT = new(0xFE700C00 + 0x01);
     private static readonly IntPtr MCBL = new(0xFE700B00 + 0x9F);
 
-    public struct DeviceVersion
-    {
-        public ushort Firmware { get; set; }
-        public byte BoardID { get; set; }
-        public byte PDCS { get; set; }
-
-        public bool BatteryTempLE { get; set; }
-        public bool MaxBatteryCharge { get; set; }
-
-        public bool IsSupported(ushort deviceFirmware, byte deviceBoardID, byte devicePDCS)
-        {
-            if (Firmware != 0 && Firmware != deviceFirmware)
-                return false;
-            if (BoardID != 0 && BoardID != deviceBoardID)
-                return false;
-            if (PDCS != 0 && PDCS != devicePDCS)
-                return false;
-            return true;
-        }
-    };
-
     private static readonly DeviceVersion[] deviceVersions =
     {
         // Steam Deck - LCD version
@@ -61,8 +41,13 @@ public class SteamDeck : IDevice
         new DeviceVersion() { Firmware = 0x1090, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
     };
 
-    public bool BatteryTempLE { get; set; }
-    public bool MaxBatteryCharge { get; set; }
+    public static ushort FirmwareVersion { get; private set; }
+    public static byte BoardID { get; private set; }
+    public static byte PDCS { get; private set; }
+
+    public override bool IsOpen => inpOut is not null;
+    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault(version => version.IsSupported(FirmwareVersion, BoardID, PDCS));
+    public override bool IsSupported => SupportedDevice is not null && SupportedDevice?.Firmware != 0;
 
     private InpOut inpOut;
 
@@ -78,10 +63,14 @@ public class SteamDeck : IDevice
 
         if (IsSupported)
         {
-            bool maxBatteryCharge = SupportedDevice?.MaxBatteryCharge ?? false;
             Capabilities |= DeviceCapabilities.FanControl;
-            Capabilities |= maxBatteryCharge ? DeviceCapabilities.BatteryChargeLimitToggle : DeviceCapabilities.None;
-            Capabilities |= maxBatteryCharge ? DeviceCapabilities.BatteryChargeLimitPercent : DeviceCapabilities.None;
+
+            bool HasBatteryChargeLimitSupport = SupportedDevice?.MaxBatteryCharge ?? false;
+            if (HasBatteryChargeLimitSupport)
+            {
+                Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+                Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
+            }
         }
 
         // https://www.steamdeck.com/en/tech
@@ -108,14 +97,6 @@ public class SteamDeck : IDevice
 
         return defaultGlyph;
     }
-
-    public static ushort FirmwareVersion { get; private set; }
-    public static byte BoardID { get; private set; }
-    public static byte PDCS { get; private set; }
-
-    public override bool IsOpen => inpOut is not null;
-    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault(version => version.IsSupported(FirmwareVersion, BoardID, PDCS));
-    public override bool IsSupported => SupportedDevice is not null && SupportedDevice?.Firmware != 0;
 
     public override bool Open()
     {

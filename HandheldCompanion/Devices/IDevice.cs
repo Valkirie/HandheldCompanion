@@ -31,7 +31,7 @@ public enum DeviceCapabilities : ushort
     DynamicLighting = 8,
     DynamicLightingBrightness = 16,
     DynamicLightingSecondLEDColor = 32,
-    BatteryChargeLimitToggle = 64,
+    BatteryChargeLimit = 64,
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
 }
@@ -63,8 +63,9 @@ public struct ECDetails
 public abstract class IDevice
 {
     public delegate void KeyPressedEventHandler(ButtonFlags button);
+    public event KeyPressedEventHandler KeyPressed;
     public delegate void KeyReleasedEventHandler(ButtonFlags button);
-    public delegate void PowerStatusChangedEventHandler(IDevice device);
+    public event KeyReleasedEventHandler KeyReleased;
 
     public static readonly Guid BetterBatteryGuid = new Guid("961cc777-2547-4f9d-8174-7d86181b8a7a");
     public static readonly Guid BetterPerformanceGuid = new Guid("3af9B8d9-7c97-431d-ad78-34a8bfea439f");
@@ -100,6 +101,9 @@ public abstract class IDevice
     public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
     public List<LEDPreset> LEDPresets { get; protected set; } = [];
     public List<BatteryBypassPreset> BatteryBypassPresets { get; protected set; } = [];
+
+    public int BatteryBypassMin = 50;   // Arbitrary
+    public int BatteryBypassMax = 100;  // Shouldn't it be 90% ?
 
     protected const byte EC_OBF = 0x01;  // Output Buffer Full
     protected const byte EC_IBF = 0x02;  // Input Buffer Full
@@ -264,9 +268,6 @@ public abstract class IDevice
     public virtual bool IsSupported => true;
 
     public Layout DefaultLayout { get; set; } = LayoutTemplate.DefaultLayout.Layout;
-
-    public event KeyPressedEventHandler KeyPressed;
-    public event KeyReleasedEventHandler KeyReleased;
 
     public string ManufacturerName = string.Empty;
     public string ProductName = string.Empty;

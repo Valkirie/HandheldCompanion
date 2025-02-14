@@ -1,5 +1,4 @@
 using HandheldCompanion.Properties;
-using System;
 
 namespace HandheldCompanion.Models;
 

@@ -13,6 +13,6 @@ public class OneXPlayerX1AMD : OneXPlayerX1
 
     public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
     {
-        return majorVersion >=1 && minorVersion >= 3;
+        return majorVersion >= 1 && minorVersion >= 3;
     }
 }

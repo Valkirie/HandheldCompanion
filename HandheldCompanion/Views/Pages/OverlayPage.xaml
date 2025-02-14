@@ -12,7 +12,7 @@
     Name="Overlay"
     Title="{l:Static resx:Resources.OverlayPage_Overlay}"
     d:Background="Black"
-    d:DesignHeight="1800"
+    d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -708,8 +708,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -806,8 +806,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -845,8 +845,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
