@@ -13,6 +13,8 @@ public class ScreenResolution : IComparable<ScreenResolution>
     public int Width;
     public int BitsPerPel;
 
+    public ScreenOrientation Orientation => Width > Height ? ScreenOrientation.Landscape : ScreenOrientation.Portrait;
+
     public ScreenResolution(int dmPelsWidth, int dmPelsHeight, int bitsPerPel)
     {
         Width = dmPelsWidth;
@@ -95,6 +97,12 @@ public class ScreenDivider
     }
 }
 
+public enum ScreenOrientation
+{
+    Landscape = 0,
+    Portrait = 1
+}
+
 public class DesktopScreen
 {
     public DisplayDevice devMode;
@@ -105,6 +113,7 @@ public class DesktopScreen
 
     public List<ScreenResolution> screenResolutions = [];
     public List<ScreenDivider> screenDividers = [];
+    public ScreenResolution nativeResolution;
 
     private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = [];
 

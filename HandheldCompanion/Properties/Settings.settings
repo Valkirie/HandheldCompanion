@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HandheldCompanion.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
@@ -101,9 +101,6 @@
     <Setting Name="MainWindowBackdrop" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="UseEnergyStar" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="UpdateUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.github.com/repos/Valkirie/HandheldCompanion</Value>
     </Setting>
@@ -160,9 +157,6 @@
     </Setting>
     <Setting Name="OnScreenDisplayRefreshRate" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1000</Value>
-    </Setting>
-    <Setting Name="NativeDisplayOrientation" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="PlatformRTSSEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -313,4 +307,3 @@
     </Setting>
   </Settings>
 </SettingsFile>
-

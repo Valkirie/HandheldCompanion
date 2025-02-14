@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using WindowsDisplayAPI;
 using WindowsDisplayAPI.DisplayConfig;
 using DisplayDevice = HandheldCompanion.Misc.DisplayDevice;
+using ScreenOrientation = HandheldCompanion.Managers.Desktop.ScreenOrientation;
 
 namespace HandheldCompanion.Managers;
 
@@ -244,26 +245,51 @@ public class MultimediaManager : IManager
                     desktopScreen.screenResolutions.Add(res);
             }
 
-            // sort resolutions
-            desktopScreen.screenResolutions.Sort();
+            // get maximum resolution
+            ScreenResolution currentResolution = new(screen.Bounds.Width, screen.Bounds.Height, screen.BitsPerPixel);
 
-            // get native resolution (old)
-            ScreenResolution nativeResolution = desktopScreen.screenResolutions.First();
-            int nativeWidth = nativeResolution.Width;
-            int nativeHeight = nativeResolution.Height;
+            // store maximum resolution as temporary native resolution
+            desktopScreen.nativeResolution = new(screen.Bounds.Width, screen.Bounds.Height, screen.BitsPerPixel);
 
-            // get native resolution (new)
+            int nativeWidth = desktopScreen.nativeResolution.Width;
+            int nativeHeight = desktopScreen.nativeResolution.Height;
+
+            // get native resolution
             Regex regex = new Regex(@"^\\\\\?\\DISPLAY#[^#]+#(?<instance>[^#]+)(?=[#\{])", RegexOptions.IgnoreCase);
             Match match = regex.Match(desktopScreen.DevicePath);
-            if (match.Success)
+            if (match.Success && match.Groups.ContainsKey("instance"))
             {
                 string instanceKeyName = match.Groups["instance"].Value;
                 GetNativeResolutions(instanceKeyName, ref nativeWidth, ref nativeHeight);
+
+                // update native resolution
+                desktopScreen.nativeResolution.Width = nativeWidth;
+                desktopScreen.nativeResolution.Height = nativeHeight;
             }
 
             // some devices have portrait-native display and therefore reversed width/height
-            if (nativeHeight > nativeWidth)
-                (nativeWidth, nativeHeight) = (nativeHeight, nativeWidth);
+            if (desktopScreen.nativeResolution.Orientation == ScreenOrientation.Portrait)
+            {
+                // swap values
+                if (currentResolution.Orientation == ScreenOrientation.Landscape)
+                    (nativeWidth, nativeHeight) = (nativeHeight, nativeWidth);
+            }
+
+            // sort resolutions, based on orientation
+            if (currentResolution.Orientation == ScreenOrientation.Landscape)
+            {
+                desktopScreen.screenResolutions = desktopScreen.screenResolutions
+                    .OrderByDescending(r => r.Width)
+                    .ThenByDescending(r => r.Height)
+                    .ToList();
+            }
+            else
+            {
+                desktopScreen.screenResolutions = desktopScreen.screenResolutions
+                    .OrderByDescending(r => r.Height)
+                    .ThenByDescending(r => r.Width)
+                    .ToList();
+            }
 
             // get integer scaling dividers
             int idx = 1;

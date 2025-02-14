@@ -27,6 +27,8 @@ namespace HandheldCompanion.Misc
             }
         }
 
+        private AutomationEventHandler _windowClosedHandler;
+
         public ProcessWindow(AutomationElement element, bool isPrimary)
         {
             Hwnd = element.Current.NativeWindowHandle;
@@ -42,11 +44,12 @@ namespace HandheldCompanion.Misc
                     AutomationElement.NameProperty,
                     AutomationElement.BoundingRectangleProperty);
 
+                _windowClosedHandler = OnWindowClosed;
                 Automation.AddAutomationEventHandler(
                     WindowPattern.WindowClosedEvent,
                     element,
                     TreeScope.Subtree,
-                    OnWindowClosed);
+                    _windowClosedHandler);
             }
 
             RefreshName();
@@ -113,7 +116,7 @@ namespace HandheldCompanion.Misc
                     Automation.RemoveAutomationEventHandler(
                         WindowPattern.WindowClosedEvent,
                         Element,
-                        OnWindowClosed);
+                        _windowClosedHandler);
                 }
                 catch { }
 

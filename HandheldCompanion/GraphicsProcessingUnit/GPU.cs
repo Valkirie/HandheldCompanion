@@ -1,6 +1,8 @@
 ﻿using SharpDX.Direct3D9;
 using System;
 using System.Management;
+using System.Threading;
+using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
@@ -16,6 +18,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public event GPUScalingChangedEvent GPUScalingChanged;
         public delegate void GPUScalingChangedEvent(bool Supported, bool Enabled, int Mode);
+
+        // true: GPU is busy, false: GPU is free
+        public event StatusChangedEvent StatusChanged;
+        public delegate void StatusChangedEvent(bool status);
         #endregion
 
         public AdapterInformation adapterInformation;
@@ -46,6 +52,29 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected object telemetryLock = new();
         protected object functionLock = new();
 
+        private Timer BusyTimer;
+        private bool busyEventRaised = false;
+
+        public bool IsBusy
+        {
+            get
+            {
+                bool lockTaken = false;
+                try
+                {
+                    // Try to enter the lock immediately
+                    Monitor.TryEnter(functionLock, 0, ref lockTaken);
+                    // If we couldn't take the lock, it means someone else is holding it.
+                    return !lockTaken;
+                }
+                finally
+                {
+                    if (lockTaken)
+                        Monitor.Exit(functionLock);
+                }
+            }
+        }
+
         private bool _disposed = false; // Prevent multiple disposals
 
         public enum UpdateGraphicsSettingsSource
@@ -57,6 +86,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             AFMF,
         }
 
+        /// <summary>
+        /// Execute a function while managing the busy/free status.
+        /// A class-level timer is started before calling func().
+        /// If func() runs longer than 1 second, the timer elapses and raises StatusChanged(true).
+        /// When func() finishes, if busy status was raised, StatusChanged(false) is raised.
+        /// </summary>
         protected T Execute<T>(Func<T> func, T defaultValue)
         {
             if (!halting && IsInitialized)
@@ -65,7 +100,24 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 {
                     try
                     {
-                        return func();
+                        // Reset flag
+                        busyEventRaised = false;
+
+                        // Reset timer
+                        BusyTimer.Stop();
+                        BusyTimer.Start();
+
+                        // Execute function
+                        T result = func();
+
+                        // Stop timer since func() has completed
+                        BusyTimer.Stop();
+
+                        // If the busy event was raised, signal that we're now free.
+                        if (busyEventRaised)
+                            StatusChanged?.Invoke(false);
+
+                        return result;
                     }
                     catch { }
                 }
@@ -77,6 +129,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public GPU(AdapterInformation adapterInformation)
         {
             this.adapterInformation = adapterInformation;
+
+            // Initialize the busy timer with a 1 second interval and set AutoReset to false.
+            BusyTimer = new(1000) { AutoReset = false };
+            BusyTimer.Elapsed += BusyTimer_Elapsed;
+        }
+
+        private void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            busyEventRaised = true;
+            StatusChanged?.Invoke(true);
         }
 
         ~GPU()
@@ -111,6 +173,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             if (TelemetryTimer != null && TelemetryTimer.Enabled)
                 TelemetryTimer.Stop();
+
+            if (BusyTimer != null && BusyTimer.Enabled)
+                BusyTimer.Stop();
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
@@ -307,10 +372,15 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 TelemetryTimer?.Dispose();
                 TelemetryTimer = null;
 
+                BusyTimer?.Stop();
+                BusyTimer?.Dispose();
+                BusyTimer = null;
+
                 // Clear event handlers to prevent memory leaks
                 IntegerScalingChanged = null;
                 ImageSharpeningChanged = null;
                 GPUScalingChanged = null;
+                StatusChanged = null;
             }
 
             _disposed = true;

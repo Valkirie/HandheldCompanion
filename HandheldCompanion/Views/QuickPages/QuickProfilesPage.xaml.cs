@@ -205,6 +205,7 @@ public partial class QuickProfilesPage : Page
 
         GPU.IntegerScalingChanged += OnIntegerScalingChanged;
         GPU.GPUScalingChanged += OnGPUScalingChanged;
+        GPU.StatusChanged += OnStatusChanged;
 
         HasScalingModeSupport = GPU.HasScalingModeSupport();
         HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
@@ -223,6 +224,16 @@ public partial class QuickProfilesPage : Page
         UpdateGraphicsSettingsUI();
     }
 
+    private void OnStatusChanged(bool status)
+    {
+        // UI thread (async)
+        UIHelper.TryInvoke(() =>
+        {
+            GraphicsSettingsExpander.IsEnabled = !status;
+            GraphicsSettingsRing.Visibility = status ? Visibility.Visible: Visibility.Collapsed;
+        });
+    }
+
     private void GPUManager_Unhooked(GPU GPU)
     {
         if (GPU is AMDGPU amdGPU)
@@ -233,6 +244,7 @@ public partial class QuickProfilesPage : Page
 
         GPU.IntegerScalingChanged -= OnIntegerScalingChanged;
         GPU.GPUScalingChanged -= OnGPUScalingChanged;
+        GPU.StatusChanged -= OnStatusChanged;
 
         // UI thread
         UIHelper.TryInvoke(() =>

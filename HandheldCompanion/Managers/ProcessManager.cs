@@ -60,17 +60,21 @@ public static class ProcessManager
 
     private static ProcessEx foregroundProcess;
     private static IntPtr foregroundWindow;
+    
+    private static AutomationEventHandler _windowOpenedHandler;
 
     public static bool IsInitialized;
 
     static ProcessManager()
     {
         // hook: on window opened
+        _windowOpenedHandler = OnWindowOpened;
+
         Automation.AddAutomationEventHandler(
             WindowPattern.WindowOpenedEvent,
             AutomationElement.RootElement,
             TreeScope.Children,
-            OnWindowOpened);
+            _windowOpenedHandler);
 
         // Set up the WinEvent hook
         winDelegate = new WinEventDelegate(WinEventProc);
@@ -110,7 +114,7 @@ public static class ProcessManager
         Automation.RemoveAutomationEventHandler(
             WindowPattern.WindowOpenedEvent,
             AutomationElement.RootElement,
-            OnWindowOpened);
+            _windowOpenedHandler);
 
         // Unhook the event when no longer needed
         if (m_hhook != IntPtr.Zero)

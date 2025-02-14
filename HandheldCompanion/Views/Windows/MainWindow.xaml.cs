@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -640,6 +641,9 @@ public partial class MainWindow : GamepadWindow
         hotkeysPage.Page_Closed();
         layoutPage.Page_Closed();
         notificationsPage.Page_Closed();
+
+        // remove all automation event handlers
+        Automation.RemoveAllEventHandlers();
 
         // stop managers
         VirtualManager.Stop();
