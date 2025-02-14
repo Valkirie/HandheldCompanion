@@ -91,8 +91,10 @@ namespace HandheldCompanion.Commands
         }
 
         [JsonIgnore] public virtual bool IsToggled => false;
+
         [JsonIgnore] public bool IsEnabled = true;
         [JsonIgnore] public bool CanCustom = true;
+        [JsonIgnore] public bool CanUnpin = true;
 
         public virtual object Clone()
         {

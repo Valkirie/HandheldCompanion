@@ -15,6 +15,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.Glyph = "\uE961";
             base.OnKeyUp = true;
             base.CanCustom = false;
+            base.CanUnpin = false;
 
             Update();
 

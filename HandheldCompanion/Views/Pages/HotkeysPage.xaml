@@ -221,7 +221,8 @@
                                                 Margin="6,0,0,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Stretch"
-                                                Command="{Binding EraseButtonCommand}">
+                                                Command="{Binding EraseButtonCommand}"
+                                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ui:FontIcon
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
@@ -234,7 +235,8 @@
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Stretch"
                                                 Command="{Binding PinButtonCommand}"
-                                                IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ui:FontIcon
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
@@ -256,7 +258,10 @@
                                 </Expander.Header>
 
                                 <Expander.Content>
-                                    <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                                    <ikw:SimpleStackPanel
+                                        Margin="30,0,0,0"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Spacing="12">
 
                                         <!--  ICommand  -->
                                         <Grid>

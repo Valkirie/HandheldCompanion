@@ -182,6 +182,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool IsPinned => Hotkey.IsPinned;
+        public bool CanUnpin => Hotkey.command.CanUnpin;
 
         private bool _IsListening = false;
         public bool IsListening => _IsListening;
@@ -499,7 +500,8 @@ namespace HandheldCompanion.ViewModels
                     else
                     {
                         ICommands command = Activator.CreateInstance(function) as ICommands;
-                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, true));
+                        if (command.CanUnpin)
+                            FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, true));
                     }
                 }
             }
