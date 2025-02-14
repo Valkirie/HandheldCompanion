@@ -2383,7 +2383,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist &quot;.\SentryConfig.cs.bak&quot; (&#xA;    copy &quot;.\SentryConfig.cs.bak&quot; &quot;.\SentryConfig.cs&quot;&#xA;    del &quot;.\SentryConfig.cs.bak&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;if exist &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; (&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /fd SHA256 /f &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; /p HandheldCompanion /d &quot;Handheld Companion&quot; /du &quot;https://github.com/Valkirie/HandheldCompanion&quot; /t http://timestamp.digicert.com &quot;$(OutDir)HandheldCompanion.exe&quot;&#xD;&#xA;)" />
+    <Exec Command="if exist &quot;.\SentryConfig.cs.bak&quot; (&#xA;    copy &quot;.\SentryConfig.cs.bak&quot; &quot;.\SentryConfig.cs&quot;&#xA;    del &quot;.\SentryConfig.cs.bak&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;if exist &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; (&#xA;  echo Signing executable...&#xA;  &quot;C:\Program Files (x86)\Windows Kits\10\bin\$(TargetPlatformVersion)\x64\signtool.exe&quot; sign /fd SHA256 /f &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; /p HandheldCompanion /d &quot;Handheld Companion&quot; /du &quot;https://github.com/Valkirie/HandheldCompanion&quot; /t http://timestamp.digicert.com &quot;$(OutDir)HandheldCompanion.exe&quot;&#xA;  if errorlevel 1 (&#xA;    echo Post-build signing failed.&#xA;    exit /B 1&#xA;  ) else (&#xA;    echo Post-build signing succeeded.&#xA;  )&#xA;)" />
   </Target>
 
 </Project>
