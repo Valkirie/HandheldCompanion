@@ -97,6 +97,9 @@ public partial class OverlayQuickTools : GamepadWindow
         // used by gamepad navigation
         Tag = "QuickTools";
 
+        Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("QuickToolsWidth"));
+        Height = (int)Math.Max(MinHeight, ManagerFactory.settingsManager.GetDouble("QuickToolsHeight"));
+
         PreviewKeyDown += HandleEsc;
 
         clockUpdateTimer = new DispatcherTimer

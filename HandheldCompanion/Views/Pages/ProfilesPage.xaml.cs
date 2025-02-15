@@ -88,7 +88,8 @@ public partial class ProfilesPage : Page
                 UIHelper.TryInvoke(() =>
                 {
                     DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
+                    if (desktopScreen is not null)
+                        desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
                 });
             }
             finally

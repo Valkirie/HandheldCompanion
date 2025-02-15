@@ -28,7 +28,7 @@ public static class DynamicLightingManager
     private static readonly Timer DynamicLightingTimer;
 
     private static Device? device;
-    private static Surface surface;
+    private static Surface? surface;
     private static DataRectangle dataRectangle;
     private static IntPtr dataPointer;
 
@@ -110,7 +110,8 @@ public static class DynamicLightingManager
 
     private static void QueryMedia()
     {
-        MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
+        if (ManagerFactory.multimediaManager.PrimaryDesktop is not null)
+            MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
     }
 
     private static void MultimediaManager_Initialized()
@@ -141,7 +142,10 @@ public static class DynamicLightingManager
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
 
         StopAmbilight();
-        ReleaseDirect3DDevice();
+
+        // dispose resources
+        device?.Dispose();
+        surface?.Dispose();
 
         // restore system setting AmbientLightingEnabled
         SetAmbientLightingEnabled(OSAmbientLightingEnabled);
@@ -197,9 +201,11 @@ public static class DynamicLightingManager
         try
         {
             // Create a device to access the screen
+            device?.Dispose();
             device = new Device(new Direct3D(), 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.SoftwareVertexProcessing, new PresentParameters(screenWidth, screenHeight));
 
             // Create a surface to capture the screen
+            surface?.Dispose();
             surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight, Format.A8R8G8B8, Pool.Scratch);
         }
         catch (SharpDXException ex)
@@ -210,27 +216,9 @@ public static class DynamicLightingManager
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
 
                 // Recreate the device and resources
-                ReleaseDirect3DDevice();
                 InitializeDirect3DDevice();
             }
-            else
-            {
-                // Handle other exceptions here
-            }
         }
-    }
-
-    private static void ReleaseDirect3DDevice()
-    {
-        if (device is null || device.IsDisposed)
-            return;
-
-        try
-        {
-            device.Dispose();
-            device = null;
-        }
-        catch { }
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)

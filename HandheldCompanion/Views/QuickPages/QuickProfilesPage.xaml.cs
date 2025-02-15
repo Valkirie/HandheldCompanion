@@ -172,7 +172,8 @@ public partial class QuickProfilesPage : Page
                 UIHelper.TryInvoke(() =>
                 {
                     DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
+                    if (desktopScreen is not null)
+                        desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
                 });
             }
             finally
@@ -230,7 +231,7 @@ public partial class QuickProfilesPage : Page
         UIHelper.TryInvoke(() =>
         {
             GraphicsSettingsExpander.IsEnabled = !status;
-            GraphicsSettingsRing.Visibility = status ? Visibility.Visible: Visibility.Collapsed;
+            GraphicsSettingsRing.Visibility = status ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 

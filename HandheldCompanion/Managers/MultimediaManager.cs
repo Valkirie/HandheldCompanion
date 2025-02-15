@@ -317,6 +317,7 @@ public class MultimediaManager : IManager
             bool IsNew = PrimaryDesktop?.DevicePath != newPrimary.DevicePath;
 
             // set or update current primary
+            PrimaryDesktop?.Dispose();
             PrimaryDesktop = newPrimary;
 
             // looks like we have a new primary screen
@@ -344,7 +345,10 @@ public class MultimediaManager : IManager
         }
 
         // clear array and transfer screens
+        foreach (var screen in AllScreens.Values)
+            screen.Dispose();
         AllScreens.Clear();
+
         foreach (DesktopScreen desktop in desktopScreens.Values)
             AllScreens.TryAdd(desktop.DevicePath, desktop);
 
