@@ -351,7 +351,7 @@ public class MultimediaManager : IManager
 
         foreach (DesktopScreen desktop in desktopScreens.Values)
             AllScreens.TryAdd(desktop.DevicePath, desktop);
-
+        
         // raise event (Display settings were updated)
         ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
         if (screenResolution is not null)

@@ -27,8 +27,10 @@ public static class DynamicLightingManager
 
     private static readonly Timer DynamicLightingTimer;
 
+    private static Direct3D? direct3D;
     private static Device? device;
     private static Surface? surface;
+
     private static DataRectangle dataRectangle;
     private static IntPtr dataPointer;
 
@@ -145,7 +147,11 @@ public static class DynamicLightingManager
 
         // dispose resources
         device?.Dispose();
+        device = null;
         surface?.Dispose();
+        surface = null;
+        direct3D?.Dispose();
+        direct3D = null;
 
         // restore system setting AmbientLightingEnabled
         SetAmbientLightingEnabled(OSAmbientLightingEnabled);
@@ -200,9 +206,13 @@ public static class DynamicLightingManager
     {
         try
         {
+            // Create or reuse the Direct3D instance
+            direct3D?.Dispose();
+            direct3D = new Direct3D();
+
             // Create a device to access the screen
             device?.Dispose();
-            device = new Device(new Direct3D(), 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.SoftwareVertexProcessing, new PresentParameters(screenWidth, screenHeight));
+            device = new Device(direct3D, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.SoftwareVertexProcessing, new PresentParameters(screenWidth, screenHeight));
 
             // Create a surface to capture the screen
             surface?.Dispose();
