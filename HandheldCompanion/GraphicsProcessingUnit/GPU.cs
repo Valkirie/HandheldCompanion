@@ -47,7 +47,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevImageSharpening = false;
         protected int prevImageSharpeningSharpness = -1;
 
-        protected bool halting = false;
+        protected volatile bool halting = false;
         protected object updateLock = new();
         protected object telemetryLock = new();
         protected object functionLock = new();
@@ -360,6 +360,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
+            halting = true;
 
             if (disposing)
             {
