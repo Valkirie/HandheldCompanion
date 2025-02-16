@@ -60,7 +60,7 @@ public static class ProcessManager
 
     private static ProcessEx foregroundProcess;
     private static IntPtr foregroundWindow;
-    
+
     private static AutomationEventHandler _windowOpenedHandler;
 
     public static bool IsInitialized;
@@ -581,7 +581,8 @@ public static class ProcessManager
             }
             catch (Win32Exception) { }
             catch (InvalidOperationException) { }
-        };
+        }
+        ;
 
         return false;
     }

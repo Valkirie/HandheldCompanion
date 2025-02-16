@@ -221,7 +221,8 @@ public abstract class IPlatform : IDisposable
             }
             catch (Win32Exception) { }
             catch (InvalidOperationException) { }
-        };
+        }
+        ;
 
         return false;
     }

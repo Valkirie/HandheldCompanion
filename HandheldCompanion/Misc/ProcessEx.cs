@@ -328,7 +328,8 @@ public class ProcessEx : IDisposable
                 }
                 catch (Win32Exception) { }
                 catch (InvalidOperationException) { }
-            };
+            }
+            ;
         }
 
         return false;
