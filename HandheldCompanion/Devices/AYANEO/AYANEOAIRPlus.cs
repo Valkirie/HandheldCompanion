@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
-public class AYANEOAIRPlus : AYANEODeviceCEii
+public class AYANEOAIRPlus : AYANEOAIR
 {
     public AYANEOAIRPlus()
     {
