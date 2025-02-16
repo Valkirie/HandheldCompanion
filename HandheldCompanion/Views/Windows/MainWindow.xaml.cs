@@ -528,18 +528,19 @@ public partial class MainWindow : GamepadWindow
                 {
                     if (prevStatus == SystemManager.SystemStatus.SystemReady)
                     {
+                        SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS | SystemManager.ES_SYSTEM_REQUIRED);
+                        LogManager.LogInformation("System is about to suspend. Performing tasks.");
+
                         // when device goes to sleep
                         pendingTime = DateTime.Now;
 
                         // suspend manager(s)
-                        ControllerManager.Suspend(true);
+                        GPUManager.Stop();
                         VirtualManager.Suspend(true);
-                        await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
-
+                        ControllerManager.Suspend(true);
                         TimerManager.Stop();
                         SensorsManager.Stop();
                         InputsManager.Stop(false);
-                        GPUManager.Stop();
 
                         // suspend platform(s)
                         PlatformManager.LibreHardwareMonitor.Stop();
@@ -549,7 +550,7 @@ public partial class MainWindow : GamepadWindow
 
                         // Allow system to sleep
                         SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS);
-                        LogManager.LogDebug("Tasks completed. System can now suspend if needed.");
+                        LogManager.LogInformation("Tasks completed. System can now suspend.");
                     }
                 }
                 break;

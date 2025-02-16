@@ -95,7 +95,7 @@ namespace HandheldCompanion.Controllers
 
         public override void UpdateInputs(long ticks, float delta)
         {
-            if (input is null || IsDisposing)
+            if (input is null || IsDisposing || IsDisposed)
                 return;
 
             ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
@@ -250,7 +250,7 @@ namespace HandheldCompanion.Controllers
             }
             catch (Exception ex)
             {
-                LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
+                LogManager.LogError("Couldn't initialize {0}. Exception: {1}", typeof(GordonController), ex.Message);
                 return;
             }
         }
@@ -275,6 +275,19 @@ namespace HandheldCompanion.Controllers
             catch
             {
                 return;
+            }
+        }
+
+        public override void Gone()
+        {
+            lock (hidLock)
+            {
+                if (Controller is not null)
+                {
+                    Controller.OnControllerInputReceived -= HandleControllerInput;
+                    Controller.EndRead();
+                    Controller = null;
+                }
             }
         }
 

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace HandheldCompanion;
 
 [StructLayout(LayoutKind.Sequential)]
-public class PnPDetails : IDisposable
+public class PnPDetails
 {
     public string deviceInstanceId = string.Empty;
     public string baseContainerDeviceInstanceId = string.Empty;
@@ -210,10 +210,5 @@ public class PnPDetails : IDisposable
         catch { }
 
         return false;
-    }
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
     }
 }

@@ -179,7 +179,7 @@ public static class ControllerManager
                 controller.Unhide(false);
 
             // dispose controller
-            controller.Dispose();
+            // controller.Dispose();
         }
 
         IsInitialized = false;
@@ -564,8 +564,7 @@ public static class ControllerManager
                 else
                 {
                     // unsupported controller
-                    LogManager.LogError("Couldn't find matching DInput controller: VID:{0} and PID:{1}",
-                        details.GetVendorID(), details.GetProductID());
+                    LogManager.LogWarning("Couldn't find matching DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 }
 
                 if (controller is not null)
@@ -651,7 +650,7 @@ public static class ControllerManager
 
             if (controller == null)
             {
-                LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                LogManager.LogWarning("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 return;
             }
 
@@ -662,7 +661,7 @@ public static class ControllerManager
             string path = controller.GetContainerInstanceId();
             Controllers[path] = controller;
 
-            LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
+            LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
             ToastManager.SendToast(controller.ToString(), "detected");
 
@@ -704,11 +703,13 @@ public static class ControllerManager
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
 
-            LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
+            LogManager.LogInformation("Generic controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
             ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
             if (!IsPowerCycling)
             {
+                controller.Gone();
+
                 if (controller.IsPhysical())
                     controller.Unhide(false);
 
@@ -795,7 +796,7 @@ public static class ControllerManager
 
             if (controller == null)
             {
-                LogManager.LogError("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                LogManager.LogWarning("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 return;
             }
 
@@ -806,7 +807,7 @@ public static class ControllerManager
             string path = details.baseContainerDeviceInstanceId;
             Controllers[path] = controller;
 
-            LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
+            LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
             ToastManager.SendToast(controller.ToString(), "detected");
 
@@ -843,11 +844,13 @@ public static class ControllerManager
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
 
-            LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
+            LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
             ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
             if (!IsPowerCycling)
             {
+                controller.Gone();
+
                 if (controller.IsPhysical())
                     controller.Unhide(false);
 
@@ -969,7 +972,7 @@ public static class ControllerManager
                             ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                         }
                     }
-                    else
+                    else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
                         // resume all physical controllers
                         ResumeControllers();
@@ -989,11 +992,8 @@ public static class ControllerManager
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
-        if (status != managerStatus)
-        {
-            managerStatus = status;
-            StatusChanged?.Invoke(status, ControllerManagementAttempts);
-        }
+        managerStatus = status;
+        StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }
 
     private static void PickTimer_Elapsed(object? sender, ElapsedEventArgs e)

@@ -90,8 +90,8 @@ namespace HandheldCompanion.Controllers
 
         protected object hidLock = new();
 
-        private bool _disposed = false; // Prevent multiple disposals
-        protected bool IsDisposing = false;
+        public volatile bool IsDisposed = false; // Prevent multiple disposals
+        public volatile bool IsDisposing = false;
 
         public virtual bool IsReady => true;
 
@@ -423,6 +423,9 @@ namespace HandheldCompanion.Controllers
             VisibilityChanged?.Invoke(false);
         }
 
+        public virtual void Gone()
+        { }
+
         public virtual void CyclePort()
         {
             if (Details is null)
@@ -728,16 +731,12 @@ namespace HandheldCompanion.Controllers
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (IsDisposed) return;
 
             if (disposing)
             {
                 // Free managed resources
                 IsDisposing = true;
-
-                // Dispose PnPDetails if applicable
-                Details?.Dispose();
-                Details = null;
 
                 // Dispose Inputs
                 Inputs?.Dispose();
@@ -760,7 +759,8 @@ namespace HandheldCompanion.Controllers
                 rumbleTask = null;
             }
 
-            _disposed = true;
+            IsDisposing = false;
+            IsDisposed = true;
         }
     }
 }

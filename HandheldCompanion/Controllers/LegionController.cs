@@ -202,7 +202,7 @@ namespace HandheldCompanion.Controllers
                 }
                 catch (Exception ex)
                 {
-                    LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
+                    LogManager.LogError("Couldn't initialize {0}. Exception: {1}", typeof(LegionController), ex.Message);
                     return;
                 }
             }
@@ -217,6 +217,19 @@ namespace HandheldCompanion.Controllers
                     // close controller
                     Controller.OnControllerInputReceived -= Controller_OnControllerInputReceived;
                     Controller.Close();
+                }
+            }
+        }
+
+        public override void Gone()
+        {
+            lock (hidLock)
+            {
+                if (Controller is not null)
+                {
+                    Controller.OnControllerInputReceived -= Controller_OnControllerInputReceived;
+                    Controller.EndRead();
+                    Controller = null;
                 }
             }
         }
@@ -247,7 +260,7 @@ namespace HandheldCompanion.Controllers
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
-            if (!IsConnected() || IsDisposing)
+            if (!IsConnected() || IsDisposing || IsDisposed)
                 return;
 
             base.UpdateInputs(ticks, delta, false);

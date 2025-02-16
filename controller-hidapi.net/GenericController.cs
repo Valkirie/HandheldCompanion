@@ -37,9 +37,14 @@ namespace controller_hidapi.net
 
         public virtual void Close()
         {
+            EndRead();
+            _hidDevice.Close();
+        }
+
+        public virtual void EndRead()
+        {
             if (_hidDevice.IsDeviceValid)
                 _hidDevice.EndRead();
-            _hidDevice.Close();
         }
     }
 }

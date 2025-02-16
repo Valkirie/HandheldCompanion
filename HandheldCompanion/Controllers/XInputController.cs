@@ -58,7 +58,7 @@ public class XInputController : IController
 
     public virtual void UpdateInputs(long ticks, float delta, bool commit)
     {
-        if (Inputs is null || IsDisposing)
+        if (Inputs is null || IsDisposing || IsDisposed)
             return;
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);

@@ -82,7 +82,7 @@ public class NeptuneController : SteamController
 
     public override void UpdateInputs(long ticks, float delta)
     {
-        if (Inputs is null || IsDisposing)
+        if (Inputs is null || IsDisposing || IsDisposed)
             return;
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
@@ -297,6 +297,19 @@ public class NeptuneController : SteamController
         catch { }
     }
 
+    public override void Gone()
+    {
+        lock (hidLock)
+        {
+            if (Controller is not null)
+            {
+                Controller.OnControllerInputReceived -= HandleControllerInput;
+                Controller.EndRead();
+                Controller = null;
+            }
+        }
+    }
+
     public override void Hide(bool powerCycle = true)
     {
         lock (hidLock)
@@ -333,7 +346,7 @@ public class NeptuneController : SteamController
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
+            LogManager.LogError("Couldn't initialize {0}. Exception: {1}", typeof(NeptuneController), ex.Message);
             return;
         }
 

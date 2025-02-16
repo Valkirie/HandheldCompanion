@@ -172,11 +172,6 @@ public static class SystemManager
 
             case PowerModes.Suspend:
                 IsPowerSuspended = true;
-
-                // Prevent system sleep
-                SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
-
-                LogManager.LogDebug("System is trying to suspend. Performing tasks...");
                 break;
 
             default:

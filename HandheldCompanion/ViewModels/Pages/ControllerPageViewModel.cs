@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -90,6 +91,10 @@ namespace HandheldCompanion.ViewModels
                 {
                     controllers.SafeRemove(foundController);
                     foundController.Dispose();
+                }
+                else if (foundController is null)
+                {
+                    LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
                 }
 
                 // do something
