@@ -202,31 +202,39 @@ public static class DynamicLightingManager
         }
     }
 
-    private static async void InitializeDirect3DDevice()
+    private static readonly object d3dLock = new object();
+    private static void InitializeDirect3DDevice()
     {
-        try
+        lock (d3dLock)
         {
-            // Create or reuse the Direct3D instance
-            direct3D?.Dispose();
-            direct3D = new Direct3D();
-
-            // Create a device to access the screen
-            device?.Dispose();
-            device = new Device(direct3D, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.SoftwareVertexProcessing, new PresentParameters(screenWidth, screenHeight));
-
-            // Create a surface to capture the screen
-            surface?.Dispose();
-            surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight, Format.A8R8G8B8, Pool.Scratch);
-        }
-        catch (SharpDXException ex)
-        {
-            if (ex.ResultCode == ResultCode.DeviceLost)
+            try
             {
-                while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
-                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                // Create or reuse the Direct3D instance
+                direct3D?.Dispose();
+                direct3D = new Direct3D();
 
-                // Recreate the device and resources
-                InitializeDirect3DDevice();
+                // Create a device to access the screen
+                device?.Dispose();
+                device = new Device(direct3D, 0, DeviceType.Hardware, IntPtr.Zero,
+                    CreateFlags.SoftwareVertexProcessing,
+                    new PresentParameters(screenWidth, screenHeight));
+
+                // Create a surface to capture the screen
+                surface?.Dispose();
+                surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight,
+                    Format.A8R8G8B8, Pool.Scratch);
+            }
+            catch (SharpDXException ex)
+            {
+                if (ex.ResultCode == ResultCode.DeviceLost)
+                {
+                    // Wait until the device is ready again
+                    while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
+                        Task.Delay(100).Wait();
+
+                    // Recreate the device and resources
+                    InitializeDirect3DDevice();
+                }
             }
         }
     }
