@@ -26,7 +26,7 @@ namespace HandheldCompanion.Controls.Hints
 
         public Hint_MSIClawCenter() : base()
         {
-            if (IDevice.GetCurrent() is not ClawA1M)
+            if (IDevice.GetCurrent() is not ClawA1M || IDevice.GetCurrent() is not Claw8)
                 return;
 
             // we'll be checking MSI Claw Task every 4 seconds
