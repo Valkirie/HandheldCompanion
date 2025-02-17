@@ -145,31 +145,13 @@ public partial class SettingsPage : Page
             switch (name)
             {
                 case "MainWindowTheme":
-                    {
-                        cB_Theme.SelectedIndex = Convert.ToInt32(value);
-
-                        // bug: SelectionChanged not triggered when control isn't loaded
-                        if (!IsLoaded)
-                            cB_Theme_SelectionChanged(this, null);
-                    }
+                    cB_Theme.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "MainWindowBackdrop":
-                    {
-                        cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
-
-                        // bug: SelectionChanged not triggered when control isn't loaded
-                        if (!IsLoaded)
-                            cB_Backdrop_SelectionChanged(this, null);
-                    }
+                    cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "QuicktoolsBackdrop":
-                    {
-                        cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
-
-                        // bug: SelectionChanged not triggered when control isn't loaded
-                        if (!IsLoaded)
-                            cB_QuickToolsBackdrop_SelectionChanged(this, null);
-                    }
+                    cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "RunAtStartup":
                     Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
@@ -188,10 +170,6 @@ public partial class SettingsPage : Page
                     break;
                 case "CurrentCulture":
                     cB_Language.SelectedItem = new CultureInfo((string)value);
-
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_Language_SelectionChanged(this, null);
                     break;
                 case "PlatformRTSSEnabled":
                     Toggle_RTSS.IsOn = Convert.ToBoolean(value);

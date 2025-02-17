@@ -246,10 +246,6 @@ namespace HandheldCompanion.Views.Pages
                             }
 
                             cB_SensorSelection.SelectedIndex = idx;
-
-                            // bug: SelectionChanged not triggered when control isn't loaded
-                            if (!IsLoaded)
-                                cB_SensorSelection_SelectionChanged(this, null);
                         }
                         break;
                     case "SensorPlacement":

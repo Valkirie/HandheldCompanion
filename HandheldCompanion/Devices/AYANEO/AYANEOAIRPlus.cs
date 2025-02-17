@@ -1,4 +1,3 @@
-using HandheldCompanion.Devices.AYANEO;
 using System.Collections.Generic;
 using System.Numerics;
 

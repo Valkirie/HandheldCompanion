@@ -76,7 +76,7 @@ public partial class OverlayModel : OverlayWindow
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {        
+    {
         switch (name)
         {
             case "OverlayControllerMotion":
@@ -97,7 +97,7 @@ public partial class OverlayModel : OverlayWindow
                 {
                     int controllerAlignment = Convert.ToInt32(value);
                     // UI thread
-                    UIHelper.TryInvoke(() => { UpdateUI_ControllerPosition(controllerAlignment); });                    
+                    UIHelper.TryInvoke(() => { UpdateUI_ControllerPosition(controllerAlignment); });
                 }
                 break;
             case "OverlayControllerSize":
