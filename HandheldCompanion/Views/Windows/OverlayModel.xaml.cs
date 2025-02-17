@@ -27,7 +27,6 @@ public partial class OverlayModel : OverlayWindow
 
     private IModel CurrentModel;
     public Vector3D DesiredAngleDeg = new(0, 0, 0);
-    public float RestingPitchAngleDeg;
     private Quaternion DevicePose;
     private Vector3D DevicePoseRad;
     private Vector3D DiffAngle = new(0, 0, 0);
@@ -35,13 +34,16 @@ public partial class OverlayModel : OverlayWindow
 
     private static IEnumerable<ButtonFlags> resetFlags = [ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4];
 
-    public bool FaceCamera = false;
+    // settings
+    private float RestingPitchAngleDeg;
+    private bool MotionActivated = true;
+    private bool FaceCamera = false;
+
     public Vector3D FaceCameraObjectAlignment;
 
     private ControllerState Inputs = new();
 
     private OverlayModelMode Modelmode;
-    public bool MotionActivated = true;
 
     private Transform3DGroup Transform3DGroupModelPrev = new();
 
@@ -61,7 +63,7 @@ public partial class OverlayModel : OverlayWindow
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         float samplePeriod = TimerManager.GetPeriod() / 1000f;
-        madgwickAHRS = new(samplePeriod, 0.01f);
+        madgwickAHRS = new(samplePeriod, 0.1f);
 
         ResetModelPose();
 
@@ -74,21 +76,124 @@ public partial class OverlayModel : OverlayWindow
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+    {        
+        switch (name)
         {
-            switch (name)
-            {
-                case "OverlayControllerMotion":
+            case "OverlayControllerMotion":
+                {
                     MotionActivated = Convert.ToBoolean(value);
 
-                    // On change of motion activated, reset object alignment
-                    ResetModelPose();
+                    // UI thread
+                    UIHelper.TryInvoke(() => { ResetModelPose(); });
+                }
+                break;
+            case "OverlayFaceCamera":
+                FaceCamera = Convert.ToBoolean(value);
+                break;
+            case "OverlayControllerRestingPitch":
+                RestingPitchAngleDeg = (float)(-1.0d * Convert.ToDouble(value));
+                break;
+            case "OverlayControllerAlignment":
+                {
+                    int controllerAlignment = Convert.ToInt32(value);
+                    // UI thread
+                    UIHelper.TryInvoke(() => { UpdateUI_ControllerPosition(controllerAlignment); });                    
+                }
+                break;
+            case "OverlayControllerSize":
+                {
+                    double controllerSize = Convert.ToDouble(value);
+                    // UI thread
+                    UIHelper.TryInvoke(() =>
+                    {
+                        MainWindow.overlayModel.Width = controllerSize;
+                        MainWindow.overlayModel.Height = controllerSize;
+                    });
+                }
+                break;
+            case "OverlayModel":
+                {
+                    OverlayModelMode modelMode = (OverlayModelMode)Convert.ToInt32(value);
+                    // UI thread
+                    UIHelper.TryInvoke(() => { UpdateOverlayMode(modelMode); });
+                }
+                break;
+            case "OverlayRenderAntialiasing":
+                {
+                    bool antialiasing = Convert.ToBoolean(value);
+                    // UI thread
+                    UIHelper.TryInvoke(() => { ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, antialiasing ? EdgeMode.Unspecified : EdgeMode.Aliased); });
+                }
+                break;
+            case "OverlayRenderInterval":
+                {
+                    double interval = 1000.0d / Convert.ToDouble(value);
+                    UpdateInterval(interval);
+                }
+                break;
+            case "OverlayControllerOpacity":
+                {
+                    double opacity = Convert.ToDouble(value);
+                    // UI thread
+                    UIHelper.TryInvoke(() => { ModelViewPort.Opacity = opacity; });
+                }
+                break;
+            case "OverlayControllerAlwaysOnTop":
+                {
+                    bool alwaysOnTop = Convert.ToBoolean(value);
+                    // UI thread
+                    UIHelper.TryInvoke(() => { Topmost = alwaysOnTop; });
+                }
+                break;
+            case "OverlayControllerBackgroundColor":
+                {
+                    Color SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
+                    // UI thread
+                    UIHelper.TryInvoke(() => { Background = new SolidColorBrush(SelectedColor); });
+                }
+                break;
+        }
+    }
 
-                    break;
-            }
-        });
+    private void UpdateUI_ControllerPosition(int controllerAlignment)
+    {
+        switch (controllerAlignment)
+        {
+            case 0:
+            case 1:
+            case 2:
+                VerticalAlignment = VerticalAlignment.Top;
+                break;
+            case 3:
+            case 4:
+            case 5:
+                VerticalAlignment = VerticalAlignment.Center;
+                break;
+            case 6:
+            case 7:
+            case 8:
+                VerticalAlignment = VerticalAlignment.Bottom;
+                break;
+        }
+
+        switch (controllerAlignment)
+        {
+            case 0:
+            case 3:
+            case 6:
+                HorizontalAlignment = HorizontalAlignment.Left;
+                break;
+            case 1:
+            case 4:
+            case 7:
+                HorizontalAlignment = HorizontalAlignment.Center;
+                break;
+            case 2:
+            case 5:
+            case 8:
+                HorizontalAlignment = HorizontalAlignment.Right;
+                break;
+        }
     }
 
     private void ResetModelPose()

@@ -1,9 +1,6 @@
-using ColorPicker;
-using ColorPicker.Models;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Controls;
 using System;
 using System.Windows;
@@ -63,10 +60,6 @@ public partial class OverlayPage : Page
             {
                 case "OverlayModel":
                     OverlayModel.SelectedIndex = Convert.ToInt32(value);
-
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        OverlayModel_SelectionChanged(this, null);
                     break;
                 case "OverlayControllerAlignment":
                     UpdateUI_ControllerPosition(Convert.ToInt32(value));
@@ -168,51 +161,10 @@ public partial class OverlayPage : Page
                     button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                 else
                     button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
-
-        switch (controllerAlignment)
-        {
-            case 0:
-            case 1:
-            case 2:
-                MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Top;
-                break;
-            case 3:
-            case 4:
-            case 5:
-                MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Center;
-                break;
-            case 6:
-            case 7:
-            case 8:
-                MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Bottom;
-                break;
-        }
-
-        switch (controllerAlignment)
-        {
-            case 0:
-            case 3:
-            case 6:
-                MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Left;
-                break;
-            case 1:
-            case 4:
-            case 7:
-                MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Center;
-                break;
-            case 2:
-            case 5:
-            case 8:
-                MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Right;
-                break;
-        }
     }
 
     private void SliderControllerSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        MainWindow.overlayModel.Width = SliderControllerSize.Value;
-        MainWindow.overlayModel.Height = SliderControllerSize.Value;
-
         if (!IsLoaded)
             return;
 
@@ -229,9 +181,6 @@ public partial class OverlayPage : Page
 
     private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // update overlay
-        MainWindow.overlayModel.UpdateOverlayMode((OverlayModelMode)OverlayModel.SelectedIndex);
-
         if (!IsLoaded)
             return;
 
@@ -275,9 +224,6 @@ public partial class OverlayPage : Page
 
     private void Toggle_MotionActivated_Toggled(object sender, RoutedEventArgs e)
     {
-        MainWindow.overlayModel.MotionActivated = Toggle_MotionActivated.IsOn;
-        //Toggle_FaceCamera.IsEnabled = Toggle_MotionActivated.IsOn ? true : false;
-
         if (!IsLoaded)
             return;
 
@@ -286,8 +232,6 @@ public partial class OverlayPage : Page
 
     private void Toggle_FaceCamera_Toggled(object sender, RoutedEventArgs e)
     {
-        MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;
-
         if (!IsLoaded)
             return;
 
@@ -296,8 +240,6 @@ public partial class OverlayPage : Page
 
     private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        MainWindow.overlayModel.RestingPitchAngleDeg = -1 * (float)Slider_RestingPitch.Value;
-
         if (!IsLoaded)
             return;
 
@@ -306,9 +248,6 @@ public partial class OverlayPage : Page
 
     private void Toggle_RenderAA_Toggled(object sender, RoutedEventArgs e)
     {
-        MainWindow.overlayModel.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty,
-            Toggle_RenderAA.IsOn ? EdgeMode.Unspecified : EdgeMode.Aliased);
-
         if (!IsLoaded)
             return;
 
@@ -317,8 +256,6 @@ public partial class OverlayPage : Page
 
     private void Slider_Framerate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        MainWindow.overlayModel.UpdateInterval(1000.0d / Slider_Framerate.Value);
-
         if (!IsLoaded)
             return;
 
@@ -327,28 +264,14 @@ public partial class OverlayPage : Page
 
     private void SliderControllerOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        MainWindow.overlayModel.ModelViewPort.Opacity = SliderControllerOpacity.Value;
-
         if (!IsLoaded)
             return;
 
         ManagerFactory.settingsManager.SetProperty("OverlayControllerOpacity", SliderControllerOpacity.Value);
     }
 
-    private Color prevSelectedColor = new();
     private void StandardColorPicker_ColorChanged(object sender, RoutedEventArgs e)
     {
-        // workaround: NotifyableColor is raising ColorChanged event infinitely
-        ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
-        if (prevSelectedColor == colorArgs.Color)
-        {
-            ColorPicker.Color = new NotifyableColor(new PickerControlBase());
-            return;
-        }
-        prevSelectedColor = colorArgs.Color;
-
-        MainWindow.overlayModel.Background = new SolidColorBrush(ColorPicker.SelectedColor);
-
         if (!IsLoaded)
             return;
 
@@ -357,8 +280,6 @@ public partial class OverlayPage : Page
 
     private void Toggle_AlwaysOnTop_Toggled(object sender, RoutedEventArgs e)
     {
-        MainWindow.overlayModel.Topmost = Toggle_AlwaysOnTop.IsOn;
-
         if (!IsLoaded)
             return;
 
