@@ -387,6 +387,9 @@ public class LegionGo : IDevice
 
     public override void Close()
     {
+        // Reset the fan speed to default before device shutdown/restart
+        SetFanFullSpeedAsync(false);
+
         // restore default touchpad behavior
         SetTouchPadStatus(1);
 
@@ -400,9 +403,6 @@ public class LegionGo : IDevice
         }
 
         hidDevices.Clear();
-
-        // Reset the fan speed to default before device shutdown/restart
-        SetFanFullSpeedAsync(false);
 
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
