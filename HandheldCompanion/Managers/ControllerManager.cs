@@ -698,7 +698,13 @@ public static class ControllerManager
             if (controller is XInputController) return;
 
             if (controller is JSController)
-                JslDisconnect(controller.GetUserIndex());
+            {
+                try
+                {
+                    JslDisconnect(controller.GetUserIndex());
+                }
+                catch { }
+            }
 
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
