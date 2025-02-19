@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -170,6 +171,9 @@ namespace HandheldCompanion.ViewModels
 
         public GyroMappingViewModel(AxisLayoutFlags layoutFlag) : base(layoutFlag)
         {
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+
             foreach (var mode in Enum.GetValues<MotionInput>())
             {
                 MotionInputItems.Add(new MotionInputViewModel

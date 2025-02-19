@@ -102,13 +102,13 @@ namespace HandheldCompanion.ViewModels
         {
             this.profilesPage = profilesPage;
 
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
+
             // manage events
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
 
             _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
             _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };

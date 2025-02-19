@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -59,6 +60,9 @@ namespace HandheldCompanion.ViewModels
             Process = process;
             Process.WindowAttached += Process_WindowAttached;
             Process.WindowDetached += Process_WindowDetached;
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ProcessWindows, new object());
 
             foreach (ProcessWindow processWindow in Process.ProcessWindows.Values)
             {

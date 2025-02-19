@@ -491,6 +491,9 @@ namespace HandheldCompanion.ViewModels
 
         public PerformancePageViewModel(bool isQuickTools)
         {
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
+
             _selectedPreset = ManagerFactory.powerProfileManager.GetProfile(Guid.Empty);
             _selectedPresetIndex = 1;
 
@@ -519,9 +522,6 @@ namespace HandheldCompanion.ViewModels
                     QueryMedia();
                     break;
             }
-
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
 
             PropertyChanged += (sender, e) =>
             {

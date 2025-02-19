@@ -6,6 +6,7 @@ using HandheldCompanion.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -32,6 +33,10 @@ namespace HandheldCompanion.ViewModels
         public ButtonStackViewModel(ButtonFlags flag)
         {
             _flag = flag;
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ButtonMappings, new object());
+
             ButtonMappings.Add(new ButtonMappingViewModel(this, flag, isInitialMapping: true));
 
             // manage events

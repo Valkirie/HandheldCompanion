@@ -60,21 +60,19 @@ namespace HandheldCompanion.ViewModels
 
         public QuickApplicationsPageViewModel()
         {
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(Processes, new object());
+            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+
             RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
 
             // manage events
             ProcessManager.ProcessStarted += ProcessStarted;
             ProcessManager.ProcessStopped += ProcessStopped;
 
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Processes, new object());
-
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
-
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
         }
 
         private void ProfileManager_Deleted(Profile profile)

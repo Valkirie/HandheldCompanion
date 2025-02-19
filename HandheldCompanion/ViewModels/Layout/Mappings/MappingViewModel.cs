@@ -8,6 +8,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace HandheldCompanion.ViewModels
@@ -161,6 +162,9 @@ namespace HandheldCompanion.ViewModels
         public MappingViewModel(object value)
         {
             Value = value;
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(Targets, new object());
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;

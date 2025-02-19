@@ -221,8 +221,7 @@
                                                 Margin="6,0,0,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Stretch"
-                                                Command="{Binding EraseButtonCommand}"
-                                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                Command="{Binding EraseButtonCommand}">
                                                 <ui:FontIcon
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
