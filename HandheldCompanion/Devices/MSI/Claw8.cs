@@ -1,9 +1,12 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Management;
@@ -106,6 +109,9 @@ public class Claw8 : ClawA1M
             { 'Z', 'Y' }
         };
 
+        // device specific capacities
+        Capabilities |= DeviceCapabilities.FanControl;
+
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterBattery, Properties.Resources.PowerProfileMSIClawBetterBatteryDesc)
         {
             Default = true,
@@ -174,7 +180,55 @@ public class Claw8 : ClawA1M
             device.Write(msg);
         }
 
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        // raise events
+        switch (ManagerFactory.powerProfileManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
+        }
+
         return true;
+    }
+
+    private void QueryPowerProfile()
+    {
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    private void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        /*
+         * iDataBlockIndex = 1; // CPU
+         * iDataBlockIndex = 2; // GPU
+         */
+
+        byte[] fanTable = new byte[7];
+        fanTable[1] = (byte)profile.FanProfile.fanSpeeds[1];
+        fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2];
+        fanTable[3] = (byte)profile.FanProfile.fanSpeeds[4];
+        fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6];
+        fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8];
+        fanTable[6] = (byte)profile.FanProfile.fanSpeeds[10];
+
+        // update fan table
+        SetFanTable(fanTable);
+    }
+
+    private void SetFanTable(byte[] fanTable)
+    {
     }
 
     public override void Close()
@@ -201,6 +255,9 @@ public class Claw8 : ClawA1M
                 hidDevice.CloseDevice();
             }
         }
+
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         base.Close();
     }
@@ -329,5 +386,54 @@ public class Claw8 : ClawA1M
         }
 
         return defaultGlyph;
+    }
+
+    public string Scope { get; set; } = "root\\WMI";
+    public string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
+
+    public void SetCPUPowerLimit(int PL, byte[] limit)
+    {
+        // Create the management object using the provided scope and path.
+        ManagementObject managementObject = new ManagementObject(this.Scope, this.Path, null);
+
+        ManagementBaseObject inParams = null;
+        ManagementBaseObject inParamsData = null;
+        bool parametersAvailable = false;
+
+        // First attempt: retrieve method parameters for "Set_Data"
+        try
+        {
+            inParams = managementObject.GetMethodParameters("Set_Data");
+            inParamsData = inParams["Data"] as ManagementBaseObject;
+            parametersAvailable = (inParams != null && inParamsData != null);
+        }
+        catch (Exception ex) { }
+
+        // If the "Data" parameter was not obtained, try the fallback method "Get_WMI"
+        if (!parametersAvailable)
+        {
+            try
+            {
+                inParams = managementObject.InvokeMethod("Get_WMI", null, null);
+                inParamsData = inParams["Data"] as ManagementBaseObject;
+            }
+            catch (ManagementException mex) { }
+            catch (Exception ex) { }
+        }
+
+        // If we still don't have valid input parameters, throw an exception.
+        if (inParams == null || inParamsData == null)
+            return;
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = (byte)PL;
+        Array.Copy(limit, 0, fullPackage, 1, limit.Length);
+
+        inParamsData.SetPropertyValue("Bytes", fullPackage);
+        inParams.SetPropertyValue("Data", inParamsData);
+
+        // Invoke the "Set_Data" method with the parameters.
+        managementObject.InvokeMethod("Set_Data", inParams, null);
     }
 }

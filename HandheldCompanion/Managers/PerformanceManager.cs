@@ -5,6 +5,7 @@ using HandheldCompanion.Processors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -128,11 +129,22 @@ public static class PerformanceManager
 
         // initialize processor
         processor = Processor.GetCurrent();
-
-        if (processor is not null && processor.IsInitialized)
+        if (processor is not null)
         {
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.Initialize();
+            if (IDevice.GetCurrent() is Claw8 claw8)
+            {
+                // fake initialization
+                processor.CanChangeTDP = true;
+                processor.CanChangeGPU = false;
+                processor.IsInitialized = true;
+
+                Processor_StatusChanged(processor.CanChangeTDP, false);
+            }
+            else if (!processor.IsInitialized)
+            {                
+                processor.StatusChanged += Processor_StatusChanged;
+                processor.Initialize();
+            }
         }
         else
         {

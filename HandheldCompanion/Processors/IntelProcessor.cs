@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Processors.Intel;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Processors.Intel;
 
 namespace HandheldCompanion.Processors;
 
@@ -46,15 +47,31 @@ public class IntelProcessor : Processor
         {
             var error = 0;
 
-            switch (type)
+            if (IDevice.GetCurrent() is Claw8 claw8)
             {
-                case PowerType.Slow:
-                    error = platform.set_long_limit((int)limit);
-                    break;
-                case PowerType.Fast:
-                    error = platform.set_short_limit((int)limit);
-                    break;
+                switch (type)
+                {
+                    case PowerType.Fast:
+                        claw8.SetCPUPowerLimit(80, [(byte)limit]);
+                        break;
+                    case PowerType.Slow:
+                        claw8.SetCPUPowerLimit(81, [(byte)limit]);
+                        break;
+                }
             }
+            else
+            {
+                switch (type)
+                {
+                    case PowerType.Slow:
+                        error = platform.set_long_limit((int)limit);
+                        break;
+                    case PowerType.Fast:
+                        error = platform.set_short_limit((int)limit);
+                        break;
+                }
+            }
+
 
             base.SetTDPLimit(type, limit, immediate, error);
         }
@@ -67,6 +84,9 @@ public class IntelProcessor : Processor
 
     public override void SetGPUClock(double clock, ref int result)
     {
+        if (!CanChangeGPU)
+            return;
+
         lock (updateLock)
         {
             result = platform.set_gfx_clk((int)clock);
