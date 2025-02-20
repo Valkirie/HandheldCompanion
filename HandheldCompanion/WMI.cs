@@ -57,7 +57,7 @@ namespace HandheldCompanion
             }
         }
 
-        public static void Call(string scope, string path, string methodName, byte[] fullPackage)
+        public static void Set(string scope, string path, string methodName, byte[] fullPackage)
         {
             // Create the management object using the provided scope and path
             ManagementObject managementObject = new ManagementObject(scope, path, null);
@@ -100,6 +100,62 @@ namespace HandheldCompanion
 
             // Invoke the method with the parameters
             managementObject.InvokeMethod(methodName, inParams, null);
+        }
+
+        public static byte[] Get(string scope, string path, string methodName, ref bool success)
+        {
+            // Create the management object using the provided scope and path
+            ManagementObject managementObject = new ManagementObject(scope, path, null);
+
+            ManagementBaseObject inParams = null;
+            ManagementBaseObject inParamsData = null;
+            bool parametersAvailable = false;
+
+            // First attempt: retrieve method parameters for the specified methodName
+            try
+            {
+                inParams = managementObject.GetMethodParameters(methodName);
+                inParamsData = inParams["Data"] as ManagementBaseObject;
+                parametersAvailable = (inParams != null && inParamsData != null);
+            }
+            catch (Exception ex) { }
+
+            // If the "Data" parameter was not obtained, try the fallback method "Get_WMI"
+            if (!parametersAvailable)
+            {
+                try
+                {
+                    inParams = managementObject.InvokeMethod("Get_WMI", null, null);
+                    inParamsData = inParams["Data"] as ManagementBaseObject;
+                }
+                catch (ManagementException mex) { }
+                catch (Exception ex) { }
+            }
+
+            // If we still don't have valid input parameters, log an error and return null
+            if (inParams == null || inParamsData == null)
+            {
+                LogManager.LogError("WMI CallGet failed: [scope={0}, path={1}, methodName={2}]", scope, path, methodName);
+                success = false;
+                return null;
+            }
+
+            // Invoke the method with the parameters (here we are retrieving data, so no setting is needed)
+            ManagementBaseObject outParams = managementObject.InvokeMethod(methodName, inParams, null);
+
+            // Retrieve the "Data" object from the output parameters
+            ManagementBaseObject outParamsData = outParams["Data"] as ManagementBaseObject;
+            if (outParamsData == null)
+            {
+                LogManager.LogError("WMI CallGet failed to retrieve data object: [scope={0}, path={1}, methodName={2}]", scope, path, methodName);
+                success = false;
+                return null;
+            }
+
+            // Extract and return the "Bytes" property from the Data object
+            byte[] fullPackage = outParamsData["Bytes"] as byte[];
+            success = true;
+            return fullPackage;
         }
 
         public static async Task CallAsync(string scope, FormattableString query, string methodName, Dictionary<string, object> methodParams)

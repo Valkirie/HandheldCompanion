@@ -239,7 +239,7 @@ public class Claw8 : ClawA1M
         fullPackage[0] = iDataBlockIndex;
         Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
 
-        WMI.Call(Scope, Path, "Set_Fan", fullPackage);
+        WMI.Set(Scope, Path, "Set_Fan", fullPackage);
     }
 
     public override void Close()
@@ -409,7 +409,7 @@ public class Claw8 : ClawA1M
         fullPackage[0] = (byte)PL;
         Array.Copy(limit, 0, fullPackage, 1, limit.Length);
 
-        WMI.Call(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
     public override void SetFanControl(bool enable, int mode = 0)
@@ -419,6 +419,6 @@ public class Claw8 : ClawA1M
         fullPackage[0] = 212;
         fullPackage[1] = (byte)(enable ? 1 : 0);
 
-        WMI.Call(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 }
