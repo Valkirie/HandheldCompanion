@@ -57,6 +57,51 @@ namespace HandheldCompanion
             }
         }
 
+        public static void Call(string scope, string path, string methodName, byte[] fullPackage)
+        {
+            // Create the management object using the provided scope and path
+            ManagementObject managementObject = new ManagementObject(scope, path, null);
+
+            ManagementBaseObject inParams = null;
+            ManagementBaseObject inParamsData = null;
+            bool parametersAvailable = false;
+
+            // First attempt: retrieve method parameters for specified methodName
+            try
+            {
+                inParams = managementObject.GetMethodParameters(methodName);
+                inParamsData = inParams["Data"] as ManagementBaseObject;
+                parametersAvailable = (inParams != null && inParamsData != null);
+            }
+            catch (Exception ex) { }
+
+            // If the "Data" parameter was not obtained, try the fallback method "Get_WMI"
+            if (!parametersAvailable)
+            {
+                try
+                {
+                    inParams = managementObject.InvokeMethod("Get_WMI", null, null);
+                    inParamsData = inParams["Data"] as ManagementBaseObject;
+                }
+                catch (ManagementException mex) { }
+                catch (Exception ex) { }
+            }
+
+            // If we still don't have valid input parameters, throw an exception
+            if (inParams == null || inParamsData == null)
+            {
+                LogManager.LogError("WMI Call failed: [scope={0}, path={1}, methodName={2}, fullPackage={3}]", scope, path, methodName, string.Join(',', fullPackage));
+                return;
+            }
+
+            // Set the "Bytes" property of the "Data" parameter to the full package
+            inParamsData.SetPropertyValue("Bytes", fullPackage);
+            inParams.SetPropertyValue("Data", inParamsData);
+
+            // Invoke the method with the parameters
+            managementObject.InvokeMethod(methodName, inParams, null);
+        }
+
         public static async Task CallAsync(string scope, FormattableString query, string methodName, Dictionary<string, object> methodParams)
         {
             try

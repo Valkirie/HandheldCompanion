@@ -6,7 +6,6 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Management;
@@ -210,25 +209,37 @@ public class Claw8 : ClawA1M
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        {
+            byte[] fanTable = new byte[7];
+            fanTable[1] = (byte)profile.FanProfile.fanSpeeds[1];
+            fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2];
+            fanTable[3] = (byte)profile.FanProfile.fanSpeeds[4];
+            fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6];
+            fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8];
+            fanTable[6] = (byte)profile.FanProfile.fanSpeeds[10];
+
+            // update fan table
+            SetFanTable(fanTable);
+        }
+
+        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
+    }
+
+    private void SetFanTable(byte[] fanTable)
+    {
         /*
          * iDataBlockIndex = 1; // CPU
          * iDataBlockIndex = 2; // GPU
          */
 
-        byte[] fanTable = new byte[7];
-        fanTable[1] = (byte)profile.FanProfile.fanSpeeds[1];
-        fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2];
-        fanTable[3] = (byte)profile.FanProfile.fanSpeeds[4];
-        fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6];
-        fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8];
-        fanTable[6] = (byte)profile.FanProfile.fanSpeeds[10];
+        // Build the complete 32-byte package:
+        byte iDataBlockIndex = 1;
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
+        Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
 
-        // update fan table
-        SetFanTable(fanTable);
-    }
-
-    private void SetFanTable(byte[] fanTable)
-    {
+        WMI.Call(Scope, Path, "Set_Fan", fullPackage);
     }
 
     public override void Close()
@@ -393,47 +404,21 @@ public class Claw8 : ClawA1M
 
     public void SetCPUPowerLimit(int PL, byte[] limit)
     {
-        // Create the management object using the provided scope and path.
-        ManagementObject managementObject = new ManagementObject(this.Scope, this.Path, null);
-
-        ManagementBaseObject inParams = null;
-        ManagementBaseObject inParamsData = null;
-        bool parametersAvailable = false;
-
-        // First attempt: retrieve method parameters for "Set_Data"
-        try
-        {
-            inParams = managementObject.GetMethodParameters("Set_Data");
-            inParamsData = inParams["Data"] as ManagementBaseObject;
-            parametersAvailable = (inParams != null && inParamsData != null);
-        }
-        catch (Exception ex) { }
-
-        // If the "Data" parameter was not obtained, try the fallback method "Get_WMI"
-        if (!parametersAvailable)
-        {
-            try
-            {
-                inParams = managementObject.InvokeMethod("Get_WMI", null, null);
-                inParamsData = inParams["Data"] as ManagementBaseObject;
-            }
-            catch (ManagementException mex) { }
-            catch (Exception ex) { }
-        }
-
-        // If we still don't have valid input parameters, throw an exception.
-        if (inParams == null || inParamsData == null)
-            return;
-
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
         fullPackage[0] = (byte)PL;
         Array.Copy(limit, 0, fullPackage, 1, limit.Length);
 
-        inParamsData.SetPropertyValue("Bytes", fullPackage);
-        inParams.SetPropertyValue("Data", inParamsData);
+        WMI.Call(Scope, Path, "Set_Data", fullPackage);
+    }
 
-        // Invoke the "Set_Data" method with the parameters.
-        managementObject.InvokeMethod("Set_Data", inParams, null);
+    public override void SetFanControl(bool enable, int mode = 0)
+    {
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = 212;
+        fullPackage[1] = (byte)(enable ? 1 : 0);
+
+        WMI.Call(Scope, Path, "Set_Data", fullPackage);
     }
 }
