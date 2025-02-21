@@ -130,15 +130,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             this.adapterInformation = adapterInformation;
 
-            // Initialize the busy timer with a 1 second interval and set AutoReset to false.
-            BusyTimer = new(1000) { AutoReset = false };
+            // Initialize the busy timer with a 2 seconds interval and set AutoReset to false.
+            BusyTimer = new(2000) { AutoReset = false };
             BusyTimer.Elapsed += BusyTimer_Elapsed;
-        }
-
-        private void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            busyEventRaised = true;
-            StatusChanged?.Invoke(true);
         }
 
         ~GPU()
@@ -149,6 +143,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override string ToString()
         {
             return adapterInformation.Details.Description;
+        }
+
+        protected virtual void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            busyEventRaised = true;
+            StatusChanged?.Invoke(true);
         }
 
         public virtual void Start()
