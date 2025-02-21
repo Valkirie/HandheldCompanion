@@ -488,7 +488,7 @@ namespace HandheldCompanion.ViewModels
                 if (value is string)
                 {
                     string category = Convert.ToString(value);
-                    FunctionItems.SafeAdd(new ComboBoxItemViewModel(category, false));
+                    FunctionItems.SafeAdd(new ComboBoxItemViewModel($"# {category}", false));
                 }
                 else
                 {
@@ -500,8 +500,7 @@ namespace HandheldCompanion.ViewModels
                     else
                     {
                         ICommands command = Activator.CreateInstance(function) as ICommands;
-                        if (command.CanUnpin)
-                            FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, true));
+                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, command.CanUnpin));
                     }
                 }
             }

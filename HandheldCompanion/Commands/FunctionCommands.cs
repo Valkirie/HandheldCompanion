@@ -19,7 +19,7 @@ namespace HandheldCompanion.Commands
             typeof(OverlayGamepadCommands),
             typeof(OverlayTrackpadCommands),
             typeof(HIDModeCommands),
-            // typeof(DesktopLayoutCommands),
+            typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
             typeof(QuickOverlayCommands),
             "Power & battery",
