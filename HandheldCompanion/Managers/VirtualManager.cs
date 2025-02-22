@@ -334,9 +334,10 @@ namespace HandheldCompanion.Managers
                 ControllerSelected?.Invoke(mode);
 
                 // If target creation failed, log an error (unless it's the NoController case)
-                if (vTarget is null && mode != HIDmode.NoController)
+                if (vTarget is null)
                 {
-                    LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
+                    if (mode != HIDmode.NoController)
+                        LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
                     return;
                 }
 
