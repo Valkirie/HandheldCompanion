@@ -7,6 +7,7 @@ using Nefarius.ViGEm.Client;
 using System;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.ControllerManager;
@@ -42,12 +43,11 @@ namespace HandheldCompanion.Managers
         private static HIDmode defaultHIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
+        private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
+
         private static readonly Random ProductGenerator = new Random();
         public static ushort ProductId = 0x28E; // Xbox 360
-
         public static ushort VendorId = 0x45E;  // Microsoft
-
-        private static object threadLock = new();
 
         public static bool IsInitialized;
 
@@ -166,34 +166,39 @@ namespace HandheldCompanion.Managers
 
         public static void Resume(bool OS)
         {
-            lock (threadLock)
+            controllerLock.Wait();
+            try
             {
                 if (Module == IntPtr.Zero)
                     Module = LoadLibrary(dllName);
 
-                // create new ViGEm client
+                // Create a new ViGEm client if needed
                 if (vClient is null)
                     vClient = new ViGEmClient();
 
                 if (OS)
                 {
-                    // update DSU status
+                    // Update DSU status
                     SetDSUStatus(ManagerFactory.settingsManager.GetBoolean("DSUEnabled"));
                 }
             }
+            finally
+            {
+                controllerLock.Release();
+            }
 
-            // set controller mode
             SetControllerMode(HIDmode, OS);
         }
 
         public static void Suspend(bool OS)
         {
-            // dispose virtual controller
+            // Disconnect the controller first
             SetControllerMode(HIDmode.NoController);
 
-            lock (threadLock)
+            controllerLock.Wait();
+            try
             {
-                // dispose ViGEm drivers
+                // Dispose of the ViGEm client and unload the module
                 if (vClient is not null)
                 {
                     vClient.Dispose();
@@ -208,9 +213,13 @@ namespace HandheldCompanion.Managers
 
                 if (OS)
                 {
-                    // halt DSU
+                    // Halt DSU
                     SetDSUStatus(false);
                 }
+            }
+            finally
+            {
+                controllerLock.Release();
             }
         }
 
@@ -284,18 +293,14 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerMode(HIDmode mode, bool OS = false)
         {
-            lock (threadLock)
+            controllerLock.Wait();
+            try
             {
-                // do not disconnect if similar to previous mode and connected
-                if (HIDmode == mode)
-                {
-                    if (HIDstatus == HIDstatus.Disconnected)
-                        return;
-                    else if (vTarget is not null && vTarget.IsConnected)
-                        return;
-                }
+                // If the requested mode is already active and connected, do nothing
+                if (HIDmode == mode && (HIDstatus == HIDstatus.Connected || (vTarget is not null && vTarget.IsConnected)))
+                    return;
 
-                // disconnect current virtual controller
+                // Disconnect and dispose the current virtual controller if it exists
                 if (vTarget is not null)
                 {
                     vTarget.Disconnect();
@@ -303,16 +308,15 @@ namespace HandheldCompanion.Managers
                     vTarget = null;
                 }
 
-                // this shouldn't happen !
-                // todo: improve the overall locking logic here
+                // Sanity-check: if the ViGEm client isn’t available, abort
                 if (vClient is null)
                     return;
 
+                // Create a new target based on the requested mode
                 switch (mode)
                 {
-                    default:
                     case HIDmode.NoController:
-                        // controller was disposed already above
+                        // Nothing to initialize
                         break;
 
                     case HIDmode.DualShock4Controller:
@@ -320,41 +324,43 @@ namespace HandheldCompanion.Managers
                         break;
 
                     case HIDmode.Xbox360Controller:
-                        // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
-                        // Unless, last ProductId was known as slot 0
-                        if (!OS)
-                            ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
-
+                        // Optionally generate a new ProductId unless running in OS mode
+                        if (!OS) ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
                         vTarget = new Xbox360Target(VendorId, ProductId);
                         break;
                 }
 
+                // Notify subscribers about the controller change
                 ControllerSelected?.Invoke(mode);
 
-                // failed to initialize controller
-                if (vTarget is null)
+                // If target creation failed, log an error (unless it's the NoController case)
+                if (vTarget is null && mode != HIDmode.NoController)
                 {
-                    if (mode != HIDmode.NoController)
-                        LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
-
+                    LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
                     return;
                 }
 
+                // Subscribe to target events
                 vTarget.Connected += OnTargetConnected;
                 vTarget.Disconnected += OnTargetDisconnected;
                 vTarget.Vibrated += OnTargetVibrated;
 
-                // update current HIDmode
+                // Update the current mode
                 HIDmode = mode;
             }
+            finally
+            {
+                controllerLock.Release();
+            }
 
-            // update status
+            // Update controller status synchronously
             SetControllerStatus(HIDstatus);
         }
 
         public static void SetControllerStatus(HIDstatus status)
         {
-            lock (threadLock)
+            controllerLock.Wait();
+            try
             {
                 if (vTarget is null)
                     return;
@@ -362,7 +368,6 @@ namespace HandheldCompanion.Managers
                 bool success = false;
                 switch (status)
                 {
-                    default:
                     case HIDstatus.Connected:
                         if (!vTarget.IsConnected)
                             success = vTarget.Connect();
@@ -373,9 +378,13 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                // update current HIDstatus
+                // Only update the internal status if the operation was successful
                 if (success)
                     HIDstatus = status;
+            }
+            finally
+            {
+                controllerLock.Release();
             }
         }
 
