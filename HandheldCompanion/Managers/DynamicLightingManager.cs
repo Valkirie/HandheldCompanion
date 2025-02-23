@@ -228,9 +228,16 @@ public static class DynamicLightingManager
             {
                 if (ex.ResultCode == ResultCode.DeviceLost)
                 {
-                    // Wait until the device is ready again
-                    while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
-                        Task.Delay(100).Wait();
+                    try
+                    {
+                        // Wait until the device is ready again
+                        while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
+                            Task.Delay(1000).Wait();
+                    }
+                    catch
+                    {
+                        Task.Delay(1000).Wait();
+                    }
 
                     // Recreate the device and resources
                     InitializeDirect3DDevice();
