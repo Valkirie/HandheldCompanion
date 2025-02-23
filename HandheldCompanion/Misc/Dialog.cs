@@ -116,7 +116,7 @@ public class Dialog
         dialog.Title = this.Title = Title;
     }
 
-    public void UpdateContent(string Content)
+    public void UpdateContent(object Content)
     {
         dialog.Content = this.Content = Content;
     }
