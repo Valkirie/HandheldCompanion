@@ -917,7 +917,7 @@ public static class ControllerManager
             // user is emulating an Xbox360Controller
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
-                if (HasVirtualController<XInputController>() && HasPhysicalController<XInputController>())
+                if (HasPhysicalController<XInputController>())
                 {
                     // check if first controller is virtual
                     XInputController controller = GetControllerFromSlot<XInputController>(UserIndex.One, false);

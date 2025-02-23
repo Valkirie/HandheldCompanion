@@ -296,9 +296,14 @@ namespace HandheldCompanion.Managers
             controllerLock.Wait();
             try
             {
-                // If the requested mode is already active and connected, do nothing
-                if (HIDmode == mode && (HIDstatus == HIDstatus.Connected || (vTarget is not null && vTarget.IsConnected)))
-                    return;
+                // If the requested mode is already active, do nothing
+                if (HIDmode == mode)
+                {
+                    if (HIDstatus == HIDstatus.Connected && (vTarget is not null && vTarget.IsConnected))
+                        return;
+                    else if (HIDstatus == HIDstatus.Disconnected && (vTarget is null || !vTarget.IsConnected))
+                        return;
+                }
 
                 // Disconnect and dispose the current virtual controller if it exists
                 if (vTarget is not null)
