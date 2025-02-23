@@ -302,34 +302,37 @@ public class ProcessEx : IDisposable
             bool hasInput = false;
             bool hasRender = false;
 
-            // Loop through the modules of the process
-            foreach (ProcessModule module in Process.Modules)
+            try
             {
-                try
+                // Loop through the modules of the process
+                foreach (ProcessModule module in Process.Modules)
                 {
-                    // Get the name of the module
-                    string moduleName = module.ModuleName;
-
-                    if (gameModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                    try
                     {
-                        return true;
-                    }
-                    else
-                    {
-                        if (inputModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
-                            hasInput = true;
-                        else if (renderModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
-                            hasRender = true;
+                        // Get the name of the module
+                        string moduleName = module.ModuleName;
 
-                        // If both conditions are met, we can exit early.
-                        if (hasInput && hasRender)
+                        if (gameModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                        {
                             return true;
+                        }
+                        else
+                        {
+                            if (inputModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                                hasInput = true;
+                            else if (renderModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                                hasRender = true;
+
+                            // If both conditions are met, we can exit early.
+                            if (hasInput && hasRender)
+                                return true;
+                        }
                     }
+                    catch (Win32Exception) { }
+                    catch (InvalidOperationException) { }
                 }
-                catch (Win32Exception) { }
-                catch (InvalidOperationException) { }
             }
-            ;
+            catch { }
         }
 
         return false;

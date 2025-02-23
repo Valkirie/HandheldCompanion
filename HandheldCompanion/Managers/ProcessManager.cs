@@ -567,22 +567,25 @@ public static class ProcessManager
     // A function that takes a Process as a parameter and returns true if it has any xinput related dlls in its modules
     public static bool CheckXInput(Process process)
     {
-        // Loop through the modules of the process
-        foreach (ProcessModule module in process.Modules)
+        try
         {
-            try
+            // Loop through the modules of the process
+            foreach (ProcessModule module in process.Modules)
             {
-                // Get the name of the module
-                string moduleName = module.ModuleName.ToLower();
+                try
+                {
+                    // Get the name of the module
+                    string moduleName = module.ModuleName.ToLower();
 
-                // Check if the name contains "xinput"
-                if (moduleName.Contains("xinput", StringComparison.InvariantCultureIgnoreCase))
-                    return true;
+                    // Check if the name contains "xinput"
+                    if (moduleName.Contains("xinput", StringComparison.InvariantCultureIgnoreCase))
+                        return true;
+                }
+                catch (Win32Exception) { }
+                catch (InvalidOperationException) { }
             }
-            catch (Win32Exception) { }
-            catch (InvalidOperationException) { }
         }
-        ;
+        catch { }
 
         return false;
     }
