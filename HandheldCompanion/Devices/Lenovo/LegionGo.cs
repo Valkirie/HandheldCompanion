@@ -467,7 +467,7 @@ public class LegionGo : IDevice
         Task<int> fanModeTask = Task.Run(async () => await GetSmartFanModeAsync());
         int fanMode = fanModeTask.Result;
 
-        if (fanMode != profile.OEMPowerMode)
+        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && fanMode != profile.OEMPowerMode)
             SetSmartFanMode(profile.OEMPowerMode);
     }
 
