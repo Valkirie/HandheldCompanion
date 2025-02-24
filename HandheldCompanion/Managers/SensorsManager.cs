@@ -340,14 +340,16 @@ namespace HandheldCompanion.Managers
 
                     // display message
                     if (x == 0 && y == 0 && z == 0)
+                    {
                         dialog.UpdateContent($"Calibration failed: device is silent.");
+
+                        // wait a bit
+                        await Task.Delay(2000); // Captures synchronization context
+
+                        break;
+                    }
                     else
-                        dialog.UpdateContent($"Calibration device is silent or unsteady.");
-
-                    // wait a bit
-                    await Task.Delay(2000); // Captures synchronization context
-
-                    break;
+                        dialog.UpdateContent($"Calibration device is unsteady, calibration may be incorrect.");
                 }
 
                 // start continuous calibration

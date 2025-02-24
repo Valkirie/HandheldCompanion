@@ -159,7 +159,7 @@ namespace HandheldCompanion.Controllers
             this.Details.isHooked = true;
 
             // manage gamepad motion
-            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
         }
 
         public virtual void UpdateInputs(long ticks, float delta)

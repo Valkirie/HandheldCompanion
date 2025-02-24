@@ -96,7 +96,6 @@ namespace HandheldCompanion.Controllers
             SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
 
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            UpdateSettings();
         }
 
         public override string ToString()
@@ -162,7 +161,7 @@ namespace HandheldCompanion.Controllers
             Open();
 
             // manage gamepad motion from right controller
-            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}");
         }
 
         /*
@@ -199,6 +198,8 @@ namespace HandheldCompanion.Controllers
                         Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
                         Controller.Open();
                     }
+
+                    UpdateSettings();
                 }
                 catch (Exception ex)
                 {
