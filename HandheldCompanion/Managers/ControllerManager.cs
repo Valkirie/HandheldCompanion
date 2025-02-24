@@ -921,7 +921,7 @@ public static class ControllerManager
             {
                 // suspend and resume virtual controller
                 VirtualManager.Suspend(false);
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
                 VirtualManager.Resume(IsOS);
             }
 
