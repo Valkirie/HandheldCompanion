@@ -7,6 +7,7 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -1292,13 +1293,16 @@ public static class ControllerManager
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
-    public static IController GetDefault()
+    public static IController GetDefault(bool profilePage = false)
     {
         // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
         HIDmode HIDmode = HIDmode.NoController;
 
         // if profile is selected, get its HIDmode
-        HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
+        if (profilePage)
+            HIDmode = ProfilesPage.selectedProfile.HID;
+        else
+            HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
 
         // if profile HID is NotSelected, use HIDmode from settings
         if (HIDmode == HIDmode.NotSelected)

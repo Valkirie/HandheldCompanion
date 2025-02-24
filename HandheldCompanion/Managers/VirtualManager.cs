@@ -51,9 +51,6 @@ namespace HandheldCompanion.Managers
 
         public static bool IsInitialized;
 
-        public static event HIDChangedEventHandler HIDchanged;
-        public delegate void HIDChangedEventHandler(HIDmode HIDmode);
-
         public static event ControllerSelectedEventHandler ControllerSelected;
         public delegate void ControllerSelectedEventHandler(HIDmode mode);
 
