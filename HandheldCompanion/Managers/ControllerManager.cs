@@ -901,18 +901,28 @@ public static class ControllerManager
                 if (UserIndex == byte.MaxValue)
                     continue;
 
-                // that's not possible, XInput is drunk
+                // two controllers can't use the same slot
                 if (!UserIndexes.Add(UserIndex))
                     XInputDrunk = true;
 
                 xInputController.AttachController(UserIndex);
             }
 
+            /*
             if (XInputDrunk)
             {
                 // (re)init controller userIndex
                 foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
                     xInputController.AttachController(byte.MaxValue);
+            }
+            */
+
+            if (XInputDrunk)
+            {
+                // suspend and resume virtual controller
+                VirtualManager.Suspend(false);
+                Thread.Sleep(500);
+                VirtualManager.Resume(IsOS);
             }
 
             // user is emulating an Xbox360Controller
@@ -945,21 +955,16 @@ public static class ControllerManager
                             }
 
                             // suspend all physical controllers
-                            bool HasSuspendedController = false;
                             foreach (XInputController xInputController in GetPhysicalControllers<XInputController>())
-                            {
-                                // set flag(s)
-                                xInputController.IsBusy = true;
-                                HasSuspendedController |= SuspendController(xInputController.GetContainerInstanceId());
-                            }
+                                SuspendController(xInputController.GetContainerInstanceId());
 
                             // suspend and resume virtual controller
                             VirtualManager.Suspend(false);
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                             VirtualManager.Resume(IsOS);
 
                             // resume all physical controllers, after a few seconds
-                            Thread.Sleep(4000);
+                            Thread.Sleep(1000);
                             ResumeControllers();
 
                             // increment attempt counter (if no wireless controller is power cycling)
@@ -1152,8 +1157,6 @@ public static class ControllerManager
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
                         usbPnPDevice.CyclePort();
                     }
-
-                    PowerCyclers[baseContainerDeviceInstanceId] = true;
                     return true;
             }
         }
