@@ -191,16 +191,8 @@ public class ClawA1M : IDevice
 
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
-        {
-            if (!hidDevice.IsConnected)
-                continue;
-
-            if (hidDevice.IsOpen)
-            {
-                hidDevice.MonitorDeviceEvents = false;
-                hidDevice.CloseDevice();
-            }
-        }
+            hidDevice.Dispose();
+        hidDevices.Clear();
 
         base.Close();
     }

@@ -394,14 +394,8 @@ public class LegionGo : IDevice
         SetTouchPadStatus(1);
 
         // close devices
-        foreach (KeyValuePair<byte, HidDevice> hidDevice in hidDevices)
-        {
-            byte key = hidDevice.Key;
-            HidDevice device = hidDevice.Value;
-
-            device.CloseDevice();
-        }
-
+        foreach (HidDevice hidDevice in hidDevices.Values)
+            hidDevice.Dispose();
         hidDevices.Clear();
 
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;

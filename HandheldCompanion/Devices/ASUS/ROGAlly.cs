@@ -382,18 +382,7 @@ public class ROGAlly : IDevice
 
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
-        {
-            if (!hidDevice.IsConnected)
-                continue;
-
-            if (hidDevice.IsOpen)
-            {
-                hidDevice.MonitorDeviceEvents = false;
-                hidDevice.CloseDevice();
-                hidDevice.Dispose();
-            }
-        }
-
+            hidDevice.Dispose();
         hidDevices.Clear();
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
