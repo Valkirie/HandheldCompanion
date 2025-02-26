@@ -448,7 +448,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Controller management.
+        ///   Looks up a localized string similar to Controller management (Experimental).
         /// </summary>
         public static string ControllerPage_ControllerManagement {
             get {

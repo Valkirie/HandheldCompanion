@@ -2572,7 +2572,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Controller management</value>
+    <value>Controller management (Experimental)</value>
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
     <value>Automatically manage controller order for greater compatibility</value>

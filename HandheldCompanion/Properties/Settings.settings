@@ -171,7 +171,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ControllerManagement" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="HidModeDoNotShowAgain" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

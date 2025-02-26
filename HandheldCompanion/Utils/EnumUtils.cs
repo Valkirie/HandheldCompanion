@@ -40,7 +40,7 @@ public static class EnumUtils
         if (attribute is not null)
             return attribute.Description;
 
-        LogManager.LogWarning("Neither localization nor description exists for enum: {0}", key);
+        LogManager.LogWarning("No localization for enum: {0}", key);
         return value.ToString();
     }
 

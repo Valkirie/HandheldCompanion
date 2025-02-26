@@ -1135,12 +1135,26 @@ public static class ControllerManager
     {
         try
         {
-            PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-            DriverMeta pnPDriver = null;
+            PnPDevice pnPDevice = null;
 
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout && pnPDevice is null)
+            {
+                pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+                Task.Delay(100).Wait();
+            }
+
+            if (pnPDevice is null)
+                return false;
+
+            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+            if (usbPnPDevice is null)
+                return false;
+
+            DriverMeta pnPDriver = null;
             try
             {
+                // get current driver
                 pnPDriver = pnPDevice.GetCurrentDriver();
             }
             catch { }
@@ -1172,13 +1186,22 @@ public static class ControllerManager
         {
             try
             {
-                PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-                UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+                PnPDevice pnPDevice = null;
 
-                // get current driver
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                while (DateTime.Now < timeout && pnPDevice is null)
+                {
+                    pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+                    Task.Delay(100).Wait();
+                }
+
+                if (pnPDevice is null)
+                    continue;
+
                 DriverMeta pnPDriver = null;
                 try
                 {
+                    // get current driver
                     pnPDriver = pnPDevice.GetCurrentDriver();
                 }
                 catch { }
@@ -1198,8 +1221,6 @@ public static class ControllerManager
 
                             // remove device from store
                             DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
-
-                            PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                             return true;
                         }
                 }

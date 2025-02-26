@@ -682,7 +682,7 @@ public class DeviceManager : IManager
                 ledState = ledStateData[2];
             }
 
-            Task.Delay(1000).ConfigureAwait(UIthread);
+            Task.Delay(1000).Wait();
         }
 
         return XINPUT_LED_TO_PORT_MAP[ledState];
