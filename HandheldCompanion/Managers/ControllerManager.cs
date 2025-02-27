@@ -1170,6 +1170,8 @@ public static class ControllerManager
 
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
                         usbPnPDevice.CyclePort();
+
+                        PowerCyclers[baseContainerDeviceInstanceId] = true;
                     }
                     return true;
             }
@@ -1221,8 +1223,10 @@ public static class ControllerManager
 
                             // remove device from store
                             DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
-                            return true;
+
+                            PowerCyclers[baseContainerDeviceInstanceId] = false;
                         }
+                        return true;
                 }
             }
             catch { }

@@ -438,10 +438,12 @@ public class LegionGo : IDevice
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
-            fanTable = new(new ushort[] {
+            // default fanTable
+            // FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
+
+            FanTable fanTable = new([
                 (ushort)profile.FanProfile.fanSpeeds[1],
                 (ushort)profile.FanProfile.fanSpeeds[2],
                 (ushort)profile.FanProfile.fanSpeeds[3],
@@ -452,17 +454,17 @@ public class LegionGo : IDevice
                 (ushort)profile.FanProfile.fanSpeeds[8],
                 (ushort)profile.FanProfile.fanSpeeds[9],
                 (ushort)profile.FanProfile.fanSpeeds[10],
-            });
+            ]);
+
+            // update fan table
+            SetFanTable(fanTable).Wait();
         }
 
-        // update fan table
-        SetFanTable(fanTable);
-
-        Task<int> fanModeTask = Task.Run(async () => await GetSmartFanModeAsync());
+        Task<int> fanModeTask = Task.Run(GetSmartFanModeAsync);
         int fanMode = fanModeTask.Result;
 
         if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && fanMode != profile.OEMPowerMode)
-            SetSmartFanMode(profile.OEMPowerMode);
+            SetSmartFanMode(profile.OEMPowerMode).Wait();
     }
 
     public override bool SetLedBrightness(int brightness)
