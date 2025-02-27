@@ -133,6 +133,11 @@ namespace HandheldCompanion.Controllers
             SetGyroIndex(ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"));
         }
 
+        public override bool IsExternal()
+        {
+            return false;
+        }
+
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)

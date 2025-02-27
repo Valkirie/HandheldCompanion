@@ -180,38 +180,38 @@ namespace HandheldCompanion.Controllers
             return gamepadMotions[gamepadIndex];
         }
 
-        public bool IsPhysical()
+        public virtual bool IsPhysical()
         {
             return !IsVirtual();
         }
 
-        public bool IsVirtual()
+        public virtual bool IsVirtual()
         {
             if (Details is not null)
                 return Details.isVirtual;
             return true;
         }
 
-        public bool IsInternal()
+        public virtual bool IsInternal()
         {
             return !IsExternal();
         }
 
-        public bool IsExternal()
+        public virtual bool IsExternal()
         {
             if (Details is not null)
                 return Details.isExternal;
             return true;
         }
 
-        public bool IsXInput()
+        public virtual bool IsXInput()
         {
             if (Details is not null)
                 return Details.isXInput;
             return false;
         }
 
-        public bool IsGaming()
+        public virtual bool IsGaming()
         {
             if (Details is not null)
                 return Details.isGaming;
@@ -225,7 +225,7 @@ namespace HandheldCompanion.Controllers
             return false;
         }
 
-        public bool IsDongle()
+        public virtual bool IsDongle()
         {
             if (Details is not null)
                 return Details.isDongle;
