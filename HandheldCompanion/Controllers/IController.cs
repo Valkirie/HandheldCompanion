@@ -220,6 +220,11 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsWireless()
         {
+            return IsBluetooth() || IsDongle();
+        }
+
+        public virtual bool IsBluetooth()
+        {
             if (Details is not null)
                 return Details.isBluetooth;
             return false;

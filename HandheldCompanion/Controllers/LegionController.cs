@@ -77,13 +77,6 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsReady => Controller?.GetStatus(STATUS_IDX) is byte status && READY_STATES.Contains(status);
 
-        public override bool IsWireless()
-        {
-            return Controller != null &&
-                   (Controller.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
-                    Controller.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless);
-        }
-
         public LegionController() : base()
         { }
 
@@ -133,10 +126,11 @@ namespace HandheldCompanion.Controllers
             SetGyroIndex(ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"));
         }
 
-        public override bool IsExternal()
-        {
-            return false;
-        }
+        public override bool IsWireless() =>
+            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
+            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless;
+
+        public override bool IsExternal() => false;
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {

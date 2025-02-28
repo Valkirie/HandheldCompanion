@@ -942,7 +942,7 @@ public static class ControllerManager
                             bool HasCyclingController = false;
 
                             // do we have a pending wireless controller ?
-                            XInputController wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsWireless() && controller.IsBusy);
+                            XInputController wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
                             if (wirelessController is not null)
                             {
                                 // update busy flag
@@ -1012,30 +1012,37 @@ public static class ControllerManager
     {
         lock (targetLock)
         {
-            // pick last external controller
-            IController? externalController = GetPhysicalControllers<IController>().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless() || c.IsDongle());
+            IEnumerable<IController> controllers = GetPhysicalControllers<IController>();
 
-            // pick first internal controller
-            IController? internalController = GetPhysicalControllers<IController>().FirstOrDefault(c => c.IsInternal());
+            // Pick the most recently arrived external or wireless controller
+            IController? latestExternalController = controllers
+                .Where(c => c.IsExternal() || c.IsWireless())
+                .OrderByDescending(c => c.GetLastArrivalDate())
+                .FirstOrDefault();
 
-            string baseContainerDeviceInstanceId = string.Empty;
+            // Pick the internal controller (built-in, non-removable)
+            IController? internalController = controllers
+                .FirstOrDefault(c => c.IsInternal());
 
-            if (externalController != null)
+            string deviceInstanceId = string.Empty;
+
+            if (latestExternalController != null)
             {
-                // only replace controller if current is not external
-                if (targetController == null || targetController.IsInternal())
-                    baseContainerDeviceInstanceId = externalController.GetContainerInstanceId();
+                // Only replace the current controller if it's not a wireless (can be internal) or external controller
+                if (targetController != null && (targetController.IsWireless() || targetController.IsExternal()))
+                    deviceInstanceId = targetController.GetContainerInstanceId();
                 else
-                    baseContainerDeviceInstanceId = targetController.GetContainerInstanceId();
+                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
             }
+            // Fallback: if no external/wireless controller is available, use an internal controller (if present)
             else if (internalController != null)
             {
-                baseContainerDeviceInstanceId = internalController.GetContainerInstanceId();
+                deviceInstanceId = internalController.GetContainerInstanceId();
             }
 
-            // are we power cycling ?
-            PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out bool IsPowerCycling);
-            SetTargetController(baseContainerDeviceInstanceId, IsPowerCycling);
+            // Check if the chosen controller is power cycling
+            PowerCyclers.TryGetValue(deviceInstanceId, out bool isPowerCycling);
+            SetTargetController(deviceInstanceId, isPowerCycling);
         }
     }
 
