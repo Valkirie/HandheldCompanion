@@ -2512,9 +2512,6 @@
   <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
     <value>M2</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>設為默認佈局</value>
-  </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>切換虛擬手柄類型</value>
   </data>

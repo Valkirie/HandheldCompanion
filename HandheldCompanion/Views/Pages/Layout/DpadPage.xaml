@@ -21,7 +21,7 @@
         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DPadPage_DPad}" />
         <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ButtonStacks}">
             <ui:ItemsRepeater.Layout>
-                <ui:StackLayout Spacing="6" />
+                <ui:StackLayout />
             </ui:ItemsRepeater.Layout>
         </ui:ItemsRepeater>
     </ikw:SimpleStackPanel>

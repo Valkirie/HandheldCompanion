@@ -227,7 +227,7 @@
 
                 <ui:ItemsRepeater ItemsSource="{Binding Processes}">
                     <ui:ItemsRepeater.Layout>
-                        <ui:StackLayout Spacing="6" />
+                        <ui:StackLayout />
                     </ui:ItemsRepeater.Layout>
 
                     <ui:ItemsRepeater.ItemTemplate>
@@ -305,7 +305,7 @@
 
                                     <ui:ItemsRepeater ItemsSource="{Binding ProcessWindows}">
                                         <ui:ItemsRepeater.Layout>
-                                            <ui:StackLayout Spacing="6" />
+                                            <ui:StackLayout />
                                         </ui:ItemsRepeater.Layout>
 
                                         <ui:ItemsRepeater.ItemTemplate>

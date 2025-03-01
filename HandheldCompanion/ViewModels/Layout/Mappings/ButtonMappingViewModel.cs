@@ -15,8 +15,6 @@ namespace HandheldCompanion.ViewModels
 {
     public class ButtonMappingViewModel : MappingViewModel
     {
-        private static List<MappingTargetViewModel> _keyboardKeysTargets = [];
-
         private static HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.Move,
@@ -242,19 +240,6 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
-            // Lazy initialize to avoid re-creating target for Keyboard targets
-            if (_keyboardKeysTargets.Count == 0)
-            {
-                foreach (KeyFlags key in KeyFlagsOrder.arr)
-                {
-                    _keyboardKeysTargets.Add(new MappingTargetViewModel
-                    {
-                        Tag = (VirtualKeyCode)key,
-                        Content = EnumUtils.GetDescriptionFromEnumValue(key)
-                    });
-                }
-            }
-
             if (isInitialMapping)
             {
                 var controller = ControllerManager.GetTarget();
@@ -287,18 +272,18 @@ namespace HandheldCompanion.ViewModels
                 return;
             }
 
-            var fallbackPressType = (PressType)_pressTypeFallbackIndex;
+            // get current controller
+            IController controller = ControllerManager.GetDefault(true);
+
+            // Build Targets
+            List<MappingTargetViewModel> targets = new List<MappingTargetViewModel>();
+
+            PressType fallbackPressType = (PressType)_pressTypeFallbackIndex;
 
             if (actionType == ActionType.Button)
             {
                 if (Action is null || Action is not ButtonActions)
                     Action = new ButtonActions() { pressType = fallbackPressType };
-
-                // get current controller
-                var controller = ControllerManager.GetDefault(true);
-
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var button in controller.GetTargetButtons())
@@ -332,9 +317,6 @@ namespace HandheldCompanion.ViewModels
                 if (Action is null || Action is not MouseActions)
                     Action = new MouseActions() { pressType = fallbackPressType };
 
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
-
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
                 {
@@ -360,9 +342,6 @@ namespace HandheldCompanion.ViewModels
                 if (Action is null || Action is not ShiftActions)
                     Action = new ShiftActions(ShiftSlot.ShiftA);
 
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
-
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var shiftSlot in Enum.GetValues<ShiftSlot>())
                 {
@@ -386,9 +365,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Inherit)
             {
                 if (Action is null || Action is not InheritActions)
-                {
                     Action = new InheritActions();
-                }
 
                 // Update list and selected target
                 Targets.Clear();

@@ -644,7 +644,7 @@ public partial class MainWindow : GamepadWindow
         notificationsPage.Page_Closed();
 
         // remove all automation event handlers
-        Automation.RemoveAllEventHandlers();
+        // Automation.RemoveAllEventHandlers();
 
         // stop managers
         VirtualManager.Stop();

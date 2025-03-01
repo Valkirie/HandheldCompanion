@@ -64,7 +64,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _leftAxis)
             {
-                LeftAxisMappings.Add(new AxisStackViewModel(flag));
+                LeftAxisMappings.Add(new AxisStackViewModel(flag, touchpad: true));
             }
 
             foreach (var flag in _rightButtons)
@@ -74,7 +74,7 @@ namespace HandheldCompanion.ViewModels
 
             foreach (var flag in _rightAxis)
             {
-                RightAxisMappings.Add(new AxisStackViewModel(flag));
+                RightAxisMappings.Add(new AxisStackViewModel(flag, touchpad: true));
             }
         }
 

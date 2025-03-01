@@ -349,22 +349,17 @@
 
             <Button
                 Grid.Column="0"
-                Width="48"
-                Height="48"
-                Margin="0,0,1,0"
-                Padding="2,2,0,0"
-                HorizontalAlignment="Right"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Command="{Binding ButtonCommand}"
-                FontWeight="Bold"
-                Foreground="{DynamicResource AccentButtonBackground}"
-                Style="{DynamicResource TabViewButtonStyle}">
+                Style="{DynamicResource AccentButtonStyle}">
                 <ui:FontIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    FontSize="24"
-                    FontWeight="Bold">
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}">
                     <ui:FontIcon.Style>
                         <Style TargetType="{x:Type ui:FontIcon}">
                             <Setter Property="Glyph" Value="&#xECC8;" />
@@ -1297,7 +1292,7 @@
                         </ikw:SimpleStackPanel>
                     </Grid>
 
-                    <!--  Axis 2 Mouse  -->
+                    <!--  GyroAxis 2 Mouse  -->
                     <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
                         <ikw:SimpleStackPanel Spacing="6">
                             <ikw:SimpleStackPanel Spacing="6">
@@ -1424,22 +1419,17 @@
 
             <Button
                 Grid.Column="0"
-                Width="48"
-                Height="48"
-                Margin="0,0,1,0"
-                Padding="2,2,0,0"
-                HorizontalAlignment="Right"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Command="{Binding ButtonCommand}"
-                FontWeight="Bold"
-                Foreground="{DynamicResource AccentButtonBackground}"
-                Style="{DynamicResource TabViewButtonStyle}">
+                Style="{DynamicResource AccentButtonStyle}">
                 <ui:FontIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    FontSize="24"
-                    FontWeight="Bold">
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}">
                     <ui:FontIcon.Style>
                         <Style TargetType="{x:Type ui:FontIcon}">
                             <Setter Property="Glyph" Value="&#xECC8;" />
@@ -1540,9 +1530,9 @@
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="False" />
+                                <ComboBoxItem Content="Button" IsEnabled="True" />
                                 <ComboBoxItem Content="Joystick" IsEnabled="True" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="False" />
+                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="False" />
                                 <ComboBoxItem Content="Shift" IsEnabled="False" />
@@ -1579,6 +1569,86 @@
 
                 <Expander.Content>
                     <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+
+                        <!--  Axis 2 Button|Keyboard|Mouse  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                            <!--  Axis Direction  -->
+                            <!--  TODO: Translate me  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Axis direction" />
+
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center">
+                                    <WrapPanel Orientation="Horizontal">
+                                        <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
+                                        <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
+                                    </WrapPanel>
+                                    <WrapPanel Orientation="Horizontal">
+                                        <CheckBox Content="Left" IsChecked="{Binding IsLeft, Mode=TwoWay}" />
+                                        <CheckBox Content="Right" IsChecked="{Binding IsRight, Mode=TwoWay}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <!--  Axis Threshold  -->
+                            <!--  TODO: Translate me  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Axis threshold" />
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                                    <Slider
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="10000"
+                                        Maximum="32000"
+                                        Minimum="2000"
+                                        SmallChange="2000"
+                                        TickFrequency="2000"
+                                        TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
 
                         <!--  Axis 2 Axis  -->
                         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
@@ -1800,8 +1870,8 @@
                             </Grid>
                         </ikw:SimpleStackPanel>
 
-                        <!--  Axis 2 Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+                        <!--  Axis 2 Mouse Axis  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
 
                             <!--  Sensitivity  -->
                             <Grid Height="40">
@@ -1894,10 +1964,11 @@
                             <Separator
                                 Margin="-46,0,-16,0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                                BorderThickness="0,1,0,0"
+                                Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <!--  Filtering  -->
-                            <Grid>
+                            <Grid Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="2*" MinWidth="200" />
                                     <ColumnDefinition Width="8*" MinWidth="120" />
@@ -1906,7 +1977,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Filtering (touchpad only)" />
+                                    Text="Filtering" />
 
                                 <ui:ToggleSwitch
                                     Grid.Column="1"
@@ -1967,10 +2038,11 @@
                             <Separator
                                 Margin="-46,0,-16,0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                                BorderThickness="0,1,0,0"
+                                Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <!--  Deadzone  -->
-                            <Grid Height="40">
+                            <Grid Height="40" Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200" />
                                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -1980,7 +2052,7 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Deadzone (joystick only)" />
+                                    Text="Deadzone" />
 
                                 <DockPanel
                                     Grid.Column="1"
@@ -2031,22 +2103,17 @@
 
             <Button
                 Grid.Column="0"
-                Width="48"
-                Height="48"
-                Margin="0,0,1,0"
-                Padding="2,2,0,0"
-                HorizontalAlignment="Right"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Command="{Binding ButtonCommand}"
-                FontWeight="Bold"
-                Foreground="{DynamicResource AccentButtonBackground}"
-                Style="{DynamicResource TabViewButtonStyle}">
+                Style="{DynamicResource AccentButtonStyle}">
                 <ui:FontIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    FontSize="24"
-                    FontWeight="Bold">
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}">
                     <ui:FontIcon.Style>
                         <Style TargetType="{x:Type ui:FontIcon}">
                             <Setter Property="Glyph" Value="&#xECC8;" />
@@ -2147,10 +2214,10 @@
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="False" />
+                                <ComboBoxItem Content="Button" IsEnabled="True" />
                                 <ComboBoxItem Content="Joystick" IsEnabled="False" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="False" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="False" />
+                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
+                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="True" />
                                 <ComboBoxItem Content="Shift" IsEnabled="False" />
                                 <ComboBoxItem Content="Inherit" IsEnabled="True" />
@@ -2186,6 +2253,53 @@
 
                 <Expander.Content>
                     <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+
+                        <!--  Trigger 2 Button|Keyboard|Mouse  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+
+                            <!--  Trigger Threshold  -->
+                            <!--  TODO: Translate me  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Trigger threshold" />
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                                    <Slider
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="100"
+                                        Maximum="250"
+                                        Minimum="10"
+                                        SmallChange="10"
+                                        TickFrequency="10"
+                                        TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
+
                         <!--  Trigger 2 Trigger  -->
                         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
 

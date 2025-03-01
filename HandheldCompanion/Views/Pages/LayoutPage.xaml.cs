@@ -183,9 +183,6 @@ public partial class LayoutPage : Page
 
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
-
-                CheckBoxDefaultLayout.IsChecked = currentTemplate.Layout.IsDefaultLayout;
-                CheckBoxDefaultLayout.IsEnabled = currentTemplate.Layout != ManagerFactory.layoutManager.GetDesktop();
             });
         }
     }
@@ -383,22 +380,6 @@ public partial class LayoutPage : Page
             string header = currentTemplate.Product.Length > 0 ?
                     "Profile: " + currentTemplate.Product : "Layout: Desktop";
             parentNavView.Header = new TextBlock() { Text = header };
-        }
-    }
-
-    private void CheckBoxDefaultLayout_Checked(object sender, RoutedEventArgs e)
-    {
-        bool isDefaultLayout = (bool)CheckBoxDefaultLayout.IsChecked;
-        Profile? prevDefaultLayoutProfile = ManagerFactory.profileManager.GetProfileWithDefaultLayout();
-
-        currentTemplate.Layout.IsDefaultLayout = isDefaultLayout;
-        currentTemplate.Layout.UpdateLayout();
-
-        // If option is enabled and a different default layout profile exists, we want to set option false on prev profile.
-        if (isDefaultLayout && prevDefaultLayoutProfile != null && prevDefaultLayoutProfile.Layout != currentTemplate.Layout)
-        {
-            prevDefaultLayoutProfile.Layout.IsDefaultLayout = false;
-            ManagerFactory.profileManager.UpdateOrCreateProfile(prevDefaultLayoutProfile);
         }
     }
 }

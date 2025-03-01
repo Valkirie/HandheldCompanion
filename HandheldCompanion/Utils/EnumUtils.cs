@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace HandheldCompanion.Utils;
 
 public static class EnumUtils
 {
+    private static HashSet<string> missingKeys = new();
     public static string GetDescriptionFromEnumValue(Enum value, string prefix = "", string suffix = "")
     {
         // return localized string if available
@@ -40,7 +42,10 @@ public static class EnumUtils
         if (attribute is not null)
             return attribute.Description;
 
-        LogManager.LogWarning("No localization for enum: {0}", key);
+        // only display enum warnings once
+        if (missingKeys.Add(key))
+            LogManager.LogWarning("No localization for enum: {0}", key);
+
         return value.ToString();
     }
 

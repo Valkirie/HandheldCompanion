@@ -29,10 +29,12 @@ namespace HandheldCompanion.ViewModels
         }
 
         private AxisLayoutFlags _flag;
+        public bool _touchpad;
 
-        public AxisStackViewModel(AxisLayoutFlags flag)
+        public AxisStackViewModel(AxisLayoutFlags flag, bool touchpad = false)
         {
             _flag = flag;
+            _touchpad = touchpad;
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(AxisMappings, new object());
@@ -64,8 +66,6 @@ namespace HandheldCompanion.ViewModels
 
             base.Dispose();
         }
-
-
 
         public void AddMapping()
         {

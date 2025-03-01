@@ -978,8 +978,6 @@ public class ProfileManager : IManager
             UpdateProfileWrapper(profile);
     }
 
-    public Profile? GetProfileWithDefaultLayout() => profiles.Values.FirstOrDefault(p => p.Layout.IsDefaultLayout);
-
     #region events
 
     public event DeletedEventHandler Deleted;

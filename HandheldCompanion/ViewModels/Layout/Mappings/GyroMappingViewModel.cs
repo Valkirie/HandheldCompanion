@@ -259,6 +259,12 @@ namespace HandheldCompanion.ViewModels
                 return;
             }
 
+            // get current controller
+            IController controller = ControllerManager.GetDefault(true);
+
+            // Build Targets
+            List<MappingTargetViewModel> targets = new List<MappingTargetViewModel>();
+
             if (actionType == ActionType.Joystick)
             {
                 if (Action is null || Action is not AxisActions)
@@ -270,12 +276,6 @@ namespace HandheldCompanion.ViewModels
                         MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState
                     };
                 }
-
-                // get current controller
-                var controller = ControllerManager.GetDefault(true);
-
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetAxis())
@@ -309,9 +309,6 @@ namespace HandheldCompanion.ViewModels
                     };
                 }
 
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
-
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
                 {
@@ -335,9 +332,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Inherit)
             {
                 if (Action is null || Action is not InheritActions)
-                {
                     Action = new InheritActions();
-                }
 
                 // Update list and selected target
                 Targets.Clear();

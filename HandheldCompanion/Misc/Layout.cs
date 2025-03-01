@@ -16,8 +16,6 @@ public partial class Layout : ICloneable, IDisposable
     public SortedDictionary<AxisLayoutFlags, List<IActions>> AxisLayout { get; set; } = [];
     public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = [];
 
-    public bool IsDefaultLayout { get; set; }
-
     public Layout()
     {
     }
@@ -82,11 +80,7 @@ public partial class Layout : ICloneable, IDisposable
 
     public object Clone()
     {
-        // Clone shouldn't be default layout in case it is true
-        Layout clone = CloningHelper.DeepClone(this);
-        clone.IsDefaultLayout = false;
-
-        return clone;
+        return CloningHelper.DeepClone(this);
     }
 
     public void Dispose()

@@ -1,6 +1,7 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -118,6 +119,9 @@ namespace HandheldCompanion.Actions
 
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
+
+        public MotionDirection motionDirection = MotionDirection.None;
+        public float motionThreshold = 4000;
 
         public IActions()
         {

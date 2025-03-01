@@ -2522,9 +2522,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
     <value>M2</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Make this the default layout</value>
-  </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>Toggle emulated controller type</value>
   </data>

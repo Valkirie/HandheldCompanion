@@ -248,12 +248,6 @@
                                 </Button>
                             </ikw:SimpleStackPanel>
                         </Grid>
-
-                        <CheckBox
-                            Name="CheckBoxDefaultLayout"
-                            Checked="CheckBoxDefaultLayout_Checked"
-                            Content="{l:Static resx:Resources.LayoutPage_SetAsDefault}"
-                            Unchecked="CheckBoxDefaultLayout_Checked" />
                     </ikw:SimpleStackPanel>
 
                     <!--  Separator  -->

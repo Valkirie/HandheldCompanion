@@ -16,16 +16,16 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRIGGER BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left_Button}" />
+            <!-- <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left_Button}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftTriggerMappings}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout />
                 </ui:ItemsRepeater.Layout>
-            </ui:ItemsRepeater>
+            </ui:ItemsRepeater>-->
 
             <!--  LEFT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left}" />
@@ -34,12 +34,13 @@
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT TRIGGER BUTTONS  -->
+            <!--
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Right_Button}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightTriggerMappings}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout />
                 </ui:ItemsRepeater.Layout>
-            </ui:ItemsRepeater>
+            </ui:ItemsRepeater>-->
 
             <!--  RIGHT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Right}" />
