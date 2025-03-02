@@ -435,6 +435,7 @@
                             <ComboBoxItem Content="Shift B" />
                             <ComboBoxItem Content="Shift C" />
                             <ComboBoxItem Content="Shift D" />
+                            <ComboBoxItem Content="Any" />
                             <ComboBox.Style>
                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                     <Setter Property="Visibility" Value="Hidden" />
@@ -1508,6 +1509,7 @@
                             <ComboBoxItem Content="Shift B" />
                             <ComboBoxItem Content="Shift C" />
                             <ComboBoxItem Content="Shift D" />
+                            <ComboBoxItem Content="Any" />
                             <ComboBox.Style>
                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                     <Setter Property="Visibility" Value="Hidden" />
@@ -2192,6 +2194,7 @@
                             <ComboBoxItem Content="Shift B" />
                             <ComboBoxItem Content="Shift C" />
                             <ComboBoxItem Content="Shift D" />
+                            <ComboBoxItem Content="Any" />
                             <ComboBox.Style>
                                 <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                     <Setter Property="Visibility" Value="Hidden" />

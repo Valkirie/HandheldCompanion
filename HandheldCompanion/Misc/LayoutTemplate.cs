@@ -3,6 +3,7 @@ using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using Newtonsoft.Json;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 
@@ -61,8 +62,6 @@ namespace HandheldCompanion.Misc
             {
                 default:
                 case "Gamepad (XBOX)":
-                    {
-                    }
                     break;
 
                 case "Desktop":
@@ -72,7 +71,29 @@ namespace HandheldCompanion.Misc
                             { AxisLayoutFlags.LeftStick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Scroll } } },
                             { AxisLayoutFlags.RightStick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } },
                             { AxisLayoutFlags.LeftPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Scroll } } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } }
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } },
+                            {
+                                AxisLayoutFlags.L2, new List<IActions>()
+                                {
+                                    new MouseActions
+                                    {
+                                        motionThreshold = Gamepad.TriggerThreshold,
+                                        motionDirection = Utils.MotionDirection.Up,
+                                        MouseType = MouseActionsType.RightButton
+                                    }
+                                }
+                            },
+                            {
+                                AxisLayoutFlags.R2, new List<IActions>()
+                                {
+                                    new MouseActions
+                                    {
+                                        motionThreshold = Gamepad.TriggerThreshold,
+                                        motionDirection = Utils.MotionDirection.Up,
+                                        MouseType = MouseActionsType.LeftButton
+                                    }
+                                }
+                            }
                         };
 
                         Layout.ButtonLayout = new()
@@ -92,9 +113,6 @@ namespace HandheldCompanion.Misc
                             { ButtonFlags.DPadDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.DOWN } } },
                             { ButtonFlags.DPadLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.LEFT } } },
                             { ButtonFlags.DPadRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.RIGHT } } },
-
-                            { ButtonFlags.L2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
-                            { ButtonFlags.R2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } },
 
                             { ButtonFlags.LeftPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
                             { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
@@ -116,7 +134,58 @@ namespace HandheldCompanion.Misc
                         Layout.AxisLayout = new()
                         {
                             { AxisLayoutFlags.RightStick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } }
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } } },
+                            {
+                                AxisLayoutFlags.LeftStick, new List<IActions>()
+                                {
+                                    new KeyboardActions
+                                    {
+                                        motionThreshold = Gamepad.LeftThumbDeadZone,
+                                        motionDirection = Utils.MotionDirection.Left,
+                                        Key = VirtualKeyCode.VK_A
+                                    },
+                                    new KeyboardActions
+                                    {
+                                        motionThreshold = Gamepad.LeftThumbDeadZone,
+                                        motionDirection = Utils.MotionDirection.Right,
+                                        Key = VirtualKeyCode.VK_D
+                                    },
+                                    new KeyboardActions
+                                    {
+                                        motionThreshold = Gamepad.LeftThumbDeadZone,
+                                        motionDirection = Utils.MotionDirection.Up,
+                                        Key = VirtualKeyCode.VK_W
+                                    },
+                                    new KeyboardActions
+                                    {
+                                        motionThreshold = Gamepad.LeftThumbDeadZone,
+                                        motionDirection = Utils.MotionDirection.Down,
+                                        Key = VirtualKeyCode.VK_S
+                                    }
+                                }
+                            },
+                            {
+                                AxisLayoutFlags.L2, new List<IActions>()
+                                {
+                                    new MouseActions
+                                    {
+                                        motionThreshold = Gamepad.TriggerThreshold,
+                                        motionDirection = Utils.MotionDirection.Up,
+                                        MouseType = MouseActionsType.RightButton
+                                    }
+                                }
+                            },
+                            {
+                                AxisLayoutFlags.R2, new List<IActions>()
+                                {
+                                    new MouseActions
+                                    {
+                                        motionThreshold = Gamepad.TriggerThreshold,
+                                        motionDirection = Utils.MotionDirection.Up,
+                                        MouseType = MouseActionsType.LeftButton
+                                    }
+                                }
+                            }
                         };
 
                         Layout.ButtonLayout = new()
@@ -136,14 +205,6 @@ namespace HandheldCompanion.Misc
                             { ButtonFlags.DPadDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_3 } } },
                             { ButtonFlags.DPadLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_4 } } },
                             { ButtonFlags.DPadRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_2 } } },
-
-                            { ButtonFlags.L2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
-                            { ButtonFlags.R2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } },
-
-                            { ButtonFlags.LeftStickUp, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_W } } },
-                            { ButtonFlags.LeftStickDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_S } } },
-                            { ButtonFlags.LeftStickLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_A } } },
-                            { ButtonFlags.LeftStickRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_D } } },
 
                             { ButtonFlags.LeftStickClick, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.LSHIFT } } },
                             { ButtonFlags.RightStickClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } },

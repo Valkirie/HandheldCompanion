@@ -67,7 +67,7 @@ namespace HandheldCompanion.Actions
                 return;
 
             MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
-            bool value = motionDirection.HasFlag(direction) && direction != MotionDirection.None;
+            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
 
             // transition to Button Execute()
             Execute(this.Button, value, shiftSlot);

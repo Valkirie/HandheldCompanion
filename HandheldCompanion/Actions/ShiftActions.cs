@@ -16,6 +16,8 @@ namespace HandheldCompanion.Actions
         ShiftC,
         [Description("Shift D")]
         ShiftD,
+        [Description("Any")]
+        Any,
     }
 
     [Serializable]

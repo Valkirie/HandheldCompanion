@@ -21,19 +21,15 @@
         <!--  LEFT JOYSTICK  -->
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Left}" />
-            <StackPanel>
-                <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftThumbAxisMappings}" />
-                <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftThumbMappings}" />
-            </StackPanel>
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftThumbAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftThumbMappings}" />
         </ikw:SimpleStackPanel>
 
         <!--  RIGHT JOYSTICK  -->
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightThumbEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.JoystickPage_Joystick_Right}" />
-            <StackPanel>
-                <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding RightThumbAxisMappings}" />
-                <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightThumbMappings}" />
-            </StackPanel>
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding RightThumbAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightThumbMappings}" />
         </ikw:SimpleStackPanel>
 
     </ikw:SimpleStackPanel>
