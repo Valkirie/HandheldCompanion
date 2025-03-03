@@ -174,7 +174,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (ManagerFactory.multimediaManager.Status != ManagerStatus.Initialized || ManagerFactory.multimediaManager.PrimaryDesktop is null)
+                if (!ManagerFactory.multimediaManager.IsReady || ManagerFactory.multimediaManager.PrimaryDesktop is null)
                     return 60.0d;
 
                 return ManagerFactory.multimediaManager.PrimaryDesktop.devMode.dmDisplayFrequency;

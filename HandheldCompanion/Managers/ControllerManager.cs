@@ -326,7 +326,7 @@ public static class ControllerManager
         {
             case "VibrationStrength":
                 uint VibrationStrength = Convert.ToUInt32(value);
-                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.Status == ManagerStatus.Initialized);
+                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.IsReady);
                 break;
 
             case "ControllerManagement":

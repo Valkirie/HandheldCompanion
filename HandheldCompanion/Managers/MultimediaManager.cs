@@ -56,7 +56,7 @@ public class MultimediaManager : IManager
 
     public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -98,7 +98,7 @@ public class MultimediaManager : IManager
 
     public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();
@@ -218,6 +218,9 @@ public class MultimediaManager : IManager
 
     private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
+        // set flag
+        AddStatus(ManagerStatus.Busy);
+
         // temporary array to store all current screens
         Dictionary<string, DesktopScreen> desktopScreens = [];
 
@@ -356,6 +359,9 @@ public class MultimediaManager : IManager
         ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
         if (screenResolution is not null)
             DisplaySettingsChanged?.Invoke(PrimaryDesktop, screenResolution);
+
+        // set flag
+        RemoveStatus(ManagerStatus.Busy);
     }
 
     /// <summary>
