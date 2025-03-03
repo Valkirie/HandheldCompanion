@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace HandheldCompanion.Managers
 {
@@ -245,6 +246,10 @@ namespace HandheldCompanion.Managers
             // Add to dictionary
             DisplayGPU.TryAdd(adapterInformation, newGPU);
 
+            // Wait until manager is ready
+            while (ManagerFactory.multimediaManager.IsRunning && ManagerFactory.multimediaManager.IsBusy)
+                Thread.Sleep(1000);
+
             // Force send an update
             if (ManagerFactory.multimediaManager.PrimaryDesktop != null)
                 MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
@@ -252,6 +257,10 @@ namespace HandheldCompanion.Managers
 
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
+            // this shouldn't happen
+            if (screen?.screen == null)
+                return;
+
             AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
             if (key is not null && DisplayGPU.TryGetValue(key, out GPU gpu))
             {
