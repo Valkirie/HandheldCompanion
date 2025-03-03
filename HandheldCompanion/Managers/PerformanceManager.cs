@@ -72,7 +72,6 @@ public static class PerformanceManager
     private static int AutoTDPFPSSetpointMetCounter;
     private static int AutoTDPFPSSmallDipCounter;
     private static readonly double[] FPSHistory = new double[6];
-    private static int FPSHistoryIndex = 0;
     private static double ProcessValueFPSPrevious;
     private static double AutoTDP;
     private static double AutoTDPPrev;
@@ -567,31 +566,37 @@ public static class PerformanceManager
 
     private static double AutoTDPDipper(double FPSActual, double FPSSetpoint)
     {
+        // Dipper
+        // Add small positive "error" if actual and target FPS are similar for a duration
         double Modifier = 0.0d;
 
-        // Circular buffer for FPS history
-        FPSHistory[FPSHistoryIndex] = FPSActual;
-        FPSHistoryIndex = (FPSHistoryIndex + 1) % FPSHistory.Length; // Circular index update
+        // Track previous FPS values for average calculation using a rolling array
+        Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
+        FPSHistory[0] = FPSActual; // Add current FPS at the start
 
-        double averageFPS = FPSHistory.Average();
-
+        // Activate around target range of 1 FPS as games can fluctuate
         if (FPSSetpoint - 1 <= FPSActual && FPSActual <= FPSSetpoint + 1)
         {
             AutoTDPFPSSetpointMetCounter++;
 
+            // First wait for three seconds of stable FPS arount target, then perform small dip
+            // Reduction only happens if average FPS is on target or slightly below
             if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 &&
-                FPSSetpoint - 0.5 <= averageFPS && averageFPS <= FPSSetpoint + 0.1)
+                FPSSetpoint - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= FPSSetpoint + 0.1)
             {
                 AutoTDPFPSSmallDipCounter++;
                 Modifier = FPSSetpoint + 0.5 - FPSActual;
             }
+            // After three small dips, perform larger dip 
+            // Reduction only happens if average FPS is on target or slightly below
             else if (AutoTDPFPSSmallDipCounter >= 3 &&
-                     FPSSetpoint - 0.5 <= averageFPS && averageFPS <= FPSSetpoint + 0.1)
+                     FPSSetpoint - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= FPSSetpoint + 0.1)
             {
                 Modifier = FPSSetpoint + 1.5 - FPSActual;
                 AutoTDPFPSSetpointMetCounter = 6;
             }
         }
+        // Perform dips until FPS is outside of limits around target
         else
         {
             Modifier = 0.0;
