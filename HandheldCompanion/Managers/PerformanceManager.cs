@@ -77,7 +77,6 @@ public static class PerformanceManager
     private static double AutoTDPPrev;
     private static double AutoTDPMax;
     private static bool autotdpWatchdogPendingStop;
-    private static int autotdpWatchdogCounter;
 
     // powercfg
     private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
@@ -94,7 +93,6 @@ public static class PerformanceManager
     private static bool tdpWatchdogPendingStop;
     private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
     private static readonly double[] StoredTDP = new double[3]; // used to store TDP
-    private static int tdpWatchdogCounter;
 
     private const string dllName = "WinRing0x64.dll";
 
@@ -476,14 +474,14 @@ public static class PerformanceManager
         {
             try
             {
-                autotdpWatchdogCounter++;
-
                 bool TDPdone = false;
                 bool MSRdone = true;
                 bool forcedUpdate = false;
+                double damper = 0.0;
+                double unclampedProcessValueFPS = 0.0;
 
                 // todo: Store fps for data gathering from multiple points (OSD, Performance)
-                double processValueFPS = PlatformManager.RTSS.GetFramerate(true);
+                double processValueFPS = unclampedProcessValueFPS = PlatformManager.RTSS.GetFramerate(true);
 
                 // Ensure realistic process values, prevent divide by 0
                 processValueFPS = Math.Clamp(processValueFPS, 5, 500);
@@ -501,28 +499,29 @@ public static class PerformanceManager
 
                 // Determine final setpoint
                 if (!AutoTDPFirstRun)
+                {
                     AutoTDP += TDPAdjustment + AutoTDPDamper(processValueFPS);
+                    damper = AutoTDPDamper(processValueFPS);
+                }
                 else
                     AutoTDPFirstRun = false;
 
                 AutoTDP = Math.Clamp(AutoTDP, TDPMin, AutoTDPMax);
 
-                // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
-
-                // force update TDP periodically since we don't actually read current TDP
-                if (autotdpWatchdogCounter > COUNTER_AUTO)
-                {
-                    forcedUpdate = true;
-                    autotdpWatchdogCounter = 0;
-                }
-
                 // Only update if we have a different TDP value to set
-                // or a forced update is requested
-                if (AutoTDP != AutoTDPPrev || forcedUpdate)
+                if (AutoTDP != AutoTDPPrev)
                 {
                     double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
                     RequestTDP(values, true);
                     AutoTDPPrev = AutoTDP;
+
+                    // Reset interval to default after a TDP change
+                    autotdpWatchdog.Interval = INTERVAL_AUTO;
+                }
+                else
+                {
+                    // Reduce interval to 100ms for quicker reaction next time a change is requierd
+                    autotdpWatchdog.Interval = 115;
                 }
 
                 // are we done ?
@@ -668,18 +667,8 @@ public static class PerformanceManager
         {
             try
             {
-                tdpWatchdogCounter++;
-
                 bool TDPdone = false;
                 bool MSRdone = true;
-                bool forcedUpdate = false;
-
-                // force update TDP periodically since we don't actually read current TDP
-                if (tdpWatchdogCounter > COUNTER_DEFAULT)
-                {
-                    forcedUpdate = true;
-                    tdpWatchdogCounter = 0;
-                }
 
                 // read current values and (re)apply requested TDP if needed
                 for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
@@ -700,8 +689,7 @@ public static class PerformanceManager
                         tdpWatchdog.Interval = INTERVAL_DEGRADED;
 
                     // only request an update if current limit is different than stored
-                    // or a forced update is requested
-                    if (ReadTDP != TDP || forcedUpdate)
+                    if (ReadTDP != TDP)
                         RequestTDP((PowerType)idx, TDP, true);
 
                     await Task.Delay(20).ConfigureAwait(false); // Avoid blocking the synchronization context
@@ -718,7 +706,7 @@ public static class PerformanceManager
 
                     if (TDPslow != 0.0d && TDPfast != 0.0d)
                         // only request an update if current limit is different than stored
-                        if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast || forcedUpdate)
+                        if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
                         {
                             MSRdone = false;
                             RequestMSR(TDPslow, TDPfast);
