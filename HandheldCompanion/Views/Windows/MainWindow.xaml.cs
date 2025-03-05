@@ -682,8 +682,8 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Maximized:
                 ManagerFactory.settingsManager.SetProperty("MainWindowLeft", 0);
                 ManagerFactory.settingsManager.SetProperty("MainWindowTop", 0);
-                ManagerFactory.settingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
-                ManagerFactory.settingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
+                // ManagerFactory.settingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
+                // ManagerFactory.settingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
                 break;
         }
 
