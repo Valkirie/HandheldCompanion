@@ -296,13 +296,11 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (button == ((ButtonActions)Action).Button)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 Targets.ReplaceWith(targets);
-                if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
+                SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Keyboard)
             {
@@ -328,14 +326,12 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (mouseType == ((MouseActions)Action).MouseType)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 // Update list and selected target
                 Targets.ReplaceWith(targets);
-                if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
+                SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Shift)
             {
@@ -353,14 +349,13 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (shiftSlot == ((ShiftActions)Action).ShiftSlot)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 // Update list and selected target
                 Targets.ReplaceWith(targets);
-                if (matchingTargetVm != null) SelectedTarget = matchingTargetVm;
+                // Pick Any if matchingTargetVm is null
+                SelectedTarget = matchingTargetVm ?? Targets.Last();
             }
             else if (actionType == ActionType.Inherit)
             {

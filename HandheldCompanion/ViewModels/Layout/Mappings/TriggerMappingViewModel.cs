@@ -151,9 +151,7 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (button == ((ButtonActions)Action).Button)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 Targets.ReplaceWith(targets);
@@ -183,9 +181,7 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (mouseType == ((MouseActions)Action).MouseType)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 // Update list and selected target
@@ -208,9 +204,7 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (axis == ((TriggerActions)Action).Axis)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 Targets.ReplaceWith(targets);

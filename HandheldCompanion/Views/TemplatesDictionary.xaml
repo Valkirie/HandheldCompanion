@@ -425,44 +425,6 @@
                                 Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
 
-                        <ComboBox
-                            Grid.Column="0"
-                            MinWidth="138"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="No Shift" />
-                            <ComboBoxItem Content="Shift A" />
-                            <ComboBoxItem Content="Shift B" />
-                            <ComboBoxItem Content="Shift C" />
-                            <ComboBoxItem Content="Shift D" />
-                            <ComboBoxItem Content="Any" />
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-
-                        <ComboBox
-                            Grid.Column="1"
-                            Width="160"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
-                            <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
-                            <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
-                            <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
-                        </ComboBox>
-
                         <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                             <ComboBox
                                 Width="160"
@@ -770,6 +732,73 @@
                                 </Grid>
                             </ikw:SimpleStackPanel>
                         </Grid>
+
+                        <!--  Input Type and Shifting  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input shift" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="No Shift" />
+                                    <ComboBoxItem Content="Shift A" />
+                                    <ComboBoxItem Content="Shift B" />
+                                    <ComboBoxItem Content="Shift C" />
+                                    <ComboBoxItem Content="Shift D" />
+                                    <ComboBoxItem Content="Any" />
+                                </ComboBox>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input type" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
+                                    <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
+                                    <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
+                                    <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
+                                </ComboBox>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </Expander.Content>
             </Expander>
@@ -1499,33 +1528,6 @@
                                 Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
 
-                        <ComboBox
-                            Grid.Column="0"
-                            MinWidth="138"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="No Shift" />
-                            <ComboBoxItem Content="Shift A" />
-                            <ComboBoxItem Content="Shift B" />
-                            <ComboBoxItem Content="Shift C" />
-                            <ComboBoxItem Content="Shift D" />
-                            <ComboBoxItem Content="Any" />
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-
                         <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                             <ComboBox
                                 Width="160"
@@ -2083,6 +2085,42 @@
                                 </DockPanel>
                             </Grid>
                         </ikw:SimpleStackPanel>
+
+                        <!--  Input Shifting  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input shift" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="No Shift" />
+                                    <ComboBoxItem Content="Shift A" />
+                                    <ComboBoxItem Content="Shift B" />
+                                    <ComboBoxItem Content="Shift C" />
+                                    <ComboBoxItem Content="Shift D" />
+                                    <ComboBoxItem Content="Any" />
+                                </ComboBox>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </Expander.Content>
             </Expander>
@@ -2183,33 +2221,6 @@
                                 FontSize="14"
                                 Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-
-                        <ComboBox
-                            Grid.Column="0"
-                            MinWidth="138"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="No Shift" />
-                            <ComboBoxItem Content="Shift A" />
-                            <ComboBoxItem Content="Shift B" />
-                            <ComboBoxItem Content="Shift C" />
-                            <ComboBoxItem Content="Shift D" />
-                            <ComboBoxItem Content="Any" />
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
 
                         <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                             <ComboBox
@@ -2439,6 +2450,42 @@
                                         ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         Value="{Binding Trigger2TriggerAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
+
+                        <!--  Input Shifting  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input shift" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="No Shift" />
+                                    <ComboBoxItem Content="Shift A" />
+                                    <ComboBoxItem Content="Shift B" />
+                                    <ComboBoxItem Content="Shift C" />
+                                    <ComboBoxItem Content="Shift D" />
+                                    <ComboBoxItem Content="Any" />
+                                </ComboBox>
                             </Grid>
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
