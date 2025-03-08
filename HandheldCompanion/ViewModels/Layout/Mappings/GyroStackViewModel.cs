@@ -45,7 +45,8 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerSelected += UpdateController;
 
             // send events
-            UpdateController(ControllerManager.GetTarget());
+            if (ControllerManager.HasTargetController)
+                UpdateController(ControllerManager.GetTarget());
         }
 
         protected override void UpdateController(IController controller)

@@ -54,7 +54,8 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerSelected += UpdateController;
 
             // send events
-            UpdateController(ControllerManager.GetTarget());
+            if (ControllerManager.HasTargetController)
+                UpdateController(ControllerManager.GetTarget());
         }
 
         private void ButtonMappings_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

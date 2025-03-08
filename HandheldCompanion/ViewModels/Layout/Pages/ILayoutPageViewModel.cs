@@ -26,9 +26,7 @@ namespace HandheldCompanion.ViewModels
 
             // send events
             if (ControllerManager.HasTargetController)
-            {
                 UpdateController(ControllerManager.GetTarget());
-            }
         }
 
         public override void Dispose()

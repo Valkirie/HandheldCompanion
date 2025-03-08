@@ -96,14 +96,10 @@ public class ProfileManager : IManager
 
         // raise events
         if (ProcessManager.IsInitialized)
-        {
             ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
-        }
 
         if (ControllerManager.IsInitialized)
-        {
             ControllerManager_ControllerPlugged(ControllerManager.GetTarget(), false);
-        }
 
         base.Start();
     }

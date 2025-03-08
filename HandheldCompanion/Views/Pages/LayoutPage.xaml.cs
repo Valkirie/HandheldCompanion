@@ -86,9 +86,7 @@ public partial class LayoutPage : Page
 
         // raise events
         if (ControllerManager.HasTargetController)
-        {
             ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-        }
     }
 
     private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
