@@ -45,7 +45,7 @@ namespace HandheldCompanion.ViewModels
 
             // send events
             if (ControllerManager.HasTargetController)
-                UpdateController(ControllerManager.GetTarget());
+                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
         }
 
         private void QueryLayouts()
