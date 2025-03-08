@@ -1237,5 +1237,16 @@ namespace HandheldCompanion.Properties
                 this["LayoutMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection KnownDrivers {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["KnownDrivers"]));
+            }
+            set {
+                this["KnownDrivers"] = value;
+            }
+        }
     }
 }

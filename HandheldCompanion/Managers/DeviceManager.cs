@@ -105,8 +105,20 @@ public class DeviceManager : IManager
     private void RefreshDrivers()
     {
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        /*
         foreach (string InfPath in DriverStore.GetDrivers())
+        {
             PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+            LogManager.LogWarning("Pending drivers {0} detected in Driver Store. Initiating (re)installation.", InfPath);
+        }
+        */
+        
+        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        foreach (string InfPath in DriverStore.GetKnownDrivers())
+        {
+            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+            LogManager.LogInformation("Deploying known drivers {0} from Driver Store.", InfPath);
+        }
     }
 
     public override void Stop()
