@@ -2022,28 +2022,28 @@
     <value>Plus</value>
   </data>
   <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Single-touch swipe</value>
+    <value>Left-finger swipe</value>
   </data>
   <data name="Enum_DS4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Multi-touch swipe</value>
+    <value>Right-finger swipe</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Single-touch click</value>
+    <value>Left-finger click</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Single-touch tap</value>
+    <value>Left-finger touch</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Multi-touch click</value>
+    <value>Right-finger click</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Multi-touch tap</value>
+    <value>Right-finger touch</value>
   </data>
   <data name="Enum_DualSenseController_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Single-touch swipe</value>
+    <value>Left-finger swipe</value>
   </data>
   <data name="Enum_DualSenseController_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Multi-touch swipe</value>
+    <value>Right-finger swipe</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_B1" xml:space="preserve">
     <value>Cross</value>
@@ -2061,16 +2061,16 @@
     <value>Share</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Single-touch click</value>
+    <value>Left-finger click</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Single-touch tap</value>
+    <value>Left-finger touch</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Multi-touch click</value>
+    <value>Right-finger click</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Multi-touch tap</value>
+    <value>Right-finger touch</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_Special" xml:space="preserve">
     <value>Sony</value>

@@ -236,18 +236,6 @@ namespace HandheldCompanion.ViewModels
             base.Dispose();
         }
 
-        protected override void UpdateController(IController controller)
-        {
-            var flag = (AxisLayoutFlags)Value;
-
-            IsSupported = controller.HasSourceAxis(flag) || IDevice.GetCurrent().HasMotionSensor();
-
-            if (IsSupported)
-            {
-                UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
-            }
-        }
-
         protected override void ActionTypeChanged(ActionType? newActionType = null)
         {
             var actionType = newActionType ?? (ActionType)ActionTypeIndex;

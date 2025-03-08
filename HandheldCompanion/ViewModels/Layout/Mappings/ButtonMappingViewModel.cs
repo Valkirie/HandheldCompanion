@@ -44,12 +44,9 @@ namespace HandheldCompanion.ViewModels
         // default mapping can't be shifted
         public int ShiftIndex
         {
-            get => IsInitialMapping ? 0 : Action is not null ? (int)Action.ShiftSlot : 0;
+            get => Action is not null ? (int)Action.ShiftSlot : 0;
             set
             {
-                if (IsInitialMapping)
-                    return;
-
                 if (Action is not null && value != ShiftIndex)
                 {
                     Action.ShiftSlot = (ShiftSlot)value;
@@ -220,45 +217,17 @@ namespace HandheldCompanion.ViewModels
 
         private ButtonStackViewModel _parentStack;
 
-        public bool IsInitialMapping { get; set; } = false;
-
         public ICommand ButtonCommand { get; private set; }
 
-        public ButtonMappingViewModel(ButtonStackViewModel parentStack, ButtonFlags button, bool isInitialMapping = false) : base(button)
+        public ButtonMappingViewModel(ButtonStackViewModel parentStack, ButtonFlags button) : base(button)
         {
             _parentStack = parentStack;
-            IsInitialMapping = isInitialMapping;
 
             ButtonCommand = new DelegateCommand(() =>
             {
-                if (IsInitialMapping)
-                    _parentStack.AddMapping();
-                else
-                {
-                    if (Action is not null) Delete();
-                    _parentStack.RemoveMapping(this);
-                }
+                if (Action is not null) Delete();
+                _parentStack.RemoveMapping(this);
             });
-
-            if (isInitialMapping)
-            {
-                var controller = ControllerManager.GetTarget();
-                if (controller is not null) UpdateController(controller);
-            }
-
-            if (OEM.Contains(button))
-            {
-                UpdateIcon(IDevice.GetCurrent().GetGlyphIconInfo(button, 28));
-            }
-        }
-
-        protected override void UpdateController(IController controller)
-        {
-            var flag = (ButtonFlags)Value;
-            if (OEM.Contains(flag))
-                return;
-
-            UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
         }
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)

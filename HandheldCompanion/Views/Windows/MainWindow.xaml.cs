@@ -106,9 +106,6 @@ public partial class MainWindow : GamepadWindow
         // used by system manager, controller manager
         uiSettings = new UISettings();
 
-        // fix touch support
-        TabletDeviceCollection tabletDevices = Tablet.TabletDevices;
-
         // define current directory
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
@@ -706,7 +703,8 @@ public partial class MainWindow : GamepadWindow
         {
             case WindowState.Minimized:
                 {
-                    notifyIcon.Visible = true;
+                    if (notifyIcon is not null)
+                        notifyIcon.Visible = true;
                     ShowInTaskbar = false;
 
                     if (!NotifyInTaskbar)
@@ -719,7 +717,8 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Normal:
             case WindowState.Maximized:
                 {
-                    notifyIcon.Visible = false;
+                    if (notifyIcon is not null)
+                        notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
                     Activate();

@@ -63,12 +63,9 @@ namespace HandheldCompanion.ViewModels
         // default mapping can't be shifted
         public int ShiftIndex
         {
-            get => IsInitialMapping ? 0 : Action is not null ? (int)Action.ShiftSlot : 0;
+            get => Action is not null ? (int)Action.ShiftSlot : 0;
             set
             {
-                if (IsInitialMapping)
-                    return;
-
                 if (Action is not null && value != ShiftIndex)
                 {
                     Action.ShiftSlot = (ShiftSlot)value;
@@ -79,43 +76,17 @@ namespace HandheldCompanion.ViewModels
 
         private TriggerStackViewModel _parentStack;
 
-        public bool IsInitialMapping { get; set; } = false;
-
         public ICommand ButtonCommand { get; private set; }
 
-        public TriggerMappingViewModel(TriggerStackViewModel parentStack, AxisLayoutFlags value, bool isInitialMapping = false) : base(value)
+        public TriggerMappingViewModel(TriggerStackViewModel parentStack, AxisLayoutFlags value) : base(value)
         {
             _parentStack = parentStack;
-            IsInitialMapping = isInitialMapping;
 
             ButtonCommand = new DelegateCommand(() =>
             {
-                if (IsInitialMapping)
-                    _parentStack.AddMapping();
-                else
-                {
-                    if (Action is not null) Delete();
-                    _parentStack.RemoveMapping(this);
-                }
+                if (Action is not null) Delete();
+                _parentStack.RemoveMapping(this);
             });
-
-            if (isInitialMapping)
-            {
-                var controller = ControllerManager.GetTarget();
-                if (controller is not null) UpdateController(controller);
-            }
-        }
-
-        protected override void UpdateController(IController controller)
-        {
-            var flag = (AxisLayoutFlags)Value;
-
-            IsSupported = controller.HasSourceAxis(flag);
-
-            if (IsSupported)
-            {
-                UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
-            }
         }
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)

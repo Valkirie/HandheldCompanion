@@ -90,6 +90,9 @@
                 </Button>
 
                 <ui:ItemsRepeater ItemsSource="{Binding HotkeysList}">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:StackLayout Orientation="Vertical" Spacing="6" />
+                    </ui:ItemsRepeater.Layout>
                     <ui:ItemsRepeater.ItemTemplate>
                         <DataTemplate>
                             <Expander HorizontalAlignment="Stretch">

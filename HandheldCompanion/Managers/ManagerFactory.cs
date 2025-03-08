@@ -1,13 +1,33 @@
-﻿namespace HandheldCompanion.Managers
+﻿using HandheldCompanion.Shared;
+using System.Windows.Input;
+
+namespace HandheldCompanion.Managers
 {
     public static class ManagerFactory
     {
-        public static SettingsManager settingsManager = new();
-        public static DeviceManager deviceManager = new();
-        public static LayoutManager layoutManager = new();
-        public static MultimediaManager multimediaManager = new();
-        public static HotkeysManager hotkeysManager = new();
-        public static ProfileManager profileManager = new();
-        public static PowerProfileManager powerProfileManager = new();
+        public static SettingsManager settingsManager;
+        public static DeviceManager deviceManager;
+        public static LayoutManager layoutManager;
+        public static MultimediaManager multimediaManager;
+        public static HotkeysManager hotkeysManager;
+        public static ProfileManager profileManager;
+        public static PowerProfileManager powerProfileManager;
+
+        static ManagerFactory()
+        {
+            // fix touch support
+            // we need to call this before ANY ManagementClass objects across the whole app, good job NET team
+            if (Tablet.TabletDevices.Count == 0)
+                LogManager.LogError("No touch support detected!");
+
+            // prepare managers
+            settingsManager = new();
+            deviceManager = new();
+            layoutManager = new();
+            multimediaManager = new();
+            hotkeysManager = new();
+            profileManager = new();
+            powerProfileManager = new();
+        }
     }
 }

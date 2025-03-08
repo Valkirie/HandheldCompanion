@@ -1609,7 +1609,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch swipe.
+        ///   Looks up a localized string similar to Left-finger swipe.
         /// </summary>
         public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad {
             get {
@@ -1618,7 +1618,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch swipe.
+        ///   Looks up a localized string similar to Right-finger swipe.
         /// </summary>
         public static string Enum_DS4Controller_AxisLayoutFlags_RightPad {
             get {
@@ -1672,7 +1672,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch click.
+        ///   Looks up a localized string similar to Left-finger click.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_LeftPadClick {
             get {
@@ -1681,7 +1681,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch tap.
+        ///   Looks up a localized string similar to Left-finger touch.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch {
             get {
@@ -1690,7 +1690,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch click.
+        ///   Looks up a localized string similar to Right-finger click.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_RightPadClick {
             get {
@@ -1699,7 +1699,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch tap.
+        ///   Looks up a localized string similar to Right-finger touch.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_RightPadTouch {
             get {
@@ -1726,7 +1726,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch swipe.
+        ///   Looks up a localized string similar to Left-finger swipe.
         /// </summary>
         public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad {
             get {
@@ -1735,7 +1735,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch swipe.
+        ///   Looks up a localized string similar to Right-finger swipe.
         /// </summary>
         public static string Enum_DualSenseController_AxisLayoutFlags_RightPad {
             get {
@@ -1789,7 +1789,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch click.
+        ///   Looks up a localized string similar to Left-finger click.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_LeftPadClick {
             get {
@@ -1798,7 +1798,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch tap.
+        ///   Looks up a localized string similar to Left-finger touch.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch {
             get {
@@ -1807,7 +1807,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch click.
+        ///   Looks up a localized string similar to Right-finger click.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_RightPadClick {
             get {
@@ -1816,7 +1816,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch tap.
+        ///   Looks up a localized string similar to Right-finger touch.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_RightPadTouch {
             get {

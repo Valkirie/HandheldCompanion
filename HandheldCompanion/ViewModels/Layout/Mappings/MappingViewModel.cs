@@ -24,8 +24,6 @@ namespace HandheldCompanion.ViewModels
 
     public abstract class MappingViewModel : BaseViewModel
     {
-        public static readonly HashSet<ButtonFlags> OEM = [ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10];
-
         protected object Value { get; set; }
         public IActions? Action { get; protected set; }
 
@@ -78,76 +76,6 @@ namespace HandheldCompanion.ViewModels
                 {
                     iActions.motionThreshold = value;
                     OnPropertyChanged(nameof(Axis2ButtonThreshold));
-                }
-            }
-        }
-
-        private string _name;
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (value != Name)
-                {
-                    _name = value;
-                    OnPropertyChanged(nameof(Name));
-                }
-            }
-        }
-
-        private string _glyph;
-        public string Glyph
-        {
-            get => _glyph;
-            set
-            {
-                if (value != Glyph)
-                {
-                    _glyph = value;
-                    OnPropertyChanged(nameof(Glyph));
-                }
-            }
-        }
-
-        private FontFamily? _glyphFontFamily;
-        public FontFamily? GlyphFontFamily
-        {
-            get => _glyphFontFamily;
-            set
-            {
-                if (value != GlyphFontFamily)
-                {
-                    _glyphFontFamily = value;
-                    OnPropertyChanged(nameof(GlyphFontFamily));
-                }
-            }
-        }
-
-        private double _glyphFontSize = 14;
-        public double GlyphFontSize
-        {
-            get => _glyphFontSize;
-            set
-            {
-                if (value != GlyphFontSize)
-                {
-                    _glyphFontSize = value;
-                    OnPropertyChanged(nameof(GlyphFontSize));
-                }
-            }
-        }
-
-        private Brush? _glyphForeground;
-        public Brush? GlyphForeground
-        {
-            get => _glyphForeground;
-            set
-            {
-                if (value != GlyphForeground)
-                {
-                    _glyphForeground = value;
-                    OnPropertyChanged(nameof(GlyphForeground));
                 }
             }
         }
@@ -213,11 +141,6 @@ namespace HandheldCompanion.ViewModels
         // Avoid unnecessary save/update calls
         protected HashSet<string> ExcludedUpdateProperties =
         [
-            nameof(Name),
-            nameof(Glyph),
-            nameof(GlyphFontFamily),
-            nameof(GlyphFontSize),
-            nameof(GlyphForeground),
             nameof(IsSupported),
         ];
 
@@ -234,14 +157,7 @@ namespace HandheldCompanion.ViewModels
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
-            ControllerManager.ControllerSelected += UpdateController;
             VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-
-            // send events
-            if (ControllerManager.HasTargetController)
-            {
-                UpdateController(ControllerManager.GetTarget());
-            }
 
             // Lazy initialize to avoid re-creating target for Keyboard targets
             if (_keyboardKeysTargets.Count == 0)
@@ -268,7 +184,6 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
-            ControllerManager.ControllerSelected -= UpdateController;
             VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
 
             base.Dispose();
@@ -276,30 +191,11 @@ namespace HandheldCompanion.ViewModels
 
         private void VirtualManager_ControllerSelected(HIDmode hid) => ActionTypeChanged();
 
-        protected void UpdateIcon(GlyphIconInfo glyphIconInfo)
-        {
-            if (glyphIconInfo is null)
-                return;
-
-            Name = glyphIconInfo.Name!;
-            Glyph = glyphIconInfo.Glyph!;
-            GlyphFontFamily = glyphIconInfo.FontFamily;
-            GlyphFontSize = glyphIconInfo.FontSize;
-
-            // UI thread
-            UIHelper.TryInvoke(() =>
-            {
-                GlyphForeground = new SolidColorBrush(glyphIconInfo.Color);
-            });
-        }
-
-        protected abstract void UpdateController(IController controller);
         protected abstract void ActionTypeChanged(ActionType? newActionType = null);
         protected abstract void TargetTypeChanged();
         protected abstract void Update();
         protected abstract void Delete();
         protected abstract void UpdateMapping(Layout layout);
-
 
         public virtual void SetAction(IActions newAction, bool updateToModel = true)
         {

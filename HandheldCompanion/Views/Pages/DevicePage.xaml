@@ -448,7 +448,7 @@
                                 <ComboBox
                                     Name="LEDSettingsLevel"
                                     Grid.Column="1"
-                                    Width="140"
+                                    Width="220"
                                     Margin="12,0,0,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
