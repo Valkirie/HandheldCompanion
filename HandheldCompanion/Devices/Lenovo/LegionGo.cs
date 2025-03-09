@@ -1,4 +1,5 @@
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -182,10 +183,6 @@ public class LegionGo : IDevice
         }
     }
 
-    public const byte INPUT_HID_ID = 0x04;
-
-    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
-
     public const int LeftJoyconIndex = 3;
     public const int RightJoyconIndex = 4;
 
@@ -308,36 +305,11 @@ public class LegionGo : IDevice
         if (!success)
             return false;
 
-        // initialize SapientiaUsb
-        Init();
-
-        // make sure both left and right gyros are enabled
-        SetLeftGyroStatus(1);
-        SetRightGyroStatus(1);
-
-        // make sure both left and right gyros are reporting values
-        SetGyroModeStatus(2, 1, 1);
-        SetGyroModeStatus(2, 2, 2);
-
-        // make sure both left and right gyros are reporting raw values
-        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
-        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
-
-        // disable QuickLightingEffect(s)
-        SetQuickLightingEffect(0, 1);
-        SetQuickLightingEffect(3, 1);
-        SetQuickLightingEffect(4, 1);
-        SetQuickLightingEffectEnable(0, false);
-        SetQuickLightingEffectEnable(3, false);
-        SetQuickLightingEffectEnable(4, false);
-
-        // get current light profile(s)
-        lightProfileL = GetCurrentLightProfile(3);
-        lightProfileR = GetCurrentLightProfile(4);
-
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -363,6 +335,55 @@ public class LegionGo : IDevice
         }
 
         return true;
+    }
+
+    private object controllerLock = new();
+    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
+    {
+        if (Controller is LegionController legionController)
+        {
+            lock (controllerLock)
+            {
+                // unload SapientiaUsb
+                FreeSapientiaUsb();
+            }
+        }
+    }
+
+    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+    {
+        if (Controller is LegionController legionController)
+        {
+            lock (controllerLock)
+            {
+                // initialize SapientiaUsb
+                Init();
+
+                // make sure both left and right gyros are enabled
+                SetLeftGyroStatus(1);
+                SetRightGyroStatus(1);
+
+                // make sure both left and right gyros are reporting values
+                SetGyroModeStatus(2, 1, 1);
+                SetGyroModeStatus(2, 2, 2);
+
+                // make sure both left and right gyros are reporting raw values
+                SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
+                SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+
+                // disable QuickLightingEffect(s)
+                SetQuickLightingEffect(0, 1);
+                SetQuickLightingEffect(3, 1);
+                SetQuickLightingEffect(4, 1);
+                SetQuickLightingEffectEnable(0, false);
+                SetQuickLightingEffectEnable(3, false);
+                SetQuickLightingEffectEnable(4, false);
+
+                // get current light profile(s)
+                lightProfileL = GetCurrentLightProfile(3);
+                lightProfileR = GetCurrentLightProfile(4);
+            }
+        }
     }
 
     private void QueryPowerProfile()
@@ -402,38 +423,19 @@ public class LegionGo : IDevice
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
     }
 
     public override bool IsReady()
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
-        foreach (HidDevice device in devices)
-        {
-            if (!device.IsConnected)
-                continue;
-
-            if (device.Capabilities.InputReportByteLength == 64)
-                hidDevices[INPUT_HID_ID] = device;  // HID-compliant vendor-defined device
-        }
-
-        hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
-
-        PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-        string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-
-        PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-        Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-        string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
-
         // Legion XInput controller and other Legion devices shares the same USBHUB
         while (ControllerManager.PowerCyclers.Count > 0)
             Thread.Sleep(100);
 
-        return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        return true;
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
