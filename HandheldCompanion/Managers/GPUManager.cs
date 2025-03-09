@@ -218,7 +218,7 @@ namespace HandheldCompanion.Managers
             if (DisplayGPU.ContainsKey(adapterInformation))
                 return;
 
-            GPU newGPU = null;
+            GPU? newGPU = null;
 
             if ((adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD")) && IsLoaded_ADLX)
             {
@@ -258,30 +258,37 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static object screenLock = new();
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
-            // this shouldn't happen
-            if (screen?.screen == null)
-                return;
-
-            AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
-            if (key is not null && DisplayGPU.TryGetValue(key, out GPU gpu))
+            lock (screenLock)
             {
-                LogManager.LogInformation("Retrieved DisplayAdapter: {0} for screen: {1}", gpu.ToString(), screen.ToString());
-
-                if (currentGPU != gpu)
+                try
                 {
-                    // Disconnect from the current GPU, if any
-                    if (currentGPU is not null)
-                        GPUDisconnect(currentGPU);
+                    AdapterInformation? key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
+                    if (key is not null && DisplayGPU.TryGetValue(key, out GPU? gpu))
+                    {
+                        LogManager.LogInformation("Retrieved DisplayAdapter: {0} for screen: {1}", gpu.ToString(), screen.ToString());
 
-                    // Connect to the new GPU
-                    GPUConnect(gpu);
+                        if (currentGPU != gpu)
+                        {
+                            // Disconnect from the current GPU, if any
+                            if (currentGPU is not null)
+                                GPUDisconnect(currentGPU);
+
+                            // Connect to the new GPU
+                            GPUConnect(gpu);
+                        }
+                    }
+                    else
+                    {
+                        LogManager.LogError("Failed to retrieve DisplayAdapter for screen: {0}", screen.ToString());
+                    }
                 }
-            }
-            else
-            {
-                LogManager.LogError("Failed to retrieve DisplayAdapter for screen: {0}", screen.ToString());
+                catch
+                {
+                    LogManager.LogError("Failed to retrieve DisplayAdapter for screen: {0}, {1}", screen.ToString());
+                }
             }
         }
 

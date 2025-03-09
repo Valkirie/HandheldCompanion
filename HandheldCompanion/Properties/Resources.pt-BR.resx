@@ -1485,18 +1485,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>Definição de limite de energia</value>
   </data>
-  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
-    <value>Orientação da tela</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
-    <value>Alguns recursos dependem do conhecimento da orientação da tela para funcionar corretamente. Se isto não foi detectado apropriadamente, defina a orientação da sua tela correspondente ao seu controle, então clique Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
-    <value>Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
-    <value>Não definida</value>
-  </data>
   <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
     <value>Modo de impulso de CPU</value>
   </data>
