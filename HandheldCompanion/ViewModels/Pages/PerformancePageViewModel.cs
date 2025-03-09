@@ -367,6 +367,19 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int CPUParkingMode
+        {
+            get => (int)SelectedPreset.CPUParkingMode;
+            set
+            {
+                if (value != CPUParkingMode)
+                {
+                    SelectedPreset.CPUParkingMode = (CoreParkingMode)value;
+                    OnPropertyChanged(nameof(CPUParkingMode));
+                }
+            }
+        }
+
         public int FanMode
         {
             get => (int)SelectedPreset.FanProfile.fanMode;

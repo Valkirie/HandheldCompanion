@@ -6168,6 +6168,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Auto (balanced P/E cores).
+        /// </summary>
+        public static string PerformancePage_ParkingModeAllCoresAuto {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeAllCoresAuto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefer performance cores (P-cores).
+        /// </summary>
+        public static string PerformancePage_ParkingModeAllCoresPrefECore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeAllCoresPrefECore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefer efficiency cores (E-cores).
+        /// </summary>
+        public static string PerformancePage_ParkingModeAllCoresPrefPCore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeAllCoresPrefPCore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-cores only (maximum efficiency).
+        /// </summary>
+        public static string PerformancePage_ParkingModeOnlyECore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeOnlyECore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performance cores only (maximum performance).
+        /// </summary>
+        public static string PerformancePage_ParkingModeOnlyPCore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeOnlyPCore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string PerformangePage_Preset_Cancel {

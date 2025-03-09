@@ -341,16 +341,8 @@ public static class PerformanceManager
             RestoreGPUClock(true);
         }
 
-        // apply profile defined EPP
-        if (profile.EPPOverrideEnabled)
-        {
-            RequestEPP(profile.EPPOverrideValue);
-        }
-        else
-        {
-            // restore default EPP
-            RequestEPP(0x00000032);
-        }
+        // apply profile defined CPU Core Parking
+        RequestCoreParkingMode(profile.CPUParkingMode);
 
         // apply profile defined CPU Core Count
         if (profile.CPUCoreEnabled)
@@ -413,12 +405,8 @@ public static class PerformanceManager
             RestoreGPUClock(true);
         }
 
-        // (un)apply profile defined EPP
-        if (profile.EPPOverrideEnabled)
-        {
-            // restore default EPP
-            RequestEPP(0x00000032);
-        }
+        // restore default CPU Core Parking
+        RequestCoreParkingMode(CoreParkingMode.AllCoresAuto);
 
         // unapply profile defined CPU Core Count
         if (profile.CPUCoreEnabled)
@@ -638,10 +626,6 @@ public static class PerformanceManager
                     // Check if CPU core count has changed and apply if needed
                     if (currentProfile.CPUCoreEnabled)
                         RequestCPUCoreCount(currentProfile.CPUCoreCount);
-
-                    // Check if current EPP value has changed and apply if needed
-                    if (currentProfile.EPPOverrideEnabled)
-                        RequestEPP(currentProfile.EPPOverrideValue);
 
                     // Check if active power shceme has changed and apply if needed
                     RequestPowerMode(currentProfile.OSPowerMode);
@@ -946,6 +930,56 @@ public static class PerformanceManager
         }
     }
 
+    private static void RequestCoreParkingMode(CoreParkingMode coreParkingMode)
+    {
+        /*
+         * HETEROGENEOUS_POLICY values:
+         * 0: Default (no explicit preference)
+         * 1: Prefer heterogeneous scheduling (allows mixed cores based on scheduling hints)
+         * 2: Prefer E-cores exclusively (favor efficiency and battery life)
+         * 3: Prefer P-cores exclusively (favor performance at all costs)
+         
+         * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values: These settings instruct Windows Scheduler about how aggressively it should favor either core type for regular or short-lived threads:
+         * 1: Strongly Prefer P-Cores (high-performance cores only)
+         * 2: Prefer P-Cores (favor P-Cores but allow E-Cores occasionally)
+         * 3: Strongly Prefer E-Cores (efficiency cores only)
+         * 4: Prefer E-Cores (favor E-Cores but allow P-Cores occasionally)
+         * 5: No specific preference (Windows decides automatically)
+         */
+
+        switch (coreParkingMode)
+        {
+            case CoreParkingMode.AllCoresPrefPCore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 1U, 1U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 2U, 2U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 2U, 2U);
+                break;
+            case CoreParkingMode.AllCoresPrefECore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 1U, 1U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 4U, 4U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 4U, 4U);
+                break;
+            case CoreParkingMode.OnlyPCore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 3U, 3U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 1U, 1U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 1U, 1U);
+                break;
+            case CoreParkingMode.OnlyECore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 2U, 2U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 3U, 3U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 3U, 3U);
+                break;
+            default:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 0U, 0U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 5U, 5U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 5U, 5U);
+                break;
+        }
+
+        LogManager.LogDebug("User requested Core Parking Mode: {0}", coreParkingMode);
+    }
+
+    [Obsolete("This function is deprecated and will be removed in future versions.")]
     private static void RequestEPP(uint EPPOverrideValue)
     {
         var requestedEPP = new uint[2]

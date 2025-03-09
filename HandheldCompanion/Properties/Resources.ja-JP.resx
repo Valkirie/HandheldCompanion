@@ -2879,4 +2879,19 @@
   <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
+    <value />
+  </data>
 </root>
