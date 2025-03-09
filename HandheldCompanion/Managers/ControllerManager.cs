@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Shell;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -1004,6 +1005,20 @@ public static class ControllerManager
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
+        switch(status)
+        {
+            case ControllerManagerStatus.Busy:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Indeterminate);
+                break;
+            case ControllerManagerStatus.Succeeded:
+            case ControllerManagerStatus.Failed:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.None);
+                break;
+            case ControllerManagerStatus.Pending:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Paused);
+                break;
+        }
+
         managerStatus = status;
         StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }

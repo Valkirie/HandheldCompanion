@@ -27,6 +27,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using System.Windows.Shell;
 using Windows.UI.ViewManagement;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
@@ -354,6 +355,26 @@ public partial class MainWindow : GamepadWindow
     public static MainWindow GetCurrent()
     {
         return CurrentWindow;
+    }
+
+    public void UpdateTaskbarState(TaskbarItemProgressState state)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.TaskbarItem.ProgressState = state;
+        });
+    }
+
+    public void UpdateTaskbarProgress(double value)
+    {
+        if (value < 0 || value > 1) return;
+
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.TaskbarItem.ProgressValue = value;
+        });
     }
 
     private void loadPages()

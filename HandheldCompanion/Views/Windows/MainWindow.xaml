@@ -29,6 +29,11 @@
     WindowState="Minimized"
     mc:Ignorable="d">
 
+    <!--  Add this in your Window's XAML  -->
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskbarItem" />
+    </Window.TaskbarItemInfo>
+
     <ui:NavigationView
         Name="navView"
         BackRequested="navView_BackRequested"
