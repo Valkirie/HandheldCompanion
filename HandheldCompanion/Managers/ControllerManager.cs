@@ -1005,7 +1005,7 @@ public static class ControllerManager
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
-        switch(status)
+        switch (status)
         {
             case ControllerManagerStatus.Busy:
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Indeterminate);
