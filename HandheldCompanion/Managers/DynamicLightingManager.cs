@@ -187,18 +187,15 @@ public static class DynamicLightingManager
 
         // Check LED settings
         bool LEDSettingsEnabled = ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
-        bool IsAmbilightOn = ManagerFactory.settingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
+        bool AmbilightEnabled = ManagerFactory.settingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
 
         // Restart Ambilight if necessary
-        if (IsAmbilightOn && LEDSettingsEnabled)
+        if (AmbilightEnabled && LEDSettingsEnabled)
         {
-            StopAmbilight();
+            if (ambilightThreadRunning)
+                StopAmbilight();
             InitializeDirect3DDevice();
             StartAmbilight();
-        }
-        else
-        {
-            InitializeDirect3DDevice();
         }
     }
 
@@ -224,25 +221,33 @@ public static class DynamicLightingManager
                 surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight,
                     Format.A8R8G8B8, Pool.Scratch);
             }
-            catch (SharpDXException ex)
+            catch (SharpDXException ex) when (ex.ResultCode == ResultCode.DeviceLost)
             {
-                if (ex.ResultCode == ResultCode.DeviceLost)
+                // Wait a bit
+                Task.Delay(3000).Wait();
+                
+                /*
+                try
                 {
-                    try
+                    // Wait until the device is ready again
+                    if (device is not null)
                     {
-                        // Wait until the device is ready again
-                        while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
-                            Task.Delay(1000).Wait();
+                        Result cooperativeLevel = device.TestCooperativeLevel();
+                        while (device is not null && cooperativeLevel == ResultCode.DeviceLost)
+                            Task.Delay(3000).Wait();
                     }
-                    catch
-                    {
-                        Task.Delay(1000).Wait();
-                    }
-
-                    // Recreate the device and resources
-                    InitializeDirect3DDevice();
                 }
+                catch { }
+                */
             }
+            catch
+            {
+                // Wait a bit
+                Task.Delay(3000).Wait();
+            }
+
+            // Recreate the device and resources
+            InitializeDirect3DDevice();
         }
     }
 
@@ -322,7 +327,9 @@ public static class DynamicLightingManager
             case LEDLevel.Ambilight:
                 if (!ambilightThreadRunning)
                 {
+                    InitializeDirect3DDevice();
                     StartAmbilight();
+
                     device.SetLedBrightness(100);
                     device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
                 }
