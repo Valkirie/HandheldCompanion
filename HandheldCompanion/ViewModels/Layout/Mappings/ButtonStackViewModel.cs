@@ -65,9 +65,6 @@ namespace HandheldCompanion.ViewModels
 
         protected override void UpdateController(IController controller)
         {
-            if (OEM.Contains(_flag))
-                return;
-
             IsSupported = controller.HasSourceButton(_flag) || OEM.Contains(_flag);
             UpdateIcon(controller.GetGlyphIconInfo(_flag, 28));
         }
