@@ -83,11 +83,11 @@ public class AMDProcessor : Processor
                 switch (type)
                 {
                     case PowerType.Fast:
-                        legion.SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)limit).Wait(250);
-                        legion.SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)limit).Wait(250);
+                        legion.SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)limit);
+                        legion.SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)limit);
                         break;
                     case PowerType.Slow:
-                        legion.SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)limit).Wait(250);
+                        legion.SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)limit);
                         break;
                 }
             }

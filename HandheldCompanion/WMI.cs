@@ -57,6 +57,37 @@ namespace HandheldCompanion
             }
         }
 
+        public static void Call(string scope, string query, string methodName, Dictionary<string, object> methodParams)
+        {
+            using var searcher = new ManagementObjectSearcher(scope, query);
+            var managementObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
+
+            if (managementObject == null)
+                return;
+
+            using var methodParamsObject = managementObject.GetMethodParameters(methodName);
+            foreach (var pair in methodParams)
+                methodParamsObject[pair.Key] = pair.Value;
+
+            managementObject.InvokeMethod(methodName, methodParamsObject, null);
+        }
+
+        public static T Call<T>(string scope, string query, string methodName, Dictionary<string, object> methodParams, Func<PropertyDataCollection, T> resultSelector)
+        {
+            using var searcher = new ManagementObjectSearcher(scope, query);
+            var managementObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
+
+            if (managementObject == null)
+                return default;
+
+            using var methodParamsObject = managementObject.GetMethodParameters(methodName);
+            foreach (var pair in methodParams)
+                methodParamsObject[pair.Key] = pair.Value;
+
+            var result = managementObject.InvokeMethod(methodName, methodParamsObject, null);
+            return resultSelector(result.Properties);
+        }
+
         public static async Task CallAsync(string scope, FormattableString query, string methodName, Dictionary<string, object> methodParams)
         {
             try
