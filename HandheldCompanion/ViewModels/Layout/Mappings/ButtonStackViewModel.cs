@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -55,6 +56,12 @@ namespace HandheldCompanion.ViewModels
             // send events
             if (ControllerManager.HasTargetController)
                 UpdateController(ControllerManager.GetTarget());
+
+            if (OEM.Contains(_flag))
+            {
+                IsSupported = true;
+                UpdateIcon(IDevice.GetCurrent().GetGlyphIconInfo(_flag, 28));
+            }
         }
 
         private void ButtonMappings_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -65,7 +72,10 @@ namespace HandheldCompanion.ViewModels
 
         protected override void UpdateController(IController controller)
         {
-            IsSupported = controller.HasSourceButton(_flag) || OEM.Contains(_flag);
+            if (OEM.Contains(_flag))
+                return;
+
+            IsSupported = controller.HasSourceButton(_flag);
             UpdateIcon(controller.GetGlyphIconInfo(_flag, 28));
         }
 
