@@ -78,7 +78,7 @@ public class LegionGo : IDevice
         }
     }
 
-    private void SetFanFullSpeed(bool enabled)
+    public void SetFanFullSpeed(bool enabled)
     {
         try
         {
