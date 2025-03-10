@@ -441,35 +441,25 @@ public class LegionGo : IDevice
     }
 
 
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    private async void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
             // default fanTable
             // FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
 
-            FanTable fanTable = new([
-                (ushort)profile.FanProfile.fanSpeeds[1],
-                (ushort)profile.FanProfile.fanSpeeds[2],
-                (ushort)profile.FanProfile.fanSpeeds[3],
-                (ushort)profile.FanProfile.fanSpeeds[4],
-                (ushort)profile.FanProfile.fanSpeeds[5],
-                (ushort)profile.FanProfile.fanSpeeds[6],
-                (ushort)profile.FanProfile.fanSpeeds[7],
-                (ushort)profile.FanProfile.fanSpeeds[8],
-                (ushort)profile.FanProfile.fanSpeeds[9],
-                (ushort)profile.FanProfile.fanSpeeds[10],
-            ]);
+            // prepare array of fan speeds
+            ushort[] fanSpeeds = profile.FanProfile.fanSpeeds.Skip(1).Take(10).Select(speed => (ushort)speed).ToArray();
+            FanTable fanTable = new(fanSpeeds);
 
             // update fan table
-            SetFanTable(fanTable).Wait();
+            await SetFanTable(fanTable).ConfigureAwait(false);
         }
 
-        Task<int> fanModeTask = Task.Run(GetSmartFanModeAsync);
-        int fanMode = fanModeTask.Result;
+        int currentFanMode = await GetSmartFanModeAsync().ConfigureAwait(false);
 
-        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && fanMode != profile.OEMPowerMode)
-            SetSmartFanMode(profile.OEMPowerMode).Wait();
+        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && currentFanMode != profile.OEMPowerMode)
+            await SetSmartFanMode(profile.OEMPowerMode).ConfigureAwait(false);
     }
 
     public override bool SetLedBrightness(int brightness)
