@@ -432,16 +432,14 @@ public class LegionGo : IDevice
 
     public override bool IsReady()
     {
-        // Legion XInput controller and other Legion devices shares the same USBHUB
-        LegionController? legionController = ControllerManager.GetPhysicalControllers<LegionController>().FirstOrDefault();
-        if (legionController is not null)
-        {
-            while (ControllerManager.PowerCyclers.ContainsKey(legionController.GetContainerInstanceId()))
-                Thread.Sleep(1000);
-        }
+        // Wait until no LegionController is currently power cycling
+        IEnumerable<LegionController> legionControllers = ControllerManager.GetPhysicalControllers<LegionController>();
+        while (legionControllers.Any(controller => ControllerManager.PowerCyclers.ContainsKey(controller.GetContainerInstanceId())))
+            Thread.Sleep(1000);
 
         return true;
     }
+
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
