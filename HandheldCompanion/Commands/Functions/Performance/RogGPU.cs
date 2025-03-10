@@ -25,18 +25,7 @@ namespace HandheldCompanion.Commands.Functions.Performance
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             if (IDevice.GetCurrent() is ROGAlly rOGAlly)
-            {
                 rOGAlly.asusACPI?.SetGPUEco(IsToggled ? 0 : 1);
-                switch (IsToggled)
-                {
-                    case true:
-                        rOGAlly.asusACPI?.SetGPUEco(0);
-                        break;
-                    case false:
-                        rOGAlly.asusACPI?.SetGPUEco(1);
-                        break;
-                }
-            }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
