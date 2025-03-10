@@ -9,6 +9,7 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -432,8 +433,12 @@ public class LegionGo : IDevice
     public override bool IsReady()
     {
         // Legion XInput controller and other Legion devices shares the same USBHUB
-        while (ControllerManager.PowerCyclers.Count > 0)
-            Thread.Sleep(100);
+        LegionController? legionController = ControllerManager.GetPhysicalControllers<LegionController>().FirstOrDefault();
+        if (legionController is not null)
+        {
+            while (ControllerManager.PowerCyclers.ContainsKey(legionController.GetContainerInstanceId()))
+                Thread.Sleep(1000);
+        }
 
         return true;
     }
