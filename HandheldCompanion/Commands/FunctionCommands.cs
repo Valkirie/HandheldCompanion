@@ -25,6 +25,7 @@ namespace HandheldCompanion.Commands
             "Power & battery",
             typeof(TDPIncrease),
             typeof(TDPDecrease),
+            typeof(RogGPU),
             "Windows",
             typeof(OnScreenKeyboardCommands),
             typeof(OnScreenKeyboardLegacyCommands),

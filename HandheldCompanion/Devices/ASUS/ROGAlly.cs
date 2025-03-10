@@ -29,7 +29,7 @@ public class ROGAlly : IDevice
         { 168, ButtonFlags.OEM4 },
     };
 
-    private AsusACPI? asusACPI;
+    public AsusACPI? asusACPI;
 
     private static bool customFanControl = false;
 

@@ -47,7 +47,6 @@ namespace HandheldCompanion.Devices.ASUS
         public const int KB_DUO_PgUpDn = 0x4B;
         public const int KB_DUO_SecondDisplay = 0x6A;
 
-
         public const int Touchpad_Toggle = 0x6B;
 
         public const int ChargerMode = 0x0012006C;
@@ -188,7 +187,6 @@ namespace HandheldCompanion.Devices.ASUS
         // still works only with asus optimization service on , if someone knows how to get ACPI events from asus without that - let me know
         public void RunListener()
         {
-
             eventHandle = CreateEvent(IntPtr.Zero, false, false, "ATK4001");
 
             byte[] outBuffer = new byte[16];
@@ -237,7 +235,6 @@ namespace HandheldCompanion.Devices.ASUS
 
         public void Control(uint dwIoControlCode, byte[] lpInBuffer, byte[] lpOutBuffer)
         {
-
             uint lpBytesReturned = 0;
             DeviceIoControl(
                 handle,
@@ -268,7 +265,6 @@ namespace HandheldCompanion.Devices.ASUS
             Control(CONTROL_CODE, acpiBuf, outBuffer);
 
             return outBuffer;
-
         }
 
         public byte[] DeviceInit()
@@ -308,7 +304,6 @@ namespace HandheldCompanion.Devices.ASUS
             byte[] status = CallMethod(DSTS, args);
 
             return BitConverter.ToInt32(status, 0) - 65536;
-
         }
 
         public byte[] DeviceGetBuffer(uint DeviceID, uint Status = 0)
@@ -374,18 +369,16 @@ namespace HandheldCompanion.Devices.ASUS
 
         public int SetFanCurve(AsusFan device, byte[] curve)
         {
-
-            if (curve.Length != 16) return -1;
-            // if (curve.All(singleByte => singleByte == 0)) return -1;
+            if (curve.Length != 16)
+                return -1;
 
             int result;
-            int fanScale = 100; //AppConfig.Get("fan_scale", 100);
+            int fanScale = 100;
 
             // if (fanScale != 100 && device == AsusFan.CPU) Logger.WriteLine("Custom fan scale: " + fanScale);
-
             // it seems to be a bug, when some old model's bios can go nuts if fan is set to 100% 
-
-            for (int i = 8; i < curve.Length; i++) curve[i] = (byte)(Math.Max((byte)0, Math.Min((byte)99, curve[i])) * fanScale / 100);
+            for (int i = 8; i < curve.Length; i++)
+                curve[i] = (byte)(Math.Max((byte)0, Math.Min((byte)99, curve[i])) * fanScale / 100);
 
             switch (device)
             {
@@ -424,7 +417,6 @@ namespace HandheldCompanion.Devices.ASUS
                 default:
                     return DeviceGetBuffer(DevsCPUFanCurve, fan_mode);
             }
-
         }
 
         public static bool IsInvalidCurve(byte[] curve)
@@ -440,12 +432,10 @@ namespace HandheldCompanion.Devices.ASUS
         public static byte[] FixFanCurve(byte[] curve)
         {
             return curve;
-
         }
 
         public bool IsXGConnected()
         {
-            //return true;
             return DeviceGet(GPUXGConnected) == 1;
         }
 
@@ -498,10 +488,7 @@ namespace HandheldCompanion.Devices.ASUS
                 watcher.Query = new WqlEventQuery("SELECT * FROM AsusAtkWmiEvent");
                 watcher.Start();
             }
-            catch
-            {
-
-            }
+            catch { }
         }
     }
 }

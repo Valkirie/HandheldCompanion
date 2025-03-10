@@ -70,6 +70,7 @@ namespace HandheldCompanion.Commands
         [JsonIgnore] public string FontFamily = "Segoe Fluent Icons";
 
         public CommandType commandType;
+        public Type deviceType = null;
 
         private bool _disposed = false; // Prevent multiple disposals
 
