@@ -263,6 +263,8 @@ public class ProcessEx : IDisposable
         // update main thread when disposed
         if (MainThread is not null)
             SubscribeToDisposedEvent(MainThread);
+        else
+            throw new Exception($"Process {ProcessId} has exited or MainThread is unreachable during creation");
 
         // get executable icon
         if (File.Exists(Path))

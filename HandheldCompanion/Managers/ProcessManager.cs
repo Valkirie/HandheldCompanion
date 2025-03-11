@@ -379,7 +379,7 @@ public static class ProcessManager
 
                     // create process 
                     // UI thread (synchronous)
-                    UIHelper.TryInvoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
+                    UIHelper.TryInvoke(() => { try { processEx = new ProcessEx(proc, path, exec, filter); } catch { } });
 
                     if (processEx is null)
                         return false;
