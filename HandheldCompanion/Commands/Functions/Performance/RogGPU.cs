@@ -3,6 +3,8 @@ using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using SharpDX.Direct3D9;
 using System;
 
 namespace HandheldCompanion.Commands.Functions.Performance
@@ -18,6 +20,16 @@ namespace HandheldCompanion.Commands.Functions.Performance
             Glyph = "\u2796";
             OnKeyDown = true;
             deviceType = typeof(ROGAlly);
+
+            Update();
+
+            ManagerFactory.deviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterEvent;
+            ManagerFactory.deviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterEvent;
+        }
+
+        private void DeviceManager_DisplayAdapterEvent(AdapterInformation adapterInformation)
+        {
+            Update();
         }
 
         public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && rOGAlly.asusACPI?.DeviceGet(AsusACPI.GPUEco) == 1;
@@ -28,6 +40,13 @@ namespace HandheldCompanion.Commands.Functions.Performance
                 rOGAlly.asusACPI?.SetGPUEco(IsToggled ? 0 : 1);
 
             base.Execute(IsKeyDown, IsKeyUp, false);
+        }
+
+        public void Update(HIDmode profileMode = HIDmode.NotSelected)
+        {
+            IsEnabled = IDevice.GetCurrent() is ROGAlly rOGAlly && rOGAlly.asusACPI?.IsXGConnected() == true;
+
+            base.Update();
         }
 
         public override object Clone()
@@ -44,6 +63,13 @@ namespace HandheldCompanion.Commands.Functions.Performance
             };
 
             return commands;
+        }
+
+        public override void Dispose()
+        {
+            ManagerFactory.deviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterEvent;
+            ManagerFactory.deviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterEvent;
+            base.Dispose();
         }
     }
 }
