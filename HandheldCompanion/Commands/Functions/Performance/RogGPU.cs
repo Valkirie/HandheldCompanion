@@ -14,8 +14,8 @@ namespace HandheldCompanion.Commands.Functions.Performance
     {
         public RogGPU()
         {
-            Name = "XG Mobile";
-            Description = "Enable/disable XG Mobile";
+            Name = Properties.Resources.Hotkey_XGMobile;
+            Description = Properties.Resources.Hotkey_XGMobileDesc;
             FontFamily = "Segoe UI Symbol";
             Glyph = "\u2796";
             OnKeyDown = true;

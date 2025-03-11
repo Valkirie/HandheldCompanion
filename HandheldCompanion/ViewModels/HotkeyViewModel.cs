@@ -500,7 +500,12 @@ namespace HandheldCompanion.ViewModels
                     else
                     {
                         ICommands command = Activator.CreateInstance(function) as ICommands;
-                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, command.CanUnpin));
+
+                        bool canUnpin = command.CanUnpin;
+                        bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
+                        bool isEnabled = canUnpin && isSupported;
+
+                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, isEnabled));
                     }
                 }
             }

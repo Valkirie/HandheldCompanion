@@ -3230,4 +3230,10 @@
   <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
     <value />
   </data>
+  <data name="Hotkey_XGMobile" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -4777,6 +4777,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle ROG XG Mobile.
+        /// </summary>
+        public static string Hotkey_XGMobile {
+            get {
+                return ResourceManager.GetString("Hotkey_XGMobile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle ROG XG Mobile state.
+        /// </summary>
+        public static string Hotkey_XGMobileDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_XGMobileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap icon {
