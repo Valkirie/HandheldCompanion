@@ -1,8 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using SharpDX.Direct3D9;
 using System;
@@ -32,19 +30,19 @@ namespace HandheldCompanion.Commands.Functions.Performance
             Update();
         }
 
-        public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && rOGAlly.asusACPI?.DeviceGet(AsusACPI.GPUEco) == 1;
+        public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.DeviceGet(AsusACPI.GPUEco) == 1;
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             if (IDevice.GetCurrent() is ROGAlly rOGAlly)
-                rOGAlly.asusACPI?.SetGPUEco(IsToggled ? 0 : 1);
+                AsusACPI.SetXGMode(IsToggled);
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
         public void Update(HIDmode profileMode = HIDmode.NotSelected)
         {
-            IsEnabled = IDevice.GetCurrent() is ROGAlly rOGAlly && rOGAlly.asusACPI?.IsXGConnected() == true;
+            IsEnabled = IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.IsXGConnected() == true;
 
             base.Update();
         }
