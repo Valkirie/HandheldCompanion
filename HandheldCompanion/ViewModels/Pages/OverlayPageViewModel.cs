@@ -422,20 +422,36 @@ namespace HandheldCompanion.ViewModels
             }
 
             GPUManager.Hooked += GPUManager_Hooked;
-            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
             // raise events
+            switch (ManagerFactory.processManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryForeground();
+                    break;
+            }
+
             if (GPUManager.IsInitialized)
             {
                 GPU gpu = GPUManager.GetCurrent();
                 if (gpu is not null)
                     GPUManager_Hooked(gpu);
             }
+        }
 
-            if (ProcessManager.IsInitialized)
-            {
-                ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
-            }
+        private void QueryForeground()
+        {
+            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        }
+
+        private void ProcessManager_Initialized()
+        {
+            QueryForeground();
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)

@@ -200,7 +200,7 @@ public partial class MainWindow : GamepadWindow
             Task.Run(() => ControllerManager.Start()),
             Task.Run(() => ManagerFactory.deviceManager.Start()),
             Task.Run(() => PlatformManager.Start()),
-            Task.Run(() => ProcessManager.Start()),
+            Task.Run(() => ManagerFactory.processManager.Start()),
             Task.Run(() => TaskManager.Start(CurrentExe)),
             Task.Run(() => PerformanceManager.Start()),
             Task.Run(() => UpdateManager.Start())
@@ -679,7 +679,7 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.layoutManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();
-        ProcessManager.Stop();
+        ManagerFactory.processManager.Stop();
         ToastManager.Stop();
         TaskManager.Stop();
         PerformanceManager.Stop();

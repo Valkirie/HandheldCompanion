@@ -82,9 +82,9 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
@@ -115,9 +115,15 @@ public static class ControllerManager
                 break;
         }
 
-        if (ProcessManager.IsInitialized)
+        switch (ManagerFactory.processManager.Status)
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
         }
 
         // prepare timer(s)
@@ -181,9 +187,11 @@ public static class ControllerManager
         ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+
         UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
 
@@ -415,6 +423,16 @@ public static class ControllerManager
             else if (device.isGaming)
                 HidDeviceArrived(device, device.InterfaceGuid);
         }
+    }
+
+    private static void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
+    private static void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
     }
 
     private static bool IsOS = false;

@@ -88,20 +88,38 @@ public class ProfileManager : IManager
         profileWatcher.Deleted += ProfileDeleted;
 
         // manage events
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
-        ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
+        ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
         // raise events
-        if (ProcessManager.IsInitialized)
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        switch (ManagerFactory.processManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
+        }
 
         if (ControllerManager.IsInitialized)
             ControllerManager_ControllerPlugged(ControllerManager.GetTarget(), false);
 
         base.Start();
+    }
+
+    private void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+    }
+
+    private void ProcessManager_Initialized()
+    {
+        QueryForeground();
     }
 
     public override void Stop()
@@ -116,9 +134,10 @@ public class ProfileManager : IManager
         profileWatcher.Deleted -= ProfileDeleted;
 
         // manage events
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStarted -= ProcessManager_ProcessStarted;
-        ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStarted -= ProcessManager_ProcessStarted;
+        ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
         ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
 

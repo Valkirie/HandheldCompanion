@@ -101,14 +101,20 @@ public class RTSS : IPlatform
             Process.Exited += Process_Exited;
 
         // manage events
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
 
         // raise events
-        if (ProcessManager.IsInitialized)
+        switch (ManagerFactory.processManager.Status)
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
         }
 
         switch (ManagerFactory.profileManager.Status)
@@ -125,6 +131,16 @@ public class RTSS : IPlatform
         return base.Start();
     }
 
+    private void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+    }
+
+    private void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
     private void QueryProfile()
     {
         ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
@@ -138,8 +154,9 @@ public class RTSS : IPlatform
     public override bool Stop(bool kill = false)
     {
         // manage events
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
         ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
 

@@ -67,8 +67,8 @@ namespace HandheldCompanion.ViewModels
             RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
 
             // manage events
-            ProcessManager.ProcessStarted += ProcessStarted;
-            ProcessManager.ProcessStopped += ProcessStopped;
+            ManagerFactory.processManager.ProcessStarted += ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped += ProcessStopped;
 
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
@@ -99,7 +99,7 @@ namespace HandheldCompanion.ViewModels
             if (foundProfile is null)
             {
                 if (profile.IsPinned)
-                    Profiles.SafeAdd(new ProfileViewModel(profile, this));
+                    Profiles.SafeAdd(new ProfileViewModel(profile));
             }
             else
             {
@@ -149,8 +149,8 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             // manage events
-            ProcessManager.ProcessStarted -= ProcessStarted;
-            ProcessManager.ProcessStopped -= ProcessStopped;
+            ManagerFactory.processManager.ProcessStarted -= ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped -= ProcessStopped;
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
 

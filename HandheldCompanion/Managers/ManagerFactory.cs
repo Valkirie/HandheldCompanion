@@ -12,6 +12,7 @@ namespace HandheldCompanion.Managers
         public static HotkeysManager hotkeysManager;
         public static ProfileManager profileManager;
         public static PowerProfileManager powerProfileManager;
+        public static ProcessManager processManager;
 
         static ManagerFactory()
         {
@@ -28,6 +29,7 @@ namespace HandheldCompanion.Managers
             hotkeysManager = new();
             profileManager = new();
             powerProfileManager = new();
+            processManager = new();
         }
     }
 }
