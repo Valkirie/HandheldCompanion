@@ -13,30 +13,30 @@ using System.Threading;
 
 namespace HandheldCompanion.Managers
 {
-    public static class GPUManager
+    public class GPUManager : IManager
     {
         #region events
-        public static event InitializedEventHandler? Initialized;
-        public delegate void InitializedEventHandler(bool HasIGCL, bool HasADLX);
-
-        public static event HookedEventHandler? Hooked;
+        public event HookedEventHandler? Hooked;
         public delegate void HookedEventHandler(GPU GPU);
 
-        public static event UnhookedEventHandler? Unhooked;
+        public event UnhookedEventHandler? Unhooked;
         public delegate void UnhookedEventHandler(GPU GPU);
         #endregion
 
-        public static bool IsInitialized = false;
         public static bool IsLoaded_IGCL = false;
         public static bool IsLoaded_ADLX = false;
 
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
 
-        public static void Start()
+        private object screenLock = new();
+
+        public override void Start()
         {
-            if (IsInitialized)
+            if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
                 return;
+
+            base.PrepareStart();
 
             if (!IsLoaded_IGCL && GPU.HasIntelGPU())
             {
@@ -95,26 +95,15 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            IsInitialized = true;
-            Initialized?.Invoke(IsLoaded_IGCL, IsLoaded_ADLX);
-
-            LogManager.LogInformation("{0} has started", "GPUManager");
+            base.Start();
         }
 
-        private static void QueryProfile()
+        public override void Stop()
         {
-            ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
-        }
-
-        private static void ProfileManager_Initialized()
-        {
-            QueryProfile();
-        }
-
-        public static void Stop()
-        {
-            if (!IsInitialized)
+            if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
                 return;
+
+            base.PrepareStop();
 
             // manage events
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
@@ -141,24 +130,32 @@ namespace HandheldCompanion.Managers
                 IsLoaded_ADLX = false;
             }
 
-            IsInitialized = false;
-
-            LogManager.LogInformation("{0} has stopped", "GPUManager");
+            base.Stop();
         }
 
-        private static void DeviceManager_Initialized()
+        private void QueryProfile()
+        {
+            ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfile();
+        }
+
+        private void DeviceManager_Initialized()
         {
             QueryDevices();
         }
 
-        private static void QueryDevices()
+        private void QueryDevices()
         {
             // use ConcurrentDictionary's thread-safe operations to avoid collection errors
             foreach (KeyValuePair<Guid, AdapterInformation> kvp in ManagerFactory.deviceManager.displayAdapters)
                 DeviceManager_DisplayAdapterArrived(kvp.Value);
         }
 
-        private static void GPUConnect(GPU GPU)
+        private void GPUConnect(GPU GPU)
         {
             LogManager.LogInformation("Connecting DisplayAdapter {0}", GPU.ToString());
 
@@ -188,7 +185,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void GPUDisconnect(GPU GPU)
+        private void GPUDisconnect(GPU GPU)
         {
             LogManager.LogInformation("Disconnecting DisplayAdapter {0}", GPU.ToString());
 
@@ -212,7 +209,7 @@ namespace HandheldCompanion.Managers
             GPU.Stop();
         }
 
-        private static void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        private void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
             // GPU is already part of the dictionary
             if (DisplayGPU.ContainsKey(adapterInformation))
@@ -258,8 +255,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static object screenLock = new();
-        private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
+        private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
             lock (screenLock)
             {
@@ -292,7 +288,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
+        private void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
         {
             if (DisplayGPU.TryRemove(adapterInformation, out GPU gpu))
             {
@@ -306,9 +302,9 @@ namespace HandheldCompanion.Managers
             return currentGPU;
         }
 
-        private static void CurrentGPU_RSRStateChanged(bool Supported, bool Enabled, int Sharpness)
+        private void CurrentGPU_RSRStateChanged(bool Supported, bool Enabled, int Sharpness)
         {
-            if (!IsInitialized)
+            if (!IsReady)
                 return;
 
             // todo: use ProfileMager events
@@ -321,9 +317,9 @@ namespace HandheldCompanion.Managers
                 amdGPU.SetRSRSharpness(profile.RSRSharpness);
         }
 
-        private static void CurrentGPU_AFMFStateChanged(bool Supported, bool Enabled)
+        private void CurrentGPU_AFMFStateChanged(bool Supported, bool Enabled)
         {
-            if (!IsInitialized)
+            if (!IsReady)
                 return;
 
             // todo: use ProfileMager events
@@ -334,9 +330,9 @@ namespace HandheldCompanion.Managers
                 amdGPU.SetAFMF(profile.AFMFEnabled);
         }
 
-        private static void CurrentGPU_IntegerScalingChanged(bool Supported, bool Enabled)
+        private void CurrentGPU_IntegerScalingChanged(bool Supported, bool Enabled)
         {
-            if (!IsInitialized)
+            if (!IsReady)
                 return;
 
             // todo: use ProfileMager events
@@ -346,9 +342,9 @@ namespace HandheldCompanion.Managers
                 currentGPU.SetIntegerScaling(profile.IntegerScalingEnabled, profile.IntegerScalingType);
         }
 
-        private static void CurrentGPU_GPUScalingChanged(bool Supported, bool Enabled, int Mode)
+        private void CurrentGPU_GPUScalingChanged(bool Supported, bool Enabled, int Mode)
         {
-            if (!IsInitialized)
+            if (!IsReady)
                 return;
 
             // todo: use ProfileMager events
@@ -360,9 +356,9 @@ namespace HandheldCompanion.Managers
                 currentGPU.SetScalingMode(profile.ScalingMode);
         }
 
-        private static void CurrentGPU_ImageSharpeningChanged(bool Enabled, int Sharpness)
+        private void CurrentGPU_ImageSharpeningChanged(bool Enabled, int Sharpness)
         {
-            if (!IsInitialized)
+            if (!IsReady)
                 return;
 
             // todo: use ProfileMager events
@@ -374,9 +370,9 @@ namespace HandheldCompanion.Managers
                 currentGPU.SetImageSharpeningSharpness(Sharpness);
         }
 
-        private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+        private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            if (!IsInitialized || currentGPU is null)
+            if (!IsReady || currentGPU is null)
                 return;
 
             try
@@ -454,9 +450,9 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        private static void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
+        private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
         {
-            if (!IsInitialized || currentGPU is null)
+            if (!IsReady || currentGPU is null)
                 return;
 
             // don't bother discarding settings, new one will be enforce shortly
@@ -490,7 +486,7 @@ namespace HandheldCompanion.Managers
         }
 
         // todo: moveme
-        private static void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
         {
             ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.DisabledMaximizedWindowedValue, !profile.FullScreenOptimization);
             ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.HighDPIAwareValue, !profile.HighDPIAware);

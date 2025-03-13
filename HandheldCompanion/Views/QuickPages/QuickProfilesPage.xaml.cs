@@ -63,9 +63,9 @@ public partial class QuickProfilesPage : Page
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
+        ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+        ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        GPUManager.Hooked += GPUManager_Hooked;
-        GPUManager.Unhooked += GPUManager_Unhooked;
 
         // raise events
         switch (ManagerFactory.processManager.Status)
@@ -176,9 +176,9 @@ public partial class QuickProfilesPage : Page
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
+        ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+        ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
-        GPUManager.Hooked -= GPUManager_Hooked;
-        GPUManager.Unhooked -= GPUManager_Unhooked;
 
         ((QuickProfilesPageViewModel)DataContext).Dispose();
 

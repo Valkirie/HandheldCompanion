@@ -421,8 +421,8 @@ namespace HandheldCompanion.ViewModels
                 PlatformManager.LibreHardwareMonitor.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
             }
 
-            GPUManager.Hooked += GPUManager_Hooked;
             ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
 
             // raise events
             switch (ManagerFactory.processManager.Status)
@@ -436,12 +436,28 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
-            if (GPUManager.IsInitialized)
+            switch (ManagerFactory.gpuManager.Status)
             {
-                GPU gpu = GPUManager.GetCurrent();
-                if (gpu is not null)
-                    GPUManager_Hooked(gpu);
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
+                    break;
             }
+        }
+
+        private void QueryGPU()
+        {
+            GPU gpu = GPUManager.GetCurrent();
+            if (gpu is not null)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
         }
 
         private void QueryForeground()

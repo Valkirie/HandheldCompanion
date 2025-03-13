@@ -195,7 +195,7 @@ public partial class MainWindow : GamepadWindow
             Task.Run(() => ManagerFactory.hotkeysManager.Start()),
             Task.Run(() => ManagerFactory.profileManager.Start()),
             Task.Run(() => ManagerFactory.powerProfileManager.Start()),
-            Task.Run(() => GPUManager.Start()),
+            Task.Run(() => ManagerFactory.gpuManager.Start()),
             Task.Run(() => ManagerFactory.multimediaManager.Start()),
             Task.Run(() => ControllerManager.Start()),
             Task.Run(() => ManagerFactory.deviceManager.Start()),
@@ -513,7 +513,7 @@ public partial class MainWindow : GamepadWindow
                         InputsManager.Start();
                         TimerManager.Start();
                         SensorsManager.Resume(true);
-                        GPUManager.Start();
+                        ManagerFactory.gpuManager.Start();
                         PerformanceManager.Resume(true);
 
                         // resume platform(s)
@@ -552,7 +552,7 @@ public partial class MainWindow : GamepadWindow
                         pendingTime = DateTime.Now;
 
                         // suspend manager(s)
-                        GPUManager.Stop();
+                        ManagerFactory.gpuManager.Stop();
                         VirtualManager.Suspend(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();
@@ -666,7 +666,7 @@ public partial class MainWindow : GamepadWindow
         // stop managers
         VirtualManager.Stop();
         ManagerFactory.multimediaManager.Stop();
-        GPUManager.Stop();
+        ManagerFactory.gpuManager.Stop();
         MotionManager.Stop();
         SensorsManager.Stop();
         ControllerManager.Stop();
