@@ -491,7 +491,6 @@ public class ROGAlly : IDevice
             return;
 
         AsusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
-        AsusACPI.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
     }
 
     public override float ReadFanDuty()
@@ -500,12 +499,7 @@ public class ROGAlly : IDevice
             return 100.0f;
 
         if (AsusACPI.IsOpen)
-        {
-            int cpuFan = AsusACPI.DeviceGet(AsusACPI.CPU_Fan);
-            int gpuFan = AsusACPI.DeviceGet(AsusACPI.GPU_Fan);
-
-            return (cpuFan + gpuFan) / 2 * 100;
-        }
+            return AsusACPI.DeviceGet(AsusACPI.CPU_Fan) * 100.0f;
 
         return 100.0f;
     }
