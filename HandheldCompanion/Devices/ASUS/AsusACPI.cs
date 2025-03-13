@@ -34,6 +34,7 @@ namespace HandheldCompanion.Devices.ASUS
         const uint DSTS = 0x53545344;
         const uint DEVS = 0x53564544;
         const uint INIT = 0x54494E49;
+        const uint WDOG = 0x474F4457;
 
         public const uint GPUEco = 0x00090020;
         public const uint GPUXGConnected = 0x00090018;
@@ -157,6 +158,12 @@ namespace HandheldCompanion.Devices.ASUS
         {
             byte[] args = new byte[8];
             return CallMethod(INIT, args);
+        }
+
+        public static byte[] DeviceWatchDog()
+        {
+            byte[] args = new byte[8];
+            return CallMethod(WDOG, args);
         }
 
         public static int DeviceSet(uint DeviceID, int Status)

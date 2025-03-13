@@ -35,7 +35,11 @@ namespace HandheldCompanion.Commands.Functions.Performance
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
             if (IDevice.GetCurrent() is ROGAlly rOGAlly)
+            {
+                if (!IsToggled) XGM.Reset();
                 AsusACPI.SetXGMode(IsToggled);
+                if (IsToggled) XGM.Init();
+            }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

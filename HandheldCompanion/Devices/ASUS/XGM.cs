@@ -35,23 +35,27 @@ namespace HandheldCompanion.Devices.ASUS
 
         public static void Init()
         {
+            if (!AsusACPI.IsXGConnected()) return;
             Write(Encoding.ASCII.GetBytes("^ASUS Tech.Inc."));
         }
 
         public static void Light(bool status)
         {
+            if (!AsusACPI.IsXGConnected()) return;
             Write(new byte[] { 0x5e, 0xc5, status ? (byte)0x50 : (byte)0 });
         }
 
         public static void Reset()
         {
+            if (!AsusACPI.IsXGConnected()) return;
             Write(new byte[] { 0x5e, 0xd1, 0x02 });
         }
 
         public static void SetFan(byte[] curve)
         {
             if (AsusACPI.IsInvalidCurve(curve)) return;
-
+            if (!AsusACPI.IsXGConnected()) return;
+            
             byte[] msg = new byte[19];
             Array.Copy(new byte[] { 0x5e, 0xd1, 0x01 }, msg, 3);
             Array.Copy(curve, 0, msg, 3, curve.Length);
