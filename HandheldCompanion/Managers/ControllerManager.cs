@@ -36,10 +36,10 @@ public static class ControllerManager
     private static readonly ConcurrentDictionary<string, IController> Controllers = new();
     public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
 
-    private static Thread watchdogThread;
-    private static bool watchdogThreadRunning;
+    // Controller Management
+    private static Thread CMThread;
+    private static bool CMThreadRunning;
     private static bool ControllerManagement;
-
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
@@ -59,6 +59,7 @@ public static class ControllerManager
 
     private static Timer scenarioTimer = new(100) { AutoReset = false };
     private static Timer pickTimer = new(500) { AutoReset = false };
+    private static Timer xinputTimer = new(1000) { AutoReset = true };
 
     public static bool IsInitialized;
 
@@ -121,10 +122,13 @@ public static class ControllerManager
 
         // prepare timer(s)
         scenarioTimer.Elapsed += ScenarioTimer_Elapsed;
-        scenarioTimer.Start();
-
         pickTimer.Elapsed += PickTimer_Elapsed;
+        xinputTimer.Elapsed += XInputTimer_Elapsed;
+
+        // start timer(s)
+        scenarioTimer.Start();
         pickTimer.Start();
+        xinputTimer.Start();
 
         // enable HidHide
         HidHide.SetCloaking(true);
@@ -138,6 +142,24 @@ public static class ControllerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void XInputTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        // used to keep track of XInput slots in real time
+        foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
+        {
+            byte newIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
+            byte oldIndex = (byte)xInputController.GetUserIndex();
+
+            // controller is not ready yet
+            if (newIndex == byte.MaxValue)
+                continue;
+
+            // controller user index has changed unexpectedly
+            if (newIndex != oldIndex)
+                xInputController.AttachController(newIndex);
+        }
     }
 
     public static void Stop()
@@ -169,9 +191,15 @@ public static class ControllerManager
         IDevice.GetCurrent().KeyPressed -= CurrentDevice_KeyPressed;
         IDevice.GetCurrent().KeyReleased -= CurrentDevice_KeyReleased;
 
-        // stop timer
+        // (un)prepare timer(s)
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
+        pickTimer.Elapsed -= PickTimer_Elapsed;
+        xinputTimer.Elapsed -= XInputTimer_Elapsed;
+
+        // stop timer(s)
         scenarioTimer.Stop();
+        pickTimer.Stop();
+        xinputTimer.Stop();
 
         bool HIDuncloakonclose = ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
         foreach (IController controller in GetPhysicalControllers<IController>())
@@ -411,22 +439,22 @@ public static class ControllerManager
 
     public static void StartWatchdog()
     {
-        if (watchdogThreadRunning)
+        if (CMThreadRunning)
             return;
 
-        watchdogThreadRunning = true;
-        watchdogThread = new Thread(watchdogThreadLoop) { IsBackground = true };
-        watchdogThread.Start();
+        CMThreadRunning = true;
+        CMThread = new Thread(CMThreadLoop) { IsBackground = true };
+        CMThread.Start();
     }
 
     public static void StopWatchdog()
     {
-        if (watchdogThread is null)
+        if (CMThread is null)
             return;
 
-        watchdogThreadRunning = false;
-        if (watchdogThread.IsAlive)
-            watchdogThread.Join();
+        CMThreadRunning = false;
+        if (CMThread.IsAlive)
+            CMThread.Join();
     }
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
@@ -882,13 +910,13 @@ public static class ControllerManager
         }
     }
 
-    private static void watchdogThreadLoop(object? obj)
+    private static void CMThreadLoop(object? obj)
     {
         HashSet<byte> UserIndexes = [];
         bool XInputDrunk = false;
 
         // monitoring unexpected slot changes
-        while (watchdogThreadRunning)
+        while (CMThreadRunning)
         {
             // clear array
             UserIndexes.Clear();
@@ -896,7 +924,7 @@ public static class ControllerManager
 
             foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
             {
-                byte UserIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
+                byte UserIndex = (byte)xInputController.GetUserIndex();
 
                 // controller is not ready yet
                 if (UserIndex == byte.MaxValue)
@@ -905,18 +933,7 @@ public static class ControllerManager
                 // two controllers can't use the same slot
                 if (!UserIndexes.Add(UserIndex))
                     XInputDrunk = true;
-
-                xInputController.AttachController(UserIndex);
             }
-
-            /*
-            if (XInputDrunk)
-            {
-                // (re)init controller userIndex
-                foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
-                    xInputController.AttachController(byte.MaxValue);
-            }
-            */
 
             if (XInputDrunk)
             {
