@@ -30,7 +30,7 @@ namespace HandheldCompanion.Commands.Functions.Performance
             Update();
         }
 
-        public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.DeviceGet(AsusACPI.GPUEco) == 1;
+        public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.DeviceGet(AsusACPI.GPUXG) == 1;
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
