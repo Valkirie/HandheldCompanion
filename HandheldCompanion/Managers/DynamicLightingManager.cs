@@ -174,6 +174,9 @@ public static class DynamicLightingManager
                 key.SetValue(OSAmbientLightingEnabledKey, enabled ? 1 : 0);
     }
 
+    private static bool LEDSettingsEnabled => ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
+    private static bool AmbilightEnabled => ManagerFactory.settingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
+
     private static void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // Update the screen width and height values when display changes
@@ -182,17 +185,14 @@ public static class DynamicLightingManager
         screenHeight = resolution.Height;
         squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
-        // Check LED settings
-        bool LEDSettingsEnabled = ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
-        bool AmbilightEnabled = ManagerFactory.settingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
-
         // Restart Ambilight if necessary
         if (AmbilightEnabled && LEDSettingsEnabled)
         {
             if (ambilightThreadRunning)
                 StopAmbilight();
-            InitializeDirect3DDevice();
-            StartAmbilight();
+
+            if (InitializeDirect3DDevice())
+                StartAmbilight();
         }
     }
 
@@ -209,32 +209,58 @@ public static class DynamicLightingManager
         direct3D = null;
     }
 
-    private static void InitializeDirect3DDevice()
+    private static bool InitializeDirect3DDevice(int maxAttempts)
     {
-        lock (d3dLock)
+        // Try to enter the critical section without waiting.
+        if (!Monitor.TryEnter(d3dLock, TimeSpan.Zero))
+            return false;
+
+        try
         {
-            try
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                // Ensure clean-up before re-initialization
-                DisposeDirect3DResources();
+                try
+                {
+                    // Ensure clean-up before re-initialization
+                    DisposeDirect3DResources();
 
-                // Create a Direct3D instance
-                direct3D = new Direct3D();
+                    // Create a Direct3D instance
+                    direct3D = new Direct3D();
 
-                // Create a Device to access the screen
-                device = new Device(direct3D, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.SoftwareVertexProcessing, new PresentParameters(screenWidth, screenHeight));
+                    // Create a Device to access the screen
+                    device = new Device(
+                        direct3D,
+                        0,
+                        DeviceType.Hardware,
+                        IntPtr.Zero,
+                        CreateFlags.SoftwareVertexProcessing,
+                        new PresentParameters(screenWidth, screenHeight)
+                    );
 
-                // Create a Surface to capture the screen
-                surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight, Format.A8R8G8B8, Pool.Scratch);
+                    // Create a Surface to capture the screen
+                    surface = Surface.CreateOffscreenPlain(
+                        device,
+                        screenWidth,
+                        screenHeight,
+                        Format.A8R8G8B8,
+                        Pool.Scratch
+                    );
+
+                    return true;
+                }
+                catch { }
+
+                // Wait before retrying, if not the last attempt.
+                if (attempt < maxAttempts)
+                    Task.Delay(3000).Wait();
             }
-            catch
-            {
-                // Wait a bit
-                Task.Delay(3000).Wait();
 
-                // Recreate the device and resources
-                InitializeDirect3DDevice();
-            }
+            LogManager.LogError("Failed to initialize Direct3D resources after {0} attempts", maxAttempts);
+            return false;
+        }
+        finally
+        {
+            Monitor.Exit(d3dLock);
         }
     }
 
@@ -314,11 +340,14 @@ public static class DynamicLightingManager
             case LEDLevel.Ambilight:
                 if (!ambilightThreadRunning)
                 {
-                    InitializeDirect3DDevice();
-                    StartAmbilight();
+                    if (InitializeDirect3DDevice())
+                    {
+                        // prepare LEDs
+                        device.SetLedBrightness(100);
+                        device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
 
-                    device.SetLedBrightness(100);
-                    device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+                        StartAmbilight();
+                    }
                 }
                 ambilightThreadDelay = (int)(defaultThreadDelay / 100.0 * LEDSpeed);
                 break;
