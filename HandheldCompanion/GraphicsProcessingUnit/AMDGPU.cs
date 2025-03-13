@@ -57,7 +57,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 }
             }
 
-            LogManager.LogError("{0} has been shut down to restore {1} library", "AMD Software꞉ Adrenalin Edition", typeof(AMDGPU));
+            LogManager.LogError("{0} was killed to restore {1} library", "AMD Software: Adrenalin Edition", "ADLXBackend");
         }
 
         public bool HasRSRSupport()
