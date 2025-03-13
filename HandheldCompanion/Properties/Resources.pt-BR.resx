@@ -3345,4 +3345,10 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
     <value>Nível máximo de carga da bateria</value>
   </data>
+  <data name="Hotkey_XGMobile" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

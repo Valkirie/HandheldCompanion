@@ -938,12 +938,17 @@ public abstract class IDevice
         return false;
     }
 
-    public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
+    public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int[] deviceIds, int minFeatures = 1)
     {
-        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, new int[] { deviceId }).ToArray();
+        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, deviceIds).ToArray();
         foreach (HidDevice device in HidDeviceList)
             if (device.IsConnected && device.Capabilities.FeatureReportByteLength >= minFeatures)
                 yield return device;
+    }
+
+    public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
+    {
+        return GetHidDevices(vendorId, new int[] { deviceId }, minFeatures);
     }
 
     public string GetButtonName(ButtonFlags button)

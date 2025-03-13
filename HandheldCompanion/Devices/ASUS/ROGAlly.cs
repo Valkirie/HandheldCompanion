@@ -29,8 +29,6 @@ public class ROGAlly : IDevice
         { 168, ButtonFlags.OEM4 },
     };
 
-    private AsusACPI? asusACPI;
-
     private static bool customFanControl = false;
 
     private const byte INPUT_HID_ID = 0x5a;
@@ -46,7 +44,7 @@ public class ROGAlly : IDevice
     static byte[] MESSAGE_APPLY = { AURA_HID_ID, 0xb4 };
     static byte[] MESSAGE_SET = { AURA_HID_ID, 0xb5, 0, 0, 0 };
 
-    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen && asusACPI is not null && asusACPI.IsOpen();
+    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen && AsusACPI.IsOpen;
 
     private enum AuraMode
     {
@@ -328,9 +326,8 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        // try open asus ACPI
-        asusACPI = new AsusACPI();
-        if (asusACPI is null)
+        // check if Asus ACPI is open
+        if (!AsusACPI.IsOpen)
             return false;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
@@ -377,7 +374,7 @@ public class ROGAlly : IDevice
     public override void Close()
     {
         // close Asus ACPI
-        asusACPI?.Close();
+        AsusACPI.Close();
 
         // restore default M1/M2 behavior
         ConfigureController(false);
@@ -478,7 +475,7 @@ public class ROGAlly : IDevice
                     if (customFanControl)
                     {
                         customFanControl = false;
-                        asusACPI?.DeviceSet(AsusACPI.PerformanceMode, mode);
+                        AsusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
                     }
                 }
                 break;
@@ -493,8 +490,7 @@ public class ROGAlly : IDevice
         if (!IsOpen)
             return;
 
-        asusACPI?.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
-        asusACPI?.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
+        AsusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
     }
 
     public override float ReadFanDuty()
@@ -502,13 +498,8 @@ public class ROGAlly : IDevice
         if (!IsOpen)
             return 100.0f;
 
-        if (asusACPI is not null)
-        {
-            int cpuFan = asusACPI.DeviceGet(AsusACPI.CPU_Fan);
-            int gpuFan = asusACPI.DeviceGet(AsusACPI.GPU_Fan);
-
-            return (cpuFan + gpuFan) / 2 * 100;
-        }
+        if (AsusACPI.IsOpen)
+            return AsusACPI.DeviceGet(AsusACPI.CPU_Fan) * 100.0f;
 
         return 100.0f;
     }
@@ -774,7 +765,7 @@ public class ROGAlly : IDevice
         if (chargeLimit < 0 || chargeLimit > 100)
             return;
 
-        asusACPI?.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
+        AsusACPI.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
