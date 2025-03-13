@@ -209,7 +209,7 @@ public static class DynamicLightingManager
         direct3D = null;
     }
 
-    private static bool InitializeDirect3DDevice(int maxAttempts)
+    private static bool InitializeDirect3DDevice(int maxAttempts = 3)
     {
         // Try to enter the critical section without waiting.
         if (!Monitor.TryEnter(d3dLock, TimeSpan.Zero))
