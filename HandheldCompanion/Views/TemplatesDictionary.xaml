@@ -240,13 +240,13 @@
 
                                 <ui:ProgressBar
                                     Width="138"
-                                    Margin="0,-8,0,0"
+                                    Margin="0,-9,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     IsIndeterminate="True"
                                     Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <ui:ProgressBar.RenderTransform>
-                                        <ScaleTransform ScaleY="4" />
+                                        <ScaleTransform ScaleY="3.8" />
                                     </ui:ProgressBar.RenderTransform>
                                 </ui:ProgressBar>
                             </Grid>
