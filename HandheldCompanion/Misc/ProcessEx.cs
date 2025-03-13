@@ -465,7 +465,7 @@ public class ProcessEx : IDisposable
     {
         try
         {
-            if (Process.HasExited)
+            if (Process is null || Process.HasExited)
                 return;
 
             if (MainThread is null)
@@ -501,6 +501,7 @@ public class ProcessEx : IDisposable
             Refreshed?.Invoke(this, EventArgs.Empty);
         }
         catch (InvalidOperationException) { } // No process is associated with this object
+        catch (NullReferenceException) { }
     }
 
     public void RefreshChildProcesses()
