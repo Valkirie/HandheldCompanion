@@ -347,6 +347,9 @@ public class ProcessManager : IManager
         {
             try
             {
+                if (!automationElement.Current.IsContentElement && !automationElement.Current.IsControlElement)
+                    return false;
+
                 // process has exited on arrival
                 Process proc = Process.GetProcessById(processID);
                 if (proc.HasExited)
@@ -511,29 +514,31 @@ public class ProcessManager : IManager
             });
     }
 
+    private static Dictionary<int, int[]> windowsCache = new();
+
     public static async void ResumeProcess(ProcessEx processEx)
     {
         // process has exited
         if (processEx.Process.HasExited)
             return;
 
-        ProcessUtils.NtResumeProcess(processEx.Process.Handle);
+        // refresh processes handles
+        List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
+        handles.Insert(0, processEx.Handle);
 
-        // refresh child processes list (most likely useless, a suspended process shouldn't have new child processes)
-        processEx.RefreshChildProcesses();
+        // resume processes
+        foreach (int handle in handles)
+            ProcessUtils.NtResumeProcess(handle);
 
-        Parallel.ForEach(processEx.ChildrenProcessIds,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
-            {
-                Process process = Process.GetProcessById(childId);
-                ProcessUtils.NtResumeProcess(process.Handle);
-            });
-
+        // wait a bit
         await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
         // restore process windows
-        foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
-            ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
+        foreach (int Hwnd in windowsCache[processEx.ProcessId])
+            ProcessUtils.ShowWindow(Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
+
+        // clear cache
+        windowsCache.Remove(processEx.ProcessId);
     }
 
     public static async void SuspendProcess(ProcessEx processEx)
@@ -542,23 +547,23 @@ public class ProcessManager : IManager
         if (processEx.Process.HasExited)
             return;
 
-        // hide process windows
-        foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
-            ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
+        // store process windows in cache
+        windowsCache[processEx.ProcessId] = processEx.ProcessWindows.Keys.ToArray();
 
+        // hide process windows
+        foreach (int Hwnd in windowsCache[processEx.ProcessId])
+            ProcessUtils.ShowWindow(Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
+
+        // wait a bit
         await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
-        ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
+        // refresh processes handles
+        List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
+        handles.Insert(0, processEx.Handle);
 
-        // refresh child processes list
-        processEx.RefreshChildProcesses();
-
-        Parallel.ForEach(processEx.ChildrenProcessIds,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
-            {
-                Process process = Process.GetProcessById(childId);
-                ProcessUtils.NtSuspendProcess(process.Handle);
-            });
+        // suspend processes
+        foreach(int handle in handles)
+            ProcessUtils.NtSuspendProcess(handle);
     }
 
     // A function that takes a Process as a parameter and returns true if it has any xinput related dlls in its modules

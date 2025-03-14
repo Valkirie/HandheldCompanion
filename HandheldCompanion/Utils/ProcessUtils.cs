@@ -196,18 +196,24 @@ public static class ProcessUtils
         return closestProcess;
     }
 
-    public static List<Process> GetChildProcesses(Process process)
+    /// <summary>
+    /// Retrieves all child processes of a given process.
+    /// </summary>
+    public static List<Process> GetChildProcesses(int pId)
     {
-        return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid=={process.Id}")
+        return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid = {pId}")
             .Get()
             .Cast<ManagementObject>()
             .Select(mo => Process.GetProcessById(Convert.ToInt32(mo["ProcessID"])))
             .ToList();
     }
 
-    public static List<int> GetChildIds(Process process)
+    /// <summary>
+    /// Retrieves all child processes ids of a given process.
+    /// </summary>
+    public static List<int> GetChildIds(int pId)
     {
-        return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid={process.Id}")
+        return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid = {pId}")
             .Get()
             .Cast<ManagementObject>()
             .Select(mo => Convert.ToInt32(mo["ProcessID"]))
