@@ -181,32 +181,30 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
+        // prepare toast manager
         ToastManager.Start();
 
-        // non-STA threads
+        // start non-static managers
+        foreach (IManager manager in ManagerFactory.Managers)
+            Task.Run(() => manager.Start());
+
+        // start static managers
+        // todo: make them non-static
         List<Task> tasks = new List<Task>
         {
             Task.Run(() => OSDManager.Start()),
-            Task.Run(() => ManagerFactory.layoutManager.Start()),
             Task.Run(() => SystemManager.Start()),
             Task.Run(() => DynamicLightingManager.Start()),
             Task.Run(() => VirtualManager.Start()),
             Task.Run(() => SensorsManager.Start()),
-            Task.Run(() => ManagerFactory.hotkeysManager.Start()),
-            Task.Run(() => ManagerFactory.profileManager.Start()),
-            Task.Run(() => ManagerFactory.powerProfileManager.Start()),
-            Task.Run(() => ManagerFactory.gpuManager.Start()),
-            Task.Run(() => ManagerFactory.multimediaManager.Start()),
             Task.Run(() => ControllerManager.Start()),
-            Task.Run(() => ManagerFactory.deviceManager.Start()),
             Task.Run(() => PlatformManager.Start()),
-            Task.Run(() => ManagerFactory.processManager.Start()),
             Task.Run(() => TaskManager.Start(CurrentExe)),
             Task.Run(() => PerformanceManager.Start()),
             Task.Run(() => UpdateManager.Start())
         };
 
-        // those managers can't be threaded
+        // start non-threaded managers
         InputsManager.Start();
         TimerManager.Start();
         ManagerFactory.settingsManager.Start();
@@ -633,8 +631,12 @@ public partial class MainWindow : GamepadWindow
         TryGoBack();
     }
 
-    private void Window_Closed(object sender, EventArgs e)
+    private async void Window_Closed(object sender, EventArgs e)
     {
+        // wait until all managers have initialized
+        while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+            await Task.Delay(250).ConfigureAwait(false);
+
         CurrentDevice.Close();
 
         notifyIcon.Visible = false;
@@ -646,40 +648,40 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
 
-        // stop windows
-        overlayModel.Close(true);
-        overlayTrackpad.Close();
-        overlayquickTools.Close(true);
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            // stop windows
+            overlayModel.Close(true);
+            overlayTrackpad.Close();
+            overlayquickTools.Close(true);
 
-        // stop pages
-        controllerPage.Page_Closed();
-        profilesPage.Page_Closed();
-        settingsPage.Page_Closed();
-        overlayPage.Page_Closed();
-        hotkeysPage.Page_Closed();
-        layoutPage.Page_Closed();
-        notificationsPage.Page_Closed();
+            // stop pages
+            controllerPage.Page_Closed();
+            profilesPage.Page_Closed();
+            settingsPage.Page_Closed();
+            overlayPage.Page_Closed();
+            hotkeysPage.Page_Closed();
+            layoutPage.Page_Closed();
+            notificationsPage.Page_Closed();
+        });
 
         // remove all automation event handlers
         // Automation.RemoveAllEventHandlers();
 
+        foreach (IManager manager in ManagerFactory.Managers)
+            manager.Stop();
+
         // stop managers
         VirtualManager.Stop();
-        ManagerFactory.multimediaManager.Stop();
-        ManagerFactory.gpuManager.Stop();
         MotionManager.Stop();
         SensorsManager.Stop();
         ControllerManager.Stop();
         InputsManager.Stop(true);
-        ManagerFactory.deviceManager.Stop();
         PlatformManager.Stop();
         OSDManager.Stop();
-        ManagerFactory.powerProfileManager.Stop();
-        ManagerFactory.profileManager.Stop();
-        ManagerFactory.layoutManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();
-        ManagerFactory.processManager.Stop();
         ToastManager.Stop();
         TaskManager.Stop();
         PerformanceManager.Stop();

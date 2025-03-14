@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Shared;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace HandheldCompanion.Managers
@@ -14,6 +15,19 @@ namespace HandheldCompanion.Managers
         public static PowerProfileManager powerProfileManager;
         public static ProcessManager processManager;
         public static GPUManager gpuManager;
+
+        public static List<IManager> Managers => new()
+        {
+            settingsManager,
+            deviceManager,
+            layoutManager,
+            multimediaManager,
+            hotkeysManager,
+            profileManager,
+            powerProfileManager,
+            processManager,
+            gpuManager
+        };
 
         static ManagerFactory()
         {
