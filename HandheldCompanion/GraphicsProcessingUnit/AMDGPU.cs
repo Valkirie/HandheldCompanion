@@ -1,10 +1,8 @@
 ﻿using HandheldCompanion.ADLX;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Timers;
@@ -30,35 +28,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private bool prevAFMFSupport = false;
         private bool prevAFMF = false;
 
-        protected new AdlxTelemetryData TelemetryData = new();
-
-        protected override void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // Adrenaline Software is known to cause issues with the ADLX backend, so we kill it here
-            KillAdrenaline();
-
-            base.BusyTimer_Elapsed(sender, e);
-        }
-
-        public static void KillAdrenaline()
-        {
-            HashSet<string> targets = new HashSet<string> { "RadeonSoftware", "cncmd" };
-
-            foreach (Process proc in Process.GetProcesses())
-            {
-                if (targets.Contains(proc.ProcessName))
-                {
-                    proc.Kill();
-                    // Remove the target so we don't try killing it again.
-                    targets.Remove(proc.ProcessName);
-                    // If all targets are handled, exit early.
-                    if (targets.Count == 0)
-                        break;
-                }
-            }
-
-            LogManager.LogError("{0} was killed to restore {1} library", "AMD Software: Adrenalin Edition", "ADLXBackend");
-        }
+        protected AdlxTelemetryData TelemetryData = new();
 
         public bool HasRSRSupport()
         {
@@ -342,6 +312,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             return (float)TelemetryData.gpuVramValue;
         }
+        
+        static AMDGPU()
+        {
+            ProcessTargets = new HashSet<string> { "RadeonSoftware", "cncmd" };
+        }
 
         public AMDGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
@@ -563,6 +538,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     Monitor.Exit(updateLock);
                 }
             }
+        }
+
+        protected override void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // Call the generic method to terminate conflicting processes.
+            TerminateConflictingProcesses();
+
+            base.BusyTimer_Elapsed(sender, e);
         }
     }
 }

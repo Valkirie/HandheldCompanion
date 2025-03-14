@@ -12,7 +12,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         #region events
         #endregion
 
-        protected new ctl_telemetry_data TelemetryData = new();
+        protected ctl_telemetry_data TelemetryData = new();
 
         public override bool HasIntegerScalingSupport()
         {
