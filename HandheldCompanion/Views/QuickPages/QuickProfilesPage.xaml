@@ -1222,8 +1222,8 @@
                             </ikw:SimpleStackPanel>
                             <ui:ProgressRing
                                 Name="GraphicsSettingsRing"
-                                Width="200"
-                                Height="200"
+                                Width="100"
+                                Height="100"
                                 Visibility="Collapsed" />
                         </Grid>
                     </Expander.Content>
