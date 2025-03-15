@@ -54,6 +54,7 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
             SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
@@ -64,6 +65,17 @@ namespace HandheldCompanion.Managers
                     break;
                 case ManagerStatus.Initialized:
                     QueryProfile();
+                    break;
+            }
+
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
                     break;
             }
 
@@ -80,6 +92,17 @@ namespace HandheldCompanion.Managers
             QueryProfile();
         }
 
+        private void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
+            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         public override void Stop()
         {
             if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
@@ -93,8 +116,41 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
             SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
             base.Stop();
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            // Only process relevant setting names.
+            if (name != "ConfigurableTDPOverrideDown" && name != "ConfigurableTDPOverrideUp")
+                return;
+
+            double threshold = Convert.ToDouble(value);
+
+            // Define the condition based on the setting name.
+            Func<double, bool> shouldUpdate = name == "ConfigurableTDPOverrideDown"
+                ? (current => current < threshold)
+                : (current => current > threshold);
+
+            foreach (PowerProfile profile in profiles.Values)
+            {
+                bool updated = false;
+
+                // Loop through all override values
+                for (int i = 0; i < profile.TDPOverrideValues.Length; i++)
+                {
+                    if (shouldUpdate(profile.TDPOverrideValues[i]))
+                    {
+                        profile.TDPOverrideValues[i] = threshold;
+                        updated = true;
+                    }
+                }
+
+                if (updated)
+                    UpdateOrCreateProfile(profile, UpdateSource.Background);
+            }
         }
 
         private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)

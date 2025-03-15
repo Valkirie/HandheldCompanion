@@ -145,30 +145,14 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public double TDPMinimum
+        public double ConfigurableTDPOverrideDown
         {
             get => ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideDown);
-            set
-            {
-                if (value != TDPMinimum)
-                {
-                    ManagerFactory.settingsManager.SetProperty(Settings.ConfigurableTDPOverrideDown, value);
-                    OnPropertyChanged(nameof(TDPMinimum));
-                }
-            }
         }
 
-        public double TDPMaximum
+        public double ConfigurableTDPOverrideUp
         {
             get => ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
-            set
-            {
-                if (value != TDPMaximum)
-                {
-                    ManagerFactory.settingsManager.SetProperty(Settings.ConfigurableTDPOverrideUp, value);
-                    OnPropertyChanged(nameof(TDPMaximum));
-                }
-            }
         }
 
         public double AutoTDPMaximum
@@ -753,13 +737,9 @@ namespace HandheldCompanion.ViewModels
             switch (name)
             {
                 case "ConfigurableTDPOverride":
-                    OnPropertyChanged(name);
-                    break;
                 case "ConfigurableTDPOverrideDown":
-                    OnPropertyChanged("TDPMinimum");
-                    break;
                 case "ConfigurableTDPOverrideUp":
-                    OnPropertyChanged("TDPMaximum");
+                    OnPropertyChanged(name);
                     break;
             }
         }

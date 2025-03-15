@@ -244,13 +244,15 @@ public static class PerformanceManager
             case "ConfigurableTDPOverrideDown":
                 {
                     TDPMin = Convert.ToDouble(value);
-                    if (AutoTDPMax != 0d && AutoTDPMax < TDPMin) AutoTDPMax = TDPMin;
+                    if (AutoTDPMax != 0d && AutoTDPMax < TDPMin)
+                        AutoTDPMax = TDPMin;
                 }
                 break;
             case "ConfigurableTDPOverrideUp":
                 {
                     TDPMax = Convert.ToDouble(value);
-                    if (AutoTDPMax == 0d || AutoTDPMax > TDPMax) AutoTDPMax = TDPMax;
+                    if (AutoTDPMax == 0d || AutoTDPMax > TDPMax)
+                        AutoTDPMax = TDPMax;
                 }
                 break;
         }
