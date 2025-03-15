@@ -76,7 +76,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public readonly bool IsQuickTools;
-        public bool IsMainPage => IsMainPage;
+        public bool IsMainPage => !IsQuickTools;
 
         #region Binding Properties
 
