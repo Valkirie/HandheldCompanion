@@ -2850,4 +2850,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="SettingsPage_Experimental" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_SuspendOnSleep" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_SuspendOnSleepDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

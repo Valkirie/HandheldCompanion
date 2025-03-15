@@ -8987,6 +8987,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Experimental options.
+        /// </summary>
+        public static string SettingsPage_Experimental {
+            get {
+                return ResourceManager.GetString("SettingsPage_Experimental", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to General options.
         /// </summary>
         public static string SettingsPage_GeneralOptions {
@@ -9055,6 +9064,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_OpenAppBackgroundDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_OpenAppBackgroundDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend on sleep.
+        /// </summary>
+        public static string SettingsPage_SuspendOnSleep {
+            get {
+                return ResourceManager.GetString("SettingsPage_SuspendOnSleep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend foreground application when system goes to sleep.
+        /// </summary>
+        public static string SettingsPage_SuspendOnSleepDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SuspendOnSleepDesc", resourceCulture);
             }
         }
         

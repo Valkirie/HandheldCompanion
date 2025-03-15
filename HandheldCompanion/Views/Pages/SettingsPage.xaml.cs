@@ -18,6 +18,7 @@ using System.Windows.Controls;
 using static HandheldCompanion.Managers.UpdateManager;
 using static HandheldCompanion.WinAPI;
 using Page = System.Windows.Controls.Page;
+using WindowHelper = iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -173,6 +174,9 @@ public partial class SettingsPage : Page
                     break;
                 case "PlatformRTSSEnabled":
                     Toggle_RTSS.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "SuspendOnSleep":
+                    Toggle_SuspendOnSleep.IsOn = Convert.ToBoolean(value);
                     break;
                 case "QuickToolsLocation":
                     cB_QuicktoolsPosition.SelectedIndex = Convert.ToInt32(value);
@@ -483,6 +487,14 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("PlatformRTSSEnabled", Toggle_RTSS.IsOn);
+    }
+
+    private void Toggle_SuspendOnSleep_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("SuspendOnSleep", Toggle_SuspendOnSleep.IsOn);
     }
 
     private void cB_QuicktoolsPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)

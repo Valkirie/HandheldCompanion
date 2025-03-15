@@ -1248,5 +1248,17 @@ namespace HandheldCompanion.Properties
                 this["KnownDrivers"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SuspendOnSleep {
+            get {
+                return ((bool)(this["SuspendOnSleep"]));
+            }
+            set {
+                this["SuspendOnSleep"] = value;
+            }
+        }
     }
 }

@@ -437,11 +437,11 @@ public class ProcessEx : IDisposable
                 if (prevThreadWaitReason == ThreadWaitReason.Suspended)
                     return;
 
-                ProcessManager.SuspendProcess(this);
+                ProcessManager.SuspendProcess(this).Wait();
             }
             else
             {
-                ProcessManager.ResumeProcess(this);
+                ProcessManager.ResumeProcess(this).Wait();
             }
             _isSuspended = value;
         }

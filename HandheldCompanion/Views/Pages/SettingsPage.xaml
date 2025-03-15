@@ -750,6 +750,49 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
+            <!--  Experimental options  -->
+            <ikw:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Experimental}" />
+
+                <!--  RTSS  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xEA6C;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SuspendOnSleep}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.SettingsPage_SuspendOnSleepDesc}"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_SuspendOnSleep"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_SuspendOnSleep_Toggled" />
+                    </Grid>
+                </Border>
+            </ikw:SimpleStackPanel>
+
         </ikw:SimpleStackPanel>
     </Grid>
 </Page>
