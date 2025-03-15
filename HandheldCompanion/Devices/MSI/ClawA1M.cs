@@ -14,20 +14,20 @@ namespace HandheldCompanion.Devices;
 
 public class ClawA1M : IDevice
 {
-    private enum WMIEventCode
+    protected enum WMIEventCode
     {
         LaunchMcxMainUI = 41, // 0x00000029
         LaunchMcxOSD = 88, // 0x00000058
     }
 
-    private readonly Dictionary<WMIEventCode, ButtonFlags> keyMapping = new()
+    protected readonly Dictionary<WMIEventCode, ButtonFlags> keyMapping = new()
     {
         { 0, ButtonFlags.None },
         { WMIEventCode.LaunchMcxMainUI, ButtonFlags.OEM1 },
         { WMIEventCode.LaunchMcxOSD, ButtonFlags.OEM2 },
     };
 
-    private enum GamepadMode
+    protected enum GamepadMode
     {
         Offline,
         XInput,
@@ -38,13 +38,13 @@ public class ClawA1M : IDevice
         TESTING,
     }
 
-    private enum MKeysFunction
+    protected enum MKeysFunction
     {
         Macro,
         Combination,
     }
 
-    private enum CommandType
+    protected enum CommandType
     {
         EnterProfileConfig = 1,
         ExitProfileConfig = 2,
@@ -236,7 +236,7 @@ public class ClawA1M : IDevice
         return false;
     }
 
-    private void StartWatching()
+    protected void StartWatching()
     {
         try
         {
@@ -251,7 +251,7 @@ public class ClawA1M : IDevice
         }
     }
 
-    private void StopWatching()
+    protected void StopWatching()
     {
         if (specialKeyWatcher == null)
         {

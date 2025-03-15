@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -8,6 +9,7 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -16,75 +18,10 @@ namespace HandheldCompanion.Devices;
 
 public class Claw8 : ClawA1M
 {
-    private enum WMIEventCode
-    {
-        LaunchMcxMainUI = 41, // 0x00000029
-        LaunchMcxOSD = 88, // 0x00000058
-    }
-
-    private readonly Dictionary<WMIEventCode, ButtonFlags> keyMapping = new()
-    {
-        { 0, ButtonFlags.None },
-        { WMIEventCode.LaunchMcxMainUI, ButtonFlags.OEM1 },
-        { WMIEventCode.LaunchMcxOSD, ButtonFlags.OEM2 },
-    };
-
-    private enum GamepadMode
-    {
-        Offline,
-        XInput,
-        DInput,
-        MSI,
-        Desktop,
-        BIOS,
-        TESTING,
-    }
-
-    private enum MKeysFunction
-    {
-        Macro,
-        Combination,
-    }
-
-    private enum CommandType
-    {
-        EnterProfileConfig = 1,
-        ExitProfileConfig = 2,
-        WriteProfile = 3,
-        ReadProfile = 4,
-        ReadProfileAck = 5,
-        Ack = 6,
-        SwitchProfile = 7,
-        WriteProfileToEEPRom = 8,
-        ReadFirmwareVersion = 9,
-        ReadRGBStatusAck = 10, // 0x0000000A
-        ReadCurrentProfile = 11, // 0x0000000B
-        ReadCurrentProfileAck = 12, // 0x0000000C
-        ReadRGBStatus = 13, // 0x0000000D
-        SyncToROM = 34, // 0x00000022
-        RestoreFromROM = 35, // 0x00000023
-        SwitchMode = 36, // 0x00000024
-        ReadGamepadMode = 38, // 0x00000026
-        GamepadModeAck = 39, // 0x00000027
-        ResetDevice = 40, // 0x00000028
-        RGBControl = 224, // 0x000000E0
-        CalibrationControl = 253, // 0x000000FD
-        CalibrationAck = 254, // 0x000000FE
-    }
-
-    private ManagementEventWatcher? specialKeyWatcher;
-
-    // todo: find the right value, this is placeholder
-    private const byte INPUT_HID_ID = 0x01;
-
     public Claw8()
     {
         // device specific settings
         ProductIllustration = "device_msi_claw";
-
-        // used to monitor OEM specific inputs
-        _vid = 0x0DB0;
-        _pid = 0x1901;
 
         // https://www.intel.com/content/www/us/en/products/sku/240957/intel-core-ultra-7-processor-258v-12m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 37 };
@@ -92,75 +29,21 @@ public class Claw8 : ClawA1M
         GfxClock = new double[] { 100, 1950 };
         CpuClock = 4800;
 
-        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
-        };
-
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
-        };
-
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterBattery, Properties.Resources.PowerProfileMSIClawBetterBatteryDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterBattery,
-            CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = BetterBatteryGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
-        });
+        // overwrite ClawA1M default power profiles
+        PowerProfile powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BetterBatteryGuid);
+        if (powerProfile != null)
+            powerProfile.TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d };
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterPerformance, Properties.Resources.PowerProfileMSIClawBetterPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterPerformance,
-            Guid = BetterPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
-        });
+        powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BetterPerformanceGuid);
+        if (powerProfile != null)
+            powerProfile.TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d };
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBestPerformance, Properties.Resources.PowerProfileMSIClawBestPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BestPerformance,
-            Guid = BestPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d }
-        });
-
-        OEMChords.Add(new KeyboardChord("CLAW",
-            [], [],
-            false, ButtonFlags.OEM1
-        ));
-
-        OEMChords.Add(new KeyboardChord("QS",
-            [], [],
-            false, ButtonFlags.OEM2
-        ));
-
-        OEMChords.Add(new KeyboardChord("M1",             // unimplemented
-            [], [],
-            false, ButtonFlags.OEM3
-        ));
-
-        OEMChords.Add(new KeyboardChord("M2",             // unimplemented
-            [], [],
-            false, ButtonFlags.OEM4
-        ));
+        powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BestPerformanceGuid);
+        if (powerProfile != null)
+            powerProfile.TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d };
     }
 
     public override bool Open()
@@ -168,16 +51,6 @@ public class Claw8 : ClawA1M
         var success = base.Open();
         if (!success)
             return false;
-
-        // start WMI event monitor
-        StartWatching();
-
-        // configure controller to XInput
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.XInput, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
@@ -244,159 +117,10 @@ public class Claw8 : ClawA1M
 
     public override void Close()
     {
-        // stop WMI event monitor
-        StopWatching();
-
-        // configure controller to Desktop
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.Desktop, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
-
-        // close devices
-        foreach (HidDevice hidDevice in hidDevices.Values)
-        {
-            if (!hidDevice.IsConnected)
-                continue;
-
-            if (hidDevice.IsOpen)
-            {
-                hidDevice.MonitorDeviceEvents = false;
-                hidDevice.CloseDevice();
-            }
-        }
-
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         base.Close();
-    }
-
-    public override bool IsReady()
-    {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
-        foreach (HidDevice device in devices)
-        {
-            if (!device.IsConnected)
-                continue;
-
-            // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64)
-                continue;
-
-            hidDevices[INPUT_HID_ID] = device;
-            break;
-        }
-
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
-        {
-            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-
-            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
-
-            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
-        }
-
-        return false;
-    }
-
-    private void StartWatching()
-    {
-        try
-        {
-            var scope = new ManagementScope("\\\\.\\root\\WMI");
-            specialKeyWatcher = new ManagementEventWatcher(scope, new WqlEventQuery("SELECT * FROM MSI_Event"));
-            specialKeyWatcher.EventArrived += onWMIEvent;
-            specialKeyWatcher.Start();
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("Exception configuring MSI_Event monitor: {0}", ex.Message);
-        }
-    }
-
-    private void StopWatching()
-    {
-        if (specialKeyWatcher == null)
-        {
-            return;
-        }
-
-        try
-        {
-            specialKeyWatcher.EventArrived -= onWMIEvent;
-            specialKeyWatcher.Stop();
-            specialKeyWatcher.Dispose();
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("Exception unconfiguring MSI_Event monitor: {0}", ex.Message);
-        }
-
-        specialKeyWatcher = null;
-    }
-
-    private void onWMIEvent(object sender, EventArrivedEventArgs e)
-    {
-        int WMIEvent = Convert.ToInt32(e.NewEvent.Properties["MSIEvt"].Value);
-        WMIEventCode key = (WMIEventCode)(WMIEvent & byte.MaxValue);
-
-        // LogManager.LogInformation("Received MSI WMI Event Code {0}", (int)key);
-
-        if (!keyMapping.ContainsKey(key))
-            return;
-
-        // get button
-        ButtonFlags button = keyMapping[key];
-        switch (key)
-        {
-            default:
-            case WMIEventCode.LaunchMcxMainUI:  // MSI Claw: Click
-            case WMIEventCode.LaunchMcxOSD:     // Quick Settings: Click
-                {
-                    Task.Run(async () =>
-                    {
-                        KeyPress(button);
-                        await Task.Delay(KeyPressDelay).ConfigureAwait(false); // Avoid blocking the synchronization context
-                        KeyRelease(button);
-                    });
-                }
-                break;
-        }
-    }
-
-    public override void SetKeyPressDelay(HIDmode controllerMode)
-    {
-        switch (controllerMode)
-        {
-            case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
-                break;
-            default:
-                KeyPressDelay = 20;
-                break;
-        }
-    }
-
-    public override string GetGlyph(ButtonFlags button)
-    {
-        switch (button)
-        {
-            case ButtonFlags.OEM1:
-                return "\uE010";
-            case ButtonFlags.OEM2:
-                return "\uE011";
-            case ButtonFlags.OEM3:
-                return "\u2212";
-            case ButtonFlags.OEM4:
-                return "\u2213";
-        }
-
-        return defaultGlyph;
     }
 
     public string Scope { get; set; } = "root\\WMI";
@@ -417,7 +141,10 @@ public class Claw8 : ClawA1M
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
         fullPackage[0] = 212;
-        fullPackage[1] = (byte)(enable ? 1 : 0);
+
+        byte[] ap = WMI.Get(Scope, Path, "Get_AP", 1);
+        byte num = ap[0].SetBit(7, enable);
+        fullPackage[1] = num;
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }

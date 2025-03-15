@@ -102,60 +102,64 @@ namespace HandheldCompanion
             managementObject.InvokeMethod(methodName, inParams, null);
         }
 
-        public static byte[] Get(string scope, string path, string methodName, ref bool success)
+        public static byte[] Get(string scope, string path, string methodName, byte? command)
         {
-            // Create the management object using the provided scope and path
-            ManagementObject managementObject = new ManagementObject(scope, path, null);
+            // Connect to the WMI scope.
+            ManagementScope managementScope = new ManagementScope(scope);
+            managementScope.Connect();
 
-            ManagementBaseObject inParams = null;
-            ManagementBaseObject inParamsData = null;
-            bool parametersAvailable = false;
+            // Create a ManagementPath for the WMI class.
+            ManagementPath managementPath = new ManagementPath(path);
 
-            // First attempt: retrieve method parameters for the specified methodName
-            try
+            using (ManagementClass managementClass = new ManagementClass(managementScope, managementPath, null))
             {
-                inParams = managementObject.GetMethodParameters(methodName);
-                inParamsData = inParams["Data"] as ManagementBaseObject;
-                parametersAvailable = (inParams != null && inParamsData != null);
-            }
-            catch (Exception ex) { }
-
-            // If the "Data" parameter was not obtained, try the fallback method "Get_WMI"
-            if (!parametersAvailable)
-            {
-                try
+                ManagementBaseObject inParams = null;
+                if (command.HasValue)
                 {
-                    inParams = managementObject.InvokeMethod("Get_WMI", null, null);
-                    inParamsData = inParams["Data"] as ManagementBaseObject;
+                    // Retrieve the method's input parameter template.
+                    inParams = managementClass.GetMethodParameters(methodName);
+
+                    // Create a byte array of the assumed size and set the first byte to the command value.
+                    byte[] dataBytes = new byte[32];
+                    dataBytes[0] = command.Value;
+
+                    // The decompiled code expects the "Data" property to be a nested object with a "Bytes" property.
+                    // Try to use the provided embedded object, if available.
+                    ManagementBaseObject dataObject = inParams["Data"] as ManagementBaseObject;
+                    if (dataObject != null)
+                    {
+                        dataObject["Bytes"] = dataBytes;
+                        inParams["Data"] = dataObject;
+                    }
+                    else
+                    {
+                        // If no embedded object exists, assign the byte array directly.
+                        inParams["Data"] = dataBytes;
+                    }
                 }
-                catch (ManagementException mex) { }
-                catch (Exception ex) { }
+
+                // Invoke the method with the prepared input parameters (or null if no command was provided).
+                ManagementBaseObject outParams = managementClass.InvokeMethod(methodName, inParams, null);
+
+                // Extract and return the byte array from the output parameters.
+                if (outParams != null)
+                {
+                    object dataField = outParams["Data"];
+                    if (dataField is ManagementBaseObject mbo)
+                    {
+                        object bytesField = mbo["Bytes"];
+                        if (bytesField is byte[] bytes)
+                        {
+                            return bytes;
+                        }
+                    }
+                    else if (dataField is byte[] bytes)
+                    {
+                        return bytes;
+                    }
+                }
             }
-
-            // If we still don't have valid input parameters, log an error and return null
-            if (inParams == null || inParamsData == null)
-            {
-                LogManager.LogError("WMI CallGet failed: [scope={0}, path={1}, methodName={2}]", scope, path, methodName);
-                success = false;
-                return null;
-            }
-
-            // Invoke the method with the parameters (here we are retrieving data, so no setting is needed)
-            ManagementBaseObject outParams = managementObject.InvokeMethod(methodName, inParams, null);
-
-            // Retrieve the "Data" object from the output parameters
-            ManagementBaseObject outParamsData = outParams["Data"] as ManagementBaseObject;
-            if (outParamsData == null)
-            {
-                LogManager.LogError("WMI CallGet failed to retrieve data object: [scope={0}, path={1}, methodName={2}]", scope, path, methodName);
-                success = false;
-                return null;
-            }
-
-            // Extract and return the "Bytes" property from the Data object
-            byte[] fullPackage = outParamsData["Bytes"] as byte[];
-            success = true;
-            return fullPackage;
+            return null;
         }
 
         public static async Task CallAsync(string scope, FormattableString query, string methodName, Dictionary<string, object> methodParams)
