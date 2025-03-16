@@ -102,67 +102,77 @@ namespace HandheldCompanion
             managementObject.InvokeMethod(methodName, inParams, null);
         }
 
-        public static byte[] Get(string scope, string path, string methodName, byte? command)
+        public static byte[] Get(string scope, string path, string methodName, int iDataBlockIndex, out bool readSuccess)
         {
-            // Create a byte array of the assumed size.
-            byte[] dataBytes = new byte[32];
+            readSuccess = false;
+            byte[] resultData = new byte[0];
 
-            // Connect to the WMI scope.
-            ManagementScope managementScope = new ManagementScope(scope);
-            managementScope.Connect();
-
-            // Create a ManagementPath for the WMI class.
-            ManagementPath managementPath = new ManagementPath(path);
-
-            using (ManagementClass managementClass = new ManagementClass(managementScope, managementPath, null))
+            try
             {
-                ManagementBaseObject inParams = null;
-                if (command.HasValue)
+                // Establish the WMI connection using the provided scope and path.
+                ManagementScope managementScope = new ManagementScope(scope);
+                managementScope.Connect();
+                ManagementPath managementPath = new ManagementPath(path);
+
+                using (ManagementObject managementObject = new ManagementObject(managementScope, managementPath, null))
                 {
-                    // Retrieve the method's input parameter template.
-                    inParams = managementClass.GetMethodParameters(methodName);
+                    // Get input parameters for the methodName method.
+                    ManagementBaseObject inParams = managementObject.GetMethodParameters(methodName);
+                    // Define package length (this should match the expected size, e.g., 32)
+                    int packageLength = 32;
+                    byte[] inputBytes = new byte[packageLength];
+                    inputBytes[0] = (byte)iDataBlockIndex; // set the data block index
 
-                    // Set the first byte to the command value.
-                    dataBytes[0] = command.Value;
+                    // Prepare the nested 'Data' parameter.
+                    ManagementBaseObject dataParam = inParams["Data"] as ManagementBaseObject;
+                    if (dataParam == null)
+                        throw new InvalidOperationException("Method parameter 'Data' is not available.");
 
-                    // The decompiled code expects the "Data" property to be a nested object with a "Bytes" property.
-                    // Try to use the provided embedded object, if available.
-                    ManagementBaseObject dataObject = inParams["Data"] as ManagementBaseObject;
-                    if (dataObject != null)
-                    {
-                        dataObject["Bytes"] = dataBytes;
-                        inParams["Data"] = dataObject;
-                    }
-                    else
-                    {
-                        // If no embedded object exists, assign the byte array directly.
-                        inParams["Data"] = dataBytes;
-                    }
-                }
+                    dataParam["Bytes"] = inputBytes;
+                    inParams["Data"] = dataParam;
 
-                // Invoke the method with the prepared input parameters (or null if no command was provided).
-                ManagementBaseObject outParams = managementClass.InvokeMethod(methodName, inParams, null);
+                    // Invoke the WMI method.
+                    ManagementBaseObject outParams = managementObject.InvokeMethod(methodName, inParams, null);
+                    if (outParams == null)
+                    {
+                        return resultData;
+                    }
 
-                // Extract and return the byte array from the output parameters.
-                if (outParams != null)
-                {
-                    object dataField = outParams["Data"];
-                    if (dataField is ManagementBaseObject mbo)
+                    // Extract the output bytes from the nested 'Data' object.
+                    ManagementBaseObject dataOut = outParams["Data"] as ManagementBaseObject;
+                    if (dataOut == null)
                     {
-                        object bytesField = mbo["Bytes"];
-                        if (bytesField is byte[] bytes)
-                        {
-                            return bytes;
-                        }
+                        return resultData;
                     }
-                    else if (dataField is byte[] bytes)
+
+                    byte[] outBytes = dataOut["Bytes"] as byte[];
+                    if (outBytes == null || outBytes.Length < 1)
                     {
-                        return bytes;
+                        return resultData;
                     }
+
+                    // The first byte is the flag; subsequent bytes contain the actual data.
+                    byte flag = outBytes[0];
+                    readSuccess = (flag == 1);
+
+                    // Copy the remaining bytes as the returned data.
+                    int dataLength = outBytes.Length - 1;
+                    resultData = new byte[dataLength];
+                    Array.Copy(outBytes, 1, resultData, 0, dataLength);
                 }
             }
+            catch (ManagementException mex)
+            {
+                // Optionally log the WMI-specific exception
+                // e.g., Console.WriteLine("WMI Error: " + mex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Optionally log the general exception
+                // e.g., Console.WriteLine("General Error: " + ex.Message);
+            }
 
-            return dataBytes;
+            return resultData;
         }
 
         public static void Call(string scope, string query, string methodName, Dictionary<string, object> methodParams)
