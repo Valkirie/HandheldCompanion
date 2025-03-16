@@ -488,7 +488,7 @@ namespace HandheldCompanion.ViewModels
                 if (value is string)
                 {
                     string category = Convert.ToString(value);
-                    FunctionItems.SafeAdd(new ComboBoxItemViewModel(category, false));
+                    FunctionItems.SafeAdd(new ComboBoxItemViewModel($"# {category}", false));
                 }
                 else
                 {
@@ -500,8 +500,12 @@ namespace HandheldCompanion.ViewModels
                     else
                     {
                         ICommands command = Activator.CreateInstance(function) as ICommands;
-                        if (command.CanUnpin)
-                            FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, true));
+
+                        bool canUnpin = command.CanUnpin;
+                        bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
+                        bool isEnabled = canUnpin && isSupported;
+
+                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, isEnabled));
                     }
                 }
             }

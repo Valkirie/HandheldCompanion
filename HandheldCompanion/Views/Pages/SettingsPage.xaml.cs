@@ -191,7 +191,7 @@ public partial class SettingsPage : Page
                         Toggle_Telemetry.IsOn = IsSentryEnabled;
 
                         // ignore if initializing
-                        if (ManagerFactory.settingsManager.Status == ManagerStatus.Initializing)
+                        if (ManagerFactory.settingsManager.Status.HasFlag(ManagerStatus.Initializing))
                             return;
 
                         if (SentrySdk.IsEnabled && IsSentryEnabled)

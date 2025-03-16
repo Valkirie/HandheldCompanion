@@ -52,7 +52,7 @@ public class SettingsManager : IManager
 
     public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -69,7 +69,7 @@ public class SettingsManager : IManager
 
     public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();
@@ -117,7 +117,7 @@ public class SettingsManager : IManager
             Settings[name] = value;
 
             // raise event
-            if (Status == ManagerStatus.Initialized || force)
+            if (Status.HasFlag(ManagerStatus.Initialized) || force)
                 SettingValueChanged?.Invoke(name, value, temporary);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);

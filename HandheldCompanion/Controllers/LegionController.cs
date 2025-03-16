@@ -77,13 +77,6 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsReady => Controller?.GetStatus(STATUS_IDX) is byte status && READY_STATES.Contains(status);
 
-        public override bool IsWireless()
-        {
-            return Controller != null &&
-                   (Controller.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
-                    Controller.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless);
-        }
-
         public LegionController() : base()
         { }
 
@@ -96,7 +89,6 @@ namespace HandheldCompanion.Controllers
             SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
 
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            UpdateSettings();
         }
 
         public override string ToString()
@@ -134,6 +126,12 @@ namespace HandheldCompanion.Controllers
             SetGyroIndex(ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"));
         }
 
+        public override bool IsWireless() =>
+            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
+            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless;
+
+        public override bool IsExternal() => false;
+
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
@@ -162,7 +160,7 @@ namespace HandheldCompanion.Controllers
             Open();
 
             // manage gamepad motion from right controller
-            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}", CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}");
         }
 
         /*
@@ -199,6 +197,8 @@ namespace HandheldCompanion.Controllers
                         Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
                         Controller.Open();
                     }
+
+                    UpdateSettings();
                 }
                 catch (Exception ex)
                 {

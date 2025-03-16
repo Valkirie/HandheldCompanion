@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -6,11 +7,14 @@ using HandheldCompanion.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class ButtonStackViewModel : BaseViewModel
+    public class ButtonStackViewModel : StackViewModel
     {
+        public static readonly HashSet<ButtonFlags> OEM = [ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10];
+
         public ObservableCollection<ButtonMappingViewModel> ButtonMappings { get; private set; } = [];
 
         private bool _isSupported;
@@ -28,11 +32,22 @@ namespace HandheldCompanion.ViewModels
         }
 
         private ButtonFlags _flag;
+        public new int ActionNumber => ButtonMappings.Count();
 
-        public ButtonStackViewModel(ButtonFlags flag)
+        public ButtonStackViewModel(ButtonFlags flag) : base(flag)
         {
             _flag = flag;
-            ButtonMappings.Add(new ButtonMappingViewModel(this, flag, isInitialMapping: true));
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ButtonMappings, new object());
+
+            ButtonMappings.Add(new ButtonMappingViewModel(this, flag));
+            ButtonMappings.CollectionChanged += ButtonMappings_CollectionChanged;
+
+            ButtonCommand = new DelegateCommand(() =>
+            {
+                AddMapping();
+            });
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
@@ -40,34 +55,52 @@ namespace HandheldCompanion.ViewModels
 
             // send events
             if (ControllerManager.HasTargetController)
-            {
                 UpdateController(ControllerManager.GetTarget());
+
+            if (OEM.Contains(_flag))
+            {
+                IsSupported = true;
+                UpdateIcon(IDevice.GetCurrent().GetGlyphIconInfo(_flag, 28));
             }
+        }
+
+        private void ButtonMappings_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // Notify that ActionNumber has changed
+            OnPropertyChanged(nameof(ActionNumber));
+        }
+
+        protected override void UpdateController(IController controller)
+        {
+            if (OEM.Contains(_flag))
+                return;
+
+            IsSupported = controller.HasSourceButton(_flag);
+            UpdateIcon(controller.GetGlyphIconInfo(_flag, 28));
         }
 
         public override void Dispose()
         {
+            ButtonMappings.CollectionChanged -= ButtonMappings_CollectionChanged;
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
             ControllerManager.ControllerSelected -= UpdateController;
 
             foreach (var buttonMapping in ButtonMappings)
-            {
                 buttonMapping.Dispose();
-            }
 
             ButtonMappings.Clear();
 
             base.Dispose();
         }
 
-        public void AddMapping()
+        public override void AddMapping()
         {
             ButtonMappings.SafeAdd(new ButtonMappingViewModel(this, _flag));
         }
 
-        public void RemoveMapping(ButtonMappingViewModel mapping)
+        public override void RemoveMapping(MappingViewModel mapping)
         {
-            ButtonMappings.SafeRemove(mapping);
+            ButtonMappings.SafeRemove((ButtonMappingViewModel)mapping);
             mapping.Dispose();
         }
 
@@ -96,7 +129,7 @@ namespace HandheldCompanion.ViewModels
                 var newMappings = new List<ButtonMappingViewModel>();
                 foreach (var action in actions.OrderBy(a => a.ShiftSlot))
                 {
-                    var newMapping = new ButtonMappingViewModel(this, _flag, isInitialMapping: newMappings.Count == 0);
+                    var newMapping = new ButtonMappingViewModel(this, _flag);
                     newMappings.Add(newMapping);
 
                     // Model update should not go through as on update the entire stack is being recreated
@@ -107,18 +140,12 @@ namespace HandheldCompanion.ViewModels
 
                 ButtonMappings.ReplaceWith(newMappings);
             }
-            else
+            else if (ButtonMappings.Count != 0)
             {
                 foreach (var mapping in ButtonMappings)
                     mapping.Dispose();
-
-                ButtonMappings.ReplaceWith([new ButtonMappingViewModel(this, _flag, isInitialMapping: true)]);
+                ButtonMappings.Clear();
             }
-        }
-
-        private void UpdateController(IController controller)
-        {
-            IsSupported = controller.HasSourceButton(_flag) || MappingViewModel.OEM.Contains(_flag);
         }
     }
 }

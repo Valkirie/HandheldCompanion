@@ -65,9 +65,7 @@ namespace HandheldCompanion.Views.Pages
 
             // raise events
             if (ControllerManager.HasTargetController)
-            {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-            }
         }
 
         private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)

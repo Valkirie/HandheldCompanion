@@ -107,6 +107,7 @@ namespace HandheldCompanion.ViewModels
             this.quickProfilesPage = quickProfilesPage;
 
             // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
             BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
 
             _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };

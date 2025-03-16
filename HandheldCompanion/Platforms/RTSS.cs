@@ -31,8 +31,6 @@ public class RTSS : IPlatform
     private bool ProfileLoaded;
     private AppEntry appEntry;
 
-    private int RequestedFramerate;
-
     public RTSS()
     {
         PlatformType = PlatformType.RTSS;
@@ -89,7 +87,7 @@ public class RTSS : IPlatform
         }
 
         // our main watchdog to (re)apply requested settings
-        PlatformWatchdog = new Timer(2000) { Enabled = false };
+        PlatformWatchdog = new Timer(2000) { Enabled = false, AutoReset = false };
         PlatformWatchdog.Elapsed += Watchdog_Elapsed;
     }
 
@@ -103,14 +101,20 @@ public class RTSS : IPlatform
             Process.Exited += Process_Exited;
 
         // manage events
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
 
         // raise events
-        if (ProcessManager.IsInitialized)
+        switch (ManagerFactory.processManager.Status)
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
         }
 
         switch (ManagerFactory.profileManager.Status)
@@ -127,6 +131,16 @@ public class RTSS : IPlatform
         return base.Start();
     }
 
+    private void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+    }
+
+    private void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
     private void QueryProfile()
     {
         ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
@@ -140,8 +154,9 @@ public class RTSS : IPlatform
     public override bool Stop(bool kill = false)
     {
         // manage events
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
         ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
 
@@ -165,17 +180,7 @@ public class RTSS : IPlatform
             frameLimit = desktopScreen.GetClosest(profile.FramerateValue).limit;
         }
 
-        if (frameLimit > 0)
-        {
-            // Apply profile-defined framerate
-            RequestFPS(frameLimit);
-        }
-        else if (frameLimit == 0 && RequestedFramerate > 0)
-        {
-            // Reset to 0 only when a cap was set previously and the current profile has no limit 
-            // These conditions prevent 0 from being set on every profile change 
-            RequestFPS(frameLimit);
-        }
+        SetTargetFPS(frameLimit);
     }
 
     private async void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
@@ -245,6 +250,7 @@ public class RTSS : IPlatform
     {
         lock (updateLock)
         {
+            int RequestedFramerate = ManagerFactory.profileManager.GetCurrent().FramerateValue;
             if (GetTargetFPS() != RequestedFramerate)
                 SetTargetFPS(RequestedFramerate);
 
@@ -510,15 +516,6 @@ public class RTSS : IPlatform
             return Convert.ToInt32(iniFile.Read("Limit", "Framerate"));
         }
         */
-    }
-
-    public void RequestFPS(int framerate)
-    {
-        if (RequestedFramerate == framerate)
-            return;
-
-        RequestedFramerate = framerate;
-        SetTargetFPS(framerate);
     }
 
     public override bool StartProcess()

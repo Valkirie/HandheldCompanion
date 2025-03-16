@@ -104,6 +104,9 @@ namespace HandheldCompanion
 
         public static byte[] Get(string scope, string path, string methodName, byte? command)
         {
+            // Create a byte array of the assumed size.
+            byte[] dataBytes = new byte[32];
+
             // Connect to the WMI scope.
             ManagementScope managementScope = new ManagementScope(scope);
             managementScope.Connect();
@@ -119,8 +122,7 @@ namespace HandheldCompanion
                     // Retrieve the method's input parameter template.
                     inParams = managementClass.GetMethodParameters(methodName);
 
-                    // Create a byte array of the assumed size and set the first byte to the command value.
-                    byte[] dataBytes = new byte[32];
+                    // Set the first byte to the command value.
                     dataBytes[0] = command.Value;
 
                     // The decompiled code expects the "Data" property to be a nested object with a "Bytes" property.
@@ -159,7 +161,39 @@ namespace HandheldCompanion
                     }
                 }
             }
-            return null;
+
+            return dataBytes;
+        }
+
+        public static void Call(string scope, string query, string methodName, Dictionary<string, object> methodParams)
+        {
+            using var searcher = new ManagementObjectSearcher(scope, query);
+            var managementObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
+
+            if (managementObject == null)
+                return;
+
+            using var methodParamsObject = managementObject.GetMethodParameters(methodName);
+            foreach (var pair in methodParams)
+                methodParamsObject[pair.Key] = pair.Value;
+
+            managementObject.InvokeMethod(methodName, methodParamsObject, null);
+        }
+
+        public static T Call<T>(string scope, string query, string methodName, Dictionary<string, object> methodParams, Func<PropertyDataCollection, T> resultSelector)
+        {
+            using var searcher = new ManagementObjectSearcher(scope, query);
+            var managementObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
+
+            if (managementObject == null)
+                return default;
+
+            using var methodParamsObject = managementObject.GetMethodParameters(methodName);
+            foreach (var pair in methodParams)
+                methodParamsObject[pair.Key] = pair.Value;
+
+            var result = managementObject.InvokeMethod(methodName, methodParamsObject, null);
+            return resultSelector(result.Properties);
         }
 
         public static async Task CallAsync(string scope, FormattableString query, string methodName, Dictionary<string, object> methodParams)

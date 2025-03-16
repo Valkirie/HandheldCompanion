@@ -65,9 +65,9 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
             // additional buttons calculated from the above
-            ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
+            /* ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
             ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown, ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight,
-            ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
+            ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight */
         ];
 
         protected static readonly FontFamily GlyphFontFamily = new("PromptFont");
@@ -159,7 +159,7 @@ namespace HandheldCompanion.Controllers
             this.Details.isHooked = true;
 
             // manage gamepad motion
-            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
         }
 
         public virtual void UpdateInputs(long ticks, float delta)
@@ -180,38 +180,38 @@ namespace HandheldCompanion.Controllers
             return gamepadMotions[gamepadIndex];
         }
 
-        public bool IsPhysical()
+        public virtual bool IsPhysical()
         {
             return !IsVirtual();
         }
 
-        public bool IsVirtual()
+        public virtual bool IsVirtual()
         {
             if (Details is not null)
                 return Details.isVirtual;
             return true;
         }
 
-        public bool IsInternal()
+        public virtual bool IsInternal()
         {
             return !IsExternal();
         }
 
-        public bool IsExternal()
+        public virtual bool IsExternal()
         {
             if (Details is not null)
                 return Details.isExternal;
             return true;
         }
 
-        public bool IsXInput()
+        public virtual bool IsXInput()
         {
             if (Details is not null)
                 return Details.isXInput;
             return false;
         }
 
-        public bool IsGaming()
+        public virtual bool IsGaming()
         {
             if (Details is not null)
                 return Details.isGaming;
@@ -220,12 +220,17 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsWireless()
         {
+            return IsBluetooth() || IsDongle();
+        }
+
+        public virtual bool IsBluetooth()
+        {
             if (Details is not null)
                 return Details.isBluetooth;
             return false;
         }
 
-        public bool IsDongle()
+        public virtual bool IsDongle()
         {
             if (Details is not null)
                 return Details.isDongle;

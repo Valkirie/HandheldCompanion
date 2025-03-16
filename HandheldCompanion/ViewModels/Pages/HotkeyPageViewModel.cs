@@ -40,9 +40,7 @@ namespace HandheldCompanion.ViewModels
 
             // raise event
             if (ControllerManager.HasTargetController)
-            {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-            }
 
             // raise events
             switch (ManagerFactory.hotkeysManager.Status)

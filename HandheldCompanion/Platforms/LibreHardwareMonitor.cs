@@ -137,7 +137,7 @@ namespace HandheldCompanion.Platforms
                 // pull temperature sensor
                 foreach (IHardware? hardware in computer.Hardware)
                 {
-                    hardware.Update();
+                    try { hardware.Update(); } catch { }
 
                     switch (hardware.HardwareType)
                     {

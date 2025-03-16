@@ -25,12 +25,12 @@ namespace HandheldCompanion.Commands.Functions.HC
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             IsEnabled = profile.HID == HIDmode.NotSelected;
-            Update();
+            Update(profile.HID);
         }
 
-        public override void Update()
+        public void Update(HIDmode profileMode = HIDmode.NotSelected)
         {
-            HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt(SettingsName, true);
+            HIDmode currentHIDmode = profileMode == HIDmode.NotSelected ? (HIDmode)ManagerFactory.settingsManager.GetInt(SettingsName, true) : profileMode;
             switch (currentHIDmode)
             {
                 case HIDmode.Xbox360Controller:

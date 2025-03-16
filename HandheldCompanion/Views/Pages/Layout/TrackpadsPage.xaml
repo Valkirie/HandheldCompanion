@@ -16,20 +16,24 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRACKPAD BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftButtonsMappings}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
 
             <!--  LEFT TRACKPAD  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftAxisMappings}">
+                <ui:ItemsRepeater.Layout>
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
+                </ui:ItemsRepeater.Layout>
+            </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>
 
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -37,14 +41,17 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightButtonsMappings}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
 
             <!--  RIGHT TRACKPAD  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding RightAxisMappings}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding RightAxisMappings}">
+                <ui:ItemsRepeater.Layout>
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
+                </ui:ItemsRepeater.Layout>
+            </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>
-
     </ikw:SimpleStackPanel>
 </local:ILayoutPage>

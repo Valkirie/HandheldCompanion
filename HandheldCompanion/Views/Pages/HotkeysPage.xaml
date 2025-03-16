@@ -90,6 +90,9 @@
                 </Button>
 
                 <ui:ItemsRepeater ItemsSource="{Binding HotkeysList}">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:StackLayout Orientation="Vertical" Spacing="6" />
+                    </ui:ItemsRepeater.Layout>
                     <ui:ItemsRepeater.ItemTemplate>
                         <DataTemplate>
                             <Expander HorizontalAlignment="Stretch">
@@ -221,8 +224,7 @@
                                                 Margin="6,0,0,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Stretch"
-                                                Command="{Binding EraseButtonCommand}"
-                                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                Command="{Binding EraseButtonCommand}">
                                                 <ui:FontIcon
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"

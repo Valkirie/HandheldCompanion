@@ -35,6 +35,7 @@
             <ui:NavigationViewItem
                 Name="navButtons"
                 Content="{l:Static resx:Resources.LayoutPage_Buttons}"
+                IsEnabled="False"
                 Tag="ButtonsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;" />
@@ -44,6 +45,7 @@
             <ui:NavigationViewItem
                 Name="navDpad"
                 Content="{l:Static resx:Resources.LayoutPage_Dpad}"
+                IsEnabled="False"
                 Tag="DpadPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;" />
@@ -53,6 +55,7 @@
             <ui:NavigationViewItem
                 Name="navTriggers"
                 Content="{l:Static resx:Resources.LayoutPage_Triggers}"
+                IsEnabled="False"
                 Tag="TriggersPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;" />
@@ -62,6 +65,7 @@
             <ui:NavigationViewItem
                 Name="navJoysticks"
                 Content="{l:Static resx:Resources.LayoutPage_Joysticks}"
+                IsEnabled="False"
                 Tag="JoysticksPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;" />
@@ -71,6 +75,7 @@
             <ui:NavigationViewItem
                 Name="navTrackpads"
                 Content="{l:Static resx:Resources.LayoutPage_Trackpads}"
+                IsEnabled="False"
                 Tag="TrackpadsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
@@ -248,12 +253,6 @@
                                 </Button>
                             </ikw:SimpleStackPanel>
                         </Grid>
-
-                        <CheckBox
-                            Name="CheckBoxDefaultLayout"
-                            Checked="CheckBoxDefaultLayout_Checked"
-                            Content="{l:Static resx:Resources.LayoutPage_SetAsDefault}"
-                            Unchecked="CheckBoxDefaultLayout_Checked" />
                     </ikw:SimpleStackPanel>
 
                     <!--  Separator  -->

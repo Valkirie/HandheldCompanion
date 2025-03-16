@@ -19,7 +19,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
-public static class ProcessManager
+public class ProcessManager : IManager
 {
     #region imports
     [DllImport("user32.dll")]
@@ -28,20 +28,20 @@ public static class ProcessManager
     public delegate bool WindowEnumCallback(IntPtr hwnd, int lparam);
 
     [DllImport("user32.dll")]
-    public static extern bool IsWindowVisible(int h);
+    private static extern bool IsWindowVisible(int h);
 
     // Import the necessary user32.dll functions
     [DllImport("user32.dll")]
-    static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+    private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+    private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
     #endregion
 
     // Declare the WinEventDelegate
-    private static WinEventDelegate winDelegate = null;
-    private static IntPtr m_hhook = IntPtr.Zero;
+    private WinEventDelegate winDelegate = null;
+    private IntPtr m_hhook = IntPtr.Zero;
 
     // Define the WinEventDelegate
     delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
@@ -52,20 +52,18 @@ public static class ProcessManager
     private const uint EVENT_SYSTEM_FOREGROUND = 3;
 
     // process vars
-    private static readonly Timer ForegroundTimer;
-    private static readonly Timer ProcessWatcher;
+    private readonly Timer ForegroundTimer;
+    private readonly Timer ProcessWatcher;
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
-    private static object processLock = new();
+    private object processLock = new();
 
     private static ProcessEx foregroundProcess;
-    private static IntPtr foregroundWindow;
+    private IntPtr foregroundWindow;
 
-    private static AutomationEventHandler _windowOpenedHandler;
+    private AutomationEventHandler _windowOpenedHandler;
 
-    public static bool IsInitialized;
-
-    static ProcessManager()
+    public ProcessManager()
     {
         // hook: on window opened
         _windowOpenedHandler = OnWindowOpened;
@@ -87,10 +85,12 @@ public static class ProcessManager
         ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
     }
 
-    public static void Start()
+    public override void Start()
     {
-        if (IsInitialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
+
+        base.PrepareStart();
 
         // list all current windows
         EnumWindows(OnWindowDiscovered, 0);
@@ -99,16 +99,15 @@ public static class ProcessManager
         ForegroundTimer.Start();
         ProcessWatcher.Start();
 
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "ProcessManager");
+        base.Start();
     }
 
-    public static void Stop()
+    public override void Stop()
     {
-        if (!IsInitialized)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
+
+        base.PrepareStop();
 
         // Remove the WindowOpened event handler
         Automation.RemoveAutomationEventHandler(
@@ -127,18 +126,16 @@ public static class ProcessManager
         ForegroundTimer.Stop();
         ProcessWatcher.Stop();
 
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "ProcessManager");
+        base.Stop();
     }
 
-    private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+    private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
     {
         // Avoid locking UI thread by running the action in a task
         Task.Run(() => ForegroundCallback());
     }
 
-    private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
+    private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
     {
         try
         {
@@ -171,7 +168,7 @@ public static class ProcessManager
         catch { }
     }
 
-    private static bool OnWindowDiscovered(IntPtr hWnd, int lparam)
+    private bool OnWindowDiscovered(IntPtr hWnd, int lparam)
     {
         if (IsWindowVisible((int)hWnd))
         {
@@ -236,7 +233,7 @@ public static class ProcessManager
         return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
-    private static async void ForegroundCallback()
+    private async void ForegroundCallback()
     {
         IntPtr hWnd = GetforegroundWindow();
 
@@ -317,7 +314,7 @@ public static class ProcessManager
         }
     }
 
-    private static void ProcessHalted(object? sender, EventArgs e)
+    private void ProcessHalted(object? sender, EventArgs e)
     {
         int processId = ((Process)sender).Id;
 
@@ -344,12 +341,15 @@ public static class ProcessManager
         processEx = null;
     }
 
-    private static bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
+    private bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
     {
         lock (processLock)
         {
             try
             {
+                if (!automationElement.Current.IsContentElement && !automationElement.Current.IsControlElement)
+                    return false;
+
                 // process has exited on arrival
                 Process proc = Process.GetProcessById(processID);
                 if (proc.HasExited)
@@ -379,7 +379,7 @@ public static class ProcessManager
 
                     // create process 
                     // UI thread (synchronous)
-                    UIHelper.TryInvoke(() => { processEx = new ProcessEx(proc, path, exec, filter); });
+                    UIHelper.TryInvoke(() => { try { processEx = new ProcessEx(proc, path, exec, filter); } catch { } });
 
                     if (processEx is null)
                         return false;
@@ -500,7 +500,7 @@ public static class ProcessManager
         }
     }
 
-    private static void ProcessWatcher_Elapsed()
+    private void ProcessWatcher_Elapsed()
     {
         Parallel.ForEach(Processes,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
@@ -514,29 +514,31 @@ public static class ProcessManager
             });
     }
 
+    private static Dictionary<int, int[]> windowsCache = new();
+
     public static async void ResumeProcess(ProcessEx processEx)
     {
         // process has exited
         if (processEx.Process.HasExited)
             return;
 
-        ProcessUtils.NtResumeProcess(processEx.Process.Handle);
+        // refresh processes handles
+        List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
+        handles.Insert(0, processEx.Handle);
 
-        // refresh child processes list (most likely useless, a suspended process shouldn't have new child processes)
-        processEx.RefreshChildProcesses();
+        // resume processes
+        foreach (int handle in handles)
+            ProcessUtils.NtResumeProcess(handle);
 
-        Parallel.ForEach(processEx.ChildrenProcessIds,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
-            {
-                Process process = Process.GetProcessById(childId);
-                ProcessUtils.NtResumeProcess(process.Handle);
-            });
-
+        // wait a bit
         await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
         // restore process windows
-        foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
-            ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
+        foreach (int Hwnd in windowsCache[processEx.ProcessId])
+            ProcessUtils.ShowWindow(Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
+
+        // clear cache
+        windowsCache.Remove(processEx.ProcessId);
     }
 
     public static async void SuspendProcess(ProcessEx processEx)
@@ -545,61 +547,61 @@ public static class ProcessManager
         if (processEx.Process.HasExited)
             return;
 
-        // hide process windows
-        foreach (ProcessWindow processWindow in processEx.ProcessWindows.Values)
-            ProcessUtils.ShowWindow(processWindow.Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
+        // store process windows in cache
+        windowsCache[processEx.ProcessId] = processEx.ProcessWindows.Keys.ToArray();
 
+        // hide process windows
+        foreach (int Hwnd in windowsCache[processEx.ProcessId])
+            ProcessUtils.ShowWindow(Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
+
+        // wait a bit
         await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
-        ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
+        // refresh processes handles
+        List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
+        handles.Insert(0, processEx.Handle);
 
-        // refresh child processes list
-        processEx.RefreshChildProcesses();
-
-        Parallel.ForEach(processEx.ChildrenProcessIds,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
-            {
-                Process process = Process.GetProcessById(childId);
-                ProcessUtils.NtSuspendProcess(process.Handle);
-            });
+        // suspend processes
+        foreach(int handle in handles)
+            ProcessUtils.NtSuspendProcess(handle);
     }
 
     // A function that takes a Process as a parameter and returns true if it has any xinput related dlls in its modules
     public static bool CheckXInput(Process process)
     {
-        // Loop through the modules of the process
-        foreach (ProcessModule module in process.Modules)
+        try
         {
-            try
+            // Loop through the modules of the process
+            foreach (ProcessModule module in process.Modules)
             {
-                // Get the name of the module
-                string moduleName = module.ModuleName.ToLower();
+                try
+                {
+                    // Get the name of the module
+                    string moduleName = module.ModuleName.ToLower();
 
-                // Check if the name contains "xinput"
-                if (moduleName.Contains("xinput", StringComparison.InvariantCultureIgnoreCase))
-                    return true;
+                    // Check if the name contains "xinput"
+                    if (moduleName.Contains("xinput", StringComparison.InvariantCultureIgnoreCase))
+                        return true;
+                }
+                catch (Win32Exception) { }
+                catch (InvalidOperationException) { }
             }
-            catch (Win32Exception) { }
-            catch (InvalidOperationException) { }
         }
-        ;
+        catch { }
 
         return false;
     }
 
     #region events
 
-    public static event ForegroundChangedEventHandler ForegroundChanged;
+    public event ForegroundChangedEventHandler ForegroundChanged;
     public delegate void ForegroundChangedEventHandler(ProcessEx? processEx, ProcessEx? backgroundEx);
 
-    public static event ProcessStartedEventHandler ProcessStarted;
+    public event ProcessStartedEventHandler ProcessStarted;
     public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool OnStartup);
 
-    public static event ProcessStoppedEventHandler ProcessStopped;
+    public event ProcessStoppedEventHandler ProcessStopped;
     public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
-
-    public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
 
     #endregion
 }

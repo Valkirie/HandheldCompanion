@@ -77,7 +77,7 @@ public class DeviceManager : IManager
 
     public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -105,13 +105,28 @@ public class DeviceManager : IManager
     private void RefreshDrivers()
     {
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        /*
         foreach (string InfPath in DriverStore.GetDrivers())
+        {
             PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+            LogManager.LogWarning("Pending drivers {0} detected in Driver Store. Initiating (re)installation.", InfPath);
+        }
+        */
+
+        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
+        IEnumerable<string> drivers = DriverStore.GetKnownDrivers().Cast<string>();
+        if (drivers.Count() != 0)
+        {
+            foreach (string InfPath in drivers)
+                PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+
+            LogManager.LogInformation("Deploying known drivers {0} from driver store.", string.Join(',', drivers));
+        }
     }
 
     public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();
@@ -682,7 +697,7 @@ public class DeviceManager : IManager
                 ledState = ledStateData[2];
             }
 
-            Task.Delay(1000).ConfigureAwait(UIthread);
+            Task.Delay(1000).Wait();
         }
 
         return XINPUT_LED_TO_PORT_MAP[ledState];

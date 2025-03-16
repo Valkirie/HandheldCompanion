@@ -16,14 +16,14 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
         <!--  A,B,X,Y  -->
         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsABXYEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_ABXY}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ABXYStacks}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>
@@ -33,7 +33,7 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Bumpers}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BUMPERSStacks}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>
@@ -43,7 +43,7 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Back_Grips}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BACKGRIPSStacks}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>
@@ -53,7 +53,7 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Menu}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding MENUStacks}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>
@@ -63,7 +63,7 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_OEM}" />
             <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding OEMStacks}">
                 <ui:ItemsRepeater.Layout>
-                    <ui:StackLayout Spacing="6" />
+                    <ui:StackLayout Orientation="Vertical" Spacing="6" />
                 </ui:ItemsRepeater.Layout>
             </ui:ItemsRepeater>
         </ikw:SimpleStackPanel>

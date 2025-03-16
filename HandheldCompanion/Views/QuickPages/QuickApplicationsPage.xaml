@@ -22,6 +22,7 @@
     <Grid>
         <ui:ContentDialog
             Name="SnapDialog"
+            d:Visibility="Collapsed"
             CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
             PrimaryButtonStyle="{DynamicResource AccentButtonStyle}"
             PrimaryButtonText="Snap">
@@ -225,7 +226,9 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Processes" />
 
-                <ui:ItemsRepeater ItemsSource="{Binding Processes}">
+                <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
+
+                <ui:ItemsRepeater IsEnabled="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Processes}">
                     <ui:ItemsRepeater.Layout>
                         <ui:StackLayout Spacing="6" />
                     </ui:ItemsRepeater.Layout>
@@ -305,7 +308,7 @@
 
                                     <ui:ItemsRepeater ItemsSource="{Binding ProcessWindows}">
                                         <ui:ItemsRepeater.Layout>
-                                            <ui:StackLayout Spacing="6" />
+                                            <ui:StackLayout />
                                         </ui:ItemsRepeater.Layout>
 
                                         <ui:ItemsRepeater.ItemTemplate>

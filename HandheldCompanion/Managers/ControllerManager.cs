@@ -7,6 +7,7 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -19,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Shell;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -34,10 +36,10 @@ public static class ControllerManager
     private static readonly ConcurrentDictionary<string, IController> Controllers = new();
     public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
 
-    private static Thread watchdogThread;
-    private static bool watchdogThreadRunning;
+    // Controller Management
+    private static Thread CMThread;
+    private static bool CMThreadRunning;
     private static bool ControllerManagement;
-
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
@@ -57,6 +59,7 @@ public static class ControllerManager
 
     private static Timer scenarioTimer = new(100) { AutoReset = false };
     private static Timer pickTimer = new(500) { AutoReset = false };
+    private static Timer xinputTimer = new(1000) { AutoReset = true };
 
     public static bool IsInitialized;
 
@@ -79,9 +82,9 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
@@ -112,17 +115,26 @@ public static class ControllerManager
                 break;
         }
 
-        if (ProcessManager.IsInitialized)
+        switch (ManagerFactory.processManager.Status)
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
         }
 
         // prepare timer(s)
         scenarioTimer.Elapsed += ScenarioTimer_Elapsed;
-        scenarioTimer.Start();
-
         pickTimer.Elapsed += PickTimer_Elapsed;
+        xinputTimer.Elapsed += XInputTimer_Elapsed;
+
+        // start timer(s)
+        scenarioTimer.Start();
         pickTimer.Start();
+        xinputTimer.Start();
 
         // enable HidHide
         HidHide.SetCloaking(true);
@@ -136,6 +148,24 @@ public static class ControllerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void XInputTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        // used to keep track of XInput slots in real time
+        foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
+        {
+            byte newIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
+            byte oldIndex = (byte)xInputController.GetUserIndex();
+
+            // controller is not ready yet
+            if (newIndex == byte.MaxValue)
+                continue;
+
+            // controller user index has changed unexpectedly
+            if (newIndex != oldIndex)
+                xInputController.AttachController(newIndex);
+        }
     }
 
     public static void Stop()
@@ -157,9 +187,11 @@ public static class ControllerManager
         ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+
         UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
 
@@ -167,9 +199,15 @@ public static class ControllerManager
         IDevice.GetCurrent().KeyPressed -= CurrentDevice_KeyPressed;
         IDevice.GetCurrent().KeyReleased -= CurrentDevice_KeyReleased;
 
-        // stop timer
+        // (un)prepare timer(s)
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
+        pickTimer.Elapsed -= PickTimer_Elapsed;
+        xinputTimer.Elapsed -= XInputTimer_Elapsed;
+
+        // stop timer(s)
         scenarioTimer.Stop();
+        pickTimer.Stop();
+        xinputTimer.Stop();
 
         bool HIDuncloakonclose = ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
         foreach (IController controller in GetPhysicalControllers<IController>())
@@ -325,7 +363,7 @@ public static class ControllerManager
         {
             case "VibrationStrength":
                 uint VibrationStrength = Convert.ToUInt32(value);
-                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.Status == ManagerStatus.Initialized);
+                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.IsReady);
                 break;
 
             case "ControllerManagement":
@@ -387,6 +425,16 @@ public static class ControllerManager
         }
     }
 
+    private static void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
+    private static void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+    }
+
     private static bool IsOS = false;
     public static void Resume(bool OS)
     {
@@ -409,22 +457,22 @@ public static class ControllerManager
 
     public static void StartWatchdog()
     {
-        if (watchdogThreadRunning)
+        if (CMThreadRunning)
             return;
 
-        watchdogThreadRunning = true;
-        watchdogThread = new Thread(watchdogThreadLoop) { IsBackground = true };
-        watchdogThread.Start();
+        CMThreadRunning = true;
+        CMThread = new Thread(CMThreadLoop) { IsBackground = true };
+        CMThread.Start();
     }
 
     public static void StopWatchdog()
     {
-        if (watchdogThread is null)
+        if (CMThread is null)
             return;
 
-        watchdogThreadRunning = false;
-        if (watchdogThread.IsAlive)
-            watchdogThread.Join();
+        CMThreadRunning = false;
+        if (CMThread.IsAlive)
+            CMThread.Join();
     }
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
@@ -698,7 +746,13 @@ public static class ControllerManager
             if (controller is XInputController) return;
 
             if (controller is JSController)
-                JslDisconnect(controller.GetUserIndex());
+            {
+                try
+                {
+                    JslDisconnect(controller.GetUserIndex());
+                }
+                catch { }
+            }
 
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
@@ -874,13 +928,13 @@ public static class ControllerManager
         }
     }
 
-    private static void watchdogThreadLoop(object? obj)
+    private static void CMThreadLoop(object? obj)
     {
         HashSet<byte> UserIndexes = [];
         bool XInputDrunk = false;
 
         // monitoring unexpected slot changes
-        while (watchdogThreadRunning)
+        while (CMThreadRunning)
         {
             // clear array
             UserIndexes.Clear();
@@ -888,30 +942,29 @@ public static class ControllerManager
 
             foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
             {
-                byte UserIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
+                byte UserIndex = (byte)xInputController.GetUserIndex();
 
                 // controller is not ready yet
                 if (UserIndex == byte.MaxValue)
                     continue;
 
-                // that's not possible, XInput is drunk
+                // two controllers can't use the same slot
                 if (!UserIndexes.Add(UserIndex))
                     XInputDrunk = true;
-
-                xInputController.AttachController(UserIndex);
             }
 
             if (XInputDrunk)
             {
-                // (re)init controller userIndex
-                foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
-                    xInputController.AttachController(byte.MaxValue);
+                // suspend and resume virtual controller
+                VirtualManager.Suspend(false);
+                Thread.Sleep(1000);
+                VirtualManager.Resume(IsOS);
             }
 
             // user is emulating an Xbox360Controller
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
-                if (HasVirtualController<XInputController>() && HasPhysicalController<XInputController>())
+                if (HasPhysicalController<XInputController>())
                 {
                     // check if first controller is virtual
                     XInputController controller = GetControllerFromSlot<XInputController>(UserIndex.One, false);
@@ -925,7 +978,7 @@ public static class ControllerManager
                             bool HasCyclingController = false;
 
                             // do we have a pending wireless controller ?
-                            XInputController wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsWireless() && controller.IsBusy);
+                            XInputController wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
                             if (wirelessController is not null)
                             {
                                 // update busy flag
@@ -938,21 +991,16 @@ public static class ControllerManager
                             }
 
                             // suspend all physical controllers
-                            bool HasSuspendedController = false;
                             foreach (XInputController xInputController in GetPhysicalControllers<XInputController>())
-                            {
-                                // set flag(s)
-                                xInputController.IsBusy = true;
-                                HasSuspendedController |= SuspendController(xInputController.GetContainerInstanceId());
-                            }
+                                SuspendController(xInputController.GetContainerInstanceId());
 
                             // suspend and resume virtual controller
                             VirtualManager.Suspend(false);
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                             VirtualManager.Resume(IsOS);
 
                             // resume all physical controllers, after a few seconds
-                            Thread.Sleep(4000);
+                            Thread.Sleep(1000);
                             ResumeControllers();
 
                             // increment attempt counter (if no wireless controller is power cycling)
@@ -992,6 +1040,20 @@ public static class ControllerManager
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
+        switch (status)
+        {
+            case ControllerManagerStatus.Busy:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Indeterminate);
+                break;
+            case ControllerManagerStatus.Succeeded:
+            case ControllerManagerStatus.Failed:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.None);
+                break;
+            case ControllerManagerStatus.Pending:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Paused);
+                break;
+        }
+
         managerStatus = status;
         StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }
@@ -1000,30 +1062,37 @@ public static class ControllerManager
     {
         lock (targetLock)
         {
-            // pick last external controller
-            IController? externalController = GetPhysicalControllers<IController>().OrderByDescending(c => c.GetLastArrivalDate()).FirstOrDefault(c => c.IsExternal() || c.IsWireless() || c.IsDongle());
+            IEnumerable<IController> controllers = GetPhysicalControllers<IController>();
 
-            // pick first internal controller
-            IController? internalController = GetPhysicalControllers<IController>().FirstOrDefault(c => c.IsInternal());
+            // Pick the most recently arrived external or wireless controller
+            IController? latestExternalController = controllers
+                .Where(c => c.IsExternal() || c.IsWireless())
+                .OrderByDescending(c => c.GetLastArrivalDate())
+                .FirstOrDefault();
 
-            string baseContainerDeviceInstanceId = string.Empty;
+            // Pick the internal controller (built-in, non-removable)
+            IController? internalController = controllers
+                .FirstOrDefault(c => c.IsInternal());
 
-            if (externalController != null)
+            string deviceInstanceId = string.Empty;
+
+            if (latestExternalController != null)
             {
-                // only replace controller if current is not external
-                if (targetController == null || targetController.IsInternal())
-                    baseContainerDeviceInstanceId = externalController.GetContainerInstanceId();
+                // Only replace the current controller if it's not a wireless (can be internal) or external controller
+                if (targetController != null && (targetController.IsWireless() || targetController.IsExternal()))
+                    deviceInstanceId = targetController.GetContainerInstanceId();
                 else
-                    baseContainerDeviceInstanceId = targetController.GetContainerInstanceId();
+                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
             }
+            // Fallback: if no external/wireless controller is available, use an internal controller (if present)
             else if (internalController != null)
             {
-                baseContainerDeviceInstanceId = internalController.GetContainerInstanceId();
+                deviceInstanceId = internalController.GetContainerInstanceId();
             }
 
-            // are we power cycling ?
-            PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out bool IsPowerCycling);
-            SetTargetController(baseContainerDeviceInstanceId, IsPowerCycling);
+            // Check if the chosen controller is power cycling
+            PowerCyclers.TryGetValue(deviceInstanceId, out bool isPowerCycling);
+            SetTargetController(deviceInstanceId, isPowerCycling);
         }
     }
 
@@ -1123,12 +1192,26 @@ public static class ControllerManager
     {
         try
         {
-            PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-            DriverMeta pnPDriver = null;
+            PnPDevice pnPDevice = null;
 
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout && pnPDevice is null)
+            {
+                pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+                Task.Delay(100).Wait();
+            }
+
+            if (pnPDevice is null)
+                return false;
+
+            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+            if (usbPnPDevice is null)
+                return false;
+
+            DriverMeta pnPDriver = null;
             try
             {
+                // get current driver
                 pnPDriver = pnPDevice.GetCurrentDriver();
             }
             catch { }
@@ -1144,9 +1227,9 @@ public static class ControllerManager
 
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
                         usbPnPDevice.CyclePort();
-                    }
 
-                    PowerCyclers[baseContainerDeviceInstanceId] = true;
+                        PowerCyclers[baseContainerDeviceInstanceId] = true;
+                    }
                     return true;
             }
         }
@@ -1162,13 +1245,22 @@ public static class ControllerManager
         {
             try
             {
-                PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-                UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+                PnPDevice pnPDevice = null;
 
-                // get current driver
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                while (DateTime.Now < timeout && pnPDevice is null)
+                {
+                    pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+                    Task.Delay(100).Wait();
+                }
+
+                if (pnPDevice is null)
+                    continue;
+
                 DriverMeta pnPDriver = null;
                 try
                 {
+                    // get current driver
                     pnPDriver = pnPDevice.GetCurrentDriver();
                 }
                 catch { }
@@ -1189,9 +1281,9 @@ public static class ControllerManager
                             // remove device from store
                             DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
 
-                            PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
-                            return true;
+                            PowerCyclers[baseContainerDeviceInstanceId] = false;
                         }
+                        return true;
                 }
             }
             catch { }
@@ -1286,13 +1378,16 @@ public static class ControllerManager
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
-    public static IController GetDefault()
+    public static IController GetDefault(bool profilePage = false)
     {
         // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
         HIDmode HIDmode = HIDmode.NoController;
 
         // if profile is selected, get its HIDmode
-        HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
+        if (profilePage)
+            HIDmode = ProfilesPage.selectedProfile.HID;
+        else
+            HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
 
         // if profile HID is NotSelected, use HIDmode from settings
         if (HIDmode == HIDmode.NotSelected)

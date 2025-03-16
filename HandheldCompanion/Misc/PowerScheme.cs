@@ -26,30 +26,16 @@ public static class SleepSetting
 public static class PowerSetting
 {
     public static Guid PERFBOOSTMODE = new("be337238-0d82-4146-a960-4f3749d470c7"); // Processor performance boost mode
+    public static Guid PROCFREQMAX = new("75b0ae3f-bce0-45a7-8c89-c9611c25e100"); // Maximum processor frequency in MHz, 0 for no limit (default)
+    public static Guid PROCFREQMAX1 = new("75b0ae3f-bce0-45a7-8c89-c9611c25e101"); // Maximum processor frequency for processor power efficiency class 1 in MHz, 0 for no limit (default)
+    public static Guid CPMINCORES = new("0cc5b647-c1df-4637-891a-dec35c318583"); // Processor performance core parking min cores, expressed as a percent from 0 - 100
+    public static Guid CPMAXCORES = new("ea062031-0e34-4ff1-9b6d-eb1059334028"); // Processor performance core parking max cores, expressed as a percent from 0 - 100
+    public static Guid PERFEPP = new("36687f9e-e3a5-4dbf-b1dc-15eb381c6863"); // Processor energy performance preference policy, expressed as a percent from 0 - 100
+    public static Guid PERFEPP1 = new("36687f9e-e3a5-4dbf-b1dc-15eb381c6864"); // Processor energy performance preference policy for Processor Power Efficiency Class 1, expressed as a percent from 0 - 100
 
-    public static Guid
-        PROCFREQMAX =
-            new("75b0ae3f-bce0-45a7-8c89-c9611c25e100"); // Maximum processor frequency in MHz, 0 for no limit (default)
-
-    public static Guid
-        PROCFREQMAX1 =
-            new("75b0ae3f-bce0-45a7-8c89-c9611c25e101"); // Maximum processor frequency for processor power efficiency class 1 in MHz, 0 for no limit (default)
-
-    public static Guid
-        CPMINCORES =
-            new("0cc5b647-c1df-4637-891a-dec35c318583"); // Processor performance core parking min cores, expressed as a percent from 0 - 100
-
-    public static Guid
-        CPMAXCORES =
-            new("ea062031-0e34-4ff1-9b6d-eb1059334028"); // Processor performance core parking max cores, expressed as a percent from 0 - 100
-
-    public static Guid
-        PERFEPP = new(
-            "36687f9e-e3a5-4dbf-b1dc-15eb381c6863"); // Processor energy performance preference policy, expressed as a percent from 0 - 100
-
-    public static Guid
-        PERFEPP1 = new(
-            "36687f9e-e3a5-4dbf-b1dc-15eb381c6864"); // Processor energy performance preference policy for Processor Power Efficiency Class 1, expressed as a percent from 0 - 100
+    public static Guid HETEROGENEOUS_POLICY = new Guid("7f2f5cfa-f10c-4823-b5e1-e93ae85f46b5");
+    public static Guid HETEROGENEOUS_THREAD_SCHEDULING_POLICY = new Guid("93b8b6dc-0698-4d1c-9ee4-0644e900c85d");
+    public static Guid HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY = new Guid("bae08b81-2d5e-4688-ad6a-13243356654b");
 }
 
 public enum PerfBoostMode
@@ -61,6 +47,15 @@ public enum PerfBoostMode
     EfficientAggressive = 4,
     AggressiveAtGuaranteed = 5,
     EfficientAggressiveAtGuaranteed = 6
+}
+
+public enum CoreParkingMode
+{
+    AllCoresAuto,
+    AllCoresPrefPCore,
+    AllCoresPrefECore,
+    OnlyPCore,
+    OnlyECore,
 }
 
 public static class PowerScheme

@@ -1,6 +1,7 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -114,10 +115,13 @@ namespace HandheldCompanion.Actions
         protected bool IsToggled;
 
         public bool Interruptable = true;
-        public ShiftSlot ShiftSlot = 0;
+        public ShiftSlot ShiftSlot = ShiftSlot.Any;
 
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
+
+        public MotionDirection motionDirection = MotionDirection.None;
+        public float motionThreshold = 4000;
 
         public IActions()
         {
@@ -142,6 +146,10 @@ namespace HandheldCompanion.Actions
                         this.Value = (short)0;
                     break;
 
+                case ShiftSlot.Any:
+                    // do nothing
+                    break;
+
                 default:
                     if (!shiftSlot.HasFlag(ShiftSlot))
                         this.Value = (short)0;
@@ -157,6 +165,10 @@ namespace HandheldCompanion.Actions
                 case ShiftSlot.None:
                     if (shiftSlot != ShiftSlot.None)
                         this.Vector = Vector2.Zero;
+                    break;
+
+                case ShiftSlot.Any:
+                    // do nothing
                     break;
 
                 default:
@@ -186,6 +198,10 @@ namespace HandheldCompanion.Actions
                 case ShiftSlot.None:
                     if (shiftSlot != ShiftSlot.None)
                         value = false;
+                    break;
+
+                case ShiftSlot.Any:
+                    // do nothing
                     break;
 
                 default:

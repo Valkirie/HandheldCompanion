@@ -19,13 +19,13 @@ namespace HandheldCompanion.ViewModels
 
         public LayoutPageViewModel(LayoutPage layoutPage)
         {
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(LayoutList, new object());
+
             // manage events
             ManagerFactory.layoutManager.Updated += LayoutManager_Updated;
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(LayoutList, new object());
 
             _layoutTemplates = new() { IsHeader = true, Name = Resources.LayoutPage_Templates, Guid = new() };
             _layoutCommunity = new() { IsHeader = true, Name = Resources.LayoutPage_Community, Guid = new() };
@@ -46,9 +46,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             if (ControllerManager.HasTargetController)
-            {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-            }
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)

@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -13,6 +14,9 @@ namespace HandheldCompanion.ViewModels
 
         public QuickHomePageViewModel()
         {
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+
             // manage events
             ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
             ManagerFactory.hotkeysManager.Deleted += HotkeysManager_Deleted;

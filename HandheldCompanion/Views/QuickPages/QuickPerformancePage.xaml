@@ -155,8 +155,8 @@
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="5"
-                            Maximum="{Binding TDPMaximum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Minimum="{Binding TDPMinimum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Maximum="{Binding ConfigurableTDPOverrideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Minimum="{Binding ConfigurableTDPOverrideDown, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             SmallChange="1"
                             Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
@@ -240,7 +240,8 @@
             <Border
                 Padding="15,12,12,12"
                 Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Visibility="Collapsed">
 
                 <ikw:SimpleStackPanel Spacing="6">
                     <Grid>
@@ -541,6 +542,53 @@
                             <ComboBoxItem Name="PowerModeEfficiency" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}" />
                             <ComboBoxItem Name="PowerModeBalanced" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}" />
                             <ComboBoxItem Name="PowerModePerformance" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModePerformance}" />
+                        </ComboBox>
+                    </DockPanel>
+                </Grid>
+            </Border>
+
+            <!--  CPU Parking Mode  -->
+            <Border
+                Padding="15,12,12,12"
+                Background="{DynamicResource ExpanderHeaderBackground}"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" MinWidth="200" />
+                        <ColumnDefinition Width="4*" MinWidth="200" />
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xe964;" />
+
+                        <StackPanel
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Vertical">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="CPU parking mode" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Set current CPU parking mode"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <ComboBox
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            SelectedIndex="{Binding CPUParkingMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Name="ParkingModeAllCoresAuto" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresAuto}" />
+                            <ComboBoxItem Name="ParkingModeAllCoresPrefPCore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresPrefPCore}" />
+                            <ComboBoxItem Name="ParkingModeAllCoresPrefECore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresPrefECore}" />
+                            <ComboBoxItem Name="ParkingModeOnlyPCore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeOnlyPCore}" />
+                            <ComboBoxItem Name="ParkingModeOnlyECore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeOnlyECore}" />
                         </ComboBox>
                     </DockPanel>
                 </Grid>

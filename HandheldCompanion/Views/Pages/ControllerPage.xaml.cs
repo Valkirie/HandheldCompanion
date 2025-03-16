@@ -134,9 +134,9 @@ public partial class ControllerPage : Page
                         }
 
                         // update content
-                        dialog.Content = CreateFormattedContent(
+                        dialog.UpdateContent(CreateFormattedContent(
                             string.Format(Properties.Resources.ControllerPage_ControllerManagement_Attempt, attempts + 1),
-                            GetResourceString("ControllerPage_ControllerManagement_Attempt", attempts));
+                            GetResourceString("ControllerPage_ControllerManagement_Attempt", attempts)));
 
                         dialog.Show();
                     }

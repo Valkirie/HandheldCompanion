@@ -1477,18 +1477,6 @@
   <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>Objetivo de límite de potencia</value>
   </data>
-  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
-    <value>Orientación de pantalla nativa</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
-    <value>Algunas funciones dependen de conocer la orientación de la pantalla nativa para funcionar correctamente. Si esto no se detectó correctamente, configure la orientación de su pantalla en la orientación que coincida con su controlador, luego haga clic en Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
-    <value>Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
-    <value>No establecido</value>
-  </data>
   <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
     <value>Modo de refuerzo de CPU</value>
   </data>
@@ -2524,9 +2512,6 @@
   <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
     <value>M2</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Make this the default layout</value>
-  </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>Toggle emulated controller type</value>
   </data>
@@ -2840,6 +2825,27 @@
     <value />
   </data>
   <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_XGMobile" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
   </data>
 </root>

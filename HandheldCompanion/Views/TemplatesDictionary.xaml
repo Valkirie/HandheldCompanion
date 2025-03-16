@@ -240,13 +240,13 @@
 
                                 <ui:ProgressBar
                                     Width="138"
-                                    Margin="0,-8,0,0"
+                                    Margin="0,-9,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     IsIndeterminate="True"
                                     Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <ui:ProgressBar.RenderTransform>
-                                        <ScaleTransform ScaleY="4" />
+                                        <ScaleTransform ScaleY="3.8" />
                                     </ui:ProgressBar.RenderTransform>
                                 </ui:ProgressBar>
                             </Grid>
@@ -341,7 +341,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonMappingTemplate" DataType="{x:Type viewmodels:ButtonMappingViewModel}">
-        <Grid>
+        <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
@@ -349,33 +349,17 @@
 
             <Button
                 Grid.Column="0"
-                Width="48"
-                Height="48"
-                Margin="0,0,1,0"
-                Padding="2,2,0,0"
-                HorizontalAlignment="Right"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Command="{Binding ButtonCommand}"
-                FontWeight="Bold"
-                Foreground="{DynamicResource AccentButtonBackground}"
-                Style="{DynamicResource TabViewButtonStyle}">
+                Command="{Binding ButtonCommand}">
                 <ui:FontIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    FontSize="24"
-                    FontWeight="Bold">
-                    <ui:FontIcon.Style>
-                        <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Glyph" Value="&#xECC8;" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                    <Setter Property="Glyph" Value="&#xECC9;" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ui:FontIcon.Style>
-                </ui:FontIcon>
+                    Glyph="&#xECC9;" />
             </Button>
 
             <Expander Grid.Column="1" HorizontalAlignment="Stretch">
@@ -387,89 +371,9 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <DockPanel Grid.Column="0" MinWidth="150">
-                            <DockPanel.Style>
-                                <Style TargetType="{x:Type DockPanel}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DockPanel.Style>
-                            <ui:FontIcon
-                                Width="40"
-                                Height="40"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ui:FontIcon.Style>
-                                    <Style TargetType="{x:Type ui:FontIcon}">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                        <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                                        <Setter Property="FontSize" Value="14" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ui:FontIcon.Style>
-                            </ui:FontIcon>
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DockPanel>
-
-                        <ComboBox
-                            Grid.Column="0"
-                            MinWidth="138"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="No Shift" />
-                            <ComboBoxItem Content="Shift A" />
-                            <ComboBoxItem Content="Shift B" />
-                            <ComboBoxItem Content="Shift C" />
-                            <ComboBoxItem Content="Shift D" />
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-
-                        <ComboBox
-                            Grid.Column="1"
-                            Width="160"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
-                            <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
-                            <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
-                            <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
-                        </ComboBox>
-
                         <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                             <ComboBox
-                                Width="160"
+                                Width="220"
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -484,7 +388,7 @@
                             </ComboBox>
 
                             <ComboBox
-                                Width="140"
+                                Width="220"
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 DisplayMemberPath="Content"
@@ -774,6 +678,73 @@
                                 </Grid>
                             </ikw:SimpleStackPanel>
                         </Grid>
+
+                        <!--  Input Type and Shifting  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input shift" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="Disabled on shift" />
+                                    <ComboBoxItem Content="Enabled with shift A" />
+                                    <ComboBoxItem Content="Enabled with shift B" />
+                                    <ComboBoxItem Content="Enabled with shift C" />
+                                    <ComboBoxItem Content="Enabled with shift D" />
+                                    <ComboBoxItem Content="Always enabled" />
+                                </ComboBox>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input type" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
+                                    <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
+                                    <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
+                                    <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
+                                </ComboBox>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </Expander.Content>
             </Expander>
@@ -781,14 +752,79 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonStackTemplate" DataType="{x:Type viewmodels:ButtonStackViewModel}">
-        <ui:ItemsRepeater
-            ItemTemplate="{StaticResource ButtonMappingTemplate}"
-            ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-            Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Button
+                    Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    Margin="0,2,2,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Command="{Binding ButtonCommand}"
+                    Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xECC8;" />
+                </Button>
+
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                            <Binding
+                                FallbackValue="No Name"
+                                Mode="OneWay"
+                                Path="Name"
+                                TargetNullValue="Unknown"
+                                UpdateSourceTrigger="PropertyChanged" />
+                            <Binding
+                                FallbackValue="0"
+                                Mode="OneWay"
+                                Path="ActionNumber"
+                                TargetNullValue="0"
+                                UpdateSourceTrigger="PropertyChanged" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+
+            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="GyroMappingTemplate" DataType="{x:Type viewmodels:GyroMappingViewModel}">
-        <Expander HorizontalAlignment="Stretch" Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Expander HorizontalAlignment="Stretch">
             <Expander.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -796,42 +832,9 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-
-                    <ui:FontIcon
-                        Width="40"
-                        Height="40"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ui:FontIcon.Style>
-                            <Style TargetType="{x:Type ui:FontIcon}">
-                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                                <Setter Property="FontSize" Value="14" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                        <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                        <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                        <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ui:FontIcon.Style>
-                    </ui:FontIcon>
-                    <TextBlock
-                        Grid.Column="1"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        FontSize="14"
-                        Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
                     <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                         <ComboBox
-                            Width="160"
+                            Width="220"
                             VerticalAlignment="Center"
                             SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="Disabled" IsEnabled="True" />
@@ -845,7 +848,7 @@
                         </ComboBox>
 
                         <ComboBox
-                            Width="140"
+                            Width="220"
                             Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             DisplayMemberPath="Content"
@@ -1297,7 +1300,7 @@
                         </ikw:SimpleStackPanel>
                     </Grid>
 
-                    <!--  Axis 2 Mouse  -->
+                    <!--  GyroAxis 2 Mouse  -->
                     <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
                         <ikw:SimpleStackPanel Spacing="6">
                             <ikw:SimpleStackPanel Spacing="6">
@@ -1414,9 +1417,48 @@
         </Expander>
     </DataTemplate>
 
-    <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
+    <DataTemplate x:Key="GyroStackTemplate" DataType="{x:Type viewmodels:GyroStackViewModel}">
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
 
-        <Grid>
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+
+            <ui:ItemsRepeater ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
+        <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
@@ -1424,39 +1466,20 @@
 
             <Button
                 Grid.Column="0"
-                Width="48"
-                Height="48"
-                Margin="0,0,1,0"
-                Padding="2,2,0,0"
-                HorizontalAlignment="Right"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Command="{Binding ButtonCommand}"
-                FontWeight="Bold"
-                Foreground="{DynamicResource AccentButtonBackground}"
-                Style="{DynamicResource TabViewButtonStyle}">
+                Command="{Binding ButtonCommand}">
                 <ui:FontIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    FontSize="24"
-                    FontWeight="Bold">
-                    <ui:FontIcon.Style>
-                        <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Glyph" Value="&#xECC8;" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                    <Setter Property="Glyph" Value="&#xECC9;" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ui:FontIcon.Style>
-                </ui:FontIcon>
+                    Glyph="&#xECC9;" />
             </Button>
 
-            <Expander
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1465,84 +1488,15 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <DockPanel Grid.Column="0" MinWidth="150">
-                            <DockPanel.Style>
-                                <Style TargetType="{x:Type DockPanel}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DockPanel.Style>
-                            <ui:FontIcon
-                                Width="40"
-                                Height="40"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ui:FontIcon.Style>
-                                    <Style TargetType="{x:Type ui:FontIcon}">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                        <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                                        <Setter Property="FontSize" Value="14" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ui:FontIcon.Style>
-                            </ui:FontIcon>
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DockPanel>
-
-                        <ComboBox
-                            Grid.Column="0"
-                            MinWidth="138"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="No Shift" />
-                            <ComboBoxItem Content="Shift A" />
-                            <ComboBoxItem Content="Shift B" />
-                            <ComboBoxItem Content="Shift C" />
-                            <ComboBoxItem Content="Shift D" />
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-
                         <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                             <ComboBox
-                                Width="160"
+                                Width="220"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="False" />
+                                <ComboBoxItem Content="Button" IsEnabled="True" />
                                 <ComboBoxItem Content="Joystick" IsEnabled="True" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="False" />
+                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="False" />
                                 <ComboBoxItem Content="Shift" IsEnabled="False" />
@@ -1550,7 +1504,7 @@
                             </ComboBox>
 
                             <ComboBox
-                                Width="140"
+                                Width="220"
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 DisplayMemberPath="Content"
@@ -1579,6 +1533,86 @@
 
                 <Expander.Content>
                     <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+
+                        <!--  Axis 2 Button|Keyboard|Mouse  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                            <!--  Axis Direction  -->
+                            <!--  TODO: Translate me  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Axis direction" />
+
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center">
+                                    <WrapPanel Orientation="Horizontal">
+                                        <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
+                                        <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
+                                    </WrapPanel>
+                                    <WrapPanel Orientation="Horizontal">
+                                        <CheckBox Content="Left" IsChecked="{Binding IsLeft, Mode=TwoWay}" />
+                                        <CheckBox Content="Right" IsChecked="{Binding IsRight, Mode=TwoWay}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <!--  Axis Threshold  -->
+                            <!--  TODO: Translate me  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Axis threshold" />
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                                    <Slider
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="10000"
+                                        Maximum="32000"
+                                        Minimum="2000"
+                                        SmallChange="2000"
+                                        TickFrequency="2000"
+                                        TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
 
                         <!--  Axis 2 Axis  -->
                         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
@@ -1800,8 +1834,8 @@
                             </Grid>
                         </ikw:SimpleStackPanel>
 
-                        <!--  Axis 2 Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+                        <!--  Axis 2 Mouse Axis  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
 
                             <!--  Sensitivity  -->
                             <Grid Height="40">
@@ -1894,10 +1928,11 @@
                             <Separator
                                 Margin="-46,0,-16,0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                                BorderThickness="0,1,0,0"
+                                Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <!--  Filtering  -->
-                            <Grid>
+                            <Grid Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="2*" MinWidth="200" />
                                     <ColumnDefinition Width="8*" MinWidth="120" />
@@ -1906,7 +1941,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Filtering (touchpad only)" />
+                                    Text="Filtering" />
 
                                 <ui:ToggleSwitch
                                     Grid.Column="1"
@@ -1967,10 +2002,11 @@
                             <Separator
                                 Margin="-46,0,-16,0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                                BorderThickness="0,1,0,0"
+                                Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <!--  Deadzone  -->
-                            <Grid Height="40">
+                            <Grid Height="40" Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200" />
                                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -1980,7 +2016,7 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Deadzone (joystick only)" />
+                                    Text="Deadzone" />
 
                                 <DockPanel
                                     Grid.Column="1"
@@ -2009,6 +2045,46 @@
                                 </DockPanel>
                             </Grid>
                         </ikw:SimpleStackPanel>
+
+                        <!--  Input Shifting  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Mode shifting" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Define under which circumstances this input should be shifted"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="Disabled on shift" />
+                                    <ComboBoxItem Content="Enabled with shift A" />
+                                    <ComboBoxItem Content="Enabled with shift B" />
+                                    <ComboBoxItem Content="Enabled with shift C" />
+                                    <ComboBoxItem Content="Enabled with shift D" />
+                                    <ComboBoxItem Content="Always enabled" />
+                                </ComboBox>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </Expander.Content>
             </Expander>
@@ -2016,14 +2092,79 @@
     </DataTemplate>
 
     <DataTemplate x:Key="AxisStackTemplate" DataType="{x:Type viewmodels:AxisStackViewModel}">
-        <ui:ItemsRepeater
-            ItemTemplate="{StaticResource AxisMappingTemplate}"
-            ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-            Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Button
+                    Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    Margin="0,2,2,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Command="{Binding ButtonCommand}"
+                    Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xECC8;" />
+                </Button>
+
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                            <Binding
+                                FallbackValue="No Name"
+                                Mode="OneWay"
+                                Path="Name"
+                                TargetNullValue="Unknown"
+                                UpdateSourceTrigger="PropertyChanged" />
+                            <Binding
+                                FallbackValue="0"
+                                Mode="OneWay"
+                                Path="ActionNumber"
+                                TargetNullValue="0"
+                                UpdateSourceTrigger="PropertyChanged" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="TriggerMappingTemplate" DataType="{x:Type viewmodels:TriggerMappingViewModel}">
-        <Grid>
+        <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
@@ -2031,39 +2172,20 @@
 
             <Button
                 Grid.Column="0"
-                Width="48"
-                Height="48"
-                Margin="0,0,1,0"
-                Padding="2,2,0,0"
-                HorizontalAlignment="Right"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Command="{Binding ButtonCommand}"
-                FontWeight="Bold"
-                Foreground="{DynamicResource AccentButtonBackground}"
-                Style="{DynamicResource TabViewButtonStyle}">
+                Command="{Binding ButtonCommand}">
                 <ui:FontIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    FontSize="24"
-                    FontWeight="Bold">
-                    <ui:FontIcon.Style>
-                        <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Glyph" Value="&#xECC8;" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                    <Setter Property="Glyph" Value="&#xECC9;" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ui:FontIcon.Style>
-                </ui:FontIcon>
+                    Glyph="&#xECC9;" />
             </Button>
 
-            <Expander
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -2072,92 +2194,23 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <DockPanel Grid.Column="0" MinWidth="150">
-                            <DockPanel.Style>
-                                <Style TargetType="{x:Type DockPanel}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DockPanel.Style>
-                            <ui:FontIcon
-                                Width="40"
-                                Height="40"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ui:FontIcon.Style>
-                                    <Style TargetType="{x:Type ui:FontIcon}">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                        <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                                        <Setter Property="FontSize" Value="14" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                                <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ui:FontIcon.Style>
-                            </ui:FontIcon>
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DockPanel>
-
-                        <ComboBox
-                            Grid.Column="0"
-                            MinWidth="138"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="No Shift" />
-                            <ComboBoxItem Content="Shift A" />
-                            <ComboBoxItem Content="Shift B" />
-                            <ComboBoxItem Content="Shift C" />
-                            <ComboBoxItem Content="Shift D" />
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsInitialMapping}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-
                         <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                             <ComboBox
-                                Width="160"
+                                Width="220"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="False" />
+                                <ComboBoxItem Content="Button" IsEnabled="True" />
                                 <ComboBoxItem Content="Joystick" IsEnabled="False" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="False" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="False" />
+                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
+                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="True" />
                                 <ComboBoxItem Content="Shift" IsEnabled="False" />
                                 <ComboBoxItem Content="Inherit" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox
-                                Width="140"
+                                Width="220"
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 DisplayMemberPath="Content"
@@ -2186,6 +2239,53 @@
 
                 <Expander.Content>
                     <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+
+                        <!--  Trigger 2 Button|Keyboard|Mouse  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+
+                            <!--  Trigger Threshold  -->
+                            <!--  TODO: Translate me  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Trigger threshold" />
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                                    <Slider
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="100"
+                                        Maximum="250"
+                                        Minimum="10"
+                                        SmallChange="10"
+                                        TickFrequency="10"
+                                        TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
+
                         <!--  Trigger 2 Trigger  -->
                         <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
 
@@ -2324,6 +2424,42 @@
                                 </DockPanel>
                             </Grid>
                         </ikw:SimpleStackPanel>
+
+                        <!--  Input Shifting  -->
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Input shift" />
+
+                                <ComboBox
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="Disabled on shift" />
+                                    <ComboBoxItem Content="Enabled with shift A" />
+                                    <ComboBoxItem Content="Enabled with shift B" />
+                                    <ComboBoxItem Content="Enabled with shift C" />
+                                    <ComboBoxItem Content="Enabled with shift D" />
+                                    <ComboBoxItem Content="Always enabled" />
+                                </ComboBox>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </Expander.Content>
             </Expander>
@@ -2331,9 +2467,74 @@
     </DataTemplate>
 
     <DataTemplate x:Key="TriggerStackTemplate" DataType="{x:Type viewmodels:TriggerStackViewModel}">
-        <ui:ItemsRepeater
-            ItemTemplate="{StaticResource TriggerMappingTemplate}"
-            ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-            Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Button
+                    Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    Margin="0,2,2,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Command="{Binding ButtonCommand}"
+                    Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xECC8;" />
+                </Button>
+
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                            <Binding
+                                FallbackValue="No Name"
+                                Mode="OneWay"
+                                Path="Name"
+                                TargetNullValue="Unknown"
+                                UpdateSourceTrigger="PropertyChanged" />
+                            <Binding
+                                FallbackValue="0"
+                                Mode="OneWay"
+                                Path="ActionNumber"
+                                TargetNullValue="0"
+                                UpdateSourceTrigger="PropertyChanged" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+
+            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

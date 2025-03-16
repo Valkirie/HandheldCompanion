@@ -356,7 +356,8 @@ namespace HandheldCompanion.Devices.Lenovo
         {
             lock (_lock)
             {
-                return SetTouchPadStatusInternal(iSwitch);
+                try { return SetTouchPadStatusInternal(iSwitch); } catch { }
+                return false;
             }
         }
 

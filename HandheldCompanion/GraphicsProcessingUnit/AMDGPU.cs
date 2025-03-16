@@ -2,6 +2,7 @@
 using HandheldCompanion.Managers;
 using SharpDX.Direct3D9;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Timers;
@@ -27,7 +28,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private bool prevAFMFSupport = false;
         private bool prevAFMF = false;
 
-        protected new AdlxTelemetryData TelemetryData = new();
+        protected AdlxTelemetryData TelemetryData = new();
 
         public bool HasRSRSupport()
         {
@@ -311,6 +312,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             return (float)TelemetryData.gpuVramValue;
         }
+        
+        static AMDGPU()
+        {
+            ProcessTargets = new HashSet<string> { "RadeonSoftware", "cncmd" };
+        }
 
         public AMDGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
@@ -324,25 +330,25 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (result != ADLX_RESULT.ADLX_OK)
                 return;
 
-            if (adapterCount > 1)
+            if (adapterCount == 0)
+                return;
+
+            for (int idx = 0; idx < adapterCount; idx++)
             {
-                for (int idx = 0; idx < adapterCount; idx++)
-                {
-                    StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
+                StringBuilder displayName = new StringBuilder(256); // Assume display name won't exceed 255 characters
 
-                    // skip if failed to retrieve display
-                    result = GetDisplayName(idx, displayName, displayName.Capacity);
-                    if (result != ADLX_RESULT.ADLX_OK)
-                        continue;
+                // skip if failed to retrieve display
+                result = GetDisplayName(idx, displayName, displayName.Capacity);
+                if (result != ADLX_RESULT.ADLX_OK)
+                    continue;
 
-                    // skip if display is not the one we're looking for
-                    if (!displayName.ToString().Equals(friendlyName))
-                        continue;
+                // skip if display is not the one we're looking for
+                if (!displayName.ToString().Equals(friendlyName))
+                    continue;
 
-                    // update displayIdx
-                    displayIdx = idx;
-                    break;
-                }
+                // update displayIdx
+                displayIdx = idx;
+                break;
             }
 
             // we couldn't pick a display by its name, pick first
@@ -532,6 +538,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     Monitor.Exit(updateLock);
                 }
             }
+        }
+
+        protected override void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // Call the generic method to terminate conflicting processes.
+            TerminateConflictingProcesses();
+
+            base.BusyTimer_Elapsed(sender, e);
         }
     }
 }

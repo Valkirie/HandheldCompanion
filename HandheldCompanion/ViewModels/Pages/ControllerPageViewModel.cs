@@ -13,7 +13,7 @@ namespace HandheldCompanion.ViewModels
     {
         private ControllerPage controllerPage;
 
-        public bool LayoutManagerReady => ManagerFactory.layoutManager.Status == ManagerStatus.Initialized;
+        public bool LayoutManagerReady => ManagerFactory.layoutManager.IsReady;
 
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
@@ -45,9 +45,7 @@ namespace HandheldCompanion.ViewModels
 
             // send events
             if (ControllerManager.HasTargetController)
-            {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-            }
         }
 
         private void QueryLayouts()

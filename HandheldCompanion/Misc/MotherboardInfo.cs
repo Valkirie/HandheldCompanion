@@ -293,6 +293,9 @@ public static class MotherboardInfo
                 case string s when !string.IsNullOrEmpty(s):
                 case int i when i != 0:
                 case uint ui when ui != 0:
+                case long l when l != 0:
+                case double d when d != 0:
+                case short sh when sh != 0:
                     hasvalue = true;
                     break;
             }

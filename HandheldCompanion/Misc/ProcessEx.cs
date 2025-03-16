@@ -220,7 +220,8 @@ public class ProcessEx : IDisposable
     public const string HighDPIAwareValue = "HIGHDPIAWARE";
 
     public Process Process { get; private set; }
-    public int ProcessId { get; private set; }
+    public int ProcessId => Process.Id;
+    public nint Handle => Process.Handle;
 
     public ProcessFilter Filter { get; set; }
     public PlatformType Platform { get; set; }
@@ -228,7 +229,6 @@ public class ProcessEx : IDisposable
     public ImageSource ProcessIcon { get; private set; }
 
     public ConcurrentDictionary<int, ProcessWindow> ProcessWindows { get; private set; } = new();
-    public ConcurrentList<int> ChildrenProcessIds = [];
 
     private ProcessThread? MainThread { get; set; }
     private ProcessThread? prevThread;
@@ -252,7 +252,6 @@ public class ProcessEx : IDisposable
     public ProcessEx(Process process, string path, string executable, ProcessFilter filter)
     {
         Process = process;
-        ProcessId = process.Id;
         Path = path;
         Executable = executable;
         Filter = filter;
@@ -263,6 +262,8 @@ public class ProcessEx : IDisposable
         // update main thread when disposed
         if (MainThread is not null)
             SubscribeToDisposedEvent(MainThread);
+        else
+            throw new Exception($"Process {ProcessId} has exited or MainThread is unreachable during creation");
 
         // get executable icon
         if (File.Exists(Path))
@@ -302,34 +303,37 @@ public class ProcessEx : IDisposable
             bool hasInput = false;
             bool hasRender = false;
 
-            // Loop through the modules of the process
-            foreach (ProcessModule module in Process.Modules)
+            try
             {
-                try
+                // Loop through the modules of the process
+                foreach (ProcessModule module in Process.Modules)
                 {
-                    // Get the name of the module
-                    string moduleName = module.ModuleName;
-
-                    if (gameModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                    try
                     {
-                        return true;
-                    }
-                    else
-                    {
-                        if (inputModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
-                            hasInput = true;
-                        else if (renderModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
-                            hasRender = true;
+                        // Get the name of the module
+                        string moduleName = module.ModuleName;
 
-                        // If both conditions are met, we can exit early.
-                        if (hasInput && hasRender)
+                        if (gameModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                        {
                             return true;
+                        }
+                        else
+                        {
+                            if (inputModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                                hasInput = true;
+                            else if (renderModules.Contains(moduleName, StringComparer.InvariantCultureIgnoreCase))
+                                hasRender = true;
+
+                            // If both conditions are met, we can exit early.
+                            if (hasInput && hasRender)
+                                return true;
+                        }
                     }
+                    catch (Win32Exception) { }
+                    catch (InvalidOperationException) { }
                 }
-                catch (Win32Exception) { }
-                catch (InvalidOperationException) { }
             }
-            ;
+            catch { }
         }
 
         return false;
@@ -368,7 +372,6 @@ public class ProcessEx : IDisposable
     public void AttachWindow(AutomationElement automationElement, bool primary = false)
     {
         int hwnd = automationElement.Current.NativeWindowHandle;
-
         if (!ProcessWindows.TryGetValue(hwnd, out var window))
         {
             // create new window object
@@ -378,12 +381,12 @@ public class ProcessEx : IDisposable
             if (string.IsNullOrEmpty(window.Name))
                 return;
 
-            // update window
-            ProcessWindows[hwnd] = window;
-        }
+            // add window
+            ProcessWindows.TryAdd(hwnd, window);
 
-        // raise event
-        WindowAttached?.Invoke(window);
+            // raise event
+            WindowAttached?.Invoke(window);
+        }
     }
 
     private void Window_Closed(object? sender, EventArgs e)
@@ -460,7 +463,7 @@ public class ProcessEx : IDisposable
     {
         try
         {
-            if (Process.HasExited)
+            if (Process is null || Process.HasExited)
                 return;
 
             if (MainThread is null)
@@ -496,20 +499,7 @@ public class ProcessEx : IDisposable
             Refreshed?.Invoke(this, EventArgs.Empty);
         }
         catch (InvalidOperationException) { } // No process is associated with this object
-    }
-
-    public void RefreshChildProcesses()
-    {
-        // refresh all child processes
-        List<int> childs = ProcessUtils.GetChildIds(Process);
-
-        // remove exited children
-        foreach (int pid in childs)
-            ChildrenProcessIds.Remove(pid);
-
-        // raise event on new children
-        foreach (int pid in childs)
-            ChildrenProcessIds.Add(pid);
+        catch (NullReferenceException) { }
     }
 
     private void SubscribeToDisposedEvent(ProcessThread newMainThread)
@@ -605,7 +595,7 @@ public class ProcessEx : IDisposable
 
         try
         {
-            if (process.Threads is null || process.Threads.Count == 0)
+            if (process.HasExited || process.Threads is null || process.Threads.Count == 0)
                 return null;
 
             foreach (ProcessThread thread in process.Threads)
@@ -680,9 +670,6 @@ public class ProcessEx : IDisposable
                 prevThread.Dispose();
                 prevThread = null;
             }
-
-            // Dispose of child process list safely
-            ChildrenProcessIds?.Clear();
 
             // Dispose of all windows
             foreach (ProcessWindow window in ProcessWindows.Values)

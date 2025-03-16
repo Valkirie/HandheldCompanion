@@ -1,7 +1,9 @@
-﻿using HandheldCompanion.Shared;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 
 namespace HandheldCompanion.Helpers
@@ -10,6 +12,8 @@ namespace HandheldCompanion.Helpers
     {
         private static string DriversPath = Path.Combine(App.SettingsPath, "drivers.json");
         private static Dictionary<string, string> Drivers = [];
+
+        private const string SettingsName = "KnownDrivers";
 
         static DriverStore()
         {
@@ -20,6 +24,25 @@ namespace HandheldCompanion.Helpers
         public static IEnumerable<string> GetDrivers()
         {
             return Drivers.Values;
+        }
+
+        public static StringCollection GetKnownDrivers()
+        {
+            StringCollection stringCollection = ManagerFactory.settingsManager.GetStringCollection(SettingsName);
+            if (stringCollection is null)
+                stringCollection = new();
+
+            return stringCollection;
+        }
+
+        public static void StoreKnownDriver(string driverName)
+        {
+            StringCollection stringCollection = GetKnownDrivers();
+            if (!stringCollection.Contains(driverName))
+            {
+                stringCollection.Add(driverName);
+                ManagerFactory.settingsManager.SetProperty(SettingsName, stringCollection);
+            }
         }
 
         public static IEnumerable<string> GetPaths()
@@ -67,6 +90,9 @@ namespace HandheldCompanion.Helpers
 
             // update array
             Drivers[path] = driverName;
+
+            // update settings (failsafe)
+            StoreKnownDriver(driverName);
 
             // serialize store
             SerializeDriverStore();
