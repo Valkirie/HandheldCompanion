@@ -57,7 +57,7 @@ namespace HandheldCompanion
             }
         }
 
-        public static void Set(string scope, string path, string methodName, byte[] fullPackage)
+        public static ManagementBaseObject Set(string scope, string path, string methodName, byte[] fullPackage)
         {
             // Create the management object using the provided scope and path
             ManagementObject managementObject = new ManagementObject(scope, path, null);
@@ -91,7 +91,7 @@ namespace HandheldCompanion
             if (inParams == null || inParamsData == null)
             {
                 LogManager.LogError("WMI Call failed: [scope={0}, path={1}, methodName={2}, fullPackage={3}]", scope, path, methodName, string.Join(',', fullPackage));
-                return;
+                return null;
             }
 
             // Set the "Bytes" property of the "Data" parameter to the full package
@@ -99,79 +99,41 @@ namespace HandheldCompanion
             inParams.SetPropertyValue("Data", inParamsData);
 
             // Invoke the method with the parameters
-            managementObject.InvokeMethod(methodName, inParams, null);
+            return managementObject.InvokeMethod(methodName, inParams, null);
         }
 
-        public static byte[] Get(string scope, string path, string methodName, int iDataBlockIndex, int length, out bool readSuccess)
+        public static byte[] Get(string scope, string path, string methodName, byte iDataBlockIndex, int length, out bool readSuccess)
         {
-            readSuccess = false;
+            byte[] fullPackage = new byte[32];
             byte[] resultData = new byte[length];
 
-            try
+            fullPackage[0] = iDataBlockIndex;
+            readSuccess = false;
+
+            // Extract the output bytes from the nested 'Data' object.
+            ManagementBaseObject outParams = Set(scope, path, methodName, fullPackage);
+            ManagementBaseObject dataOut = outParams["Data"] as ManagementBaseObject;
+            if (dataOut == null)
             {
-                // Establish the WMI connection using the provided scope and path.
-                ManagementScope managementScope = new ManagementScope(scope);
-                managementScope.Connect();
-                ManagementPath managementPath = new ManagementPath(path);
-
-                using (ManagementObject managementObject = new ManagementObject(managementScope, managementPath, null))
-                {
-                    // Get input parameters for the methodName method.
-                    ManagementBaseObject inParams = managementObject.GetMethodParameters(methodName);
-                    // Define package length (this should match the expected size, e.g., 32)
-                    int packageLength = 32;
-                    byte[] inputBytes = new byte[packageLength];
-                    inputBytes[0] = (byte)iDataBlockIndex; // set the data block index
-
-                    // Prepare the nested 'Data' parameter.
-                    ManagementBaseObject dataParam = inParams["Data"] as ManagementBaseObject;
-                    if (dataParam == null)
-                        throw new InvalidOperationException("Method parameter 'Data' is not available.");
-
-                    dataParam["Bytes"] = inputBytes;
-                    inParams["Data"] = dataParam;
-
-                    // Invoke the WMI method.
-                    ManagementBaseObject outParams = managementObject.InvokeMethod(methodName, inParams, null);
-                    if (outParams == null)
-                    {
-                        LogManager.LogError("WMI Call failed at InvokeMethod: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
-                        return resultData;
-                    }
-
-                    // Extract the output bytes from the nested 'Data' object.
-                    ManagementBaseObject dataOut = outParams["Data"] as ManagementBaseObject;
-                    if (dataOut == null)
-                    {
-                        LogManager.LogError("WMI Call failed at outParams[\"Data\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
-                        return resultData;
-                    }
-
-                    byte[] outBytes = dataOut["Bytes"] as byte[];
-                    if (outBytes == null || outBytes.Length < 1)
-                    {
-                        LogManager.LogError("WMI Call failed at dataOut[\"Bytes\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
-                        return resultData;
-                    }
-
-                    // The first byte is the flag; subsequent bytes contain the actual data.
-                    byte flag = outBytes[0];
-                    readSuccess = (flag == 1);
-
-                    // Copy the remaining bytes as the returned data.
-                    int dataLength = outBytes.Length - 1;
-                    resultData = new byte[dataLength];
-                    Array.Copy(outBytes, 1, resultData, 0, dataLength);
-                }
+                LogManager.LogError("WMI Call failed at outParams[\"Data\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
+                return resultData;
             }
-            catch (ManagementException mex)
+
+            byte[] outBytes = dataOut["Bytes"] as byte[];
+            if (outBytes == null || outBytes.Length < 1)
             {
-                LogManager.LogError("WMI Call failed: {0}. [scope={1}, path={2}, methodName={3}, iDataBlockIndex={4}]", mex.Message, scope, path, methodName, iDataBlockIndex);
+                LogManager.LogError("WMI Call failed at dataOut[\"Bytes\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
+                return resultData;
             }
-            catch (Exception ex)
-            {
-                LogManager.LogError("WMI Call failed: {0}. [scope={1}, path={2}, methodName={3}, iDataBlockIndex={4}]", ex.Message, scope, path, methodName, iDataBlockIndex);
-            }
+
+            // The first byte is the flag; subsequent bytes contain the actual data.
+            byte flag = outBytes[0];
+            readSuccess = (flag == 1);
+
+            // Copy the remaining bytes as the returned data.
+            int dataLength = outBytes.Length - 1;
+            resultData = new byte[dataLength];
+            Array.Copy(outBytes, 1, resultData, 0, dataLength);
 
             return resultData;
         }
