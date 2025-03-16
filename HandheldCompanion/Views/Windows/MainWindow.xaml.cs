@@ -633,11 +633,14 @@ public partial class MainWindow : GamepadWindow
 
     private async void Window_Closed(object sender, EventArgs e)
     {
-        LogManager.LogInformation("Closing {0}", Title);
-
         // wait until all managers have initialized
-        while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
-            await Task.Delay(250).ConfigureAwait(false);
+        if (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+        {
+            LogManager.LogWarning("Waiting for all managers to be fully initialized before halting them");
+
+            while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+                await Task.Delay(250).ConfigureAwait(false);
+        }
 
         CurrentDevice.Close();
 
