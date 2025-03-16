@@ -171,7 +171,15 @@ public class Claw8 : ClawA1M
         byte[] fullPackage = new byte[32];
         fullPackage[0] = 212;
 
-        byte[] data = WMI.Get(Scope, Path, "Get_AP", 1, out bool readSuccess);
+        /*
+         * Get_AP
+         * switch (iDataBlockIndex)
+         * case 0: length = 6;
+         * case 1: length = 3;
+         * case 2: length = 7;
+         */
+
+        byte[] data = WMI.Get(Scope, Path, "Get_AP", 1, 3, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
         fullPackage[1] = data[0];
@@ -185,7 +193,7 @@ public class Claw8 : ClawA1M
         byte[] fullPackage = new byte[32];
         fullPackage[0] = 152;
 
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", 152, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", 152, 1, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enabled);
         fullPackage[1] = data[0];

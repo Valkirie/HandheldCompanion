@@ -102,10 +102,10 @@ namespace HandheldCompanion
             managementObject.InvokeMethod(methodName, inParams, null);
         }
 
-        public static byte[] Get(string scope, string path, string methodName, int iDataBlockIndex, out bool readSuccess)
+        public static byte[] Get(string scope, string path, string methodName, int iDataBlockIndex, int length, out bool readSuccess)
         {
             readSuccess = false;
-            byte[] resultData = new byte[0];
+            byte[] resultData = new byte[length];
 
             try
             {
@@ -135,6 +135,7 @@ namespace HandheldCompanion
                     ManagementBaseObject outParams = managementObject.InvokeMethod(methodName, inParams, null);
                     if (outParams == null)
                     {
+                        LogManager.LogError("WMI Call failed at InvokeMethod: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
                         return resultData;
                     }
 
@@ -142,12 +143,14 @@ namespace HandheldCompanion
                     ManagementBaseObject dataOut = outParams["Data"] as ManagementBaseObject;
                     if (dataOut == null)
                     {
+                        LogManager.LogError("WMI Call failed at outParams[\"Data\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
                         return resultData;
                     }
 
                     byte[] outBytes = dataOut["Bytes"] as byte[];
                     if (outBytes == null || outBytes.Length < 1)
                     {
+                        LogManager.LogError("WMI Call failed at dataOut[\"Bytes\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
                         return resultData;
                     }
 
@@ -163,13 +166,11 @@ namespace HandheldCompanion
             }
             catch (ManagementException mex)
             {
-                // Optionally log the WMI-specific exception
-                // e.g., Console.WriteLine("WMI Error: " + mex.Message);
+                LogManager.LogError("WMI Call failed: {0}. [scope={1}, path={2}, methodName={3}, iDataBlockIndex={4}]", mex.Message, scope, path, methodName, iDataBlockIndex);
             }
             catch (Exception ex)
             {
-                // Optionally log the general exception
-                // e.g., Console.WriteLine("General Error: " + ex.Message);
+                LogManager.LogError("WMI Call failed: {0}. [scope={1}, path={2}, methodName={3}, iDataBlockIndex={4}]", ex.Message, scope, path, methodName, iDataBlockIndex);
             }
 
             return resultData;
