@@ -138,6 +138,10 @@ namespace HandheldCompanion.Managers
             {
                 bool updated = false;
 
+                // Prevent null reference if TDPOverrideValues is null.
+                if (profile.TDPOverrideValues == null)
+                    continue;
+
                 // Loop through all override values
                 for (int i = 0; i < profile.TDPOverrideValues.Length; i++)
                 {
