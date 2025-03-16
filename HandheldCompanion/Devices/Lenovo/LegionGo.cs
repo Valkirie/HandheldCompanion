@@ -227,6 +227,7 @@ public class LegionGo : IDevice
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.FanOverride;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;

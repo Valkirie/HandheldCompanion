@@ -34,6 +34,7 @@ public enum DeviceCapabilities : ushort
     BatteryChargeLimit = 64,
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
+    FanOverride = 512,
 }
 
 public struct ECDetails

@@ -1,18 +1,8 @@
-﻿using HandheldCompanion.Devices.Lenovo;
-using HandheldCompanion.Extensions;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Shared;
-using HandheldCompanion.Utils;
-using HidLibrary;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Management;
-using System.Numerics;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Devices;
 
@@ -31,6 +21,7 @@ public class Claw8 : ClawA1M
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.FanOverride;
 
         // overwrite ClawA1M default power profiles
         PowerProfile powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BetterBatteryGuid);
@@ -117,6 +108,8 @@ public class Claw8 : ClawA1M
 
     public override void Close()
     {
+        SetFanFullSpeed(false);
+
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
@@ -142,9 +135,22 @@ public class Claw8 : ClawA1M
         byte[] fullPackage = new byte[32];
         fullPackage[0] = 212;
 
-        byte[] ap = WMI.Get(Scope, Path, "Get_AP", 1);
-        byte num = ap[0].SetBit(7, enable);
-        fullPackage[1] = num;
+        byte[] data = WMI.Get(Scope, Path, "Get_AP", 1);
+        data[0] = data[0].SetBit(7, enable);
+        fullPackage[1] = data[0];
+
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
+    public void SetFanFullSpeed(bool enabled)
+    {
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = 152;
+
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", 152);
+        data[0] = data[0].SetBit(7, enabled);
+        fullPackage[1] = data[0];
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
