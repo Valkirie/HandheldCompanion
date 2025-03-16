@@ -2,12 +2,39 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Devices;
 
 public class Claw8 : ClawA1M
 {
+    #region imports
+    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int getEGmode();
+
+    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int setEGmode(int setMode);
+
+    public enum EnduranceGamingControl
+    {
+        Off = 0,    // Endurance Gaming disable
+        On = 1,     // Endurance Gaming enable
+        Auto = 2,   // Endurance Gaming auto
+    }
+
+    public enum EnduranceGamingMode
+    {
+        Performance = 0,        // Endurance Gaming better performance mode
+        Balanced = 1,           // Endurance Gaming balanced mode
+        MaximumBattery = 2,     // Endurance Gaming maximum battery mode
+    }
+
+    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
+    #endregion
+
     public Claw8()
     {
         // device specific settings
@@ -24,17 +51,18 @@ public class Claw8 : ClawA1M
         Capabilities |= DeviceCapabilities.FanOverride;
 
         // overwrite ClawA1M default power profiles
-        PowerProfile powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BetterBatteryGuid);
-        if (powerProfile != null)
-            powerProfile.TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d };
+        Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
+        {
+            { BetterBatteryGuid,      new double[] { 20.0d, 20.0d, 20.0d } },
+            { BetterPerformanceGuid,  new double[] { 30.0d, 30.0d, 30.0d } },
+            { BestPerformanceGuid,    new double[] { 35.0d, 35.0d, 35.0d } }
+        };
 
-        powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BetterPerformanceGuid);
-        if (powerProfile != null)
-            powerProfile.TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d };
-
-        powerProfile = DevicePowerProfiles.FirstOrDefault(profile => profile.Guid == BestPerformanceGuid);
-        if (powerProfile != null)
-            powerProfile.TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d };
+        foreach (KeyValuePair<Guid, double[]> kvp in tdpOverrides)
+        {
+            PowerProfile? profile = DevicePowerProfiles.FirstOrDefault(p => p.Guid == kvp.Key);
+            if (profile != null) profile.TDPOverrideValues = kvp.Value;
+        }
     }
 
     public override bool Open()
@@ -86,6 +114,14 @@ public class Claw8 : ClawA1M
             // update fan table
             SetFanTable(fanTable);
         }
+
+        // MSI Center, API_UserScenario
+        if (profile.Guid == BetterBatteryGuid)
+            setEGControlMode(EnduranceGamingControl.Auto, EnduranceGamingMode.MaximumBattery);
+        else if (profile.Guid == BetterPerformanceGuid)
+            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
+        else if (profile.Guid == BestPerformanceGuid)
+            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
 
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
