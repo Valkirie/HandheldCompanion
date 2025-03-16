@@ -79,7 +79,7 @@ public partial class LayoutPage : Page
             { "GyroPage", ( gyroPage, navGyro ) },
         };
 
-        foreach(ILayoutPage page in pages.Values.Select(p => p.Item1))
+        foreach (ILayoutPage page in pages.Values.Select(p => p.Item1))
         {
             if (page.DataContext is BaseViewModel baseViewModel)
                 baseViewModel.PropertyChanged += (sender, e) => BaseViewModel_PropertyChanged(page, e);
@@ -95,7 +95,7 @@ public partial class LayoutPage : Page
 
     private void BaseViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        switch(e.PropertyName)
+        switch (e.PropertyName)
         {
             case "IsEnabled":
                 break;

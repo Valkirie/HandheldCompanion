@@ -342,7 +342,7 @@ public class ProcessManager : IManager
             // Dispose the process.
             processEx.Dispose();
         }
-        
+
         processLocks.TryRemove(processId, out _);
     }
 
@@ -576,7 +576,7 @@ public class ProcessManager : IManager
         handles.Insert(0, processEx.Handle);
 
         // suspend processes
-        foreach(int handle in handles)
+        foreach (int handle in handles)
             ProcessUtils.NtSuspendProcess(handle);
     }
 

@@ -5,7 +5,6 @@ using HandheldCompanion.Processors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -139,7 +138,7 @@ public static class PerformanceManager
                 Processor_StatusChanged(processor.CanChangeTDP, false);
             }
             else if (!processor.IsInitialized)
-            {                
+            {
                 processor.StatusChanged += Processor_StatusChanged;
                 processor.Initialize();
             }

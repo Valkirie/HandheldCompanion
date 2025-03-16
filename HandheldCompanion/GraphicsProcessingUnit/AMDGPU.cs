@@ -312,7 +312,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             return (float)TelemetryData.gpuVramValue;
         }
-        
+
         static AMDGPU()
         {
             ProcessTargets = new HashSet<string> { "RadeonSoftware", "cncmd" };
