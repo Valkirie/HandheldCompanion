@@ -115,13 +115,10 @@ public class DeviceManager : IManager
 
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
         IEnumerable<string> drivers = DriverStore.GetKnownDrivers().Cast<string>();
-        if (drivers.Count() != 0)
-        {
-            foreach (string InfPath in drivers)
-                PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
+        foreach (string InfPath in drivers)
+            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
 
-            LogManager.LogInformation("Deploying known drivers {0} from driver store.", string.Join(',', drivers));
-        }
+        LogManager.LogInformation("Deploying known drivers {0} from driver store.", string.Join(',', drivers));
     }
 
     public override void Stop()
