@@ -220,8 +220,8 @@ public class ProcessEx : IDisposable
     public const string HighDPIAwareValue = "HIGHDPIAWARE";
 
     public Process Process { get; private set; }
-    public int ProcessId => Process.Id;
-    public nint Handle => Process.Handle;
+    public int ProcessId => Process?.Id ?? 0;
+    public nint Handle => Process?.Handle ?? IntPtr.Zero;
 
     public ProcessFilter Filter { get; set; }
     public PlatformType Platform { get; set; }
