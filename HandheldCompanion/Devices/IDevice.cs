@@ -696,6 +696,9 @@ public abstract class IDevice
     {
         switch (controllerMode)
         {
+            case HIDmode.DualShock4Controller:
+                KeyPressDelay = 180;
+                break;
             default:
                 KeyPressDelay = 20;
                 break;

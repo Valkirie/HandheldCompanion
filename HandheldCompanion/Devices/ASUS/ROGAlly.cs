@@ -504,19 +504,6 @@ public class ROGAlly : IDevice
         return 100.0f;
     }
 
-    public override void SetKeyPressDelay(HIDmode controllerMode)
-    {
-        switch (controllerMode)
-        {
-            case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
-                break;
-            default:
-                KeyPressDelay = 20;
-                break;
-        }
-    }
-
     private void HandleEvent(byte key)
     {
         if (!keyMapping.ContainsKey(key))

@@ -305,19 +305,6 @@ public class ClawA1M : IDevice
         }
     }
 
-    public override void SetKeyPressDelay(HIDmode controllerMode)
-    {
-        switch (controllerMode)
-        {
-            case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
-                break;
-            default:
-                KeyPressDelay = 20;
-                break;
-        }
-    }
-
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)

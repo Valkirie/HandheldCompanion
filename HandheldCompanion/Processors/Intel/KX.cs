@@ -12,6 +12,7 @@ public class KX
     private const string pnt_limit = "59";
     private const string pnt_clock = "94";
 
+    private string[] mchbar_addresses = new string[] { "0xfedc59A0", "0xfed159A0" };
     private string mchbar;
     private readonly string path;
     private readonly ProcessStartInfo startInfo;
@@ -36,6 +37,52 @@ public class KX
     }
 
     internal bool init()
+    {
+        if (startInfo is null)
+            return false;
+
+        try
+        {
+            foreach (string add in mchbar_addresses)
+            {
+                startInfo.Arguments = $"/rdmem32 {add}";
+                using (var ProcessOutput = Process.Start(startInfo))
+                {
+                    while (!ProcessOutput.StandardOutput.EndOfStream)
+                    {
+                        var line = ProcessOutput.StandardOutput.ReadLine();
+
+                        if (!line.Contains("Return"))
+                            continue;
+
+                        // parse result
+                        line = CommonUtils.Between(line, "Return ");
+                        var returned = long.Parse(line);
+                        var output = "0x" + returned.ToString("X2").Substring(0, 4);
+                        
+                        // mcbar is null
+                        if (output == "0xFFFFFFFF")
+                            continue;
+
+                        mchbar = output + pnt_limit;
+
+                        ProcessOutput.Close();
+                        return true;
+                    }
+
+                    ProcessOutput.Close();
+                }
+            }
+        }
+        catch
+        {
+        }
+
+        return false;
+    }
+
+    [Obsolete("This function is deprecated and will be removed in future versions.")]
+    internal bool init_legacy()
     {
         if (startInfo is null)
             return false;

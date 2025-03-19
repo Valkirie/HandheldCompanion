@@ -47,6 +47,7 @@ public class IntelProcessor : Processor
         {
             var error = 0;
 
+            /*
             if (IDevice.GetCurrent() is Claw8 claw8)
             {
                 switch (type)
@@ -71,7 +72,17 @@ public class IntelProcessor : Processor
                         break;
                 }
             }
+            */
 
+            switch (type)
+            {
+                case PowerType.Slow:
+                    error = platform.set_long_limit((int)limit);
+                    break;
+                case PowerType.Fast:
+                    error = platform.set_short_limit((int)limit);
+                    break;
+            }
 
             base.SetTDPLimit(type, limit, immediate, error);
         }

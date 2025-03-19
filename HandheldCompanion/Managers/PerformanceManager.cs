@@ -128,25 +128,11 @@ public static class PerformanceManager
         processor = Processor.GetCurrent();
         if (processor is not null)
         {
-            if (IDevice.GetCurrent() is Claw8 claw8)
-            {
-                // fake initialization
-                processor.CanChangeTDP = true;
-                processor.CanChangeGPU = false;
-                processor.IsInitialized = true;
-
-                Processor_StatusChanged(processor.CanChangeTDP, false);
-            }
-            else if (!processor.IsInitialized)
-            {
-                processor.StatusChanged += Processor_StatusChanged;
-                processor.Initialize();
-            }
+            processor.StatusChanged += Processor_StatusChanged;
+            processor.Initialize();
         }
         else
-        {
             ProcessorStatusChanged?.Invoke(false, false);
-        }
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
