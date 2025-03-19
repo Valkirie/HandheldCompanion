@@ -168,11 +168,7 @@ public class ClawA1M : IDevice
         StartWatching();
 
         // configure controller to XInput
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.XInput, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
+        SwitchMode(GamepadMode.XInput);
 
         return true;
     }
@@ -183,11 +179,7 @@ public class ClawA1M : IDevice
         StopWatching();
 
         // configure controller to Desktop
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.Desktop, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
+        SwitchMode(GamepadMode.Desktop);
 
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
@@ -195,6 +187,26 @@ public class ClawA1M : IDevice
         hidDevices.Clear();
 
         base.Close();
+    }
+
+    private bool SwitchMode(GamepadMode gamepadMode)
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)gamepadMode, (byte)MKeysFunction.Macro };
+            if (device.Write(msg))
+            {
+                LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
+                return true;
+            }
+            else
+            {
+                LogManager.LogWarning("Failed to switch controller mode to {0}", gamepadMode);
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public override bool IsReady()
