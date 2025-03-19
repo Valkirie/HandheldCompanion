@@ -199,16 +199,17 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 {
                     if (ProcessTargets.Contains(proc.ProcessName))
                     {
+                        // kill process
                         proc.Kill();
+                        LogManager.LogError("{0} was killed to restore {1} library", proc.ProcessName, this.GetType().Name);
+
                         // Remove the target so we don't try killing it again.
                         ProcessTargets.Remove(proc.ProcessName);
 
                         // If all targets are handled, exit early.
                         if (ProcessTargets.Count == 0)
-                            break;
+                            return;
                     }
-
-                    LogManager.LogError("{0} was killed to restore {1} library", proc.ProcessName, this.GetType().Name);
                 }
             }
             finally
