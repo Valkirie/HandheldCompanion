@@ -65,7 +65,7 @@ namespace HandheldCompanion.ViewModels
                     switch (IsQuickTools)
                     {
                         case false:
-                            ProfilesPickerViewModel profile = ProfilePickerItems.First(p => p.LinkedPresetId == _selectedPreset.Guid);
+                            ProfilesPickerViewModel profile = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == _selectedPreset.Guid);
                             if (profile is not null)
                                 _selectedPresetIndex = ProfilePickerItems.IndexOf(profile);
                             break;
@@ -524,7 +524,7 @@ namespace HandheldCompanion.ViewModels
 
             PropertyChanged += (sender, e) =>
             {
-                if (SelectedPreset is null)
+                if (SelectedPreset is null || SelectedPreset.Name is null)
                     return;
 
                 // skip PropertyChanged updates for specific properties
