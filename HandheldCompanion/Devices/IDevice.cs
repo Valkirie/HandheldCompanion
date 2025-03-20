@@ -710,7 +710,7 @@ public abstract class IDevice
         Gyrometer? gyrometer = Gyrometer.GetDefault();
         Accelerometer? accelerometer = Accelerometer.GetDefault();
 
-        if (gyrometer is not null && accelerometer is not null)
+        if (gyrometer is not null || accelerometer is not null)
         {
             // check sensor
             string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
