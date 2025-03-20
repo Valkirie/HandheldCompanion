@@ -218,6 +218,20 @@ namespace HandheldCompanion.Controllers
             return false;
         }
 
+        public virtual int GetVendorID()
+        {
+            if (Details is not null)
+                return Details.VendorID;
+            return 0;
+        }
+
+        public virtual int GetProductID()
+        {
+            if (Details is not null)
+                return Details.ProductID;
+            return 0;
+        }
+
         public virtual bool IsWireless()
         {
             return IsBluetooth() || IsDongle();
