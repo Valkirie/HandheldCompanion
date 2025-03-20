@@ -1257,9 +1257,10 @@ public static class ControllerManager
                             {
                                 pnPDevice.RemoveAndSetup();
                                 pnPDevice.InstallCustomDriver(InfPath, out bool rebootRequired);
-                                
+                                /*
                                 UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
                                 usbPnPDevice?.CyclePort();
+                                */
                             }
 
                             // remove device from store

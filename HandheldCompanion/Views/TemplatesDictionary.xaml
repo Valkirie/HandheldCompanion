@@ -246,7 +246,7 @@
                                     IsIndeterminate="True"
                                     Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <ui:ProgressBar.RenderTransform>
-                                        <ScaleTransform ScaleY="3.8" />
+                                        <ScaleTransform ScaleY="4.5" />
                                     </ui:ProgressBar.RenderTransform>
                                 </ui:ProgressBar>
                             </Grid>

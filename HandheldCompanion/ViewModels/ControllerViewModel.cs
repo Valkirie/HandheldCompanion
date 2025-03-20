@@ -13,16 +13,7 @@ namespace HandheldCompanion.ViewModels
             get => _controller;
             set
             {
-                // clear previous events
-                if (_controller is not null)
-                {
-                    _controller.UserIndexChanged -= Controller_UserIndexChanged;
-                    _controller.StateChanged -= Controller_StateChanged;
-                    _controller.VisibilityChanged -= Controller_VisibilityChanged;
-                }
-
                 _controller = value;
-
                 Updated();
             }
         }
@@ -49,6 +40,10 @@ namespace HandheldCompanion.ViewModels
 
         public ControllerViewModel(IController controller)
         {
+            controller.UserIndexChanged -= Controller_UserIndexChanged;
+            controller.StateChanged -= Controller_StateChanged;
+            controller.VisibilityChanged -= Controller_VisibilityChanged;
+
             Controller = controller;
             Controller.UserIndexChanged += Controller_UserIndexChanged;
             Controller.StateChanged += Controller_StateChanged;
