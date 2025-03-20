@@ -1,10 +1,12 @@
 ﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
@@ -63,6 +65,12 @@ public class Claw8 : ClawA1M
             PowerProfile? profile = DevicePowerProfiles.FirstOrDefault(p => p.Guid == kvp.Key);
             if (profile != null) profile.TDPOverrideValues = kvp.Value;
         }
+
+        this.OEMChords.Add(new KeyboardChord("LButton",
+            [KeyCode.LButton | KeyCode.OemClear],
+            [KeyCode.LButton | KeyCode.OemClear],
+            true, ButtonFlags.OEM5
+        ));
     }
 
     public override bool Open()
