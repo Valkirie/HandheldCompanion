@@ -51,6 +51,12 @@ namespace HandheldCompanion.Controls.Hints
 
         protected override async void HintActionButton_Click(object sender, RoutedEventArgs e)
         {
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                this.IsEnabled = false;
+            });
+
             RegistryUtils.SetValue(@"SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000", "DalEmbeddedIntegerScalingSupport", 1);
 
             Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())

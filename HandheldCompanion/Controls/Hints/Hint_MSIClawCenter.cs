@@ -13,13 +13,6 @@ namespace HandheldCompanion.Controls.Hints
 {
     public class Hint_MSIClawCenter : IHint
     {
-        private List<string> serviceNames =
-        [
-            "ArmouryCrateSEService",
-            "AsusAppService",
-            "ArmouryCrateControlInterface",
-        ];
-
         private Timer watcherTimer;
         private const string TaskName = "MSI_Center_M_Server";
         private const string UIname = "MSI Center M";
@@ -107,6 +100,12 @@ namespace HandheldCompanion.Controls.Hints
 
         protected override void HintActionButton_Click(object sender, RoutedEventArgs e)
         {
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                this.IsEnabled = false;
+            });
+            
             KillTask();
             KillProcesses();
         }

@@ -79,6 +79,12 @@ namespace HandheldCompanion.Controls.Hints
 
         protected override async void HintActionButton_Click(object sender, RoutedEventArgs e)
         {
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                this.IsEnabled = false;
+            });
+
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity", 0);
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable", 0);
 

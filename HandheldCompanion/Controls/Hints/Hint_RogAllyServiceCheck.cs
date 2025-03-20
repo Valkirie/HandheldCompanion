@@ -89,6 +89,12 @@ namespace HandheldCompanion.Controls.Hints
             if (!serviceControllers.Any())
                 return;
 
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                this.IsEnabled = false;
+            });
+
             Task.Run(async () =>
             {
                 foreach (ServiceController serviceController in serviceControllers)
