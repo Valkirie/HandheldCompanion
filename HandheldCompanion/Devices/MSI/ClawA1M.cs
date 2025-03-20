@@ -43,7 +43,7 @@ public class ClawA1M : IDevice
         Combination,
     }
 
-    protected enum CommandType
+    public enum CommandType
     {
         EnterProfileConfig = 1,
         ExitProfileConfig = 2,
@@ -53,7 +53,7 @@ public class ClawA1M : IDevice
         Ack = 6,
         SwitchProfile = 7,
         WriteProfileToEEPRom = 8,
-        ReadFirmwareVersion = 9,
+        SyncRGB = 9,
         ReadRGBStatusAck = 10, // 0x0000000A
         ReadCurrentProfile = 11, // 0x0000000B
         ReadCurrentProfileAck = 12, // 0x0000000C
@@ -64,6 +64,10 @@ public class ClawA1M : IDevice
         ReadGamepadMode = 38, // 0x00000026
         GamepadModeAck = 39, // 0x00000027
         ResetDevice = 40, // 0x00000028
+        SetFeatureState = 44, // 0x0000002C
+        DisableDevice = 45, // 0x0000002D
+        SetMotionStatus = 47, // 0x0000002F
+        MotionDataAck = 48, // 0x00000030
         RGBControl = 224, // 0x000000E0
         CalibrationControl = 253, // 0x000000FD
         CalibrationAck = 254, // 0x000000FE
@@ -168,6 +172,7 @@ public class ClawA1M : IDevice
 
         // configure controller to XInput
         SwitchMode(GamepadMode.XInput);
+        SetMotionStatus(true);
 
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
@@ -183,7 +188,10 @@ public class ClawA1M : IDevice
 
             // configure controller to XInput
             if (Controller.IsXInput())
+            {
                 SwitchMode(GamepadMode.XInput);
+                SetMotionStatus(true);
+            }
         }
     }
 
@@ -203,6 +211,26 @@ public class ClawA1M : IDevice
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
 
         base.Close();
+    }
+
+    protected bool SetMotionStatus(bool enabled)
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SetMotionStatus, (byte)(enabled ? 1 : 0) };
+            if (device.Write(msg))
+            {
+                LogManager.LogInformation("Successfully SetMotionStatus to {0}", enabled);
+                return true;
+            }
+            else
+            {
+                LogManager.LogWarning("Failed to SetMotionStatus to {0}", enabled);
+                return false;
+            }
+        }
+
+        return false;
     }
 
     protected bool SwitchMode(GamepadMode gamepadMode)
