@@ -25,17 +25,18 @@ namespace HandheldCompanion.Controls.Hints
 
         public Hint_CoreIsolationCheck() : base()
         {
-            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity"))
-            {
-                HypervisorWatcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
-                HypervisorWatcher.Start();
-            }
+            // Ensure registry keys exist and set up watchers.
+            SetupRegistryWatcher(
+                @"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios",
+                "HypervisorEnforcedCodeIntegrity",
+                HypervisorWatcher,
+                HypervisorQuery);
 
-            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable"))
-            {
-                VulnerableDriverWatcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
-                VulnerableDriverWatcher.Start();
-            }
+            SetupRegistryWatcher(
+                @"SYSTEM\CurrentControlSet\Control\CI\Config",
+                "VulnerableDriverBlocklistEnable",
+                VulnerableDriverWatcher,
+                VulnerableDriverQuery);
 
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
@@ -47,6 +48,15 @@ namespace HandheldCompanion.Controls.Hints
             this.HintActionButton.Content = Properties.Resources.Hint_CoreIsolationCheckAction;
 
             CheckSettings();
+        }
+
+        private void SetupRegistryWatcher(string regPath, string valueName, ManagementEventWatcher watcher, WqlEventQuery query)
+        {
+            if (!RegistryUtils.KeyExists(regPath, valueName))
+                RegistryUtils.CreateKey(regPath);
+
+            watcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
+            watcher.Start();
         }
 
         private void HandleEvent(object sender, EventArrivedEventArgs e)
@@ -63,7 +73,7 @@ namespace HandheldCompanion.Controls.Hints
             // UI thread
             UIHelper.TryInvoke(() =>
             {
-                this.Visibility = Processor.GetCurrent() is IntelProcessor && (HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable) ? Visibility.Visible : Visibility.Collapsed;
+                this.Visibility = (HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable) ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
@@ -103,11 +113,8 @@ namespace HandheldCompanion.Controls.Hints
 
         public override void Stop()
         {
-            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity"))
-                HypervisorWatcher.Stop();
-
-            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable"))
-                VulnerableDriverWatcher.Stop();
+            HypervisorWatcher?.Stop();
+            VulnerableDriverWatcher?.Stop();
 
             base.Stop();
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler.Fluent;
 using System;
 
 namespace HandheldCompanion.Utils;
@@ -23,6 +24,17 @@ public static class RegistryUtils
     {
         var keyName = HKLM + "\\" + key;
         return Registry.GetValue(keyName, valueName, null) != null;
+    }
+
+    public static bool CreateKey(string key)
+    {
+        // CreateSubKey will create the key if it doesn't exist,
+        // or open it if it does.
+        using (RegistryKey regKey = Registry.LocalMachine.CreateSubKey(key))
+            if (regKey != null)
+                return true;
+
+        return false;
     }
 
     public static string GetString(string key, string valueName)
