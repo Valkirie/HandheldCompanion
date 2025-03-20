@@ -1187,10 +1187,6 @@ public static class ControllerManager
             if (pnPDevice is null)
                 return false;
 
-            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-            if (usbPnPDevice is null)
-                return false;
-
             DriverMeta pnPDriver = null;
             try
             {
@@ -1209,7 +1205,9 @@ public static class ControllerManager
                         DriverStore.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
 
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
-                        usbPnPDevice.CyclePort();
+
+                        UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+                        usbPnPDevice?.CyclePort();
 
                         PowerCyclers[baseContainerDeviceInstanceId] = true;
                     }
@@ -1259,6 +1257,9 @@ public static class ControllerManager
                             {
                                 pnPDevice.RemoveAndSetup();
                                 pnPDevice.InstallCustomDriver(InfPath, out bool rebootRequired);
+                                
+                                UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+                                usbPnPDevice?.CyclePort();
                             }
 
                             // remove device from store

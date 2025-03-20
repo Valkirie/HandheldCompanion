@@ -163,7 +163,7 @@ namespace HandheldCompanion.Managers
 
         public static void Resume(bool OS)
         {
-            controllerLock.Wait();
+            controllerLock.Wait(3000);
             try
             {
                 if (Module == IntPtr.Zero)
@@ -192,7 +192,7 @@ namespace HandheldCompanion.Managers
             // Disconnect the controller first
             SetControllerMode(HIDmode.NoController);
 
-            controllerLock.Wait();
+            controllerLock.Wait(3000);
             try
             {
                 // Dispose of the ViGEm client and unload the module
@@ -290,7 +290,7 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerMode(HIDmode mode, bool OS = false)
         {
-            controllerLock.Wait();
+            controllerLock.Wait(3000);
             try
             {
                 // If the requested mode is already active, do nothing
@@ -362,7 +362,7 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerStatus(HIDstatus status)
         {
-            controllerLock.Wait();
+            controllerLock.Wait(3000);
             try
             {
                 if (vTarget is null)
