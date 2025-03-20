@@ -13,7 +13,6 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using NumQuaternion = System.Numerics.Quaternion;
 using NumVector3 = System.Numerics.Vector3;
 
 namespace HandheldCompanion.Views.Windows;
@@ -30,7 +29,6 @@ public partial class OverlayModel : OverlayWindow
     private Quaternion DevicePose;
     private Vector3D DevicePoseRad;
     private Vector3D DiffAngle = new(0, 0, 0);
-    private static MadgwickAHRS madgwickAHRS;
 
     private static IEnumerable<ButtonFlags> resetFlags = [ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4];
 
@@ -62,11 +60,6 @@ public partial class OverlayModel : OverlayWindow
 
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        float samplePeriod = TimerManager.GetPeriod() / 1000f;
-        madgwickAHRS = new(samplePeriod, 0.1f);
-
-        ResetModelPose();
-
         // initialize timers
         UpdateTimer = new Timer(33)
         {
@@ -80,12 +73,7 @@ public partial class OverlayModel : OverlayWindow
         switch (name)
         {
             case "OverlayControllerMotion":
-                {
-                    MotionActivated = Convert.ToBoolean(value);
-
-                    // UI thread
-                    UIHelper.TryInvoke(() => { ResetModelPose(); });
-                }
+                MotionActivated = Convert.ToBoolean(value);
                 break;
             case "OverlayFaceCamera":
                 FaceCamera = Convert.ToBoolean(value);
@@ -196,7 +184,7 @@ public partial class OverlayModel : OverlayWindow
         }
     }
 
-    private void ResetModelPose()
+    private void ResetModelPose(GamepadMotion gamepadMotion)
     {
         // Reset model to initial pose
         FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d); // Angles when facing camera
@@ -208,7 +196,7 @@ public partial class OverlayModel : OverlayWindow
         ShoulderTriggerAngleLeftPrev = 0;
         ShoulderTriggerAngleRightPrev = 0;
 
-        madgwickAHRS.Reset();
+        gamepadMotion.Reset();
     }
 
     public void Close(bool v)
@@ -273,8 +261,6 @@ public partial class OverlayModel : OverlayWindow
 
         if (newModel != CurrentModel)
         {
-            ResetModelPose();
-
             CurrentModel?.Dispose();
             CurrentModel = newModel;
 
@@ -326,29 +312,17 @@ public partial class OverlayModel : OverlayWindow
 
         // Reset device pose if all facebuttons are pressed at the same time
         if (Inputs.ButtonState.Buttons.Intersect(resetFlags).Count() == 4)
-            ResetModelPose();
+            ResetModelPose(gamepadMotion);
 
         // Rotate for different coordinate system of 3D model and motion algorithm
         // Motion algorithm uses DS4 coordinate system
         // 3D model, has Z+ up, X+ to the right, Y+ towards the screen
 
         // Update Madgwick orientation filter with IMU sensor data for 3D overlay
-        gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
-        gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
-
-        madgwickAHRS.UpdateReport(
-            -InputUtils.deg2rad(gyroX),
-            InputUtils.deg2rad(gyroY),
-            -InputUtils.deg2rad(gyroZ),
-            -accelX,
-            accelY,
-            -accelZ,
-            gamepadMotion.deltaTime
-            );
+        gamepadMotion.GetOrientation(out float oW, out float oX, out float oY, out float oZ);
 
         // System.Numerics to Media.3D, library really requires System.Numerics
-        NumQuaternion quaternion = madgwickAHRS.GetQuaternion();
-        DevicePose = new Quaternion(quaternion.W, quaternion.X, quaternion.Y, quaternion.Z);
+        DevicePose = new Quaternion(oX, -oY, -oZ, oW);
 
         // Also make euler equivalent availible of quaternions
         NumVector3 euler = InputUtils.ToEulerAngles(DevicePose);
