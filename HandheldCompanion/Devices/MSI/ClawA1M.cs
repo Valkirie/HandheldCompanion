@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
-using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -9,7 +8,6 @@ using System.Collections.Generic;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
-using API_MysticLight;
 
 namespace HandheldCompanion.Devices;
 
@@ -171,11 +169,22 @@ public class ClawA1M : IDevice
         // configure controller to XInput
         SwitchMode(GamepadMode.XInput);
 
-        Class_HandHeld.Init();
-        DataCenter.CurrentStyle = EnumStyle.Wave;
-        Class_HandHeld.Set_LED_Style();
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
         return true;
+    }
+
+    private async void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
+    {
+        if (Controller.GetVendorID() == _vid && Controller.GetProductID() == _pid)
+        {
+            while (!IsReady())
+                await Task.Delay(1000).ConfigureAwait(false);
+
+            // configure controller to XInput
+            if (Controller.IsXInput())
+                SwitchMode(GamepadMode.XInput);
+        }
     }
 
     public override void Close()
@@ -191,10 +200,12 @@ public class ClawA1M : IDevice
             hidDevice.Dispose();
         hidDevices.Clear();
 
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+
         base.Close();
     }
 
-    private bool SwitchMode(GamepadMode gamepadMode)
+    protected bool SwitchMode(GamepadMode gamepadMode)
     {
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
@@ -279,13 +290,6 @@ public class ClawA1M : IDevice
         }
 
         specialKeyWatcher = null;
-    }
-
-    public override bool SetLedStatus(bool status)
-    {
-        DataCenter.CurrentStyle = status ? EnumStyle.Steady : EnumStyle.Off;
-        Class_HandHeld.Set_LED_Style();
-        return true;
     }
 
     private void onWMIEvent(object sender, EventArrivedEventArgs e)
