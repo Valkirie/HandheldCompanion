@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
+using API_MysticLight;
 
 namespace HandheldCompanion.Devices;
 
@@ -170,6 +171,10 @@ public class ClawA1M : IDevice
         // configure controller to XInput
         SwitchMode(GamepadMode.XInput);
 
+        Class_HandHeld.Init();
+        DataCenter.CurrentStyle = EnumStyle.Wave;
+        Class_HandHeld.Set_LED_Style();
+
         return true;
     }
 
@@ -274,6 +279,13 @@ public class ClawA1M : IDevice
         }
 
         specialKeyWatcher = null;
+    }
+
+    public override bool SetLedStatus(bool status)
+    {
+        DataCenter.CurrentStyle = status ? EnumStyle.Steady : EnumStyle.Off;
+        Class_HandHeld.Set_LED_Style();
+        return true;
     }
 
     private void onWMIEvent(object sender, EventArrivedEventArgs e)
