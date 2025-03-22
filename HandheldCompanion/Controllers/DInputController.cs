@@ -98,6 +98,9 @@ public class DInputController : IController
 
     public override void Plug()
     {
+        if (!IsConnected())
+            return;
+        
         // Acquire joystick
         joystick?.Acquire();
 
@@ -106,6 +109,9 @@ public class DInputController : IController
 
     public override void Unplug()
     {
+        if (!IsConnected())
+            return;
+
         // Unacquire the joystick
         joystick?.Unacquire();
 
