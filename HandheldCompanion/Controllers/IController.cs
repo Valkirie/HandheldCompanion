@@ -218,14 +218,14 @@ namespace HandheldCompanion.Controllers
             return false;
         }
 
-        public virtual int GetVendorID()
+        public virtual ushort GetVendorID()
         {
             if (Details is not null)
                 return Details.VendorID;
             return 0;
         }
 
-        public virtual int GetProductID()
+        public virtual ushort GetProductID()
         {
             if (Details is not null)
                 return Details.ProductID;
@@ -450,6 +450,9 @@ namespace HandheldCompanion.Controllers
             if (Details is null)
                 return;
 
+            // set flag
+            bool success = false;
+
             // set status
             IsBusy = true;
             ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
@@ -459,17 +462,25 @@ namespace HandheldCompanion.Controllers
             {
                 case "BTHENUM":
                 case "BTHLEDEVICE":
-                    Task.Run(async () =>
                     {
-                        Details.Uninstall(false);
-                        await Task.Delay(3000).ConfigureAwait(false); // Avoid blocking the synchronization context
-                        Devcon.Refresh();
-                    });
+                        if (Details.Uninstall(false))
+                        {
+                            Task.Delay(3000).Wait();
+                            success = Devcon.Refresh();
+                        }
+                    }
                     break;
-                default:
                 case "USB":
-                    Details.CyclePort();
+                case "HID":
+                    success = Details.CyclePort();
                     break;
+            }
+
+            if (!success)
+            {
+                // (re)set status
+                IsBusy = false;
+                ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
             }
         }
 

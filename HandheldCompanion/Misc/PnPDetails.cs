@@ -2,6 +2,7 @@
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Devices.Input;
 
 namespace HandheldCompanion;
 
@@ -75,11 +76,17 @@ public class PnPDetails
     public UsbPnPDevice GetUsbPnPDevice()
     {
         PnPDevice device = GetBasePnPDevice();
-        if (device is null)
-            return null;
 
-        // skip if bluetooth
-        if (isBluetooth)
+        // if device is HID, we need to get USB parent
+        string enumerator = device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+        if (Equals(enumerator, "HID"))
+        {
+            string device_parent = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            device = PnPDevice.GetDeviceByInstanceId(device_parent);
+            enumerator = device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+        }
+
+        if (!Equals(enumerator, "USB"))
             return null;
 
         return device.ToUsbPnPDevice();

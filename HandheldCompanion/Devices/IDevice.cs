@@ -77,7 +77,8 @@ public abstract class IDevice
 
     private static IDevice device;
 
-    protected ushort _vid, _pid;
+    protected int vendorId;
+    protected int[] productIds;
     protected Dictionary<byte, HidDevice> hidDevices = [];
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
@@ -262,7 +263,7 @@ public abstract class IDevice
         PullSensors();
     }
 
-    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
+    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(a => !a.silenced).SelectMany(a => a.state.Buttons).Distinct();
 
     public virtual bool IsOpen => openLibSys is not null;
 

@@ -112,6 +112,7 @@ public class Claw8 : ClawA1M
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
             byte[] fanTable = new byte[7];
+            fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4];
             fanTable[1] = (byte)profile.FanProfile.fanSpeeds[1];
             fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2];
             fanTable[3] = (byte)profile.FanProfile.fanSpeeds[4];
@@ -134,22 +135,6 @@ public class Claw8 : ClawA1M
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 
-    private void SetFanTable(byte[] fanTable)
-    {
-        /*
-         * iDataBlockIndex = 1; // CPU
-         * iDataBlockIndex = 2; // GPU
-         */
-
-        // Build the complete 32-byte package:
-        byte iDataBlockIndex = 1;
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = iDataBlockIndex;
-        Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
-
-        WMI.Set(Scope, Path, "Set_Fan", fullPackage);
-    }
-
     public override void Close()
     {
         SetFanFullSpeed(false);
@@ -162,6 +147,25 @@ public class Claw8 : ClawA1M
 
     public string Scope { get; set; } = "root\\WMI";
     public string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
+
+    private void SetFanTable(byte[] fanTable)
+    {
+        /*
+         * iDataBlockIndex = 1; // CPU
+         * iDataBlockIndex = 2; // GPU
+         */
+        byte iDataBlockIndex = 1;
+
+        // default: 49, 0, 40, 49, 58, 67, 75, 75
+        byte[] dataFan = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
+        Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
+
+        WMI.Set(Scope, Path, "Set_Fan", fullPackage);
+    }
 
     public void SetCPUPowerLimit(int PL, byte[] limit)
     {

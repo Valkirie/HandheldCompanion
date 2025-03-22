@@ -113,10 +113,7 @@ namespace HandheldCompanion.Misc
                         Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler);
 
                     // Remove the WindowClosed event handler
-                    Automation.RemoveAutomationEventHandler(
-                        WindowPattern.WindowClosedEvent,
-                        Element,
-                        _windowClosedHandler);
+                    // Automation.RemoveAutomationEventHandler(WindowPattern.WindowClosedEvent, Element, _windowClosedHandler);
                 }
                 catch { }
 

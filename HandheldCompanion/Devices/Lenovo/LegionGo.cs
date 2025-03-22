@@ -194,8 +194,8 @@ public class LegionGo : IDevice
         ProductIllustration = "device_legion_go";
 
         // used to monitor OEM specific inputs
-        _vid = 0x17EF;
-        _pid = 0x6182;
+        vendorId = 0x17EF;
+        productIds = [0x6182];
 
         // fix for threshold overflow
         GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);

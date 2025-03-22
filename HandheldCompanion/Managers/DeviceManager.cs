@@ -485,7 +485,7 @@ public class DeviceManager : IManager
         return details;
     }
 
-    public string SymLinkToInstanceId(string SymLink, string InterfaceGuid)
+    public static string SymLinkToInstanceId(string SymLink, string InterfaceGuid)
     {
         string InstanceId = SymLink.ToUpper().Replace(InterfaceGuid, "", StringComparison.InvariantCultureIgnoreCase);
         InstanceId = InstanceId.Replace("#", @"\");

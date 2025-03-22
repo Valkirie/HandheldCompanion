@@ -11,7 +11,6 @@ using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
@@ -25,7 +24,6 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
-using DeviceType = SharpDX.DirectInput.DeviceType;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
 using Timer = System.Timers.Timer;
 
@@ -391,9 +389,9 @@ public static class ControllerManager
         foreach (PnPDetails? device in ManagerFactory.deviceManager.PnPDevices.Values)
         {
             if (device.isXInput)
-                XUsbDeviceArrived(device, device.InterfaceGuid);
+                XUsbDeviceArrived(device, DeviceInterfaceIds.XUsbDevice);
             else if (device.isGaming)
-                HidDeviceArrived(device, device.InterfaceGuid);
+                HidDeviceArrived(device, DeviceInterfaceIds.HidDevice);
         }
     }
 
@@ -544,45 +542,6 @@ public static class ControllerManager
             else
             {
                 // DInput
-                DirectInput directInput = new DirectInput();
-                int VendorId = details.VendorID;
-                int ProductId = details.ProductID;
-
-                // initialize controller vars
-                Joystick joystick = null;
-
-                // search for the plugged controller
-                foreach (DeviceInstance? deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
-                {
-                    try
-                    {
-                        // Instantiate the joystick
-                        Joystick lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                        string SymLink = ManagerFactory.deviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, InterfaceGuid.ToString());
-
-                        if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            joystick = lookup_joystick;
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
-
-                if (joystick is not null)
-                {
-                    // supported controller
-                    VendorId = joystick.Properties.VendorId;
-                    ProductId = joystick.Properties.ProductId;
-                }
-                else
-                {
-                    // unsupported controller
-                    LogManager.LogWarning("Couldn't find matching DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
-                }
-
                 if (controller is not null)
                 {
                     controller.AttachDetails(details);
@@ -602,6 +561,9 @@ public static class ControllerManager
                 }
                 else
                 {
+                    int VendorId = details.VendorID;
+                    int ProductId = details.ProductID;
+
                     // search for a supported controller
                     switch (VendorId)
                     {
@@ -617,7 +579,7 @@ public static class ControllerManager
                                         // MI == 2 is controller proper
                                         // No idea what's in case of more than one controller connected
                                         if (details.GetMI() == 2)
-                                            controller = new GordonController(details);
+                                            try { controller = new GordonController(details); } catch { }
                                         break;
                                     // WIRELESS STEAM CONTROLLER
                                     case 0x1142:
@@ -627,12 +589,12 @@ public static class ControllerManager
                                         // actually connected. There is no easy way to check for connection without
                                         // actually talking to each controller. Handle only the first for now.
                                         if (details.GetMI() == 1)
-                                            controller = new GordonController(details);
+                                            try { controller = new GordonController(details); } catch { }
                                         break;
 
                                     // STEAM DECK
                                     case 0x1205:
-                                        controller = new NeptuneController(details);
+                                        try { controller = new NeptuneController(details); } catch { }
                                         break;
                                 }
                             }
@@ -656,6 +618,18 @@ public static class ControllerManager
                                 switch (ProductId)
                                 {
                                     case 0x6184:
+                                        break;
+                                }
+                            }
+                            break;
+
+                        // MSI
+                        case 0x0DB0:
+                            {
+                                switch (ProductId)
+                                {
+                                    case 0x1902:
+                                        try { controller = new DClawController(details); } catch { }
                                         break;
                                 }
                             }
@@ -787,12 +761,12 @@ public static class ControllerManager
                 switch (details.GetVendorID())
                 {
                     default:
-                        controller = new XInputController(details);
+                        try { controller = new XInputController(details); } catch { }
                         break;
 
                     // LegionGo
                     case "0x17EF":
-                        controller = new LegionController(details);
+                        try { controller = new LegionController(details); } catch { }
                         break;
 
                     // GameSir
@@ -808,7 +782,7 @@ public static class ControllerManager
                                 // Tarantula Pro
                                 default:
                                 case "0x1050":
-                                    controller = new TatantulaProController(details);
+                                    try { controller = new TatantulaProController(details); } catch { }
                                     break;
                             }
                         }
@@ -940,6 +914,8 @@ public static class ControllerManager
                     XInputController vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
                     if (vController is null)
                     {
+                        XInputController pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
+
                         if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
                         {
                             UpdateStatus(ControllerManagerStatus.Busy);
@@ -967,7 +943,9 @@ public static class ControllerManager
                             VirtualManager.SetControllerMode(HIDmode.NoController);
 
                             // create and dispose temporary virtual controllers
-                            VirtualManager.CreateTemporaryControllers();
+                            ushort vendorId = pController?.GetVendorID()?? VirtualManager.Microsoft;
+                            ushort productId = pController?.GetProductID() ?? VirtualManager.Xbox360;
+                            VirtualManager.CreateTemporaryControllers(vendorId, productId);
                             VirtualManager.DisposeTemporaryControllers();
 
                             // resume virtual controller

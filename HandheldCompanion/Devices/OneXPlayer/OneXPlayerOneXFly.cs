@@ -62,8 +62,8 @@ public class OneXPlayerOneXFly : IDevice
         };
 
         // LED HID Device
-        _vid = 0x1A2C;
-        _pid = 0xB001;
+        vendorId = 0x1A2C;
+        productIds = [0xB001];
 
         OEMChords.Add(new KeyboardChord("Turbo",
             [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
@@ -141,7 +141,7 @@ public class OneXPlayerOneXFly : IDevice
     public override bool IsReady()
     {
         // Prepare list for all HID devices
-        HidDevice[] HidDeviceList = HidDevices.Enumerate(_vid, new int[] { _pid }).ToArray();
+        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, productIds).ToArray();
 
         // Check every HID device to find LED device
         foreach (HidDevice device in HidDeviceList)

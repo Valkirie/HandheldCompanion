@@ -5,6 +5,7 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -84,8 +85,8 @@ public class ClawA1M : IDevice
         ProductIllustration = "device_msi_claw";
 
         // used to monitor OEM specific inputs
-        _vid = 0x0DB0;
-        _pid = 0x1901;
+        vendorId = 0x0DB0;
+        productIds = [0x1901, 0x1902];
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 65 };
@@ -171,7 +172,7 @@ public class ClawA1M : IDevice
         StartWatching();
 
         // configure controller to XInput
-        SwitchMode(GamepadMode.XInput);
+        SwitchMode(GamepadMode.DInput);
         SetMotionStatus(true);
 
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
@@ -181,16 +182,20 @@ public class ClawA1M : IDevice
 
     private async void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
     {
-        if (Controller.GetVendorID() == _vid && Controller.GetProductID() == _pid)
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
         {
             while (!IsReady())
                 await Task.Delay(1000).ConfigureAwait(false);
 
-            // configure controller to XInput
-            if (Controller.IsXInput())
+            ushort productId = Controller.GetProductID();
+            switch(productId)
             {
-                SwitchMode(GamepadMode.XInput);
-                SetMotionStatus(true);
+                case 0x1901:
+                    SwitchMode(GamepadMode.XInput);
+                    break;
+                case 0x1902:
+                    SwitchMode(GamepadMode.DInput);
+                    break;
             }
         }
     }
@@ -255,14 +260,14 @@ public class ClawA1M : IDevice
 
     public override bool IsReady()
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {
             if (!device.IsConnected)
                 continue;
 
             // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64)
+            if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
 
             hidDevices[INPUT_HID_ID] = device;
@@ -271,14 +276,18 @@ public class ClawA1M : IDevice
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
         {
-            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            try
+            {
+                PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+                string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+                PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+                Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+                string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
-            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+                return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+            }
+            catch { }
         }
 
         return false;

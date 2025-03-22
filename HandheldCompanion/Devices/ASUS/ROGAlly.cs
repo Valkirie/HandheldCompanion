@@ -83,8 +83,8 @@ public class ROGAlly : IDevice
         ProductIllustration = "device_rog_ally";
 
         // used to monitor OEM specific inputs
-        _vid = 0x0B05;
-        _pid = 0x1ABE;
+        vendorId = 0x0B05;
+        productIds = [0x1ABE];
 
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
@@ -395,7 +395,7 @@ public class ROGAlly : IDevice
 
     public override bool IsReady()
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {
             if (!device.IsConnected)
@@ -415,14 +415,18 @@ public class ROGAlly : IDevice
         {
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
             {
-                PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-                string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+                try
+                {
+                    PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+                    string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-                PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-                Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-                string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+                    PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+                    Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+                    string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
-                return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+                    return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+                }
+                catch { }
             }
         }
         catch (ArgumentException)

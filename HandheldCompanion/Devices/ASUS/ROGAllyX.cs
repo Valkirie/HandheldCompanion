@@ -14,7 +14,7 @@ public class ROGAllyX : ROGAlly
         ProductIllustration = "device_rog_ally_x";
 
         // used to monitor OEM specific inputs
-        _pid = 0x1B4C;
+        productIds = [0x1B4C];
 
         // overwrite ROGAlly default gyrometer axis settings
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);

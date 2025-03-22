@@ -48,11 +48,15 @@ namespace HandheldCompanion.Managers
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
 
         private static readonly Random ProductGenerator = new Random();
-        private static ushort ProductId = 0x28E; // Xbox 360
-        private static ushort VendorId = 0x45E;  // Microsoft
 
-        public static ushort LastKnownProductId = 0x28E;
-        public static ushort LastKnownVendorId = 0x45E;
+        public const ushort Microsoft = 0x45E;
+        public const ushort Xbox360 = 0x28E;
+
+        private static ushort ProductId = Xbox360;
+        private static ushort VendorId = Microsoft;
+
+        public static ushort LastKnownProductId = ProductId;
+        public static ushort LastKnownVendorId = VendorId;
 
         public static bool IsInitialized;
 
@@ -286,7 +290,7 @@ namespace HandheldCompanion.Managers
         }
 
         private static List<IXbox360Controller> temporaryControllers = new();
-        public static void CreateTemporaryControllers()
+        public static void CreateTemporaryControllers(ushort vendorId, ushort productId)
         {
             // Sanity-check: if the ViGEm client isn't available, abort
             if (vClient is null)
@@ -295,8 +299,8 @@ namespace HandheldCompanion.Managers
             // initialize controllers
             for(int i = 0; i < 4; i++)
             {
-                IXbox360Controller xboxController = vClient.CreateXbox360Controller();
-                temporaryControllers.Insert(0, xboxController);
+                IXbox360Controller xboxController = vClient.CreateXbox360Controller(vendorId, productId);
+                temporaryControllers.Add(xboxController);
 
                 xboxController.Connect();
                 Thread.Sleep(1000);
