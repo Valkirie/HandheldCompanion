@@ -528,13 +528,13 @@ public static class ControllerManager
                     switch (joyShockType)
                     {
                         case JOY_TYPE.DualSense:
-                            controller = new DualSenseController(settings, details);
+                            try { controller = new DualSenseController(settings, details); } catch { }
                             break;
                         case JOY_TYPE.DualShock4:
-                            controller = new DS4Controller(settings, details);
+                            try { controller = new DS4Controller(settings, details); } catch { }
                             break;
                         case JOY_TYPE.ProController:
-                            controller = new ProController(settings, details);
+                            try { controller = new ProController(settings, details); } catch { }
                             break;
                     }
                 }
