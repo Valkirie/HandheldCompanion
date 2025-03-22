@@ -407,12 +407,8 @@ public static class ControllerManager
         ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
     }
 
-    private static bool IsOS = false;
     public static void Resume(bool OS)
     {
-        // update flag
-        IsOS = OS;
-
         if (ManagerFactory.settingsManager.GetBoolean("ControllerManagement"))
             StartWatchdog();
 
@@ -927,21 +923,12 @@ public static class ControllerManager
                 xInputController.AttachController(UserIndex);
             }
 
-            /*
-            if (XInputDrunk)
-            {
-                // (re)init controller userIndex
-                foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
-                    xInputController.AttachController(byte.MaxValue);
-            }
-            */
-
             if (XInputDrunk)
             {
                 // suspend and resume virtual controller
                 VirtualManager.Suspend(false);
                 Thread.Sleep(1000);
-                VirtualManager.Resume(IsOS);
+                VirtualManager.Resume(false);
             }
 
             // user is emulating an Xbox360Controller
@@ -950,8 +937,8 @@ public static class ControllerManager
                 if (HasPhysicalController<XInputController>())
                 {
                     // check if first controller is virtual
-                    XInputController controller = GetControllerFromSlot<XInputController>(UserIndex.One, false);
-                    if (controller is null)
+                    XInputController vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                    if (vController is null)
                     {
                         if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
                         {
@@ -974,13 +961,17 @@ public static class ControllerManager
                             }
 
                             // suspend all physical controllers
-                            foreach (XInputController xInputController in GetPhysicalControllers<XInputController>())
-                                SuspendController(xInputController.GetContainerInstanceId());
+                            SuspendControllers();
 
-                            // suspend and resume virtual controller
-                            VirtualManager.Suspend(false);
-                            Thread.Sleep(1000);
-                            VirtualManager.Resume(IsOS);
+                            // disconnect main virtual controller
+                            VirtualManager.SetControllerMode(HIDmode.NoController);
+
+                            // create and dispose temporary virtual controllers
+                            VirtualManager.CreateTemporaryControllers();
+                            VirtualManager.DisposeTemporaryControllers();
+
+                            // resume virtual controller
+                            VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
 
                             // resume all physical controllers, after a few seconds
                             Thread.Sleep(1000);
@@ -998,26 +989,35 @@ public static class ControllerManager
 
                             UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
-                            IsOS = false;
 
                             ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                         }
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
+                        // store last known working ProductId
+                        VirtualManager.LastKnownVendorId = (ushort)vController.GetVendorID();
+                        VirtualManager.LastKnownProductId = (ushort)vController.GetProductID();
+
                         // resume all physical controllers
                         ResumeControllers();
 
                         // give us one extra loop to make sure we're good
                         UpdateStatus(ControllerManagerStatus.Succeeded);
                         ControllerManagementAttempts = 0;
-                        IsOS = false;
                     }
+                }
+                else if (ControllerManagementAttempts != 0)
+                {
+                    UpdateStatus(ControllerManagerStatus.Failed);
+                    ControllerManagementAttempts = 0;
+
+                    ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                 }
             }
 
         Exit:
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
         }
     }
 
@@ -1180,7 +1180,7 @@ public static class ControllerManager
             DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
             while (DateTime.Now < timeout && pnPDevice is null)
             {
-                pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+                try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
                 Task.Delay(100).Wait();
             }
 
@@ -1204,77 +1204,88 @@ public static class ControllerManager
                         // store driver to collection
                         DriverStore.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
 
+                        // install empty drivers
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
 
-                        UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-                        usbPnPDevice?.CyclePort();
+                        // cycle controller
+                        if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+                            controller.CyclePort();
 
-                        PowerCyclers[baseContainerDeviceInstanceId] = true;
+                        return true;
                     }
-                    return true;
+                    break;
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+        }
 
         return false;
     }
 
-    public static bool ResumeControllers()
+    public static void SuspendControllers()
     {
-        // loop through controllers
-        foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
+        foreach (XInputController xInputController in GetPhysicalControllers<XInputController>())
+            SuspendController(xInputController.GetContainerInstanceId());
+    }
+
+    public static bool ResumeController(string baseContainerDeviceInstanceId)
+    {
+        try
         {
+            PnPDevice pnPDevice = null;
+
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+            while (DateTime.Now < timeout && pnPDevice is null)
+            {
+                try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
+                Task.Delay(100).Wait();
+            }
+
+            if (pnPDevice is null)
+                return false;
+
+            DriverMeta pnPDriver = null;
             try
             {
-                PnPDevice pnPDevice = null;
+                // get current driver
+                pnPDriver = pnPDevice.GetCurrentDriver();
+            }
+            catch { }
 
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-                while (DateTime.Now < timeout && pnPDevice is null)
-                {
-                    pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-                    Task.Delay(100).Wait();
-                }
-
-                if (pnPDevice is null)
-                    continue;
-
-                DriverMeta pnPDriver = null;
-                try
-                {
-                    // get current driver
-                    pnPDriver = pnPDevice.GetCurrentDriver();
-                }
-                catch { }
-
-                string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-                switch (enumerator)
-                {
-                    case "USB":
+            string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+            switch (enumerator)
+            {
+                case "USB":
+                    {
+                        string InfPath = DriverStore.GetDriverFromDriverStore(baseContainerDeviceInstanceId);
+                        if (!string.IsNullOrEmpty(InfPath) && pnPDriver?.InfPath != InfPath)
                         {
-                            // todo: check PnPDevice PID/VID to deploy the appropriate inf
-                            string InfPath = DriverStore.GetDriverFromDriverStore(baseContainerDeviceInstanceId);
-                            if (pnPDriver?.InfPath != InfPath && !string.IsNullOrEmpty(InfPath))
-                            {
-                                pnPDevice.RemoveAndSetup();
-                                pnPDevice.InstallCustomDriver(InfPath, out bool rebootRequired);
-                                /*
-                                UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-                                usbPnPDevice?.CyclePort();
-                                */
-                            }
+                            // restore drivers
+                            pnPDevice.RemoveAndSetup();
+                            pnPDevice.InstallCustomDriver(InfPath, out bool rebootRequired);
 
                             // remove device from store
                             DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
 
-                            PowerCyclers[baseContainerDeviceInstanceId] = false;
+                            return true;
                         }
-                        return true;
-                }
+                    }
+                    break;
             }
-            catch { }
+        }
+        catch (Exception ex)
+        {
         }
 
         return false;
+    }
+
+    public static void ResumeControllers()
+    {
+        // loop through controllers
+        foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
+            ResumeController(baseContainerDeviceInstanceId);
     }
 
     public static IController GetTarget()

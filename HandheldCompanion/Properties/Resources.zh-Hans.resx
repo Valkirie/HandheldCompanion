@@ -121,7 +121,7 @@
     <value>关于</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion - “掌机伴侣“ 是一个集多种功能（虚拟手柄、体感控制、性能监控、悬浮窗等）于一体，来改善玩家掌机游戏体验的工具。掌机伴侣依赖于ViGEmBus驱动和ViGEmClient库，以及内核态的HidHide过滤驱动。体感算法基于Jibbsmart的研究成果和GyroWiki上公开的信息。</value>
+    <value>Handheld Companion - "掌机伴侣" 是一个集多种功能（虚拟手柄、体感控制、性能监控、悬浮窗等）于一体，来改善玩家掌机游戏体验的工具。掌机伴侣依赖于ViGEmBus驱动和ViGEmClient库，以及内核态的HidHide过滤驱动。体感算法基于Jibbsmart的研究成果和GyroWiki上公开的信息。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速计</value>
@@ -1277,7 +1277,7 @@
     <value>没有检测到实体手柄</value>
   </data>
   <data name="ControllerPage_NoVirtualControllerAction" xml:space="preserve">
-    <value>请确保虚拟手柄服务已开启并将状态切换为“已连接”</value>
+    <value>请确保虚拟手柄服务已开启并将状态切换为"已连接"</value>
   </data>
   <data name="ControllerPage_NoVirtualControllerDesc" xml:space="preserve">
     <value>实体手柄已被隐藏，并且没有可用的虚拟手柄配置，程序可能无法收到任何输入命令</value>
@@ -2531,7 +2531,7 @@
     <value>Touchpad passthrough</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>Close</value>

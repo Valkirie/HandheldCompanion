@@ -506,7 +506,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = FindDevice(InstanceId);
+                    try { deviceEx = FindDevice(InstanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
@@ -522,7 +522,9 @@ public class DeviceManager : IManager
                 }
             });
         }
-        catch { }
+        catch
+        {
+        }
     }
 
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -538,7 +540,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = FindDevice(InstanceId);
+                    try { deviceEx = FindDevice(InstanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
@@ -579,7 +581,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = FindDevice(InstanceId);
+                    try { deviceEx = FindDevice(InstanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
@@ -613,7 +615,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = GetDetails(obj.SymLink);
+                    try { deviceEx = GetDetails(obj.SymLink); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 

@@ -454,7 +454,8 @@ namespace HandheldCompanion.Controllers
             IsBusy = true;
             ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
 
-            switch (GetEnumerator())
+            string enumerator = GetEnumerator();
+            switch (enumerator)
             {
                 case "BTHENUM":
                 case "BTHLEDEVICE":

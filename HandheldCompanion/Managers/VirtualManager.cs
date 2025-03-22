@@ -4,7 +4,9 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
@@ -46,8 +48,11 @@ namespace HandheldCompanion.Managers
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
 
         private static readonly Random ProductGenerator = new Random();
-        public static ushort ProductId = 0x28E; // Xbox 360
-        public static ushort VendorId = 0x45E;  // Microsoft
+        private static ushort ProductId = 0x28E; // Xbox 360
+        private static ushort VendorId = 0x45E;  // Microsoft
+
+        public static ushort LastKnownProductId = 0x28E;
+        public static ushort LastKnownVendorId = 0x45E;
 
         public static bool IsInitialized;
 
@@ -184,7 +189,7 @@ namespace HandheldCompanion.Managers
                 controllerLock.Release();
             }
 
-            SetControllerMode(HIDmode, OS);
+            SetControllerMode(HIDmode);
         }
 
         public static void Suspend(bool OS)
@@ -280,6 +285,40 @@ namespace HandheldCompanion.Managers
                 SetControllerMode(defaultHIDmode);
         }
 
+        private static List<IXbox360Controller> temporaryControllers = new();
+        public static void CreateTemporaryControllers()
+        {
+            // Sanity-check: if the ViGEm client isn't available, abort
+            if (vClient is null)
+                return;
+
+            // initialize controllers
+            for(int i = 0; i < 4; i++)
+            {
+                IXbox360Controller xboxController = vClient.CreateXbox360Controller();
+                temporaryControllers.Insert(0, xboxController);
+
+                xboxController.Connect();
+                Thread.Sleep(1000);
+            }
+        }
+
+        public static void DisposeTemporaryControllers()
+        {
+            // Sanity-check: if the ViGEm client isn't available, abort
+            if (vClient is null)
+                return;
+
+            // dipose controllers
+            foreach (IXbox360Controller xbox360Controller in temporaryControllers)
+            {
+                xbox360Controller.Disconnect();
+                Thread.Sleep(1000);
+            }
+
+            temporaryControllers.Clear();
+        }
+
         private static void SetDSUStatus(bool started)
         {
             if (started)
@@ -288,7 +327,7 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-        public static void SetControllerMode(HIDmode mode, bool OS = false)
+        public static void SetControllerMode(HIDmode mode)
         {
             controllerLock.Wait(3000);
             try
@@ -310,7 +349,7 @@ namespace HandheldCompanion.Managers
                     vTarget = null;
                 }
 
-                // Sanity-check: if the ViGEm client isn’t available, abort
+                // Sanity-check: if the ViGEm client isn't available, abort
                 if (vClient is null)
                     return;
 
@@ -326,9 +365,29 @@ namespace HandheldCompanion.Managers
                         break;
 
                     case HIDmode.Xbox360Controller:
-                        // Optionally generate a new ProductId unless running in OS mode
-                        if (!OS) ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
-                        vTarget = new Xbox360Target(VendorId, ProductId);
+                        {
+                            if (LastKnownProductId == 0)
+                            {
+                                ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
+                            }
+                            else
+                            {
+                                ProductId = LastKnownProductId;
+                                LastKnownProductId = 0;
+                            }
+
+                            if (LastKnownVendorId == 0)
+                            {
+                                VendorId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
+                            }
+                            else
+                            {
+                                VendorId = LastKnownVendorId;
+                                LastKnownVendorId = 0;
+                            }
+
+                            vTarget = new Xbox360Target(VendorId, ProductId);
+                        }
                         break;
                 }
 
