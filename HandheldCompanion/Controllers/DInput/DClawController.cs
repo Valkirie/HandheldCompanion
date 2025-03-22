@@ -85,6 +85,8 @@ public class DClawController : DInputController
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
                 joystick.Acquire();
+            else if (ex.ResultCode == ResultCode.InputLost)
+                AttachDetails(Details);
         }
         
         base.UpdateInputs(ticks, delta);

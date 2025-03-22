@@ -86,7 +86,7 @@ public class ClawA1M : IDevice
 
         // used to monitor OEM specific inputs
         vendorId = 0x0DB0;
-        productIds = [0x1901, 0x1902];
+        productIds = [0x1901, 0x1902, 0x1903];
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 65 };
@@ -187,6 +187,11 @@ public class ClawA1M : IDevice
             while (!IsReady())
                 await Task.Delay(1000).ConfigureAwait(false);
 
+            SwitchMode(GamepadMode.DInput);
+            SetMotionStatus(true);
+
+            return;
+
             ushort productId = Controller.GetProductID();
             switch(productId)
             {
@@ -195,6 +200,9 @@ public class ClawA1M : IDevice
                     break;
                 case 0x1902:
                     SwitchMode(GamepadMode.DInput);
+                    break;
+                case 0x1903:
+                    SwitchMode(GamepadMode.TESTING);
                     break;
             }
         }

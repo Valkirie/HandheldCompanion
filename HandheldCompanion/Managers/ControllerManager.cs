@@ -629,6 +629,7 @@ public static class ControllerManager
                                 switch (ProductId)
                                 {
                                     case 0x1902:
+                                    case 0x1903:
                                         try { controller = new DClawController(details); } catch { }
                                         break;
                                 }
