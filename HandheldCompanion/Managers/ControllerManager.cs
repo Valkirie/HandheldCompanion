@@ -912,15 +912,15 @@ public static class ControllerManager
                 if (HasPhysicalController<XInputController>())
                 {
                     // check if first controller is virtual
-                    XInputController vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                    XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
                     if (vController is null)
                     {
                         // store physical controller Ids to trick the system
-                        XInputController pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
+                        XInputController? pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
                         if (pController is not null)
                         {
-                            VirtualManager.LastKnownVendorId = pController.GetVendorID();
-                            VirtualManager.LastKnownProductId = pController.GetProductID();
+                            VirtualManager.VendorId = pController.GetVendorID();
+                            VirtualManager.ProductId = pController.GetProductID();
                         }
 
                         if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
@@ -931,7 +931,7 @@ public static class ControllerManager
                             bool HasCyclingController = false;
 
                             // do we have a pending wireless controller ?
-                            XInputController wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
+                            XInputController? wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
                             if (wirelessController is not null)
                             {
                                 // update busy flag
@@ -949,28 +949,25 @@ public static class ControllerManager
                             // disconnect main virtual controller and wait until it's gone
                             VirtualManager.SetControllerMode(HIDmode.NoController);
                             DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() != 0)
+                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() != 0)
                                 Thread.Sleep(100);
 
-                            ushort vendorId = pController?.GetVendorID()?? VirtualManager.Microsoft;
-                            ushort productId = pController?.GetProductID() ?? VirtualManager.Xbox360;
-
                             // wait until all virtual controllers are created
-                            VirtualManager.CreateTemporaryControllers(vendorId, productId);
+                            int usedSlots = VirtualManager.CreateTemporaryControllers();
                             timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() < 4)
+                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() < usedSlots)
                                 Thread.Sleep(100);
 
                             // wait until all virtual controllers are gone
                             VirtualManager.DisposeTemporaryControllers();
                             timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() != 0)
+                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() > usedSlots)
                                 Thread.Sleep(100);
 
                             // resume virtual controller and wait until it's back
                             VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
                             timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() == 0)
+                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
                                 Thread.Sleep(100);
 
                             // increment attempt counter (if no wireless controller is power cycling)
@@ -1280,7 +1277,7 @@ public static class ControllerManager
             ResumeController(baseContainerDeviceInstanceId);
     }
 
-    public static IController GetTarget()
+    public static IController? GetTarget()
     {
         return targetController;
     }
@@ -1297,32 +1294,40 @@ public static class ControllerManager
 
     public static bool HasPhysicalController<T>() where T : IController
     {
-        return GetPhysicalControllers<T>().Any(c => c is T);
+        return GetPhysicalControllers<T>().Any(controller => controller is T);
     }
 
     public static bool HasVirtualController<T>() where T : IController
     {
-        return GetVirtualControllers<T>().Any(c => c is T);
+        return GetVirtualControllers<T>().Any(controller => controller is T);
     }
 
-    public static IEnumerable<T> GetPhysicalControllers<T>() where T : IController
+    public static IEnumerable<T> GetPhysicalControllers<T>(ushort vendorId = 0, ushort productId = 0) where T : IController
     {
-        return Controllers.Values.Where(a => a is T && !a.IsVirtual() && !a.isPlaceholder).Cast<T>();
+        return Controllers.Values
+            .Where(controller => controller is T && controller.IsPhysical() && !controller.isPlaceholder
+                && (vendorId == 0 || controller.GetVendorID() == vendorId)
+                && (productId == 0 || controller.GetProductID() == productId))
+            .Cast<T>();
     }
 
-    public static IEnumerable<T> GetVirtualControllers<T>() where T : IController
+    public static IEnumerable<T> GetVirtualControllers<T>(ushort vendorId = 0, ushort productId = 0) where T : IController
     {
-        return Controllers.Values.Where(a => a is T && a.IsVirtual() && !a.isPlaceholder).Cast<T>();
+        return Controllers.Values
+            .Where(controller => controller is T && controller.IsVirtual() && !controller.isPlaceholder
+                && (vendorId == 0 || controller.GetVendorID() == vendorId)
+                && (productId == 0 || controller.GetProductID() == productId))
+            .Cast<T>();
     }
 
-    public static T GetControllerFromSlot<T>(UserIndex userIndex = 0, bool physical = true) where T : IController
+    public static T? GetControllerFromSlot<T>(UserIndex userIndex = 0, bool physical = true) where T : IController
     {
-        return Controllers.Values.FirstOrDefault(c => c is T && ((physical && c.IsPhysical()) || (!physical && c.IsVirtual())) && c.GetUserIndex() == (int)userIndex) as T;
+        return Controllers.Values.FirstOrDefault(controller => controller is T && ((physical && controller.IsPhysical()) || (!physical && controller.IsVirtual())) && controller.GetUserIndex() == (int)userIndex) as T;
     }
 
     public static IEnumerable<T> GetControllers<T>() where T : IController
     {
-        return Controllers.Values.Where(a => a is T).Cast<T>();
+        return Controllers.Values.Where(controller => controller is T).Cast<T>();
     }
 
     private static ControllerState mutedState = new ControllerState();

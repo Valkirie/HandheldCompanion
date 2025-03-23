@@ -15,6 +15,7 @@ public class XInputController : IController
     private Gamepad Gamepad;
 
     private XInputStateSecret State;
+    public static int MaxControllers = 4;
 
     public XInputController()
     { }

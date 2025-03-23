@@ -5,6 +5,7 @@ using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -46,17 +47,10 @@ namespace HandheldCompanion.Managers
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
+        private static List<IXbox360Controller> temporaryControllers = new();
 
-        private static readonly Random ProductGenerator = new Random();
-
-        public const ushort Microsoft = 0x45E;
-        public const ushort Xbox360 = 0x28E;
-
-        private static ushort ProductId = Xbox360;
-        private static ushort VendorId = Microsoft;
-
-        public static ushort LastKnownProductId = ProductId;
-        public static ushort LastKnownVendorId = VendorId;
+        public static ushort VendorId = 0x28E;
+        public static ushort ProductId = 0x45E;
 
         public static bool IsInitialized;
 
@@ -289,22 +283,32 @@ namespace HandheldCompanion.Managers
                 SetControllerMode(defaultHIDmode);
         }
 
-        private static List<IXbox360Controller> temporaryControllers = new();
-        public static void CreateTemporaryControllers(ushort vendorId, ushort productId)
+        public static int CreateTemporaryControllers()
         {
             // Sanity-check: if the ViGEm client isn't available, abort
             if (vClient is null)
-                return;
+                return 0;
+
+            // count available slots
+            int availableSlots = 0;
+            for (int i = 0; i < XInputController.MaxControllers; i++)
+            {
+                Controller controller = new Controller((UserIndex)i);
+                if (!controller.IsConnected)
+                    availableSlots++;
+            }
 
             // initialize controllers
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < availableSlots; i++)
             {
-                IXbox360Controller xboxController = vClient.CreateXbox360Controller(vendorId, productId);
-                temporaryControllers.Add(xboxController);
+                IXbox360Controller controller = vClient.CreateXbox360Controller(VendorId, ProductId);
+                temporaryControllers.Add(controller);
 
-                xboxController.Connect();
-                Thread.Sleep(250);
+                controller.Connect();
+                Thread.Sleep(500);
             }
+
+            return temporaryControllers.Count;
         }
 
         public static void DisposeTemporaryControllers()
@@ -313,11 +317,11 @@ namespace HandheldCompanion.Managers
             if (vClient is null)
                 return;
 
-            // dipose controllers
-            foreach (IXbox360Controller xbox360Controller in temporaryControllers)
+            // dispose controllers
+            foreach (IXbox360Controller controller in temporaryControllers)
             {
-                xbox360Controller.Disconnect();
-                Thread.Sleep(250);
+                controller.Disconnect();
+                Thread.Sleep(500);
             }
 
             temporaryControllers.Clear();
@@ -369,29 +373,7 @@ namespace HandheldCompanion.Managers
                         break;
 
                     case HIDmode.Xbox360Controller:
-                        {
-                            if (LastKnownProductId == 0)
-                            {
-                                ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
-                            }
-                            else
-                            {
-                                ProductId = LastKnownProductId;
-                                LastKnownProductId = 0;
-                            }
-
-                            if (LastKnownVendorId == 0)
-                            {
-                                VendorId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
-                            }
-                            else
-                            {
-                                VendorId = LastKnownVendorId;
-                                LastKnownVendorId = 0;
-                            }
-
-                            vTarget = new Xbox360Target(VendorId, ProductId);
-                        }
+                        vTarget = new Xbox360Target(VendorId, ProductId);
                         break;
                 }
 
