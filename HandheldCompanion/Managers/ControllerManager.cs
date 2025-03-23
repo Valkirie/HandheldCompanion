@@ -915,11 +915,10 @@ public static class ControllerManager
                     XInputController vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
                     if (vController is null)
                     {
-                        // create and dispose temporary virtual controllers
+                        // store physical controller Ids to trick the system
                         XInputController pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
                         if (pController is not null)
                         {
-                            // store physical controller Ids to trick the system ?
                             VirtualManager.LastKnownVendorId = pController.GetVendorID();
                             VirtualManager.LastKnownProductId = pController.GetProductID();
                         }
@@ -949,7 +948,7 @@ public static class ControllerManager
 
                             // disconnect main virtual controller and wait until it's gone
                             VirtualManager.SetControllerMode(HIDmode.NoController);
-                            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                             while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() != 0)
                                 Thread.Sleep(100);
 
@@ -958,19 +957,19 @@ public static class ControllerManager
 
                             // wait until all virtual controllers are created
                             VirtualManager.CreateTemporaryControllers(vendorId, productId);
-                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                             while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() < 4)
                                 Thread.Sleep(100);
 
                             // wait until all virtual controllers are gone
                             VirtualManager.DisposeTemporaryControllers();
-                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                             while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() != 0)
                                 Thread.Sleep(100);
 
                             // resume virtual controller and wait until it's back
                             VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
-                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                             while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() == 0)
                                 Thread.Sleep(100);
 
@@ -992,10 +991,6 @@ public static class ControllerManager
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
-                        // store last known working ProductId
-                        VirtualManager.LastKnownVendorId = (ushort)vController.GetVendorID();
-                        VirtualManager.LastKnownProductId = (ushort)vController.GetProductID();
-
                         // resume all physical controllers
                         ResumeControllers();
 
