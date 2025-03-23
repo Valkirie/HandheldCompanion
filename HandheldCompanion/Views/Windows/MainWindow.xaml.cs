@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -672,7 +673,7 @@ public partial class MainWindow : GamepadWindow
         });
 
         // remove all automation event handlers
-        // Automation.RemoveAllEventHandlers();
+        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAllEventHandlers(), TimeSpan.FromSeconds(3));
 
         foreach (IManager manager in ManagerFactory.Managers)
             manager.Stop();

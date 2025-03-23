@@ -110,10 +110,11 @@ public class ProcessManager : IManager
         base.PrepareStop();
 
         // Remove the WindowOpened event handler
-        Automation.RemoveAutomationEventHandler(
-            WindowPattern.WindowOpenedEvent,
-            AutomationElement.RootElement,
-            _windowOpenedHandler);
+        if (_windowOpenedHandler != null)
+            ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationEventHandler(
+                WindowPattern.WindowOpenedEvent,
+                AutomationElement.RootElement,
+                _windowOpenedHandler), TimeSpan.FromSeconds(3));
 
         // Unhook the event when no longer needed
         if (m_hhook != IntPtr.Zero)

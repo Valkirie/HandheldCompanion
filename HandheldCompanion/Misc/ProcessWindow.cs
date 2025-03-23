@@ -110,10 +110,14 @@ namespace HandheldCompanion.Misc
                 try
                 {
                     if (handler != null)
-                        Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler);
+                        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler), TimeSpan.FromSeconds(3));
 
                     // Remove the WindowClosed event handler
-                    // Automation.RemoveAutomationEventHandler(WindowPattern.WindowClosedEvent, Element, _windowClosedHandler);
+                    if (_windowClosedHandler != null)
+                        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationEventHandler(
+                            WindowPattern.WindowClosedEvent,
+                            Element,
+                            _windowClosedHandler), TimeSpan.FromSeconds(3));
                 }
                 catch { }
 
