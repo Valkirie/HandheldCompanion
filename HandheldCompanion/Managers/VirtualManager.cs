@@ -303,7 +303,7 @@ namespace HandheldCompanion.Managers
                 temporaryControllers.Add(xboxController);
 
                 xboxController.Connect();
-                Thread.Sleep(1000);
+                Thread.Sleep(250);
             }
         }
 
@@ -317,7 +317,7 @@ namespace HandheldCompanion.Managers
             foreach (IXbox360Controller xbox360Controller in temporaryControllers)
             {
                 xbox360Controller.Disconnect();
-                Thread.Sleep(1000);
+                Thread.Sleep(250);
             }
 
             temporaryControllers.Clear();
