@@ -12,7 +12,7 @@ public class KX
     private const string pnt_limit = "59";
     private const string pnt_clock = "94";
 
-    private string[] mchbar_addresses = new string[] { "0xfedc59A0", "0xfed159A0" };
+    private string[] mchbar_addresses = new string[] { "0xfedc0000", "0xfed10000" };
     private string mchbar;
     private readonly string path;
     private readonly ProcessStartInfo startInfo;
