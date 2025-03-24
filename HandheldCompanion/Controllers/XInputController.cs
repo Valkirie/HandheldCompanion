@@ -34,7 +34,7 @@ public class XInputController : IController
         ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 217, 65, 38));
         ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 26, 159, 255));
         ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 255, 200, 44));
-        
+
         // Capabilities
         Capabilities |= ControllerCapabilities.Rumble;
     }

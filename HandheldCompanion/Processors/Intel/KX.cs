@@ -59,7 +59,7 @@ public class KX
                         line = CommonUtils.Between(line, "Return ");
                         var returned = long.Parse(line);
                         var output = "0x" + returned.ToString("X2").Substring(0, 4);
-                        
+
                         // mcbar is null
                         if (output == "0xFFFFFFFF")
                             continue;

@@ -193,7 +193,7 @@ public class ClawA1M : IDevice
             return;
 
             ushort productId = Controller.GetProductID();
-            switch(productId)
+            switch (productId)
             {
                 case 0x1901:
                     SwitchMode(GamepadMode.XInput);

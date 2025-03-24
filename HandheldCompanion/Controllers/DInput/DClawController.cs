@@ -1,8 +1,6 @@
-﻿using System;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using NAudio.Gui;
 using SharpDX.DirectInput;
 
 namespace HandheldCompanion.Controllers;
@@ -88,7 +86,7 @@ public class DClawController : DInputController
             else if (ex.ResultCode == ResultCode.InputLost)
                 AttachDetails(Details);
         }
-        
+
         base.UpdateInputs(ticks, delta);
     }
 

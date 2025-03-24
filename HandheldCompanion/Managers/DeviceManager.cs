@@ -553,7 +553,7 @@ public class DeviceManager : IManager
 
                     if (deviceEx.EnumeratorName.Equals("USB"))
                         deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink, false);
-                    
+
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
                         deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
 

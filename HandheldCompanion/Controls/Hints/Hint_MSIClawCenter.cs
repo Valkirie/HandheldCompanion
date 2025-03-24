@@ -105,7 +105,7 @@ namespace HandheldCompanion.Controls.Hints
             {
                 this.IsEnabled = false;
             });
-            
+
             KillTask();
             KillProcesses();
         }

@@ -92,8 +92,8 @@ public partial class ProfilesPage : Page
                         desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
                 });
             }
-        catch { }
-        finally
+            catch { }
+            finally
             {
                 profileLock.Exit();
             }

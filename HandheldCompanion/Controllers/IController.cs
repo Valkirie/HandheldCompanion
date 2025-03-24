@@ -6,7 +6,6 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.Bluetooth;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,8 +1,7 @@
-﻿using System;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Shared;
+﻿using HandheldCompanion.Managers;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
+using System;
 using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Controllers;
@@ -56,7 +55,7 @@ public class DInputController : IController
                 {
                     // Instantiate the joystick
                     Joystick lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                    
+
                     // Check if lookup joystick has proper interface path
                     string SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, DeviceInterfaceIds.HidDevice.ToString());
                     if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
@@ -100,7 +99,7 @@ public class DInputController : IController
     {
         if (!IsConnected())
             return;
-        
+
         // Acquire joystick
         joystick?.Acquire();
 

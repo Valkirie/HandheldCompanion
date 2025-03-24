@@ -313,7 +313,8 @@ namespace HandheldCompanion.Managers
                     controller.Connect();
                     temporaryControllers.Add(controller);
                     Thread.Sleep(500);
-                } catch { }
+                }
+                catch { }
             }
 
             return temporaryControllers.Count;
@@ -332,7 +333,8 @@ namespace HandheldCompanion.Managers
                 {
                     controller.Disconnect();
                     Thread.Sleep(500);
-                } catch { }
+                }
+                catch { }
             }
 
             temporaryControllers.Clear();

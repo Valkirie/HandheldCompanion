@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using Microsoft.Win32.TaskScheduler.Fluent;
 using System;
 
 namespace HandheldCompanion.Utils;

@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;

@@ -2,7 +2,6 @@
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Runtime.InteropServices;
-using Windows.Devices.Input;
 
 namespace HandheldCompanion;
 

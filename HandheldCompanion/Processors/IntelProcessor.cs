@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Processors.Intel;
+﻿using HandheldCompanion.Processors.Intel;
 
 namespace HandheldCompanion.Processors;
 
