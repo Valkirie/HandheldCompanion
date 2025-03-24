@@ -193,6 +193,7 @@ public partial class QuickDevicePage : Page
                         ComboBoxResolution.Items.Add(resolution);
                 });
             }
+            catch { }
             finally
             {
                 multimediaLock.Exit();
@@ -251,6 +252,7 @@ public partial class QuickDevicePage : Page
                     }
                 });
             }
+            catch { }
             finally
             {
                 multimediaLock.Exit();

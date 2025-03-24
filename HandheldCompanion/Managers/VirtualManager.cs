@@ -166,7 +166,9 @@ namespace HandheldCompanion.Managers
 
         public static void Resume(bool OS)
         {
-            controllerLock.Wait(3000);
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 if (Module == IntPtr.Zero)
@@ -182,6 +184,7 @@ namespace HandheldCompanion.Managers
                     SetDSUStatus(ManagerFactory.settingsManager.GetBoolean("DSUEnabled"));
                 }
             }
+            catch { }
             finally
             {
                 controllerLock.Release();
@@ -195,7 +198,9 @@ namespace HandheldCompanion.Managers
             // Disconnect the controller first
             SetControllerMode(HIDmode.NoController);
 
-            controllerLock.Wait(3000);
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 // Dispose of the ViGEm client and unload the module
@@ -217,6 +222,7 @@ namespace HandheldCompanion.Managers
                     SetDSUStatus(false);
                 }
             }
+            catch { }
             finally
             {
                 controllerLock.Release();
@@ -342,7 +348,9 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerMode(HIDmode mode)
         {
-            controllerLock.Wait(3000);
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 // If the requested mode is already active, do nothing
@@ -401,6 +409,7 @@ namespace HandheldCompanion.Managers
                 // Update the current mode
                 HIDmode = mode;
             }
+            catch { }
             finally
             {
                 controllerLock.Release();
@@ -412,7 +421,9 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerStatus(HIDstatus status)
         {
-            controllerLock.Wait(3000);
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 if (vTarget is null)
@@ -435,6 +446,7 @@ namespace HandheldCompanion.Managers
                 if (success)
                     HIDstatus = status;
             }
+            catch { }
             finally
             {
                 controllerLock.Release();

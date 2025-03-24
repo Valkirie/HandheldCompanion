@@ -473,7 +473,7 @@ namespace HandheldCompanion.Controllers
                                     hostRadio.DisableRadio();
                                     Task.Delay(3000).Wait();
                                     hostRadio.EnableRadio();
-                                    success = Devcon.Refresh();
+                                    success = true;
                                 }
                             }
                             catch { }

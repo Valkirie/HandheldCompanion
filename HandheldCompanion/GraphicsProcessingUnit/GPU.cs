@@ -73,6 +73,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     // If we couldn't take the lock, it means someone else is holding it.
                     return !lockTaken;
                 }
+                catch { return false; }
                 finally
                 {
                     if (lockTaken)
@@ -212,6 +213,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     }
                 }
             }
+            catch { }
             finally
             {
                 Monitor.Exit(processTargetsLock);

@@ -660,6 +660,7 @@ public static class ControllerManager
             PickTargetController();
             PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
         }
+        catch { }
         finally
         {
             deviceLock.Release();
@@ -724,6 +725,7 @@ public static class ControllerManager
                 Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
             }
         }
+        catch { }
         finally
         {
             deviceLock.Release();
@@ -809,6 +811,7 @@ public static class ControllerManager
             PickTargetController();
             PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
         }
+        catch { }
         finally
         {
             deviceLock.Release();
@@ -862,6 +865,7 @@ public static class ControllerManager
                 Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
             }
         }
+        catch { }
         finally
         {
             deviceLock.Release();

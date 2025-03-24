@@ -188,7 +188,7 @@ public static class DSUServer
             sentAsync = udpSock.SendToAsync(args);
             //if (!sentAsync) CompletedSynchronousSocketEvent();
         }
-        catch (Exception /*e*/) { }
+        catch { }
         finally
         {
             if (!sentAsync) CompletedSynchronousSocketEvent(args);

@@ -91,6 +91,7 @@ public partial class QuickHomePage : Page
                         SliderBrightness.Value = brightness;
                 });
             }
+            catch { }
             finally
             {
                 brightnessLock.Exit();
@@ -115,6 +116,7 @@ public partial class QuickHomePage : Page
                         SliderVolume.Value = value;
                 });
             }
+            catch { }
             finally
             {
                 volumeLock.Exit();

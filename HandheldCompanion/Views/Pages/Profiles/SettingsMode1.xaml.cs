@@ -59,6 +59,7 @@ public partial class SettingsMode1 : Page
                     lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.selectedProfile.SteeringPower);
                 });
             }
+            catch { }
             finally
             {
                 updateLock.Exit();

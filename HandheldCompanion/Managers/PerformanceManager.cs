@@ -543,6 +543,7 @@ public static class PerformanceManager
                     }
                 }
             }
+            catch { }
             finally
             {
                 // release lock
@@ -633,6 +634,7 @@ public static class PerformanceManager
                     RequestPerfBoostMode((uint)currentProfile.CPUBoostLevel);
                 }
             }
+            catch { }
             finally
             {
                 // release lock
@@ -710,6 +712,7 @@ public static class PerformanceManager
                     }
                 }
             }
+            catch { }
             finally
             {
                 // release lock
@@ -779,6 +782,7 @@ public static class PerformanceManager
                     }
                 }
             }
+            catch { }
             finally
             {
                 // release lock

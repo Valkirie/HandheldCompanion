@@ -398,6 +398,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 {
                     TelemetryData = GetTelemetry();
                 }
+                catch { }
                 finally
                 {
                     Monitor.Exit(telemetryLock);
@@ -533,6 +534,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     }
                     catch { }
                 }
+                catch { }
                 finally
                 {
                     Monitor.Exit(updateLock);
