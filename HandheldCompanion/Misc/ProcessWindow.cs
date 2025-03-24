@@ -12,6 +12,7 @@ namespace HandheldCompanion.Misc
 
         public AutomationElement Element { get; private set; }
         public readonly int Hwnd;
+        private bool _disposed = false;
 
         private string _Name;
         public string Name
@@ -62,7 +63,7 @@ namespace HandheldCompanion.Misc
 
         ~ProcessWindow()
         {
-            Dispose();
+            Dispose(false);
         }
 
         private void OnPropertyChanged(object sender, AutomationPropertyChangedEventArgs e)
@@ -105,27 +106,38 @@ namespace HandheldCompanion.Misc
 
         public void Dispose()
         {
-            if (Element != null)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
             {
                 try
                 {
-                    if (handler != null)
-                        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler), TimeSpan.FromSeconds(3));
+                    if (Element != null)
+                    {
+                        if (handler != null)
+                            ProcessUtils.TaskWithTimeout(() =>
+                                Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler),
+                                TimeSpan.FromSeconds(3));
 
-                    // Remove the WindowClosed event handler
-                    if (_windowClosedHandler is not null && Element is not null)
-                        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationEventHandler(
-                            WindowPattern.WindowClosedEvent,
-                            Element,
-                            _windowClosedHandler), TimeSpan.FromSeconds(3));
+                        if (_windowClosedHandler != null)
+                            ProcessUtils.TaskWithTimeout(() =>
+                                Automation.RemoveAutomationEventHandler(WindowPattern.WindowClosedEvent, Element, _windowClosedHandler),
+                                TimeSpan.FromSeconds(3));
+                    }
                 }
                 catch { }
-
-                Element = null;
-                handler = null;
             }
 
-            GC.SuppressFinalize(this);
+            // Clear references and mark as disposed
+            Element = null;
+            handler = null;
+            _disposed = true;
         }
     }
 }
