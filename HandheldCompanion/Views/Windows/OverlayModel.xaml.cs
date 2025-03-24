@@ -322,7 +322,7 @@ public partial class OverlayModel : OverlayWindow
         gamepadMotion.GetOrientation(out float oW, out float oX, out float oY, out float oZ);
 
         // System.Numerics to Media.3D, library really requires System.Numerics
-        DevicePose = new Quaternion(oX, -oY, -oZ, oW);
+        DevicePose = new Quaternion(-oX, -oY, oZ, oW);
 
         // Also make euler equivalent availible of quaternions
         NumVector3 euler = InputUtils.ToEulerAngles(DevicePose);
