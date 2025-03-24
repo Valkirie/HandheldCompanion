@@ -1308,18 +1308,18 @@ public static class ControllerManager
 
     public static bool HasPhysicalController<T>() where T : IController
     {
-        return GetPhysicalControllers<T>().Any(controller => controller is T);
+        return GetPhysicalControllers<T>().Any(controller => typeof(T).IsAssignableFrom(controller.GetType()));
     }
 
     public static bool HasVirtualController<T>() where T : IController
     {
-        return GetVirtualControllers<T>().Any(controller => controller is T);
+        return GetVirtualControllers<T>().Any(controller => typeof(T).IsAssignableFrom(controller.GetType()));
     }
 
     public static IEnumerable<T> GetPhysicalControllers<T>(ushort vendorId = 0, ushort productId = 0) where T : IController
     {
         return Controllers.Values
-            .Where(controller => controller is T && controller.IsPhysical() && !controller.isPlaceholder
+            .Where(controller => typeof(T).IsAssignableFrom(controller.GetType()) && controller.IsPhysical() && !controller.isPlaceholder
                 && (vendorId == 0 || controller.GetVendorID() == vendorId)
                 && (productId == 0 || controller.GetProductID() == productId))
             .Cast<T>();
@@ -1328,7 +1328,7 @@ public static class ControllerManager
     public static IEnumerable<T> GetVirtualControllers<T>(ushort vendorId = 0, ushort productId = 0) where T : IController
     {
         return Controllers.Values
-            .Where(controller => controller is T && controller.IsVirtual() && !controller.isPlaceholder
+            .Where(controller => typeof(T).IsAssignableFrom(controller.GetType()) && controller.IsVirtual() && !controller.isPlaceholder
                 && (vendorId == 0 || controller.GetVendorID() == vendorId)
                 && (productId == 0 || controller.GetProductID() == productId))
             .Cast<T>();
@@ -1336,12 +1336,12 @@ public static class ControllerManager
 
     public static T? GetControllerFromSlot<T>(UserIndex userIndex = 0, bool physical = true) where T : IController
     {
-        return Controllers.Values.FirstOrDefault(controller => controller is T && ((physical && controller.IsPhysical()) || (!physical && controller.IsVirtual())) && controller.GetUserIndex() == (int)userIndex) as T;
+        return Controllers.Values.FirstOrDefault(controller => typeof(T).IsAssignableFrom(controller.GetType()) && ((physical && controller.IsPhysical()) || (!physical && controller.IsVirtual())) && controller.GetUserIndex() == (int)userIndex) as T;
     }
 
     public static IEnumerable<T> GetControllers<T>() where T : IController
     {
-        return Controllers.Values.Where(controller => controller is T).Cast<T>();
+        return Controllers.Values.Where(controller => typeof(T).IsAssignableFrom(controller.GetType())).Cast<T>();
     }
 
     private static ControllerState mutedState = new ControllerState();
