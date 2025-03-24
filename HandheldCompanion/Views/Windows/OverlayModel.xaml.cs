@@ -324,6 +324,13 @@ public partial class OverlayModel : OverlayWindow
         // System.Numerics to Media.3D, library really requires System.Numerics
         DevicePose = new Quaternion(-oX, -oY, oZ, oW);
 
+        // Dirty fix for devices without Accelerometer (MSI Claw 8)
+        if (gamepadMotion.accelX == 0 && gamepadMotion.accelY == 0 && gamepadMotion.accelZ == 0)
+        {
+            DevicePose.X = DevicePose.X * -1.0f;
+            DevicePose.Z = DevicePose.Z * -1.0f;
+        }
+
         // Also make euler equivalent availible of quaternions
         NumVector3 euler = InputUtils.ToEulerAngles(DevicePose);
         DevicePoseRad = new Vector3D(euler.X, euler.Y, euler.Z);

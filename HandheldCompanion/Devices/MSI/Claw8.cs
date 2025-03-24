@@ -5,6 +5,7 @@ using HandheldCompanion.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using WindowsInput.Events;
 
@@ -47,6 +48,8 @@ public class Claw8 : ClawA1M
         cTDP = new double[] { 20, 37 };
         GfxClock = new double[] { 100, 1950 };
         CpuClock = 4800;
+
+        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
