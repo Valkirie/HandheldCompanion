@@ -113,7 +113,7 @@ namespace HandheldCompanion.Misc
                         ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler), TimeSpan.FromSeconds(3));
 
                     // Remove the WindowClosed event handler
-                    if (_windowClosedHandler != null)
+                    if (_windowClosedHandler is not null && Element is not null)
                         ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationEventHandler(
                             WindowPattern.WindowClosedEvent,
                             Element,
