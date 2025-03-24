@@ -2312,7 +2312,7 @@
     <value>Device</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+    <value>Please wait a moment while we power cycle your bluetooth radio.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Effects</value>

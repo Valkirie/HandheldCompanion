@@ -301,11 +301,13 @@ namespace HandheldCompanion.Managers
             // initialize controllers
             for (int i = 0; i < availableSlots; i++)
             {
-                IXbox360Controller controller = vClient.CreateXbox360Controller(VendorId, ProductId);
-                temporaryControllers.Add(controller);
-
-                controller.Connect();
-                Thread.Sleep(500);
+                try
+                {
+                    IXbox360Controller controller = vClient.CreateXbox360Controller(VendorId, ProductId);
+                    controller.Connect();
+                    temporaryControllers.Add(controller);
+                    Thread.Sleep(500);
+                } catch { }
             }
 
             return temporaryControllers.Count;
@@ -320,8 +322,11 @@ namespace HandheldCompanion.Managers
             // dispose controllers
             foreach (IXbox360Controller controller in temporaryControllers)
             {
-                controller.Disconnect();
-                Thread.Sleep(500);
+                try
+                {
+                    controller.Disconnect();
+                    Thread.Sleep(500);
+                } catch { }
             }
 
             temporaryControllers.Clear();

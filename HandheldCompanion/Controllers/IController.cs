@@ -5,6 +5,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -445,10 +446,10 @@ namespace HandheldCompanion.Controllers
         public virtual void Gone()
         { }
 
-        public virtual void CyclePort()
+        public virtual bool CyclePort()
         {
             if (Details is null)
-                return;
+                return false;
 
             // set flag
             bool success = false;
@@ -463,10 +464,19 @@ namespace HandheldCompanion.Controllers
                 case "BTHENUM":
                 case "BTHLEDEVICE":
                     {
-                        if (Details.Uninstall(false))
+                        if (HostRadio.IsEnabled && HostRadio.IsAvailable)
                         {
-                            Task.Delay(3000).Wait();
-                            success = Devcon.Refresh();
+                            try
+                            {
+                                using (HostRadio hostRadio = new())
+                                {
+                                    hostRadio.DisableRadio();
+                                    Task.Delay(3000).Wait();
+                                    hostRadio.EnableRadio();
+                                    success = Devcon.Refresh();
+                                }
+                            }
+                            catch { }
                         }
                     }
                     break;
@@ -482,6 +492,8 @@ namespace HandheldCompanion.Controllers
                 IsBusy = false;
                 ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
             }
+
+            return success;
         }
 
         public virtual void SetLightColor(byte R, byte G, byte B)

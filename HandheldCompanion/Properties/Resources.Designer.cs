@@ -9700,7 +9700,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please restart your controller by holding the Guide button to finalize pairing..
+        ///   Looks up a localized string similar to Please wait a moment while we power cycle your bluetooth radio..
         /// </summary>
         public static string XInputController_Warning_BTH {
             get {

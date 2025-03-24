@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Helpers;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
@@ -552,6 +553,8 @@ public class DeviceManager : IManager
 
                     if (deviceEx.EnumeratorName.Equals("USB"))
                         deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink, false);
+                    else
+                        deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
 
                     // set InterfaceGuid
                     deviceEx.InterfaceGuid = obj.InterfaceGuid;
