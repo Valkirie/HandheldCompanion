@@ -87,6 +87,8 @@ namespace HandheldCompanion.Misc
 
         public void RefreshName()
         {
+            if (_disposed) return;
+
             try
             {
                 string elementName = Element.Current.Name;
