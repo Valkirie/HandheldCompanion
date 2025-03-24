@@ -57,10 +57,13 @@ namespace HandheldCompanion.ViewModels
 
             HideCommand = new DelegateCommand(async () =>
             {
-                if (IsHidden)
-                    Controller.Unhide();
-                else
-                    Controller.Hide();
+                await Task.Run(() =>
+                {
+                    if (IsHidden)
+                        Controller.Unhide();
+                    else
+                        Controller.Hide();
+                });
             });
 
             CalibrateCommand = new DelegateCommand(async () =>
