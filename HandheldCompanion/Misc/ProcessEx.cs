@@ -230,9 +230,7 @@ public class ProcessEx : IDisposable
 
     public ConcurrentDictionary<int, ProcessWindow> ProcessWindows { get; private set; } = new();
 
-    private ProcessThread? MainThread { get; set; }
-    private ProcessThread? prevThread;
-    private ThreadWaitReason waitReason = ThreadWaitReason.UserRequest;
+    public ProcessThread? MainThread { get; set; }
 
     private static object registryLock = new();
 
@@ -428,7 +426,13 @@ public class ProcessEx : IDisposable
 
     public bool IsSuspended
     {
-        get => waitReason == ThreadWaitReason.Suspended;
+        get
+        {
+            MainThread = GetMainThread(Process);
+            if (MainThread?.ThreadState == ThreadState.Wait && MainThread?.WaitReason == ThreadWaitReason.Suspended)
+                return true;
+            return false;
+        }
         set
         {
             if (value != IsSuspended)
@@ -467,9 +471,6 @@ public class ProcessEx : IDisposable
             {
                 case ThreadState.Wait:
                     {
-                        // monitor if the process main thread was suspended or resumed
-                        if (MainThread.WaitReason != waitReason)
-                            waitReason = MainThread.WaitReason;
                     }
                     break;
 
@@ -496,18 +497,18 @@ public class ProcessEx : IDisposable
     private void SubscribeToDisposedEvent(ProcessThread newMainThread)
     {
         // Unsubscribe from the previous MainThread's Disposed event
-        if (prevThread != null)
+        if (MainThread != null)
         {
-            prevThread.Disposed -= MainThread_Disposed;
-            prevThread.Dispose();
-            prevThread = null;
+            MainThread.Disposed -= MainThread_Disposed;
+            MainThread.Dispose();
+            MainThread = null;
         }
 
         // Subscribe to the new MainThread's Disposed event
         newMainThread.Disposed += MainThread_Disposed;
 
         // Update the previous MainThread reference
-        prevThread = newMainThread;
+        MainThread = newMainThread;
     }
 
     private void MainThread_Disposed(object? sender, EventArgs e)
@@ -586,6 +587,8 @@ public class ProcessEx : IDisposable
 
         try
         {
+            process.Refresh();
+
             if (process.HasExited || process.Threads is null || process.Threads.Count == 0)
                 return null;
 
@@ -593,9 +596,6 @@ public class ProcessEx : IDisposable
             {
                 try
                 {
-                    if (thread.ThreadState != ThreadState.Running)
-                        continue;
-
                     if (thread.StartTime < startTime)
                     {
                         startTime = thread.StartTime;
@@ -652,14 +652,6 @@ public class ProcessEx : IDisposable
                 MainThread.Disposed -= MainThread_Disposed;
                 MainThread.Dispose();
                 MainThread = null;
-            }
-
-            // Unsubscribe from prevThread's event
-            if (prevThread != null)
-            {
-                prevThread.Disposed -= MainThread_Disposed;
-                prevThread.Dispose();
-                prevThread = null;
             }
 
             // Dispose of all windows
