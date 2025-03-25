@@ -2300,7 +2300,7 @@
     <value>Device</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please wait a moment while we power cycle your bluetooth radio.</value>
+    <value>Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Effects</value>

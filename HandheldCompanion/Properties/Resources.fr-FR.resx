@@ -2310,7 +2310,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Device</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Veuillez patienter un instant pendant que nous effectuons un redémarrage de votre radio Bluetooth.</value>
+    <value>Veuillez patienter un instant pendant que nous effectuons un redémarrage de votre radio Bluetooth. Les autres périphériques Bluetooth peuvent ne plus répondre.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Effects</value>

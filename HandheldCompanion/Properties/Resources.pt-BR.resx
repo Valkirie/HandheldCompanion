@@ -2335,7 +2335,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Dispositivo</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Aguarde um momento enquanto fazemos o ciclo de energia do rádio bluetooth.</value>
+    <value>Aguarde um momento enquanto fazemos o ciclo de energia do rádio bluetooth. Outros dispositivos Bluetooth podem não responder mais.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Efeitos</value>

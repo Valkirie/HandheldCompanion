@@ -9700,7 +9700,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please wait a moment while we power cycle your bluetooth radio..
+        ///   Looks up a localized string similar to Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond..
         /// </summary>
         public static string XInputController_Warning_BTH {
             get {
