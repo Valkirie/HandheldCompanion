@@ -232,7 +232,7 @@ public class ProcessEx : IDisposable
 
     private ProcessThread? MainThread { get; set; }
     private ProcessThread? prevThread;
-    private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
+    private ThreadWaitReason waitReason = ThreadWaitReason.UserRequest;
 
     private static object registryLock = new();
 
@@ -426,24 +426,18 @@ public class ProcessEx : IDisposable
 
     public string Executable { get; set; }
 
-    private bool _isSuspended;
     public bool IsSuspended
     {
-        get => _isSuspended;
+        get => waitReason == ThreadWaitReason.Suspended;
         set
         {
-            if (value)
+            if (value != IsSuspended)
             {
-                if (prevThreadWaitReason == ThreadWaitReason.Suspended)
-                    return;
-
-                ProcessManager.SuspendProcess(this).Wait();
+                if (value)
+                    ProcessManager.SuspendProcess(this).Wait();
+                else
+                    ProcessManager.ResumeProcess(this).Wait();
             }
-            else
-            {
-                ProcessManager.ResumeProcess(this).Wait();
-            }
-            _isSuspended = value;
         }
     }
 
@@ -474,11 +468,8 @@ public class ProcessEx : IDisposable
                 case ThreadState.Wait:
                     {
                         // monitor if the process main thread was suspended or resumed
-                        if (MainThread.WaitReason != prevThreadWaitReason)
-                        {
-                            prevThreadWaitReason = MainThread.WaitReason;
-                            _isSuspended = prevThreadWaitReason == ThreadWaitReason.Suspended;
-                        }
+                        if (MainThread.WaitReason != waitReason)
+                            waitReason = MainThread.WaitReason;
                     }
                     break;
 

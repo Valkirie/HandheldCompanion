@@ -59,7 +59,6 @@ public class ProcessManager : IManager
     private object processLock = new();
 
     private static ProcessEx foregroundProcess;
-    private static ProcessEx pausedProcess;
     private IntPtr foregroundWindow;
 
     private AutomationEventHandler _windowOpenedHandler;
@@ -141,20 +140,31 @@ public class ProcessManager : IManager
     public override void Resume()
     {
         bool SuspendOnSleep = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
-        if (SuspendOnSleep && pausedProcess is not null)
+        if (!SuspendOnSleep)
+            return;
+
+        foreach (ProcessEx processEx in Processes.Values)
         {
-            // resume paused process
-            ResumeProcess(pausedProcess, false).Wait();
-            // clear paused process
-            pausedProcess = null;
+            if (!processEx.IsSuspended || !processEx.IsGame())
+                continue;
+
+            ResumeProcess(processEx, false).Wait();
         }
     }
 
     public override void Suspend()
     {
         bool SuspendOnSleep = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
-        if (SuspendOnSleep && foregroundProcess is not null)
-            SuspendProcess(foregroundProcess, false).Wait();
+        if (!SuspendOnSleep)
+            return;
+
+        foreach (ProcessEx processEx in Processes.Values)
+        {
+            if (processEx.IsSuspended || !processEx.IsGame())
+                continue;
+
+            SuspendProcess(processEx, false).Wait();
+        }
     }
 
     private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
