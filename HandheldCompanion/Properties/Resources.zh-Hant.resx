@@ -2300,7 +2300,7 @@
     <value>裝置</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+    <value>Please wait a moment while we power cycle your bluetooth radio.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>燈光效果</value>
@@ -2531,7 +2531,7 @@
     <value>Touchpad passthrough</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>關閉</value>

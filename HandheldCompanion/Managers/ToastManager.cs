@@ -35,7 +35,7 @@ namespace HandheldCompanion.Managers
 
         private static async Task ProcessToastQueue()
         {
-            if (!QueueSemaphore.Wait(0)) return; // Prevent concurrent processing
+            if (!QueueSemaphore.Wait(1000)) return; // Prevent concurrent processing
 
             try
             {
@@ -49,6 +49,7 @@ namespace HandheldCompanion.Managers
                     LastToastTime = DateTime.Now;
                 }
             }
+            catch { }
             finally
             {
                 QueueSemaphore.Release();

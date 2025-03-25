@@ -7,5 +7,6 @@ namespace HandheldCompanion.Controllers
     {
         None = 0,
         MotionSensor = 1,
+        Rumble = 2,
     }
 }

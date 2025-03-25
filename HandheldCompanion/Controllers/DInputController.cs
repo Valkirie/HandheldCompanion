@@ -1,4 +1,8 @@
-﻿using SharpDX.DirectInput;
+﻿using HandheldCompanion.Managers;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using SharpDX.DirectInput;
+using System;
+using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Controllers;
 
@@ -10,22 +14,18 @@ public class DInputController : IController
     public DInputController()
     { }
 
-    public DInputController(Joystick joystick, PnPDetails details)
+    public DInputController(PnPDetails details)
     {
-        if (joystick is null)
-            return;
+        if (details is null)
+            throw new Exception("DInputController PnPDetails is null");
+
+        AttachDetails(details);
 
         this.joystick = joystick;
         UserIndex = (byte)joystick.Properties.JoystickId;
 
-        if (details is null)
-            return;
-
         Details = details;
         Details.isHooked = true;
-
-        // Set BufferSize in order to use buffered data.
-        joystick.Properties.BufferSize = 128;
     }
 
     ~DInputController()
@@ -37,14 +37,42 @@ public class DInputController : IController
     {
         Unplug();
 
-        // don't dispose our placeholders
-        if (isPlaceholder)
-            return;
-
         joystick.Dispose();
         joystick = null;
 
         base.Dispose();
+    }
+
+    public override void AttachDetails(PnPDetails details)
+    {
+        // search for the plugged controller
+        // todo: check if joystick isn't null and is acquired
+        using (DirectInput directInput = new DirectInput())
+        {
+            foreach (DeviceInstance? deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+            {
+                try
+                {
+                    // Instantiate the joystick
+                    Joystick lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+
+                    // Check if lookup joystick has proper interface path
+                    string SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, DeviceInterfaceIds.HidDevice.ToString());
+                    if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        joystick = lookup_joystick;
+                        break;
+                    }
+                }
+                catch { }
+            }
+        }
+
+        // unsupported controller
+        if (joystick is null)
+            throw new Exception($"Couldn't find matching DInput controller: VID:{details.GetVendorID()} and PID:{details.GetProductID()}");
+
+        base.AttachDetails(details);
     }
 
     public override string ToString()
@@ -69,6 +97,10 @@ public class DInputController : IController
 
     public override void Plug()
     {
+        if (!IsConnected())
+            return;
+
+        // Acquire joystick
         joystick?.Acquire();
 
         base.Plug();
@@ -76,6 +108,9 @@ public class DInputController : IController
 
     public override void Unplug()
     {
+        if (!IsConnected())
+            return;
+
         // Unacquire the joystick
         joystick?.Unacquire();
 

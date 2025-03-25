@@ -34,6 +34,7 @@ public enum DeviceCapabilities : ushort
     BatteryChargeLimit = 64,
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
+    FanOverride = 512,
 }
 
 public struct ECDetails
@@ -76,7 +77,8 @@ public abstract class IDevice
 
     private static IDevice device;
 
-    protected ushort _vid, _pid;
+    protected int vendorId;
+    protected int[] productIds;
     protected Dictionary<byte, HidDevice> hidDevices = [];
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
@@ -261,7 +263,7 @@ public abstract class IDevice
         PullSensors();
     }
 
-    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
+    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(a => !a.silenced).SelectMany(a => a.state.Buttons).Distinct();
 
     public virtual bool IsOpen => openLibSys is not null;
 
@@ -643,6 +645,9 @@ public abstract class IDevice
                         case "MS-1T41":
                             device = new ClawA1M();
                             break;
+                        case "MS-1T52":
+                            device = new Claw8();
+                            break;
                     }
                 }
                 break;
@@ -692,6 +697,9 @@ public abstract class IDevice
     {
         switch (controllerMode)
         {
+            case HIDmode.DualShock4Controller:
+                KeyPressDelay = 180;
+                break;
             default:
                 KeyPressDelay = 20;
                 break;
@@ -703,7 +711,7 @@ public abstract class IDevice
         Gyrometer? gyrometer = Gyrometer.GetDefault();
         Accelerometer? accelerometer = Accelerometer.GetDefault();
 
-        if (gyrometer is not null && accelerometer is not null)
+        if (gyrometer is not null || accelerometer is not null)
         {
             // check sensor
             string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");

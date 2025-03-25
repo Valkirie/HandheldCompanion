@@ -126,16 +126,13 @@ public static class PerformanceManager
 
         // initialize processor
         processor = Processor.GetCurrent();
-
-        if (processor is not null && processor.IsInitialized)
+        if (processor is not null)
         {
             processor.StatusChanged += Processor_StatusChanged;
             processor.Initialize();
         }
         else
-        {
             ProcessorStatusChanged?.Invoke(false, false);
-        }
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
@@ -546,6 +543,7 @@ public static class PerformanceManager
                     }
                 }
             }
+            catch { }
             finally
             {
                 // release lock
@@ -636,6 +634,7 @@ public static class PerformanceManager
                     RequestPerfBoostMode((uint)currentProfile.CPUBoostLevel);
                 }
             }
+            catch { }
             finally
             {
                 // release lock
@@ -713,6 +712,7 @@ public static class PerformanceManager
                     }
                 }
             }
+            catch { }
             finally
             {
                 // release lock
@@ -782,6 +782,7 @@ public static class PerformanceManager
                     }
                 }
             }
+            catch { }
             finally
             {
                 // release lock

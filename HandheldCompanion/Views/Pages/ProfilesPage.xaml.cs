@@ -92,6 +92,7 @@ public partial class ProfilesPage : Page
                         desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
                 });
             }
+            catch { }
             finally
             {
                 profileLock.Exit();
@@ -651,6 +652,7 @@ public partial class ProfilesPage : Page
                     cb_SubProfilePicker.Items.Refresh();
                 });
             }
+            catch { }
             finally
             {
                 profileLock.Exit();
@@ -692,6 +694,7 @@ public partial class ProfilesPage : Page
                 // set subprofile to be applied
                 cb_SubProfilePicker.SelectedIndex = idx;
             }
+            catch { }
             finally
             {
                 profileLock.Exit();
@@ -1402,6 +1405,7 @@ public partial class ProfilesPage : Page
                         break;
                 }
             }
+            catch { }
             finally
             {
                 graphicLock.Exit();

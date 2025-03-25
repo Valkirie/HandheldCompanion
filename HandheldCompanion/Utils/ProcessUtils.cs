@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -101,6 +102,20 @@ public static class ProcessUtils
         }
 
         return string.Empty;
+    }
+
+    public static bool TaskWithTimeout(Action removalAction, TimeSpan timeout)
+    {
+        try
+        {
+            Task removalTask = Task.Run(removalAction);
+            return removalTask.Wait(timeout);
+        }
+        catch (Exception ex)
+        {
+            // Log exception details
+            return false;
+        }
     }
 
     public static string GetPathToApp(int pid)

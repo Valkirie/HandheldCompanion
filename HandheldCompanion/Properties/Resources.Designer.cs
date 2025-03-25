@@ -475,7 +475,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adjustments are still in progress. We’ll get this right for your games..
+        ///   Looks up a localized string similar to Adjustments are still in progress. We&apos;ll get this right for your games..
         /// </summary>
         public static string ControllerPage_ControllerManagement_Attempt1 {
             get {
@@ -484,7 +484,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Almost there! We’re making another adjustment to optimize controller settings..
+        ///   Looks up a localized string similar to Almost there! We&apos;re making another adjustment to optimize controller settings..
         /// </summary>
         public static string ControllerPage_ControllerManagement_Attempt2 {
             get {
@@ -493,7 +493,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One last attempt to reorder controllers. We’re doing everything we can!.
+        ///   Looks up a localized string similar to One last attempt to reorder controllers. We&apos;re doing everything we can!.
         /// </summary>
         public static string ControllerPage_ControllerManagement_Attempt3 {
             get {
@@ -637,7 +637,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping.
+        ///   Looks up a localized string similar to Allows you to use your device&apos;s touchpad as a regular mouse, without any software processing or mapping.
         /// </summary>
         public static string ControllerPage_LegionGoPassthroughDesc {
             get {
@@ -2887,7 +2887,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input is based on the controller’s orientation, independent of the game world or character..
+        ///   Looks up a localized string similar to Input is based on the controller&apos;s orientation, independent of the game world or character..
         /// </summary>
         public static string Enum_MotionInput_LocalSpace_Desc {
             get {
@@ -2905,7 +2905,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input is aligned with the player character’s orientation in the game, allowing for intuitive aiming and movement..
+        ///   Looks up a localized string similar to Input is aligned with the player character&apos;s orientation in the game, allowing for intuitive aiming and movement..
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace_Desc {
             get {
@@ -2923,7 +2923,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input is mapped to the game world’s axes, providing consistent directional input regardless of the player character’s orientation..
+        ///   Looks up a localized string similar to Input is mapped to the game world&apos;s axes, providing consistent directional input regardless of the player character&apos;s orientation..
         /// </summary>
         public static string Enum_MotionInput_WorldSpace_Desc {
             get {
@@ -9700,7 +9700,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please restart your controller by holding the Guide button to finalize pairing..
+        ///   Looks up a localized string similar to Please wait a moment while we power cycle your bluetooth radio..
         /// </summary>
         public static string XInputController_Warning_BTH {
             get {

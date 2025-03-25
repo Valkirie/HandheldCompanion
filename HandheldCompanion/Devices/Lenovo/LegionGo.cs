@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -195,8 +194,8 @@ public class LegionGo : IDevice
         ProductIllustration = "device_legion_go";
 
         // used to monitor OEM specific inputs
-        _vid = 0x17EF;
-        _pid = 0x6182;
+        vendorId = 0x17EF;
+        productIds = [0x6182];
 
         // fix for threshold overflow
         GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);
@@ -227,6 +226,7 @@ public class LegionGo : IDevice
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.FanOverride;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;

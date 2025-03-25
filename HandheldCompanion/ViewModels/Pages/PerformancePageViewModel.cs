@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -65,7 +66,9 @@ namespace HandheldCompanion.ViewModels
                     switch (IsQuickTools)
                     {
                         case false:
-                            _selectedPresetIndex = ProfilePickerItems.IndexOf(ProfilePickerItems.First(p => p.LinkedPresetId == _selectedPreset.Guid));
+                            ProfilesPickerViewModel profile = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == _selectedPreset.Guid);
+                            if (profile is not null)
+                                _selectedPresetIndex = ProfilePickerItems.IndexOf(profile);
                             break;
                     }
 
@@ -522,7 +525,7 @@ namespace HandheldCompanion.ViewModels
 
             PropertyChanged += (sender, e) =>
             {
-                if (SelectedPreset is null)
+                if (SelectedPreset is null || SelectedPreset.Name is null)
                     return;
 
                 // skip PropertyChanged updates for specific properties
@@ -557,7 +560,10 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // trigger power profile update
-                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
+                Task.Run(() =>
+                {
+                    ManagerFactory.powerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
+                });
             };
 
             CreatePresetCommand = new DelegateCommand(() =>
@@ -768,11 +774,32 @@ namespace HandheldCompanion.ViewModels
                 return;
 
             // skip if not current preset
-            if (SelectedPreset?.Guid != preset.Guid)
-                return;
+            if (source != UpdateSource.QuickProfilesCreation && source != UpdateSource.Creation)
+                if (SelectedPreset?.Guid != preset.Guid)
+                    return;
 
             // Update all properties
             OnPropertyChanged(string.Empty);
+
+            // Main Window only
+            if (IsMainPage)
+            {
+                int index;
+                ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == preset.Guid);
+                if (foundPreset is not null)
+                {
+                    index = ProfilePickerItems.IndexOf(foundPreset);
+                    foundPreset.Text = preset.Name;
+                }
+                else
+                {
+                    index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
+                    ProfilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name });
+                }
+
+                OnPropertyChanged(nameof(ProfilePickerItems));
+                SelectedPresetIndex = index;
+            }
         }
 
         private void PowerProfileManager_Deleted(PowerProfile preset)

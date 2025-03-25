@@ -110,10 +110,11 @@ public class ProcessManager : IManager
         base.PrepareStop();
 
         // Remove the WindowOpened event handler
-        Automation.RemoveAutomationEventHandler(
-            WindowPattern.WindowOpenedEvent,
-            AutomationElement.RootElement,
-            _windowOpenedHandler);
+        if (_windowOpenedHandler != null)
+            ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationEventHandler(
+                WindowPattern.WindowOpenedEvent,
+                AutomationElement.RootElement,
+                _windowOpenedHandler), TimeSpan.FromSeconds(3));
 
         // Unhook the event when no longer needed
         if (m_hhook != IntPtr.Zero)
@@ -342,7 +343,7 @@ public class ProcessManager : IManager
             // Dispose the process.
             processEx.Dispose();
         }
-        
+
         processLocks.TryRemove(processId, out _);
     }
 
@@ -576,7 +577,7 @@ public class ProcessManager : IManager
         handles.Insert(0, processEx.Handle);
 
         // suspend processes
-        foreach(int handle in handles)
+        foreach (int handle in handles)
             ProcessUtils.NtSuspendProcess(handle);
     }
 

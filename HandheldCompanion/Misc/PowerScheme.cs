@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Misc;
@@ -16,6 +17,39 @@ public static class PowerSubGroup
 {
     public static readonly Guid SUB_PROCESSOR = new("54533251-82be-4824-96c1-47b60b740d00");
     public static readonly Guid SUB_SLEEP = new("238C9FA8-0AAD-41ED-83F4-97BE242C8F20");
+}
+
+public static class PowerProfileGroup
+{
+    public static readonly Guid GUID_LOWPOWER = new("4569E601-272E-4869-BCAB-1C6C03D7966F");
+    public static readonly Guid GUID_LOWLATENCY = new("0DA965DC-8FCF-4c0b-8EFE-8DD5E7BC959A");
+    public static readonly Guid GUID_SUSTAINEDPERF = new("0AABB002-A307-447e-9B81-1D819DF6C6D0");
+    public static readonly Guid GUID_GAMEMODE = new("D4140C81-EBBA-4e60-8561-6918290359CD");
+    public static readonly Guid GUID_CONSTRAINED = new("EE1E4F72-E368-46b1-B3C6-5048B11C2DBD");
+    public static readonly Guid GUID_STANDBY = new("8BC6262C-C026-411d-AE3B-7E2F70811A13");
+    public static readonly Guid GUID_SCREENOFF = new("2e92e666-c3f6-42c3-89bd-94d40fabcde5");
+    public static readonly Guid GUID_LOWQOS = new("C04A802D-2205-4910-AE98-3B51E3BB72F2");
+    public static readonly Guid GUID_MEDIUMQOS = new("A4A61B5F-F42C-4d23-B3AB-5C27DF9F0F18");
+    public static readonly Guid GUID_MULTIMEDIAQOS = new("0C3D5326-944B-4aab-8AD8-FE422A0E50E0");
+    public static readonly Guid GUID_UTILITYQOS = new("33CC3A0D-45EE-43CA-86C4-695BFC9A313B");
+    public static readonly Guid GUID_ECOQOS = new("336C7511-F109-4172-BB3A-3EA51F815ADA");
+
+    // List of all profiles for easy iteration
+    public static readonly List<Guid> AllProfiles = new List<Guid>
+    {
+        GUID_LOWPOWER,
+        GUID_LOWLATENCY,
+        GUID_SUSTAINEDPERF,
+        GUID_GAMEMODE,
+        GUID_CONSTRAINED,
+        GUID_STANDBY,
+        GUID_SCREENOFF,
+        GUID_LOWQOS,
+        GUID_MEDIUMQOS,
+        GUID_MULTIMEDIAQOS,
+        GUID_UTILITYQOS,
+        GUID_ECOQOS
+    };
 }
 
 public static class SleepSetting

@@ -312,14 +312,11 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
-            <!--  Lenovo Legion Go  -->
-            <ikw:SimpleStackPanel
-                Name="LegionGoPanel"
-                d:Visibility="Visible"
-                Spacing="6"
-                Visibility="Collapsed">
+            <!--  Device or Capabilities specific  -->
+            <ikw:SimpleStackPanel Spacing="6">
 
                 <Border
+                    Name="FanOverridePanel"
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -348,11 +345,11 @@
                         </DockPanel>
 
                         <ui:ToggleSwitch
-                            Name="Toggle_LegionGoFanOverride"
+                            Name="Toggle_FanOverride"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_LegionGoFanOverride_Toggled" />
+                            Toggled="Toggle_FanOverride_Toggled" />
                     </Grid>
                 </Border>
             </ikw:SimpleStackPanel>

@@ -313,7 +313,7 @@ public static class InputsManager
         if (args.IsKeyDown)
         {
             // check if key is used by OEM chords
-            foreach (KeyboardChord? pair in IDevice.GetCurrent().OEMChords.Where(a => !a.silenced))
+            foreach (KeyboardChord? pair in IDevice.GetCurrent().OEMChords)
             {
                 List<KeyCode> chord = pair.chords[args.IsKeyDown];
                 if (KeyIndexOEM[args.IsKeyDown] >= chord.Count)
@@ -378,7 +378,7 @@ public static class InputsManager
                     {
                         // compare ordered enumerable
                         List<KeyCode> chord_keys = chord.GetChord(args.IsKeyDown);
-                        if (chord_keys.Count == 0)
+                        if (chord_keys.Count == 0 || chord.silenced)
                             continue;
 
                         bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));

@@ -15,6 +15,23 @@ namespace HandheldCompanion.ViewModels
 
         public bool LayoutManagerReady => ManagerFactory.layoutManager.IsReady;
 
+        private bool _CanRumble;
+        public bool CanRumble
+        {
+            get
+            {
+                return _CanRumble;
+            }
+            set
+            {
+                if (_CanRumble != value)
+                {
+                    _CanRumble = value;
+                    OnPropertyChanged(nameof(CanRumble));
+                }
+            }
+        }
+
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
 
@@ -107,6 +124,9 @@ namespace HandheldCompanion.ViewModels
                 foreach (ControllerViewModel controller in PhysicalControllers)
                     controller.Updated();
             }
+
+            // check rumble
+            CanRumble = Controller.Capabilities.HasFlag(ControllerCapabilities.Rumble);
 
             // do something
             controllerPage.ControllerRefresh();

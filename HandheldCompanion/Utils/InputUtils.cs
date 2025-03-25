@@ -25,8 +25,8 @@ public enum MotionInput
     /// </summary>
     PlayerSpace = 1,
     /// <summary>
-    /// World Space: Gyro controls calculate the direction of gravity to determine the player’s “up” orientation.
-    /// The yaw axis remains aligned with this “up” direction, regardless of the controller’s physical orientation.
+    /// World Space: Gyro controls calculate the direction of gravity to determine the player's "up" orientation.
+    /// The yaw axis remains aligned with this "up" direction, regardless of the controller's physical orientation.
     /// By using the accelerometer, local space inputs are converted to world space.
     /// Players can consistently turn the camera left and right by rotating the controller relative to themselves.
     /// While more intuitive, world space controls are challenging to implement and less suitable for handheld devices.

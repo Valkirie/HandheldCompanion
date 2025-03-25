@@ -25,6 +25,17 @@ public static class RegistryUtils
         return Registry.GetValue(keyName, valueName, null) != null;
     }
 
+    public static bool CreateKey(string key)
+    {
+        // CreateSubKey will create the key if it doesn't exist,
+        // or open it if it does.
+        using (RegistryKey regKey = Registry.LocalMachine.CreateSubKey(key))
+            if (regKey != null)
+                return true;
+
+        return false;
+    }
+
     public static string GetString(string key, string valueName)
     {
         return Convert.ToString(GetValue(key, valueName));

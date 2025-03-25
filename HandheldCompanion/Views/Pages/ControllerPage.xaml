@@ -324,6 +324,7 @@
 
                 <!--  Vibration Strength  -->
                 <Border
+                    IsEnabled="{Binding CanRumble, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">

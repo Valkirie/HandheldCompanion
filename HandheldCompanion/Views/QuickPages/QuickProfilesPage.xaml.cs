@@ -199,6 +199,7 @@ public partial class QuickProfilesPage : Page
                         desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
                 });
             }
+            catch { }
             finally
             {
                 multimediaLock.Exit();
@@ -547,6 +548,7 @@ public partial class QuickProfilesPage : Page
                     RISSlider.Value = selectedProfile.RISSharpness;
                 });
             }
+            catch { }
             finally
             {
                 profileLock.Exit();
@@ -601,6 +603,7 @@ public partial class QuickProfilesPage : Page
                     }
                 });
             }
+            catch { }
             finally
             {
                 foregroundLock.Exit();
@@ -1121,6 +1124,7 @@ public partial class QuickProfilesPage : Page
                         break;
                 }
             }
+            catch { }
             finally
             {
                 graphicLock.Exit();

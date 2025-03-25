@@ -40,11 +40,11 @@ public partial class QuickDevicePage : Page
         NightLight.Toggled += NightLight_Toggled;
 
         // Device specific
-        LegionGoPanel.Visibility = IDevice.GetCurrent() is LegionGo ? Visibility.Visible : Visibility.Collapsed;
         AYANEOFlipDSPanel.Visibility = IDevice.GetCurrent() is AYANEOFlipDS ? Visibility.Visible : Visibility.Collapsed;
 
         // Capabilities specific
         DynamicLightingPanel.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+        FanOverridePanel.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.FanOverride) ? Visibility.Visible : Visibility.Collapsed;
 
         NightLightToggle.IsEnabled = NightLight.Supported;
         NightLightToggle.IsOn = NightLight.Enabled;
@@ -193,6 +193,7 @@ public partial class QuickDevicePage : Page
                         ComboBoxResolution.Items.Add(resolution);
                 });
             }
+            catch { }
             finally
             {
                 multimediaLock.Exit();
@@ -251,6 +252,7 @@ public partial class QuickDevicePage : Page
                     }
                 });
             }
+            catch { }
             finally
             {
                 multimediaLock.Exit();
@@ -331,13 +333,13 @@ public partial class QuickDevicePage : Page
         ManagerFactory.settingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
     }
 
-    private void Toggle_LegionGoFanOverride_Toggled(object sender, RoutedEventArgs e)
+    private void Toggle_FanOverride_Toggled(object sender, RoutedEventArgs e)
     {
+        ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
         if (IDevice.GetCurrent() is LegionGo device)
-        {
-            ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
             device.SetFanFullSpeed(toggleSwitch.IsOn);
-        }
+        else if (IDevice.GetCurrent() is Claw8 claw8)
+            claw8.SetFanFullSpeed(toggleSwitch.IsOn);
     }
 
     private void NightLightToggle_Toggled(object sender, RoutedEventArgs e)
