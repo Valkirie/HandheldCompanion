@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -65,7 +66,9 @@ namespace HandheldCompanion.ViewModels
                     switch (IsQuickTools)
                     {
                         case false:
-                            _selectedPresetIndex = ProfilePickerItems.IndexOf(ProfilePickerItems.First(p => p.LinkedPresetId == _selectedPreset.Guid));
+                            ProfilesPickerViewModel profile = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == _selectedPreset.Guid);
+                            if (profile is not null)
+                                _selectedPresetIndex = ProfilePickerItems.IndexOf(profile);
                             break;
                     }
 
@@ -75,7 +78,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool IsQuickTools { get; }
+        public readonly bool IsQuickTools;
+        public bool IsMainPage => !IsQuickTools;
 
         #region Binding Properties
 
@@ -144,30 +148,14 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public double TDPMinimum
+        public double ConfigurableTDPOverrideDown
         {
             get => ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideDown);
-            set
-            {
-                if (value != TDPMinimum)
-                {
-                    ManagerFactory.settingsManager.SetProperty(Settings.ConfigurableTDPOverrideDown, value);
-                    OnPropertyChanged(nameof(TDPMinimum));
-                }
-            }
         }
 
-        public double TDPMaximum
+        public double ConfigurableTDPOverrideUp
         {
             get => ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
-            set
-            {
-                if (value != TDPMaximum)
-                {
-                    ManagerFactory.settingsManager.SetProperty(Settings.ConfigurableTDPOverrideUp, value);
-                    OnPropertyChanged(nameof(TDPMaximum));
-                }
-            }
         }
 
         public double AutoTDPMaximum
@@ -487,7 +475,6 @@ namespace HandheldCompanion.ViewModels
         private LineSeries _fanGraphLineSeries;
         private ContentDialog _modifyDialog;
 
-        private bool _updatingProfile;
         private bool _updatingFanCurveUI;
 
         // Use these to easily rebuild 
@@ -538,18 +525,24 @@ namespace HandheldCompanion.ViewModels
 
             PropertyChanged += (sender, e) =>
             {
-                if (SelectedPreset is null)
+                if (SelectedPreset is null || SelectedPreset.Name is null)
                     return;
 
+                // skip PropertyChanged updates for specific properties
                 switch (e.PropertyName)
                 {
                     case "ModifyPresetName":
                     case "ModifyPresetDescription":
+                    case "AutoTDPMaximum":
+                    case "ConfigurableTDPOverride":
+                    case "ConfigurableTDPOverrideDown":
+                    case "ConfigurableTDPOverrideUp":
+                    case "":
                         return;
                 }
 
                 // TODO: Get rid of UI update here of fan graph UI dependency
-                if (!IsQuickTools)
+                if (IsMainPage)
                 {
                     UIHelper.TryInvoke(() =>
                     {
@@ -566,14 +559,11 @@ namespace HandheldCompanion.ViewModels
                         return;
                 }
 
-                // set flag
-                _updatingProfile = true;
-
                 // trigger power profile update
-                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
-
-                // set flag
-                _updatingProfile = false;
+                Task.Run(() =>
+                {
+                    ManagerFactory.powerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
+                });
             };
 
             CreatePresetCommand = new DelegateCommand(() =>
@@ -628,7 +618,7 @@ namespace HandheldCompanion.ViewModels
 
             #region Main Window Setup
 
-            if (!IsQuickTools)
+            if (IsMainPage)
             {
                 _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
                 _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };
@@ -733,7 +723,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
 
-            if (!IsQuickTools)
+            if (IsMainPage)
             {
                 _fanGraphLineSeries.ActualValues.CollectionChanged -= ActualValues_CollectionChanged;
                 _fanGraph.DataClick -= ChartOnDataClick;
@@ -777,38 +767,38 @@ namespace HandheldCompanion.ViewModels
                 EPPOverrideValue = epp;
         }
 
-        private object lockcollection = new();
         private void PowerProfileManager_Updated(PowerProfile preset, UpdateSource source)
         {
             // skip if self update
-            if (_updatingProfile)
+            if (source == (IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage))
                 return;
 
+            // skip if not current preset
+            if (source != UpdateSource.QuickProfilesCreation && source != UpdateSource.Creation)
+                if (SelectedPreset?.Guid != preset.Guid)
+                    return;
+
             // Update all properties
-            if (SelectedPreset?.Guid == preset.Guid)
-                OnPropertyChanged(string.Empty);
+            OnPropertyChanged(string.Empty);
 
             // Main Window only
-            if (!IsQuickTools)
+            if (IsMainPage)
             {
-                lock (lockcollection)
+                int index;
+                ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == preset.Guid);
+                if (foundPreset is not null)
                 {
-                    int index;
-                    ProfilesPickerViewModel? foundPreset = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == preset.Guid);
-                    if (foundPreset is not null)
-                    {
-                        index = ProfilePickerItems.IndexOf(foundPreset);
-                        foundPreset.Text = preset.Name;
-                    }
-                    else
-                    {
-                        index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
-                        ProfilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name });
-                    }
-
-                    OnPropertyChanged(nameof(ProfilePickerItems));
-                    SelectedPresetIndex = index;
+                    index = ProfilePickerItems.IndexOf(foundPreset);
+                    foundPreset.Text = preset.Name;
                 }
+                else
+                {
+                    index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
+                    ProfilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name });
+                }
+
+                OnPropertyChanged(nameof(ProfilePickerItems));
+                SelectedPresetIndex = index;
             }
         }
 
@@ -819,15 +809,14 @@ namespace HandheldCompanion.ViewModels
                 if (SelectedPreset?.Guid == preset.Guid && OverlayQuickTools.GetCurrent().ContentFrame.CanGoBack)
                     OverlayQuickTools.GetCurrent().ContentFrame.GoBack();
             }
-            else
+            else if (IsMainPage)
             {
-                lock (lockcollection)
-                {
-                    ProfilesPickerViewModel foundVm = ProfilePickerItems.First(p => p.LinkedPresetId == preset.Guid);
-                    ProfilePickerItems.Remove(foundVm);
-                    OnPropertyChanged(nameof(ProfilePickerItems));
+                ProfilesPickerViewModel foundVm = ProfilePickerItems.First(p => p.LinkedPresetId == preset.Guid);
+                ProfilePickerItems.Remove(foundVm);
+                OnPropertyChanged(nameof(ProfilePickerItems));
+
+                if (SelectedPreset?.Guid == preset.Guid)
                     SelectedPresetIndex = 1;
-                }
             }
         }
 

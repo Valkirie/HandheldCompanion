@@ -86,6 +86,7 @@ public partial class SettingsMode0 : Page
                     }
                 });
             }
+            catch { }
             finally
             {
                 updateLock.Exit();

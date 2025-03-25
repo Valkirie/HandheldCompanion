@@ -1,11 +1,11 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
-using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -14,20 +14,20 @@ namespace HandheldCompanion.Devices;
 
 public class ClawA1M : IDevice
 {
-    private enum WMIEventCode
+    protected enum WMIEventCode
     {
         LaunchMcxMainUI = 41, // 0x00000029
         LaunchMcxOSD = 88, // 0x00000058
     }
 
-    private readonly Dictionary<WMIEventCode, ButtonFlags> keyMapping = new()
+    protected readonly Dictionary<WMIEventCode, ButtonFlags> keyMapping = new()
     {
         { 0, ButtonFlags.None },
         { WMIEventCode.LaunchMcxMainUI, ButtonFlags.OEM1 },
         { WMIEventCode.LaunchMcxOSD, ButtonFlags.OEM2 },
     };
 
-    private enum GamepadMode
+    protected enum GamepadMode
     {
         Offline,
         XInput,
@@ -38,13 +38,13 @@ public class ClawA1M : IDevice
         TESTING,
     }
 
-    private enum MKeysFunction
+    protected enum MKeysFunction
     {
         Macro,
         Combination,
     }
 
-    private enum CommandType
+    public enum CommandType
     {
         EnterProfileConfig = 1,
         ExitProfileConfig = 2,
@@ -54,7 +54,7 @@ public class ClawA1M : IDevice
         Ack = 6,
         SwitchProfile = 7,
         WriteProfileToEEPRom = 8,
-        ReadFirmwareVersion = 9,
+        SyncRGB = 9,
         ReadRGBStatusAck = 10, // 0x0000000A
         ReadCurrentProfile = 11, // 0x0000000B
         ReadCurrentProfileAck = 12, // 0x0000000C
@@ -65,6 +65,10 @@ public class ClawA1M : IDevice
         ReadGamepadMode = 38, // 0x00000026
         GamepadModeAck = 39, // 0x00000027
         ResetDevice = 40, // 0x00000028
+        SetFeatureState = 44, // 0x0000002C
+        DisableDevice = 45, // 0x0000002D
+        SetMotionStatus = 47, // 0x0000002F
+        MotionDataAck = 48, // 0x00000030
         RGBControl = 224, // 0x000000E0
         CalibrationControl = 253, // 0x000000FD
         CalibrationAck = 254, // 0x000000FE
@@ -81,8 +85,8 @@ public class ClawA1M : IDevice
         ProductIllustration = "device_msi_claw";
 
         // used to monitor OEM specific inputs
-        _vid = 0x0DB0;
-        _pid = 0x1901;
+        vendorId = 0x0DB0;
+        productIds = [0x1901, 0x1902, 0x1903];
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 65 };
@@ -168,13 +172,40 @@ public class ClawA1M : IDevice
         StartWatching();
 
         // configure controller to XInput
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.XInput, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
+        SwitchMode(GamepadMode.DInput);
+        SetMotionStatus(true);
+
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
         return true;
+    }
+
+    private async void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
+    {
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+        {
+            while (!IsReady())
+                await Task.Delay(1000).ConfigureAwait(false);
+
+            SwitchMode(GamepadMode.DInput);
+            SetMotionStatus(true);
+
+            return;
+
+            ushort productId = Controller.GetProductID();
+            switch (productId)
+            {
+                case 0x1901:
+                    SwitchMode(GamepadMode.XInput);
+                    break;
+                case 0x1902:
+                    SwitchMode(GamepadMode.DInput);
+                    break;
+                case 0x1903:
+                    SwitchMode(GamepadMode.TESTING);
+                    break;
+            }
+        }
     }
 
     public override void Close()
@@ -183,30 +214,68 @@ public class ClawA1M : IDevice
         StopWatching();
 
         // configure controller to Desktop
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)GamepadMode.Desktop, (byte)MKeysFunction.Macro };
-            device.Write(msg);
-        }
+        SwitchMode(GamepadMode.Desktop);
 
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
             hidDevice.Dispose();
         hidDevices.Clear();
 
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+
         base.Close();
+    }
+
+    protected bool SetMotionStatus(bool enabled)
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SetMotionStatus, (byte)(enabled ? 1 : 0) };
+            if (device.Write(msg))
+            {
+                LogManager.LogInformation("Successfully SetMotionStatus to {0}", enabled);
+                return true;
+            }
+            else
+            {
+                LogManager.LogWarning("Failed to SetMotionStatus to {0}", enabled);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    protected bool SwitchMode(GamepadMode gamepadMode)
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)gamepadMode, (byte)MKeysFunction.Macro };
+            if (device.Write(msg))
+            {
+                LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
+                return true;
+            }
+            else
+            {
+                LogManager.LogWarning("Failed to switch controller mode to {0}", gamepadMode);
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public override bool IsReady()
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {
             if (!device.IsConnected)
                 continue;
 
             // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64)
+            if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
 
             hidDevices[INPUT_HID_ID] = device;
@@ -215,20 +284,24 @@ public class ClawA1M : IDevice
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
         {
-            PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-            string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            try
+            {
+                PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+                string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-            PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-            Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-            string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+                PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+                Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+                string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
-            return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+                return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+            }
+            catch { }
         }
 
         return false;
     }
 
-    private void StartWatching()
+    protected void StartWatching()
     {
         try
         {
@@ -243,7 +316,7 @@ public class ClawA1M : IDevice
         }
     }
 
-    private void StopWatching()
+    protected void StopWatching()
     {
         if (specialKeyWatcher == null)
         {
@@ -289,19 +362,6 @@ public class ClawA1M : IDevice
                         KeyRelease(button);
                     });
                 }
-                break;
-        }
-    }
-
-    public override void SetKeyPressDelay(HIDmode controllerMode)
-    {
-        switch (controllerMode)
-        {
-            case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
-                break;
-            default:
-                KeyPressDelay = 20;
                 break;
         }
     }

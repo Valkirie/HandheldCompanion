@@ -118,7 +118,11 @@ public class ProcessManager : IManager
         base.PrepareStop();
 
         // Remove the WindowOpened event handler
-        // Automation.RemoveAutomationEventHandler(WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, _windowOpenedHandler);
+        if (_windowOpenedHandler != null)
+            ProcessUtils.TaskWithTimeout(() => Automation.RemoveAutomationEventHandler(
+                WindowPattern.WindowOpenedEvent,
+                AutomationElement.RootElement,
+                _windowOpenedHandler), TimeSpan.FromSeconds(3));
 
         // Unhook the event when no longer needed
         if (m_hhook != IntPtr.Zero)
@@ -340,97 +344,112 @@ public class ProcessManager : IManager
 
     private void ProcessHalted(object? sender, EventArgs e)
     {
+        // Get the processId
         int processId = ((Process)sender).Id;
 
-        if (!Processes.TryGetValue(processId, out ProcessEx processEx))
-            return;
-
-        // stopped process can't have foreground
-        if (foregroundProcess == processEx)
+        object lockObject = processLocks.GetOrAdd(processId, id => new object());
+        lock (lockObject)
         {
-            LogManager.LogDebug("{0} process {1} that had foreground has halted", foregroundProcess.Platform, foregroundProcess.Executable);
-            ForegroundChanged?.Invoke(null, foregroundProcess);
+            if (!Processes.TryGetValue(processId, out ProcessEx processEx))
+                return;
+
+            // If the halted process had foreground, log and raise event.
+            if (foregroundProcess == processEx)
+            {
+                LogManager.LogDebug("{0} process {1} that had foreground has halted", foregroundProcess.Platform, foregroundProcess.Executable);
+                ForegroundChanged?.Invoke(null, foregroundProcess);
+            }
+
+            // Remove the process from the dictionary and raise the stopped event.
+            if (Processes.TryRemove(processId, out _))
+            {
+                ProcessStopped?.Invoke(processEx);
+                LogManager.LogDebug("Process halted: {0}", processEx.Executable);
+            }
+
+            // Dispose the process.
+            processEx.Dispose();
         }
 
-        // raise event
-        if (Processes.TryRemove(processId, out _))
-        {
-            ProcessStopped?.Invoke(processEx);
-
-            LogManager.LogDebug("Process halted: {0}", processEx.Executable);
-        }
-
-        // dispose process
-        processEx.Dispose();
-        processEx = null;
+        processLocks.TryRemove(processId, out _);
     }
+
+    // Define a thread-safe dictionary to hold lock objects per process id.
+    private static readonly ConcurrentDictionary<int, object> processLocks = new ConcurrentDictionary<int, object>();
 
     private bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
     {
-        lock (processLock)
+        object lockObject = processLocks.GetOrAdd(processID, id => new object());
+        lock (lockObject)
         {
             try
             {
                 if (!automationElement.Current.IsContentElement && !automationElement.Current.IsControlElement)
                     return false;
 
-                // process has exited on arrival
+                // Process has exited on arrival
                 Process proc = Process.GetProcessById(processID);
                 if (proc.HasExited)
                     return false;
 
                 if (!Processes.TryGetValue(proc.Id, out ProcessEx processEx))
                 {
-                    // hook exited event
+                    // Hook exited event
                     try
                     {
                         proc.EnableRaisingEvents = true;
                     }
                     catch (Exception)
                     {
-                        // access denied
+                        // Access denied
                     }
                     proc.Exited += ProcessHalted;
 
-                    // check process path
+                    // Check process path
                     string path = ProcessUtils.GetPathToApp(proc.Id);
                     if (string.IsNullOrEmpty(path))
                         return false;
 
-                    // get filter
+                    // Get filter
                     string exec = Path.GetFileName(path);
                     ProcessFilter filter = GetFilter(exec, path);
 
-                    // create process 
+                    // Create process 
                     // UI thread (synchronous)
-                    UIHelper.TryInvoke(() => { try { processEx = new ProcessEx(proc, path, exec, filter); } catch { } });
+                    UIHelper.TryInvoke(() =>
+                    {
+                        try
+                        {
+                            processEx = new ProcessEx(proc, path, exec, filter);
+                        }
+                        catch
+                        {
+                            // Handle exception if needed
+                        }
+                    });
 
                     if (processEx is null)
                         return false;
 
-                    // attach current window
+                    // Attach current window
                     processEx.AttachWindow(automationElement);
 
-                    // get the proper platform
+                    // Get the proper platform
                     processEx.Platform = PlatformManager.GetPlatform(proc);
 
-                    // add to dictionary
+                    // Add to dictionary
                     Processes.TryAdd(processID, processEx);
 
-                    // todo: move me to event listeners
-                    // we might want to treat this information differently depending on the location
+                    // Raise event if allowed
                     if (processEx.Filter != ProcessFilter.Allowed)
                         return true;
 
-                    // raise event
                     ProcessStarted?.Invoke(processEx, OnStartup);
-
                     LogManager.LogDebug("Process detected: {0}", processEx.Executable);
                 }
                 else
                 {
-                    // process already exist
-                    // attach current window
+                    // Process already exists; attach current window
                     processEx.AttachWindow(automationElement);
                 }
 
@@ -438,9 +457,8 @@ public class ProcessManager : IManager
             }
             catch (Exception)
             {
-                // process has too high elevation
+                // Process has too high elevation or other error occurred
             }
-
             return false;
         }
     }

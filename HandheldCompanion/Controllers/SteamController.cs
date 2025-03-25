@@ -9,7 +9,9 @@ namespace HandheldCompanion.Controllers
 
         public SteamController() : base()
         {
+            // Capabilities
             Capabilities |= ControllerCapabilities.MotionSensor;
+            Capabilities |= ControllerCapabilities.Rumble;
         }
 
         public override void AttachDetails(PnPDetails details)

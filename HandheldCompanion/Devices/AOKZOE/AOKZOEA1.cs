@@ -63,8 +63,8 @@ public class AOKZOEA1 : IDevice
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
 
         // LED HID Device
-        _vid = 0x1A2C;
-        _pid = 0xB001;
+        vendorId = 0x1A2C;
+        productIds = [0xB001];
 
         ECDetails = new ECDetails
         {
@@ -192,7 +192,7 @@ public class AOKZOEA1 : IDevice
     public override bool IsReady()
     {
         // Prepare list for all HID devices
-        HidDevice[] HidDeviceList = HidDevices.Enumerate(_vid, new int[] { _pid }).ToArray();
+        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, productIds).ToArray();
 
         // Check every HID device to find LED device
         foreach (HidDevice device in HidDeviceList)

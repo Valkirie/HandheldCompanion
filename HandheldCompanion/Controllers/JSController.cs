@@ -25,6 +25,7 @@ public class JSController : IController
 
         // Capabilities
         Capabilities |= ControllerCapabilities.MotionSensor;
+        Capabilities |= ControllerCapabilities.Rumble;
     }
 
     public override string ToString()

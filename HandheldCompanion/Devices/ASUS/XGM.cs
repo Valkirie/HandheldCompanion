@@ -1,10 +1,8 @@
 ﻿// Reference : thanks to https://github.com/RomanYazvinsky/ for initial discovery of XGM payloads
 
-using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace HandheldCompanion.Devices.ASUS
@@ -55,7 +53,7 @@ namespace HandheldCompanion.Devices.ASUS
         {
             if (AsusACPI.IsInvalidCurve(curve)) return;
             if (!AsusACPI.IsXGConnected()) return;
-            
+
             byte[] msg = new byte[19];
             Array.Copy(new byte[] { 0x5e, 0xd1, 0x01 }, msg, 3);
             Array.Copy(curve, 0, msg, 3, curve.Length);

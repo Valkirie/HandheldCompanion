@@ -57,6 +57,87 @@ namespace HandheldCompanion
             }
         }
 
+        public static ManagementBaseObject Set(string scope, string path, string methodName, byte[] fullPackage)
+        {
+            // Create the management object using the provided scope and path
+            ManagementObject managementObject = new ManagementObject(scope, path, null);
+
+            ManagementBaseObject inParams = null;
+            ManagementBaseObject inParamsData = null;
+            bool parametersAvailable = false;
+
+            // First attempt: retrieve method parameters for specified methodName
+            try
+            {
+                inParams = managementObject.GetMethodParameters(methodName);
+                inParamsData = inParams["Data"] as ManagementBaseObject;
+                parametersAvailable = (inParams != null && inParamsData != null);
+            }
+            catch (Exception ex) { }
+
+            // If the "Data" parameter was not obtained, try the fallback method "Get_WMI"
+            if (!parametersAvailable)
+            {
+                try
+                {
+                    inParams = managementObject.InvokeMethod("Get_WMI", null, null);
+                    inParamsData = inParams["Data"] as ManagementBaseObject;
+                }
+                catch (ManagementException mex) { }
+                catch (Exception ex) { }
+            }
+
+            // If we still don't have valid input parameters, throw an exception
+            if (inParams == null || inParamsData == null)
+            {
+                LogManager.LogError("WMI Call failed: [scope={0}, path={1}, methodName={2}, fullPackage={3}]", scope, path, methodName, string.Join(',', fullPackage));
+                return null;
+            }
+
+            // Set the "Bytes" property of the "Data" parameter to the full package
+            inParamsData.SetPropertyValue("Bytes", fullPackage);
+            inParams.SetPropertyValue("Data", inParamsData);
+
+            // Invoke the method with the parameters
+            return managementObject.InvokeMethod(methodName, inParams, null);
+        }
+
+        public static byte[] Get(string scope, string path, string methodName, byte iDataBlockIndex, int length, out bool readSuccess)
+        {
+            byte[] fullPackage = new byte[32];
+            byte[] resultData = new byte[length];
+
+            fullPackage[0] = iDataBlockIndex;
+            readSuccess = false;
+
+            // Extract the output bytes from the nested 'Data' object.
+            ManagementBaseObject outParams = Set(scope, path, methodName, fullPackage);
+            ManagementBaseObject dataOut = outParams["Data"] as ManagementBaseObject;
+            if (dataOut == null)
+            {
+                LogManager.LogError("WMI Call failed at outParams[\"Data\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
+                return resultData;
+            }
+
+            byte[] outBytes = dataOut["Bytes"] as byte[];
+            if (outBytes == null || outBytes.Length < 1)
+            {
+                LogManager.LogError("WMI Call failed at dataOut[\"Bytes\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
+                return resultData;
+            }
+
+            // The first byte is the flag; subsequent bytes contain the actual data.
+            byte flag = outBytes[0];
+            readSuccess = (flag == 1);
+
+            // Copy the remaining bytes as the returned data.
+            int dataLength = outBytes.Length - 1;
+            resultData = new byte[dataLength];
+            Array.Copy(outBytes, 1, resultData, 0, dataLength);
+
+            return resultData;
+        }
+
         public static void Call(string scope, string query, string methodName, Dictionary<string, object> methodParams)
         {
             using var searcher = new ManagementObjectSearcher(scope, query);

@@ -5,7 +5,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using Nefarius.Utilities.DeviceManagement.PnP;
+using Nefarius.Utilities.Bluetooth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,6 +216,20 @@ namespace HandheldCompanion.Controllers
             if (Details is not null)
                 return Details.isGaming;
             return false;
+        }
+
+        public virtual ushort GetVendorID()
+        {
+            if (Details is not null)
+                return Details.VendorID;
+            return 0;
+        }
+
+        public virtual ushort GetProductID()
+        {
+            if (Details is not null)
+                return Details.ProductID;
+            return 0;
         }
 
         public virtual bool IsWireless()
@@ -431,31 +445,54 @@ namespace HandheldCompanion.Controllers
         public virtual void Gone()
         { }
 
-        public virtual void CyclePort()
+        public virtual bool CyclePort()
         {
             if (Details is null)
-                return;
+                return false;
+
+            // set flag
+            bool success = false;
 
             // set status
             IsBusy = true;
             ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
 
-            switch (GetEnumerator())
+            string enumerator = GetEnumerator();
+            switch (enumerator)
             {
                 case "BTHENUM":
                 case "BTHLEDEVICE":
-                    Task.Run(async () =>
                     {
-                        Details.Uninstall(false);
-                        await Task.Delay(3000).ConfigureAwait(false); // Avoid blocking the synchronization context
-                        Devcon.Refresh();
-                    });
+                        if (HostRadio.IsEnabled && HostRadio.IsAvailable)
+                        {
+                            try
+                            {
+                                using (HostRadio hostRadio = new())
+                                {
+                                    hostRadio.DisableRadio();
+                                    Task.Delay(3000).Wait();
+                                    hostRadio.EnableRadio();
+                                    success = true;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
                     break;
-                default:
                 case "USB":
-                    Details.CyclePort();
+                case "HID":
+                    success = Details.CyclePort();
                     break;
             }
+
+            if (!success)
+            {
+                // (re)set status
+                IsBusy = false;
+                ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
+            }
+
+            return success;
         }
 
         public virtual void SetLightColor(byte R, byte G, byte B)

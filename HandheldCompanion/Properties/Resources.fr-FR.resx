@@ -2310,7 +2310,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Device</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+    <value>Veuillez patienter un instant pendant que nous effectuons un redémarrage de votre radio Bluetooth. Les autres périphériques Bluetooth peuvent ne plus répondre.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Effects</value>
@@ -2472,7 +2472,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Toggle</value>
   </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
-    <value>Please wait a moment while we power cycle your controller.</value>
+    <value>Veuillez patienter un moment pendant que nous redémarrons votre contrôleur.</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_B5" xml:space="preserve">
     <value>M2</value>
@@ -2541,7 +2541,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Touchpad passthrough</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>Close</value>

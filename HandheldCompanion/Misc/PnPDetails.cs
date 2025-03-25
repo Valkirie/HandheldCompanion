@@ -72,20 +72,28 @@ public class PnPDetails
         return device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
     }
 
-    public UsbPnPDevice GetUsbPnPDevice()
+    public UsbPnPDevice? GetUsbPnPDevice()
     {
         PnPDevice device = GetBasePnPDevice();
         if (device is null)
             return null;
 
-        // skip if bluetooth
-        if (isBluetooth)
+        // if device is HID, we need to get USB parent
+        string enumerator = device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+        if (Equals(enumerator, "HID"))
+        {
+            string device_parent = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            device = PnPDevice.GetDeviceByInstanceId(device_parent);
+            enumerator = device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+        }
+
+        if (!Equals(enumerator, "USB"))
             return null;
 
         return device.ToUsbPnPDevice();
     }
 
-    public PnPDevice GetPnPDevice()
+    public PnPDevice? GetPnPDevice()
     {
         try
         {
@@ -96,7 +104,7 @@ public class PnPDetails
         return null;
     }
 
-    public PnPDevice GetBasePnPDevice()
+    public PnPDevice? GetBasePnPDevice()
     {
         try
         {
@@ -111,15 +119,8 @@ public class PnPDetails
     {
         UsbPnPDevice device = GetUsbPnPDevice();
 
-        try
-        {
-            if (device is not null)
-            {
-                device.CyclePort();
-                return true;
-            }
-        }
-        catch { }
+        if (device is not null)
+            try { device.CyclePort(); return true; } catch { }
 
         return false;
     }
@@ -138,15 +139,8 @@ public class PnPDetails
                 break;
         }
 
-        try
-        {
-            if (device is not null)
-            {
-                device.InstallNullDriver();
-                return true;
-            }
-        }
-        catch { }
+        if (device is not null)
+            try { device.InstallNullDriver(); return true; } catch { }
 
         return false;
     }
@@ -165,15 +159,8 @@ public class PnPDetails
                 break;
         }
 
-        try
-        {
-            if (device is not null)
-            {
-                device.InstallCustomDriver(driverName);
-                return true;
-            }
-        }
-        catch { }
+        if (device is not null)
+            try { device.InstallCustomDriver(driverName); return true; } catch { }
 
         return false;
     }
@@ -199,15 +186,8 @@ public class PnPDetails
                 break;
         }
 
-        try
-        {
-            if (device is not null)
-            {
-                device.Uninstall();
-                return true;
-            }
-        }
-        catch { }
+        if (device is not null)
+            try { device.Uninstall(); return true; } catch { }
 
         return false;
     }

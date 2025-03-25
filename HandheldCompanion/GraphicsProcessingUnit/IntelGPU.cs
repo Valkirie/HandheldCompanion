@@ -191,6 +191,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 {
                     TelemetryData = GetTelemetry();
                 }
+                catch { }
                 finally
                 {
                     Monitor.Exit(telemetryLock);

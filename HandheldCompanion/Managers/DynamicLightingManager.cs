@@ -258,6 +258,7 @@ public static class DynamicLightingManager
             LogManager.LogError("Failed to initialize Direct3D resources after {0} attempts", maxAttempts);
             return false;
         }
+        catch { return false; }
         finally
         {
             Monitor.Exit(d3dLock);

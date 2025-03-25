@@ -2,6 +2,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
@@ -15,12 +16,16 @@ public class XInputController : IController
     private Gamepad Gamepad;
 
     private XInputStateSecret State;
+    public static int MaxControllers = 4;
 
     public XInputController()
     { }
 
     public XInputController(PnPDetails details)
     {
+        if (details is null)
+            throw new Exception("XInputController PnPDetails is null");
+
         AttachController(details.XInputUserIndex);
         AttachDetails(details);
 
@@ -29,6 +34,9 @@ public class XInputController : IController
         ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 217, 65, 38));
         ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 26, 159, 255));
         ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 255, 200, 44));
+
+        // Capabilities
+        Capabilities |= ControllerCapabilities.Rumble;
     }
 
     ~XInputController()
@@ -179,22 +187,8 @@ public class XInputController : IController
 
     public static UserIndex TryGetUserIndex(PnPDetails details)
     {
-        XInputCapabilitiesEx capabilitiesEx = new();
-
-        for (int idx = 0; idx < 4; idx++)
-        {
-            if (XInputGetCapabilitiesEx(1, idx, 0, ref capabilitiesEx) == 0)
-            {
-                if (capabilitiesEx.ProductId != details.ProductID || capabilitiesEx.VendorId != details.VendorID)
-                    continue;
-
-                var devices = ManagerFactory.deviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
-                if (devices.FirstOrDefault() is not null)
-                    return (UserIndex)idx;
-            }
-        }
-
-        return SharpDX.XInput.UserIndex.Any;
+        List<PnPDetails> tempList = ManagerFactory.deviceManager.PnPDevices.Values.Where(device => device.isXInput).OrderBy(device => device.XInputUserIndex).OrderBy(device => device.XInputDeviceIdx).ToList();
+        return (UserIndex)tempList.IndexOf(details);
     }
 
     public virtual void AttachController(byte userIndex)

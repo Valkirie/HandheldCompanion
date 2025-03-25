@@ -1774,13 +1774,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Menu</value>
   </data>
   <data name="Enum_MotionInput_WorldSpace_Desc" xml:space="preserve">
-    <value>Input is mapped to the game world’s axes, providing consistent directional input regardless of the player character’s orientation.</value>
+    <value>Input is mapped to the game world's axes, providing consistent directional input regardless of the player character's orientation.</value>
   </data>
   <data name="Enum_MotionInput_JoystickSteering_Desc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
   </data>
   <data name="Enum_MotionInput_PlayerSpace_Desc" xml:space="preserve">
-    <value>Input is aligned with the player character’s orientation in the game, allowing for intuitive aiming and movement.</value>
+    <value>Input is aligned with the player character's orientation in the game, allowing for intuitive aiming and movement.</value>
   </data>
   <data name="Enum_InputsHotkeyType_Handheld" xml:space="preserve">
     <value>Handheld Companion</value>
@@ -2335,7 +2335,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Device</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please restart your controller by holding the Guide button to finalize pairing.</value>
+    <value>Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Effects</value>
@@ -2566,7 +2566,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Touchpad passthrough</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>Close</value>
@@ -2869,7 +2869,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Local space</value>
   </data>
   <data name="Enum_MotionInput_LocalSpace_Desc" xml:space="preserve">
-    <value>Input is based on the controller’s orientation, independent of the game world or character.</value>
+    <value>Input is based on the controller's orientation, independent of the game world or character.</value>
   </data>
   <data name="SettingsPage_SensorCalibration" xml:space="preserve">
     <value>Sensor calibration</value>
@@ -2998,13 +2998,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart Handheld Companion.</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>One last attempt to reorder controllers. We’re doing everything we can!</value>
+    <value>One last attempt to reorder controllers. We're doing everything we can!</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Almost there! We’re making another adjustment to optimize controller settings.</value>
+    <value>Almost there! We're making another adjustment to optimize controller settings.</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>Adjustments are still in progress. We’ll get this right for your games.</value>
+    <value>Adjustments are still in progress. We'll get this right for your games.</value>
   </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>Flipped Landscape</value>

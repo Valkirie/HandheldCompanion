@@ -4,7 +4,10 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
+using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
@@ -44,10 +47,10 @@ namespace HandheldCompanion.Managers
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
+        private static List<IXbox360Controller> temporaryControllers = new();
 
-        private static readonly Random ProductGenerator = new Random();
-        public static ushort ProductId = 0x28E; // Xbox 360
-        public static ushort VendorId = 0x45E;  // Microsoft
+        public static ushort VendorId = 0x28E;
+        public static ushort ProductId = 0x45E;
 
         public static bool IsInitialized;
 
@@ -163,7 +166,9 @@ namespace HandheldCompanion.Managers
 
         public static void Resume(bool OS)
         {
-            controllerLock.Wait();
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 if (Module == IntPtr.Zero)
@@ -179,12 +184,13 @@ namespace HandheldCompanion.Managers
                     SetDSUStatus(ManagerFactory.settingsManager.GetBoolean("DSUEnabled"));
                 }
             }
+            catch { }
             finally
             {
                 controllerLock.Release();
             }
 
-            SetControllerMode(HIDmode, OS);
+            SetControllerMode(HIDmode);
         }
 
         public static void Suspend(bool OS)
@@ -192,7 +198,9 @@ namespace HandheldCompanion.Managers
             // Disconnect the controller first
             SetControllerMode(HIDmode.NoController);
 
-            controllerLock.Wait();
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 // Dispose of the ViGEm client and unload the module
@@ -214,6 +222,7 @@ namespace HandheldCompanion.Managers
                     SetDSUStatus(false);
                 }
             }
+            catch { }
             finally
             {
                 controllerLock.Release();
@@ -280,6 +289,57 @@ namespace HandheldCompanion.Managers
                 SetControllerMode(defaultHIDmode);
         }
 
+        public static int CreateTemporaryControllers()
+        {
+            // Sanity-check: if the ViGEm client isn't available, abort
+            if (vClient is null)
+                return 0;
+
+            // count available slots
+            int availableSlots = 0;
+            for (int i = 0; i < XInputController.MaxControllers; i++)
+            {
+                Controller controller = new Controller((UserIndex)i);
+                if (!controller.IsConnected)
+                    availableSlots++;
+            }
+
+            // initialize controllers
+            for (int i = 0; i < availableSlots; i++)
+            {
+                try
+                {
+                    IXbox360Controller controller = vClient.CreateXbox360Controller(VendorId, ProductId);
+                    controller.Connect();
+                    temporaryControllers.Add(controller);
+                    Thread.Sleep(500);
+                }
+                catch { }
+            }
+
+            return temporaryControllers.Count;
+        }
+
+        public static void DisposeTemporaryControllers()
+        {
+            // Sanity-check: if the ViGEm client isn't available, abort
+            if (vClient is null)
+                return;
+
+            // dispose controllers
+            foreach (IXbox360Controller controller in temporaryControllers)
+            {
+                try
+                {
+                    controller.Disconnect();
+                    Thread.Sleep(500);
+                }
+                catch { }
+            }
+
+            temporaryControllers.Clear();
+        }
+
         private static void SetDSUStatus(bool started)
         {
             if (started)
@@ -288,9 +348,11 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-        public static void SetControllerMode(HIDmode mode, bool OS = false)
+        public static void SetControllerMode(HIDmode mode)
         {
-            controllerLock.Wait();
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 // If the requested mode is already active, do nothing
@@ -310,7 +372,7 @@ namespace HandheldCompanion.Managers
                     vTarget = null;
                 }
 
-                // Sanity-check: if the ViGEm client isn’t available, abort
+                // Sanity-check: if the ViGEm client isn't available, abort
                 if (vClient is null)
                     return;
 
@@ -326,8 +388,6 @@ namespace HandheldCompanion.Managers
                         break;
 
                     case HIDmode.Xbox360Controller:
-                        // Optionally generate a new ProductId unless running in OS mode
-                        if (!OS) ProductId = (ushort)ProductGenerator.Next(1, ushort.MaxValue);
                         vTarget = new Xbox360Target(VendorId, ProductId);
                         break;
                 }
@@ -351,6 +411,7 @@ namespace HandheldCompanion.Managers
                 // Update the current mode
                 HIDmode = mode;
             }
+            catch { }
             finally
             {
                 controllerLock.Release();
@@ -362,7 +423,9 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerStatus(HIDstatus status)
         {
-            controllerLock.Wait();
+            if (!controllerLock.Wait(3000))
+                return;
+
             try
             {
                 if (vTarget is null)
@@ -385,6 +448,7 @@ namespace HandheldCompanion.Managers
                 if (success)
                     HIDstatus = status;
             }
+            catch { }
             finally
             {
                 controllerLock.Release();

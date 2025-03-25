@@ -1,4 +1,3 @@
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -6,6 +5,7 @@ using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -79,14 +79,40 @@ public partial class LayoutPage : Page
             { "GyroPage", ( gyroPage, navGyro ) },
         };
 
+        foreach (ILayoutPage page in pages.Values.Select(p => p.Item1))
+        {
+            if (page.DataContext is BaseViewModel baseViewModel)
+                baseViewModel.PropertyChanged += (sender, e) => BaseViewModel_PropertyChanged(page, e);
+
+            // force raise event, in case page is already loaded
+            BaseViewModel_PropertyChanged(page, new PropertyChangedEventArgs("IsEnabled"));
+        }
+
         // manage events
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+    }
 
-        // raise events
-        if (ControllerManager.HasTargetController)
-            ControllerManager_ControllerSelected(ControllerManager.GetTarget());
+    private void BaseViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case "IsEnabled":
+                break;
+            default:
+                return;
+        }
+
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            if (sender is ILayoutPage layoutPage)
+            {
+                string key = pages.FirstOrDefault(kvp => kvp.Value.Item1 == layoutPage).Key;
+                NavigationViewItem navItem = pages[key].Item2;
+                navItem.IsEnabled = layoutPage.IsEnabled();
+            }
+        });
     }
 
     private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
@@ -104,19 +130,6 @@ public partial class LayoutPage : Page
                             UpdateLayout(profile.Layout);
                     }
                     break;
-            }
-        });
-    }
-
-    private void ControllerManager_ControllerSelected(IController controller)
-    {
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            // cascade update to (sub)pages
-            foreach (var page in pages.Values)
-            {
-                page.Item2.IsEnabled = page.Item1.IsEnabled();
             }
         });
     }
@@ -144,7 +157,6 @@ public partial class LayoutPage : Page
         ((LayoutPageViewModel)DataContext).Dispose();
 
         // manage events
-        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
     }

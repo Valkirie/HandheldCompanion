@@ -47,6 +47,12 @@ namespace HandheldCompanion.Controls.Hints
 
         protected override void HintActionButton_Click(object sender, RoutedEventArgs e)
         {
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                this.IsEnabled = false;
+            });
+
             Task.Run(async () =>
             {
                 // halt steam and wait

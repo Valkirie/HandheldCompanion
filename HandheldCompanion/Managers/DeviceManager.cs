@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Helpers;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
@@ -104,15 +105,6 @@ public class DeviceManager : IManager
 
     private void RefreshDrivers()
     {
-        // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
-        /*
-        foreach (string InfPath in DriverStore.GetDrivers())
-        {
-            PnPUtil.StartPnPUtil($@"/add-driver C:\Windows\INF\{InfPath} /install");
-            LogManager.LogWarning("Pending drivers {0} detected in Driver Store. Initiating (re)installation.", InfPath);
-        }
-        */
-
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
         IEnumerable<string> drivers = DriverStore.GetKnownDrivers().Cast<string>();
         if (drivers.Count() != 0)
@@ -494,7 +486,7 @@ public class DeviceManager : IManager
         return details;
     }
 
-    public string SymLinkToInstanceId(string SymLink, string InterfaceGuid)
+    public static string SymLinkToInstanceId(string SymLink, string InterfaceGuid)
     {
         string InstanceId = SymLink.ToUpper().Replace(InterfaceGuid, "", StringComparison.InvariantCultureIgnoreCase);
         InstanceId = InstanceId.Replace("#", @"\");
@@ -515,7 +507,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = FindDevice(InstanceId);
+                    try { deviceEx = FindDevice(InstanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
@@ -531,7 +523,9 @@ public class DeviceManager : IManager
                 }
             });
         }
-        catch { }
+        catch
+        {
+        }
     }
 
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -547,7 +541,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = FindDevice(InstanceId);
+                    try { deviceEx = FindDevice(InstanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
@@ -559,6 +553,9 @@ public class DeviceManager : IManager
 
                     if (deviceEx.EnumeratorName.Equals("USB"))
                         deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink, false);
+
+                    if (deviceEx.XInputUserIndex == byte.MaxValue)
+                        deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
 
                     // set InterfaceGuid
                     deviceEx.InterfaceGuid = obj.InterfaceGuid;
@@ -588,7 +585,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = FindDevice(InstanceId);
+                    try { deviceEx = FindDevice(InstanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 
@@ -622,7 +619,7 @@ public class DeviceManager : IManager
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    deviceEx = GetDetails(obj.SymLink);
+                    try { deviceEx = GetDetails(obj.SymLink); } catch { }
                     await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
                 }
 

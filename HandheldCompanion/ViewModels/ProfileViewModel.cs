@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using System;
