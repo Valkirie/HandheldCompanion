@@ -428,7 +428,8 @@ public class ProcessEx : IDisposable
     {
         get
         {
-            MainThread = GetMainThread(Process);
+            Process.Refresh();
+
             if (MainThread?.ThreadState == ThreadState.Wait && MainThread?.WaitReason == ThreadWaitReason.Suspended)
                 return true;
             return false;
@@ -587,8 +588,6 @@ public class ProcessEx : IDisposable
 
         try
         {
-            process.Refresh();
-
             if (process.HasExited || process.Threads is null || process.Threads.Count == 0)
                 return null;
 
