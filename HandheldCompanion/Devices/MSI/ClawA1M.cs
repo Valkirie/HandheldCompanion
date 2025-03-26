@@ -2,11 +2,12 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HidLibrary;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Devices;
@@ -79,6 +80,10 @@ public class ClawA1M : IDevice
     private const byte INPUT_HID_ID = 0x01;
     protected GamepadMode gamepadMode = GamepadMode.Offline;
 
+    protected const int PID_XINPUT = 0x1901;
+    protected const int PID_DINPUT = 0x1902;
+    protected const int PID_TESTING = 0x1903;
+
     public ClawA1M()
     {
         // device specific settings
@@ -86,7 +91,7 @@ public class ClawA1M : IDevice
 
         // used to monitor OEM specific inputs
         vendorId = 0x0DB0;
-        productIds = [0x1901, 0x1902, 0x1903];
+        productIds = [PID_XINPUT, PID_DINPUT, PID_TESTING];
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 65 };
@@ -170,9 +175,12 @@ public class ClawA1M : IDevice
 
         // start WMI event monitor
         StartWatching();
+        Device_Inserted();
 
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -187,6 +195,29 @@ public class ClawA1M : IDevice
         }
 
         return true;
+    }
+
+    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
+    {
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Removed();
+    }
+
+    private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
+    {
+        // hack, force rescan
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+        {
+            switch(Controller.GetProductID())
+            {
+                case PID_XINPUT:
+                    ManagerFactory.deviceManager.RefreshXInput();
+                    break;
+                case PID_DINPUT:
+                    ManagerFactory.deviceManager.RefreshDInput();
+                    break;
+            }
+        }
     }
 
     private void SettingsManager_Initialized()
@@ -227,6 +258,8 @@ public class ClawA1M : IDevice
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
     }
@@ -283,29 +316,9 @@ public class ClawA1M : IDevice
             if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
 
-            device.MonitorDeviceEvents = true;
-            device.Inserted += Device_Inserted;
-            device.Removed += Device_Removed;
-            device.OpenDevice();
-
             hidDevices[INPUT_HID_ID] = device;
-            break;
-        }
 
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
-        {
-            try
-            {
-                PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-                string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-
-                PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-                Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-                string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
-
-                return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
-            }
-            catch { }
+            return true;
         }
 
         return false;
@@ -313,26 +326,41 @@ public class ClawA1M : IDevice
 
     private void Device_Removed()
     {
-        // do something
+        // close device
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.Removed -= Device_Removed;
+            device.Dispose();
+        }
+
+        while (!IsReady())
+            Task.Delay(250).Wait();
+
+        Device_Inserted();
     }
 
     private void Device_Inserted()
     {
+        // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            device.Removed += Device_Removed;
+            device.MonitorDeviceEvents = true;
+
+            /*
             GamepadMode currentMode = GamepadMode.Offline;
-            switch(device.Attributes.ProductId)
+            switch (device.Attributes.ProductId)
             {
-                case 0x1901:
+                case PID_XINPUT:
                     currentMode = GamepadMode.XInput;
                     break;
-                case 0x1902:
+                case PID_DINPUT:
                     currentMode = GamepadMode.DirectInput;
                     break;
             }
+            */
 
-            if (currentMode != gamepadMode)
-                SwitchMode(gamepadMode);
+            SwitchMode(gamepadMode);
         }
     }
 

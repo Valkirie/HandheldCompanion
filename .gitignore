@@ -6,3 +6,5 @@ install/
 *Backup.csproj
 *tmp.csproj
 .idea/
+HandheldCompanion/SentryConfig.cs
+HandheldCompanion/SentryConfig.cs.bak

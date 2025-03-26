@@ -140,7 +140,7 @@ public class DeviceManager : IManager
         base.Stop();
     }
 
-    private void RefreshXInput()
+    public void RefreshXInput()
     {
         var deviceIndex = 0;
         Dictionary<string, DateTimeOffset> devices = [];
@@ -162,7 +162,7 @@ public class DeviceManager : IManager
             { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
     }
 
-    private void RefreshDInput()
+    public void RefreshDInput()
     {
         var deviceIndex = 0;
         Dictionary<string, DateTimeOffset> devices = [];
