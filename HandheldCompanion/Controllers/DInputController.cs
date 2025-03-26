@@ -20,12 +20,6 @@ public class DInputController : IController
             throw new Exception("DInputController PnPDetails is null");
 
         AttachDetails(details);
-
-        this.joystick = joystick;
-        UserIndex = (byte)joystick.Properties.JoystickId;
-
-        Details = details;
-        Details.isHooked = true;
     }
 
     ~DInputController()
@@ -71,6 +65,9 @@ public class DInputController : IController
         // unsupported controller
         if (joystick is null)
             throw new Exception($"Couldn't find matching DirectInput controller: VID:{details.GetVendorID()} and PID:{details.GetProductID()}");
+
+        // update UserIndex
+        UserIndex = (byte)joystick.Properties.JoystickId;
 
         base.AttachDetails(details);
     }

@@ -5,7 +5,6 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -174,7 +173,6 @@ public class ClawA1M : IDevice
 
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -214,33 +212,6 @@ public class ClawA1M : IDevice
         }
     }
 
-    private async void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-        {
-            while (!IsReady())
-                await Task.Delay(250).ConfigureAwait(false);
-
-            // SwitchMode(gamepadMode);
-
-            /*
-            ushort productId = Controller.GetProductID();
-            switch (productId)
-            {
-                case 0x1901:
-                    SwitchMode(GamepadMode.XInput);
-                    break;
-                case 0x1902:
-                    SwitchMode(GamepadMode.DInput);
-                    break;
-                case 0x1903:
-                    SwitchMode(GamepadMode.TESTING);
-                    break;
-            }
-            */
-        }
-    }
-
     public override void Close()
     {
         // stop WMI event monitor
@@ -256,7 +227,6 @@ public class ClawA1M : IDevice
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
 
         base.Close();
     }
