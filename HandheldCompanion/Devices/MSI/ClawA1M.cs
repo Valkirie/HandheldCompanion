@@ -31,7 +31,7 @@ public class ClawA1M : IDevice
     {
         Offline,
         XInput,
-        DInput,
+        DirectInput,
         MSI,
         Desktop,
         BIOS,
@@ -172,10 +172,6 @@ public class ClawA1M : IDevice
         // start WMI event monitor
         StartWatching();
 
-        // configure controller
-        SwitchMode(gamepadMode);
-        SetMotionStatus(true);
-
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
@@ -225,8 +221,7 @@ public class ClawA1M : IDevice
             while (!IsReady())
                 await Task.Delay(250).ConfigureAwait(false);
 
-            SwitchMode(gamepadMode);
-            SetMotionStatus(true);
+            // SwitchMode(gamepadMode);
 
             /*
             ushort productId = Controller.GetProductID();
@@ -318,6 +313,11 @@ public class ClawA1M : IDevice
             if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
 
+            device.MonitorDeviceEvents = true;
+            device.Inserted += Device_Inserted;
+            device.Removed += Device_Removed;
+            device.OpenDevice();
+
             hidDevices[INPUT_HID_ID] = device;
             break;
         }
@@ -339,6 +339,31 @@ public class ClawA1M : IDevice
         }
 
         return false;
+    }
+
+    private void Device_Removed()
+    {
+        // do something
+    }
+
+    private void Device_Inserted()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            GamepadMode currentMode = GamepadMode.Offline;
+            switch(device.Attributes.ProductId)
+            {
+                case 0x1901:
+                    currentMode = GamepadMode.XInput;
+                    break;
+                case 0x1902:
+                    currentMode = GamepadMode.DirectInput;
+                    break;
+            }
+
+            if (currentMode != gamepadMode)
+                SwitchMode(gamepadMode);
+        }
     }
 
     protected void StartWatching()

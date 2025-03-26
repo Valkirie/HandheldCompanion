@@ -1084,8 +1084,8 @@
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ClawControllerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Offline" />
-                                <ComboBoxItem Content="DInput" />
                                 <ComboBoxItem Content="XInput" />
+                                <ComboBoxItem Content="DirectInput" />
                             </ComboBox>
                         </Grid>
                     </Border>

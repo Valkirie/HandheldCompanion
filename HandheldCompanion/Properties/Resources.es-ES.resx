@@ -1283,7 +1283,7 @@
     <value>No tienes ningún controlador físico conectado. No se enviarán insumos a HC ni a su servicio.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
-    <value>Asegúrese de haber conectado un dispositivo XInput o DInput compatible.</value>
+    <value>Asegúrese de haber conectado un dispositivo XInput o DirectInput compatible.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>No se detectó ningún controlador físico</value>

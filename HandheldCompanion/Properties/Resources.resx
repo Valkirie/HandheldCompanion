@@ -1297,7 +1297,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>You have no physical controller connected. No inputs will be sent to HC or its service.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
-    <value>Please make sure you connected a compatible XInput or DInput device.</value>
+    <value>Please make sure you connected a compatible XInput or DirectInput device.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>No physical controller detected</value>

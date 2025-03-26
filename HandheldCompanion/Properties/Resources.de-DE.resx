@@ -1285,7 +1285,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Sie haben keinen physischen Controller angeschlossen. Es werden keine Eingaben an HC oder seinen Dienst gesendet.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
-    <value>Bitte stellen Sie sicher, dass Sie ein kompatibles XInput- oder DInput-Gerät angeschlossen haben.</value>
+    <value>Bitte stellen Sie sicher, dass Sie ein kompatibles XInput- oder DirectInput-Gerät angeschlossen haben.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>Kein physischer Controller gefunden</value>

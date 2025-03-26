@@ -70,7 +70,7 @@ public class DInputController : IController
 
         // unsupported controller
         if (joystick is null)
-            throw new Exception($"Couldn't find matching DInput controller: VID:{details.GetVendorID()} and PID:{details.GetProductID()}");
+            throw new Exception($"Couldn't find matching DirectInput controller: VID:{details.GetVendorID()} and PID:{details.GetProductID()}");
 
         base.AttachDetails(details);
     }
@@ -92,7 +92,13 @@ public class DInputController : IController
 
     public override bool IsConnected()
     {
-        return (bool)!joystick?.IsDisposed;
+        if (joystick is null)
+            return false;
+
+        if (joystick.IsDisposed)
+            return false;
+
+        return true;
     }
 
     public override void Plug()
@@ -101,7 +107,7 @@ public class DInputController : IController
             return;
 
         // Acquire joystick
-        joystick?.Acquire();
+        try { joystick?.Acquire(); } catch { }
 
         base.Plug();
     }
@@ -112,7 +118,7 @@ public class DInputController : IController
             return;
 
         // Unacquire the joystick
-        joystick?.Unacquire();
+        try { joystick?.Unacquire(); } catch { }
 
         base.Unplug();
     }
