@@ -673,7 +673,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please make sure you connected a compatible XInput or DInput device..
+        ///   Looks up a localized string similar to Please make sure you connected a compatible XInput or DirectInput device..
         /// </summary>
         public static string ControllerPage_NoPhysicalControllerDetectedAction {
             get {

@@ -37,10 +37,46 @@ namespace HandheldCompanion.Views.Pages
             // call function
             UpdateDevice();
 
+            // get device
+            IDevice device = IDevice.GetCurrent();
+
             // Adjust UI element availability based on device capabilities
-            DynamicLightingPanel.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLighting) ? Visibility.Visible : Visibility.Collapsed;
-            LEDBrightness.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
-            StackSecondColor.Visibility = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+            DynamicLightingPanel.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting) ? Visibility.Visible : Visibility.Collapsed;
+            LEDBrightness.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
+            StackSecondColor.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+
+            if (device is LegionGo)
+            {
+                // Left joycon settings
+                SliderLeftJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGo.LeftJoyconIndex) + 1;
+                SliderLeftAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGo.LeftJoyconIndex);
+
+                var leftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex);
+                SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone + 1;
+                SliderLeftTriggerMargin.Value = leftTrigger.Margin + 1;
+
+                // Right joycon settings
+                SliderRightJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGo.RightJoyconIndex) + 1;
+                SliderRightAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGo.RightJoyconIndex);
+
+                var rightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex);
+                SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone + 1;
+                SliderRightTriggerMargin.Value = rightTrigger.Margin + 1;
+
+                // Show LegionGoPanel
+                LegionGoPanel.Visibility = Visibility.Visible;
+            }
+            else if (device is Claw8 || device is ClawA1M)
+            {
+                // Show MSIClawPanel
+                MSIClawPanel.Visibility = Visibility.Visible;
+            }
+
+            // Show DeviceSettingsPanel if either child panel is visible.
+            DeviceSettingsPanel.Visibility =
+                (LegionGoPanel.Visibility == Visibility.Visible || MSIClawPanel.Visibility == Visibility.Visible)
+                ? Visibility.Visible
+                : Visibility.Hidden;
 
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
@@ -84,28 +120,6 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object? sender, RoutedEventArgs? e)
         {
-            if (IDevice.GetCurrent() is LegionGo)
-            {
-                // make panel visible
-                LegionGoPanel.Visibility = Visibility.Visible;
-
-                // Left joycon settings
-                SliderLeftJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGo.LeftJoyconIndex) + 1;
-                SliderLeftAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGo.LeftJoyconIndex);
-
-                SapientiaUsb.LegionTriggerDeadzone legionGoLeftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex);
-                SliderLeftTriggerDeadzone.Value = legionGoLeftTrigger.Deadzone + 1;
-                SliderLeftTriggerMargin.Value = legionGoLeftTrigger.Margin + 1;
-
-                // Right joycon settings
-                SliderRightJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGo.RightJoyconIndex) + 1;
-                SliderRightAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGo.RightJoyconIndex);
-
-                SapientiaUsb.LegionTriggerDeadzone legionGoRightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex);
-                SliderRightTriggerDeadzone.Value = legionGoRightTrigger.Deadzone + 1;
-                SliderRightTriggerMargin.Value = legionGoRightTrigger.Margin + 1;
-            }
-
             if (LedPresetsComboBox.ItemsSource is null)
             {
                 // First Time
@@ -132,8 +146,6 @@ namespace HandheldCompanion.Views.Pages
                 CB_BatteryBypassCharging.ItemsSource = IDevice.GetCurrent().BatteryBypassPresets;
                 CB_BatteryBypassCharging.SelectedIndex = currentSelected;
             }
-
-            DeviceSettingsPanel.Visibility = LegionGoPanel.Visibility == Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
         }
 
         public void Page_Closed()

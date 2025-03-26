@@ -1283,7 +1283,7 @@
     <value>Non hai nessun controller fisico collegato. Nessun input verrà inviato a HC o al suo servizio.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
-    <value>Assicurati di aver collegato un dispositivo XInput o DInput compatibile.</value>
+    <value>Assicurati di aver collegato un dispositivo XInput o DirectInput compatibile.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>Nessun controller fisico rilevato</value>

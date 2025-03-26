@@ -1271,7 +1271,7 @@
     <value>没有连接到实体手柄。掌机伴侣没办法处理任何输入请求</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
-    <value>请确保你连接了支持 XInput 或者 DInput 的设备</value>
+    <value>请确保你连接了支持 XInput 或者 DirectInput 的设备</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>没有检测到实体手柄</value>

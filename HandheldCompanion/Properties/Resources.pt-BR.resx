@@ -1297,7 +1297,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Você não possui controle físico conectado. Nenhuma entrada será enviada para o HC ou seu serviço.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
-    <value>Por favor, certifique-se de conectar um dispositivo compatível com XInput ou DInput.</value>
+    <value>Por favor, certifique-se de conectar um dispositivo compatível com XInput ou DirectInput.</value>
   </data>
   <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>Nenhum controle físico detectado</value>

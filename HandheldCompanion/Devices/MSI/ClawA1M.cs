@@ -5,7 +5,6 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ public class ClawA1M : IDevice
     {
         Offline,
         XInput,
-        DInput,
+        DirectInput,
         MSI,
         Desktop,
         BIOS,
@@ -78,6 +77,7 @@ public class ClawA1M : IDevice
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
+    protected GamepadMode gamepadMode = GamepadMode.Offline;
 
     public ClawA1M()
     {
@@ -171,40 +171,44 @@ public class ClawA1M : IDevice
         // start WMI event monitor
         StartWatching();
 
-        // configure controller to XInput
-        SwitchMode(GamepadMode.DInput);
-        SetMotionStatus(true);
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
 
         return true;
     }
 
-    private async void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
+    private void SettingsManager_Initialized()
     {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+        QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false);
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
         {
-            while (!IsReady())
-                await Task.Delay(1000).ConfigureAwait(false);
-
-            SwitchMode(GamepadMode.DInput);
-            SetMotionStatus(true);
-
-            return;
-
-            ushort productId = Controller.GetProductID();
-            switch (productId)
-            {
-                case 0x1901:
-                    SwitchMode(GamepadMode.XInput);
-                    break;
-                case 0x1902:
-                    SwitchMode(GamepadMode.DInput);
-                    break;
-                case 0x1903:
-                    SwitchMode(GamepadMode.TESTING);
-                    break;
-            }
+            case "MSIClawControllerIndex":
+                {
+                    gamepadMode = (GamepadMode)Convert.ToInt32(value);
+                    SwitchMode(gamepadMode);
+                }
+                break;
         }
     }
 
@@ -221,7 +225,8 @@ public class ClawA1M : IDevice
             hidDevice.Dispose();
         hidDevices.Clear();
 
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Close();
     }
@@ -278,6 +283,11 @@ public class ClawA1M : IDevice
             if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
 
+            device.MonitorDeviceEvents = true;
+            device.Inserted += Device_Inserted;
+            device.Removed += Device_Removed;
+            device.OpenDevice();
+
             hidDevices[INPUT_HID_ID] = device;
             break;
         }
@@ -299,6 +309,31 @@ public class ClawA1M : IDevice
         }
 
         return false;
+    }
+
+    private void Device_Removed()
+    {
+        // do something
+    }
+
+    private void Device_Inserted()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            GamepadMode currentMode = GamepadMode.Offline;
+            switch(device.Attributes.ProductId)
+            {
+                case 0x1901:
+                    currentMode = GamepadMode.XInput;
+                    break;
+                case 0x1902:
+                    currentMode = GamepadMode.DirectInput;
+                    break;
+            }
+
+            if (currentMode != gamepadMode)
+                SwitchMode(gamepadMode);
+        }
     }
 
     protected void StartWatching()
