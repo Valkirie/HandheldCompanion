@@ -539,6 +539,7 @@ public partial class ProfilesPage : Page
                     // Global settings
                     cB_Whitelist.IsChecked = selectedProfile.Whitelisted;
                     cB_Pinned.IsChecked = selectedProfile.IsPinned;
+                    cB_Suspend.IsChecked = selectedProfile.SuspendOnSleep;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
 
                     // Emulated controller assigned to the profile
@@ -607,45 +608,23 @@ public partial class ProfilesPage : Page
                     // display warnings
                     WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
 
-                    switch (selectedProfile.ErrorCode)
+                    (Visibility warningVisibility, bool controlsEnabled, bool redirectionEnabled) = selectedProfile.ErrorCode switch
                     {
-                        default:
-                        case ProfileErrorCode.None:
-                            WarningBorder.Visibility = Visibility.Collapsed;
-                            cB_Whitelist.IsEnabled = true;
-                            cB_Pinned.IsEnabled = true;
-                            cB_Wrapper.IsEnabled = true;
+                        ProfileErrorCode.MissingPermission => (Visibility.Visible, true, false),
+                        ProfileErrorCode.Running or
+                        ProfileErrorCode.MissingExecutable or
+                        ProfileErrorCode.MissingPath or
+                        ProfileErrorCode.Default => (Visibility.Visible, false, false),
+                        _ => (Visibility.Collapsed, true, true)
+                    };
 
-                            // wrapper
-                            cB_Wrapper_Injection.IsEnabled = true;
-                            cB_Wrapper_Redirection.IsEnabled = true;
-                            break;
-
-                        case ProfileErrorCode.Running:              // application is running
-                        case ProfileErrorCode.MissingExecutable:    // profile has no executable
-                        case ProfileErrorCode.MissingPath:          // profile has no path
-                        case ProfileErrorCode.Default:              // profile is default
-                            WarningBorder.Visibility = Visibility.Visible;
-                            cB_Whitelist.IsEnabled = false;
-                            cB_Pinned.IsEnabled = false;
-                            cB_Wrapper.IsEnabled = false;
-
-                            // wrapper
-                            cB_Wrapper_Injection.IsEnabled = false;
-                            cB_Wrapper_Redirection.IsEnabled = false;
-                            break;
-
-                        case ProfileErrorCode.MissingPermission:
-                            WarningBorder.Visibility = Visibility.Visible;
-                            cB_Whitelist.IsEnabled = true;
-                            cB_Pinned.IsEnabled = true;
-                            cB_Wrapper.IsEnabled = true;
-
-                            // wrapper
-                            cB_Wrapper_Injection.IsEnabled = true;
-                            cB_Wrapper_Redirection.IsEnabled = false;
-                            break;
-                    }
+                    WarningBorder.Visibility = warningVisibility;
+                    cB_Whitelist.IsEnabled = controlsEnabled;
+                    cB_Pinned.IsEnabled = controlsEnabled;
+                    cB_Suspend.IsEnabled = controlsEnabled;
+                    cB_Wrapper.IsEnabled = controlsEnabled;
+                    cB_Wrapper_Injection.IsEnabled = controlsEnabled;
+                    cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
 
                     // update dropdown lists
                     cB_Profiles.Items.Refresh();
@@ -746,6 +725,16 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.IsPinned = (bool)cB_Pinned.IsChecked;
+        UpdateProfile();
+    }
+
+    private void cB_Suspend_Checked(object sender, RoutedEventArgs e)
+    {
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.SuspendOnSleep = (bool)cB_Suspend.IsChecked;
         UpdateProfile();
     }
 

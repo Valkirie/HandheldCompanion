@@ -2853,10 +2853,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />
   </data>
-  <data name="SettingsPage_SuspendOnSleep" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_SuspendOnSleepDesc" xml:space="preserve">
+  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value />
   </data>
 </root>

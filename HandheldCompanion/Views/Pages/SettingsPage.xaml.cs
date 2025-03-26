@@ -175,9 +175,6 @@ public partial class SettingsPage : Page
                 case "PlatformRTSSEnabled":
                     Toggle_RTSS.IsOn = Convert.ToBoolean(value);
                     break;
-                case "SuspendOnSleep":
-                    Toggle_SuspendOnSleep.IsOn = Convert.ToBoolean(value);
-                    break;
                 case "QuickToolsLocation":
                     cB_QuicktoolsPosition.SelectedIndex = Convert.ToInt32(value);
                     break;
@@ -487,14 +484,6 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("PlatformRTSSEnabled", Toggle_RTSS.IsOn);
-    }
-
-    private void Toggle_SuspendOnSleep_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        ManagerFactory.settingsManager.SetProperty("SuspendOnSleep", Toggle_SuspendOnSleep.IsOn);
     }
 
     private void cB_QuicktoolsPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)

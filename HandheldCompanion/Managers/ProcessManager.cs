@@ -146,10 +146,11 @@ public class ProcessManager : IManager
 
         foreach (ProcessEx processEx in Processes.Values)
         {
-            if (!processEx.IsSuspended || !processEx.IsGame())
+            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
+            if (!processEx.IsSuspended || !profile.SuspendOnSleep)
                 continue;
 
-            ResumeProcess(processEx, false).Wait();
+            ResumeProcess(processEx, false);
         }
     }
 
@@ -161,10 +162,11 @@ public class ProcessManager : IManager
 
         foreach (ProcessEx processEx in Processes.Values)
         {
-            if (processEx.IsSuspended || !processEx.IsGame())
+            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
+            if (processEx.IsSuspended || !profile.SuspendOnSleep)
                 continue;
 
-            SuspendProcess(processEx, false).Wait();
+            SuspendProcess(processEx, false);
         }
     }
 

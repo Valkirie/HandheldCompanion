@@ -254,13 +254,11 @@ public class ProcessEx : IDisposable
         Executable = executable;
         Filter = filter;
 
-        // get main thread
-        MainThread = GetMainThread(process);
+        Refresh();
+        GetMainThread();
 
         // update main thread when disposed
-        if (MainThread is not null)
-            SubscribeToDisposedEvent(MainThread);
-        else
+        if (MainThread is null)
             throw new Exception($"Process {ProcessId} has exited or MainThread is unreachable during creation");
 
         // get executable icon
@@ -429,6 +427,7 @@ public class ProcessEx : IDisposable
         get
         {
             Process.Refresh();
+            GetMainThread();
 
             if (MainThread?.ThreadState == ThreadState.Wait && MainThread?.WaitReason == ThreadWaitReason.Suspended)
                 return true;
@@ -470,11 +469,6 @@ public class ProcessEx : IDisposable
 
             switch (MainThread.ThreadState)
             {
-                case ThreadState.Wait:
-                    {
-                    }
-                    break;
-
                 case ThreadState.Terminated:
                     {
                         // dispose from MainThread
@@ -495,7 +489,7 @@ public class ProcessEx : IDisposable
         catch (NullReferenceException) { }
     }
 
-    private void SubscribeToDisposedEvent(ProcessThread newMainThread)
+    private void SetMainThread(ProcessThread mainThread)
     {
         // Unsubscribe from the previous MainThread's Disposed event
         if (MainThread != null)
@@ -505,11 +499,9 @@ public class ProcessEx : IDisposable
             MainThread = null;
         }
 
-        // Subscribe to the new MainThread's Disposed event
-        newMainThread.Disposed += MainThread_Disposed;
-
         // Update the previous MainThread reference
-        MainThread = newMainThread;
+        MainThread = mainThread;
+        MainThread.Disposed += MainThread_Disposed;
     }
 
     private void MainThread_Disposed(object? sender, EventArgs e)
@@ -518,11 +510,7 @@ public class ProcessEx : IDisposable
             return;
 
         // Update MainThread when disposed
-        MainThread = GetMainThread(Process);
-
-        // Subscribe to the new MainThread's Disposed event
-        if (MainThread is not null)
-            SubscribeToDisposedEvent(MainThread);
+        GetMainThread();
     }
 
     public static string GetAppCompatFlags(string Path)
@@ -581,17 +569,17 @@ public class ProcessEx : IDisposable
         }
     }
 
-    private static ProcessThread? GetMainThread(Process process)
+    private void GetMainThread()
     {
         ProcessThread mainThread = null;
-        var startTime = DateTime.MaxValue;
+        DateTime startTime = DateTime.MaxValue;
 
         try
         {
-            if (process.HasExited || process.Threads is null || process.Threads.Count == 0)
-                return null;
+            if (Process.HasExited || Process.Threads is null || Process.Threads.Count == 0)
+                return;
 
-            foreach (ProcessThread thread in process.Threads)
+            foreach (ProcessThread thread in Process.Threads)
             {
                 try
                 {
@@ -601,29 +589,18 @@ public class ProcessEx : IDisposable
                         mainThread = thread;
                     }
                 }
-                catch (InvalidOperationException)
-                {
-                    // This exception occurs if the thread has exited
-                }
-                catch (Exception)
-                {
-                    // Handle other exceptions
-                }
+                catch { }
             }
 
             if (mainThread is null)
-                mainThread = process.Threads[0];
-        }
-        catch (Win32Exception)
-        {
-            // Access if denied
-        }
-        catch (InvalidOperationException)
-        {
-            // This exception occurs if the thread has exited
-        }
+                mainThread = Process.Threads[0];
 
-        return mainThread;
+            if (mainThread is null)
+                return;
+            
+            SetMainThread(mainThread);
+        }
+        catch { }
     }
 
     public void Dispose()
