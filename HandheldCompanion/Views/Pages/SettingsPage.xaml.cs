@@ -18,6 +18,7 @@ using System.Windows.Controls;
 using static HandheldCompanion.Managers.UpdateManager;
 using static HandheldCompanion.WinAPI;
 using Page = System.Windows.Controls.Page;
+using WindowHelper = iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper;
 
 namespace HandheldCompanion.Views.Pages;
 

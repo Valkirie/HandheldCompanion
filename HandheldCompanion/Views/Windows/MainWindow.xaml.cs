@@ -512,7 +512,8 @@ public partial class MainWindow : GamepadWindow
                         InputsManager.Start();
                         TimerManager.Start();
                         SensorsManager.Resume(true);
-                        ManagerFactory.gpuManager.Start();
+                        ManagerFactory.gpuManager.Resume();
+                        ManagerFactory.processManager.Resume();
                         PerformanceManager.Resume(true);
 
                         // resume platform(s)
@@ -552,6 +553,7 @@ public partial class MainWindow : GamepadWindow
 
                         // suspend manager(s)
                         ManagerFactory.gpuManager.Stop();
+                        ManagerFactory.processManager.Suspend();
                         VirtualManager.Suspend(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();

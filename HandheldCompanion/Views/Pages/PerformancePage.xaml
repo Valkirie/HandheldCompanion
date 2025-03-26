@@ -30,7 +30,7 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="70" />
                             <ColumnDefinition Width="5*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 

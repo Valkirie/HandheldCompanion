@@ -7770,6 +7770,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Suspend and resume the application when the system enters or exits standby state.
+        /// </summary>
+        public static string ProfilesPage_SuspendOnSleep {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SuspendOnSleep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sustained power limit.
         /// </summary>
         public static string ProfilesPage_SustainedPower {
@@ -8983,6 +8992,15 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_EnableDesktopLayoutOnStartDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_EnableDesktopLayoutOnStartDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Experimental options.
+        /// </summary>
+        public static string SettingsPage_Experimental {
+            get {
+                return ResourceManager.GetString("SettingsPage_Experimental", resourceCulture);
             }
         }
         

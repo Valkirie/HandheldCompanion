@@ -59,6 +59,7 @@ public partial class Profile : ICloneable, IComparable
 
     public bool Enabled { get; set; }
     public bool IsPinned { get; set; } = true;
+    public bool SuspendOnSleep { get; set; }
 
     public bool Default { get; set; }
     public Version Version { get; set; } = new();

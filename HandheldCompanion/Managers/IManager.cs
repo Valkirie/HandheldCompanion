@@ -63,6 +63,16 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} is {1}", this.GetType().Name, Status);
         }
 
+        public virtual void Resume()
+        {
+            Start();
+        }
+
+        public virtual void Suspend()
+        {
+            Stop();
+        }
+
         protected void AddStatus(ManagerStatus status)
         {
             Status |= status;

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
@@ -93,7 +94,14 @@ public class ProcessManager : IManager
         base.PrepareStart();
 
         // list all current windows
-        EnumWindows(OnWindowDiscovered, 0);
+        List<IntPtr> windows = WindowHelper.GetOpenWindows();
+
+        Parallel.ForEach(windows, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, hWnd =>
+        {
+            // discover window
+            try { OnWindowDiscovered(hWnd, 0); }
+            catch { }
+        });
 
         // start processes monitor
         ForegroundTimer.Start();
@@ -128,6 +136,38 @@ public class ProcessManager : IManager
         ProcessWatcher.Stop();
 
         base.Stop();
+    }
+
+    public override void Resume()
+    {
+        bool SuspendOnSleep = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
+        if (!SuspendOnSleep)
+            return;
+
+        foreach (ProcessEx processEx in Processes.Values)
+        {
+            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
+            if (!processEx.IsSuspended || !profile.SuspendOnSleep)
+                continue;
+
+            ResumeProcess(processEx, false);
+        }
+    }
+
+    public override void Suspend()
+    {
+        bool SuspendOnSleep = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
+        if (!SuspendOnSleep)
+            return;
+
+        foreach (ProcessEx processEx in Processes.Values)
+        {
+            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
+            if (processEx.IsSuspended || !profile.SuspendOnSleep)
+                continue;
+
+            SuspendProcess(processEx, false);
+        }
     }
 
     private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
@@ -517,21 +557,17 @@ public class ProcessManager : IManager
 
     private void ProcessWatcher_Elapsed()
     {
-        Parallel.ForEach(Processes,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
-            {
-                try
-                {
-                    ProcessEx processEx = process.Value;
-                    processEx.Refresh();
-                }
-                catch { }
-            });
+        Parallel.ForEach(Processes, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
+        {
+            // refresh process
+            try { process.Value.Refresh(); }
+            catch { }
+        });
     }
 
     private static Dictionary<int, int[]> windowsCache = new();
 
-    public static async void ResumeProcess(ProcessEx processEx)
+    public static async Task ResumeProcess(ProcessEx processEx, bool restoreWindow = true)
     {
         // process has exited
         if (processEx.Process.HasExited)
@@ -542,42 +578,48 @@ public class ProcessManager : IManager
         handles.Insert(0, processEx.Handle);
 
         // resume processes
-        foreach (int handle in handles)
+        foreach (nint handle in handles)
             ProcessUtils.NtResumeProcess(handle);
 
-        // wait a bit
-        await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+        if (restoreWindow && windowsCache.ContainsKey(processEx.ProcessId))
+        {
+            // wait a bit
+            await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
 
-        // restore process windows
-        foreach (int Hwnd in windowsCache[processEx.ProcessId])
-            ProcessUtils.ShowWindow(Hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
+            // restore process windows
+            foreach (int hwnd in windowsCache[processEx.ProcessId])
+                ProcessUtils.ShowWindow(hwnd, (int)ProcessUtils.ShowWindowCommands.Restored);
 
-        // clear cache
-        windowsCache.Remove(processEx.ProcessId);
+            // clear cache
+            windowsCache.Remove(processEx.ProcessId);
+        }
     }
 
-    public static async void SuspendProcess(ProcessEx processEx)
+    public static async Task SuspendProcess(ProcessEx processEx, bool hideWindow = true)
     {
         // process has exited
         if (processEx.Process.HasExited)
             return;
 
-        // store process windows in cache
-        windowsCache[processEx.ProcessId] = processEx.ProcessWindows.Keys.ToArray();
+        if (hideWindow)
+        {
+            // store process windows in cache
+            windowsCache[processEx.ProcessId] = processEx.ProcessWindows.Keys.ToArray();
 
-        // hide process windows
-        foreach (int Hwnd in windowsCache[processEx.ProcessId])
-            ProcessUtils.ShowWindow(Hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
+            // hide process windows
+            foreach (int hwnd in windowsCache[processEx.ProcessId])
+                ProcessUtils.ShowWindow(hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
 
-        // wait a bit
-        await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+            // wait a bit
+            await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+        }
 
         // refresh processes handles
         List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
         handles.Insert(0, processEx.Handle);
 
         // suspend processes
-        foreach (int handle in handles)
+        foreach (nint handle in handles)
             ProcessUtils.NtSuspendProcess(handle);
     }
 

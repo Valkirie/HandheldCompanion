@@ -2888,4 +2888,10 @@
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="SettingsPage_Experimental" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
+    <value />
+  </data>
 </root>

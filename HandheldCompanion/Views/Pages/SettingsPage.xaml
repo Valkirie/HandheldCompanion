@@ -750,6 +750,11 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
+            <!--  Experimental options  -->
+            <ikw:SimpleStackPanel Spacing="6" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Experimental}" />
+            </ikw:SimpleStackPanel>
+
         </ikw:SimpleStackPanel>
     </Grid>
 </Page>
