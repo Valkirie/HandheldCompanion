@@ -78,6 +78,7 @@ public class ClawA1M : IDevice
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
+    protected GamepadMode gamepadMode = GamepadMode.Offline;
 
     public ClawA1M()
     {
@@ -171,13 +172,50 @@ public class ClawA1M : IDevice
         // start WMI event monitor
         StartWatching();
 
-        // configure controller to XInput
-        SwitchMode(GamepadMode.DInput);
+        // configure controller
+        SwitchMode(gamepadMode);
         SetMotionStatus(true);
 
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
         return true;
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false);
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "MSIClawControllerIndex":
+                {
+                    gamepadMode = (GamepadMode)Convert.ToInt32(value);
+                    SwitchMode(gamepadMode);
+                }
+                break;
+        }
     }
 
     private async void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
@@ -185,13 +223,12 @@ public class ClawA1M : IDevice
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
         {
             while (!IsReady())
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(250).ConfigureAwait(false);
 
-            SwitchMode(GamepadMode.DInput);
+            SwitchMode(gamepadMode);
             SetMotionStatus(true);
 
-            return;
-
+            /*
             ushort productId = Controller.GetProductID();
             switch (productId)
             {
@@ -205,6 +242,7 @@ public class ClawA1M : IDevice
                     SwitchMode(GamepadMode.TESTING);
                     break;
             }
+            */
         }
     }
 
@@ -221,6 +259,8 @@ public class ClawA1M : IDevice
             hidDevice.Dispose();
         hidDevices.Clear();
 
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
 
         base.Close();

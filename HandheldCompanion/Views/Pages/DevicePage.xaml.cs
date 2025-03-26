@@ -105,6 +105,10 @@ namespace HandheldCompanion.Views.Pages
                 SliderRightTriggerDeadzone.Value = legionGoRightTrigger.Deadzone + 1;
                 SliderRightTriggerMargin.Value = legionGoRightTrigger.Margin + 1;
             }
+            else if (IDevice.GetCurrent() is Claw8 || IDevice.GetCurrent() is ClawA1M)
+            {
+                MSIClawPanel.Visibility = Visibility.Visible;
+            }
 
             if (LedPresetsComboBox.ItemsSource is null)
             {

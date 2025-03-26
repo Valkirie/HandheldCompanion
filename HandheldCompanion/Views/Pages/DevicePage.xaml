@@ -14,7 +14,7 @@
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
     d:Background="White"
-    d:DesignHeight="1500"
+    d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -1042,9 +1042,59 @@
                 Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
+                <!--  MSI Claw 8  -->
+                <ikw:SimpleStackPanel
+                    Name="MSIClawPanel"
+                    d:Background="Red"
+                    d:Visibility="Visible"
+                    Spacing="6"
+                    Visibility="Collapsed">
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE950;" />
+
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Controller mode" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Selected the desired controller mode"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ComboBox
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                SelectedIndex="{Binding ClawControllerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Offline" />
+                                <ComboBoxItem Content="DInput" />
+                                <ComboBoxItem Content="XInput" />
+                            </ComboBox>
+                        </Grid>
+                    </Border>
+                </ikw:SimpleStackPanel>
+
                 <!--  Lenovo Legion Go  -->
                 <ikw:SimpleStackPanel
                     Name="LegionGoPanel"
+                    d:Background="Blue"
                     d:Visibility="Visible"
                     Spacing="6"
                     Visibility="Collapsed">

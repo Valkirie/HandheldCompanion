@@ -33,6 +33,22 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int ClawControllerIndex
+        {
+            get
+            {
+                return ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex");
+            }
+            set
+            {
+                if (value != ClawControllerIndex)
+                {
+                    ManagerFactory.settingsManager.SetProperty("MSIClawControllerIndex", value);
+                    OnPropertyChanged(nameof(ClawControllerIndex));
+                }
+            }
+        }
+
         public DevicePageViewModel()
         {
             // manage events

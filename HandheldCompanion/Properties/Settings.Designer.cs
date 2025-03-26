@@ -1248,5 +1248,17 @@ namespace HandheldCompanion.Properties
                 this["KnownDrivers"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int MSIClawControllerIndex {
+            get {
+                return ((int)(this["MSIClawControllerIndex"]));
+            }
+            set {
+                this["MSIClawControllerIndex"] = value;
+            }
+        }
     }
 }
