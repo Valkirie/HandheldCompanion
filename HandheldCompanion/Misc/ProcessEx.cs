@@ -597,7 +597,7 @@ public class ProcessEx : IDisposable
 
             if (mainThread is null)
                 return;
-            
+
             SetMainThread(mainThread);
         }
         catch { }

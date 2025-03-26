@@ -4,7 +4,6 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern;
-using iNKORE.UI.WPF.Modern.Controls.Helpers;
 using iNKORE.UI.WPF.Modern.Helpers.Styles;
 using Sentry;
 using System;
