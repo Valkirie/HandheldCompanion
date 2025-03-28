@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HidLibrary;
 using SharpDX.DirectInput;
 
 namespace HandheldCompanion.Controllers;
@@ -11,7 +12,10 @@ public class DClawController : DInputController
     { }
 
     public DClawController(PnPDetails details) : base(details)
-    { }
+    {
+        // Capabilities
+        Capabilities |= ControllerCapabilities.Rumble;
+    }
 
     protected override void InitializeInputOutput()
     {
@@ -88,6 +92,12 @@ public class DClawController : DInputController
         }
 
         base.UpdateInputs(ticks, delta);
+    }
+
+    public override void SetVibration(byte LargeMotor, byte SmallMotor)
+    {
+        HidDevice joystickHid = HidDevices.GetDevice(joystick.Properties.InterfacePath);
+        joystickHid?.Write(new byte[] { 05, 01, 00, 00, SmallMotor, LargeMotor });
     }
 
     public override string GetGlyph(ButtonFlags button)
