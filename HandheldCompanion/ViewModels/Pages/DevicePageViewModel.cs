@@ -122,11 +122,15 @@ namespace HandheldCompanion.ViewModels
             if (IDevice.GetCurrent() is ClawA1M || IDevice.GetCurrent() is Claw8)
                 manufacturerWatcher = new ClawCenterWatcher();
 
-            manufacturerWatcher?.Start();
-
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             coreIsolationWatcher.KeyChanged += CoreIsolationWatcher_KeyChanged;
+
+            if (manufacturerWatcher is not null)
+            {
+                manufacturerWatcher.StatusChanged += (enabled) => OnPropertyChanged(nameof(ManufacturerApplication));
+                manufacturerWatcher.Start();
+            }
         }
 
         private void CoreIsolationWatcher_KeyChanged(string key, bool enabled)
