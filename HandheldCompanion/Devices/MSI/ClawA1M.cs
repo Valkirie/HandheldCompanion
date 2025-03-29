@@ -1,14 +1,15 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
+using HandheldCompanion.Utils;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Devices;
 
@@ -114,6 +115,10 @@ public class ClawA1M : IDevice
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
+
+        // device specific capacities
+        Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterBattery, Properties.Resources.PowerProfileMSIClawBetterBatteryDesc)
         {
@@ -322,6 +327,58 @@ public class ClawA1M : IDevice
         }
 
         return false;
+    }
+
+    public override bool SetLedBrightness(int brightness)
+    {
+        Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+            return device.Write(SetRgbCmd(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B));
+
+        return false;
+    }
+
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, DeviceUtils.LEDLevel level, int speed = 100)
+    {
+        int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+            return device.Write(SetRgbCmd(LEDBrightness, MainColor.R, MainColor.G, MainColor.B));
+
+        return false;
+    }
+
+    private byte[] SetRgbCmd(double brightness, byte red, byte green, byte blue)
+    {
+        List<byte> data = new List<byte>
+        {
+            // Preamble
+            0x0F, 0x00, 0x00, 0x3C,
+
+            // Write first profile
+            0x21, 0x01,
+
+            // Start at
+            0x01, 0xFA,
+
+            // Write 31 bytes
+            0x20,
+
+            // Index, Frame num, Effect, Speed, Brightness
+            0x00, 0x01, 0x09, 0x03,
+            (byte)Math.Max(0, Math.Min(100, (int)(brightness * 100)))
+        };
+
+        // Append [red, green, blue] * 9
+        for (int i = 0; i < 9; i++)
+        {
+            data.Add(red);
+            data.Add(green);
+            data.Add(blue);
+        }
+
+        return data.ToArray();
     }
 
     private void Device_Removed()
