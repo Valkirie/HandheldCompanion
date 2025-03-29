@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HidLibrary;
 using SharpDX.DirectInput;
 
 namespace HandheldCompanion.Controllers;
@@ -96,7 +95,6 @@ public class DClawController : DInputController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
-        HidDevice joystickHid = HidDevices.GetDevice(joystick.Properties.InterfacePath);
         joystickHid?.Write(new byte[] { 05, 01, 00, 00, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength) });
     }
 

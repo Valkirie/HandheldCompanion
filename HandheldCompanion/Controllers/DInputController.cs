@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using System;
@@ -10,6 +11,7 @@ public class DInputController : IController
 {
     public Joystick joystick;
     protected JoystickState State = new();
+    protected HidDevice joystickHid;
 
     public DInputController()
     { }
@@ -49,12 +51,14 @@ public class DInputController : IController
                 {
                     // Instantiate the joystick
                     Joystick lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                    string devicePath = lookup_joystick.Properties.InterfacePath;
 
                     // Check if lookup joystick has proper interface path
-                    string SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath, DeviceInterfaceIds.HidDevice.ToString());
+                    string SymLink = DeviceManager.SymLinkToInstanceId(devicePath, DeviceInterfaceIds.HidDevice.ToString());
                     if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
                     {
                         joystick = lookup_joystick;
+                        joystickHid = HidDevices.GetDevice(devicePath);
                         break;
                     }
                 }
