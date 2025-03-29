@@ -986,7 +986,7 @@
     <value>Anulación de potencia configurable (cTDP)</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
-    <value>Permite modificar los valores mínimo y máximo de potencia (TDP) más allá de las especificaciones de la CPU</value>
+    <value>Permite modificar los valores mínimo y máximo de TDP más allá de las recomendaciones del OEM</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>Oscuro</value>

@@ -986,7 +986,7 @@
     <value>Sovrascrittura dell'intervallo di potenza configurabile (cTDP)</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
-    <value>Consente di modificare i valori di potenza minima e massima (TDP) al di là delle specifiche della CPU</value>
+    <value>Consente di modificare i valori TDP minimo e massimo oltre le raccomandazioni del produttore originale</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>Scuro</value>

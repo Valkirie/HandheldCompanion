@@ -988,7 +988,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Configurable Power (cTDP) konfigurieren</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
-    <value>Ermöglicht die Änderung der minimalen und maximalen Leistungswerte (TDP) über die CPU-Spezifikationen hinaus</value>
+    <value>Ermöglicht die Änderung der minimalen und maximalen TDP-Werte über die OEM-Empfehlungen hinaus</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>Dunkel</value>

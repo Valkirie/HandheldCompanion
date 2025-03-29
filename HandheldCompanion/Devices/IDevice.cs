@@ -3,6 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -35,6 +36,13 @@ public enum DeviceCapabilities : ushort
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
     FanOverride = 512,
+    WMIMethod = 1024,
+}
+
+public enum TDPMethod
+{
+    Default = 0,
+    OEM = 1
 }
 
 public struct ECDetails
@@ -901,6 +909,12 @@ public abstract class IDevice
         SendECData(address);
         SendECData(data);
     }
+
+    public virtual void set_long_limit(int limit)
+    { }
+
+    public virtual void set_short_limit(int limit)
+    { }
 
     protected virtual void SendECCommand(byte command)
     {
