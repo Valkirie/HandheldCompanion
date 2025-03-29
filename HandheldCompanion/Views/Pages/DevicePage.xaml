@@ -267,14 +267,13 @@
                             Grid.Column="1"
                             Width="120"
                             HorizontalAlignment="Right"
-                            IsChecked="{Binding ManufacturerApplication, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            IsEnabled="{Binding ManufacturerAppBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsChecked="{Binding ManufacturerAppStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ToggleButton.Style>
                                 <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
-                                    <!--  Default Content when ManufacturerApplication is false  -->
-                                    <Setter Property="Content" Value="Enable" />
+                                    <Setter Property="Content" Value="Restore" />
                                     <Style.Triggers>
-                                        <!--  When ManufacturerApplication is true, change Content  -->
-                                        <DataTrigger Binding="{Binding ManufacturerApplication}" Value="True">
+                                        <DataTrigger Binding="{Binding ManufacturerAppStatus}" Value="True">
                                             <Setter Property="Content" Value="Disable" />
                                         </DataTrigger>
                                     </Style.Triggers>

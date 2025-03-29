@@ -35,6 +35,27 @@ namespace HandheldCompanion.Watchers
             watchdogTimer.Stop();
         }
 
+        public virtual void Enable()
+        {
+            Stop();
+
+            EnableTasks();
+            EnableServices();
+
+            Start();
+        }
+
+        public virtual void Disable()
+        {
+            Stop();
+
+            DisableTasks();
+            DisableServices();
+            KillProcesses();
+
+            Start();
+        }
+
         protected void UpdateStatus(bool enabled)
         {
             StatusChanged?.Invoke(enabled);
@@ -56,7 +77,7 @@ namespace HandheldCompanion.Watchers
             return GetProcesses().Any();
         }
 
-        public void KillProcesses()
+        private void KillProcesses()
         {
             foreach (Process process in GetProcesses())
                 process.Kill();
@@ -82,18 +103,28 @@ namespace HandheldCompanion.Watchers
             return GetTasks().Any(task => task.Enabled);
         }
 
-        public void EnableTasks()
+        private void EnableTasks()
         {
             foreach (TaskScheduled task in GetTasks())
+            {
                 if (!task.Enabled)
+                {
                     task.Enabled = true;
+                    task.Run();
+                }
+            }
         }
 
-        public void DisableTasks()
+        private void DisableTasks()
         {
             foreach (TaskScheduled task in GetTasks())
+            {
                 if (task.Enabled)
+                {
+                    task.Stop();
                     task.Enabled = false;
+                }
+            }
         }
         #endregion
 
@@ -116,7 +147,7 @@ namespace HandheldCompanion.Watchers
             return GetServices().Any(service => service.Status == ServiceControllerStatus.Running);
         }
 
-        public void DisableServices()
+        private void DisableServices()
         {
             foreach (ServiceController service in GetServices())
             {
@@ -127,7 +158,7 @@ namespace HandheldCompanion.Watchers
             }
         }
 
-        public void EnableServices()
+        private void EnableServices()
         {
             foreach (ServiceController service in GetServices())
             {

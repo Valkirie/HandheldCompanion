@@ -95,6 +95,9 @@ public class DClawController : DInputController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
+        if (!IsConnected())
+            return;
+
         joystickHid?.Write(new byte[] { 05, 01, 00, 00, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength) });
     }
 

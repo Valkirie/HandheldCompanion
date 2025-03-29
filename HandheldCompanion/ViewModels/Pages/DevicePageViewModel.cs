@@ -87,7 +87,25 @@ namespace HandheldCompanion.ViewModels
 
         #region Manufacturer application
         private ISpaceWatcher manufacturerWatcher;
-        public bool ManufacturerApplication
+
+        private bool _ManufacturerAppBusy;
+        public bool ManufacturerAppBusy
+        {
+            get
+            {
+                return !_ManufacturerAppBusy;
+            }
+            set
+            {
+                if (value !=  _ManufacturerAppBusy)
+                {
+                    _ManufacturerAppBusy = value;
+                    OnPropertyChanged(nameof(ManufacturerAppBusy));
+                }
+            }
+        }
+
+        public bool ManufacturerAppStatus
         {
             get
             {
@@ -97,18 +115,17 @@ namespace HandheldCompanion.ViewModels
             }
             set
             {
+                // update flag
+                ManufacturerAppBusy = true;
+
                 if (value)
                 {
-                    manufacturerWatcher?.KillProcesses();
-                    manufacturerWatcher?.DisableTasks();
-                    manufacturerWatcher?.DisableServices();
+                    manufacturerWatcher?.Enable();
                 }
                 else
                 {
-                    manufacturerWatcher?.EnableTasks();
-                    manufacturerWatcher?.EnableServices();
+                    manufacturerWatcher?.Disable();
                 }
-                OnPropertyChanged(nameof(ManufacturerApplication));
             }
         }
         #endregion
@@ -119,8 +136,11 @@ namespace HandheldCompanion.ViewModels
             coreIsolationWatcher.Start();
 
             // manufacturer watcher
-            if (IDevice.GetCurrent() is ClawA1M || IDevice.GetCurrent() is Claw8)
+            IDevice device = IDevice.GetCurrent();
+            if (device is ClawA1M || device is Claw8)
                 manufacturerWatcher = new ClawCenterWatcher();
+            else if (device is LegionGo)
+                manufacturerWatcher = new LegionSpaceWatcher();
 
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -128,8 +148,20 @@ namespace HandheldCompanion.ViewModels
 
             if (manufacturerWatcher is not null)
             {
-                manufacturerWatcher.StatusChanged += (enabled) => OnPropertyChanged(nameof(ManufacturerApplication));
+                manufacturerWatcher.StatusChanged += (enabled) =>
+                {
+                    // update flag
+                    ManufacturerAppBusy = false;
+                    OnPropertyChanged(nameof(ManufacturerAppStatus));
+                };
+
+                // start watcher
                 manufacturerWatcher.Start();
+            }
+            else
+            {
+                // update flag
+                ManufacturerAppBusy = true;
             }
         }
 

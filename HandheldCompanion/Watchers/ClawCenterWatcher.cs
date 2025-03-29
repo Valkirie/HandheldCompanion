@@ -9,28 +9,19 @@ namespace HandheldCompanion.Watchers
 {
     public class ClawCenterWatcher : ISpaceWatcher
     {
-        protected new List<string> taskNames = new() { "MSI_Center_M_Server" };
-        protected new List<string> executableNames = new() { "MSI_Center_M_Server", "MSI Center M" };
-
         public ClawCenterWatcher()
         {
+            taskNames = new() { "MSI_Center_M_Server", "MSI_Center_M_Updater" };
+            executableNames = new() { "MSI_Center_M_Server", "MSI Center M", "MCMOSDInfo", "MSI Center OSD Info", "Gamebar_Widget" };
+            serviceNames = new() { "MSI Foundation Service" };
+
             watchdogTimer = new Timer(4000);
             watchdogTimer.Elapsed += WatchdogTimer_Elapsed;
         }
 
-        public override void Start()
-        {
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
         private void WatchdogTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            bool status = HasProcesses() || HasEnabledTasks();
+            bool status = HasProcesses() || HasEnabledTasks() || HasRunningServices();
             if (status != prevStatus)
             {
                 prevStatus = status;
