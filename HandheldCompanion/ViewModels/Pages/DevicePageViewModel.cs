@@ -49,6 +49,9 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool MemoryIntegrity;
+        public bool ManufacturerApplication;
+
         public DevicePageViewModel()
         {
             // manage events

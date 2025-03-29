@@ -149,6 +149,103 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
+            <!--  Security options  -->
+            <ikw:SimpleStackPanel Name="SecurityOptionsStack" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Security options" />
+
+                <!--  Core isolation  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE705;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Core isolation" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Security features available on your device that use virtualization-based security. May prevent TDP manipulations."
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            IsOn="{Binding MemoryIntegrity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </Grid>
+                </Border>
+            </ikw:SimpleStackPanel>
+
+            <!--  Platform options  -->
+            <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Platform options" />
+
+                <!--  OEM Frontend  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="120" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xF156;" />
+
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Manufacturer application" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Enable or disable manufacturer-installed applications on your gaming device."
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ToggleButton
+                            Grid.Column="1"
+                            Width="120"
+                            HorizontalAlignment="Right"
+                            IsChecked="{Binding ManufacturerApplication, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ToggleButton.Style>
+                                <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
+                                    <!--  Default Content when ManufacturerApplication is false  -->
+                                    <Setter Property="Content" Value="Enable" />
+                                    <Style.Triggers>
+                                        <!--  When ManufacturerApplication is true, change Content  -->
+                                        <DataTrigger Binding="{Binding ManufacturerApplication}" Value="True">
+                                            <Setter Property="Content" Value="Disable" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </Grid>
+                </Border>
+            </ikw:SimpleStackPanel>
+
             <!--  Battery options  -->
             <ikw:SimpleStackPanel
                 Name="BatteryChargeStack"
