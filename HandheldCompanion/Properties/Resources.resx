@@ -994,7 +994,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Configurable power (cTDP) override</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
-    <value>Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications</value>
+    <value>Allows to modify the minimum and maximum TDP values beyond the OEM recommendations</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>Dark</value>

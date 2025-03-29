@@ -9437,7 +9437,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications.
+        ///   Looks up a localized string similar to Allows to modify the minimum and maximum TDP values beyond the OEM recommendations.
         /// </summary>
         public static string SettingsPage_TDPRangeOverrideDesc {
             get {
