@@ -60,7 +60,6 @@
             <hints:Hint_MSIClawCenter d:Visibility="Visible" />
             <hints:Hint_SteamInput d:Visibility="Visible" />
             <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
-            <hints:Hint_CoreIsolationCheck d:Visibility="Visible" />
             <hints:Hint_AMD_IntegerScalingCheck d:Visibility="Visible" />
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>

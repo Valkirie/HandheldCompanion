@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Watchers;
 using System;
 using System.Windows;
 
@@ -69,13 +70,68 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool MemoryIntegrity;
-        public bool ManufacturerApplication;
+        #region MemoryIntegrity
+        private CoreIsolationWatcher coreIsolationWatcher = new CoreIsolationWatcher();
+        public bool MemoryIntegrity
+        {
+            get
+            {
+                return coreIsolationWatcher.VulnerableDriverBlocklistEnable || coreIsolationWatcher.HypervisorEnforcedCodeIntegrityEnabled;
+            }
+            set
+            {
+                coreIsolationWatcher.SetSettings(value);
+            }
+        }
+        #endregion
+
+        #region Manufacturer application
+        private ISpaceWatcher manufacturerWatcher;
+        public bool ManufacturerApplication
+        {
+            get
+            {
+                return (manufacturerWatcher?.HasProcesses() ?? false) ||
+                       (manufacturerWatcher?.HasEnabledTasks() ?? false) ||
+                       (manufacturerWatcher?.HasRunningServices() ?? false);
+            }
+            set
+            {
+                if (value)
+                {
+                    manufacturerWatcher?.KillProcesses();
+                    manufacturerWatcher?.DisableTasks();
+                    manufacturerWatcher?.DisableServices();
+                }
+                else
+                {
+                    manufacturerWatcher?.EnableTasks();
+                    manufacturerWatcher?.EnableServices();
+                }
+                OnPropertyChanged(nameof(ManufacturerApplication));
+            }
+        }
+        #endregion
 
         public DevicePageViewModel()
         {
+            // prepare watchers
+            coreIsolationWatcher.Start();
+
+            // manufacturer watcher
+            if (IDevice.GetCurrent() is ClawA1M || IDevice.GetCurrent() is Claw8)
+                manufacturerWatcher = new ClawCenterWatcher();
+
+            manufacturerWatcher?.Start();
+
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            coreIsolationWatcher.KeyChanged += CoreIsolationWatcher_KeyChanged;
+        }
+
+        private void CoreIsolationWatcher_KeyChanged(string key, bool enabled)
+        {
+            OnPropertyChanged(nameof(MemoryIntegrity));
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -90,8 +146,12 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            coreIsolationWatcher.Stop();
+            manufacturerWatcher?.Stop();
+
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            coreIsolationWatcher.KeyChanged -= CoreIsolationWatcher_KeyChanged;
 
             base.Dispose();
         }
