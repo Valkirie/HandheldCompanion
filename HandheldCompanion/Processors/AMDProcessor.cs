@@ -1,5 +1,6 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Processors.AMD;
 using System;
 using static HandheldCompanion.Devices.LegionGo;
@@ -77,17 +78,18 @@ public class AMDProcessor : Processor
 
         lock (updateLock)
         {
-            // device specific: Lenovo Legion Go
-            if (IDevice.GetCurrent() is LegionGo legion)
+            bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
+            IDevice device = IDevice.GetCurrent();
+
+            if (device.Capabilities.HasFlag(DeviceCapabilities.WMIMethod) && UseOEM)
             {
                 switch (type)
                 {
-                    case PowerType.Fast:
-                        legion.SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)limit);
-                        legion.SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)limit);
-                        break;
                     case PowerType.Slow:
-                        legion.SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)limit);
+                        device.set_long_limit((int)limit);
+                        break;
+                    case PowerType.Fast:
+                        device.set_short_limit((int)limit);
                         break;
                 }
             }
@@ -96,7 +98,7 @@ public class AMDProcessor : Processor
                 // 15W : 15000
                 limit *= 1000;
 
-                var error = 0;
+                int error = 0;
 
                 switch (type)
                 {

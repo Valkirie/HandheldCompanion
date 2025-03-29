@@ -230,6 +230,7 @@ public class LegionGo : IDevice
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        Capabilities |= DeviceCapabilities.WMIMethod;
 
         // battery bypass settings
         BatteryBypassMin = 80;
@@ -533,6 +534,18 @@ public class LegionGo : IDevice
         lightProfileR.r = SecondaryColor.R;
         lightProfileR.g = SecondaryColor.G;
         lightProfileR.b = SecondaryColor.B;
+    }
+
+    public override void set_long_limit(int limit)
+    {
+        SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, limit);
+        SetCPUPowerLimit(CapabilityID.CPUCrossLoadingPowerLimit, limit);
+    }
+
+    public override void set_short_limit(int limit)
+    {
+        SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, limit);
+        SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, limit);
     }
 
     public override string GetGlyph(ButtonFlags button)
