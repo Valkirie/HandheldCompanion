@@ -367,7 +367,7 @@ public class ClawA1M : IDevice
 
             // Index, Frame num, Effect, Speed, Brightness
             0x00, 0x01, 0x09, 0x03,
-            (byte)Math.Max(0, Math.Min(100, (int)(brightness * 100)))
+            (byte)Math.Max(0, Math.Min(100, (int)brightness))
         };
 
         // Append [red, green, blue] * 9
