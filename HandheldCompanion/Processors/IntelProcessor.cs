@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Processors.Intel;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Processors.Intel;
 
 namespace HandheldCompanion.Processors;
 
@@ -44,23 +46,25 @@ public class IntelProcessor : Processor
     {
         lock (updateLock)
         {
-            var error = 0;
+            bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
+            IDevice device = IDevice.GetCurrent();
 
-            /*
-            if (IDevice.GetCurrent() is Claw8 claw8)
+            if (device.Capabilities.HasFlag(DeviceCapabilities.WMIMethod) && UseOEM)
             {
                 switch (type)
                 {
-                    case PowerType.Fast:
-                        claw8.SetCPUPowerLimit(80, [(byte)limit]);
-                        break;
                     case PowerType.Slow:
-                        claw8.SetCPUPowerLimit(81, [(byte)limit]);
+                        device.set_long_limit((int)limit);
+                        break;
+                    case PowerType.Fast:
+                        device.set_short_limit((int)limit);
                         break;
                 }
             }
             else
             {
+                int error = 0;
+
                 switch (type)
                 {
                     case PowerType.Slow:
@@ -70,20 +74,9 @@ public class IntelProcessor : Processor
                         error = platform.set_short_limit((int)limit);
                         break;
                 }
-            }
-            */
 
-            switch (type)
-            {
-                case PowerType.Slow:
-                    error = platform.set_long_limit((int)limit);
-                    break;
-                case PowerType.Fast:
-                    error = platform.set_short_limit((int)limit);
-                    break;
+                base.SetTDPLimit(type, limit, immediate, error);
             }
-
-            base.SetTDPLimit(type, limit, immediate, error);
         }
     }
 

@@ -994,7 +994,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Sobreposição dos limites de potência (cTDP)</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
-    <value>Permite modificar o mínimo e máximo de valores de potência (TDP) além das especificações do CPU</value>
+    <value>Permite modificar o mínimo e máximo de valores de potência (TDP) além das especificações do OEM</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>Escuro</value>

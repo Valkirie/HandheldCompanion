@@ -924,7 +924,7 @@ public static class ControllerManager
                         // wait until physical controller is here and ready
                         XInputController? pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
                         if (pController is null || pController.IsBusy)
-                            return;
+                            continue;
 
                         // store physical controller Ids to trick the system
                         VirtualManager.VendorId = pController.GetVendorID();

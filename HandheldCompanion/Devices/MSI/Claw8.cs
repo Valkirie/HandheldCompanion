@@ -38,6 +38,9 @@ public class Claw8 : ClawA1M
     public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
     #endregion
 
+    protected string Scope { get; set; } = "root\\WMI";
+    protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
+
     public Claw8()
     {
         // device specific settings
@@ -54,6 +57,7 @@ public class Claw8 : ClawA1M
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
+        Capabilities |= DeviceCapabilities.WMIMethod;
 
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
@@ -148,9 +152,6 @@ public class Claw8 : ClawA1M
         base.Close();
     }
 
-    public string Scope { get; set; } = "root\\WMI";
-    public string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
-
     private void SetFanTable(byte[] fanTable)
     {
         /*
@@ -170,7 +171,17 @@ public class Claw8 : ClawA1M
         WMI.Set(Scope, Path, "Set_Fan", fullPackage);
     }
 
-    public void SetCPUPowerLimit(int PL, byte[] limit)
+    public override void set_long_limit(int limit)
+    {
+        SetCPUPowerLimit(81, [(byte)limit]);
+    }
+
+    public override void set_short_limit(int limit)
+    {
+        SetCPUPowerLimit(80, [(byte)limit]);
+    }
+
+    private void SetCPUPowerLimit(int PL, byte[] limit)
     {
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
