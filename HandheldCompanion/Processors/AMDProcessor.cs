@@ -80,7 +80,7 @@ public class AMDProcessor : Processor
             bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
             IDevice device = IDevice.GetCurrent();
 
-            if (device.Capabilities.HasFlag(DeviceCapabilities.WMIMethod) && UseOEM)
+            if (device.Capabilities.HasFlag(DeviceCapabilities.OEMPower) && UseOEM)
             {
                 switch (type)
                 {

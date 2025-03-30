@@ -36,7 +36,7 @@ namespace HandheldCompanion.ViewModels
         #endregion
 
         #region Power options
-        public bool HasWMIMethod => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.WMIMethod);
+        public bool HasWMIMethod => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.OEMPower);
         public int ConfigurableTDPMethod
         {
             get

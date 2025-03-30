@@ -35,7 +35,7 @@ public enum DeviceCapabilities : ushort
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
     FanOverride = 512,
-    WMIMethod = 1024,
+    OEMPower = 1024,
 }
 
 public enum TDPMethod

@@ -53,6 +53,21 @@ namespace HandheldCompanion.Devices.ASUS
         public const uint GPU_Fan = 0x00110014;
         public const uint Mid_Fan = 0x00110031;
 
+        /// <summary>
+        /// SPL (sustained limit) / PL1
+        /// </summary>
+        public const int PPT_APUA3 = 0x001200A3;
+
+        /// <summary>
+        /// sPPT (slow boost limit) / PL2
+        /// </summary>
+        public const int PPT_APUA0 = 0x001200A0;
+
+        /// <summary>
+        /// fPPT (fast boost limit)
+        /// </summary>
+        public const int PPT_APUC1 = 0x001200C1;
+
         public const uint PerformanceMode = 0x00120075; // Performance modes
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

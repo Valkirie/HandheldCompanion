@@ -230,7 +230,7 @@ public class LegionGo : IDevice
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
-        Capabilities |= DeviceCapabilities.WMIMethod;
+        Capabilities |= DeviceCapabilities.OEMPower;
 
         // battery bypass settings
         BatteryBypassMin = 80;

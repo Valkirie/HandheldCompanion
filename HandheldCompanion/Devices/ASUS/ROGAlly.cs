@@ -115,6 +115,7 @@ public class ROGAlly : IDevice
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
+        Capabilities |= DeviceCapabilities.OEMPower;
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
@@ -756,6 +757,17 @@ public class ROGAlly : IDevice
             return;
 
         AsusACPI.DeviceSet(AsusACPI.BatteryLimit, chargeLimit);
+    }
+
+    public override void set_long_limit(int limit)
+    {
+        AsusACPI.DeviceSet(AsusACPI.PPT_APUA0, limit);
+        AsusACPI.DeviceSet(AsusACPI.PPT_APUA3, limit);
+    }
+
+    public override void set_short_limit(int limit)
+    {
+        AsusACPI.DeviceSet(AsusACPI.PPT_APUC1, limit);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)

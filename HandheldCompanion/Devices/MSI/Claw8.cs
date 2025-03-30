@@ -57,7 +57,7 @@ public class Claw8 : ClawA1M
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
-        Capabilities |= DeviceCapabilities.WMIMethod;
+        Capabilities |= DeviceCapabilities.OEMPower;
 
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
