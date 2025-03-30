@@ -29,7 +29,7 @@ namespace HandheldCompanion.Watchers
             notification = new(
                 Properties.Resources.Hint_CoreIsolationCheck,
                 Properties.Resources.Hint_CoreIsolationCheckDesc,
-                Properties.Resources.Hint_CoreIsolationCheckAction,
+                string.Empty,
                 InfoBarSeverity.Warning);
         }
 

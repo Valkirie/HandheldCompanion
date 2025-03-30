@@ -17,6 +17,8 @@ namespace HandheldCompanion.Managers
         public delegate void DiscardedEventHandler(Notification notification);
 
         public List<Notification> Notifications = new();
+        public bool Any => Notifications.Any();
+        public int Count => Notifications.Count;
 
         public override void Start()
         {

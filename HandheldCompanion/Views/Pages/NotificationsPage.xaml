@@ -16,7 +16,6 @@
     d:DesignHeight="1000"
     d:DesignWidth="1000"
     KeepAlive="True"
-    LayoutUpdated="Page_LayoutUpdated"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 

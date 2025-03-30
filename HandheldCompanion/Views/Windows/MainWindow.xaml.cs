@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
@@ -180,6 +181,8 @@ public partial class MainWindow : GamepadWindow
         SystemManager.SystemStatusChanged += OnSystemStatusChanged;
         ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+        ManagerFactory.notificationManager.Added += NotificationManagerUpdated;
+        ManagerFactory.notificationManager.Discarded += NotificationManagerUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         // prepare toast manager
@@ -389,7 +392,6 @@ public partial class MainWindow : GamepadWindow
 
         // manage events
         controllerPage.Loaded += ControllerPage_Loaded;
-        notificationsPage.StatusChanged += NotificationsPage_LayoutUpdated;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
@@ -479,13 +481,13 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
-    private void NotificationsPage_LayoutUpdated(int notifications)
+    private void NotificationManagerUpdated(Notification notification)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            HasNotifications.Visibility = notifications != 0 ? Visibility.Visible : Visibility.Collapsed;
-            HasNotifications.Value = notifications;
+            HasNotifications.Visibility = ManagerFactory.notificationManager.Any ? Visibility.Visible : Visibility.Collapsed;
+            HasNotifications.Value = ManagerFactory.notificationManager.Count;
         });
     }
 
@@ -654,6 +656,8 @@ public partial class MainWindow : GamepadWindow
         SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
+        ManagerFactory.notificationManager.Added -= NotificationManagerUpdated;
+        ManagerFactory.notificationManager.Discarded -= NotificationManagerUpdated;
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
 
         // UI thread

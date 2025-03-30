@@ -21,7 +21,7 @@ namespace HandheldCompanion.Watchers
             notification = new(
                 Properties.Resources.Hint_MSIClawCenterCheck,
                 Properties.Resources.Hint_MSIClawCenterCheckDesc,
-                Properties.Resources.Hint_MSIClawCenterCheckAction,
+                string.Empty,
                 InfoBarSeverity.Warning);
 
             // prepare timer

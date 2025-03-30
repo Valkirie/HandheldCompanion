@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Commands;
 using HandheldCompanion.ViewModels.Pages;
 using HandheldCompanion.Views.Pages;
@@ -52,7 +53,7 @@ namespace HandheldCompanion.ViewModels
 
         private void OnInfoBarClosed(object obj)
         {
-            NotificationPage.NotificationManager_Discarded(Notification);
+            ManagerFactory.notificationManager.Discard(Notification);
         }
 
         private void OnInfobarAction(object obj)

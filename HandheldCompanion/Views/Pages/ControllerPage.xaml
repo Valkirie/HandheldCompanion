@@ -35,7 +35,7 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
-                    Severity="Warning" />
+                    Severity="Error" />
 
                 <ui:InfoBar
                     Name="HintsNotMuted"
@@ -43,7 +43,7 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
-                    Severity="Warning" />
+                    Severity="Error" />
 
                 <ui:InfoBar
                     Name="WarningNoVirtual"
@@ -51,7 +51,7 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
-                    Severity="Warning" />
+                    Severity="Error" />
             </ikw:SimpleStackPanel>
 
             <!--  Virtual devices  -->
@@ -113,7 +113,7 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedDesc}"
-                    Severity="Warning" />
+                    Severity="Error" />
             </ikw:SimpleStackPanel>
 
             <!--  Virtual controller settings  -->

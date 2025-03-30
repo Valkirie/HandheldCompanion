@@ -31,16 +31,9 @@ namespace HandheldCompanion.Views.Pages
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
+        { }
 
         public void Page_Closed()
-        {
-        }
-
-        private void Page_LayoutUpdated(object sender, EventArgs e)
-        {
-            // do something
-        }
+        { }
     }
 }
