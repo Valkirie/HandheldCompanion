@@ -213,7 +213,7 @@ public class ClawA1M : IDevice
         // hack, force rescan
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
         {
-            switch(Controller.GetProductID())
+            switch (Controller.GetProductID())
             {
                 case PID_XINPUT:
                     ManagerFactory.deviceManager.RefreshXInput();

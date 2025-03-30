@@ -1,15 +1,9 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using HandheldCompanion.ViewModels.Commands;
-using System;
-using System.Collections.Generic;
+using HandheldCompanion.Notifications;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels.Pages
 {
@@ -26,7 +20,7 @@ namespace HandheldCompanion.ViewModels.Pages
             // manage events
             ManagerFactory.notificationManager.Added += NotificationManager_Added;
             ManagerFactory.notificationManager.Discarded += NotificationManager_Discarded;
-            
+
             // raise events
             switch (ManagerFactory.notificationManager.Status)
             {
@@ -42,7 +36,7 @@ namespace HandheldCompanion.ViewModels.Pages
 
         private void QueryNotifications()
         {
-            foreach(Notification notification in ManagerFactory.notificationManager.Notifications)
+            foreach (Notification notification in ManagerFactory.notificationManager.Notifications)
                 NotificationManager_Added(notification);
         }
 
@@ -67,13 +61,9 @@ namespace HandheldCompanion.ViewModels.Pages
         {
             NotificationViewModel? foundNotification = Notifications.ToList().FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
             if (foundNotification is null)
-            {
-                Notifications.SafeAdd(new NotificationViewModel(this, notification));
-            }
+                Notifications.SafeAdd(new NotificationViewModel(notification));
             else
-            {
                 foundNotification.Notification = notification;
-            }
 
             OnPropertyChanged(nameof(HasNotifications));
         }

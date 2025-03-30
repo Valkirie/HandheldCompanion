@@ -108,7 +108,7 @@
                         d:Visibility="Visible"
                         IsClosable="False"
                         IsOpen="True"
-                        Severity="Informational"
+                        Severity="Warning"
                         Visibility="Collapsed" />
                 </ikw:SimpleStackPanel>
 

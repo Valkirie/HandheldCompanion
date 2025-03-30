@@ -1,14 +1,6 @@
-﻿using HandheldCompanion.Helpers;
-using HandheldCompanion.Processors;
-using HandheldCompanion.Utils;
+﻿using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Modern.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace HandheldCompanion.Watchers
 {
@@ -72,7 +64,7 @@ namespace HandheldCompanion.Watchers
             string valueName = registryEvent["ValueName"]?.ToString();
 
             bool value = false;
-            switch(valueName)
+            switch (valueName)
             {
                 case "VulnerableDriverBlocklistEnable":
                     value = VulnerableDriverBlocklistEnable;

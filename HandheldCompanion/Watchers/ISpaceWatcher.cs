@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Notifications;
 using HandheldCompanion.Utils;
 using Microsoft.Win32.TaskScheduler;
 using System;
@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using TaskScheduled = Microsoft.Win32.TaskScheduler.Task;
 
@@ -79,7 +77,12 @@ namespace HandheldCompanion.Watchers
         private void KillProcesses()
         {
             foreach (Process process in GetProcesses())
+            {
+                if (process.HasExited)
+                    continue;
+
                 process.Kill();
+            }
         }
         #endregion
 
@@ -88,7 +91,7 @@ namespace HandheldCompanion.Watchers
         {
             using (TaskService taskService = new TaskService())
             {
-                foreach(string task in taskNames)
+                foreach (string task in taskNames)
                 {
                     TaskScheduled taskScheduled = taskService.GetTask(task);
                     if (taskScheduled != null)

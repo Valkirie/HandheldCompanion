@@ -1,12 +1,7 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace HandheldCompanion.Misc
+namespace HandheldCompanion.Notifications
 {
     public class Notification
     {

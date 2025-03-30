@@ -97,7 +97,7 @@ namespace HandheldCompanion.ViewModels
             }
             set
             {
-                if (value !=  _ManufacturerAppBusy)
+                if (value != _ManufacturerAppBusy)
                 {
                     _ManufacturerAppBusy = value;
                     OnPropertyChanged(nameof(ManufacturerAppBusy));
@@ -142,6 +142,8 @@ namespace HandheldCompanion.ViewModels
                 manufacturerWatcher = new ClawCenterWatcher();
             else if (device is LegionGo)
                 manufacturerWatcher = new LegionSpaceWatcher();
+            else if (device is ROGAlly || device is ROGAllyX)
+                manufacturerWatcher = new RogAllySpaceWatcher();
 
             if (manufacturerWatcher is not null)
             {

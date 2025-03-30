@@ -1,16 +1,8 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.ViewModels.Commands;
-using HandheldCompanion.ViewModels.Pages;
-using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml.Linq;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -37,15 +29,12 @@ namespace HandheldCompanion.ViewModels
         public bool IsClosable => _Notification.IsClosable;
         public bool IsClickable => _Notification.IsClickable;
 
-        private NotificationPageViewModel NotificationPage;
-
         public ICommand InfoBarCloseCommand { get; }
         public ICommand ActionCommand { get; }
 
-        public NotificationViewModel(NotificationPageViewModel notificationPage, Notification notification)
+        public NotificationViewModel(Notification notification)
         {
             Notification = notification;
-            NotificationPage = notificationPage;
 
             InfoBarCloseCommand = new RelayCommand(OnInfoBarClosed);
             ActionCommand = new RelayCommand(OnInfobarAction);
@@ -58,7 +47,12 @@ namespace HandheldCompanion.ViewModels
 
         private void OnInfobarAction(object obj)
         {
-            Notification.Execute();
+            Notification?.Execute();
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
         }
     }
 }

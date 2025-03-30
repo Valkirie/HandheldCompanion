@@ -1,11 +1,4 @@
-﻿using HandheldCompanion.Controls.Hints;
-using HandheldCompanion.Helpers;
-using HandheldCompanion.ViewModels;
-using HandheldCompanion.ViewModels.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Timers;
+﻿using HandheldCompanion.ViewModels.Pages;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 

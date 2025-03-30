@@ -117,7 +117,7 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{Binding Warning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    Severity="Informational"
+                    Severity="Warning"
                     Visibility="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             </ikw:SimpleStackPanel>

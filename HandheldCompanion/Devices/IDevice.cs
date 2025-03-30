@@ -3,7 +3,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;

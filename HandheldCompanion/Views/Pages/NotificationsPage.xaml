@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:hints="clr-namespace:HandheldCompanion.Controls.Hints"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -23,7 +22,7 @@
 
         <ui:InfoBar
             Title="{l:Static resx:Resources.NotificationsPage_NothingToSee}"
-            IsClosable="True"
+            IsClosable="False"
             IsOpen="True"
             Message="{l:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
             Severity="Success"
