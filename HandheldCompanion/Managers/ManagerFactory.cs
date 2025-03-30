@@ -15,6 +15,7 @@ namespace HandheldCompanion.Managers
         public static PowerProfileManager powerProfileManager;
         public static ProcessManager processManager;
         public static GPUManager gpuManager;
+        public static NotificationManager notificationManager;
 
         public static List<IManager> Managers => new()
         {
@@ -26,7 +27,8 @@ namespace HandheldCompanion.Managers
             profileManager,
             powerProfileManager,
             processManager,
-            gpuManager
+            gpuManager,
+            notificationManager
         };
 
         static ManagerFactory()
@@ -46,6 +48,7 @@ namespace HandheldCompanion.Managers
             powerProfileManager = new();
             processManager = new();
             gpuManager = new();
+            notificationManager = new();
         }
     }
 }

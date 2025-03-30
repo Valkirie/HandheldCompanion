@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="About"
     Title="{l:Static resx:Resources.MainWindow_navNotifications}"
     d:Background="White"
@@ -21,45 +22,37 @@
 
     <ikw:SimpleStackPanel Margin="20" Spacing="6">
 
-        <!--  WARNING: Nothing to see here  -->
-        <Border
-            Name="NothingToSee"
-            Padding="15,12,12,12"
-            d:Visibility="Visible"
-            ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-            Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-            CornerRadius="{DynamicResource ControlCornerRadius}"
-            Visibility="Visible">
+        <ui:InfoBar
+            Title="{l:Static resx:Resources.NotificationsPage_NothingToSee}"
+            IsClosable="True"
+            IsOpen="True"
+            Message="{l:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
+            Severity="Success"
+            Visibility="{Binding HasNotifications, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
-            <Grid>
-                <DockPanel>
-                    <ui:FontIcon
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                        Glyph="&#xe7ed;" />
+        <ui:ItemsRepeater ItemsSource="{Binding Notifications}">
+            <ui:ItemsRepeater.Layout>
+                <ui:StackLayout Spacing="6" />
+            </ui:ItemsRepeater.Layout>
 
-                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock
-                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Text="{l:Static resx:Resources.NotificationsPage_NothingToSee}" />
-                        <TextBlock
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="{l:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
-                            TextWrapping="Wrap" />
-                    </ikw:SimpleStackPanel>
-                </DockPanel>
-            </Grid>
-        </Border>
-        <ikw:SimpleStackPanel Name="Notifications" Spacing="6">
-            <hints:Hint_LegionGoLegionSpace d:Visibility="Visible" />
-            <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
-            <hints:Hint_SteamInput d:Visibility="Visible" />
-            <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
-            <hints:Hint_AMD_IntegerScalingCheck d:Visibility="Visible" />
-        </ikw:SimpleStackPanel>
+            <ui:ItemsRepeater.ItemTemplate>
+                <DataTemplate>
+                    <ui:InfoBar
+                        Title="{Binding Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        CloseButtonCommand="{Binding InfoBarCloseCommand}"
+                        IsClosable="{Binding IsClosable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        IsOpen="True"
+                        Message="{Binding Message, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Severity="{Binding Severity, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ui:InfoBar.ActionButton>
+                            <Button
+                                Command="{Binding ActionCommand}"
+                                Content="{Binding Action, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding IsClickable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </ui:InfoBar.ActionButton>
+                    </ui:InfoBar>
+                </DataTemplate>
+            </ui:ItemsRepeater.ItemTemplate>
+        </ui:ItemsRepeater>
     </ikw:SimpleStackPanel>
 </Page>

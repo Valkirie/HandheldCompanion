@@ -241,11 +241,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Oups, it appears your device is not supported yet. The software might not run as expected..
+        ///   Looks up a localized string similar to Unsupported device.
         /// </summary>
         public static string AboutPage_UnsupportedDevice {
             get {
                 return ResourceManager.GetString("AboutPage_UnsupportedDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oups, it appears your device is not supported yet. The software might not run as expected..
+        /// </summary>
+        public static string AboutPage_UnsupportedDeviceDesc {
+            get {
+                return ResourceManager.GetString("AboutPage_UnsupportedDeviceDesc", resourceCulture);
             }
         }
         

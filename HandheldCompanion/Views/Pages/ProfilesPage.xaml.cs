@@ -606,7 +606,7 @@ public partial class ProfilesPage : Page
                     ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
                     // display warnings
-                    WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
+                    WarningInfoBar.Message = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
 
                     (Visibility warningVisibility, bool controlsEnabled, bool redirectionEnabled) = selectedProfile.ErrorCode switch
                     {
@@ -618,7 +618,7 @@ public partial class ProfilesPage : Page
                         _ => (Visibility.Collapsed, true, true)
                     };
 
-                    WarningBorder.Visibility = warningVisibility;
+                    WarningInfoBar.Visibility = warningVisibility;
                     cB_Whitelist.IsEnabled = controlsEnabled;
                     cB_Pinned.IsEnabled = controlsEnabled;
                     cB_Suspend.IsEnabled = controlsEnabled;

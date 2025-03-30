@@ -267,8 +267,8 @@
                             Grid.Column="1"
                             Width="120"
                             HorizontalAlignment="Right"
-                            IsEnabled="{Binding ManufacturerAppBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            IsChecked="{Binding ManufacturerAppStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            IsChecked="{Binding ManufacturerAppStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{Binding ManufacturerAppBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ToggleButton.Style>
                                 <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
                                     <Setter Property="Content" Value="Restore" />

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Utils;
+﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace HandheldCompanion.Watchers
         protected List<string> taskNames = new();
         protected List<string> executableNames = new();
 
+        public Notification notification;
+
         protected Timer watchdogTimer;
 
         protected bool prevStatus = false;
@@ -26,14 +29,10 @@ namespace HandheldCompanion.Watchers
         public delegate void StatusChangedHandler(bool enabled);
 
         public virtual void Start()
-        {
-            watchdogTimer.Start();
-        }
+        { }
 
         public virtual void Stop()
-        {
-            watchdogTimer.Stop();
-        }
+        { }
 
         public virtual void Enable()
         {

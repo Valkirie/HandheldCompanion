@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Windows;
 
 namespace HandheldCompanion.Watchers
 {
-    public class CoreIsolationWatcher
+    public class CoreIsolationWatcher : ISpaceWatcher
     {
         private static WqlEventQuery HypervisorQuery = new WqlEventQuery(@"SELECT * FROM RegistryValueChangeEvent WHERE Hive = 'HKEY_LOCAL_MACHINE' AND KeyPath = 'SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios' AND ValueName='HypervisorEnforcedCodeIntegrity'");
         private static WqlEventQuery VulnerableDriverQuery = new WqlEventQuery(@"SELECT * FROM RegistryValueChangeEvent WHERE Hive = 'HKEY_LOCAL_MACHINE' AND KeyPath = 'SYSTEM\\CurrentControlSet\\Control\\CI\\Config' AND ValueName='VulnerableDriverBlocklistEnable'");
@@ -22,13 +23,17 @@ namespace HandheldCompanion.Watchers
         public bool HypervisorEnforcedCodeIntegrityEnabled => RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity");
         public bool VulnerableDriverBlocklistEnable => RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable");
 
-        public event KeyChangedHandler KeyChanged;
-        public delegate void KeyChangedHandler(string key, bool enabled);
+        public CoreIsolationWatcher()
+        {
+            // set notification
+            notification = new(
+                Properties.Resources.Hint_CoreIsolationCheck,
+                Properties.Resources.Hint_CoreIsolationCheckDesc,
+                Properties.Resources.Hint_CoreIsolationCheckAction,
+                InfoBarSeverity.Warning);
+        }
 
-        public CoreIsolationWatcher() : base()
-        { }
-
-        public void Start()
+        public override void Start()
         {
             // Ensure registry keys exist and set up watchers.
             SetupRegistryWatcher(
@@ -42,12 +47,18 @@ namespace HandheldCompanion.Watchers
                 "VulnerableDriverBlocklistEnable",
                 VulnerableDriverWatcher,
                 VulnerableDriverQuery);
+
+            UpdateStatus(HypervisorEnforcedCodeIntegrityEnabled || VulnerableDriverBlocklistEnable);
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             HypervisorWatcher.Stop();
             VulnerableDriverWatcher.Stop();
+
+            base.Stop();
         }
 
         private void HandleEvent(object sender, EventArrivedEventArgs e)
@@ -71,7 +82,7 @@ namespace HandheldCompanion.Watchers
                     break;
             }
 
-            KeyChanged?.Invoke(valueName, value);
+            UpdateStatus(value);
         }
 
         public void SetSettings(bool enabled)

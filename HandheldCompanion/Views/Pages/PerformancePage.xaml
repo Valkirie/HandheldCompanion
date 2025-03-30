@@ -113,41 +113,13 @@
                     </Grid>
                 </Border>
 
-                <!--  Warning  -->
-                <Border
-                    Padding="15,12,12,12"
-                    d:Visibility="Visible"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasWarning, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
+                <ui:InfoBar
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{Binding Warning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    Severity="Informational"
+                    Visibility="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <DockPanel>
-                        <Grid>
-                            <ui:FontIcon
-                                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Glyph="&#xe7ba;" />
-                        </Grid>
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{Binding Warning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-                </Border>
             </ikw:SimpleStackPanel>
 
             <ui:ContentDialog

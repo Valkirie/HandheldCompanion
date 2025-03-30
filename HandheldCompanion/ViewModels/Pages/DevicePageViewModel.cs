@@ -132,7 +132,8 @@ namespace HandheldCompanion.ViewModels
 
         public DevicePageViewModel()
         {
-            // prepare watchers
+            // settings watcher
+            coreIsolationWatcher.StatusChanged += CoreIsolationWatcher_StatusChanged;
             coreIsolationWatcher.Start();
 
             // manufacturer watcher
@@ -142,20 +143,10 @@ namespace HandheldCompanion.ViewModels
             else if (device is LegionGo)
                 manufacturerWatcher = new LegionSpaceWatcher();
 
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            coreIsolationWatcher.KeyChanged += CoreIsolationWatcher_KeyChanged;
-
             if (manufacturerWatcher is not null)
             {
-                manufacturerWatcher.StatusChanged += (enabled) =>
-                {
-                    // update flag
-                    ManufacturerAppBusy = false;
-                    OnPropertyChanged(nameof(ManufacturerAppStatus));
-                };
-
                 // start watcher
+                manufacturerWatcher.StatusChanged += ManufacturerWatcher_StatusChanged;
                 manufacturerWatcher.Start();
             }
             else
@@ -163,11 +154,41 @@ namespace HandheldCompanion.ViewModels
                 // update flag
                 ManufacturerAppBusy = true;
             }
+
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
-        private void CoreIsolationWatcher_KeyChanged(string key, bool enabled)
+        private void CoreIsolationWatcher_StatusChanged(bool enabled)
         {
+            switch (enabled)
+            {
+                case true:
+                    ManagerFactory.notificationManager.Add(coreIsolationWatcher.notification);
+                    break;
+                case false:
+                    ManagerFactory.notificationManager.Discard(coreIsolationWatcher.notification);
+                    break;
+            }
+
             OnPropertyChanged(nameof(MemoryIntegrity));
+        }
+
+        private void ManufacturerWatcher_StatusChanged(bool enabled)
+        {
+            switch (enabled)
+            {
+                case true:
+                    ManagerFactory.notificationManager.Add(manufacturerWatcher.notification);
+                    break;
+                case false:
+                    ManagerFactory.notificationManager.Discard(manufacturerWatcher.notification);
+                    break;
+            }
+
+            // update flag
+            ManufacturerAppBusy = false;
+            OnPropertyChanged(nameof(ManufacturerAppStatus));
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -182,12 +203,17 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            coreIsolationWatcher.StatusChanged -= CoreIsolationWatcher_StatusChanged;
             coreIsolationWatcher.Stop();
-            manufacturerWatcher?.Stop();
+
+            if (manufacturerWatcher is not null)
+            {
+                manufacturerWatcher.StatusChanged -= ManufacturerWatcher_StatusChanged;
+                manufacturerWatcher.Stop();
+            }
 
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-            coreIsolationWatcher.KeyChanged -= CoreIsolationWatcher_KeyChanged;
 
             base.Dispose();
         }

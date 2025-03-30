@@ -29,119 +29,29 @@
             <!--  Hints  -->
             <ikw:SimpleStackPanel Name="Hints" Spacing="6">
 
-                <!--  Emulated controller managed by profile  -->
-                <Border
+                <ui:InfoBar
                     Name="HintsHIDManagedByProfile"
-                    Padding="15,12,12,12"
-                    d:Visibility="Visible"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Visible">
+                    Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
+                    Severity="Warning" />
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Glyph="&#xE99A;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-                    </Grid>
-                </Border>
-
-                <!--  Physical controller is not hidden and virtual controller detected  -->
-                <Border
+                <ui:InfoBar
                     Name="HintsNotMuted"
-                    Padding="15,12,12,12"
-                    d:Visibility="Visible"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Visible">
+                    Title="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
+                    Severity="Warning" />
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Glyph="&#xE99A;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-                    </Grid>
-                </Border>
-
-                <!--  WARNING: No physical controller detected  -->
-                <Border
+                <ui:InfoBar
                     Name="WarningNoVirtual"
-                    Padding="15,12,12,12"
-                    d:Visibility="Visible"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Visible">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Glyph="&#xE99A;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_NoVirtualControllerWarning}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-                    </Grid>
-                </Border>
+                    Title="{l:Static resx:Resources.ControllerPage_NoVirtualControllerWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
+                    Severity="Warning" />
             </ikw:SimpleStackPanel>
 
             <!--  Virtual devices  -->
@@ -197,43 +107,13 @@
                     </ui:ItemsRepeater>
                 </ikw:SimpleStackPanel>
 
-                <!--  WARNING: No physical controller detected  -->
-                <Border
+                <ui:InfoBar
                     Name="WarningNoPhysical"
-                    Padding="15,12,12,12"
-                    d:Visibility="Visible"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Visible">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                Glyph="&#xE99A;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedWarning}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedAction}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-                    </Grid>
-                </Border>
+                    Title="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedDesc}"
+                    Severity="Warning" />
             </ikw:SimpleStackPanel>
 
             <!--  Virtual controller settings  -->
@@ -324,10 +204,10 @@
 
                 <!--  Vibration Strength  -->
                 <Border
-                    IsEnabled="{Binding CanRumble, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    IsEnabled="{Binding CanRumble, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>

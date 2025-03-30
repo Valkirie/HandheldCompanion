@@ -103,33 +103,13 @@
                         </Grid>
                     </Border>
 
-                    <!--  Warning  -->
-                    <Border
-                        Name="WarningBorder"
-                        Padding="15,12,12,12"
+                    <ui:InfoBar
+                        Name="WarningInfoBar"
                         d:Visibility="Visible"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Visibility="Collapsed">
-
-                        <DockPanel>
-                            <Grid>
-                                <ui:FontIcon
-                                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Glyph="&#xe7ba;" />
-                            </Grid>
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock
-                                    Name="WarningContent"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-                    </Border>
+                        IsClosable="False"
+                        IsOpen="True"
+                        Severity="Informational"
+                        Visibility="Collapsed" />
                 </ikw:SimpleStackPanel>
 
                 <ikw:SimpleStackPanel Name="ProfileDetails" Spacing="6">
