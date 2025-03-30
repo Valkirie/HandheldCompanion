@@ -1,0 +1,46 @@
+﻿using iNKORE.UI.WPF.Modern.Controls;
+using System.Timers;
+
+namespace HandheldCompanion.Watchers
+{
+    public class RogAllySpaceWatcher : ISpaceWatcher
+    {
+        public RogAllySpaceWatcher()
+        {
+            serviceNames = new() { "ArmouryCrateSEService", "AsusAppService", "ArmouryCrateControlInterface" };
+
+            // set notification
+            notification = new(
+                Properties.Resources.Hint_RogAllyServiceCheck,
+                Properties.Resources.Hint_RogAllyServiceCheckDesc,
+                string.Empty,
+                InfoBarSeverity.Warning);
+
+            // prepare timer
+            watchdogTimer = new Timer(4000);
+            watchdogTimer.Elapsed += WatchdogTimer_Elapsed;
+        }
+
+        public override void Start()
+        {
+            watchdogTimer.Start();
+            base.Start();
+        }
+
+        public override void Stop()
+        {
+            watchdogTimer.Stop();
+            base.Stop();
+        }
+
+        private void WatchdogTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            bool status = HasProcesses() || HasEnabledTasks() || HasRunningServices();
+            if (status != prevStatus)
+            {
+                prevStatus = status;
+                UpdateStatus(status);
+            }
+        }
+    }
+}

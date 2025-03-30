@@ -97,7 +97,7 @@
                         <DataTemplate>
                             <Expander HorizontalAlignment="Stretch">
                                 <Expander.Header>
-                                    <Grid>
+                                    <Grid Margin="0,12,12,12">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" />
                                             <ColumnDefinition Width="5*" />

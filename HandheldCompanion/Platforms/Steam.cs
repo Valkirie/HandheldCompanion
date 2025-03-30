@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Watchers;
 using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -14,13 +15,12 @@ namespace HandheldCompanion.Platforms;
 
 public class Steam : IPlatform
 {
-    public bool IsControllerDriverInstalled;
-
     private readonly RegistryWatcher SteamActiveUserWatcher = new(WatchedRegistry.CurrentUser, @"SOFTWARE\\Valve\\Steam\\ActiveProcess\\", "ActiveUser");
     private FileSystemWatcher SteamActiveUserFileWatcher = new();
     private Timer debounceTimer;
 
     private readonly int SteamAppsId = 413080;
+    private SteamWatcher steamWatcher = new SteamWatcher();
 
     public Steam()
     {
@@ -59,9 +59,6 @@ public class Steam : IPlatform
             return;
         }
 
-        // check drivers
-        IsControllerDriverInstalled = HasXboxDriversInstalled();
-
         // Initialize debounce timer
         debounceTimer = new Timer(1000); // 1 second delay
         debounceTimer.AutoReset = false; // Trigger only once per activation
@@ -72,8 +69,27 @@ public class Steam : IPlatform
     {
         SteamActiveUserWatcher.RegistryChanged += ActiveUserWatcher_RegistryChanged;
         SteamActiveUserWatcher.StartWatching();
+        steamWatcher.Start();
 
         return base.Start();
+    }
+
+    public override bool Stop(bool kill = false)
+    {
+        SteamActiveUserWatcher.StopWatching();
+        steamWatcher.Stop();
+
+        SteamActiveUserFileWatcher.Changed -= FileWatcher_Changed;
+        SteamActiveUserFileWatcher.Dispose();
+
+        debounceTimer.Stop();
+        if (kill)
+        {
+            debounceTimer.Dispose();
+            debounceTimer = null;
+        }
+
+        return base.Stop();
     }
 
     private void ActiveUserWatcher_RegistryChanged(object? sender, RegistryChangedEventArgs e)
@@ -193,23 +209,6 @@ public class Steam : IPlatform
             Console.WriteLine($"Error updating file {SettingsPath}: {ex.Message}");
             return false;
         }
-    }
-
-    public override bool Stop(bool kill = false)
-    {
-        SteamActiveUserWatcher.StopWatching();
-
-        SteamActiveUserFileWatcher.Changed -= FileWatcher_Changed;
-        SteamActiveUserFileWatcher.Dispose();
-
-        debounceTimer.Stop();
-        if (kill)
-        {
-            debounceTimer.Dispose();
-            debounceTimer = null;
-        }
-
-        return base.Stop();
     }
 
     public bool HasXboxDriversInstalled()

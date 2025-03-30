@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Watchers;
 using System;
 using System.Windows;
 
@@ -69,10 +70,127 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        #region MemoryIntegrity
+        private CoreIsolationWatcher coreIsolationWatcher = new CoreIsolationWatcher();
+        public bool MemoryIntegrity
+        {
+            get
+            {
+                return coreIsolationWatcher.VulnerableDriverBlocklistEnable || coreIsolationWatcher.HypervisorEnforcedCodeIntegrityEnabled;
+            }
+            set
+            {
+                coreIsolationWatcher.SetSettings(value);
+            }
+        }
+        #endregion
+
+        #region Manufacturer application
+        private ISpaceWatcher manufacturerWatcher;
+
+        private bool _ManufacturerAppBusy;
+        public bool ManufacturerAppBusy
+        {
+            get
+            {
+                return !_ManufacturerAppBusy;
+            }
+            set
+            {
+                if (value != _ManufacturerAppBusy)
+                {
+                    _ManufacturerAppBusy = value;
+                    OnPropertyChanged(nameof(ManufacturerAppBusy));
+                }
+            }
+        }
+
+        public bool ManufacturerAppStatus
+        {
+            get
+            {
+                return (manufacturerWatcher?.HasProcesses() ?? false) ||
+                       (manufacturerWatcher?.HasEnabledTasks() ?? false) ||
+                       (manufacturerWatcher?.HasRunningServices() ?? false);
+            }
+            set
+            {
+                // update flag
+                ManufacturerAppBusy = true;
+
+                if (value)
+                {
+                    manufacturerWatcher?.Enable();
+                }
+                else
+                {
+                    manufacturerWatcher?.Disable();
+                }
+            }
+        }
+        #endregion
+
         public DevicePageViewModel()
         {
+            // settings watcher
+            coreIsolationWatcher.StatusChanged += CoreIsolationWatcher_StatusChanged;
+            coreIsolationWatcher.Start();
+
+            // manufacturer watcher
+            IDevice device = IDevice.GetCurrent();
+            if (device is ClawA1M || device is Claw8)
+                manufacturerWatcher = new ClawCenterWatcher();
+            else if (device is LegionGo)
+                manufacturerWatcher = new LegionSpaceWatcher();
+            else if (device is ROGAlly || device is ROGAllyX)
+                manufacturerWatcher = new RogAllySpaceWatcher();
+
+            if (manufacturerWatcher is not null)
+            {
+                // start watcher
+                manufacturerWatcher.StatusChanged += ManufacturerWatcher_StatusChanged;
+                manufacturerWatcher.Start();
+            }
+            else
+            {
+                // update flag
+                ManufacturerAppBusy = true;
+            }
+
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private void CoreIsolationWatcher_StatusChanged(bool enabled)
+        {
+            switch (enabled)
+            {
+                case true:
+                    ManagerFactory.notificationManager.Add(coreIsolationWatcher.notification);
+                    break;
+                case false:
+                    ManagerFactory.notificationManager.Discard(coreIsolationWatcher.notification);
+                    break;
+            }
+
+            OnPropertyChanged(nameof(MemoryIntegrity));
+        }
+
+        private void ManufacturerWatcher_StatusChanged(bool enabled)
+        {
+            switch (enabled)
+            {
+                case true:
+                    ManagerFactory.notificationManager.Add(manufacturerWatcher.notification);
+                    break;
+                case false:
+                    ManagerFactory.notificationManager.Discard(manufacturerWatcher.notification);
+                    break;
+            }
+
+            // update flag
+            ManufacturerAppBusy = false;
+            OnPropertyChanged(nameof(ManufacturerAppStatus));
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -87,6 +205,15 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            coreIsolationWatcher.StatusChanged -= CoreIsolationWatcher_StatusChanged;
+            coreIsolationWatcher.Stop();
+
+            if (manufacturerWatcher is not null)
+            {
+                manufacturerWatcher.StatusChanged -= ManufacturerWatcher_StatusChanged;
+                manufacturerWatcher.Stop();
+            }
+
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 

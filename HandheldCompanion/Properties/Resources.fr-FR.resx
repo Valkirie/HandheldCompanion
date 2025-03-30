@@ -2813,7 +2813,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Trigger Margin</value>
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
   <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
@@ -2854,6 +2854,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value />
   </data>
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value />
   </data>
 </root>

@@ -4,6 +4,7 @@ using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
+using HandheldCompanion.Watchers;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Concurrent;
@@ -28,6 +29,9 @@ namespace HandheldCompanion.Managers
 
         private static GPU currentGPU = null;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
+
+        // watcher(s)
+        private AMDSettingsWatcher AMDSettingsWatcher = new();
 
         private object screenLock = new();
 
@@ -59,6 +63,8 @@ namespace HandheldCompanion.Managers
                 else
                     LogManager.LogError("Failed to initialize ADLX", "GPUManager");
             }
+
+            AMDSettingsWatcher.Start();
 
             // todo: check if usefull on resume
             // it could be DeviceManager_DisplayAdapterArrived is called already, making this redundant
@@ -129,6 +135,8 @@ namespace HandheldCompanion.Managers
                 ADLXBackend.CloseAdlx();
                 IsLoaded_ADLX = false;
             }
+
+            AMDSettingsWatcher.Stop();
 
             base.Stop();
         }

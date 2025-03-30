@@ -3,7 +3,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Processors.AMD;
 using System;
-using static HandheldCompanion.Devices.LegionGo;
 
 namespace HandheldCompanion.Processors;
 
