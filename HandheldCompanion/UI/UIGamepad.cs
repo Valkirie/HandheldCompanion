@@ -856,8 +856,11 @@ namespace HandheldCompanion.Managers
                         {
                             case "NavigationViewItem":
                                 {
-                                    focusedElement = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, _currentWindow.controlElements, direction);
-                                    Focus(focusedElement);
+                                    if (focusedElement is not null)
+                                    {
+                                        focusedElement = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, _currentWindow.controlElements, direction);
+                                        Focus(focusedElement);
+                                    }
                                 }
                                 return;
 
@@ -945,8 +948,11 @@ namespace HandheldCompanion.Managers
                         }
 
                         // default
-                        focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, [typeof(NavigationViewItem)]);
-                        Focus(focusedElement);
+                        if (focusedElement is not null)
+                        {
+                            focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, [typeof(NavigationViewItem)]);
+                            Focus(focusedElement);
+                        }
                     }
                 }
                 catch { }
