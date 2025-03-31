@@ -8,6 +8,7 @@ using LiveCharts;
 using System;
 using System.Timers;
 using System.Windows.Media;
+using static HandheldCompanion.Misc.ProcessEx;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -462,7 +463,9 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryForeground()
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            ProcessEx processEx = ProcessManager.GetForegroundProcess();
+            ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null, filter);
         }
 
         private void ProcessManager_Initialized()
@@ -470,8 +473,14 @@ namespace HandheldCompanion.ViewModels
             QueryForeground();
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
         {
+            switch (filter)
+            {
+                case ProcessFilter.HandheldCompanion:
+                    return;
+            }
+
             // get path
             string path = processEx != null ? processEx.Path : string.Empty;
 

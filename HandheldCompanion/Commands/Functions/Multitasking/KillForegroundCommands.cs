@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using System;
+using static HandheldCompanion.Misc.ProcessEx;
 
 namespace HandheldCompanion.Commands.Functions.Multitasking
 {
@@ -20,9 +21,19 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
             try
             {
                 // get current foreground process
-                ProcessEx fProcess = ProcessManager.GetForegroundProcess();
-                // kill if is alive
-                fProcess?.Kill();
+                ProcessEx processEx = ProcessManager.GetForegroundProcess();
+                ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+
+                switch (filter)
+                {
+                    case ProcessFilter.Restricted:
+                    case ProcessFilter.HandheldCompanion:
+                        break;
+
+                    default:
+                        processEx?.Kill();
+                        break;
+                }
             }
             catch { }
 

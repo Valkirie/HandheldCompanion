@@ -222,7 +222,7 @@ namespace hidapi
                 _reading = false;
                 // Ensure the thread has finished execution
                 if (_readThread.IsAlive)
-                    _readThread.Join();
+                    _readThread.Join(3000);
                 _readThread = null;
             }
         }

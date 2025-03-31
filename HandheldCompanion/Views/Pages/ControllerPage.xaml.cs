@@ -122,6 +122,8 @@ public partial class ControllerPage : Page
             {
                 case ControllerManagerStatus.Busy:
                     {
+                        Toggle_ControllerManagement.IsEnabled = false;
+
                         switch (attempts)
                         {
                             case 0:
@@ -144,6 +146,8 @@ public partial class ControllerPage : Page
 
                 case ControllerManagerStatus.Succeeded:
                     {
+                        Toggle_ControllerManagement.IsEnabled = true;
+
                         dialog.UpdateContent(Properties.Resources.ControllerPage_ControllerManagement_Success);
                         await Task.Delay(2000); // Captures synchronization context
                         dialog.Hide();
@@ -152,6 +156,8 @@ public partial class ControllerPage : Page
 
                 case ControllerManagerStatus.Failed:
                     {
+                        Toggle_ControllerManagement.IsEnabled = true;
+
                         // set dialog settings
                         dialog.CanClose = true;
                         dialog.DefaultButton = ContentDialogButton.Close;

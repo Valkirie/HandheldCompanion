@@ -23,6 +23,7 @@ using System.Timers;
 using System.Windows.Shell;
 using Windows.UI;
 using Windows.UI.ViewManagement;
+using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
@@ -244,7 +245,7 @@ public static class ControllerManager
         CheckControllerScenario();
     }
 
-    private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
+    private static void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
     {
         // update current process
         foregroundProcess = processEx;
@@ -403,7 +404,9 @@ public static class ControllerManager
 
     private static void QueryForeground()
     {
-        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null, filter);
     }
 
     public static void Resume(bool OS)
@@ -439,7 +442,7 @@ public static class ControllerManager
 
         watchdogThreadRunning = false;
         if (watchdogThread.IsAlive)
-            watchdogThread.Join();
+            watchdogThread.Join(3000);
     }
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
@@ -1370,7 +1373,8 @@ public static class ControllerManager
         }
 
         // compute layout
-        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
+        if (!ControllerMuted)
+            controllerState = ManagerFactory.layoutManager.MapController(controllerState);
         InputsUpdated2?.Invoke(controllerState);
 
         // controller is muted

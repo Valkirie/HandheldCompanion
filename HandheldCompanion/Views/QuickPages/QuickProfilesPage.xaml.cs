@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
+using static HandheldCompanion.Misc.ProcessEx;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
 
@@ -158,7 +159,9 @@ public partial class QuickProfilesPage : Page
 
     private void QueryForeground()
     {
-        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null, filter);
     }
 
     private void ProcessManager_Initialized()
@@ -560,11 +563,17 @@ public partial class QuickProfilesPage : Page
     {
         // this shouldn't happen, someone removed the currently applied profile
         if (selectedProfile == profile)
-            ProcessManager_ForegroundChanged(currentProcess, null);
+            ProcessManager_ForegroundChanged(currentProcess, null, ProcessFilter.Allowed);
     }
 
-    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
+    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
     {
+        switch (filter)
+        {
+            case ProcessFilter.HandheldCompanion:
+                return;
+        }
+
         if (foregroundLock.TryEnter())
         {
             try

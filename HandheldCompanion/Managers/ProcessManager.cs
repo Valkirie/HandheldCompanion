@@ -315,43 +315,31 @@ public class ProcessManager : IManager
             if (!Processes.TryGetValue(processId, out ProcessEx process))
                 return;
 
+            // store previous process
             ProcessEx prevProcess = foregroundProcess;
 
-            // filter based on current process status
-            ProcessFilter filter = GetFilter(process.Executable, process.Path /*, ProcessUtils.GetWindowTitle(hWnd) */);
-            switch (filter)
-            {
-                // do nothing on QuickTools window, current process is kept
-                case ProcessFilter.HandheldCompanion:
-                    // case ProcessFilter.Desktop:
-                    return;
-                // update foreground process
-                default:
-                    foregroundProcess = process;
-                    foregroundProcess.Refresh();
-                    break;
-            }
+            // get filter
+            ProcessFilter filter = GetFilter(process.Executable, process.Path);
 
-            // nothing's changed
-            if (foregroundProcess == prevProcess)
-                return;
+            // update current process
+            foregroundProcess = process;
+            foregroundProcess.Refresh();
 
             if (foregroundProcess is not null)
                 LogManager.LogDebug("{0} process {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
             else
+            {
                 LogManager.LogDebug("No current foreground process or it is ignored");
+                return;
+            }
 
             // raise event
-            ForegroundChanged?.Invoke(foregroundProcess, prevProcess);
+            ForegroundChanged?.Invoke(process, prevProcess, filter);
 
             // update current foreground window
             foregroundWindow = hWnd;
         }
-        catch
-        {
-            // process has too high elevation
-            return;
-        }
+        catch { }
     }
 
     private void ProcessHalted(object? sender, EventArgs e)
@@ -369,7 +357,7 @@ public class ProcessManager : IManager
             if (foregroundProcess == processEx)
             {
                 LogManager.LogDebug("{0} process {1} that had foreground has halted", foregroundProcess.Platform, foregroundProcess.Executable);
-                ForegroundChanged?.Invoke(null, foregroundProcess);
+                ForegroundChanged?.Invoke(null, foregroundProcess, ProcessFilter.Allowed);
             }
 
             // Remove the process from the dictionary and raise the stopped event.
@@ -475,7 +463,7 @@ public class ProcessManager : IManager
         }
     }
 
-    private static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "")
+    public static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "")
     {
         if (string.IsNullOrEmpty(path))
             return ProcessFilter.Restricted;
@@ -485,18 +473,7 @@ public class ProcessManager : IManager
         {
             // handheld companion
             case "handheldcompanion.exe":
-                {
-                    /* if (!string.IsNullOrEmpty(MainWindowTitle))
-                    {
-                        switch (MainWindowTitle)
-                        {
-                            case "QuickTools":
-                                return ProcessFilter.HandheldCompanion;
-                        }
-                    } */
-
-                    return ProcessFilter.HandheldCompanion;
-                }
+                return ProcessFilter.HandheldCompanion;
 
             case "rw.exe": // Used to change TDP
             case "kx.exe": // Used to change TDP
@@ -651,7 +628,7 @@ public class ProcessManager : IManager
     #region events
 
     public event ForegroundChangedEventHandler ForegroundChanged;
-    public delegate void ForegroundChangedEventHandler(ProcessEx? processEx, ProcessEx? backgroundEx);
+    public delegate void ForegroundChangedEventHandler(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter);
 
     public event ProcessStartedEventHandler ProcessStarted;
     public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool OnStartup);

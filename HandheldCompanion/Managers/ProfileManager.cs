@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion.Managers;
@@ -114,7 +115,9 @@ public class ProfileManager : IManager
 
     private void QueryForeground()
     {
-        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null, filter);
     }
 
     private void ProcessManager_Initialized()
@@ -408,10 +411,13 @@ public class ProfileManager : IManager
         }
     }
 
-    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
+    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
     {
-        if (processEx is null)
-            return;
+        switch (filter)
+        {
+            case ProcessFilter.HandheldCompanion:
+                return;
+        }
 
         try
         {

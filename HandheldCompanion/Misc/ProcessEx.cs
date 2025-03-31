@@ -19,6 +19,7 @@ namespace HandheldCompanion.Misc;
 
 public class ProcessEx : IDisposable
 {
+    #region filters
     public enum ProcessFilter
     {
         Allowed = 0,
@@ -213,6 +214,7 @@ public class ProcessEx : IDisposable
         // Itch.io App
         "itch.dll", "butler.exe", "itch-setup.exe",
     };
+    #endregion
 
     public const string AppCompatRegistry = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
     public const string RunAsAdminRegistryValue = "RUNASADMIN";

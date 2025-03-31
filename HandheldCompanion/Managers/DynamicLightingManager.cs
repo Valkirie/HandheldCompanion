@@ -441,7 +441,7 @@ public static class DynamicLightingManager
             ambilightThreadRunning = false;
             // Ensure the thread has finished execution
             if (ambilightThread.IsAlive)
-                ambilightThread.Join();
+                ambilightThread.Join(3000);
             ambilightThread = null;
         }
     }

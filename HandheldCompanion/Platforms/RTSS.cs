@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
+using static HandheldCompanion.Misc.ProcessEx;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;
@@ -133,7 +134,9 @@ public class RTSS : IPlatform
 
     private void QueryForeground()
     {
-        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null, filter);
     }
 
     private void ProcessManager_Initialized()
@@ -183,10 +186,16 @@ public class RTSS : IPlatform
         SetTargetFPS(frameLimit);
     }
 
-    private async void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)
+    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
     {
         if (processEx is null || processEx.ProcessId == 0)
             return;
+
+        switch (filter)
+        {
+            case ProcessFilter.HandheldCompanion:
+                return;
+        }
 
         // unhook previous process
         UnhookProcess(TargetProcessId);
