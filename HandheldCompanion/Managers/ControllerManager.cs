@@ -43,8 +43,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly XInputController? defaultXInput = new(new() { isVirtual = true }) { isPlaceholder = true };
-    private static readonly DS4Controller? defaultDS4 = new(new(), new() { isVirtual = true }) { isPlaceholder = true };
+    private static readonly XInputController? defaultXInput = new(new() { isVirtual = true }) { isPlaceholder = true, Capabilities = ControllerCapabilities.None };
+    private static readonly DS4Controller? defaultDS4 = new(new(), new() { isVirtual = true }) { isPlaceholder = true, Capabilities = ControllerCapabilities.None };
 
     public static bool HasTargetController => GetTarget() != null;
 

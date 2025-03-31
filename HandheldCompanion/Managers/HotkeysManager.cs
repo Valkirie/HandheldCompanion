@@ -52,10 +52,22 @@ public class HotkeysManager : IManager
         {
             // create a few defaults hotkeys
             if (!hotkeys.Values.Any(hotkey => hotkey.command is QuickToolsCommands quickToolsCommands))
-                UpdateOrCreateHotkey(new Hotkey() { command = new QuickToolsCommands() });
+            {
+                Hotkey quicktools = new Hotkey() { command = new QuickToolsCommands() };
+                quicktools.inputsChord.ButtonState[ButtonFlags.Special] = true;
+                quicktools.inputsChord.chordType = InputsChordType.Click;
+
+                UpdateOrCreateHotkey(quicktools);
+            }
 
             if (!hotkeys.Values.Any(hotkey => hotkey.command is MainWindowCommands mainWindowCommands))
-                UpdateOrCreateHotkey(new Hotkey() { command = new MainWindowCommands() });
+            {
+                Hotkey mainWindow = new Hotkey() { command = new MainWindowCommands() };
+                mainWindow.inputsChord.ButtonState[ButtonFlags.Special] = true;
+                mainWindow.inputsChord.chordType = InputsChordType.Long;
+
+                UpdateOrCreateHotkey(mainWindow);
+            }
 
             if (!hotkeys.Values.Any(hotkey => hotkey.command is OverlayGamepadCommands overlayGamepadCommands))
                 UpdateOrCreateHotkey(new Hotkey() { command = new OverlayGamepadCommands(), IsPinned = true });
