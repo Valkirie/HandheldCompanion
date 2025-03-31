@@ -103,6 +103,8 @@ public class LayoutManager : IManager
         // manage events
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
+        UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -139,6 +141,11 @@ public class LayoutManager : IManager
         }
 
         base.Start();
+    }
+
+    private void GamepadFocusManager_FocusChanged(string Name)
+    {
+        CheckProfileLayout();
     }
 
     private void QueryProfile()
@@ -191,6 +198,8 @@ public class LayoutManager : IManager
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        UIGamepad.GotFocus -= GamepadFocusManager_FocusChanged;
+        UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
 
         base.Stop();
     }
@@ -302,8 +311,15 @@ public class LayoutManager : IManager
         }
         else if (layoutMode == LayoutModes.Auto)
         {
-            ProcessEx processEx = ProcessManager.GetForegroundProcess();
-            SetActiveLayout(processEx?.IsGame() == true ? profileLayout : desktopLayout);
+            if (UIGamepad.HasFocus() && defaultLayout is not null)
+            {
+                SetActiveLayout(defaultLayout);
+            }
+            else
+            {
+                ProcessEx processEx = ProcessManager.GetForegroundProcess();
+                SetActiveLayout(processEx?.IsGame() == true ? profileLayout : desktopLayout);
+            }
         }
     }
 

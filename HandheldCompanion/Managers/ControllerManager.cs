@@ -82,8 +82,8 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
-        UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
+        UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
+        UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
@@ -168,8 +168,8 @@ public static class ControllerManager
         ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
 
-        UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
-        UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
+        UIGamepad.GotFocus -= GamepadFocusManager_FocusChanged;
+        UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
 
@@ -211,36 +211,8 @@ public static class ControllerManager
         Quicktools
     }
 
-    private static void GamepadFocusManager_LostFocus(string Name)
+    private static void GamepadFocusManager_FocusChanged(string Name)
     {
-        switch (Name)
-        {
-            default:
-            case "MainWindow":
-                focusedWindows &= ~FocusedWindow.MainWindow;
-                break;
-            case "QuickTools":
-                focusedWindows &= ~FocusedWindow.Quicktools;
-                break;
-        }
-
-        // check applicable scenarios
-        CheckControllerScenario();
-    }
-
-    private static void GamepadFocusManager_GotFocus(string Name)
-    {
-        switch (Name)
-        {
-            default:
-            case "MainWindow":
-                focusedWindows |= FocusedWindow.MainWindow;
-                break;
-            case "QuickTools":
-                focusedWindows |= FocusedWindow.Quicktools;
-                break;
-        }
-
         // check applicable scenarios
         CheckControllerScenario();
     }
@@ -318,7 +290,7 @@ public static class ControllerManager
         }
 
         // either main window or quicktools are focused
-        if (focusedWindows != FocusedWindow.None)
+        if (UIGamepad.HasFocus())
             ControllerMuted = true;
     }
 
@@ -1373,8 +1345,7 @@ public static class ControllerManager
         }
 
         // compute layout
-        if (!ControllerMuted)
-            controllerState = ManagerFactory.layoutManager.MapController(controllerState);
+        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
         InputsUpdated2?.Invoke(controllerState);
 
         // controller is muted

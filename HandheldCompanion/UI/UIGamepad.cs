@@ -65,6 +65,11 @@ namespace HandheldCompanion.Managers
         // key: Window, store which window has focus
         private static ConcurrentDictionary<string, bool> _focused = new();
 
+        public static bool HasFocus()
+        {
+            return _focused.Any(w => w.Value);
+        }
+
         public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
         {
             // set current window
