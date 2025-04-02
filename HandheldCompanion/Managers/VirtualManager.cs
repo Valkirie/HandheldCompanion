@@ -310,7 +310,7 @@ namespace HandheldCompanion.Managers
                     vTarget = null;
                 }
 
-                // Sanity-check: if the ViGEm client isn’t available, abort
+                // Sanity-check: if the ViGEm client isnï¿½t available, abort
                 if (vClient is null)
                     return;
 
@@ -406,7 +406,7 @@ namespace HandheldCompanion.Managers
             Vibrated?.Invoke(LargeMotor, SmallMotor);
         }
 
-        public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
+        public static void UpdateInputs(ControllerState controllerState, GamepadMotion? gamepadMotion)
         {
             vTarget?.UpdateInputs(controllerState, gamepadMotion);
         }
