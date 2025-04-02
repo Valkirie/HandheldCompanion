@@ -16,7 +16,7 @@ namespace HandheldCompanion.Commands.Functions.HC
         {
             Name = Resources.Hotkey_Guide;
             Description = Resources.Hotkey_GuideDesc;
-            Glyph = "\uEC7A";
+            Glyph = "\uE7FC";
             OnKeyDown = true;
         }
 
