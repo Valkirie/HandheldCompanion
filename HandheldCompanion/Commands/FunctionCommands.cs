@@ -18,6 +18,7 @@ namespace HandheldCompanion.Commands
             typeof(MainWindowCommands),
             typeof(OverlayGamepadCommands),
             typeof(OverlayTrackpadCommands),
+            typeof(GuideCommands),
             typeof(HIDModeCommands),
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
