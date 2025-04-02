@@ -14,6 +14,7 @@ namespace HandheldCompanion.ViewModels
         #region Battery bypass
         public int BatteryBypassMin => CurrentDevice.BatteryBypassMin;
         public int BatteryBypassMax => CurrentDevice.BatteryBypassMax;
+        public int BatteryBypassStep => CurrentDevice.BatteryBypassStep;
         public Visibility BatteryBypassVisibility => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimit) ? Visibility.Visible : Visibility.Collapsed;
         public Visibility BatteryBypassModeVisibility => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
 

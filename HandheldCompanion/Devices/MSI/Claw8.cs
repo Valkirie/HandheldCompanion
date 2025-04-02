@@ -82,6 +82,11 @@ public class Claw8 : ClawA1M
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
+        // battery bypass settings
+        BatteryBypassMin = 60;
+        BatteryBypassMax = 100;
+        BatteryBypassStep = 20;
+
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
         {
@@ -208,12 +213,6 @@ public class Claw8 : ClawA1M
     {
         switch (name)
         {
-            case "MSIClawControllerIndex":
-                {
-                    gamepadMode = (GamepadMode)Convert.ToInt32(value);
-                    SwitchMode(gamepadMode);
-                }
-                break;
             case "BatteryChargeLimitPercent":
                 {
                     int percent = Convert.ToInt32(value);
@@ -221,6 +220,21 @@ public class Claw8 : ClawA1M
                 }
                 break;
         }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
+    }
+
+    private bool GetBatteryChargeLimit(ref byte currentValue)
+    {
+        // Data block index specific to battery mode settings
+        byte dataBlockIndex = 215;
+
+        // Get the current battery data (1 byte) from the device
+        byte[] dataBattery = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        if (readSuccess)
+            currentValue = dataBattery[0];
+
+        return readSuccess;
     }
 
     private void SetBatteryChargeLimit(int chargeLimit)
@@ -228,18 +242,12 @@ public class Claw8 : ClawA1M
         // Data block index specific to battery mode settings
         byte dataBlockIndex = 215;
 
-        // Build the complete 32-byte package
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = dataBlockIndex;
-
         // Get the current battery data (1 byte) from the device
-        byte[] dataBattery = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        byte currentValue = 0;
+        GetBatteryChargeLimit(ref currentValue);
 
-        // Use the first byte from the data.
-        byte currentValue = dataBattery[0];
-        byte mask = (byte)(currentValue & sbyte.MaxValue);
-
-        // Compute the new value based on the battery mode.
+        // Compute the new value based on the battery mode
+        /*
         BatteryMode batteryMode = BatteryMode.Custom;
         switch (batteryMode)
         {
@@ -253,7 +261,13 @@ public class Claw8 : ClawA1M
                 chargeLimit = 60;
                 break;
         }
+        */
 
+        byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
+
+        // Build the complete 32-byte package
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = dataBlockIndex;
         fullPackage[1] = (byte)(currentValue - mask + chargeLimit);
 
         // Set the battery mode using the package.

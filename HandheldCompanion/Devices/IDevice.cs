@@ -113,6 +113,7 @@ public abstract class IDevice
 
     public int BatteryBypassMin = 50;   // Arbitrary
     public int BatteryBypassMax = 100;  // Shouldn't it be 90% ?
+    public int BatteryBypassStep = 10;
 
     protected const byte EC_OBF = 0x01;  // Output Buffer Full
     protected const byte EC_IBF = 0x02;  // Input Buffer Full

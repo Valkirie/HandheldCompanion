@@ -250,6 +250,7 @@ public class ClawA1M : IDevice
     private void QuerySettings()
     {
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false);
+        SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false);
     }
 
     protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
