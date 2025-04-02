@@ -1,11 +1,9 @@
 using System;
 using System.Threading;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
-using HandheldCompanion.Utils;
-using Nefarius.ViGEm.Client;
-using Nefarius.ViGEm.Client.Targets.DualShock4;
-using Nefarius.ViGEm.Client.Targets.Xbox360;
 
 namespace HandheldCompanion.Commands.Functions.HC
 {
@@ -20,42 +18,32 @@ namespace HandheldCompanion.Commands.Functions.HC
             OnKeyDown = true;
         }
 
-        private IVirtualGamepad PressPsButton()
+        private void SetGuideButtonState(bool pressed)
         {
-            var controller = VirtualManager.vClient.CreateDualShock4Controller();
-            controller.Connect();
-            Thread.Sleep(100);
-            controller.SetButtonState(DualShock4SpecialButton.Ps, true);
-            Thread.Sleep(100);
-            controller.SetButtonState(DualShock4SpecialButton.Ps, false);
-            return controller;
+            VirtualManager.UpdateInputs(
+                new ControllerState()
+                {
+                    ButtonState = new ButtonState()
+                    {
+                        [ButtonFlags.Special] = pressed
+                    }
+                },
+                null
+            );
         }
 
-        private IVirtualGamepad PressGuideButton()
+        private void PressGuideButton()
         {
-            var controller = VirtualManager.vClient.CreateXbox360Controller();
-            controller.Connect();
-            Thread.Sleep(100);
-            controller.SetButtonState(Xbox360Button.Guide, true);
-            Thread.Sleep(100);
-            controller.SetButtonState(Xbox360Button.Guide, false);
-            return controller;
+            SetGuideButtonState(true);
+            Thread.Sleep(1);
+            SetGuideButtonState(false);
         }
 
         public override void Execute(bool isKeyDown, bool isKeyUp, bool isBackground)
         {
+            if (!VirtualManager.vTarget.IsConnected) return;
+            PressGuideButton();
             base.Execute(isKeyDown, isKeyUp, isBackground);
-
-            var state = VirtualManager.vTarget.IsConnected;
-            var profile = ManagerFactory.profileManager.GetCurrent();
-
-            VirtualManager.vTarget.Disconnect();
-
-            var controller = profile.HID == HIDmode.DualShock4Controller ? PressPsButton() : PressGuideButton();
-            
-            controller.Disconnect();
-            
-            if (state) VirtualManager.vTarget.Connect();
         }
 
         public override object Clone()
