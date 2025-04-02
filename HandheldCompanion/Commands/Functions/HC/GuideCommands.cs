@@ -27,8 +27,7 @@ namespace HandheldCompanion.Commands.Functions.HC
                     {
                         [ButtonFlags.Special] = pressed
                     }
-                },
-                null
+                }
             );
         }
 

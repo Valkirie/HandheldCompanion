@@ -406,7 +406,7 @@ namespace HandheldCompanion.Managers
             Vibrated?.Invoke(LargeMotor, SmallMotor);
         }
 
-        public static void UpdateInputs(ControllerState controllerState, GamepadMotion? gamepadMotion)
+        public static void UpdateInputs(ControllerState controllerState, GamepadMotion? gamepadMotion = null)
         {
             vTarget?.UpdateInputs(controllerState, gamepadMotion);
         }

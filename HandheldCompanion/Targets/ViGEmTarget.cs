@@ -86,7 +86,7 @@ namespace HandheldCompanion.Targets
             return true;
         }
 
-        public virtual void UpdateInputs(ControllerState inputs, GamepadMotion? gamepadMotion)
+        public virtual void UpdateInputs(ControllerState inputs, GamepadMotion? gamepadMotion = null)
         { }
 
         public virtual unsafe void UpdateReport(long ticks, float delta)
