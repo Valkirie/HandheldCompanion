@@ -93,14 +93,7 @@ public class ProcessManager : IManager
         base.PrepareStart();
 
         // list all current windows
-        List<IntPtr> windows = WindowHelper.GetOpenWindows();
-
-        Parallel.ForEach(windows, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, hWnd =>
-        {
-            // discover window
-            try { OnWindowDiscovered(hWnd, 0); }
-            catch { }
-        });
+        EnumWindows(OnWindowDiscovered, 0);
 
         // start processes monitor
         ForegroundTimer.Start();

@@ -194,6 +194,9 @@ public class RTSS : IPlatform
         switch (filter)
         {
             case ProcessFilter.HandheldCompanion:
+            case ProcessFilter.Desktop:
+            case ProcessFilter.Ignored:
+            case ProcessFilter.Restricted:
                 return;
         }
 

@@ -19,11 +19,20 @@ namespace HandheldCompanion.Devices;
 public class Claw8 : ClawA1M
 {
     #region imports
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
+
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
+
     [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int getEGmode();
 
     [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int setEGmode(int setMode);
+
+    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
 
     public enum EnduranceGamingControl
     {
@@ -38,9 +47,6 @@ public class Claw8 : ClawA1M
         Balanced = 1,           // Endurance Gaming balanced mode
         MaximumBattery = 2,     // Endurance Gaming maximum battery mode
     }
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
     #endregion
 
     public enum ShiftType
@@ -106,6 +112,18 @@ public class Claw8 : ClawA1M
         var success = base.Open();
         if (!success)
             return false;
+        
+        // OverBoost
+        byte[] box = new byte[4096];
+        int uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box);
+        if (uefiVariableEx != 0)
+        {
+            if (box[1] == (byte)0)
+            {
+                box[1] = (byte)1;
+                SetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box, uefiVariableEx);
+            }
+        }
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
@@ -170,7 +188,7 @@ public class Claw8 : ClawA1M
         }
         else
         {
-            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.User);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.SportMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.Performance);
         }
         
@@ -330,9 +348,9 @@ public class Claw8 : ClawA1M
         // bool isSupported = (shiftValue & 128) != 0;
         // bool isActive = (shiftValue & 64) != 0;
         // int modeValue = shiftValue & 0x3F; // lower 6 bits
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_AP", 0, 6, out bool readSuccess);
         if (readSuccess)
-            return data[0];
+            return data[2];
 
         return -1;
     }
@@ -355,7 +373,7 @@ public class Claw8 : ClawA1M
         return (currentValue & 128) != 0;
     }
 
-    public void SetShiftMode(ShiftModeCalcType calcType, ShiftType shiftType)
+    public void SetShiftMode(ShiftModeCalcType calcType, ShiftType shiftType = ShiftType.None)
     {
         if (!IsShiftSupported())
             return;
