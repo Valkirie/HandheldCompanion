@@ -126,6 +126,7 @@ public class Claw8 : ClawA1M
             }
         }
 
+        SetBatteryMaster();
         SetShiftMode(ShiftModeCalcType.Deactive);
 
         // manage events
@@ -213,15 +214,47 @@ public class Claw8 : ClawA1M
     {
         switch (name)
         {
+            case "BatteryChargeLimit":
+                bool enabled = Convert.ToBoolean(value);
+                if (!enabled)
+                    SetBatteryChargeLimit(100);
+                break;
+
             case "BatteryChargeLimitPercent":
-                {
-                    int percent = Convert.ToInt32(value);
-                    SetBatteryChargeLimit(percent);
-                }
+                int percent = Convert.ToInt32(value);
+                SetBatteryChargeLimit(percent);
                 break;
         }
 
         base.SettingsManager_SettingValueChanged(name, value, temporary);
+    }
+
+    private void SetBatteryMaster()
+    {
+        // Data block index specific to battery mode settings
+        byte dataBlockIndex = 215;
+
+        // Get the current battery data (1 byte) from the device
+        byte[] dataBattery = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        if (readSuccess)
+        {
+            dataBattery[0] = dataBattery[0].SetBit(7, true);
+            dataBattery[0] = dataBattery[0].SetBit(6, true);
+            dataBattery[0] = dataBattery[0].SetBit(5, true);
+            dataBattery[0] = dataBattery[0].SetBit(4, false);
+            dataBattery[0] = dataBattery[0].SetBit(3, false);
+            dataBattery[0] = dataBattery[0].SetBit(2, true);
+            dataBattery[0] = dataBattery[0].SetBit(1, false);
+            dataBattery[0] = dataBattery[0].SetBit(0, false);
+        }
+        
+        // Build the complete 32-byte package
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = dataBlockIndex;
+        fullPackage[1] = dataBattery[0];
+
+        // Set the battery mode using the package.
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
     private bool GetBatteryChargeLimit(ref byte currentValue)
