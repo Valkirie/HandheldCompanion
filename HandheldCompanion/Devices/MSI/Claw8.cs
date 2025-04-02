@@ -1,13 +1,17 @@
-﻿using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Devices.ASUS;
+using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using WindowsInput.Events;
+using static HandheldCompanion.Devices.ClawA1M;
 
 namespace HandheldCompanion.Devices;
 
@@ -38,9 +42,6 @@ public class Claw8 : ClawA1M
     public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
     #endregion
 
-    protected string Scope { get; set; } = "root\\WMI";
-    protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
-
     public Claw8()
     {
         // device specific settings
@@ -58,6 +59,8 @@ public class Claw8 : ClawA1M
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
         Capabilities |= DeviceCapabilities.OEMPower;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
@@ -150,6 +153,67 @@ public class Claw8 : ClawA1M
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         base.Close();
+    }
+
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "MSIClawControllerIndex":
+                {
+                    gamepadMode = (GamepadMode)Convert.ToInt32(value);
+                    SwitchMode(gamepadMode);
+                }
+                break;
+            case "BatteryChargeLimitPercent":
+                {
+                    int percent = Convert.ToInt32(value);
+                    SetBatteryChargeLimit(percent);
+                }
+                break;
+        }
+    }
+
+    private void SetBatteryChargeLimit(int chargeLimit)
+    {
+        byte iDataBlockIndex = 215;
+
+        byte[] dataFan = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readBattery);
+        if (!readBattery)
+            return;
+
+        // Retrieve the current value and mask out the lower 7 bits (sbyte.MaxValue is 127, or 0x7F)
+        byte currentValue = dataFan[0];
+        byte maskedValue = (byte)(currentValue & 0x7F);
+
+        // Prepare the byte array that will hold the new battery mode value
+        byte[] newData = new byte[1];
+        int modeOffset = chargeLimit;
+
+        /*
+        switch (batteryMode)
+        {
+            case BatteryMode.BestForMobility:
+                modeOffset = 100;
+                break;
+            case BatteryMode.Balanced:
+                modeOffset = 80;
+                break;
+            case BatteryMode.BestForBattery:
+                modeOffset = 60;
+                break;
+        }
+        */
+
+        // Calculate the new value by preserving the higher bits and applying the offset
+        newData[0] = (byte)(currentValue - maskedValue + modeOffset);
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
+        Array.Copy(newData, 0, fullPackage, 1, newData.Length);
+
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
     private void SetFanTable(byte[] fanTable)

@@ -75,15 +75,28 @@ public class ClawA1M : IDevice
         CalibrationAck = 254, // 0x000000FE
     }
 
+    public enum BatteryMode
+    {
+        BestForMobility,
+        Balanced,
+        BestForBattery,
+    }
+
     private ManagementEventWatcher? specialKeyWatcher;
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
     protected GamepadMode gamepadMode = GamepadMode.Offline;
 
+    protected string Scope { get; set; } = "root\\WMI";
+    protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
+
     protected const int PID_XINPUT = 0x1901;
     protected const int PID_DINPUT = 0x1902;
     protected const int PID_TESTING = 0x1903;
+
+    protected int WmiMajorVersion;
+    protected int WmiMinorVersion;
 
     public ClawA1M()
     {
@@ -179,6 +192,7 @@ public class ClawA1M : IDevice
             return false;
 
         // start WMI event monitor
+        GetWMI();
         StartWatching();
         Device_Inserted();
 
@@ -235,7 +249,7 @@ public class ClawA1M : IDevice
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
@@ -267,6 +281,18 @@ public class ClawA1M : IDevice
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
+    }
+
+    protected void GetWMI()
+    {
+        byte iDataBlockIndex = 1;
+
+        byte[] dataWMI = WMI.Get(Scope, Path, "Get_WMI", iDataBlockIndex, 32, out bool readWMI);
+        if (dataWMI.Length > 2 && dataWMI[1] >= (byte)2)
+        {
+            this.WmiMajorVersion = (int)dataWMI[1];
+            this.WmiMinorVersion = (int)dataWMI[2];
+        }
     }
 
     protected bool SetMotionStatus(bool enabled)
