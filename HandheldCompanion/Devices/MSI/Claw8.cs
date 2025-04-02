@@ -43,6 +43,16 @@ public class Claw8 : ClawA1M
     public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
     #endregion
 
+    public enum ShiftType
+    {
+        None = -1,
+        SportMode = 0,
+        ComfortMode = 1,
+        GreenMode = 2,
+        ECO = 3,
+        User = 4,
+    }
+
     public Claw8()
     {
         // device specific settings
@@ -137,12 +147,26 @@ public class Claw8 : ClawA1M
 
         // MSI Center, API_UserScenario
         if (profile.Guid == BetterBatteryGuid)
+        {
+            SetShiftMode(true, ShiftType.ECO);
             setEGControlMode(EnduranceGamingControl.Auto, EnduranceGamingMode.MaximumBattery);
+        }
         else if (profile.Guid == BetterPerformanceGuid)
+        {
+            SetShiftMode(true, ShiftType.GreenMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
+        }
         else if (profile.Guid == BestPerformanceGuid)
+        {
+            SetShiftMode(true, ShiftType.SportMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
-
+        }
+        else
+        {
+            SetShiftMode(true, ShiftType.User);
+            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.Performance);
+        }
+        
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 
@@ -289,5 +313,81 @@ public class Claw8 : ClawA1M
         fullPackage[1] = data[0];
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
+    public int GetShiftValue()
+    {
+        byte iDataBlockIndex = 210;
+
+        // Optional: decode the value if needed.
+        // bool isSupported = (shiftValue & 128) != 0;
+        // bool isActive = (shiftValue & 64) != 0;
+        // int modeValue = shiftValue & 0x3F; // lower 6 bits
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
+        if (readSuccess)
+            return data[0];
+
+        return (int)ShiftType.None;
+    }
+
+    public void SetShiftValue(int newShiftValue)
+    {
+        byte iDataBlockIndex = 210;
+
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
+        fullPackage[1] = (byte)newShiftValue;
+
+        // Write the package back to the EC.
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
+    public bool IsShiftSupported()
+    {
+        int currentValue = GetShiftValue();
+        return (currentValue & 128) != 0;
+    }
+
+    public void SetShiftMode(bool enable, ShiftType mode = ShiftType.ComfortMode)
+    {
+        if (!IsShiftSupported())
+            return;
+
+        int newValue;
+        if (enable)
+        {
+            // Start with both support (bit 7) and active (bit 6) set.
+            newValue = 128 + 64; // 192 base value.
+
+            // Set the mode offset:
+            // SportMode: +4, ComfortMode: +0, GreenMode: +1, ECO: +2, User: +3.
+            switch (mode)
+            {
+                case ShiftType.SportMode:
+                    newValue += 4;
+                    break;
+                case ShiftType.ComfortMode:
+                    // No additional offset.
+                    break;
+                case ShiftType.GreenMode:
+                    newValue += 1;
+                    break;
+                case ShiftType.ECO:
+                    newValue += 2;
+                    break;
+                case ShiftType.User:
+                    newValue += 3;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            // When disabling, leave the support bit but clear the active bit.
+            newValue = 128;
+        }
+
+        SetShiftValue(newValue);
     }
 }
