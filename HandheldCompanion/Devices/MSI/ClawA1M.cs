@@ -80,6 +80,7 @@ public class ClawA1M : IDevice
         BestForMobility,
         Balanced,
         BestForBattery,
+        Custom,
     }
 
     private ManagementEventWatcher? specialKeyWatcher;

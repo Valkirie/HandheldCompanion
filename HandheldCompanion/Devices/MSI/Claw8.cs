@@ -185,35 +185,30 @@ public class Claw8 : ClawA1M
         fullPackage[0] = dataBlockIndex;
 
         // Get the current battery data (1 byte) from the device
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        byte[] dataBattery = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
 
-        // Determine the mode offset and description based on the selected battery mode
-        int modeOffset = chargeLimit;
-        /*
+        // Use the first byte from the data.
+        byte currentValue = dataBattery[0];
+        byte mask = (byte)(currentValue & sbyte.MaxValue);
+
+        // Compute the new value based on the battery mode.
+        BatteryMode batteryMode = BatteryMode.Custom;
         switch (batteryMode)
         {
             case BatteryMode.BestForMobility:
-                modeOffset = 100;
+                chargeLimit = 100;
                 break;
             case BatteryMode.Balanced:
-                modeOffset = 80;
+                chargeLimit = 80;
                 break;
             case BatteryMode.BestForBattery:
-                modeOffset = 60;
+                chargeLimit = 60;
                 break;
         }
-        */
 
-        // Use the extension method to get the current state of bit 7.
-        // This value represents the preserved upper bit: 128 if set, otherwise 0.
-        byte preservedUpperBit = data[0].GetBit(7) ? (byte)128 : (byte)0;
+        fullPackage[1] = (byte)(currentValue - mask + chargeLimit);
 
-        // Combine the preserved upper bit with the new mode offset.
-        // This mirrors the original logic of clearing the lower 7 bits and then adding the offset.
-        byte newValue = (byte)(preservedUpperBit + modeOffset);
-        fullPackage[1] = newValue;
-
-        // Write the new battery mode setting back using the WMI interface
+        // Set the battery mode using the package.
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
