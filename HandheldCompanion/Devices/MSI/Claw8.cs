@@ -53,6 +53,13 @@ public class Claw8 : ClawA1M
         User = 4,
     }
 
+    public enum ShiftModeCalcType
+    {
+        Active,
+        Deactive,
+        ChangeToCurrentShiftType,
+    }
+
     public Claw8()
     {
         // device specific settings
@@ -148,22 +155,22 @@ public class Claw8 : ClawA1M
         // MSI Center, API_UserScenario
         if (profile.Guid == BetterBatteryGuid)
         {
-            SetShiftMode(true, ShiftType.ECO);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.ECO);
             setEGControlMode(EnduranceGamingControl.Auto, EnduranceGamingMode.MaximumBattery);
         }
         else if (profile.Guid == BetterPerformanceGuid)
         {
-            SetShiftMode(true, ShiftType.GreenMode);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.GreenMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
         }
         else if (profile.Guid == BestPerformanceGuid)
         {
-            SetShiftMode(true, ShiftType.SportMode);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.SportMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
         }
         else
         {
-            SetShiftMode(true, ShiftType.User);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.User);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.Performance);
         }
         
@@ -327,7 +334,7 @@ public class Claw8 : ClawA1M
         if (readSuccess)
             return data[0];
 
-        return (int)ShiftType.None;
+        return -1;
     }
 
     public void SetShiftValue(int newShiftValue)
@@ -348,46 +355,49 @@ public class Claw8 : ClawA1M
         return (currentValue & 128) != 0;
     }
 
-    public void SetShiftMode(bool enable, ShiftType mode = ShiftType.ComfortMode)
+    public void SetShiftMode(ShiftModeCalcType calcType, ShiftType shiftType)
     {
         if (!IsShiftSupported())
             return;
 
-        int newValue;
-        if (enable)
-        {
-            // Start with both support (bit 7) and active (bit 6) set.
-            newValue = 128 + 64; // 192 base value.
+        int ShiftModeValueInEC = GetShiftValue();
+        if (ShiftModeValueInEC == -1)
+            return;
 
-            // Set the mode offset:
-            // SportMode: +4, ComfortMode: +0, GreenMode: +1, ECO: +2, User: +3.
-            switch (mode)
-            {
-                case ShiftType.SportMode:
-                    newValue += 4;
-                    break;
-                case ShiftType.ComfortMode:
-                    // No additional offset.
-                    break;
-                case ShiftType.GreenMode:
-                    newValue += 1;
-                    break;
-                case ShiftType.ECO:
-                    newValue += 2;
-                    break;
-                case ShiftType.User:
-                    newValue += 3;
-                    break;
-                default:
-                    break;
-            }
-        }
-        else
+        ShiftModeValueInEC &= 195;
+        switch (calcType)
         {
-            // When disabling, leave the support bit but clear the active bit.
-            newValue = 128;
+            case ShiftModeCalcType.Active:
+                ShiftModeValueInEC |= 128;
+                ShiftModeValueInEC |= 64;
+                break;
+            case ShiftModeCalcType.Deactive:
+                ShiftModeValueInEC |= 128;
+                ShiftModeValueInEC &= 191;
+                break;
+            case ShiftModeCalcType.ChangeToCurrentShiftType:
+                ShiftModeValueInEC |= 192;
+                ShiftModeValueInEC &= 252;
+                switch (shiftType)
+                {
+                    case ShiftType.SportMode:
+                        ShiftModeValueInEC += 4;
+                        break;
+                    case ShiftType.ComfortMode:
+                        break;
+                    case ShiftType.GreenMode:
+                        ++ShiftModeValueInEC;
+                        break;
+                    case ShiftType.ECO:
+                        ShiftModeValueInEC += 2;
+                        break;
+                    case ShiftType.User:
+                        ShiftModeValueInEC += 3;
+                        break;
+                }
+                break;
         }
 
-        SetShiftValue(newValue);
+        SetShiftValue(ShiftModeValueInEC);
     }
 }

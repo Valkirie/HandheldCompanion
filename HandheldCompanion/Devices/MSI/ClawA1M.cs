@@ -99,6 +99,8 @@ public class ClawA1M : IDevice
     protected int WmiMajorVersion;
     protected int WmiMinorVersion;
 
+    protected bool isNew_EC => WmiMajorVersion > 1;
+
     public ClawA1M()
     {
         // device specific settings
