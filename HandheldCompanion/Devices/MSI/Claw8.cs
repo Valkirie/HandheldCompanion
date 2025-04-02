@@ -1,18 +1,14 @@
-﻿using HandheldCompanion.Devices.ASUS;
-using HandheldCompanion.Devices.Lenovo;
-using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
-using System.IO.Pipelines;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using WindowsInput.Events;
-using static HandheldCompanion.Devices.ClawA1M;
 
 namespace HandheldCompanion.Devices;
 
@@ -112,7 +108,7 @@ public class Claw8 : ClawA1M
         var success = base.Open();
         if (!success)
             return false;
-        
+
         // OverBoost
         byte[] box = new byte[4096];
         int uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box);
@@ -124,6 +120,8 @@ public class Claw8 : ClawA1M
                 SetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box, uefiVariableEx);
             }
         }
+
+        SetShiftMode(ShiftModeCalcType.Deactive);
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
@@ -171,27 +169,28 @@ public class Claw8 : ClawA1M
         }
 
         // MSI Center, API_UserScenario
+        bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
         if (profile.Guid == BetterBatteryGuid)
         {
-            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.ECO);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.ECO);
             setEGControlMode(EnduranceGamingControl.Auto, EnduranceGamingMode.MaximumBattery);
         }
         else if (profile.Guid == BetterPerformanceGuid)
         {
-            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.GreenMode);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.GreenMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
         }
         else if (profile.Guid == BestPerformanceGuid)
         {
-            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.SportMode);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
         }
         else
         {
-            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, ShiftType.SportMode);
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.Performance);
         }
-        
+
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 
@@ -379,10 +378,8 @@ public class Claw8 : ClawA1M
             return;
 
         int ShiftModeValueInEC = GetShiftValue();
-        if (ShiftModeValueInEC == -1)
-            return;
-
         ShiftModeValueInEC &= 195;
+
         switch (calcType)
         {
             case ShiftModeCalcType.Active:

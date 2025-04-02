@@ -423,6 +423,10 @@ public class ProfileManager : IManager
         {
             Profile profile = GetProfileFromPath(processEx.Path, false);
 
+            // skip if current
+            if (profile.Guid == currentProfile.Guid)
+                return;
+
             if (!profile.Default)
             {
                 if (!profile.Path.Equals(processEx.Path))
