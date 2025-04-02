@@ -35,7 +35,7 @@ namespace HandheldCompanion.Commands.Functions.HC
         private void PressGuideButton()
         {
             SetGuideButtonState(true);
-            Thread.Sleep(1);
+            Thread.Sleep(10);
             SetGuideButtonState(false);
         }
 
