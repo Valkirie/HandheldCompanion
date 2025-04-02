@@ -4,6 +4,7 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipelines;
@@ -176,20 +177,18 @@ public class Claw8 : ClawA1M
 
     private void SetBatteryChargeLimit(int chargeLimit)
     {
-        byte iDataBlockIndex = 215;
+        // Data block index specific to battery mode settings
+        byte dataBlockIndex = 215;
 
-        byte[] dataFan = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readBattery);
-        if (!readBattery)
-            return;
+        // Build the complete 32-byte package
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = dataBlockIndex;
 
-        // Retrieve the current value and mask out the lower 7 bits (sbyte.MaxValue is 127, or 0x7F)
-        byte currentValue = dataFan[0];
-        byte maskedValue = (byte)(currentValue & 0x7F);
+        // Get the current battery data (1 byte) from the device
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
 
-        // Prepare the byte array that will hold the new battery mode value
-        byte[] newData = new byte[1];
+        // Determine the mode offset and description based on the selected battery mode
         int modeOffset = chargeLimit;
-
         /*
         switch (batteryMode)
         {
@@ -205,14 +204,16 @@ public class Claw8 : ClawA1M
         }
         */
 
-        // Calculate the new value by preserving the higher bits and applying the offset
-        newData[0] = (byte)(currentValue - maskedValue + modeOffset);
+        // Use the extension method to get the current state of bit 7.
+        // This value represents the preserved upper bit: 128 if set, otherwise 0.
+        byte preservedUpperBit = data[0].GetBit(7) ? (byte)128 : (byte)0;
 
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = iDataBlockIndex;
-        Array.Copy(newData, 0, fullPackage, 1, newData.Length);
+        // Combine the preserved upper bit with the new mode offset.
+        // This mirrors the original logic of clearing the lower 7 bits and then adding the offset.
+        byte newValue = (byte)(preservedUpperBit + modeOffset);
+        fullPackage[1] = newValue;
 
+        // Write the new battery mode setting back using the WMI interface
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
@@ -257,9 +258,11 @@ public class Claw8 : ClawA1M
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
+        byte iDataBlockIndex = 212;
+
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
-        fullPackage[0] = 212;
+        fullPackage[0] = iDataBlockIndex;
 
         /*
          * Get_AP
@@ -279,11 +282,13 @@ public class Claw8 : ClawA1M
 
     public void SetFanFullSpeed(bool enabled)
     {
+        byte iDataBlockIndex = 152;
+
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
-        fullPackage[0] = 152;
+        fullPackage[0] = iDataBlockIndex;
 
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", 152, 1, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enabled);
         fullPackage[1] = data[0];
