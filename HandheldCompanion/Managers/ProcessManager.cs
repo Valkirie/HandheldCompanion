@@ -93,14 +93,7 @@ public class ProcessManager : IManager
         base.PrepareStart();
 
         // list all current windows
-        List<IntPtr> windows = WindowHelper.GetOpenWindows();
-
-        Parallel.ForEach(windows, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, hWnd =>
-        {
-            // discover window
-            try { OnWindowDiscovered(hWnd, 0); }
-            catch { }
-        });
+        EnumWindows(OnWindowDiscovered, 0);
 
         // start processes monitor
         ForegroundTimer.Start();
@@ -214,7 +207,13 @@ public class ProcessManager : IManager
         {
             try
             {
-                AutomationElement element = AutomationElement.FromHandle(hWnd);
+                // Run the call to AutomationElement.FromHandle in a separate task
+                AutomationElement element = null;
+                Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
+                if (!task.Wait(TimeSpan.FromSeconds(5)))
+                    return false;
+
+                element = task.Result;
                 if (element is null)
                     return false;
 
@@ -231,10 +230,7 @@ public class ProcessManager : IManager
                 // create process
                 CreateOrUpdateProcess(processId, element, true);
             }
-            catch
-            {
-                // timeout
-            }
+            catch { }
         }
 
         return true;
@@ -286,8 +282,12 @@ public class ProcessManager : IManager
 
         try
         {
-            element = AutomationElement.FromHandle(hWnd);
+            // Run the call to AutomationElement.FromHandle in a separate task
+            Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
+            if (!task.Wait(TimeSpan.FromSeconds(5)))
+                return;
 
+            element = task.Result;
             if (element is null)
                 return;
 

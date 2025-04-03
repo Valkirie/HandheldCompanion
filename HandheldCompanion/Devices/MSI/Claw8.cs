@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -14,11 +15,20 @@ namespace HandheldCompanion.Devices;
 public class Claw8 : ClawA1M
 {
     #region imports
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
+
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
+
     [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int getEGmode();
 
     [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int setEGmode(int setMode);
+
+    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
 
     public enum EnduranceGamingControl
     {
@@ -33,13 +43,24 @@ public class Claw8 : ClawA1M
         Balanced = 1,           // Endurance Gaming balanced mode
         MaximumBattery = 2,     // Endurance Gaming maximum battery mode
     }
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
     #endregion
 
-    protected string Scope { get; set; } = "root\\WMI";
-    protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
+    public enum ShiftType
+    {
+        None = -1,
+        SportMode = 0,
+        ComfortMode = 1,
+        GreenMode = 2,
+        ECO = 3,
+        User = 4,
+    }
+
+    public enum ShiftModeCalcType
+    {
+        Active,
+        Deactive,
+        ChangeToCurrentShiftType,
+    }
 
     public Claw8()
     {
@@ -58,6 +79,13 @@ public class Claw8 : ClawA1M
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
         Capabilities |= DeviceCapabilities.OEMPower;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
+
+        // battery bypass settings
+        BatteryBypassMin = 60;
+        BatteryBypassMax = 100;
+        BatteryBypassStep = 20;
 
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
@@ -85,6 +113,21 @@ public class Claw8 : ClawA1M
         var success = base.Open();
         if (!success)
             return false;
+
+        // OverBoost
+        byte[] box = new byte[4096];
+        int uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box);
+        if (uefiVariableEx != 0)
+        {
+            if (box[1] == (byte)0)
+            {
+                box[1] = (byte)1;
+                SetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box, uefiVariableEx);
+            }
+        }
+
+        SetBatteryMaster();
+        SetShiftMode(ShiftModeCalcType.Deactive);
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
@@ -132,12 +175,27 @@ public class Claw8 : ClawA1M
         }
 
         // MSI Center, API_UserScenario
+        bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
         if (profile.Guid == BetterBatteryGuid)
+        {
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.ECO);
             setEGControlMode(EnduranceGamingControl.Auto, EnduranceGamingMode.MaximumBattery);
+        }
         else if (profile.Guid == BetterPerformanceGuid)
+        {
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.GreenMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
+        }
         else if (profile.Guid == BestPerformanceGuid)
+        {
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
             setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
+        }
+        else
+        {
+            SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
+            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.Performance);
+        }
 
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
@@ -152,6 +210,113 @@ public class Claw8 : ClawA1M
         base.Close();
     }
 
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "BatteryChargeLimit":
+                bool enabled = Convert.ToBoolean(value);
+                switch (enabled)
+                {
+                    case false:
+                        SetBatteryChargeLimit(100);
+                        break;
+                    case true:
+                        int percent = Convert.ToInt32(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
+                        SetBatteryChargeLimit(percent);
+                        break;
+                }
+                break;
+
+            case "BatteryChargeLimitPercent":
+                {
+                    int percent = Convert.ToInt32(value);
+                    SetBatteryChargeLimit(percent);
+                }
+                break;
+        }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
+    }
+
+    private void SetBatteryMaster()
+    {
+        // Data block index specific to battery mode settings
+        byte dataBlockIndex = 215;
+
+        // Get the current battery data (1 byte) from the device
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        if (readSuccess)
+        {
+            data[0] = data[0].SetBit(7, true);
+            data[0] = data[0].SetBit(6, true);
+            data[0] = data[0].SetBit(5, true);
+            data[0] = data[0].SetBit(4, false);
+            data[0] = data[0].SetBit(3, false);
+            data[0] = data[0].SetBit(2, true);
+            data[0] = data[0].SetBit(1, false);
+            data[0] = data[0].SetBit(0, false);
+        }
+        
+        // Build the complete 32-byte package
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = dataBlockIndex;
+        fullPackage[1] = data[0];
+
+        // Set the battery mode using the package.
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
+    private bool GetBatteryChargeLimit(ref byte currentValue)
+    {
+        // Data block index specific to battery mode settings
+        byte dataBlockIndex = 215;
+
+        // Get the current battery data (1 byte) from the device
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        if (readSuccess)
+            currentValue = data[0];
+
+        return readSuccess;
+    }
+
+    private void SetBatteryChargeLimit(int chargeLimit)
+    {
+        // Data block index specific to battery mode settings
+        byte dataBlockIndex = 215;
+
+        // Get the current battery data (1 byte) from the device
+        byte currentValue = 0;
+        GetBatteryChargeLimit(ref currentValue);
+
+        // Compute the new value based on the battery mode
+        /*
+        BatteryMode batteryMode = BatteryMode.Custom;
+        switch (batteryMode)
+        {
+            case BatteryMode.BestForMobility:
+                chargeLimit = 100;
+                break;
+            case BatteryMode.Balanced:
+                chargeLimit = 80;
+                break;
+            case BatteryMode.BestForBattery:
+                chargeLimit = 60;
+                break;
+        }
+        */
+
+        byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
+
+        // Build the complete 32-byte package
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = dataBlockIndex;
+        fullPackage[1] = (byte)(currentValue - mask + chargeLimit);
+
+        // Set the battery mode using the package.
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
     private void SetFanTable(byte[] fanTable)
     {
         /*
@@ -161,7 +326,7 @@ public class Claw8 : ClawA1M
         byte iDataBlockIndex = 1;
 
         // default: 49, 0, 40, 49, 58, 67, 75, 75
-        byte[] dataFan = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
+        byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
 
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
@@ -173,29 +338,32 @@ public class Claw8 : ClawA1M
 
     public override void set_long_limit(int limit)
     {
-        SetCPUPowerLimit(81, [(byte)limit]);
+        SetCPUPowerLimit(81, limit);
     }
 
     public override void set_short_limit(int limit)
     {
-        SetCPUPowerLimit(80, [(byte)limit]);
+        SetCPUPowerLimit(80, limit);
     }
 
-    private void SetCPUPowerLimit(int PL, byte[] limit)
+    private void SetCPUPowerLimit(int iDataBlockIndex, int limit)
     {
+        /*
+         * iDataBlockIndex = 80; // Short
+         * iDataBlockIndex = 81; // Long
+         */
+
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
-        fullPackage[0] = (byte)PL;
-        Array.Copy(limit, 0, fullPackage, 1, limit.Length);
+        fullPackage[0] = (byte)iDataBlockIndex;
+        fullPackage[1] = (byte)limit;
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = 212;
+        byte iDataBlockIndex = 212;
 
         /*
          * Get_AP
@@ -208,6 +376,10 @@ public class Claw8 : ClawA1M
         byte[] data = WMI.Get(Scope, Path, "Get_AP", 1, 3, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
         fullPackage[1] = data[0];
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
@@ -215,15 +387,94 @@ public class Claw8 : ClawA1M
 
     public void SetFanFullSpeed(bool enabled)
     {
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = 152;
+        byte iDataBlockIndex = 152;
 
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", 152, 1, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enabled);
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
         fullPackage[1] = data[0];
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
+    public int GetShiftValue()
+    {
+        byte iDataBlockIndex = 210;
+
+        // Optional: decode the value if needed.
+        // bool isSupported = (shiftValue & 128) != 0;
+        // bool isActive = (shiftValue & 64) != 0;
+        // int modeValue = shiftValue & 0x3F; // lower 6 bits
+        byte[] data = WMI.Get(Scope, Path, "Get_AP", 0, 6, out bool readSuccess);
+        if (readSuccess)
+            return data[2];
+
+        return -1;
+    }
+
+    public void SetShiftValue(int newShiftValue)
+    {
+        byte iDataBlockIndex = 210;
+
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
+        fullPackage[1] = (byte)newShiftValue;
+
+        // Write the package back to the EC.
+        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+    }
+
+    public bool IsShiftSupported()
+    {
+        int currentValue = GetShiftValue();
+        return (currentValue & 128) != 0;
+    }
+
+    public void SetShiftMode(ShiftModeCalcType calcType, ShiftType shiftType = ShiftType.None)
+    {
+        if (!IsShiftSupported())
+            return;
+
+        int ShiftModeValueInEC = GetShiftValue();
+        ShiftModeValueInEC &= 195;
+
+        switch (calcType)
+        {
+            case ShiftModeCalcType.Active:
+                ShiftModeValueInEC |= 128;
+                ShiftModeValueInEC |= 64;
+                break;
+            case ShiftModeCalcType.Deactive:
+                ShiftModeValueInEC |= 128;
+                ShiftModeValueInEC &= 191;
+                break;
+            case ShiftModeCalcType.ChangeToCurrentShiftType:
+                ShiftModeValueInEC |= 192;
+                ShiftModeValueInEC &= 252;
+                switch (shiftType)
+                {
+                    case ShiftType.SportMode:
+                        ShiftModeValueInEC += 4;
+                        break;
+                    case ShiftType.ComfortMode:
+                        break;
+                    case ShiftType.GreenMode:
+                        ++ShiftModeValueInEC;
+                        break;
+                    case ShiftType.ECO:
+                        ShiftModeValueInEC += 2;
+                        break;
+                    case ShiftType.User:
+                        ShiftModeValueInEC += 3;
+                        break;
+                }
+                break;
+        }
+
+        SetShiftValue(ShiftModeValueInEC);
     }
 }

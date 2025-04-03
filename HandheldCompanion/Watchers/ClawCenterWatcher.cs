@@ -8,7 +8,7 @@ namespace HandheldCompanion.Watchers
         public ClawCenterWatcher()
         {
             taskNames = new() { "MSI_Center_M_Server", "MSI_Center_M_Updater" };
-            executableNames = new() { "MSI_Center_M_Server", "MSI Center M", "MCMOSDInfo", "MSI Center OSD Info", "Gamebar_Widget" };
+            executableNames = new() { "MSI_Center_M_Server", "MSI Center M", "MCMOSDInfo", "MSI Center OSD Info" };
             serviceNames = new() { "MSI Foundation Service" };
 
             // set notification

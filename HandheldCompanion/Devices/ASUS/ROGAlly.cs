@@ -367,7 +367,7 @@ public class ROGAlly : IDevice
 
     private void QuerySettings()
     {
-        // SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
     }
 
@@ -774,6 +774,20 @@ public class ROGAlly : IDevice
     {
         switch (name)
         {
+            case "BatteryChargeLimit":
+                bool enabled = Convert.ToBoolean(value);
+                switch (enabled)
+                {
+                    case false:
+                        SetBatteryChargeLimit(100);
+                        break;
+                    case true:
+                        int percent = Convert.ToInt32(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
+                        SetBatteryChargeLimit(percent);
+                        break;
+                }
+                break;
+
             case "BatteryChargeLimitPercent":
                 {
                     int percent = Convert.ToInt32(value);
