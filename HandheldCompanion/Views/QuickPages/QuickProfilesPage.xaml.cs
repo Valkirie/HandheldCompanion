@@ -160,8 +160,11 @@ public partial class QuickProfilesPage : Page
     private void QueryForeground()
     {
         ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        if (processEx is null)
+            return;
+
         ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
-        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null, filter);
+        ProcessManager_ForegroundChanged(processEx, null, filter);
     }
 
     private void ProcessManager_Initialized()

@@ -22,6 +22,9 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
             {
                 // get current foreground process
                 ProcessEx processEx = ProcessManager.GetForegroundProcess();
+                if (processEx is null)
+                    return;
+
                 ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
 
                 switch (filter)
