@@ -216,13 +216,23 @@ public class Claw8 : ClawA1M
         {
             case "BatteryChargeLimit":
                 bool enabled = Convert.ToBoolean(value);
-                if (!enabled)
-                    SetBatteryChargeLimit(100);
+                switch (enabled)
+                {
+                    case false:
+                        SetBatteryChargeLimit(100);
+                        break;
+                    case true:
+                        int percent = Convert.ToInt32(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
+                        SetBatteryChargeLimit(percent);
+                        break;
+                }
                 break;
 
             case "BatteryChargeLimitPercent":
-                int percent = Convert.ToInt32(value);
-                SetBatteryChargeLimit(percent);
+                {
+                    int percent = Convert.ToInt32(value);
+                    SetBatteryChargeLimit(percent);
+                }
                 break;
         }
 
@@ -235,23 +245,23 @@ public class Claw8 : ClawA1M
         byte dataBlockIndex = 215;
 
         // Get the current battery data (1 byte) from the device
-        byte[] dataBattery = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
         {
-            dataBattery[0] = dataBattery[0].SetBit(7, true);
-            dataBattery[0] = dataBattery[0].SetBit(6, true);
-            dataBattery[0] = dataBattery[0].SetBit(5, true);
-            dataBattery[0] = dataBattery[0].SetBit(4, false);
-            dataBattery[0] = dataBattery[0].SetBit(3, false);
-            dataBattery[0] = dataBattery[0].SetBit(2, true);
-            dataBattery[0] = dataBattery[0].SetBit(1, false);
-            dataBattery[0] = dataBattery[0].SetBit(0, false);
+            data[0] = data[0].SetBit(7, true);
+            data[0] = data[0].SetBit(6, true);
+            data[0] = data[0].SetBit(5, true);
+            data[0] = data[0].SetBit(4, false);
+            data[0] = data[0].SetBit(3, false);
+            data[0] = data[0].SetBit(2, true);
+            data[0] = data[0].SetBit(1, false);
+            data[0] = data[0].SetBit(0, false);
         }
         
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];
         fullPackage[0] = dataBlockIndex;
-        fullPackage[1] = dataBattery[0];
+        fullPackage[1] = data[0];
 
         // Set the battery mode using the package.
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
@@ -263,9 +273,9 @@ public class Claw8 : ClawA1M
         byte dataBlockIndex = 215;
 
         // Get the current battery data (1 byte) from the device
-        byte[] dataBattery = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
-            currentValue = dataBattery[0];
+            currentValue = data[0];
 
         return readSuccess;
     }
@@ -316,7 +326,7 @@ public class Claw8 : ClawA1M
         byte iDataBlockIndex = 1;
 
         // default: 49, 0, 40, 49, 58, 67, 75, 75
-        byte[] dataFan = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
+        byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
 
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
@@ -328,20 +338,25 @@ public class Claw8 : ClawA1M
 
     public override void set_long_limit(int limit)
     {
-        SetCPUPowerLimit(81, [(byte)limit]);
+        SetCPUPowerLimit(81, limit);
     }
 
     public override void set_short_limit(int limit)
     {
-        SetCPUPowerLimit(80, [(byte)limit]);
+        SetCPUPowerLimit(80, limit);
     }
 
-    private void SetCPUPowerLimit(int PL, byte[] limit)
+    private void SetCPUPowerLimit(int iDataBlockIndex, int limit)
     {
+        /*
+         * iDataBlockIndex = 80; // Short
+         * iDataBlockIndex = 81; // Long
+         */
+
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
-        fullPackage[0] = (byte)PL;
-        Array.Copy(limit, 0, fullPackage, 1, limit.Length);
+        fullPackage[0] = (byte)iDataBlockIndex;
+        fullPackage[1] = (byte)limit;
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
@@ -349,10 +364,6 @@ public class Claw8 : ClawA1M
     public override void SetFanControl(bool enable, int mode = 0)
     {
         byte iDataBlockIndex = 212;
-
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = iDataBlockIndex;
 
         /*
          * Get_AP
@@ -365,6 +376,10 @@ public class Claw8 : ClawA1M
         byte[] data = WMI.Get(Scope, Path, "Get_AP", 1, 3, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
         fullPackage[1] = data[0];
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
@@ -374,13 +389,13 @@ public class Claw8 : ClawA1M
     {
         byte iDataBlockIndex = 152;
 
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = iDataBlockIndex;
-
         byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enabled);
+
+        // Build the complete 32-byte package:
+        byte[] fullPackage = new byte[32];
+        fullPackage[0] = iDataBlockIndex;
         fullPackage[1] = data[0];
 
         WMI.Set(Scope, Path, "Set_Data", fullPackage);

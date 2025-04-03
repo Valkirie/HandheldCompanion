@@ -153,7 +153,7 @@ public class SteamDeck : IDevice
 
     private void QuerySettings()
     {
-        // SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimitPercent"), false);
     }
 
@@ -260,6 +260,20 @@ public class SteamDeck : IDevice
     {
         switch (name)
         {
+            case "BatteryChargeLimit":
+                bool enabled = Convert.ToBoolean(value);
+                switch (enabled)
+                {
+                    case false:
+                        SetMaxBatteryCharge(100);
+                        break;
+                    case true:
+                        int percent = Convert.ToInt32(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
+                        SetMaxBatteryCharge(percent);
+                        break;
+                }
+                break;
+
             case "BatteryChargeLimitPercent":
                 {
                     int percent = Convert.ToInt32(value);
