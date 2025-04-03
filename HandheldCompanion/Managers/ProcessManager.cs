@@ -207,7 +207,13 @@ public class ProcessManager : IManager
         {
             try
             {
-                AutomationElement element = AutomationElement.FromHandle(hWnd);
+                // Run the call to AutomationElement.FromHandle in a separate task
+                AutomationElement element = null;
+                Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
+                if (!task.Wait(TimeSpan.FromSeconds(5)))
+                    return false;
+
+                element = task.Result;
                 if (element is null)
                     return false;
 
@@ -224,10 +230,7 @@ public class ProcessManager : IManager
                 // create process
                 CreateOrUpdateProcess(processId, element, true);
             }
-            catch
-            {
-                // timeout
-            }
+            catch { }
         }
 
         return true;
@@ -279,8 +282,12 @@ public class ProcessManager : IManager
 
         try
         {
-            element = AutomationElement.FromHandle(hWnd);
+            // Run the call to AutomationElement.FromHandle in a separate task
+            Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
+            if (!task.Wait(TimeSpan.FromSeconds(5)))
+                return;
 
+            element = task.Result;
             if (element is null)
                 return;
 
