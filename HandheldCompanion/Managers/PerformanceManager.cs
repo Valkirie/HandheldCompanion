@@ -177,16 +177,19 @@ public static class PerformanceManager
         QueryPowerProfile();
     }
 
-    private static void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
-        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
-    }
-
     private static void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
     }
 
     public static void Stop()

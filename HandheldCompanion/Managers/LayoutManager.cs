@@ -166,17 +166,20 @@ public class LayoutManager : IManager
         // do something
     }
 
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     private void QuerySettings()
     {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
         bool DesktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
         if (DesktopLayoutOnStart)
             ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
-    }
-
-    private void SettingsManager_Initialized()
-    {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        QuerySettings();
     }
 
     public override void Stop()

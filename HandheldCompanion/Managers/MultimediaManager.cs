@@ -85,15 +85,18 @@ public class MultimediaManager : IManager
         base.Start();
     }
 
-    private void QuerySettings()
-    {
-        // do something
-    }
-
     private void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        // do something
     }
 
     public override void Stop()

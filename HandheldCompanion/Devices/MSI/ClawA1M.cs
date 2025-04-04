@@ -244,12 +244,15 @@ public class ClawA1M : IDevice
 
     private void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 
     private void QuerySettings()
     {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetInt("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false);

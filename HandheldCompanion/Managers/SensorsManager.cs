@@ -68,17 +68,20 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "SensorsManager");
         }
 
+        private static void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         private static void QuerySettings()
         {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
             SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false);
             SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false);
             SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false);
-        }
-
-        private static void SettingsManager_Initialized()
-        {
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            QuerySettings();
         }
 
         public static void Stop()

@@ -84,16 +84,19 @@ public static class OSDManager
         LogManager.LogInformation("{0} has started", "OSDManager");
     }
 
-    private static void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayLevel"), false);
-    }
-
     private static void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayLevel"), false);
     }
 
     public static void Stop()

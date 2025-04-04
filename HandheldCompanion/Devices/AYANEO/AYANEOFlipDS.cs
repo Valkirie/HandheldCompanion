@@ -27,7 +27,6 @@ public class AYANEOFlipDS : AYANEOFlipKB
             false, ButtonFlags.OEM5
         ));
 
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.InputsUpdated += ControllerManager_InputsUpdated;
     }
 
@@ -49,7 +48,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
         }
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
@@ -81,6 +80,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
                 }
                 break;
         }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 
     public override string GetGlyph(ButtonFlags button)

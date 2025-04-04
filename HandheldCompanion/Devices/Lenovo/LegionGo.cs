@@ -396,15 +396,18 @@ public class LegionGo : IDevice
         QueryPowerProfile();
     }
 
-    private void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
-    }
-
     private void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
     }
 
     public override void Close()

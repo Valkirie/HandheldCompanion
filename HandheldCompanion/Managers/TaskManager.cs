@@ -78,15 +78,18 @@ public static class TaskManager
         LogManager.LogInformation("{0} has started", "TaskManager");
     }
 
-    private static void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("RunAtStartup", ManagerFactory.settingsManager.GetString("RunAtStartup"), false);
-    }
-
     private static void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("RunAtStartup", ManagerFactory.settingsManager.GetString("RunAtStartup"), false);
     }
 
     public static void Stop()

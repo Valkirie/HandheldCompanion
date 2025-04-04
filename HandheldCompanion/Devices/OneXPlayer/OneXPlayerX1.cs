@@ -45,7 +45,6 @@ public class OneXPlayerX1 : IDevice
     // Battery Protection
     public ushort ECBatteryLimitAddress = 0x4A3;
     public ushort ECBypassChargingAddress = 0x4A4;
-    public bool EnableBatteryProtection = false;
 
     public OneXPlayerX1()
     {
@@ -79,7 +78,6 @@ public class OneXPlayerX1 : IDevice
 
         if (CheckIsBatteryProtectionSupported())
         {
-            EnableBatteryProtection = true;
             Capabilities |= DeviceCapabilities.BatteryChargeLimit;
             Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
             Capabilities |= DeviceCapabilities.BatteryBypassCharging;
@@ -196,20 +194,22 @@ public class OneXPlayerX1 : IDevice
         return true;
     }
 
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     private void QuerySettings()
     {
-        // Check Battery Protection Supported
-        if (EnableBatteryProtection)
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        if (CheckIsBatteryProtectionSupported())
         {
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
             SettingsManager_SettingValueChanged("BatteryBypassChargingMode", ManagerFactory.settingsManager.GetString("BatteryBypassChargingMode"), false);
         }
-    }
-
-    private void SettingsManager_Initialized()
-    {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        QuerySettings();
     }
 
     public override void Close()
@@ -218,11 +218,8 @@ public class OneXPlayerX1 : IDevice
         {
             _serialPort.Close();
         }
-
-        if (EnableBatteryProtection)
-        {
-            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        }
+        
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         ECRamDirectWrite(0x4EB, ECDetails, 0x00);
         if (ECRamReadByte(0x4EB, ECDetails) == 0x00)

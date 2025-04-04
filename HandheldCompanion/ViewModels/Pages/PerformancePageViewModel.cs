@@ -714,8 +714,17 @@ namespace HandheldCompanion.ViewModels
             #endregion
         }
 
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         private void QuerySettings()
         {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
             /*
              * case "ConfigurableTDPOverride":
              * case "ConfigurableTDPOverrideDown":
@@ -723,12 +732,6 @@ namespace HandheldCompanion.ViewModels
             */
 
             OnPropertyChanged("ConfigurableTDPOverride");
-        }
-
-        private void SettingsManager_Initialized()
-        {
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            QuerySettings();
         }
 
         private void QueryMedia()

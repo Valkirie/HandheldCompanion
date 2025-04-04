@@ -103,15 +103,18 @@ public static class UpdateManager
         LogManager.LogInformation("{0} has started", "UpdateManager");
     }
 
-    private static void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
-    }
-
     private static void SettingsManager_Initialized()
     {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
     }
 
     public static void Stop()
