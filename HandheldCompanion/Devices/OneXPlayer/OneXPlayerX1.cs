@@ -218,7 +218,7 @@ public class OneXPlayerX1 : IDevice
         {
             _serialPort.Close();
         }
-        
+
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
         ECRamDirectWrite(0x4EB, ECDetails, 0x00);

@@ -257,7 +257,7 @@ public class Claw8 : ClawA1M
             data[0] = data[0].SetBit(1, false);
             data[0] = data[0].SetBit(0, false);
         }
-        
+
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];
         fullPackage[0] = dataBlockIndex;
@@ -363,19 +363,14 @@ public class Claw8 : ClawA1M
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
-        byte iDataBlockIndex = 212;
+        byte iDataBlockIndex = 1;
 
-        /*
-         * Get_AP
-         * switch (iDataBlockIndex)
-         * case 0: length = 6;
-         * case 1: length = 3;
-         * case 2: length = 7;
-         */
-
-        byte[] data = WMI.Get(Scope, Path, "Get_AP", 1, 3, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_AP", iDataBlockIndex, WMI.GetAPLength(iDataBlockIndex), out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
+
+        // update data block index
+        iDataBlockIndex = 212;
 
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
@@ -403,13 +398,13 @@ public class Claw8 : ClawA1M
 
     public int GetShiftValue()
     {
-        byte iDataBlockIndex = 210;
+        byte iDataBlockIndex = 0;
 
         // Optional: decode the value if needed.
         // bool isSupported = (shiftValue & 128) != 0;
         // bool isActive = (shiftValue & 64) != 0;
         // int modeValue = shiftValue & 0x3F; // lower 6 bits
-        byte[] data = WMI.Get(Scope, Path, "Get_AP", 0, 6, out bool readSuccess);
+        byte[] data = WMI.Get(Scope, Path, "Get_AP", iDataBlockIndex, WMI.GetAPLength(iDataBlockIndex), out bool readSuccess);
         if (readSuccess)
             return data[2];
 

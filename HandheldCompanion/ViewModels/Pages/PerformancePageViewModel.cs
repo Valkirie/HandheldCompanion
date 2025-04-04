@@ -20,7 +20,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Xml.Linq;
 using Resources = HandheldCompanion.Properties.Resources;
 
 namespace HandheldCompanion.ViewModels
