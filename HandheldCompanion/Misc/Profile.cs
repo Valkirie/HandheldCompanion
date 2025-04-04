@@ -3,6 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
+using IGDB;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

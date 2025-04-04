@@ -260,13 +260,20 @@
                         CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
                         PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick"
                         PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
-                        <ikw:SimpleStackPanel Spacing="6">
-                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileRenamingDialogue_Name}" />
-                            <TextBox
-                                Name="tB_ProfileName"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                        <ikw:SimpleStackPanel Spacing="12">
+                            <ikw:SimpleStackPanel Spacing="6">
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileRenamingDialogue_Name}" />
+                                <TextBox Name="tB_ProfileName" HorizontalAlignment="Stretch" />
+                            </ikw:SimpleStackPanel>
+
+                            <ikw:SimpleStackPanel Spacing="6">
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="IGDB" />
+                                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding IGDBPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding RefreshIGDB}"
+                                    Content="Refresh IGDB" />
+                            </ikw:SimpleStackPanel>
                         </ikw:SimpleStackPanel>
                     </ui:ContentDialog>
 

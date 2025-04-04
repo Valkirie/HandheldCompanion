@@ -1,16 +1,21 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views.Pages;
+using IGDB;
+using IGDB.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
 {
     public class ProfilesPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems { get; } = [];
+        public ObservableCollection<GameViewModel> IGDBPickers { get; } = [];
 
         private ProfilesPage profilesPage;
         private ProfilesPickerViewModel _devicePresetsPickerVM;
@@ -98,6 +103,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public ICommand RefreshIGDB { get; private set; }
+
         public ProfilesPageViewModel(ProfilesPage profilesPage)
         {
             this.profilesPage = profilesPage;
@@ -115,6 +122,39 @@ namespace HandheldCompanion.ViewModels
 
             ProfilePickerItems.Add(_devicePresetsPickerVM);
             ProfilePickerItems.Add(_userPresetsPickerVM);
+
+            RefreshIGDB = new DelegateCommand(async () =>
+            {
+                string name = string.Empty;
+
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    name = profilesPage.tB_ProfileName.Text;
+                });
+
+                IGDBClient IGDBClient = new IGDBClient(SentryConfig.IGDB_CLIENT_ID, SentryConfig.IGDB_CLIENT_SECRET);
+                Game[] games = await IGDBClient.QueryAsync<Game>(IGDBClient.Endpoints.Games, query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id; search \"{name}\";");
+
+                IGDBPickers.Clear();
+                foreach (Game game in games)
+                {
+                    string artworkImageId = game.Artworks.Values.First().ImageId;
+                    string coverImageId = game.Cover.Value.ImageId;
+
+                    // Thumbnail
+                    var thumb = ImageHelper.GetImageUrl(imageId: artworkImageId, size: ImageSize.Thumb, retina: false);
+                    var thumb2X = ImageHelper.GetImageUrl(imageId: artworkImageId, size: ImageSize.Thumb, retina: true);
+
+                    // Covers
+                    var coverBig = ImageHelper.GetImageUrl(imageId: coverImageId, size: ImageSize.CoverBig, retina: true);
+
+                    // Screenshot
+                    var screenHuge = ImageHelper.GetImageUrl(imageId: artworkImageId, size: ImageSize.ScreenshotHuge, retina: true);
+
+                    IGDBPickers.Add(new(game));
+                }
+            });
         }
 
         private void PowerProfileManager_Initialized()
