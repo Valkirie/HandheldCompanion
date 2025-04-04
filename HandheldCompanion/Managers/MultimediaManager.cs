@@ -308,6 +308,11 @@ public class MultimediaManager : IManager
                         .ToList();
                 }
 
+                // update native resolution, based on orientation
+                ScreenResolution? maxRes = desktopScreen.screenResolutions.FirstOrDefault();
+                nativeWidth = desktopScreen.nativeResolution.Width = Math.Min(maxRes.Width, nativeWidth);
+                nativeHeight = desktopScreen.nativeResolution.Height = Math.Min(maxRes.Height, nativeHeight);
+
                 // get integer scaling dividers
                 int idx = 1;
                 while (true)
