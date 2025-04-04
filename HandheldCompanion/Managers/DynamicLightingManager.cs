@@ -80,7 +80,6 @@ public static class DynamicLightingManager
         SetAmbientLightingEnabled(false);
 
         // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
         // raise events
@@ -131,6 +130,7 @@ public static class DynamicLightingManager
 
     private static void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

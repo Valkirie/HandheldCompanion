@@ -85,9 +85,6 @@ public static class UpdateManager
         updateStatus = UpdateStatus.Initialized;
         Updated?.Invoke(updateStatus, null, null);
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -113,6 +110,7 @@ public static class UpdateManager
 
     private static void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

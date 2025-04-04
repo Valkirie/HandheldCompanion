@@ -67,7 +67,6 @@ public class MultimediaManager : IManager
 
         // manage events
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -93,6 +92,7 @@ public class MultimediaManager : IManager
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

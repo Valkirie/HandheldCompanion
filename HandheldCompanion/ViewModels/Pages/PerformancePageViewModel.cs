@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Xml.Linq;
 using Resources = HandheldCompanion.Properties.Resources;
 
 namespace HandheldCompanion.ViewModels
@@ -504,7 +505,6 @@ namespace HandheldCompanion.ViewModels
             #region General Setup
 
             // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
@@ -512,6 +512,17 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
             // raise events
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+
             switch (ManagerFactory.multimediaManager.Status)
             {
                 default:
@@ -701,6 +712,23 @@ namespace HandheldCompanion.ViewModels
             }
 
             #endregion
+        }
+
+        private void QuerySettings()
+        {
+            /*
+             * case "ConfigurableTDPOverride":
+             * case "ConfigurableTDPOverrideDown":
+             * case "ConfigurableTDPOverrideUp":
+            */
+
+            OnPropertyChanged("ConfigurableTDPOverride");
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            QuerySettings();
         }
 
         private void QueryMedia()

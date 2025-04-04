@@ -60,9 +60,6 @@ public static class TaskManager
         }
         catch { }
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -88,6 +85,7 @@ public static class TaskManager
 
     private static void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

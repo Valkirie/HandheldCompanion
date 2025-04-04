@@ -41,7 +41,6 @@ namespace HandheldCompanion.Managers
             ManagerFactory.deviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
             ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
             switch (ManagerFactory.settingsManager.Status)
@@ -78,6 +77,7 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_Initialized()
         {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             QuerySettings();
         }
 

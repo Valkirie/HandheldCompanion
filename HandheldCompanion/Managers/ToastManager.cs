@@ -115,9 +115,6 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -141,6 +138,7 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_Initialized()
         {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             QuerySettings();
         }
 

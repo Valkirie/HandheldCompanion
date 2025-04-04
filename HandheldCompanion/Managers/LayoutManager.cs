@@ -102,7 +102,6 @@ public class LayoutManager : IManager
 
         // manage events
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
 
@@ -176,6 +175,7 @@ public class LayoutManager : IManager
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

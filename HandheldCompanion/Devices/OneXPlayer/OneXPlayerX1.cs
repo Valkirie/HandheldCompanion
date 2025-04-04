@@ -176,9 +176,6 @@ public class OneXPlayerX1 : IDevice
             }
         }
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -211,6 +208,7 @@ public class OneXPlayerX1 : IDevice
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

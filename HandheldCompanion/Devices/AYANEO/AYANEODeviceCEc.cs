@@ -91,7 +91,6 @@ namespace HandheldCompanion.Devices.AYANEO
             }
 
             // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
 
             // raise events
@@ -116,6 +115,7 @@ namespace HandheldCompanion.Devices.AYANEO
 
         private void SettingsManager_Initialized()
         {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             QuerySettings();
         }
 

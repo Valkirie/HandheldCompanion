@@ -90,7 +90,6 @@ namespace HandheldCompanion.Managers
                     await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context
 
             // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
 
@@ -143,6 +142,7 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_Initialized()
         {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             QuerySettings();
         }
 

@@ -308,7 +308,6 @@ public class LegionGo : IDevice
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
@@ -404,6 +403,7 @@ public class LegionGo : IDevice
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

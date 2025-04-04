@@ -73,9 +73,6 @@ namespace HandheldCompanion.Platforms
 
         public override bool Start()
         {
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -111,6 +108,7 @@ namespace HandheldCompanion.Platforms
 
         private void SettingsManager_Initialized()
         {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             QuerySettings();
         }
 

@@ -80,7 +80,6 @@ public static class ControllerManager
         ManagerFactory.deviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
@@ -342,6 +341,7 @@ public static class ControllerManager
 
     private static void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

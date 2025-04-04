@@ -56,7 +56,6 @@ public static class OSDManager
             RefreshTimer.Start();
 
         // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
@@ -93,6 +92,7 @@ public static class OSDManager
 
     private static void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

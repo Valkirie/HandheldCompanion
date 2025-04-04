@@ -197,10 +197,8 @@ public class ClawA1M : IDevice
         // start WMI event monitor
         GetWMI();
         StartWatching();
-        Device_Inserted();
 
         // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
@@ -215,6 +213,8 @@ public class ClawA1M : IDevice
                 QuerySettings();
                 break;
         }
+
+        Device_Inserted();
 
         return true;
     }
@@ -244,6 +244,7 @@ public class ClawA1M : IDevice
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 
@@ -412,7 +413,7 @@ public class ClawA1M : IDevice
         return data.ToArray();
     }
 
-    private void Device_Removed()
+    private async void Device_Removed()
     {
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
@@ -422,12 +423,12 @@ public class ClawA1M : IDevice
         }
 
         while (!IsReady())
-            Task.Delay(250).Wait();
+            await Task.Delay(500);
 
         Device_Inserted();
     }
 
-    private void Device_Inserted()
+    private async void Device_Inserted()
     {
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))

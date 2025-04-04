@@ -342,9 +342,6 @@ public class ROGAlly : IDevice
         // force M1/M2 to send F17 and F18
         ConfigureController(true);
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -362,6 +359,7 @@ public class ROGAlly : IDevice
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

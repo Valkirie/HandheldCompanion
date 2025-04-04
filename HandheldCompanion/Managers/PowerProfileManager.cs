@@ -54,7 +54,6 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
             SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
@@ -100,6 +99,7 @@ namespace HandheldCompanion.Managers
 
         private void SettingsManager_Initialized()
         {
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             QuerySettings();
         }
 

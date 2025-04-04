@@ -125,9 +125,6 @@ public class SteamDeck : IDevice
             else
                 PDCS = 0xFF;
 
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -159,6 +156,7 @@ public class SteamDeck : IDevice
 
     private void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 

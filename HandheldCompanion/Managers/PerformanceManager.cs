@@ -137,7 +137,6 @@ public static class PerformanceManager
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -186,6 +185,7 @@ public static class PerformanceManager
 
     private static void SettingsManager_Initialized()
     {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         QuerySettings();
     }
 
