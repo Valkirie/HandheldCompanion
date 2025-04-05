@@ -115,9 +115,6 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -134,14 +131,18 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", nameof(ToastManager));
         }
 
-        private static void QuerySettings()
-        {
-            SettingsManager_SettingValueChanged("ToastEnable", ManagerFactory.settingsManager.GetString("ToastEnable"), false);
-        }
-
         private static void SettingsManager_Initialized()
         {
             QuerySettings();
+        }
+
+        private static void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            SettingsManager_SettingValueChanged("ToastEnable", ManagerFactory.settingsManager.GetString("ToastEnable"), false);
         }
 
         public static void Stop()

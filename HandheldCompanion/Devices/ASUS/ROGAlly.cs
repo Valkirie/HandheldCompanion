@@ -342,9 +342,6 @@ public class ROGAlly : IDevice
         // force M1/M2 to send F17 and F18
         ConfigureController(true);
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -367,6 +364,10 @@ public class ROGAlly : IDevice
 
     private void QuerySettings()
     {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
     }

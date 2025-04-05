@@ -73,9 +73,6 @@ namespace HandheldCompanion.Platforms
 
         public override bool Start()
         {
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -104,14 +101,18 @@ namespace HandheldCompanion.Platforms
             return base.Start();
         }
 
-        private void QuerySettings()
-        {
-            SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
-        }
-
         private void SettingsManager_Initialized()
         {
             QuerySettings();
+        }
+
+        private void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
         }
 
         public override bool Stop(bool kill = false)

@@ -57,6 +57,28 @@ namespace HandheldCompanion
             }
         }
 
+        public static int GetAPLength(byte iDataBlockIndex)
+        {
+            /*
+             * Get_AP
+             * switch (iDataBlockIndex)
+             * case 0: length = 6;
+             * case 1: length = 3;
+             * case 2: length = 7;
+             */
+            switch (iDataBlockIndex)
+            {
+                case 0:
+                    return 6;
+                case 1:
+                    return 3;
+                case 2:
+                    return 7;
+                default:
+                    return 32;
+            }
+        }
+
         public static ManagementBaseObject Set(string scope, string path, string methodName, byte[] fullPackage)
         {
             // Create the management object using the provided scope and path
@@ -112,17 +134,20 @@ namespace HandheldCompanion
 
             // Extract the output bytes from the nested 'Data' object.
             ManagementBaseObject outParams = Set(scope, path, methodName, fullPackage);
+            if (outParams == null)
+                return resultData;
+
             ManagementBaseObject dataOut = outParams["Data"] as ManagementBaseObject;
             if (dataOut == null)
             {
-                LogManager.LogError("WMI Call failed at outParams[\"Data\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
+                LogManager.LogError("WMI Call failed at outParams[\"Data\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}, length={4}]", scope, path, methodName, iDataBlockIndex, length);
                 return resultData;
             }
 
             byte[] outBytes = dataOut["Bytes"] as byte[];
             if (outBytes == null || outBytes.Length < 1)
             {
-                LogManager.LogError("WMI Call failed at dataOut[\"Bytes\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}]", scope, path, methodName, iDataBlockIndex);
+                LogManager.LogError("WMI Call failed at dataOut[\"Bytes\"]: [scope={0}, path={1}, methodName={2}, iDataBlockIndex={3}, length={4}]", scope, path, methodName, iDataBlockIndex, length);
                 return resultData;
             }
 

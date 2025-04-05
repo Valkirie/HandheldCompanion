@@ -504,7 +504,6 @@ namespace HandheldCompanion.ViewModels
             #region General Setup
 
             // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
@@ -512,6 +511,17 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
             // raise events
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+
             switch (ManagerFactory.multimediaManager.Status)
             {
                 default:
@@ -701,6 +711,26 @@ namespace HandheldCompanion.ViewModels
             }
 
             #endregion
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
+        private void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            /*
+             * case "ConfigurableTDPOverride":
+             * case "ConfigurableTDPOverrideDown":
+             * case "ConfigurableTDPOverrideUp":
+            */
+
+            OnPropertyChanged("ConfigurableTDPOverride");
         }
 
         private void QueryMedia()

@@ -137,7 +137,6 @@ public static class PerformanceManager
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -178,15 +177,19 @@ public static class PerformanceManager
         QueryPowerProfile();
     }
 
-    private static void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
-        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
-    }
-
     private static void SettingsManager_Initialized()
     {
         QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
     }
 
     public static void Stop()

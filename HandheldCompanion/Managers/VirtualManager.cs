@@ -90,7 +90,6 @@ namespace HandheldCompanion.Managers
                     await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context
 
             // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
 
@@ -119,8 +118,17 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "VirtualManager");
         }
 
+        private static void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         private static void QuerySettings()
         {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
             // Retrieve the default HID mode from settings
             HIDmode selectedHIDMode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode");
 
@@ -139,11 +147,6 @@ namespace HandheldCompanion.Managers
             SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false);
             SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false);
             SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false);
-        }
-
-        private static void SettingsManager_Initialized()
-        {
-            QuerySettings();
         }
 
         public static void Stop()

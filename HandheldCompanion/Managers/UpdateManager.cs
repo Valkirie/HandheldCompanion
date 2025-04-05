@@ -85,9 +85,6 @@ public static class UpdateManager
         updateStatus = UpdateStatus.Initialized;
         Updated?.Invoke(updateStatus, null, null);
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -106,14 +103,18 @@ public static class UpdateManager
         LogManager.LogInformation("{0} has started", "UpdateManager");
     }
 
-    private static void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
-    }
-
     private static void SettingsManager_Initialized()
     {
         QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
     }
 
     public static void Stop()

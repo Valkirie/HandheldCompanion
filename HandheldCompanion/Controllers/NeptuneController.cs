@@ -361,7 +361,6 @@ public class NeptuneController : SteamController
 
         // manage events
         TimerManager.Tick += UpdateInputs;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -385,6 +384,10 @@ public class NeptuneController : SteamController
 
     private void QuerySettings()
     {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
         SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetInt("SteamControllerRumbleInterval"), false);
     }
 

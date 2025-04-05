@@ -67,7 +67,6 @@ public class MultimediaManager : IManager
 
         // manage events
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -86,14 +85,18 @@ public class MultimediaManager : IManager
         base.Start();
     }
 
-    private void QuerySettings()
-    {
-        // do something
-    }
-
     private void SettingsManager_Initialized()
     {
         QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        // do something
     }
 
     public override void Stop()
@@ -307,6 +310,11 @@ public class MultimediaManager : IManager
                         .ThenByDescending(r => r.Width)
                         .ToList();
                 }
+
+                // update native resolution, based on orientation
+                ScreenResolution? maxRes = desktopScreen.screenResolutions.FirstOrDefault();
+                nativeWidth = desktopScreen.nativeResolution.Width = Math.Min(maxRes.Width, nativeWidth);
+                nativeHeight = desktopScreen.nativeResolution.Height = Math.Min(maxRes.Height, nativeHeight);
 
                 // get integer scaling dividers
                 int idx = 1;

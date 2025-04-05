@@ -308,7 +308,6 @@ public class LegionGo : IDevice
 
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
@@ -397,14 +396,18 @@ public class LegionGo : IDevice
         QueryPowerProfile();
     }
 
-    private void QuerySettings()
-    {
-        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
-    }
-
     private void SettingsManager_Initialized()
     {
         QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
     }
 
     public override void Close()

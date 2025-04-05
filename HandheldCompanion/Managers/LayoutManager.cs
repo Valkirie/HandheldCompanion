@@ -102,7 +102,6 @@ public class LayoutManager : IManager
 
         // manage events
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
 
@@ -167,16 +166,20 @@ public class LayoutManager : IManager
         // do something
     }
 
-    private void QuerySettings()
-    {
-        bool DesktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
-        if (DesktopLayoutOnStart)
-            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
-    }
-
     private void SettingsManager_Initialized()
     {
         QuerySettings();
+    }
+
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        bool DesktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
+        if (DesktopLayoutOnStart)
+            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
     }
 
     public override void Stop()
