@@ -19,16 +19,14 @@ namespace HandheldCompanion.Managers
 
         public Dictionary<Guid, PowerProfile> profiles = [];
 
-        private string ProfilesPath;
-
         public PowerProfileManager()
         {
             // initialize path
-            ProfilesPath = Path.Combine(App.SettingsPath, "powerprofiles");
+            ManagerPath = Path.Combine(App.SettingsPath, "powerprofiles");
 
             // create path
-            if (!Directory.Exists(ProfilesPath))
-                Directory.CreateDirectory(ProfilesPath);
+            if (!Directory.Exists(ManagerPath))
+                Directory.CreateDirectory(ManagerPath);
         }
 
         public override void Start()
@@ -39,7 +37,7 @@ namespace HandheldCompanion.Managers
             base.PrepareStart();
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
@@ -341,7 +339,7 @@ namespace HandheldCompanion.Managers
             });
 
             // prepare for writing
-            var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+            var profilePath = Path.Combine(ManagerPath, profile.GetFileName());
 
             try
             {
@@ -353,7 +351,7 @@ namespace HandheldCompanion.Managers
 
         public void DeleteProfile(PowerProfile profile)
         {
-            string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+            string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
 
             if (profiles.ContainsKey(profile.Guid))
             {

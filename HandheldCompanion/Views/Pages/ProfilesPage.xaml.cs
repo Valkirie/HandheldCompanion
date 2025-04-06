@@ -499,6 +499,8 @@ public partial class ProfilesPage : Page
 
         if (profileLock.TryEnter())
         {
+            ((ProfilesPageViewModel)DataContext).ProfileChanged(selectedProfile);
+
             try
             {
                 UIHelper.TryInvoke(() =>

@@ -5,10 +5,12 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Views.Pages;
 using IGDB;
 using IGDB.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -133,27 +135,18 @@ namespace HandheldCompanion.ViewModels
                     name = profilesPage.tB_ProfileName.Text;
                 });
 
-                IGDBClient IGDBClient = new IGDBClient(SentryConfig.IGDB_CLIENT_ID, SentryConfig.IGDB_CLIENT_SECRET);
-                Game[] games = await IGDBClient.QueryAsync<Game>(IGDBClient.Endpoints.Games, query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id; search \"{name}\";");
+                Game[] games = await ManagerFactory.libraryManager.GetGames(name);
 
                 IGDBPickers.Clear();
                 foreach (Game game in games)
-                {
-                    string artworkImageId = game.Artworks.Values.First().ImageId;
-                    string coverImageId = game.Cover.Value.ImageId;
-
-                    // Thumbnail
-                    var thumb = ImageHelper.GetImageUrl(imageId: artworkImageId, size: ImageSize.Thumb, retina: false);
-                    var thumb2X = ImageHelper.GetImageUrl(imageId: artworkImageId, size: ImageSize.Thumb, retina: true);
-
-                    // Covers
-                    var coverBig = ImageHelper.GetImageUrl(imageId: coverImageId, size: ImageSize.CoverBig, retina: true);
-
-                    // Screenshot
-                    var screenHuge = ImageHelper.GetImageUrl(imageId: artworkImageId, size: ImageSize.ScreenshotHuge, retina: true);
-
                     IGDBPickers.Add(new(game));
-                }
+
+                Game game2 = await ManagerFactory.libraryManager.GetGame(name);
+                ProfilesPage.selectedProfile.IGDB = game2;
+
+                await ManagerFactory.libraryManager.DownloadGameArts(ProfilesPage.selectedProfile.IGDB);
+
+                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ArtUpdateOnly);
             });
         }
 
@@ -198,6 +191,39 @@ namespace HandheldCompanion.ViewModels
                     ProfilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name });
                 }
             }
+        }
+
+        public ImageBrush Cover
+        {
+            get
+            {
+                if (ProfilesPage.selectedProfile?.IGDB?.Id == null)
+                    return null;
+
+                long id = (long)ProfilesPage.selectedProfile.IGDB.Id;
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.cover);
+            }
+        }
+
+        public ImageBrush Artwork
+        {
+            get
+            {
+                if (ProfilesPage.selectedProfile?.IGDB?.Id == null)
+                    return null;
+
+                long id = (long)ProfilesPage.selectedProfile.IGDB.Id;
+                return
+                    ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.artwork) ??
+                    ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.screenshot) ??
+                    ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.cover);
+            }
+        }
+
+        public void ProfileChanged(Profile selectedProfile)
+        {
+            OnPropertyChanged(nameof(Cover));
+            OnPropertyChanged(nameof(Artwork));
         }
 
         public void PowerProfileChanged(PowerProfile powerProfileAC, PowerProfile powerProfileDC)

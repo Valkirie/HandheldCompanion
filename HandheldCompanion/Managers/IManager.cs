@@ -25,6 +25,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public ManagerStatus Status = ManagerStatus.None;
+        protected string ManagerPath = string.Empty;
 
         public bool IsRunning => Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized);
         public bool IsBusy => Status.HasFlag(ManagerStatus.Busy);

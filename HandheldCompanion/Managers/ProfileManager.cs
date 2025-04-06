@@ -32,21 +32,20 @@ public class ProfileManager : IManager
     private Profile currentProfile;
 
     public FileSystemWatcher profileWatcher { get; set; }
-    private string ProfilesPath;
 
     public ProfileManager()
     {
         // initialize path
-        ProfilesPath = Path.Combine(App.SettingsPath, "profiles");
+        ManagerPath = Path.Combine(App.SettingsPath, "profiles");
 
         // create path
-        if (!Directory.Exists(ProfilesPath))
-            Directory.CreateDirectory(ProfilesPath);
+        if (!Directory.Exists(ManagerPath))
+            Directory.CreateDirectory(ManagerPath);
 
         // monitor profile files
         profileWatcher = new FileSystemWatcher
         {
-            Path = ProfilesPath,
+            Path = ManagerPath,
             EnableRaisingEvents = true,
             IncludeSubdirectories = true,
             Filter = "*.json",
@@ -62,7 +61,7 @@ public class ProfileManager : IManager
         base.PrepareStart();
 
         // process existing profiles
-        string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
+        string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
         foreach (string fileName in fileEntries)
             ProcessProfile(fileName, false);
 
@@ -721,7 +720,7 @@ public class ProfileManager : IManager
 
     public void DeleteProfile(Profile profile)
     {
-        string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
         pendingDeletion.Add(profilePath);
 
         if (profiles.ContainsKey(profile.Path))
@@ -768,7 +767,7 @@ public class ProfileManager : IManager
 
     public void DeleteSubProfile(Profile subProfile)
     {
-        string profilePath = Path.Combine(ProfilesPath, subProfile.GetFileName());
+        string profilePath = Path.Combine(ManagerPath, subProfile.GetFileName());
         pendingDeletion.Add(profilePath);
 
         if (subProfiles.Contains(subProfile))
@@ -811,7 +810,7 @@ public class ProfileManager : IManager
     public void SerializeProfile(Profile profile)
     {
         // prepare for writing
-        string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
         pendingCreation.Add(profilePath);
 
         // update profile version to current build

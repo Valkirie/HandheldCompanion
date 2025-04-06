@@ -103,6 +103,24 @@
                         </Grid>
                     </Border>
 
+                    <Border
+                        Height="300"
+                        Padding="15,12,12,12"
+                        Background="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Artwork}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
+
                     <ui:InfoBar
                         Name="WarningInfoBar"
                         d:Visibility="Visible"
@@ -116,143 +134,159 @@
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileDetails}" />
 
                     <!--  Profile details  -->
-                    <Border
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="120" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                        <ikw:SimpleStackPanel Spacing="6">
-                            <!--  Path  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" MinWidth="70" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                        <Border
+                            Padding="15,12,12,12"
+                            Background="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource ControlCornerRadius}" />
 
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Glyph="&#xED25;" />
-                                    <TextBlock
-                                        Margin="12,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.ProfilesPage_ProfilePath}" />
-                                </DockPanel>
+                        <Border
+                            Grid.Column="1"
+                            Margin="6,0,0,0"
+                            Padding="15,12,12,12"
+                            Background="{DynamicResource ExpanderHeaderBackground}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Name="tB_ProfilePath"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        BorderThickness="1"
-                                        IsEnabled="False"
-                                        IsReadOnly="True" />
-                                </DockPanel>
-                            </Grid>
+                            <ikw:SimpleStackPanel Spacing="6">
+                                <!--  Path  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" MinWidth="70" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
 
-                            <!--  Arguments  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" MinWidth="70" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                                    <DockPanel>
+                                        <ui:FontIcon
+                                            Height="40"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Glyph="&#xED25;" />
+                                        <TextBlock
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.ProfilesPage_ProfilePath}" />
+                                    </DockPanel>
 
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Glyph="&#xe712;" />
-                                    <TextBlock
-                                        Margin="12,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.ProfilesPage_ProfileArguments}" />
-                                </DockPanel>
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Name="tB_ProfileArguments"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        BorderThickness="1"
-                                        TextChanged="tB_ProfileArguments_TextChanged" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Sub Profiles  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" MinWidth="70" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Glyph="&#xE81E;" />
-                                    <TextBlock
-                                        Margin="12,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.ProfilesPage_SubProfiles}" />
-                                </DockPanel>
-                                <DockPanel Grid.Column="1">
-                                    <Grid Grid.Column="1" Margin="12,0,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="8*" MinWidth="400" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ComboBox
-                                            Name="cb_SubProfilePicker"
-                                            Grid.Column="0"
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <TextBox
+                                            Name="tB_ProfilePath"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            SelectionChanged="cb_SubProfilePicker_SelectionChanged" />
+                                            BorderThickness="1"
+                                            IsEnabled="False"
+                                            IsReadOnly="True" />
+                                    </DockPanel>
+                                </Grid>
 
-                                        <Button
-                                            Name="b_SubProfileCreate"
-                                            Grid.Column="1"
-                                            Margin="6,0,0,0"
+                                <!--  Arguments  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" MinWidth="70" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <DockPanel>
+                                        <ui:FontIcon
+                                            Height="40"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Glyph="&#xe712;" />
+                                        <TextBlock
+                                            Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Click="b_SubProfileCreate_Click"
-                                            Style="{DynamicResource AccentButtonStyle}">
-                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
-                                        </Button>
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.ProfilesPage_ProfileArguments}" />
+                                    </DockPanel>
 
-                                        <Button
-                                            Name="b_SubProfileDelete"
-                                            Grid.Column="2"
-                                            Margin="6,0,0,0"
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <TextBox
+                                            Name="tB_ProfileArguments"
+                                            HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            Click="b_SubProfileDelete_Click">
-                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
-                                        </Button>
+                                            BorderThickness="1"
+                                            TextChanged="tB_ProfileArguments_TextChanged" />
+                                    </DockPanel>
+                                </Grid>
 
-                                        <Button
-                                            Name="b_SubProfileRename"
-                                            Grid.Column="3"
-                                            Margin="6,0,0,0"
+                                <!--  Sub Profiles  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" MinWidth="70" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+                                    <DockPanel>
+                                        <ui:FontIcon
+                                            Height="40"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Glyph="&#xE81E;" />
+                                        <TextBlock
+                                            Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Click="b_SubProfileRename_Click">
-                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
-                                        </Button>
-                                    </Grid>
-                                </DockPanel>
-                            </Grid>
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.ProfilesPage_SubProfiles}" />
+                                    </DockPanel>
+                                    <DockPanel Grid.Column="1">
+                                        <Grid Grid.Column="1" Margin="12,0,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="8*" MinWidth="400" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                        </ikw:SimpleStackPanel>
-                    </Border>
+                                            <ComboBox
+                                                Name="cb_SubProfilePicker"
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectionChanged="cb_SubProfilePicker_SelectionChanged" />
+
+                                            <Button
+                                                Name="b_SubProfileCreate"
+                                                Grid.Column="1"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Click="b_SubProfileCreate_Click"
+                                                Style="{DynamicResource AccentButtonStyle}">
+                                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                            </Button>
+
+                                            <Button
+                                                Name="b_SubProfileDelete"
+                                                Grid.Column="2"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Click="b_SubProfileDelete_Click">
+                                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
+                                            </Button>
+
+                                            <Button
+                                                Name="b_SubProfileRename"
+                                                Grid.Column="3"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Click="b_SubProfileRename_Click">
+                                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                            </Button>
+                                        </Grid>
+                                    </DockPanel>
+                                </Grid>
+
+                            </ikw:SimpleStackPanel>
+                        </Border>
+                    </Grid>
 
                     <ui:ContentDialog
                         Name="ProfileRenameDialog"

@@ -4,9 +4,11 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using IGDB;
+using IGDB.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;
@@ -31,7 +33,8 @@ public enum UpdateSource
     QuickProfilesCreation = 3,
     Creation = 4,
     Serializer = 5,
-    ProfilesPageUpdateOnly = 6
+    ProfilesPageUpdateOnly = 6,
+    ArtUpdateOnly = 7,
 }
 
 public enum SteeringAxis
@@ -56,6 +59,10 @@ public partial class Profile : ICloneable, IComparable
     public bool IsFavoriteSubProfile { get; set; }
 
     public Guid Guid { get; set; } = Guid.NewGuid();
+
+    // Library
+    public Game IGDB { get; set; }
+
     public string Executable { get; set; } = string.Empty;
 
     public bool Enabled { get; set; }
@@ -187,6 +194,24 @@ public partial class Profile : ICloneable, IComparable
             name = $"{name} - {Guid}";
 
         return $"{name}.json";
+    }
+
+    public static string RemoveSpecialCharacters(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        // Define a set of allowed characters (letters, digits, '.', '_', and space)
+        var allowedCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._ ");
+        var sanitizedString = new StringBuilder(input.Length);
+
+        // Iterate over each character in the input string
+        foreach (char character in input)
+            if (allowedCharacters.Contains(character))
+                sanitizedString.Append(character);
+
+        // Return the sanitized string
+        return sanitizedString.ToString();
     }
 
     public override string ToString()

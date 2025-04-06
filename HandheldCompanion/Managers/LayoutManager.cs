@@ -37,7 +37,6 @@ public class LayoutManager : IManager
 
     private const string desktopLayoutFile = "desktop";
 
-    public string LayoutsPath;
     public string TemplatesPath;
 
     public FileSystemWatcher layoutWatcher { get; set; }
@@ -45,12 +44,12 @@ public class LayoutManager : IManager
     public LayoutManager()
     {
         // initialize path(s)
-        LayoutsPath = Path.Combine(App.SettingsPath, "layouts");
+        ManagerPath = Path.Combine(App.SettingsPath, "layouts");
         TemplatesPath = Path.Combine(App.SettingsPath, "templates");
 
         // create path(s)
-        if (!Directory.Exists(LayoutsPath))
-            Directory.CreateDirectory(LayoutsPath);
+        if (!Directory.Exists(ManagerPath))
+            Directory.CreateDirectory(ManagerPath);
         if (!Directory.Exists(TemplatesPath))
             Directory.CreateDirectory(TemplatesPath);
 
@@ -85,7 +84,7 @@ public class LayoutManager : IManager
         foreach (LayoutTemplate layoutTemplate in Templates)
             Updated?.Invoke(layoutTemplate);
 
-        string desktopFile = Path.Combine(LayoutsPath, $"{desktopLayoutFile}.json");
+        string desktopFile = Path.Combine(ManagerPath, $"{desktopLayoutFile}.json");
         desktopLayout = ProcessLayout(desktopFile);
         if (desktopLayout is null)
         {
@@ -343,7 +342,7 @@ public class LayoutManager : IManager
             TypeNameHandling = TypeNameHandling.All
         });
 
-        fileName = Path.Combine(LayoutsPath, $"{fileName}.json");
+        fileName = Path.Combine(ManagerPath, $"{fileName}.json");
         if (FileUtils.IsFileWritable(fileName))
             File.WriteAllText(fileName, jsonString);
     }
