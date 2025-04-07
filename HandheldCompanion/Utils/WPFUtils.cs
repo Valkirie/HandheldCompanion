@@ -231,6 +231,8 @@ public static class WPFUtils
                 case "NavigationViewItem":
                 case "ComboBox":
                 case "ComboBoxItem":
+                case "ListView":
+                case "ListViewItem":
                 case "AppBarButton":
                 case "ToggleButton":
                 case "CheckBox":

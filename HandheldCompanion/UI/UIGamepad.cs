@@ -17,6 +17,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using Frame = iNKORE.UI.WPF.Modern.Controls.Frame;
+using ListView = System.Windows.Controls.ListView;
+using ListViewItem = System.Windows.Controls.ListViewItem;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
 
@@ -435,6 +437,11 @@ namespace HandheldCompanion.Managers
                     // pick nearest navigation element
                     return WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.controlElements);
                 }
+            }
+            else
+            {
+                // pick nearest navigation element
+                return WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
             }
 
             return null;
@@ -868,6 +875,70 @@ namespace HandheldCompanion.Managers
                                     }
                                 }
                                 return;
+
+                            case "ListView":
+                                {
+                                    ListView listView = (ListView)focusedElement;
+                                    int idx = listView.SelectedIndex;
+
+                                    if (idx != -1)
+                                    {
+                                        focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
+                                        Focus(focusedElement, listView, true);
+                                        return;
+                                    }
+                                }
+                                break;
+
+                            case "ListViewItem":
+                                {
+                                    if (focusedElement is ListViewItem listViewItem)
+                                    {
+                                        if (ItemsControl.ItemsControlFromItemContainer(focusedElement) is ListView listView)
+                                        {
+                                            int idx = listView.Items.IndexOf(listViewItem);
+                                            if (idx == -1)
+                                                idx = listView.Items.IndexOf(listViewItem.Content);
+
+                                            while (true) // Loop to skip disabled items
+                                            {
+                                                switch (direction)
+                                                {
+                                                    case WPFUtils.Direction.Up:
+                                                        idx--;
+                                                        break;
+
+                                                    case WPFUtils.Direction.Down:
+                                                        idx++;
+                                                        break;
+                                                }
+
+                                                // Ensure index is within bounds
+                                                if (idx < 0 || idx >= listView.Items.Count)
+                                                {
+                                                    focusedElement = WPFUtils.GetClosestControl<Control>(listView, _currentWindow.controlElements, direction, [typeof(Control)]);
+                                                    Focus(focusedElement);
+                                                    return;
+                                                }
+
+                                                // Get the ListViewItem at the new index
+                                                focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
+
+                                                // Check if the focused element is enabled
+                                                if (focusedElement != null && focusedElement.IsEnabled)
+                                                {
+                                                    // If the element is enabled, focus it and break out of the loop
+                                                    Focus(focusedElement, listView, true);
+                                                    break;
+                                                }
+
+                                                // If the element is not enabled, continue to the next item in the loop
+                                            }
+                                        }
+                                        return;
+                                    }
+                                }
+                                break;
 
                             case "ComboBox":
                                 {
