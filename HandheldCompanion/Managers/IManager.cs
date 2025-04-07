@@ -22,9 +22,24 @@ namespace HandheldCompanion.Managers
 
         public delegate void HaltedEventHandler();
         public event HaltedEventHandler Halted;
+
+        public delegate void StatusChangedEventHandler(ManagerStatus status);
+        public event StatusChangedEventHandler StatusChanged;
         #endregion
 
-        public ManagerStatus Status = ManagerStatus.None;
+        private ManagerStatus _Status = ManagerStatus.None;
+        public ManagerStatus Status
+        {
+            get => _Status;
+            set
+            {
+                if (_Status != value)
+                {
+                    _Status = value;
+                    StatusChanged?.Invoke(value);
+                }
+            }
+        }
         protected string ManagerPath = string.Empty;
 
         public bool IsRunning => Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized);
