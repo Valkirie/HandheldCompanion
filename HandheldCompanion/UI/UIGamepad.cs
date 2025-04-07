@@ -649,6 +649,19 @@ namespace HandheldCompanion.Managers
                             }
                             return;
                         }
+                        else if (focusedElement is ListBoxItem listBoxItem)
+                        {
+                            // get the associated ComboBox
+                            ListBox listBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ListBox;
+                            if (listBox is not null && listBox.IsEnabled)
+                            {
+                                // leave ListBox and get below control
+                                // todo: we could look for the neareast control with a specific tag, like in HTML with Submit button from a form ?
+                                focusedElement = WPFUtils.GetClosestControl<Control>(listBox, _currentWindow.controlElements, WPFUtils.Direction.Down);
+                                Focus(focusedElement);
+                            }
+                            return;
+                        }
                     }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2))
                     {
@@ -1027,6 +1040,20 @@ namespace HandheldCompanion.Managers
                         if (focusedElement is not null)
                         {
                             focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, [typeof(NavigationViewItem)]);
+                            
+                            if (focusedElement is ListView listView)
+                            {
+                                int idx = listView.SelectedIndex;
+                                if (idx == -1 && listView.Items.Count != 0) idx = 0;
+
+                                if (idx != -1)
+                                {
+                                    ListViewItem focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
+                                    Focus(focusedElement, listView, true);
+                                    return;
+                                }
+                            }
+                            
                             Focus(focusedElement);
                         }
                     }
