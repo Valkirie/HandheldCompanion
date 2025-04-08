@@ -60,6 +60,7 @@ public partial class MainWindow : GamepadWindow
     public static HotkeysPage hotkeysPage;
     public static LayoutPage layoutPage;
     public static NotificationsPage notificationsPage;
+    public static LibraryPage libraryPage;
 
     // overlay(s) vars
     public static OverlayModel overlayModel;
@@ -389,6 +390,7 @@ public partial class MainWindow : GamepadWindow
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
         notificationsPage = new NotificationsPage("notifications");
+        libraryPage = new LibraryPage("library");
 
         // manage events
         controllerPage.Loaded += ControllerPage_Loaded;
@@ -401,6 +403,7 @@ public partial class MainWindow : GamepadWindow
         _pages.Add("SettingsPage", settingsPage);
         _pages.Add("HotkeysPage", hotkeysPage);
         _pages.Add("NotificationsPage", notificationsPage);
+        _pages.Add("LibraryPage", libraryPage);
     }
 
     private void LoadPages_MVVM()
@@ -676,6 +679,7 @@ public partial class MainWindow : GamepadWindow
             hotkeysPage.Page_Closed();
             layoutPage.Page_Closed();
             notificationsPage.Page_Closed();
+            libraryPage.Page_Closed();
         });
 
         // remove all automation event handlers

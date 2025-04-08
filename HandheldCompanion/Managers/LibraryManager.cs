@@ -104,7 +104,7 @@ namespace HandheldCompanion.Managers
                     // Query IGDB using the search query.
                     Game[] games = await IGDBClient.QueryAsync<Game>(
                         IGDBClient.Endpoints.Games,
-                        query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id,screenshots.image_id,first_release_date; search \"{searchQuery}\";");
+                        query: $"fields id,name,summary,storyline,category,cover.image_id,artworks.image_id,screenshots.image_id,first_release_date; search \"{searchQuery}\";");
 
                     // If results were found, return them.
                     if (games != null && games.Length > 0)

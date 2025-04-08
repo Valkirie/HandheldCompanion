@@ -1,0 +1,106 @@
+<Page
+    x:Class="HandheldCompanion.Views.Pages.LibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    Name="About"
+    Title="{l:Static resx:Resources.MainWindow_navLibrary}"
+    d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:LibraryPageViewModel}"
+    d:DesignHeight="1000"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    mc:Ignorable="d">
+
+    <Grid Margin="20">
+        <ikw:SimpleStackPanel Spacing="6">
+            <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
+                <ui:ItemsRepeater.Layout>
+                    <ui:UniformGridLayout
+                        ItemsStretch="Uniform"
+                        MaximumRowsOrColumns="6"
+                        MinColumnSpacing="24"
+                        MinItemHeight="240"
+                        MinItemWidth="150"
+                        MinRowSpacing="24"
+                        Orientation="Horizontal" />
+                </ui:ItemsRepeater.Layout>
+
+                <ui:ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Button x:Name="ImageContainer" Padding="0">
+                            <Button.RenderTransform>
+                                <TranslateTransform />
+                            </Button.RenderTransform>
+
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                To="-3"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                To="0"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+
+                            <Grid>
+                                <Image
+                                    x:Name="MainImage"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Stretch="UniformToFill" />
+
+                                <Image
+                                    x:Name="BlurBottomImage"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Stretch="UniformToFill">
+                                    <Image.Effect>
+                                        <BlurEffect Radius="8" />
+                                    </Image.Effect>
+
+                                    <Image.OpacityMask>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Offset="0.70" Color="Transparent" />
+                                            <GradientStop Offset="0.801" Color="Black" />
+                                            <GradientStop Offset="1" Color="Black" />
+                                        </LinearGradientBrush>
+                                    </Image.OpacityMask>
+                                </Image>
+
+                                <TextBlock
+                                    Margin="12"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="{Binding Name}"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ui:ItemsRepeater.ItemTemplate>
+            </ui:ItemsRepeater>
+        </ikw:SimpleStackPanel>
+    </Grid>
+</Page>

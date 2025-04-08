@@ -2897,4 +2897,7 @@
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value />
   </data>
+  <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value />
+  </data>
 </root>

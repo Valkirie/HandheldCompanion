@@ -71,6 +71,16 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
+            <!--  Game icon  -->
+            <ui:NavigationViewItem
+                Name="navLibrary"
+                Content="{l:Static resx:Resources.MainWindow_navLibrary}"
+                Tag="LibraryPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xECAA;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <!--  Device icon  -->
             <ui:NavigationViewItem
                 Name="navDevice"

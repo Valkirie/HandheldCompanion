@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Diagnostics;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -55,6 +57,36 @@ namespace HandheldCompanion.ViewModels
                     }
                 }
                 return null;
+            }
+        }
+
+        private bool HasIGDB => Profile.IGDB is not null;
+        private long IGDBId => Profile.IGDB?.Id ?? 0;
+
+        public BitmapImage Cover
+        {
+            get
+            {
+                if (!HasIGDB)
+                    return LibraryResources.MissingCover;
+
+                return ManagerFactory.libraryManager.GetGameArt(IGDBId, LibraryManager.LibraryType.cover);
+            }
+        }
+
+        public BitmapImage Artwork
+        {
+            get
+            {
+                if (!HasIGDB)
+                    return null;
+
+                if (Profile.IGDB.Artworks is not null)
+                    return ManagerFactory.libraryManager.GetGameArt(IGDBId, LibraryManager.LibraryType.artwork);
+                else if (Profile.IGDB.Screenshots is not null)
+                    return ManagerFactory.libraryManager.GetGameArt(IGDBId, LibraryManager.LibraryType.screenshot);
+                else
+                    return null;
             }
         }
 

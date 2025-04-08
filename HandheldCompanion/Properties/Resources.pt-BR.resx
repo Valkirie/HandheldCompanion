@@ -3336,6 +3336,9 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value />
+  </data>
   <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
     <value>Orientação da tela</value>
   </data>
@@ -3351,7 +3354,7 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Torne este o layout padrão</value>
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+  <data name="MainWindow_navLibrary" xml:space="preserve">
     <value />
   </data>
 </root>

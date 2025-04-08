@@ -1,9 +1,12 @@
-﻿using IGDB.Models;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Pages;
+using IGDB.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -25,6 +28,7 @@ namespace HandheldCompanion.ViewModels
         public string Name => _Game.Name ?? string.Empty;
         public string Summary => _Game.Summary ?? string.Empty;
         public string Storyline => _Game.Storyline ?? string.Empty;
+        public Category Category => _Game.Category ?? Category.MainGame;
         public long Id => _Game.Id ?? 0;
 
         public DateTimeOffset FirstReleaseDate => _Game.FirstReleaseDate ?? DateTimeOffset.Now;
