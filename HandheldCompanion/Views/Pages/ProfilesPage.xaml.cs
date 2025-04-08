@@ -621,10 +621,7 @@ public partial class ProfilesPage : Page
                     };
 
                     WarningInfoBar.Visibility = warningVisibility;
-                    cB_Whitelist.IsEnabled = controlsEnabled;
-                    cB_Pinned.IsEnabled = controlsEnabled;
-                    cB_Suspend.IsEnabled = controlsEnabled;
-                    cB_Wrapper.IsEnabled = controlsEnabled;
+                    GlobalSettings.IsEnabled = controlsEnabled;
                     cB_Wrapper_Injection.IsEnabled = controlsEnabled;
                     cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
 

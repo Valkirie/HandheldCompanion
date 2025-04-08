@@ -436,105 +436,60 @@
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileSettings}" />
 
                     <!--  Global settings  -->
-                    <Expander
+                    <ui:SettingsExpander
                         Name="GlobalSettings"
-                        HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded">
+                        d:IsExpanded="true"
+                        Description="{l:Static resx:Resources.ProfilesPage_GlobalSettingsDesc}"
+                        Header="{l:Static resx:Resources.ProfilesPage_GlobalSettings}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE713;" />
+                        </ui:SettingsExpander.HeaderIcon>
 
-                        <Expander.Header>
-                            <DockPanel Margin="0,12,12,12">
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE713;" />
-
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_GlobalSettings}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.ProfilesPage_GlobalSettingsDesc}"
-                                        TextWrapping="Wrap" />
-                                </ikw:SimpleStackPanel>
-                            </DockPanel>
-                        </Expander.Header>
-
-                        <Expander.Content>
-                            <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard ContentAlignment="Left">
                                 <CheckBox
                                     Name="cB_Whitelist"
                                     HorizontalAlignment="Stretch"
                                     Checked="cB_Whitelist_Checked"
                                     Content="{l:Static resx:Resources.ProfilesPage_Whitelist}"
                                     Unchecked="cB_Whitelist_Checked" />
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
+                            </ui:SettingsCard>
+                            <ui:SettingsCard ContentAlignment="Left">
                                 <CheckBox
                                     Name="cB_Pinned"
                                     HorizontalAlignment="Stretch"
                                     Checked="cB_Pinned_Checked"
                                     Content="{l:Static resx:Resources.ProfilesPage_Pinned}"
                                     Unchecked="cB_Pinned_Checked" />
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
+                            </ui:SettingsCard>
+                            <ui:SettingsCard ContentAlignment="Left">
                                 <CheckBox
                                     Name="cB_Suspend"
                                     HorizontalAlignment="Stretch"
                                     Checked="cB_Suspend_Checked"
                                     Content="{l:Static resx:Resources.ProfilesPage_SuspendOnSleep}"
                                     Unchecked="cB_Suspend_Checked" />
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Text="{l:Static resx:Resources.ProfilesPage_Wrapper}" />
-
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <ComboBox
-                                            Name="cB_Wrapper"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="0"
-                                            SelectionChanged="cB_Wrapper_SelectionChanged">
-                                            <ComboBoxItem Name="cB_Wrapper_Disabled" Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
-                                            <ComboBoxItem
-                                                Name="cB_Wrapper_Injection"
-                                                Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Injection}"
-                                                IsEnabled="False" />
-                                            <ComboBoxItem
-                                                Name="cB_Wrapper_Redirection"
-                                                Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Redirection}"
-                                                IsEnabled="False" />
-                                        </ComboBox>
-                                    </DockPanel>
-                                </Grid>
-
-                            </ikw:SimpleStackPanel>
-                        </Expander.Content>
-                    </Expander>
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_Wrapper}">
+                                <ComboBox
+                                    Name="cB_Wrapper"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    SelectedIndex="0"
+                                    SelectionChanged="cB_Wrapper_SelectionChanged">
+                                    <ComboBoxItem Name="cB_Wrapper_Disabled" Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
+                                    <ComboBoxItem
+                                        Name="cB_Wrapper_Injection"
+                                        Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Injection}"
+                                        IsEnabled="False" />
+                                    <ComboBoxItem
+                                        Name="cB_Wrapper_Redirection"
+                                        Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Redirection}"
+                                        IsEnabled="False" />
+                                </ComboBox>
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
 
                     <!--  Graphics settings  -->
                     <Expander
