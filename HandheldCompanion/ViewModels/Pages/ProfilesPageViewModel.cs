@@ -312,7 +312,7 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 if (ProfilesPage.selectedProfile?.IGDB?.Id == null)
-                    return null;
+                    return LibraryResources.MissingCover;
 
                 long id = (long)ProfilesPage.selectedProfile.IGDB.Id;
                 return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.cover);
@@ -327,10 +327,12 @@ namespace HandheldCompanion.ViewModels
                     return null;
 
                 long id = (long)ProfilesPage.selectedProfile.IGDB.Id;
-                return
-                    ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.artwork) ??
-                    ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.screenshot) ??
-                    ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.cover);
+
+                if (ProfilesPage.selectedProfile.IGDB.Artworks is not null)
+                    return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.artwork);
+                else if (ProfilesPage.selectedProfile.IGDB.Screenshots is not null)
+                    return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.screenshot);
+                return null;
             }
         }
 

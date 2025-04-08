@@ -27,6 +27,10 @@ namespace HandheldCompanion.ViewModels
         public string Storyline => _Game.Storyline ?? string.Empty;
         public long Id => _Game.Id ?? 0;
 
+        public bool HasCover => _Game.Cover.Value is not null;
+        public bool HasArtworks => _Game.Artworks is not null && _Game.Artworks.Values.Count() != 0;
+        public bool HasScreenshots => _Game.Screenshots is not null && _Game.Screenshots.Values.Count() != 0;
+
         public GameViewModel(Game game)
         {
             Game = game;

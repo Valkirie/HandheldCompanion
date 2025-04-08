@@ -19,6 +19,16 @@ using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.Managers
 {
+    public static class LibraryResources
+    {
+        // GameArt
+        public static ImageBrush MissingCover = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/IGDB/MissingCover.png")))
+        {
+            Stretch = Stretch.UniformToFill,
+            Opacity = 1.0,
+        };
+    }
+
     public class LibraryManager : IManager
     {
         public enum LibraryType
@@ -42,7 +52,7 @@ namespace HandheldCompanion.Managers
         public LibraryManager()
         {
             // initialize path
-            ManagerPath = Path.Combine(App.SettingsPath, "library");
+            ManagerPath = Path.Combine(App.SettingsPath, "cache", "library");
 
             // create path
             if (!Directory.Exists(ManagerPath))
@@ -67,13 +77,12 @@ namespace HandheldCompanion.Managers
         {
             string fileName = GetGameArtPath(gameId, libraryType);
             if (!File.Exists(fileName))
-                return null;
+                return LibraryResources.MissingCover;
 
             return new ImageBrush(new BitmapImage(new Uri(fileName)))
             {
                 Stretch = Stretch.UniformToFill,
-                Opacity = 1.0,
-                ImageSource = new BitmapImage(new Uri(fileName))
+                Opacity = 1.0
             };
         }
 
