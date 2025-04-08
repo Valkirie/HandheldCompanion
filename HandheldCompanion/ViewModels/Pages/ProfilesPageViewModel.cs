@@ -121,6 +121,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private bool _isUpdatingSelection = false;
+
         public bool HasIGDBTarget => _SelectedIGDB != null;
 
         private Game _SelectedIGDB;
@@ -129,17 +131,32 @@ namespace HandheldCompanion.ViewModels
             get => _SelectedIGDB;
             set
             {
-                if (value != _SelectedIGDB && value is not null)
+                // Only update if the new value is different.
+                if (_SelectedIGDB != value)
                 {
-                    _SelectedIGDB = value;
-                    _SelectedIGDBIndex = IGDBPickers.IndexOf(IGDBPickers.First(p => p.Id == value.Id));
+                    // Prevent recursive updates.
+                    if (_isUpdatingSelection)
+                        return;
 
-                    OnPropertyChanged(nameof(SelectedIGDB));
+                    try
+                    {
+                        _isUpdatingSelection = true;
+                        _SelectedIGDB = value;
+                        if (value != null)
+                            _SelectedIGDBIndex = IGDBPickers.IndexOf(IGDBPickers.First(p => p.Id == value.Id));
+                        else
+                            _SelectedIGDBIndex = -1;
+
+                        // Notify about both properties.
+                        OnPropertyChanged(nameof(SelectedIGDB));
+                        OnPropertyChanged(nameof(SelectedIGDBIndex));
+                        OnPropertyChanged(nameof(HasIGDBTarget));
+                    }
+                    finally
+                    {
+                        _isUpdatingSelection = false;
+                    }
                 }
-                else
-                    _SelectedIGDBIndex = -1;
-
-                OnPropertyChanged(nameof(HasIGDBTarget));
             }
         }
 
@@ -149,20 +166,35 @@ namespace HandheldCompanion.ViewModels
             get => _SelectedIGDBIndex;
             set
             {
-                if (_SelectedIGDBIndex != value && value >= 0 && value < IGDBPickers.Count)
+                // Only update if index is different.
+                if (_SelectedIGDBIndex != value)
                 {
-                    _SelectedIGDBIndex = value;
-                    _SelectedIGDB = IGDBPickers[_SelectedIGDBIndex].Game;
+                    // Prevent recursive updates.
+                    if (_isUpdatingSelection)
+                        return;
 
-                    // download preview arts
-                    // ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, true);
+                    try
+                    {
+                        _isUpdatingSelection = true;
+                        _SelectedIGDBIndex = value;
+                        if (value >= 0 && value < IGDBPickers.Count)
+                            _SelectedIGDB = IGDBPickers[value].Game;
+                        else
+                            _SelectedIGDB = null;
 
-                    OnPropertyChanged(nameof(SelectedIGDBIndex));
+                        // Notify about both properties.
+                        OnPropertyChanged(nameof(SelectedIGDBIndex));
+                        OnPropertyChanged(nameof(SelectedIGDB));
+                        OnPropertyChanged(nameof(HasIGDBTarget));
+
+                        // Optionally trigger game art download here if needed.
+                        // ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, true);
+                    }
+                    finally
+                    {
+                        _isUpdatingSelection = false;
+                    }
                 }
-                else
-                    _SelectedIGDB = null;
-
-                OnPropertyChanged(nameof(HasIGDBTarget));
             }
         }
 
@@ -212,7 +244,6 @@ namespace HandheldCompanion.ViewModels
                     IGDBPickers.Add(new(game));
 
                 SelectedIGDB = ManagerFactory.libraryManager.GetGame(games, IGDBSearch);
-
             });
 
             DownloadIGDB = new DelegateCommand(async () =>
