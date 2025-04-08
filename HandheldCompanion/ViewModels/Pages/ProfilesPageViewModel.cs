@@ -6,11 +6,13 @@ using HandheldCompanion.Views.Pages;
 using IGDB;
 using IGDB.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -105,7 +107,70 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private string _IGDBSearch;
+        public string IGDBSearch
+        {
+            get => _IGDBSearch;
+            set
+            {
+                if (_IGDBSearch != value)
+                {
+                    _IGDBSearch = value;
+                    OnPropertyChanged(nameof(IGDBSearch));
+                }
+            }
+        }
+
+        public bool HasIGDBTarget => _SelectedIGDB != null;
+
+        private Game _SelectedIGDB;
+        public Game SelectedIGDB
+        {
+            get => _SelectedIGDB;
+            set
+            {
+                if (value != _SelectedIGDB && value is not null)
+                {
+                    _SelectedIGDB = value;
+                    _SelectedIGDBIndex = IGDBPickers.IndexOf(IGDBPickers.First(p => p.Id == value.Id));
+
+                    OnPropertyChanged(nameof(SelectedIGDB));
+                }
+                else
+                    _SelectedIGDBIndex = -1;
+
+                OnPropertyChanged(nameof(HasIGDBTarget));
+            }
+        }
+
+        private int _SelectedIGDBIndex;
+        public int SelectedIGDBIndex
+        {
+            get => _SelectedIGDBIndex;
+            set
+            {
+                if (_SelectedIGDBIndex != value && value >= 0 && value < IGDBPickers.Count)
+                {
+                    _SelectedIGDBIndex = value;
+                    _SelectedIGDB = IGDBPickers[_SelectedIGDBIndex].Game;
+
+                    // download preview arts
+                    // ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, true);
+
+                    OnPropertyChanged(nameof(SelectedIGDBIndex));
+                }
+                else
+                    _SelectedIGDB = null;
+
+                OnPropertyChanged(nameof(HasIGDBTarget));
+            }
+        }
+
+        public bool IGDBBusy => ManagerFactory.libraryManager.IsBusy;
+
         public ICommand RefreshIGDB { get; private set; }
+        public ICommand DisplayIGDB { get; private set; }
+        public ICommand DownloadIGDB { get; private set; }
 
         public ProfilesPageViewModel(ProfilesPage profilesPage)
         {
@@ -118,6 +183,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+            ManagerFactory.libraryManager.StatusChanged += LibraryManager_StatusChanged;
 
             _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
             _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };
@@ -125,29 +191,46 @@ namespace HandheldCompanion.ViewModels
             ProfilePickerItems.Add(_devicePresetsPickerVM);
             ProfilePickerItems.Add(_userPresetsPickerVM);
 
+            DisplayIGDB = new DelegateCommand(async () =>
+            {
+                // clear list
+                IGDBPickers.Clear();
+                SelectedIGDBIndex = -1;
+
+                IGDBSearch = ProfilesPage.selectedProfile.Name;
+                await profilesPage.IGGBDialog.ShowAsync();
+            });
+
             RefreshIGDB = new DelegateCommand(async () =>
             {
-                string name = string.Empty;
-
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    name = profilesPage.tB_ProfileName.Text;
-                });
-
-                Game[] games = await ManagerFactory.libraryManager.GetGames(name);
+                IEnumerable<Game> games = await ManagerFactory.libraryManager.GetGames(IGDBSearch);
+                if (games.Count() == 0)
+                    return;
 
                 IGDBPickers.Clear();
                 foreach (Game game in games)
                     IGDBPickers.Add(new(game));
 
-                Game game2 = await ManagerFactory.libraryManager.GetGame(name);
-                ProfilesPage.selectedProfile.IGDB = game2;
+                SelectedIGDB = ManagerFactory.libraryManager.GetGame(games, IGDBSearch);
 
-                await ManagerFactory.libraryManager.DownloadGameArts(ProfilesPage.selectedProfile.IGDB);
+            });
 
+            DownloadIGDB = new DelegateCommand(async () =>
+            {
+                // update target IGDB game
+                ProfilesPage.selectedProfile.IGDB = SelectedIGDB;
+
+                // download arts
+                await ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, false);
+
+                // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ArtUpdateOnly);
             });
+        }
+
+        private void LibraryManager_StatusChanged(ManagerStatus status)
+        {
+            OnPropertyChanged(nameof(IGDBBusy));
         }
 
         private void PowerProfileManager_Initialized()
@@ -241,6 +324,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+            ManagerFactory.libraryManager.StatusChanged -= LibraryManager_StatusChanged;
 
             base.Dispose();
         }

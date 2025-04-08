@@ -77,32 +77,44 @@ namespace HandheldCompanion.Managers
             };
         }
 
-        public async Task<Game[]> GetGames(string name)
+        public async Task<IEnumerable<Game>> GetGames(string name)
         {
             // check connection
             if (!IsConnected)
                 return Array.Empty<Game>();
 
-            // Clean the input name and convert to lowercase for case-insensitive comparison.
-            string cleanedName = RemoveSpecialCharacters(name);
+            // update status
+            AddStatus(ManagerStatus.Busy);
 
-            // Split the game name on space characters into words
-            string[] words = cleanedName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            // Try using as many words as possible, then one less, then one less, etc.
-            for (int i = words.Length; i > 0; i--)
+            try
             {
-                // Join the first i words to form the search query.
-                string searchQuery = string.Join(" ", words.Take(i));
+                // Clean the input name and convert to lowercase for case-insensitive comparison.
+                string cleanedName = RemoveSpecialCharacters(name);
 
-                // Query IGDB using the search query.
-                Game[] games = await IGDBClient.QueryAsync<Game>(
-                    IGDBClient.Endpoints.Games,
-                    query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id,screenshots.image_id; search \"{searchQuery}\";");
+                // Split the game name on space characters into words
+                string[] words = cleanedName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                // If results were found, return them.
-                if (games != null && games.Length > 0)
-                    return games;
+                // Try using as many words as possible, then one less, then one less, etc.
+                for (int i = words.Length; i > 0; i--)
+                {
+                    // Join the first i words to form the search query.
+                    string searchQuery = string.Join(" ", words.Take(i));
+
+                    // Query IGDB using the search query.
+                    Game[] games = await IGDBClient.QueryAsync<Game>(
+                        IGDBClient.Endpoints.Games,
+                        query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id,screenshots.image_id; search \"{searchQuery}\";");
+
+                    // If results were found, return them.
+                    if (games != null && games.Length > 0)
+                        return games.OrderBy(g => g.Name);
+                }
+            }
+            catch { }
+            finally
+            {
+                // update status
+                RemoveStatus(ManagerStatus.Busy);
             }
 
             // If no results were found with any substring, return an empty array.
@@ -117,8 +129,13 @@ namespace HandheldCompanion.Managers
         public async Task<Game> GetGame(string name)
         {
             // Retrieve games based on the original search logic.
-            Game[] games = await GetGames(name);
-            if (games == null || games.Length == 0)
+            IEnumerable<Game> games = await GetGames(name);
+            return GetGame(games, name);
+        }
+
+        public Game GetGame(IEnumerable<Game> games, string name)
+        {
+            if (games == null || games.Count() == 0)
                 return null;
 
             // Clean the input name and convert to lowercase for case-insensitive comparison.
@@ -144,7 +161,7 @@ namespace HandheldCompanion.Managers
             return bestGame;
         }
 
-        public async Task<bool> DownloadGameArts(Game game)
+        public async Task<bool> DownloadGameArts(Game game, bool preview)
         {
             // check connection
             if (!IsConnected)
@@ -152,31 +169,46 @@ namespace HandheldCompanion.Managers
 
             // download cover
             if (game.Cover != null && !string.IsNullOrEmpty(game.Cover.Value.ImageId))
-                await DownloadGameArt(game.Id, game.Cover.Value.ImageId, LibraryType.cover);
+                await DownloadGameArt(game.Id, game.Cover.Value.ImageId, LibraryType.cover, preview);
 
             // download artwork
             if (game.Artworks != null && game.Artworks.Values.Length > 0)
-                await DownloadGameArt(game.Id, game.Artworks.Values[0].ImageId, LibraryType.artwork);
+                await DownloadGameArt(game.Id, game.Artworks.Values[0].ImageId, LibraryType.artwork, preview);
 
             // download screenshot
             if (game.Screenshots != null && game.Screenshots.Values.Length > 0)
-                await DownloadGameArt(game.Id, game.Screenshots.Values[0].ImageId, LibraryType.screenshot);
+                await DownloadGameArt(game.Id, game.Screenshots.Values[0].ImageId, LibraryType.screenshot, preview);
 
             return true;
         }
 
-        public async Task<bool> DownloadGameArt(long? gameId, string imageId, LibraryType libraryType)
+        public async Task<bool> DownloadGameArt(long? gameId, string imageId, LibraryType libraryType, bool preview)
         {
             // check connection
             if (!IsConnected)
                 return false;
 
-            string imageUrl = ImageHelper.GetImageUrl(imageId: imageId, size: libraryType == LibraryType.cover ? ImageSize.CoverBig : ImageSize.ScreenshotHuge, retina: true);
+            ImageSize imageSize = ImageSize.CoverBig;
+            switch(libraryType)
+            {
+                case LibraryType.cover:
+                    imageSize = preview ? ImageSize.CoverSmall : ImageSize.CoverBig;
+                    break;
+                case LibraryType.artwork:
+                case LibraryType.screenshot:
+                    imageSize = preview ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
+                    break;
+            }
+
+            string imageUrl = ImageHelper.GetImageUrl(imageId: imageId, size: imageSize, retina: !preview);
             if (string.IsNullOrEmpty(imageUrl))
                 return false;
 
             try
             {
+                // update status
+                AddStatus(ManagerStatus.Busy);
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.GetAsync(imageUrl.Replace("//", "https://"));
@@ -200,6 +232,11 @@ namespace HandheldCompanion.Managers
                 }
             }
             catch { }
+            finally
+            {
+                // update status
+                RemoveStatus(ManagerStatus.Busy);
+            }
 
             return false;
         }

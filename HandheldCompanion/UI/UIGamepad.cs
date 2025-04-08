@@ -1047,11 +1047,7 @@ namespace HandheldCompanion.Managers
                                 if (idx == -1 && listView.Items.Count != 0) idx = 0;
 
                                 if (idx != -1)
-                                {
-                                    ListViewItem focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
-                                    Focus(focusedElement, listView, true);
-                                    return;
-                                }
+                                    focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
                             }
                             
                             Focus(focusedElement);

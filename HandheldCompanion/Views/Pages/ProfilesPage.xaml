@@ -140,12 +140,26 @@
                             <ColumnDefinition Width="8*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
-                        <Border
-                            Padding="15,12,12,12"
-                            Background="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                            BorderThickness="1"
-                            CornerRadius="{DynamicResource ControlCornerRadius}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="8*" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Border
+                                Padding="15,12,12,12"
+                                Background="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource ControlCornerRadius}" />
+
+                            <Button
+                                Grid.Row="1"
+                                Margin="0,6,0,0"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding DisplayIGDB}"
+                                Content="Refresh"
+                                Style="{DynamicResource AccentButtonStyle}" />
+                        </Grid>
 
                         <Border
                             Grid.Column="1"
@@ -288,25 +302,73 @@
                         </Border>
                     </Grid>
 
+                    <ui:ContentDialog Name="IGGBDialog" CloseButtonText="Close">
+                        <ikw:SimpleStackPanel
+                            Width="500"
+                            IsEnabled="{Binding IGDBBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
+                            Spacing="12">
+                            <ikw:SimpleStackPanel Spacing="6">
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="IGDB" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox
+                                        HorizontalAlignment="Stretch"
+                                        ui:ControlHelper.PlaceholderText="Search"
+                                        Text="{Binding IGDBSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <Button
+                                        Grid.Column="1"
+                                        Margin="6,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{Binding RefreshIGDB}"
+                                        Content="Search" />
+                                </Grid>
+
+                                <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IGDBBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <ListView
+                                    MaxHeight="120"
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{Binding IGDBPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedIndex="{Binding SelectedIGDBIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+
+                                    <ListView.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
+                                            <Setter Property="ToolTip" Value="{Binding Summary}" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding DownloadIGDB}"
+                                    Content="Download"
+                                    IsEnabled="{Binding HasIGDBTarget, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource AccentButtonStyle}" />
+
+                            </ikw:SimpleStackPanel>
+                        </ikw:SimpleStackPanel>
+                    </ui:ContentDialog>
+
                     <ui:ContentDialog
                         Name="ProfileRenameDialog"
                         CloseButtonClick="ProfileRenameDialog_CloseButtonClick"
                         CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
                         PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick"
                         PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
-                        <ikw:SimpleStackPanel Spacing="12">
+                        <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
                             <ikw:SimpleStackPanel Spacing="6">
                                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileRenamingDialogue_Name}" />
                                 <TextBox Name="tB_ProfileName" HorizontalAlignment="Stretch" />
-                            </ikw:SimpleStackPanel>
-
-                            <ikw:SimpleStackPanel Spacing="6">
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="IGDB" />
-                                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding IGDBPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding RefreshIGDB}"
-                                    Content="Refresh IGDB" />
                             </ikw:SimpleStackPanel>
                         </ikw:SimpleStackPanel>
                     </ui:ContentDialog>
@@ -317,13 +379,14 @@
                         CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
                         PrimaryButtonClick="SubProfileRenameDialog_PrimaryButtonClick"
                         PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
-                        <ikw:SimpleStackPanel Spacing="6">
-                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_SubProfileRenamingDialogue_Name}" />
-                            <TextBox
-                                Name="tb_SubProfileName"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                        <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
+                            <ikw:SimpleStackPanel Spacing="6">
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_SubProfileRenamingDialogue_Name}" />
+                                <TextBox
+                                    Name="tb_SubProfileName"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center" />
+                            </ikw:SimpleStackPanel>
                         </ikw:SimpleStackPanel>
                     </ui:ContentDialog>
 
