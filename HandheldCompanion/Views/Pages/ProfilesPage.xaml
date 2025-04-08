@@ -56,12 +56,17 @@
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding IGDBPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectedIndex="{Binding SelectedIGDBIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                            <ListView.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
+                                    <Setter Property="ToolTip" Value="{Binding Summary}" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <ikw:SimpleStackPanel
-                                        Width="460"
-                                        Margin="0,6,0,6"
-                                        VerticalAlignment="Center">
+                                    <ikw:SimpleStackPanel Margin="0,6,0,6" VerticalAlignment="Center">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -97,12 +102,6 @@
                                     </ikw:SimpleStackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
-
-                            <ListView.ItemContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
-                                    <Setter Property="ToolTip" Value="{Binding Summary}" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
                         </ListView>
 
                         <Button
