@@ -1,6 +1,6 @@
 namespace HandheldCompanion;
 
-public static class SentryConfig
+public static class SecretKeys
 {
     // Register at Sentry.io and paste the DSN url here
     public static string DSN_URL = "";

@@ -202,7 +202,7 @@ public partial class App : Application
 
     private void InitializeSentry()
     {
-        string url = SentryConfig.DSN_URL;
+        string url = SecretKeys.DSN_URL;
 
         if (!string.IsNullOrEmpty(url))
         {

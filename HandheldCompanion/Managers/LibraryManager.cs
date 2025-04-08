@@ -43,7 +43,7 @@ namespace HandheldCompanion.Managers
         public bool IsConnected => CheckInternetConnection();
 
         // IGDB
-        private IGDBClient IGDBClient = new IGDBClient(SentryConfig.IGDB_CLIENT_ID, SentryConfig.IGDB_CLIENT_SECRET);
+        private IGDBClient IGDBClient = new IGDBClient(SecretKeys.IGDB_CLIENT_ID, SecretKeys.IGDB_CLIENT_SECRET);
 
         public LibraryManager()
         {
