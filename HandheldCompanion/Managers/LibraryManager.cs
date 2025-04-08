@@ -22,11 +22,7 @@ namespace HandheldCompanion.Managers
     public static class LibraryResources
     {
         // GameArt
-        public static ImageBrush MissingCover = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/IGDB/MissingCover.png")))
-        {
-            Stretch = Stretch.UniformToFill,
-            Opacity = 1.0,
-        };
+        public static BitmapImage MissingCover = new BitmapImage(new Uri("pack://application:,,,/Resources/IGDB/MissingCover.png"));
     }
 
     public class LibraryManager : IManager
@@ -73,17 +69,13 @@ namespace HandheldCompanion.Managers
             return Path.Combine(ManagerPath, gameId.ToString(), imageId);
         }
 
-        public ImageBrush GetGameArt(long gameId, LibraryType libraryType)
+        public BitmapImage GetGameArt(long gameId, LibraryType libraryType)
         {
             string fileName = GetGameArtPath(gameId, libraryType);
             if (!File.Exists(fileName))
                 return LibraryResources.MissingCover;
 
-            return new ImageBrush(new BitmapImage(new Uri(fileName)))
-            {
-                Stretch = Stretch.UniformToFill,
-                Opacity = 1.0
-            };
+            return new BitmapImage(new Uri(fileName));
         }
 
         public async Task<IEnumerable<Game>> GetGames(string name)
@@ -112,7 +104,7 @@ namespace HandheldCompanion.Managers
                     // Query IGDB using the search query.
                     Game[] games = await IGDBClient.QueryAsync<Game>(
                         IGDBClient.Endpoints.Games,
-                        query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id,screenshots.image_id; search \"{searchQuery}\";");
+                        query: $"fields id,name,summary,storyline,cover.image_id,artworks.image_id,screenshots.image_id,first_release_date; search \"{searchQuery}\";");
 
                     // If results were found, return them.
                     if (games != null && games.Length > 0)

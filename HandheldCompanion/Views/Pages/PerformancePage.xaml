@@ -54,7 +54,7 @@
 
                         <Grid Grid.Column="1" Margin="12,0,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="8*" MinWidth="400" />
+                                <ColumnDefinition Width="8*" MinWidth="120" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />

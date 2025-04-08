@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 namespace HandheldCompanion.ViewModels
@@ -307,7 +308,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ImageBrush Cover
+        public BitmapImage Cover
         {
             get
             {
@@ -319,7 +320,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ImageBrush Artwork
+        public BitmapImage Artwork
         {
             get
             {

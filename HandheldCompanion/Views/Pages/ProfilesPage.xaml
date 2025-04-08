@@ -58,25 +58,39 @@
                             SelectedIndex="{Binding SelectedIGDBIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <ikw:SimpleStackPanel Margin="0,6,0,6" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding Name}" />
+                                    <ikw:SimpleStackPanel
+                                        Width="460"
+                                        Margin="0,6,0,6"
+                                        VerticalAlignment="Center">
+                                        <Grid>
+                                            <TextBlock
+                                                HorizontalAlignment="Left"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Name}" />
+
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding ReleaseDateYear}" />
+                                        </Grid>
+
                                         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Has cover"
+                                                Text="Cover"
                                                 TextWrapping="Wrap"
                                                 Visibility="{Binding HasCover, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Has artworks"
+                                                Text="Artworks"
                                                 TextWrapping="Wrap"
                                                 Visibility="{Binding HasArtworks, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Has screenshots"
+                                                Text="Screenshots"
                                                 TextWrapping="Wrap"
                                                 Visibility="{Binding HasScreenshots, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         </ikw:SimpleStackPanel>
@@ -169,7 +183,7 @@
 
                                 <Grid Grid.Column="1" Margin="12,0,0,0">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="8*" MinWidth="400" />
+                                        <ColumnDefinition Width="8*" MinWidth="140" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
@@ -219,10 +233,15 @@
                         <Border
                             Height="300"
                             Padding="15,12,12,12"
-                            Background="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                             BorderThickness="1"
                             CornerRadius="{DynamicResource ControlCornerRadius}">
+                            <Border.Background>
+                                <ImageBrush
+                                    AlignmentY="Center"
+                                    ImageSource="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Stretch="UniformToFill" />
+                            </Border.Background>
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Style.Triggers>
@@ -266,10 +285,16 @@
 
                                 <Border
                                     Padding="15,12,12,12"
-                                    Background="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                     BorderThickness="1"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}" />
+                                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                                    <Border.Background>
+                                        <ImageBrush
+                                            AlignmentY="Center"
+                                            ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
 
                                 <Button
                                     Grid.Row="1"
