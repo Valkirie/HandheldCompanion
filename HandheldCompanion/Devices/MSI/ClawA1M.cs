@@ -332,11 +332,33 @@ public class ClawA1M : IDevice
             if (device.Write(msg))
             {
                 LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
-                return true;
+
+                // sync to ROM (needed ?)
+                return SyncToROM();
             }
             else
             {
                 LogManager.LogWarning("Failed to switch controller mode to {0}", gamepadMode);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    protected bool SyncToROM()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SyncToROM };
+            if (device.Write(msg))
+            {
+                LogManager.LogInformation("Successfully synced to ROM");
+                return true;
+            }
+            else
+            {
+                LogManager.LogWarning("Failed to sync to ROM");
                 return false;
             }
         }

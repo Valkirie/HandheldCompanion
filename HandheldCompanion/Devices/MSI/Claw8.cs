@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using WindowsInput.Events;
 
@@ -126,7 +127,6 @@ public class Claw8 : ClawA1M
             }
         }
 
-        SetBatteryMaster();
         SetShiftMode(ShiftModeCalcType.Deactive);
 
         // manage events
@@ -216,30 +216,19 @@ public class Claw8 : ClawA1M
         {
             case "BatteryChargeLimit":
                 bool enabled = Convert.ToBoolean(value);
-                switch (enabled)
-                {
-                    case false:
-                        SetBatteryChargeLimit(100);
-                        break;
-                    case true:
-                        int percent = Convert.ToInt32(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
-                        SetBatteryChargeLimit(percent);
-                        break;
-                }
+                SetBatteryMaster(enabled);
                 break;
 
             case "BatteryChargeLimitPercent":
-                {
-                    int percent = Convert.ToInt32(value);
-                    SetBatteryChargeLimit(percent);
-                }
+                int percent = Convert.ToInt32(value);
+                SetBatteryChargeLimit(percent);
                 break;
         }
 
         base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 
-    private void SetBatteryMaster()
+    private void SetBatteryMaster(bool enable)
     {
         // Data block index specific to battery mode settings
         byte dataBlockIndex = 215;
@@ -247,16 +236,7 @@ public class Claw8 : ClawA1M
         // Get the current battery data (1 byte) from the device
         byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
-        {
-            data[0] = data[0].SetBit(7, true);
-            data[0] = data[0].SetBit(6, true);
-            data[0] = data[0].SetBit(5, true);
-            data[0] = data[0].SetBit(4, false);
-            data[0] = data[0].SetBit(3, false);
-            data[0] = data[0].SetBit(2, true);
-            data[0] = data[0].SetBit(1, false);
-            data[0] = data[0].SetBit(0, false);
-        }
+            data[0] = data[0].SetBit(7, enable);
 
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];
@@ -380,13 +360,13 @@ public class Claw8 : ClawA1M
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
-    public void SetFanFullSpeed(bool enabled)
+    public void SetFanFullSpeed(bool enable)
     {
         byte iDataBlockIndex = 152;
 
         byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
-            data[0] = data[0].SetBit(7, enabled);
+            data[0] = data[0].SetBit(7, enable);
 
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];
