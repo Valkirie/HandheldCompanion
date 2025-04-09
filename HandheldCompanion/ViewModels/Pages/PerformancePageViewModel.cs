@@ -911,17 +911,23 @@ namespace HandheldCompanion.ViewModels
         {
             Point point = _fanGraph.ConvertToChartValues(e.GetPosition(_fanGraph));
             ChartMovePoint(point);
+
+            e.Handled = true;
         }
 
         private void ChartTouchMove(object? sender, TouchEventArgs e)
         {
             Point point = _fanGraph.ConvertToChartValues(e.GetTouchPoint(_fanGraph).Position);
             ChartMovePoint(point);
+
             e.Handled = true;
         }
 
         private void ChartMouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (_storedChartPoint is null)
+                return;
+
             _storedChartPoint = null;
             // Temporary until view dependencies could be removed
             OnPropertyChanged("FanGraph");
@@ -929,18 +935,21 @@ namespace HandheldCompanion.ViewModels
 
         private void ChartMouseLeave(object sender, MouseEventArgs e)
         {
+            if (_storedChartPoint is null)
+                return;
+
             _storedChartPoint = null;
             // Temporary until view dependencies could be removed
             OnPropertyChanged("FanGraph");
         }
 
-        private void ChartOnDataClick(object sender, ChartPoint p)
+        private void ChartOnDataClick(object sender, ChartPoint chartPoint)
         {
-            if (p is null)
+            if (chartPoint is null)
                 return;
 
             // store current point
-            _storedChartPoint = p;
+            _storedChartPoint = chartPoint;
         }
     }
 }
