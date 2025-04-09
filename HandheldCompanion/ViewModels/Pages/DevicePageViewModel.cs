@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Watchers;
 using System;
 using System.Windows;
@@ -134,8 +135,11 @@ namespace HandheldCompanion.ViewModels
         public DevicePageViewModel()
         {
             // settings watcher
-            coreIsolationWatcher.StatusChanged += CoreIsolationWatcher_StatusChanged;
-            coreIsolationWatcher.Start();
+            if (Processor.GetCurrent() is IntelProcessor)
+            {
+                coreIsolationWatcher.StatusChanged += CoreIsolationWatcher_StatusChanged;
+                coreIsolationWatcher.Start();
+            }
 
             // manufacturer watcher
             IDevice device = IDevice.GetCurrent();
