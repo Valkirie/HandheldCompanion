@@ -486,7 +486,8 @@ namespace HandheldCompanion.ViewModels
             nameof(XPointer),
             nameof(YPointer),
             nameof(SelectedPresetIndex),
-            nameof(ProfilePickerItems)
+            nameof(ProfilePickerItems),
+            ""
         ];
 
         public PerformancePageViewModel(bool isQuickTools)
@@ -547,7 +548,6 @@ namespace HandheldCompanion.ViewModels
                     case "ConfigurableTDPOverride":
                     case "ConfigurableTDPOverrideDown":
                     case "ConfigurableTDPOverrideUp":
-                    case "":
                         return;
                 }
 
@@ -557,6 +557,7 @@ namespace HandheldCompanion.ViewModels
                     UIHelper.TryInvoke(() =>
                     {
                         _updatingFanCurveUI = true;
+
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
                             _fanGraphLineSeries.ActualValues[idx] = SelectedPreset.FanProfile.fanSpeeds[idx];
