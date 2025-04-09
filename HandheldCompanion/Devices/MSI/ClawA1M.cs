@@ -194,6 +194,15 @@ public class ClawA1M : IDevice
         if (!success)
             return false;
 
+        // make sure M1/M2 are recognized as buttons
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.Write(CLAW_SET_M1);
+            device.Write(CLAW_SET_M2);
+            SyncToROM();
+            SwitchMode(GamepadMode.MSI);
+        }
+
         // start WMI event monitor
         GetWMI();
         StartWatching();
@@ -257,6 +266,9 @@ public class ClawA1M : IDevice
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetInt("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false);
     }
+
+    protected byte[] CLAW_SET_M1 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x00, 0x7A, 0x05, 0x01, 0x00, 0x00, 0x11, 0x00];
+    protected byte[] CLAW_SET_M2 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x01, 0x1F, 0x05, 0x01, 0x00, 0x00, 0x12, 0x00];
 
     protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
@@ -332,9 +344,7 @@ public class ClawA1M : IDevice
             if (device.Write(msg))
             {
                 LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
-
-                // sync to ROM (needed ?)
-                return SyncToROM();
+                return true;
             }
             else
             {
