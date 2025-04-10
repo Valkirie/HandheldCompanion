@@ -38,7 +38,7 @@ namespace HandheldCompanion.ViewModels
         #endregion
 
         #region Power options
-        public bool HasWMIMethod => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.OEMPower);
+        public bool HasWMIMethod => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.OEMCPU);
         public int ConfigurableTDPMethod
         {
             get
@@ -76,7 +76,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                return ((ClawA2VM)CurrentDevice).GetOverBoost();
+                return CurrentDevice is ClawA1M clawA1M && clawA1M.GetOverBoost();
             }
             set
             {

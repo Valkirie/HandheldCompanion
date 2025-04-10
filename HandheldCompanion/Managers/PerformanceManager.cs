@@ -908,13 +908,7 @@ public static class PerformanceManager
 
         // immediately apply
         if (immediate)
-        {
-            int result = 0;
-            processor.SetGPUClock(StoredGfxClock, ref result);
-
-            if (result != 0)
-                LogManager.LogWarning("Failed to set requested GPU clock: {0}, error code: {1}", StoredGfxClock, result);
-        }
+            processor.SetGPUClock(StoredGfxClock);
     }
 
     private static void RequestPowerMode(Guid guid)

@@ -72,7 +72,7 @@ public class ClawA2VM : ClawA1M
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
-        Capabilities |= DeviceCapabilities.OEMPower;
+        Capabilities |= DeviceCapabilities.OEMCPU;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 

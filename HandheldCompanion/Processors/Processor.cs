@@ -21,7 +21,11 @@ public class Processor
     private static string Manufacturer;
 
     protected readonly Timer updateTimer = new() { Interval = 3000, AutoReset = true };
+
     protected bool UseOEM => (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
+
+    protected bool HasOEMCPU => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.OEMCPU);
+    protected bool HasOEMGPU => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.OEMGPU);
 
     public bool CanChangeTDP, CanChangeGPU;
     protected object updateLock = new();
@@ -72,7 +76,7 @@ public class Processor
         LogManager.LogDebug("User requested {0} TDP limit: {1}, error code: {2}", type, (uint)limit, result);
     }
 
-    public virtual void SetGPUClock(double clock, ref int result)
+    public virtual void SetGPUClock(double clock, int result = 0)
     {
         /*
          * #define ADJ_ERR_FAM_UNSUPPORTED      -1
