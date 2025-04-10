@@ -1,9 +1,10 @@
-<Page
+﻿<Page
     x:Class="HandheldCompanion.Views.Pages.DevicePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:emoji="http://schemas.inkore.net/lib/ui/wpf/emojis"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
@@ -1182,48 +1183,28 @@
                     Name="MSIClawPanel"
                     d:Background="Red"
                     d:Visibility="Visible"
-                    Spacing="6"
+                    Spacing="4"
                     Visibility="Collapsed">
-                    <Border
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
+                    <ui:SettingsCard Description="Selected the desired controller mode" Header="Controller mode">
+                        <ui:SettingsCard.HeaderIcon>
+                            <Image emoji:EmojiImage.Source="🎮" RenderOptions.BitmapScalingMode="HighQuality" />
+                        </ui:SettingsCard.HeaderIcon>
 
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE950;" />
+                        <ComboBox SelectedIndex="{Binding ClawControllerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Offline" />
+                            <ComboBoxItem Content="XInput" />
+                            <ComboBoxItem Content="DirectInput" />
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Controller mode" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Selected the desired controller mode"
-                                        TextWrapping="Wrap" />
-                                </ikw:SimpleStackPanel>
-                            </DockPanel>
+                    <ui:SettingsCard Description="Maximized the combined performance of the processor and GPU" Header="MSI OverBoost">
+                        <ui:SettingsCard.HeaderIcon>
+                            <Image emoji:EmojiImage.Source="🚀" RenderOptions.BitmapScalingMode="HighQuality" />
+                        </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox
-                                Grid.Column="1"
-                                Margin="12,0,0,0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                SelectedIndex="{Binding ClawControllerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Offline" />
-                                <ComboBoxItem Content="XInput" />
-                                <ComboBoxItem Content="DirectInput" />
-                            </ComboBox>
-                        </Grid>
-                    </Border>
+                        <ui:ToggleSwitch IsOn="{Binding ClawOverBoost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
 
                 <!--  Lenovo Legion Go  -->

@@ -115,7 +115,7 @@ public class ROGAlly : IDevice
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
-        Capabilities |= DeviceCapabilities.OEMPower;
+        Capabilities |= DeviceCapabilities.OEMCPU;
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;

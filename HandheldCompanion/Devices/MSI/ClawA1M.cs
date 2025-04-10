@@ -1,13 +1,18 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using HidLibrary;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -83,6 +88,14 @@ public class ClawA1M : IDevice
         Custom,
     }
 
+    #region imports
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
+
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
+    #endregion
+
     private ManagementEventWatcher? specialKeyWatcher;
 
     // todo: find the right value, this is placeholder
@@ -95,6 +108,11 @@ public class ClawA1M : IDevice
     protected const int PID_XINPUT = 0x1901;
     protected const int PID_DINPUT = 0x1902;
     protected const int PID_TESTING = 0x1903;
+
+    protected byte[] CLAW_SET_M1 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x00, 0x7A, 0x05, 0x01, 0x00, 0x00, 0x11, 0x00];
+    protected byte[] CLAW_SET_M2 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x01, 0x1F, 0x05, 0x01, 0x00, 0x00, 0x12, 0x00];
+
+    protected string MsIDCVarData = "DD96BAAF-145E-4F56-B1CF-193256298E99";
 
     protected int WmiMajorVersion;
     protected int WmiMinorVersion;
@@ -194,6 +212,41 @@ public class ClawA1M : IDevice
         if (!success)
             return false;
 
+        // OverBoost
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        if (uefiVariableEx != 0)
+        {
+            if (box[1] == (byte)0)
+            {
+                InitOverBoost(true);
+                SpinWait.SpinUntil(() => false, 600);
+            }
+
+            /*
+            // Check if OverBoostSup is enabled
+            bool OverBoostSup = GetOverBoostSup();
+            if (OverBoostSup)
+            {
+                // Check if OverBoost is enabled
+                bool OverBoost = GetOverBoost();
+                if (OverBoost)
+                {
+                    // disable OverBoost ?
+                }
+            }
+            */
+        }
+
+        // make sure M1/M2 are recognized as buttons
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.Write(CLAW_SET_M1);
+            device.Write(CLAW_SET_M2);
+            SyncToROM();
+            SwitchMode(GamepadMode.MSI);
+        }
+
         // start WMI event monitor
         GetWMI();
         StartWatching();
@@ -292,6 +345,71 @@ public class ClawA1M : IDevice
         base.Close();
     }
 
+    protected byte[] GetMsiDCVarData(ref int uefiVariableEx)
+    {
+        byte[] box = new byte[4096];
+        uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box);
+        return box;
+    }
+
+    protected void InitOverBoost(bool enabled)
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+
+        // set value
+        box[1] = (byte)(enabled ? 1 : 0);
+        SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+    }
+
+    public async void SetOverBoost(bool enabled)
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+
+        // set value
+        box[6] = (byte)(enabled ? 1 : 0);
+        SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = Properties.Resources.Dialog_ForceRestartTitle,
+            Content = Properties.Resources.Dialog_ForceRestartDesc,
+            DefaultButton = ContentDialogButton.Close,
+            CloseButtonText = Properties.Resources.Dialog_No,
+            PrimaryButtonText = Properties.Resources.Dialog_Yes
+        }.ShowAsync();
+
+        await dialogTask; // sync call
+
+        switch (dialogTask.Result)
+        {
+            case ContentDialogResult.Primary:
+                DeviceUtils.RestartComputer();
+                break;
+            case ContentDialogResult.Secondary:
+                break;
+        }
+    }
+
+    public bool GetOverBoost()
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        return box[6] != 0;
+    }
+
+    public bool GetOverBoostSup()
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        return box[7] != 0;
+    }
+
     protected void GetWMI()
     {
         byte iDataBlockIndex = 1;
@@ -337,6 +455,26 @@ public class ClawA1M : IDevice
             else
             {
                 LogManager.LogWarning("Failed to switch controller mode to {0}", gamepadMode);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    protected bool SyncToROM()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SyncToROM };
+            if (device.Write(msg))
+            {
+                LogManager.LogInformation("Successfully synced to ROM");
+                return true;
+            }
+            else
+            {
+                LogManager.LogWarning("Failed to sync to ROM");
                 return false;
             }
         }

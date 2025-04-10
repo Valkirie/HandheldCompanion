@@ -35,7 +35,8 @@ public enum DeviceCapabilities : ushort
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
     FanOverride = 512,
-    OEMPower = 1024,
+    OEMCPU = 1024,
+    OEMGPU = 2048,
 }
 
 public enum TDPMethod
@@ -654,7 +655,7 @@ public abstract class IDevice
                             device = new ClawA1M();
                             break;
                         case "MS-1T52":
-                            device = new Claw8();
+                            device = new ClawA2VM();
                             break;
                     }
                 }
@@ -914,6 +915,15 @@ public abstract class IDevice
     { }
 
     public virtual void set_short_limit(int limit)
+    { }
+
+    public virtual void set_min_gfxclk_freq(uint clock)
+    { }
+
+    public virtual void set_max_gfxclk_freq(uint clock)
+    { }
+
+    public virtual void set_gfx_clk(uint clock)
     { }
 
     protected virtual void SendECCommand(byte command)

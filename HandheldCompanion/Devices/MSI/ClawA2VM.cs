@@ -12,15 +12,9 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
-public class Claw8 : ClawA1M
+public class ClawA2VM : ClawA1M
 {
     #region imports
-    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
-
-    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
-
     [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int getEGmode();
 
@@ -62,7 +56,7 @@ public class Claw8 : ClawA1M
         ChangeToCurrentShiftType,
     }
 
-    public Claw8()
+    public ClawA2VM()
     {
         // device specific settings
         ProductIllustration = "device_msi_claw";
@@ -78,7 +72,7 @@ public class Claw8 : ClawA1M
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
-        Capabilities |= DeviceCapabilities.OEMPower;
+        Capabilities |= DeviceCapabilities.OEMCPU;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
@@ -114,19 +108,6 @@ public class Claw8 : ClawA1M
         if (!success)
             return false;
 
-        // OverBoost
-        byte[] box = new byte[4096];
-        int uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box);
-        if (uefiVariableEx != 0)
-        {
-            if (box[1] == (byte)0)
-            {
-                box[1] = (byte)1;
-                SetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box, uefiVariableEx);
-            }
-        }
-
-        SetBatteryMaster();
         SetShiftMode(ShiftModeCalcType.Deactive);
 
         // manage events
@@ -216,30 +197,19 @@ public class Claw8 : ClawA1M
         {
             case "BatteryChargeLimit":
                 bool enabled = Convert.ToBoolean(value);
-                switch (enabled)
-                {
-                    case false:
-                        SetBatteryChargeLimit(100);
-                        break;
-                    case true:
-                        int percent = Convert.ToInt32(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
-                        SetBatteryChargeLimit(percent);
-                        break;
-                }
+                SetBatteryMaster(enabled);
                 break;
 
             case "BatteryChargeLimitPercent":
-                {
-                    int percent = Convert.ToInt32(value);
-                    SetBatteryChargeLimit(percent);
-                }
+                int percent = Convert.ToInt32(value);
+                SetBatteryChargeLimit(percent);
                 break;
         }
 
         base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 
-    private void SetBatteryMaster()
+    private void SetBatteryMaster(bool enable)
     {
         // Data block index specific to battery mode settings
         byte dataBlockIndex = 215;
@@ -247,16 +217,7 @@ public class Claw8 : ClawA1M
         // Get the current battery data (1 byte) from the device
         byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
-        {
-            data[0] = data[0].SetBit(7, true);
-            data[0] = data[0].SetBit(6, true);
-            data[0] = data[0].SetBit(5, true);
-            data[0] = data[0].SetBit(4, false);
-            data[0] = data[0].SetBit(3, false);
-            data[0] = data[0].SetBit(2, true);
-            data[0] = data[0].SetBit(1, false);
-            data[0] = data[0].SetBit(0, false);
-        }
+            data[0] = data[0].SetBit(7, enable);
 
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];
@@ -289,23 +250,7 @@ public class Claw8 : ClawA1M
         byte currentValue = 0;
         GetBatteryChargeLimit(ref currentValue);
 
-        // Compute the new value based on the battery mode
-        /*
-        BatteryMode batteryMode = BatteryMode.Custom;
-        switch (batteryMode)
-        {
-            case BatteryMode.BestForMobility:
-                chargeLimit = 100;
-                break;
-            case BatteryMode.Balanced:
-                chargeLimit = 80;
-                break;
-            case BatteryMode.BestForBattery:
-                chargeLimit = 60;
-                break;
-        }
-        */
-
+        // Update mask
         byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
 
         // Build the complete 32-byte package
@@ -380,13 +325,13 @@ public class Claw8 : ClawA1M
         WMI.Set(Scope, Path, "Set_Data", fullPackage);
     }
 
-    public void SetFanFullSpeed(bool enabled)
+    public void SetFanFullSpeed(bool enable)
     {
         byte iDataBlockIndex = 152;
 
         byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
-            data[0] = data[0].SetBit(7, enabled);
+            data[0] = data[0].SetBit(7, enable);
 
         // Build the complete 32-byte package:
         byte[] fullPackage = new byte[32];

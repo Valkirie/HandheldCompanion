@@ -338,7 +338,7 @@ public partial class QuickDevicePage : Page
         ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
         if (IDevice.GetCurrent() is LegionGo device)
             device.SetFanFullSpeed(toggleSwitch.IsOn);
-        else if (IDevice.GetCurrent() is Claw8 claw8)
+        else if (IDevice.GetCurrent() is ClawA2VM claw8)
             claw8.SetFanFullSpeed(toggleSwitch.IsOn);
     }
 

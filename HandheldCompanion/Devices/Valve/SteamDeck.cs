@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices.Valve;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
@@ -64,6 +65,8 @@ public class SteamDeck : IDevice
         if (IsSupported)
         {
             Capabilities |= DeviceCapabilities.FanControl;
+            Capabilities |= DeviceCapabilities.OEMCPU;
+            Capabilities |= VangoghGPU.Detect() == VangoghGPU.DetectionStatus.Detected ? DeviceCapabilities.OEMGPU : DeviceCapabilities.None;
 
             bool HasBatteryChargeLimitSupport = SupportedDevice?.MaxBatteryCharge ?? false;
             if (HasBatteryChargeLimitSupport)
@@ -172,6 +175,50 @@ public class SteamDeck : IDevice
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Close();
+    }
+
+    public override void set_long_limit(int limit)
+    {
+        using (VangoghGPU? GPU = VangoghGPU.Open())
+        {
+            if (GPU is null)
+                return;
+
+            GPU.SlowTDP = (uint)limit;
+        }
+    }
+
+    public override void set_short_limit(int limit)
+    {
+        using (VangoghGPU? GPU = VangoghGPU.Open())
+        {
+            if (GPU is null)
+                return;
+
+            GPU.FastTDP = (uint)limit;
+        }
+    }
+
+    public override void set_min_gfxclk_freq(uint clock)
+    {
+        using (VangoghGPU? GPU = VangoghGPU.Open())
+        {
+            if (GPU is null)
+                return;
+
+            GPU.HardMinGfxClock = clock;
+        }
+    }
+
+    public override void set_max_gfxclk_freq(uint clock)
+    {
+        using (VangoghGPU? GPU = VangoghGPU.Open())
+        {
+            if (GPU is null)
+                return;
+
+            GPU.SoftMaxGfxClock = clock;
+        }
     }
 
     private void SetGain(ushort gain)

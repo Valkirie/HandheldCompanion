@@ -118,6 +118,28 @@ public static class ProcessUtils
         }
     }
 
+    public static string ExecutePowerShellScript(string script)
+    {
+        try
+        {
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = "powershell.exe";
+                process.StartInfo.Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit(3000);
+                return output;
+            }
+        }
+        catch { }
+
+        return string.Empty;
+    }
+
     public static string GetPathToApp(int pid)
     {
         var size = 1024;
