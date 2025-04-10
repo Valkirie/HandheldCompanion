@@ -250,23 +250,7 @@ public class ClawA2VM : ClawA1M
         byte currentValue = 0;
         GetBatteryChargeLimit(ref currentValue);
 
-        // Compute the new value based on the battery mode
-        /*
-        BatteryMode batteryMode = BatteryMode.Custom;
-        switch (batteryMode)
-        {
-            case BatteryMode.BestForMobility:
-                chargeLimit = 100;
-                break;
-            case BatteryMode.Balanced:
-                chargeLimit = 80;
-                break;
-            case BatteryMode.BestForBattery:
-                chargeLimit = 60;
-                break;
-        }
-        */
-
+        // Update mask
         byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
 
         // Build the complete 32-byte package

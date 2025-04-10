@@ -1,8 +1,11 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using HidLibrary;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -217,15 +220,24 @@ public class ClawA1M : IDevice
         if (uefiVariableEx != 0)
         {
             if (box[1] == (byte)0)
+            {
                 InitOverBoost(true);
+                SpinWait.SpinUntil(() => false, 600);
+            }
 
+            /*
             // Check if OverBoostSup is enabled
-            if (box[7] != (byte)0)
+            bool OverBoostSup = GetOverBoostSup();
+            if (OverBoostSup)
             {
                 // Check if OverBoost is enabled
-                if (box[6] != (byte)0)
-                    SetOverBoost(false);
+                bool OverBoost = GetOverBoost();
+                if (OverBoost)
+                {
+                    // disable OverBoost ?
+                }
             }
+            */
         }
 
         // make sure M1/M2 are recognized as buttons
@@ -351,10 +363,9 @@ public class ClawA1M : IDevice
         // set value
         box[1] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
     }
 
-    protected void SetOverBoost(bool enabled)
+    public async void SetOverBoost(bool enabled)
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
@@ -363,7 +374,26 @@ public class ClawA1M : IDevice
         // set value
         box[6] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = Properties.Resources.Dialog_ForceRestartTitle,
+            Content = Properties.Resources.Dialog_ForceRestartDesc,
+            DefaultButton = ContentDialogButton.Close,
+            CloseButtonText = Properties.Resources.Dialog_No,
+            PrimaryButtonText = Properties.Resources.Dialog_Yes
+        }.ShowAsync();
+
+        await dialogTask; // sync call
+
+        switch (dialogTask.Result)
+        {
+            case ContentDialogResult.Primary:
+                DeviceUtils.RestartComputer();
+                break;
+            case ContentDialogResult.Secondary:
+                break;
+        }
     }
 
     public bool GetOverBoost()
@@ -371,6 +401,13 @@ public class ClawA1M : IDevice
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
         return box[6] != 0;
+    }
+
+    public bool GetOverBoostSup()
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        return box[7] != 0;
     }
 
     protected void GetWMI()

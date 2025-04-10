@@ -72,6 +72,22 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool ClawOverBoost
+        {
+            get
+            {
+                return ((ClawA2VM)CurrentDevice).GetOverBoost();
+            }
+            set
+            {
+                if (value != ClawOverBoost)
+                {
+                    ((ClawA2VM)CurrentDevice).SetOverBoost(value);
+                    OnPropertyChanged(nameof(ClawOverBoost));
+                }
+            }
+        }
+
         #region MemoryIntegrity
         private CoreIsolationWatcher coreIsolationWatcher = new CoreIsolationWatcher();
         public bool MemoryIntegrity
