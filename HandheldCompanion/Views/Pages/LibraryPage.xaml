@@ -26,7 +26,7 @@
                         ItemsStretch="Uniform"
                         MaximumRowsOrColumns="6"
                         MinColumnSpacing="24"
-                        MinItemHeight="240"
+                        MinItemHeight="214"
                         MinItemWidth="150"
                         MinRowSpacing="24"
                         Orientation="Horizontal" />
