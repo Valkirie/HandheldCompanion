@@ -1,5 +1,8 @@
-﻿using SharpDX.Direct3D9;
+﻿using HandheldCompanion.Shared;
+using SharpDX.Direct3D9;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management;
 using System.Threading;
 using System.Timers;
@@ -54,6 +57,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private Timer BusyTimer;
         private bool busyEventRaised = false;
+
+        protected static HashSet<string> ProcessTargets = new HashSet<string>();
+        private static readonly object processTargetsLock = new object();
 
         public bool IsBusy
         {
@@ -177,6 +183,40 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (BusyTimer != null && BusyTimer.Enabled)
                 BusyTimer.Stop();
         }
+
+        /// <summary>
+        /// Terminates processes whose names appear in ProcessTargets.
+        /// </summary>
+        protected void TerminateConflictingProcesses()
+        {
+            // Attempt to obtain the lock immediately.
+            if (!Monitor.TryEnter(processTargetsLock))
+                return;
+
+            try
+            {
+                foreach (Process proc in Process.GetProcesses())
+                {
+                    if (ProcessTargets.Contains(proc.ProcessName))
+                    {
+                        proc.Kill();
+                        // Remove the target so we don't try killing it again.
+                        ProcessTargets.Remove(proc.ProcessName);
+
+                        // If all targets are handled, exit early.
+                        if (ProcessTargets.Count == 0)
+                            break;
+                    }
+
+                    LogManager.LogError("{0} was killed to restore {1} library", proc.ProcessName, this.GetType().Name);
+                }
+            }
+            finally
+            {
+                Monitor.Exit(processTargetsLock);
+            }
+        }
+
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
         {

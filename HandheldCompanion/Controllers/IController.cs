@@ -65,9 +65,9 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
             // additional buttons calculated from the above
-            ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
+            /* ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
             ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown, ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight,
-            ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
+            ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight */
         ];
 
         protected static readonly FontFamily GlyphFontFamily = new("PromptFont");

@@ -46,9 +46,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             if (ControllerManager.HasTargetController)
-            {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-            }
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)

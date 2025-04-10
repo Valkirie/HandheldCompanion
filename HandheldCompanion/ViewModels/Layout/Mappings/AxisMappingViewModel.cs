@@ -1,38 +1,29 @@
-﻿using HandheldCompanion.Actions;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
 {
     public class AxisMappingViewModel : MappingViewModel
     {
-        private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes =
-        [
-            MouseActionsType.LeftButton,
-            MouseActionsType.RightButton,
-            MouseActionsType.MiddleButton,
-            MouseActionsType.ScrollUp,
-            MouseActionsType.ScrollDown
-        ];
-
         #region Axis Action Properties
 
         // default mapping can't be shifted
         public int ShiftIndex
         {
-            get => IsInitialMapping ? 0 : Action is not null ? (int)Action.ShiftSlot : 0;
+            get => Action is not null ? (int)Action.ShiftSlot : 0;
             set
             {
-                if (IsInitialMapping)
-                    return;
-
                 if (Action is not null && value != ShiftIndex)
                 {
                     Action.ShiftSlot = (ShiftSlot)value;
@@ -40,6 +31,83 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        #region Axis2Button
+        public int Axis2ButtonDirection
+        {
+            get => (int)((Action is IActions iActions) ? iActions.motionDirection : 0);
+            set
+            {
+                if (Action is IActions iActions && value != Axis2ButtonDirection)
+                {
+                    iActions.motionDirection = (MotionDirection)value;
+                    OnPropertyChanged(nameof(Axis2ButtonDirection));
+
+                    // Cascade notifications to dependent properties
+                    OnPropertyChanged(nameof(IsLeft));
+                    OnPropertyChanged(nameof(IsRight));
+                    OnPropertyChanged(nameof(IsUp));
+                    OnPropertyChanged(nameof(IsDown));
+                }
+            }
+        }
+
+        public bool IsLeft
+        {
+            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Left);
+            set
+            {
+                if (value != IsLeft)
+                {
+                    Axis2ButtonDirection = value
+                        ? Axis2ButtonDirection | (int)MotionDirection.Left
+                        : Axis2ButtonDirection & ~(int)MotionDirection.Left;
+                }
+            }
+        }
+
+        public bool IsRight
+        {
+            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Right);
+            set
+            {
+                if (value != IsRight)
+                {
+                    Axis2ButtonDirection = value
+                        ? Axis2ButtonDirection | (int)MotionDirection.Right
+                        : Axis2ButtonDirection & ~(int)MotionDirection.Right;
+                }
+            }
+        }
+
+        public bool IsUp
+        {
+            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Up);
+            set
+            {
+                if (value != IsUp)
+                {
+                    Axis2ButtonDirection = value
+                        ? Axis2ButtonDirection | (int)MotionDirection.Up
+                        : Axis2ButtonDirection & ~(int)MotionDirection.Up;
+                }
+            }
+        }
+
+        public bool IsDown
+        {
+            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Down);
+            set
+            {
+                if (value != IsDown)
+                {
+                    Axis2ButtonDirection = value
+                        ? Axis2ButtonDirection | (int)MotionDirection.Down
+                        : Axis2ButtonDirection & ~(int)MotionDirection.Down;
+                }
+            }
+        }
+        #endregion
 
         public int Axis2AxisInnerDeadzone
         {
@@ -192,43 +260,20 @@ namespace HandheldCompanion.ViewModels
 
         private AxisStackViewModel _parentStack;
 
-        public bool IsInitialMapping { get; set; } = false;
-
         public ICommand ButtonCommand { get; private set; }
 
-        public AxisMappingViewModel(AxisStackViewModel parentStack, AxisLayoutFlags value, bool isInitialMapping = false) : base(value)
+        public Visibility TouchpadVisibility => _parentStack._touchpad ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility JoystickVisibility => _parentStack._touchpad ? Visibility.Collapsed : Visibility.Visible;
+
+        public AxisMappingViewModel(AxisStackViewModel parentStack, AxisLayoutFlags value) : base(value)
         {
             _parentStack = parentStack;
-            IsInitialMapping = isInitialMapping;
 
             ButtonCommand = new DelegateCommand(() =>
             {
-                if (IsInitialMapping)
-                    _parentStack.AddMapping();
-                else
-                {
-                    if (Action is not null) Delete();
-                    _parentStack.RemoveMapping(this);
-                }
+                if (Action is not null) Delete();
+                _parentStack.RemoveMapping(this);
             });
-
-            if (isInitialMapping)
-            {
-                var controller = ControllerManager.GetTarget();
-                if (controller is not null) UpdateController(controller);
-            }
-        }
-
-        protected override void UpdateController(IController controller)
-        {
-            var flag = (AxisLayoutFlags)Value;
-
-            IsSupported = controller.HasSourceAxis(flag);
-
-            if (IsSupported)
-            {
-                UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
-            }
         }
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)
@@ -242,18 +287,16 @@ namespace HandheldCompanion.ViewModels
                 return;
             }
 
+            // get current controller
+            IController controller = ControllerManager.GetDefault(true);
+
+            // Build Targets
+            List<MappingTargetViewModel> targets = new List<MappingTargetViewModel>();
+
             if (actionType == ActionType.Joystick)
             {
                 if (Action is null || Action is not AxisActions)
-                {
                     Action = new AxisActions();
-                }
-
-                // get current controller
-                var controller = ControllerManager.GetDefault(true);
-
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetAxis())
@@ -266,26 +309,49 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (axis == ((AxisActions)Action).Axis)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 Targets.ReplaceWith(targets);
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
+            else if (actionType == ActionType.Button)
+            {
+                if (Action is null || Action is not ButtonActions)
+                    Action = new ButtonActions() { motionThreshold = Gamepad.LeftThumbDeadZone };
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (var button in controller.GetTargetButtons())
+                {
+                    var mappingTargetVm = new MappingTargetViewModel
+                    {
+                        Tag = button,
+                        Content = controller.GetButtonName(button)
+                    };
+                    targets.Add(mappingTargetVm);
+
+                    if (button == ((ButtonActions)Action).Button)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                Targets.ReplaceWith(targets);
+                SelectedTarget = matchingTargetVm ?? Targets.First();
+            }
+            else if (actionType == ActionType.Keyboard)
+            {
+                if (Action is null || Action is not KeyboardActions)
+                    Action = new KeyboardActions { motionThreshold = Gamepad.LeftThumbDeadZone };
+
+                Targets.ReplaceWith(_keyboardKeysTargets);
+                SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
+            }
             else if (actionType == ActionType.Mouse)
             {
                 if (Action is null || Action is not MouseActions)
-                {
-                    Action = new MouseActions();
-                }
-
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
+                    Action = new MouseActions { motionThreshold = Gamepad.LeftThumbDeadZone };
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
+                foreach (var mouseType in Enum.GetValues<MouseActionsType>())
                 {
                     var mappingTargetVm = new MappingTargetViewModel
                     {
@@ -295,9 +361,7 @@ namespace HandheldCompanion.ViewModels
                     targets.Add(mappingTargetVm);
 
                     if (mouseType == ((MouseActions)Action).MouseType)
-                    {
                         matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 // Update list and selected target
@@ -307,9 +371,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Inherit)
             {
                 if (Action is null || Action is not InheritActions)
-                {
                     Action = new InheritActions();
-                }
 
                 // Update list and selected target
                 Targets.Clear();
@@ -326,6 +388,14 @@ namespace HandheldCompanion.ViewModels
 
             switch (Action.actionType)
             {
+                case ActionType.Button:
+                    ((ButtonActions)Action).Button = (ButtonFlags)SelectedTarget.Tag;
+                    break;
+
+                case ActionType.Keyboard:
+                    ((KeyboardActions)Action).Key = (VirtualKeyCode)SelectedTarget.Tag;
+                    break;
+
                 case ActionType.Joystick:
                     ((AxisActions)Action).Axis = (AxisLayoutFlags)SelectedTarget.Tag;
                     break;

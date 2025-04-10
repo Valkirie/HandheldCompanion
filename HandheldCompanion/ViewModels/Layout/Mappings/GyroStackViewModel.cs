@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -10,9 +11,9 @@ using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class AxisStackViewModel : StackViewModel
+    public class GyroStackViewModel : StackViewModel
     {
-        public ObservableCollection<AxisMappingViewModel> AxisMappings { get; private set; } = [];
+        public ObservableCollection<GyroMappingViewModel> GyroMappings { get; private set; } = [];
 
         private bool _isSupported;
         public bool IsSupported
@@ -29,24 +30,15 @@ namespace HandheldCompanion.ViewModels
         }
 
         private AxisLayoutFlags _flag;
-        public bool _touchpad;
-        public new int ActionNumber => AxisMappings.Count();
 
-        public AxisStackViewModel(AxisLayoutFlags flag, bool touchpad = false) : base(flag)
+        public GyroStackViewModel(AxisLayoutFlags flag) : base(flag)
         {
             _flag = flag;
-            _touchpad = touchpad;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(AxisMappings, new object());
+            BindingOperations.EnableCollectionSynchronization(GyroMappings, new object());
 
-            AxisMappings.Add(new AxisMappingViewModel(this, flag));
-            AxisMappings.CollectionChanged += AxisMappings_CollectionChanged;
-
-            ButtonCommand = new DelegateCommand(() =>
-            {
-                AddMapping();
-            });
+            GyroMappings.Add(new GyroMappingViewModel(flag));
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
@@ -57,48 +49,41 @@ namespace HandheldCompanion.ViewModels
                 UpdateController(ControllerManager.GetTarget());
         }
 
-        private void AxisMappings_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            // Notify that ActionNumber has changed
-            OnPropertyChanged(nameof(ActionNumber));
-        }
-
         protected override void UpdateController(IController controller)
         {
-            IsSupported = controller.HasSourceAxis(_flag);
+            IsSupported = controller.HasSourceAxis(_flag) || IDevice.GetCurrent().HasMotionSensor();
             UpdateIcon(controller.GetGlyphIconInfo(_flag, 28));
         }
 
         public override void Dispose()
         {
-            AxisMappings.CollectionChanged -= AxisMappings_CollectionChanged;
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
             ControllerManager.ControllerSelected -= UpdateController;
 
-            foreach (var buttonMapping in AxisMappings)
+            foreach (var buttonMapping in GyroMappings)
             {
                 buttonMapping.Dispose();
             }
 
-            AxisMappings.Clear();
+            GyroMappings.Clear();
 
             base.Dispose();
         }
 
         public override void AddMapping()
         {
-            AxisMappings.SafeAdd(new AxisMappingViewModel(this, _flag));
+            GyroMappings.SafeAdd(new GyroMappingViewModel(_flag));
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            AxisMappings.SafeRemove((AxisMappingViewModel)mapping);
+            GyroMappings.SafeRemove((GyroMappingViewModel)mapping);
             mapping.Dispose();
         }
 
         public void UpdateFromMapping()
         {
-            var actions = AxisMappings.Where(b => b.Action is not null)
+            var actions = GyroMappings.Where(b => b.Action is not null)
                                         .Select(b => b.Action!).ToList();
 
             if (actions.Count > 0)
@@ -115,13 +100,13 @@ namespace HandheldCompanion.ViewModels
         {
             if (layout.AxisLayout.TryGetValue(_flag, out var actions))
             {
-                foreach (var mapping in AxisMappings)
+                foreach (var mapping in GyroMappings)
                     mapping.Dispose();
 
-                var newMappings = new List<AxisMappingViewModel>();
+                var newMappings = new List<GyroMappingViewModel>();
                 foreach (var action in actions.OrderBy(a => a.ShiftSlot))
                 {
-                    var newMapping = new AxisMappingViewModel(this, _flag);
+                    var newMapping = new GyroMappingViewModel(_flag);
                     newMappings.Add(newMapping);
 
                     // Model update should not go through as on update the entire stack is being recreated
@@ -130,13 +115,7 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                AxisMappings.ReplaceWith(newMappings);
-            }
-            else if (AxisMappings.Count != 0)
-            {
-                foreach (var mapping in AxisMappings)
-                    mapping.Dispose();
-                AxisMappings.Clear();
+                GyroMappings.ReplaceWith(newMappings);
             }
         }
     }

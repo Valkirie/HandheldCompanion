@@ -57,15 +57,27 @@ public partial class QuickProfilesPage : Page
         InitializeComponent();
 
         // manage events
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
         ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
+        ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+        ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        GPUManager.Hooked += GPUManager_Hooked;
-        GPUManager.Unhooked += GPUManager_Unhooked;
+
+        // raise events
+        switch (ManagerFactory.processManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
+        }
 
         foreach (var mode in Enum.GetValues<MotionOutput>())
         {
@@ -144,18 +156,29 @@ public partial class QuickProfilesPage : Page
         ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
     }
 
+    private void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+    }
+
+    private void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
     public void Close()
     {
         // manage events
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
         ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
         ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
+        ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+        ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
-        GPUManager.Hooked -= GPUManager_Hooked;
-        GPUManager.Unhooked -= GPUManager_Unhooked;
 
         ((QuickProfilesPageViewModel)DataContext).Dispose();
 

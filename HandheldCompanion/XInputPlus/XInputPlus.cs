@@ -95,7 +95,7 @@ public static class XInputPlus
 
     static XInputPlus()
     {
-        ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
+        ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
     }
 
     // this should be handled by the installer at some point.

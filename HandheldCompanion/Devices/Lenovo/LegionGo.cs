@@ -1,13 +1,14 @@
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HidLibrary;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,132 +60,128 @@ public class LegionGo : IDevice
         GpuCurrentTemperature = 0x05050000
     }
 
-    private async Task<bool> GetFanFullSpeedAsync()
+    #region WMI
+    private bool GetFanFullSpeed()
     {
         try
         {
-            return await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_OTHER_METHOD",
+            return WMI.Call<bool>("root\\WMI",
+                "SELECT * FROM LENOVO_OTHER_METHOD",
                 "GetFeatureValue",
                 new() { { "IDs", (int)CapabilityID.FanFullSpeed } },
                 pdc => Convert.ToInt32(pdc["Value"].Value) == 1);
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in GetFanFullSpeedAsync: {0}", ex.Message);
-            return false; // or some default value
+            LogManager.LogError("Error in GetFanFullSpeed: {0}", ex.Message);
+            return false;
         }
     }
 
-    public async Task SetFanFullSpeedAsync(bool enabled)
+    public void SetFanFullSpeed(bool enabled)
     {
         try
         {
-            await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_OTHER_METHOD",
+            WMI.Call("root\\WMI",
+                "SELECT * FROM LENOVO_OTHER_METHOD",
                 "SetFeatureValue",
                 new()
                 {
                 { "IDs", (int)CapabilityID.FanFullSpeed },
-                { "value", enabled ? 1 : 0 },
+                { "value", enabled ? 1 : 0 }
                 });
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in SetFanFullSpeedAsync: {0} with status: {1}", ex.Message, enabled);
+            LogManager.LogError("Error in SetFanFullSpeed: {0}, Enabled: {1}", ex.Message, enabled);
         }
     }
 
-    private async Task SetFanTable(FanTable fanTable)
+    private void SetFanTable(FanTable fanTable)
     {
         try
         {
-            await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_FAN_METHOD",
+            WMI.Call("root\\WMI",
+                "SELECT * FROM LENOVO_FAN_METHOD",
                 "Fan_Set_Table",
                 new() { { "FanTable", fanTable.GetBytes() } });
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in SetFanTable: {0} with fanTable: {1}", ex.Message, string.Join(',', fanTable.GetBytes()));
+            LogManager.LogError("Error in SetFanTable: {0}, FanTable: {1}", ex.Message, string.Join(',', fanTable.GetBytes()));
         }
     }
 
-    public static async Task<int> GetSmartFanModeAsync()
+    private int GetSmartFanMode()
     {
         try
         {
-            return await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_GAMEZONE_DATA",
+            return WMI.Call<int>("root\\WMI",
+                "SELECT * FROM LENOVO_GAMEZONE_DATA",
                 "GetSmartFanMode",
                 [],
                 pdc => Convert.ToInt32(pdc["Data"].Value));
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in GetSmartFanModeAsync: {0}", ex.Message);
-            return -1; // or some default value
+            LogManager.LogError("Error in GetSmartFanMode: {0}", ex.Message);
+            return -1;
         }
     }
 
-    private async Task SetSmartFanMode(int fanMode)
+    private void SetSmartFanMode(int fanMode)
     {
         try
         {
-            await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_GAMEZONE_DATA",
+            WMI.Call("root\\WMI",
+                "SELECT * FROM LENOVO_GAMEZONE_DATA",
                 "SetSmartFanMode",
                 new() { { "Data", fanMode } });
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in SetSmartFanMode: {0} with fanMode: {1}", ex.Message, fanMode);
+            LogManager.LogError("Error in SetSmartFanMode: {0}, FanMode: {1}", ex.Message, fanMode);
         }
     }
 
-    public async Task SetCPUPowerLimit(CapabilityID capabilityID, int limit)
+    public void SetCPUPowerLimit(CapabilityID capabilityID, int limit)
     {
         try
         {
-            await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_OTHER_METHOD",
+            WMI.Call("root\\WMI",
+                "SELECT * FROM LENOVO_OTHER_METHOD",
                 "SetFeatureValue",
                 new()
                 {
                 { "IDs", (int)capabilityID },
-                { "value", limit },
+                { "value", limit }
                 });
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in SetCPUPowerLimit: {0} with capability: {1} and limit: {2}", ex.Message, capabilityID, limit);
+            LogManager.LogError("Error in SetCPUPowerLimit: {0}, Capability: {1}, Limit: {2}", ex.Message, capabilityID, limit);
         }
     }
 
-    // InstantBootAc (0x03010001) controls the 80% power charge limit.
-    // https://github.com/aarron-lee/LegionGoRemapper/blob/ab823f2042fc857cca856687a385a033d68c58bf/py_modules/legion_space.py#L138
-    public async Task SetBatteryChargeLimit(bool enabled)
+    public void SetBatteryChargeLimit(bool enabled)
     {
         try
         {
-            await WMI.CallAsync("root\\WMI",
-                $"SELECT * FROM LENOVO_OTHER_METHOD",
+            WMI.Call("root\\WMI",
+                "SELECT * FROM LENOVO_OTHER_METHOD",
                 "SetFeatureValue",
                 new()
                 {
                 { "IDs", (int)CapabilityID.InstantBootAc },
-                { "value", enabled ? 1 : 0 },
+                { "value", enabled ? 1 : 0 }
                 });
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error in SetBatteryChargeLimit: {0} with status: {1}", ex.Message, enabled);
+            LogManager.LogError("Error in SetBatteryChargeLimit: {0}, Enabled: {1}", ex.Message, enabled);
         }
     }
-
-    public const byte INPUT_HID_ID = 0x04;
-
-    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
+    #endregion
 
     public const int LeftJoyconIndex = 3;
     public const int RightJoyconIndex = 4;
@@ -308,36 +305,11 @@ public class LegionGo : IDevice
         if (!success)
             return false;
 
-        // initialize SapientiaUsb
-        Init();
-
-        // make sure both left and right gyros are enabled
-        SetLeftGyroStatus(1);
-        SetRightGyroStatus(1);
-
-        // make sure both left and right gyros are reporting values
-        SetGyroModeStatus(2, 1, 1);
-        SetGyroModeStatus(2, 2, 2);
-
-        // make sure both left and right gyros are reporting raw values
-        SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
-        SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
-
-        // disable QuickLightingEffect(s)
-        SetQuickLightingEffect(0, 1);
-        SetQuickLightingEffect(3, 1);
-        SetQuickLightingEffect(4, 1);
-        SetQuickLightingEffectEnable(0, false);
-        SetQuickLightingEffectEnable(3, false);
-        SetQuickLightingEffectEnable(4, false);
-
-        // get current light profile(s)
-        lightProfileL = GetCurrentLightProfile(3);
-        lightProfileR = GetCurrentLightProfile(4);
-
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -365,6 +337,55 @@ public class LegionGo : IDevice
         return true;
     }
 
+    private object controllerLock = new();
+    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
+    {
+        if (Controller is LegionController legionController)
+        {
+            lock (controllerLock)
+            {
+                // unload SapientiaUsb
+                FreeSapientiaUsb();
+            }
+        }
+    }
+
+    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+    {
+        if (Controller is LegionController legionController)
+        {
+            lock (controllerLock)
+            {
+                // initialize SapientiaUsb
+                Init();
+
+                // make sure both left and right gyros are enabled
+                SetLeftGyroStatus(1);
+                SetRightGyroStatus(1);
+
+                // make sure both left and right gyros are reporting values
+                SetGyroModeStatus(2, 1, 1);
+                SetGyroModeStatus(2, 2, 2);
+
+                // make sure both left and right gyros are reporting raw values
+                SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
+                SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+
+                // disable QuickLightingEffect(s)
+                SetQuickLightingEffect(0, 1);
+                SetQuickLightingEffect(3, 1);
+                SetQuickLightingEffect(4, 1);
+                SetQuickLightingEffectEnable(0, false);
+                SetQuickLightingEffectEnable(3, false);
+                SetQuickLightingEffectEnable(4, false);
+
+                // get current light profile(s)
+                lightProfileL = GetCurrentLightProfile(3);
+                lightProfileR = GetCurrentLightProfile(4);
+            }
+        }
+    }
+
     private void QueryPowerProfile()
     {
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
@@ -388,7 +409,7 @@ public class LegionGo : IDevice
     public override void Close()
     {
         // Reset the fan speed to default before device shutdown/restart
-        SetFanFullSpeedAsync(false);
+        SetFanFullSpeed(false);
 
         // restore default touchpad behavior
         SetTouchPadStatus(1);
@@ -402,69 +423,41 @@ public class LegionGo : IDevice
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
     }
 
     public override bool IsReady()
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid, 0);
-        foreach (HidDevice device in devices)
-        {
-            if (!device.IsConnected)
-                continue;
+        // Wait until no LegionController is currently power cycling
+        IEnumerable<LegionController> legionControllers = ControllerManager.GetPhysicalControllers<LegionController>();
+        while (legionControllers.Any(controller => ControllerManager.PowerCyclers.ContainsKey(controller.GetContainerInstanceId())))
+            Thread.Sleep(1000);
 
-            if (device.Capabilities.InputReportByteLength == 64)
-                hidDevices[INPUT_HID_ID] = device;  // HID-compliant vendor-defined device
-        }
-
-        hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
-
-        PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-        string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-
-        PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-        Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-        string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
-
-        // Legion XInput controller and other Legion devices shares the same USBHUB
-        while (ControllerManager.PowerCyclers.Count > 0)
-            Thread.Sleep(100);
-
-        return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+        return true;
     }
+
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
-            // default fanTable
-            // FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
+            // default fanTable is ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 }
 
-            FanTable fanTable = new([
-                (ushort)profile.FanProfile.fanSpeeds[1],
-                (ushort)profile.FanProfile.fanSpeeds[2],
-                (ushort)profile.FanProfile.fanSpeeds[3],
-                (ushort)profile.FanProfile.fanSpeeds[4],
-                (ushort)profile.FanProfile.fanSpeeds[5],
-                (ushort)profile.FanProfile.fanSpeeds[6],
-                (ushort)profile.FanProfile.fanSpeeds[7],
-                (ushort)profile.FanProfile.fanSpeeds[8],
-                (ushort)profile.FanProfile.fanSpeeds[9],
-                (ushort)profile.FanProfile.fanSpeeds[10],
-            ]);
+            // prepare array of fan speeds
+            ushort[] fanSpeeds = profile.FanProfile.fanSpeeds.Skip(1).Take(10).Select(speed => (ushort)speed).ToArray();
+            FanTable fanTable = new(fanSpeeds);
 
             // update fan table
-            SetFanTable(fanTable).Wait();
+            SetFanTable(fanTable);
         }
 
-        Task<int> fanModeTask = Task.Run(GetSmartFanModeAsync);
-        int fanMode = fanModeTask.Result;
-
-        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && fanMode != profile.OEMPowerMode)
-            SetSmartFanMode(profile.OEMPowerMode).Wait();
+        // get current fan mode and set it to the desired one if different
+        int currentFanMode = GetSmartFanMode();
+        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && currentFanMode != profile.OEMPowerMode)
+            SetSmartFanMode(profile.OEMPowerMode);
     }
 
     public override bool SetLedBrightness(int brightness)

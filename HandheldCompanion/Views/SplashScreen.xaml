@@ -16,7 +16,7 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid Background="#FF202020">
         <Grid
             Margin="0,0,0,32"
             HorizontalAlignment="Center"
@@ -24,11 +24,20 @@
             <TextBlock
                 FontSize="220"
                 FontWeight="Black"
-                Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                Foreground="#FFFEB635"
                 Text="HC"
                 TextAlignment="Center" />
 
-            <ui:ProgressRing Margin="0,25,25,0" HorizontalAlignment="Right" />
+            <Ellipse
+                Canvas.Left="25"
+                Canvas.Top="25"
+                Width="50"
+                Height="50"
+                Margin="0,134,16,109"
+                HorizontalAlignment="Right"
+                Fill="White"
+                Stroke="Black"
+                StrokeThickness="1" />
         </Grid>
 
         <ikw:SimpleStackPanel
@@ -37,6 +46,7 @@
             VerticalAlignment="Bottom">
             <TextBlock
                 Margin="0,0,0,-14"
+                Foreground="White"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Text="supported by"
                 TextAlignment="Right" />

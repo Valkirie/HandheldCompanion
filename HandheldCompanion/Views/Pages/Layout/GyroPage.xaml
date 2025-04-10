@@ -19,6 +19,6 @@
     <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
         <!--  GYROSCOPE  -->
         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="GYROSCOPE" />
-        <ui:ItemsRepeater ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings}" />
+        <ui:ItemsRepeater ItemTemplate="{StaticResource GyroStackTemplate}" ItemsSource="{Binding GyroMappings}" />
     </ikw:SimpleStackPanel>
 </local:ILayoutPage>

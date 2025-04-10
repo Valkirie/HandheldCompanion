@@ -1,5 +1,7 @@
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Utils;
 using System;
+using System.Numerics;
 
 namespace HandheldCompanion.Actions
 {
@@ -26,6 +28,7 @@ namespace HandheldCompanion.Actions
 
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot)
         {
+            // call parent, check shiftSlot
             base.Execute(button, value, shiftSlot);
 
             switch (this.Value)
@@ -49,6 +52,25 @@ namespace HandheldCompanion.Actions
                     }
                     break;
             }
+        }
+
+        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot)
+        {
+            // update value
+            this.Vector = layout.vector;
+
+            // call parent, check shiftSlot
+            base.Execute(layout, shiftSlot);
+
+            // skip if zero and button wasn't pressed
+            if (this.Vector == Vector2.Zero && (bool)this.Value == false)
+                return;
+
+            MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
+            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
+
+            // transition to Button Execute()
+            Execute(this.Button, value, shiftSlot);
         }
 
         public bool GetValue()

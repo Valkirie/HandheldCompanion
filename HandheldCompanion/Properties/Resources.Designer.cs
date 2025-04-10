@@ -1609,7 +1609,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch swipe.
+        ///   Looks up a localized string similar to Left-finger swipe.
         /// </summary>
         public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad {
             get {
@@ -1618,7 +1618,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch swipe.
+        ///   Looks up a localized string similar to Right-finger swipe.
         /// </summary>
         public static string Enum_DS4Controller_AxisLayoutFlags_RightPad {
             get {
@@ -1672,7 +1672,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch click.
+        ///   Looks up a localized string similar to Left-finger click.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_LeftPadClick {
             get {
@@ -1681,7 +1681,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch tap.
+        ///   Looks up a localized string similar to Left-finger touch.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch {
             get {
@@ -1690,7 +1690,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch click.
+        ///   Looks up a localized string similar to Right-finger click.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_RightPadClick {
             get {
@@ -1699,7 +1699,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch tap.
+        ///   Looks up a localized string similar to Right-finger touch.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_RightPadTouch {
             get {
@@ -1726,7 +1726,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch swipe.
+        ///   Looks up a localized string similar to Left-finger swipe.
         /// </summary>
         public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad {
             get {
@@ -1735,7 +1735,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch swipe.
+        ///   Looks up a localized string similar to Right-finger swipe.
         /// </summary>
         public static string Enum_DualSenseController_AxisLayoutFlags_RightPad {
             get {
@@ -1789,7 +1789,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch click.
+        ///   Looks up a localized string similar to Left-finger click.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_LeftPadClick {
             get {
@@ -1798,7 +1798,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-touch tap.
+        ///   Looks up a localized string similar to Left-finger touch.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch {
             get {
@@ -1807,7 +1807,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch click.
+        ///   Looks up a localized string similar to Right-finger click.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_RightPadClick {
             get {
@@ -1816,7 +1816,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multi-touch tap.
+        ///   Looks up a localized string similar to Right-finger touch.
         /// </summary>
         public static string Enum_DualSenseController_ButtonFlags_RightPadTouch {
             get {
@@ -4777,6 +4777,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle ROG XG Mobile.
+        /// </summary>
+        public static string Hotkey_XGMobile {
+            get {
+                return ResourceManager.GetString("Hotkey_XGMobile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle ROG XG Mobile state.
+        /// </summary>
+        public static string Hotkey_XGMobileDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_XGMobileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap icon {
@@ -4963,15 +4981,6 @@ namespace HandheldCompanion.Properties {
         public static string LayoutPage_SaveGameInfoLayout {
             get {
                 return ResourceManager.GetString("LayoutPage_SaveGameInfoLayout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Make this the default layout.
-        /// </summary>
-        public static string LayoutPage_SetAsDefault {
-            get {
-                return ResourceManager.GetString("LayoutPage_SetAsDefault", resourceCulture);
             }
         }
         
@@ -6173,6 +6182,51 @@ namespace HandheldCompanion.Properties {
         public static string PerformancePage_MaxCPU_Title {
             get {
                 return ResourceManager.GetString("PerformancePage_MaxCPU_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto (balanced P/E cores).
+        /// </summary>
+        public static string PerformancePage_ParkingModeAllCoresAuto {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeAllCoresAuto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefer performance cores (P-cores).
+        /// </summary>
+        public static string PerformancePage_ParkingModeAllCoresPrefECore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeAllCoresPrefECore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefer efficiency cores (E-cores).
+        /// </summary>
+        public static string PerformancePage_ParkingModeAllCoresPrefPCore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeAllCoresPrefPCore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-cores only (maximum efficiency).
+        /// </summary>
+        public static string PerformancePage_ParkingModeOnlyECore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeOnlyECore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performance cores only (maximum performance).
+        /// </summary>
+        public static string PerformancePage_ParkingModeOnlyPCore {
+            get {
+                return ResourceManager.GetString("PerformancePage_ParkingModeOnlyPCore", resourceCulture);
             }
         }
         
@@ -8974,42 +9028,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_LastChecked {
             get {
                 return ResourceManager.GetString("SettingsPage_LastChecked", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Native display orientation.
-        /// </summary>
-        public static string SettingsPage_NativeDisplayOrientation {
-            get {
-                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display&apos;s orientation to the orientation that matches your controller, then click Detect.
-        /// </summary>
-        public static string SettingsPage_NativeDisplayOrientationDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Detect.
-        /// </summary>
-        public static string SettingsPage_NativeDisplayOrientationDetect {
-            get {
-                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationDetect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not set.
-        /// </summary>
-        public static string SettingsPage_NativeDisplayOrientationNotSet {
-            get {
-                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationNotSet", resourceCulture);
             }
         }
         

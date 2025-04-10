@@ -55,7 +55,7 @@ public class ProfileManager : IManager
 
     public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -88,29 +88,43 @@ public class ProfileManager : IManager
         profileWatcher.Deleted += ProfileDeleted;
 
         // manage events
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
-        ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
+        ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
 
         // raise events
-        if (ProcessManager.IsInitialized)
+        switch (ManagerFactory.processManager.Status)
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
         }
 
         if (ControllerManager.IsInitialized)
-        {
             ControllerManager_ControllerPlugged(ControllerManager.GetTarget(), false);
-        }
 
         base.Start();
     }
 
+    private void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+    }
+
+    private void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
     public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();
@@ -120,9 +134,10 @@ public class ProfileManager : IManager
         profileWatcher.Deleted -= ProfileDeleted;
 
         // manage events
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
-        ProcessManager.ProcessStarted -= ProcessManager_ProcessStarted;
-        ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.ProcessStarted -= ProcessManager_ProcessStarted;
+        ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
         ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
 
@@ -977,8 +992,6 @@ public class ProfileManager : IManager
         foreach (var profile in profiles.Values)
             UpdateProfileWrapper(profile);
     }
-
-    public Profile? GetProfileWithDefaultLayout() => profiles.Values.FirstOrDefault(p => p.Layout.IsDefaultLayout);
 
     #region events
 

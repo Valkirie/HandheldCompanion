@@ -1,9 +1,10 @@
-<common:GamepadWindow
+﻿<common:GamepadWindow
     x:Class="HandheldCompanion.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:emoji="http://schemas.inkore.net/lib/ui/wpf/emojis"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -28,6 +29,10 @@
     Visibility="Collapsed"
     WindowState="Minimized"
     mc:Ignorable="d">
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskbarItem" />
+    </Window.TaskbarItemInfo>
 
     <ui:NavigationView
         Name="navView"

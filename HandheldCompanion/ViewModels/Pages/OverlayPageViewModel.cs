@@ -421,21 +421,53 @@ namespace HandheldCompanion.ViewModels
                 PlatformManager.LibreHardwareMonitor.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
             }
 
-            GPUManager.Hooked += GPUManager_Hooked;
-            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
 
             // raise events
-            if (GPUManager.IsInitialized)
+            switch (ManagerFactory.processManager.Status)
             {
-                GPU gpu = GPUManager.GetCurrent();
-                if (gpu is not null)
-                    GPUManager_Hooked(gpu);
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryForeground();
+                    break;
             }
 
-            if (ProcessManager.IsInitialized)
+            switch (ManagerFactory.gpuManager.Status)
             {
-                ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
+                    break;
             }
+        }
+
+        private void QueryGPU()
+        {
+            GPU gpu = GPUManager.GetCurrent();
+            if (gpu is not null)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
+        }
+
+        private void QueryForeground()
+        {
+            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+        }
+
+        private void ProcessManager_Initialized()
+        {
+            QueryForeground();
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx)

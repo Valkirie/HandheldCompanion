@@ -503,7 +503,7 @@
     <value>Resumir</value>
   </data>
   <data name="ProcessEx_processSuspend" xml:space="preserve">
-    <value>Applications</value>
+    <value>Suspender</value>
   </data>
   <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Configurações adicionais</value>
@@ -841,7 +841,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Sustentado</value>
   </data>
   <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
-    <value> W</value>
+    <value>W</value>
   </data>
   <data name="QuickProfilesPage_Create" xml:space="preserve">
     <value>Criar perfil</value>
@@ -1038,6 +1038,12 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="WarningElevated" xml:space="preserve">
     <value>Execute esta ferramenta como um Administrador para destravar estas configurações</value>
   </data>
+  <data name="ControllerPage_SteamControllerMode" xml:space="preserve">
+    <value>Modo do controle</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeDesc" xml:space="preserve">
+    <value>Alterar o modo de controle: Modo exclusivo ou modo Híbrido. Modo Exclusivo irá assegurar que das as entradas serão gerenciadas pelo Handheld Companion (HC). Modo Híbrido irá permitir que o Steam gerencie entradas para aplicações Steam e o HC gerencia entradas para as outras aplicações.</value>
+  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Configurações de controle</value>
   </data>
@@ -1183,7 +1189,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Pressione esta combinação: Windows + Shift + S</value>
   </data>
   <data name="MainWindow_navHotkeys" xml:space="preserve">
-    <value>Teclas de atalho</value>
+    <value>Teclas/Atalhos</value>
   </data>
   <data name="SettingsPage_ThemeDefault" xml:space="preserve">
     <value>Usar padrão do sistema</value>
@@ -1405,64 +1411,64 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Mínimo</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
-    <value>Custom</value>
+    <value>Personalizado</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
     <value>Externo</value>
   </data>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Desligado</value>
   </data>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
-    <value>Full</value>
+    <value>Completo</value>
   </data>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
-    <value>Minimal</value>
+    <value>Mínimo</value>
   </data>
   <data name="OverlayPage_CustomSettings" xml:space="preserve">
-    <value>Custom Settings</value>
+    <value>Configurações Personalizadas</value>
   </data>
   <data name="OverlayPage_TimeLevel" xml:space="preserve">
-    <value>Time Level</value>
+    <value>Tempo - Nível</value>
   </data>
   <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
-    <value>The level of information for your time.</value>
+    <value>O nível de informação para o seu tempo.</value>
   </data>
   <data name="OverlayPage_FPSLevel" xml:space="preserve">
-    <value>FPS Level</value>
+    <value>FPS - Nível</value>
   </data>
   <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
-    <value>The level of information for your FPS.</value>
+    <value>O nível de informação para o seu FPS.</value>
   </data>
   <data name="OverlayPage_CPULevel" xml:space="preserve">
-    <value>CPU Level</value>
+    <value>CPU - Nível</value>
   </data>
   <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
-    <value>The level of information for your CPU.</value>
+    <value>O nível de informação para o seu CPU.</value>
   </data>
   <data name="OverlayPage_RAMLevel" xml:space="preserve">
-    <value>RAM Level</value>
+    <value>RAM - Nível</value>
   </data>
   <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
-    <value>The level of information for your RAM.</value>
+    <value>O nível de informação para a sua RAM.</value>
   </data>
   <data name="OverlayPage_GPULevel" xml:space="preserve">
-    <value>GPU Level</value>
+    <value>GPU - Nível</value>
   </data>
   <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
-    <value>The level of information for your GPU.</value>
+    <value>O nível de informação para a sua GPU.</value>
   </data>
   <data name="OverlayPage_VRAMLevel" xml:space="preserve">
-    <value>VRAM Level</value>
+    <value>VRAM - Nível</value>
   </data>
   <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
-    <value>The level of information for your VRAM.</value>
+    <value>O nível de informação para a sua VRAM (Memória da GPU).</value>
   </data>
   <data name="OverlayPage_BATTLevel" xml:space="preserve">
-    <value>Battery Level</value>
+    <value>Battery - Nível</value>
   </data>
   <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
-    <value>The level of information for your battery.</value>
+    <value>O nível de informação para a sua bateria.</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>Alterar o layout do controle virtual</value>
@@ -2599,7 +2605,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Reiniciar Steam</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
-    <value>NotificaçÕes</value>
+    <value>Notificações</value>
   </data>
   <data name="NotificationsPage_NothingToSee" xml:space="preserve">
     <value>Sem notificações</value>
@@ -2636,6 +2642,12 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Selecionar um sub perfil para aplicar</value>
+  </data>
+  <data name="Hotkey_CycleSubProfile" xml:space="preserve">
+    <value>Percorrer os sub perfis</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDesc" xml:space="preserve">
+    <value>Alterna ciclicamente os sub perfis para o jogo atual</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Define a ventoinha para maior velocidade</value>
@@ -2788,81 +2800,555 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>1/1 suporta apenas Tela Cheia Exclusiva (verdadeira).</value>
   </data>
   <data name="SettingsPage_UISounds" xml:space="preserve">
-    <value>Enable UI sounds</value>
+    <value>Habilitar sons da interface</value>
   </data>
   <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
-    <value>Enable or disable UI sounds on navigation</value>
+    <value>Habilitar ou desabilitar sons da interface durante a navigação</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
-    <value>Scaling type</value>
+    <value>Tipo de escalonamento</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleTypeDesc" xml:space="preserve">
-    <value>Select scaling type to adapt the scaling aspect ratio</value>
+    <value>Selecionar o tipo de escalonamento para adaptar a proporção de dimensionamento</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
-    <value>Integer Scaling</value>
+    <value>Escalonamento por Inteiro</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
-    <value>Nearest Neighbor</value>
+    <value>Vizinho Mais Próximo</value>
   </data>
   <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
-    <value>connected to the computer</value>
+    <value>conectado(s) ao computador</value>
   </data>
   <data name="ControllerPage_VirtualDevices" xml:space="preserve">
-    <value>Virtual controller</value>
+    <value>Controle virtual</value>
   </data>
   <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
-    <value>is what the computer uses</value>
+    <value>é o que o computador usa</value>
   </data>
   <data name="ControllerPage_VirtualStatus" xml:space="preserve">
-    <value>Controller status</value>
+    <value>Status - Controle</value>
   </data>
   <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
-    <value>Change virtual controller status</value>
+    <value>Alterar o estado do controle virtual</value>
   </data>
   <data name="ControllerPage_VirtualType" xml:space="preserve">
-    <value>Controller type</value>
+    <value>Tipo - Controle</value>
   </data>
   <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
-    <value>Change virtual controller type</value>
+    <value>Alterar o tipo do controle virtual</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
-    <value>Auto Sleep Time</value>
+    <value>Tempo para Suspensão Automática</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
-    <value>Joystick Deadzone</value>
+    <value>Zona Morta de Joystick</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
-    <value>Left Legion Controller</value>
+    <value>Controle Legion Esquerdo</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
-    <value>Change settings for the left legion controller</value>
+    <value>Alterar configurações para o controle legion esquerdo</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
-    <value>Right Legion Controller</value>
+    <value>Controle Legion Direito</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
-    <value>Change settings for the right legion controller</value>
+    <value>Alterar configurações para o controle legion direito</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
-    <value>Trigger Deadzone</value>
+    <value>Zona Morta de Gatilho</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
-    <value>Trigger Margin</value>
+    <value>Margem de Gatilho</value>
+  </data>
+  <data name="DevicePage_DeviceSettings" xml:space="preserve">
+    <value>Configurações de dispositivo</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+    <value>Opa, parece que seu dispositivo ainda não é suportado. O programa pode não funcionar como esperado.</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
+    <value>Toque duplo</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_RightPadClickDown" xml:space="preserve">
+    <value>Segurar</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_RightPadTouch" xml:space="preserve">
+    <value>Tocar</value>
+  </data>
+  <data name="Enum_Input_LocalSpace" xml:space="preserve">
+    <value>Espaço local</value>
+  </data>
+  <data name="Enum_MotionInput_LocalSpace" xml:space="preserve">
+    <value>Espaço local</value>
+  </data>
+  <data name="Enum_MotionInput_LocalSpace_Desc" xml:space="preserve">
+    <value>A entrada é baseada na orientação do controle, independente do mundo do jogo ou personagem.</value>
+  </data>
+  <data name="SettingsPage_SensorCalibration" xml:space="preserve">
+    <value>Calibração de sensores</value>
+  </data>
+  <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
+    <value>Irá calibrar o seu sensor de dispositivo IMU</value>
+  </data>
+  <data name="OverlayPage_DualShock4Controller" xml:space="preserve">
+    <value>DualShock 4</value>
+  </data>
+  <data name="OverlayPage_SteamDeck" xml:space="preserve">
+    <value>Steam Deck</value>
+  </data>
+  <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
+    <value>Xbox 360</value>
+  </data>
+  <data name="ProfilesPage_RollYawAuto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheck" xml:space="preserve">
+    <value>MSI Center está em execução</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheckAction" xml:space="preserve">
+    <value>Desativar MSI Center</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheckDesc" xml:space="preserve">
+    <value>MSI Center está em execução no seu dispositivo. Isto pode interferir com a aplicação</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheckReadme" xml:space="preserve">
+    <value>Você deveria desativar o MSI Center, para que a aplicação possa executar sem conflitos ou interferências</value>
+  </data>
+  <data name="PowerProfileMSIClawBestPerformance" xml:space="preserve">
+    <value>Desempenho Extremo</value>
+  </data>
+  <data name="PowerProfileMSIClawBestPerformanceDesc" xml:space="preserve">
+    <value>O melhor desempenho do sistema para multi-tarefas e atividades intensas.</value>
+  </data>
+  <data name="PowerProfileMSIClawBetterBattery" xml:space="preserve">
+    <value>Super Bateria</value>
+  </data>
+  <data name="PowerProfileMSIClawBetterBatteryDesc" xml:space="preserve">
+    <value>A duração de bateria mais longa possível.</value>
+  </data>
+  <data name="PowerProfileMSIClawBetterPerformance" xml:space="preserve">
+    <value>Balanceado</value>
+  </data>
+  <data name="PowerProfileMSIClawBetterPerformanceDesc" xml:space="preserve">
+    <value>As melhores configurações de sistemas reconmendadas pela MSI.</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Profiles" xml:space="preserve">
+    <value>Perfis</value>
+  </data>
+  <data name="Enum_MotionOutput_Disabled" xml:space="preserve">
+    <value>Desativado</value>
+  </data>
+  <data name="Enum_MotionOutput_MoveCursor" xml:space="preserve">
+    <value>Mover Cursor</value>
+  </data>
+  <data name="Enum_MotionOutput_ScrollWheel" xml:space="preserve">
+    <value>Roda do Mouse</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_Gyroscope" xml:space="preserve">
+    <value>Giroscópico</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_Special2" xml:space="preserve">
+    <value>Especial 2</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimit" xml:space="preserve">
+    <value>Limite de Carga da Bateria</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
+    <value>Estender a vida útil da bateria definindo um nível máximo de carga para a bateria</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent_Desc" xml:space="preserve">
+    <value>Definir o percentual máximo de nível de carga para a bateria</value>
+  </data>
+  <data name="DevicePage_BatteryBypassCharging" xml:space="preserve">
+    <value>Carga de Bateria Alternativo (Bypass)</value>
+  </data>
+  <data name="DevicePage_BatteryBypassCharging_Desc" xml:space="preserve">
+    <value>Estender a vida útil de bateria configurando um limite alternativo de carga</value>
+  </data>
+  <data name="BatteryBypassPreset_Disabled" xml:space="preserve">
+    <value>Desativado</value>
+  </data>
+  <data name="BatteryBypassPreset_ResumeOnSleepShutdown" xml:space="preserve">
+    <value>Ativado (Resumir carregamento em Suspender e Desligar)</value>
+  </data>
+  <data name="BatteryBypassPreset_AlwaysOn" xml:space="preserve">
+    <value>Sempre Ligado</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBestPerformance" xml:space="preserve">
+    <value>Super Desempenho</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBestPerformanceDesc" xml:space="preserve">
+    <value>O desempenho ótimo para o Intel Core Ultra.</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterBattery" xml:space="preserve">
+    <value>Eficiência</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterBatteryDesc" xml:space="preserve">
+    <value>Menor TDP para longa duração de bateria.</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterPerformance" xml:space="preserve">
+    <value>Desempenho</value>
+  </data>
+  <data name="PowerProfileOneXPlayerX1IntelBetterPerformanceDesc" xml:space="preserve">
+    <value>Equilibra desempenho, temperatura e acústica para qualquer cenário.</value>
+  </data>
+  <data name="SettingsPage_Telemetry" xml:space="preserve">
+    <value>Telemetria</value>
+  </data>
+  <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
+    <value>Habilitar os dados de telemetria serem automaticamente enviados em caso de um travamento/encerramento inesperado</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
+    <value>Inicializando a reconfiguração do controle... Por favor, aguarde.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
+    <value>Estamos reordenando os controles para aumentar a compatibilidade dos jogos. Por favor, aguarde um momento.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
+    <value>Reordenação de controles concluída. Obrigado pela sua paciência.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
+    <value>Falhamos em reordenar seus controles. Para máxima compatibilidade, sugerimos que reinicie o Handheld Companion.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
+    <value>Uma última tentativa de reordenar os controles. Estamos fazendo o melhor possível!</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
+    <value>Quase lá! Estamos fazendo mais um ajuste para otimizar as configurações de controle.</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
+    <value>Ajustes ainda em progresso. Iremos fazer isso direito para seus jogos.</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
+    <value>Paisagem Invertido</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_FlippedPortrait" xml:space="preserve">
+    <value>Retrato Invertido</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_Landscape" xml:space="preserve">
+    <value>Paisagem</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_NotSet" xml:space="preserve">
+    <value>Não definido</value>
+  </data>
+  <data name="SettingsPage_ScreenRotation_Portrait" xml:space="preserve">
+    <value>Retrato</value>
+  </data>
+  <data name="DevicePage_DynamicLightDesc" xml:space="preserve">
+    <value>Utilizar iluminação dinâmica no meu dispositivo</value>
+  </data>
+  <data name="DevicePage_DynamicLightTitle" xml:space="preserve">
+    <value>Configurações de iluminação dinâmica</value>
+  </data>
+  <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
+    <value>Calibrar</value>
+  </data>
+  <data name="LayoutPage_Export" xml:space="preserve">
+    <value>Exportar layout</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
+    <value>Agressivo</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Disabled" xml:space="preserve">
+    <value>Desativado</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientAggressive" xml:space="preserve">
+    <value>Agressivo eficiente</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientEnabled" xml:space="preserve">
+    <value>Eficiente ativado</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Enabled" xml:space="preserve">
+    <value>Ativado</value>
+  </data>
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
+    <value>Alterar o modo de ventoinha para o modo de energia</value>
+  </data>
+  <data name="PerformancePage_FanMode_Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Aggressive" xml:space="preserve">
+    <value>Agressivo</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Default" xml:space="preserve">
+    <value>Padrão</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Quiet" xml:space="preserve">
+    <value>Quieto</value>
+  </data>
+  <data name="PerformancePage_FanMode_Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="PerformancePage_FanMode_Title" xml:space="preserve">
+    <value>Modo de Ventoinha</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
+    <value>Controla o limite de núcleos de CPU parados</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
+    <value>Contagem Máxima de CPU</value>
+  </data>
+  <data name="PerformangePage_Preset_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="PerformangePage_Preset_Description" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="PerformangePage_Preset_Name" xml:space="preserve">
+    <value>Nome do Modo de Energia</value>
+  </data>
+  <data name="PerformangePage_Preset_Rename" xml:space="preserve">
+    <value>Renomear</value>
+  </data>
+  <data name="ProfilesPage_Compatibility" xml:space="preserve">
+    <value>Configurações de compatibilidade</value>
+  </data>
+  <data name="ProfilesPage_Compatibility_Fullscreen" xml:space="preserve">
+    <value>Habilitar otimizações de tela inteira</value>
+  </data>
+  <data name="ProfilesPage_Compatibility_HighDPI" xml:space="preserve">
+    <value>Usar configurações de DPI alto</value>
+  </data>
+  <data name="ProfilesPage_Dialogue_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="ProfilesPage_Dialogue_Rename" xml:space="preserve">
+    <value>Renomear</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Desc" xml:space="preserve">
+    <value>Alterar as configurações gráficas</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Title" xml:space="preserve">
+    <value>Configurações gráficas</value>
+  </data>
+  <data name="ProfilesPage_Layout_Desc" xml:space="preserve">
+    <value>Seu layout modificado para este executável.</value>
   </data>
   <data name="ProfilesPage_NewSubProfile" xml:space="preserve">
-    <value />
+    <value>(Novo Sub Perfil)</value>
+  </data>
+  <data name="ProfilesPage_ProfileRenamingDialogue_Name" xml:space="preserve">
+    <value>Nome do Perfil</value>
+  </data>
+  <data name="ProfilesPage_SubProfileRenamingDialogue_Name" xml:space="preserve">
+    <value>Nome do Sub Perfil</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
+    <value>Efeito pré-definido</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_PresetsSelection" xml:space="preserve">
+    <value>Selecionar Efeito</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset01" xml:space="preserve">
+    <value>Monstro Desperto</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset02" xml:space="preserve">
+    <value>Luz Fluindo</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset03" xml:space="preserve">
+    <value>Brilho do Pôr do Sol</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset04" xml:space="preserve">
+    <value>Neon Colorido</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset05" xml:space="preserve">
+    <value>Sonhador</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset06" xml:space="preserve">
+    <value>Cyberpunk</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset07" xml:space="preserve">
+    <value>Colorido</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset08" xml:space="preserve">
+    <value>Clássico AOK</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset09" xml:space="preserve">
+    <value>Clássico OXP</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset10" xml:space="preserve">
+    <value>Aurora</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
+    <value>Calor do Sol</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationMaximized" xml:space="preserve">
+    <value>Maximizado</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePath" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
+    <value>A tela que exibirá as ferramentas rápidas</value>
+  </data>
+  <data name="MainWindow_TelemetryText" xml:space="preserve">
+    <value>Você autoriza o Handheld Companion reportar informações para seus próprios desenvolvedores? 
+
+Se autorizado, o HC irá enviar relatórios de erros automaticamente, incluindo dados do seu dispositivo e sistema operacional. Nenhum dado privado ou pessoal será coletado. 
+
+Esta informação permitirá a melhoria da qualidade deste sofware e priorização dos nossos esforços. Também nos ajuda a identificar configurações raras que estão causando bugs, ou afetando desempenho e estabilidadep. Esta autorização é optativa (desativada por padrão) e pode ser alterada nas configurações principais a qualquer momento.
+
+Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</value>
+  </data>
+  <data name="MainWindow_TelemetryTitle" xml:space="preserve">
+    <value>Telemetria</value>
+  </data>
+  <data name="ProfilesPage_ProfileArguments" xml:space="preserve">
+    <value>Argumentos</value>
+  </data>
+  <data name="Enum_InputsChordType_Click" xml:space="preserve">
+    <value>Click</value>
+  </data>
+  <data name="Enum_InputsChordType_Long" xml:space="preserve">
+    <value>Longo</value>
+  </data>
+  <data name="Enum_InputsChordType_None" xml:space="preserve">
+    <value>Pressione para definir a tecla de atalho</value>
+  </data>
+  <data name="Hotkey_Keystrokes" xml:space="preserve">
+    <value>Teclas pressionadas</value>
+  </data>
+  <data name="Hotkey_KeystrokesDesc" xml:space="preserve">
+    <value>Enviar uma sequência personalizada de entradas/botões de teclado</value>
+  </data>
+  <data name="Hotkey_Executable" xml:space="preserve">
+    <value>Executável</value>
+  </data>
+  <data name="Hotkey_ExecutableDesc" xml:space="preserve">
+    <value>Executar uma aplicação com os argumentos especificados</value>
+  </data>
+  <data name="Hotkey_Function" xml:space="preserve">
+    <value>Função</value>
+  </data>
+  <data name="Hotkey_FunctionDesc" xml:space="preserve">
+    <value>Alterar a tecla de atalho pressionando um botão ou uma tecla especial</value>
+  </data>
+  <data name="Hotkey_None" xml:space="preserve">
+    <value>Nenhum</value>
+  </data>
+  <data name="Hotkey_NoneDesc" xml:space="preserve">
+    <value>Alterar a tecla de atalho pressionando um botão ou uma tecla especial</value>
+  </data>
+  <data name="Hotkey_ActionCenter" xml:space="preserve">
+    <value>Abrir a Central de Ações do Windows</value>
+  </data>
+  <data name="Hotkey_ActionCenterDesc" xml:space="preserve">
+    <value>Habilitar a Central de Ações</value>
+  </data>
+  <data name="Hotkey_Settings" xml:space="preserve">
+    <value>Abrir configurações do Windows</value>
+  </data>
+  <data name="Hotkey_SettingsDesc" xml:space="preserve">
+    <value>Alterar a tecla de atalho pressionando um botão ou uma tecla especial</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacy" xml:space="preserve">
+    <value>Exibir teclado de toque (Legado)</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyDesc" xml:space="preserve">
+    <value>Alterar a tecla de atalho pressionando um botão ou uma tecla especial</value>
+  </data>
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
+    <value>Exibição na tela (OSD)</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeHybrid" xml:space="preserve">
+    <value>Híbrido</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeExclusive" xml:space="preserve">
+    <value>Exclusivo</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterBattery" xml:space="preserve">
+    <value>Power economia</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterPerformance" xml:space="preserve">
+    <value>Power equilíbrio</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BestPerformance" xml:space="preserve">
+    <value>Power premium</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BestPerformanceDesc" xml:space="preserve">
+    <value>28W TDP</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterBatteryDesc" xml:space="preserve">
+    <value>15W TDP</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterPerformanceDesc" xml:space="preserve">
+    <value>22W TDP</value>
+  </data>
+  <data name="ProfilesPage_AFMF" xml:space="preserve">
+    <value>AMD Fluid Motion Frames</value>
+  </data>
+  <data name="ProfilesPage_AFMFDesc" xml:space="preserve">
+    <value>Melhorar desempenho utilizando a tecnologia de geração de frames para aumentar o FPS além do limite no jogo, resultado numa experiência mais suave</value>
+  </data>
+  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
+    <value>Modos de energia (Conectado)</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsPlugged" xml:space="preserve">
+    <value>NÃO USADO</value>
+  </data>
+  <data name="Hotkey_muteVolume" xml:space="preserve">
+    <value>Volume Mudo</value>
+  </data>
+  <data name="Hotkey_muteVolumeDesc" xml:space="preserve">
+    <value>Ativar/desativar mudo no volume</value>
+  </data>
+  <data name="Hotkey_GameBar" xml:space="preserve">
+    <value>Abrir Game Bar</value>
+  </data>
+  <data name="Hotkey_GameBarDesc" xml:space="preserve">
+    <value>Pressione essa combinação de teclas: Windows + G</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B5" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B6" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B7" xml:space="preserve">
+    <value>C3</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B8" xml:space="preserve">
+    <value>C4</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B9" xml:space="preserve">
+    <value>T1</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B10" xml:space="preserve">
+    <value>T2</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B11" xml:space="preserve">
+    <value>T3</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_L5" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="ProfilesPage_Pinned" xml:space="preserve">
+    <value>Exibir o perfil na seção de Início Rápido da página de Aplicativos das Ferramentas Rápidas</value>
+  </data>
+  <data name="Hotkey_SwapScreen" xml:space="preserve">
+    <value>Alternar janela ativa</value>
+  </data>
+  <data name="Hotkey_SwapScreenDesc" xml:space="preserve">
+    <value>Mover a janela ativa para a próxima tela disponível</value>
+  </data>
+  <data name="Controller_Calibrate" xml:space="preserve">
+    <value>Calibrar</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value />
+    <value>Tentativa {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value>Opções de bateria</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
+    <value>Nível máximo de carga da bateria</value>
+  </data>
+  <data name="Hotkey_XGMobile" xml:space="preserve">
     <value />
   </data>
-  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
   </data>
 </root>

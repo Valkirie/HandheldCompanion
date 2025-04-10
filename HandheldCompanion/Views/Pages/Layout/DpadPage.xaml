@@ -17,11 +17,11 @@
     mc:Ignorable="d">
 
     <!--  DIRECTIONAL PAD  -->
-    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DPadPage_DPad}" />
         <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ButtonStacks}">
             <ui:ItemsRepeater.Layout>
-                <ui:StackLayout Spacing="6" />
+                <ui:StackLayout Orientation="Vertical" Spacing="6" />
             </ui:ItemsRepeater.Layout>
         </ui:ItemsRepeater>
     </ikw:SimpleStackPanel>

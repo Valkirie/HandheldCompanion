@@ -2,6 +2,7 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Commands;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -58,6 +59,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool IsReady => ManagerFactory.processManager.IsReady;
+
         public QuickApplicationsPageViewModel()
         {
             // Enable thread-safe access to the collection
@@ -67,12 +70,34 @@ namespace HandheldCompanion.ViewModels
             RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
 
             // manage events
-            ProcessManager.ProcessStarted += ProcessStarted;
-            ProcessManager.ProcessStopped += ProcessStopped;
+            ManagerFactory.processManager.ProcessStarted += ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped += ProcessStopped;
+
+            // raise events
+            switch (ManagerFactory.processManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryForeground();
+                    break;
+            }
 
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+        }
+
+        private void QueryForeground()
+        {
+            OnPropertyChanged(nameof(IsReady));
+        }
+
+        private void ProcessManager_Initialized()
+        {
+            QueryForeground();
         }
 
         private void ProfileManager_Deleted(Profile profile)
@@ -99,7 +124,7 @@ namespace HandheldCompanion.ViewModels
             if (foundProfile is null)
             {
                 if (profile.IsPinned)
-                    Profiles.SafeAdd(new ProfileViewModel(profile, this));
+                    Profiles.SafeAdd(new ProfileViewModel(profile));
             }
             else
             {
@@ -149,8 +174,9 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             // manage events
-            ProcessManager.ProcessStarted -= ProcessStarted;
-            ProcessManager.ProcessStopped -= ProcessStopped;
+            ManagerFactory.processManager.ProcessStarted -= ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped -= ProcessStopped;
+            ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
 

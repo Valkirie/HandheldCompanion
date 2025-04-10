@@ -21,13 +21,13 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using System.Windows.Shell;
 using Windows.UI.ViewManagement;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
@@ -107,9 +107,6 @@ public partial class MainWindow : GamepadWindow
         // used by system manager, controller manager
         uiSettings = new UISettings();
 
-        // fix touch support
-        TabletDeviceCollection tabletDevices = Tablet.TabletDevices;
-
         // define current directory
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
@@ -184,32 +181,30 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
+        // prepare toast manager
         ToastManager.Start();
 
-        // non-STA threads
+        // start non-static managers
+        foreach (IManager manager in ManagerFactory.Managers)
+            Task.Run(() => manager.Start());
+
+        // start static managers
+        // todo: make them non-static
         List<Task> tasks = new List<Task>
         {
             Task.Run(() => OSDManager.Start()),
-            Task.Run(() => ManagerFactory.layoutManager.Start()),
             Task.Run(() => SystemManager.Start()),
             Task.Run(() => DynamicLightingManager.Start()),
             Task.Run(() => VirtualManager.Start()),
             Task.Run(() => SensorsManager.Start()),
-            Task.Run(() => ManagerFactory.hotkeysManager.Start()),
-            Task.Run(() => ManagerFactory.profileManager.Start()),
-            Task.Run(() => ManagerFactory.powerProfileManager.Start()),
-            Task.Run(() => GPUManager.Start()),
-            Task.Run(() => ManagerFactory.multimediaManager.Start()),
             Task.Run(() => ControllerManager.Start()),
-            Task.Run(() => ManagerFactory.deviceManager.Start()),
             Task.Run(() => PlatformManager.Start()),
-            Task.Run(() => ProcessManager.Start()),
             Task.Run(() => TaskManager.Start(CurrentExe)),
             Task.Run(() => PerformanceManager.Start()),
             Task.Run(() => UpdateManager.Start())
         };
 
-        // those managers can't be threaded
+        // start non-threaded managers
         InputsManager.Start();
         TimerManager.Start();
         ManagerFactory.settingsManager.Start();
@@ -360,6 +355,26 @@ public partial class MainWindow : GamepadWindow
         return CurrentWindow;
     }
 
+    public void UpdateTaskbarState(TaskbarItemProgressState state)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.TaskbarItem.ProgressState = state;
+        });
+    }
+
+    public void UpdateTaskbarProgress(double value)
+    {
+        if (value < 0 || value > 1) return;
+
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.TaskbarItem.ProgressValue = value;
+        });
+    }
+
     private void loadPages()
     {
         // initialize pages
@@ -496,7 +511,7 @@ public partial class MainWindow : GamepadWindow
                         InputsManager.Start();
                         TimerManager.Start();
                         SensorsManager.Resume(true);
-                        GPUManager.Start();
+                        ManagerFactory.gpuManager.Start();
                         PerformanceManager.Resume(true);
 
                         // resume platform(s)
@@ -535,7 +550,7 @@ public partial class MainWindow : GamepadWindow
                         pendingTime = DateTime.Now;
 
                         // suspend manager(s)
-                        GPUManager.Stop();
+                        ManagerFactory.gpuManager.Stop();
                         VirtualManager.Suspend(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();
@@ -616,8 +631,14 @@ public partial class MainWindow : GamepadWindow
         TryGoBack();
     }
 
-    private void Window_Closed(object sender, EventArgs e)
+    private async void Window_Closed(object sender, EventArgs e)
     {
+        LogManager.LogInformation("Closing {0}", Title);
+
+        // wait until all managers have initialized
+        while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+            await Task.Delay(250).ConfigureAwait(false);
+
         CurrentDevice.Close();
 
         notifyIcon.Visible = false;
@@ -629,40 +650,40 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
         ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
 
-        // stop windows
-        overlayModel.Close(true);
-        overlayTrackpad.Close();
-        overlayquickTools.Close(true);
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            // stop windows
+            overlayModel.Close(true);
+            overlayTrackpad.Close();
+            overlayquickTools.Close(true);
 
-        // stop pages
-        controllerPage.Page_Closed();
-        profilesPage.Page_Closed();
-        settingsPage.Page_Closed();
-        overlayPage.Page_Closed();
-        hotkeysPage.Page_Closed();
-        layoutPage.Page_Closed();
-        notificationsPage.Page_Closed();
+            // stop pages
+            controllerPage.Page_Closed();
+            profilesPage.Page_Closed();
+            settingsPage.Page_Closed();
+            overlayPage.Page_Closed();
+            hotkeysPage.Page_Closed();
+            layoutPage.Page_Closed();
+            notificationsPage.Page_Closed();
+        });
 
         // remove all automation event handlers
-        Automation.RemoveAllEventHandlers();
+        // Automation.RemoveAllEventHandlers();
+
+        foreach (IManager manager in ManagerFactory.Managers)
+            manager.Stop();
 
         // stop managers
         VirtualManager.Stop();
-        ManagerFactory.multimediaManager.Stop();
-        GPUManager.Stop();
         MotionManager.Stop();
         SensorsManager.Stop();
         ControllerManager.Stop();
         InputsManager.Stop(true);
-        ManagerFactory.deviceManager.Stop();
         PlatformManager.Stop();
         OSDManager.Stop();
-        ManagerFactory.powerProfileManager.Stop();
-        ManagerFactory.profileManager.Stop();
-        ManagerFactory.layoutManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();
-        ProcessManager.Stop();
         ToastManager.Stop();
         TaskManager.Stop();
         PerformanceManager.Stop();
@@ -683,8 +704,8 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Maximized:
                 ManagerFactory.settingsManager.SetProperty("MainWindowLeft", 0);
                 ManagerFactory.settingsManager.SetProperty("MainWindowTop", 0);
-                ManagerFactory.settingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
-                ManagerFactory.settingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
+                // ManagerFactory.settingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
+                // ManagerFactory.settingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
                 break;
         }
 
@@ -707,7 +728,8 @@ public partial class MainWindow : GamepadWindow
         {
             case WindowState.Minimized:
                 {
-                    notifyIcon.Visible = true;
+                    if (notifyIcon is not null)
+                        notifyIcon.Visible = true;
                     ShowInTaskbar = false;
 
                     if (!NotifyInTaskbar)
@@ -720,7 +742,8 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Normal:
             case WindowState.Maximized:
                 {
-                    notifyIcon.Visible = false;
+                    if (notifyIcon is not null)
+                        notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
                     Activate();

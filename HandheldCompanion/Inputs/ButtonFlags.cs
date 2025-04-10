@@ -22,6 +22,7 @@ public enum ButtonFlags : byte
     L1 = 9,
     R1 = 10,
 
+    // UI only
     [Description("Soft pull")] L2Soft = 11,
     [Description("Soft pull")] R2Soft = 12,
     [Description("Full pull")] L2Full = 44,
@@ -36,11 +37,13 @@ public enum ButtonFlags : byte
     B7 = 19,
     B8 = 20,
 
+    // UI only
     [Description("Up")] LeftStickUp = 21,
     [Description("Down")] LeftStickDown = 22,
     [Description("Left")] LeftStickLeft = 23,
     [Description("Right")] LeftStickRight = 24,
 
+    // UI only
     [Description("Up")] RightStickUp = 25,
     [Description("Down")] RightStickDown = 26,
     [Description("Left")] RightStickLeft = 27,

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using System;
@@ -15,8 +16,6 @@ namespace HandheldCompanion.ViewModels
 {
     public class ProfileViewModel : BaseViewModel
     {
-        QuickApplicationsPageViewModel PageViewModel;
-
         public ICommand StartProcessCommand { get; private set; }
 
         private Profile _Profile;
@@ -60,13 +59,12 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ProfileViewModel(Profile profile, QuickApplicationsPageViewModel pageViewModel)
+        public ProfileViewModel(Profile profile)
         {
             Profile = profile;
-            PageViewModel = pageViewModel;
 
-            ProcessManager.ProcessStarted += (processEx, onStartup) => ProcessManager_Changes();
-            ProcessManager.ProcessStopped += (processEx) => ProcessManager_Changes();
+            ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
             StartProcessCommand = new DelegateCommand(async () =>
             {
@@ -117,9 +115,31 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
-        private void ProcessManager_Changes()
+        private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
-            OnPropertyChanged(nameof(IsAvailable));
+            ProcessManager_Changes(processEx.Path);
+        }
+
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        {
+            ProcessManager_Changes(processEx.Path);
+        }
+
+        public override void Dispose()
+        {
+            ManagerFactory.processManager.ProcessStarted -= ProcessManager_ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
+
+            // dispose commands
+            StartProcessCommand = null;
+
+            base.Dispose();
+        }
+
+        private void ProcessManager_Changes(string path)
+        {
+            if (path.Equals(Profile.Path))
+                OnPropertyChanged(nameof(IsAvailable));
         }
     }
 }

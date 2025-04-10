@@ -8,14 +8,16 @@ namespace HandheldCompanion.Actions
     {
         [Description("None")]
         None,
-        [Description("Shift A")]
+        [Description("Enabled with shift A")]
         ShiftA,
-        [Description("Shift B")]
+        [Description("Enabled with shift B")]
         ShiftB,
-        [Description("Shift C")]
+        [Description("Enabled with shift C")]
         ShiftC,
-        [Description("Shift D")]
+        [Description("Enabled with shift D")]
         ShiftD,
+        [Description("Always enabled")]
+        Any,
     }
 
     [Serializable]

@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -236,18 +235,6 @@ namespace HandheldCompanion.ViewModels
             base.Dispose();
         }
 
-        protected override void UpdateController(IController controller)
-        {
-            var flag = (AxisLayoutFlags)Value;
-
-            IsSupported = controller.HasSourceAxis(flag) || IDevice.GetCurrent().HasMotionSensor();
-
-            if (IsSupported)
-            {
-                UpdateIcon(controller.GetGlyphIconInfo(flag, 28));
-            }
-        }
-
         protected override void ActionTypeChanged(ActionType? newActionType = null)
         {
             var actionType = newActionType ?? (ActionType)ActionTypeIndex;
@@ -258,6 +245,12 @@ namespace HandheldCompanion.ViewModels
                 OnPropertyChanged(string.Empty);
                 return;
             }
+
+            // get current controller
+            IController controller = ControllerManager.GetDefault(true);
+
+            // Build Targets
+            List<MappingTargetViewModel> targets = new List<MappingTargetViewModel>();
 
             if (actionType == ActionType.Joystick)
             {
@@ -270,12 +263,6 @@ namespace HandheldCompanion.ViewModels
                         MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState
                     };
                 }
-
-                // get current controller
-                var controller = ControllerManager.GetDefault(true);
-
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetAxis())
@@ -309,9 +296,6 @@ namespace HandheldCompanion.ViewModels
                     };
                 }
 
-                // Build Targets
-                var targets = new List<MappingTargetViewModel>();
-
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
                 {
@@ -335,9 +319,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Inherit)
             {
                 if (Action is null || Action is not InheritActions)
-                {
                     Action = new InheritActions();
-                }
 
                 // Update list and selected target
                 Targets.Clear();

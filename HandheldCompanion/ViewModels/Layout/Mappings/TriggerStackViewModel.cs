@@ -10,7 +10,7 @@ using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class TriggerStackViewModel : BaseViewModel
+    public class TriggerStackViewModel : StackViewModel
     {
         public ObservableCollection<TriggerMappingViewModel> TriggerMappings { get; private set; } = [];
 
@@ -29,15 +29,22 @@ namespace HandheldCompanion.ViewModels
         }
 
         private AxisLayoutFlags _flag;
+        public new int ActionNumber => TriggerMappings.Count();
 
-        public TriggerStackViewModel(AxisLayoutFlags flag)
+        public TriggerStackViewModel(AxisLayoutFlags flag) : base(flag)
         {
             _flag = flag;
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(TriggerMappings, new object());
 
-            TriggerMappings.Add(new TriggerMappingViewModel(this, flag, isInitialMapping: true));
+            TriggerMappings.Add(new TriggerMappingViewModel(this, flag));
+            TriggerMappings.CollectionChanged += TriggerMappings_CollectionChanged;
+
+            ButtonCommand = new DelegateCommand(() =>
+            {
+                AddMapping();
+            });
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
@@ -45,13 +52,24 @@ namespace HandheldCompanion.ViewModels
 
             // send events
             if (ControllerManager.HasTargetController)
-            {
                 UpdateController(ControllerManager.GetTarget());
-            }
+        }
+
+        private void TriggerMappings_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // Notify that ActionNumber has changed
+            OnPropertyChanged(nameof(ActionNumber));
+        }
+
+        protected override void UpdateController(IController controller)
+        {
+            IsSupported = controller.HasSourceAxis(_flag);
+            UpdateIcon(controller.GetGlyphIconInfo(_flag, 28));
         }
 
         public override void Dispose()
         {
+            TriggerMappings.CollectionChanged -= TriggerMappings_CollectionChanged;
             MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
             ControllerManager.ControllerSelected -= UpdateController;
 
@@ -65,14 +83,14 @@ namespace HandheldCompanion.ViewModels
             base.Dispose();
         }
 
-        public void AddMapping()
+        public override void AddMapping()
         {
             TriggerMappings.SafeAdd(new TriggerMappingViewModel(this, _flag));
         }
 
-        public void RemoveMapping(TriggerMappingViewModel mapping)
+        public override void RemoveMapping(MappingViewModel mapping)
         {
-            TriggerMappings.SafeRemove(mapping);
+            TriggerMappings.SafeRemove((TriggerMappingViewModel)mapping);
             mapping.Dispose();
         }
 
@@ -101,7 +119,7 @@ namespace HandheldCompanion.ViewModels
                 var newMappings = new List<TriggerMappingViewModel>();
                 foreach (var action in actions.OrderBy(a => a.ShiftSlot))
                 {
-                    var newMapping = new TriggerMappingViewModel(this, _flag, isInitialMapping: newMappings.Count == 0);
+                    var newMapping = new TriggerMappingViewModel(this, _flag);
                     newMappings.Add(newMapping);
 
                     // Model update should not go through as on update the entire stack is being recreated
@@ -112,18 +130,12 @@ namespace HandheldCompanion.ViewModels
 
                 TriggerMappings.ReplaceWith(newMappings);
             }
-            else
+            else if (TriggerMappings.Count != 0)
             {
                 foreach (var mapping in TriggerMappings)
                     mapping.Dispose();
-
-                TriggerMappings.ReplaceWith([new TriggerMappingViewModel(this, _flag, isInitialMapping: true)]);
+                TriggerMappings.Clear();
             }
-        }
-
-        private void UpdateController(IController controller)
-        {
-            IsSupported = controller.HasSourceAxis(_flag);
         }
     }
 }

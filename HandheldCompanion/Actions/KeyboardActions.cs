@@ -1,7 +1,9 @@
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
+using HandheldCompanion.Utils;
 using System;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -61,6 +63,25 @@ namespace HandheldCompanion.Actions
                     }
                     break;
             }
+        }
+
+        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot)
+        {
+            // update value
+            this.Vector = layout.vector;
+
+            // call parent, check shiftSlot
+            base.Execute(layout, shiftSlot);
+
+            // skip if zero
+            if (this.Vector == Vector2.Zero && !IsKeyDown)
+                return;
+
+            MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
+            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
+
+            // transition to Button Execute()
+            Execute(ButtonFlags.None, value, shiftSlot);
         }
     }
 }

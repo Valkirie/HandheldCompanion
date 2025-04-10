@@ -122,7 +122,7 @@ namespace HandheldCompanion.Managers
             HIDmode selectedHIDMode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode");
 
             // Check if ProfileManager is initialized and a valid profile is available
-            if (ManagerFactory.profileManager.Status == ManagerStatus.Initialized)
+            if (ManagerFactory.profileManager.IsReady)
             {
                 Profile currentProfile = ManagerFactory.profileManager.GetCurrent();
                 if (currentProfile != null && currentProfile.HID != HIDmode.NotSelected)
@@ -234,7 +234,7 @@ namespace HandheldCompanion.Managers
                 case "HIDstatus":
                     {
                         // skip on cold boot, retrieved by Start() function and called by SetControllerMode()
-                        if (ManagerFactory.settingsManager.Status == ManagerStatus.Initialized)
+                        if (ManagerFactory.settingsManager.IsReady)
                             SetControllerStatus((HIDstatus)Convert.ToInt32(value));
                     }
                     break;

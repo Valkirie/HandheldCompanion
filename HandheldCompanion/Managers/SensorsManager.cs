@@ -61,9 +61,7 @@ namespace HandheldCompanion.Managers
             }
 
             if (ControllerManager.HasTargetController)
-            {
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-            }
 
             IsInitialized = true;
             Initialized?.Invoke();

@@ -118,9 +118,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // raise events
         if (ControllerManager.HasTargetController)
-        {
             ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-        }
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);

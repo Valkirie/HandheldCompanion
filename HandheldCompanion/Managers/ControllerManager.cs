@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Shell;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -80,9 +81,9 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
@@ -113,9 +114,15 @@ public static class ControllerManager
                 break;
         }
 
-        if (ProcessManager.IsInitialized)
+        switch (ManagerFactory.processManager.Status)
         {
-            ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
         }
 
         // prepare timer(s)
@@ -158,9 +165,11 @@ public static class ControllerManager
         ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+        ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+
         UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
         UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
-        ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
 
@@ -326,7 +335,7 @@ public static class ControllerManager
         {
             case "VibrationStrength":
                 uint VibrationStrength = Convert.ToUInt32(value);
-                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.Status == ManagerStatus.Initialized);
+                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.IsReady);
                 break;
 
             case "ControllerManagement":
@@ -386,6 +395,16 @@ public static class ControllerManager
             else if (device.isGaming)
                 HidDeviceArrived(device, device.InterfaceGuid);
         }
+    }
+
+    private static void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
+    private static void QueryForeground()
+    {
+        ProcessManager_ForegroundChanged(ProcessManager.GetForegroundProcess(), null);
     }
 
     private static bool IsOS = false;
@@ -1004,6 +1023,20 @@ public static class ControllerManager
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
+        switch (status)
+        {
+            case ControllerManagerStatus.Busy:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Indeterminate);
+                break;
+            case ControllerManagerStatus.Succeeded:
+            case ControllerManagerStatus.Failed:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.None);
+                break;
+            case ControllerManagerStatus.Pending:
+                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Paused);
+                break;
+        }
+
         managerStatus = status;
         StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }

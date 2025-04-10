@@ -77,7 +77,6 @@ public static class PerformanceManager
     private static double AutoTDPPrev;
     private static double AutoTDPMax;
     private static bool autotdpWatchdogPendingStop;
-    private static int autotdpWatchdogCounter;
 
     // powercfg
     private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
@@ -94,7 +93,6 @@ public static class PerformanceManager
     private static bool tdpWatchdogPendingStop;
     private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
     private static readonly double[] StoredTDP = new double[3]; // used to store TDP
-    private static int tdpWatchdogCounter;
 
     private const string dllName = "WinRing0x64.dll";
 
@@ -246,13 +244,15 @@ public static class PerformanceManager
             case "ConfigurableTDPOverrideDown":
                 {
                     TDPMin = Convert.ToDouble(value);
-                    if (AutoTDPMax != 0d && AutoTDPMax < TDPMin) AutoTDPMax = TDPMin;
+                    if (AutoTDPMax != 0d && AutoTDPMax < TDPMin)
+                        AutoTDPMax = TDPMin;
                 }
                 break;
             case "ConfigurableTDPOverrideUp":
                 {
                     TDPMax = Convert.ToDouble(value);
-                    if (AutoTDPMax == 0d || AutoTDPMax > TDPMax) AutoTDPMax = TDPMax;
+                    if (AutoTDPMax == 0d || AutoTDPMax > TDPMax)
+                        AutoTDPMax = TDPMax;
                 }
                 break;
         }
@@ -343,16 +343,8 @@ public static class PerformanceManager
             RestoreGPUClock(true);
         }
 
-        // apply profile defined EPP
-        if (profile.EPPOverrideEnabled)
-        {
-            RequestEPP(profile.EPPOverrideValue);
-        }
-        else
-        {
-            // restore default EPP
-            RequestEPP(0x00000032);
-        }
+        // apply profile defined CPU Core Parking
+        RequestCoreParkingMode(profile.CPUParkingMode);
 
         // apply profile defined CPU Core Count
         if (profile.CPUCoreEnabled)
@@ -415,12 +407,8 @@ public static class PerformanceManager
             RestoreGPUClock(true);
         }
 
-        // (un)apply profile defined EPP
-        if (profile.EPPOverrideEnabled)
-        {
-            // restore default EPP
-            RequestEPP(0x00000032);
-        }
+        // restore default CPU Core Parking
+        RequestCoreParkingMode(CoreParkingMode.AllCoresAuto);
 
         // unapply profile defined CPU Core Count
         if (profile.CPUCoreEnabled)
@@ -476,14 +464,14 @@ public static class PerformanceManager
         {
             try
             {
-                autotdpWatchdogCounter++;
-
                 bool TDPdone = false;
                 bool MSRdone = true;
                 bool forcedUpdate = false;
+                double damper = 0.0;
+                double unclampedProcessValueFPS = 0.0;
 
                 // todo: Store fps for data gathering from multiple points (OSD, Performance)
-                double processValueFPS = PlatformManager.RTSS.GetFramerate(true);
+                double processValueFPS = unclampedProcessValueFPS = PlatformManager.RTSS.GetFramerate(true);
 
                 // Ensure realistic process values, prevent divide by 0
                 processValueFPS = Math.Clamp(processValueFPS, 5, 500);
@@ -501,28 +489,29 @@ public static class PerformanceManager
 
                 // Determine final setpoint
                 if (!AutoTDPFirstRun)
+                {
                     AutoTDP += TDPAdjustment + AutoTDPDamper(processValueFPS);
+                    damper = AutoTDPDamper(processValueFPS);
+                }
                 else
                     AutoTDPFirstRun = false;
 
                 AutoTDP = Math.Clamp(AutoTDP, TDPMin, AutoTDPMax);
 
-                // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
-
-                // force update TDP periodically since we don't actually read current TDP
-                if (autotdpWatchdogCounter > COUNTER_AUTO)
-                {
-                    forcedUpdate = true;
-                    autotdpWatchdogCounter = 0;
-                }
-
                 // Only update if we have a different TDP value to set
-                // or a forced update is requested
-                if (AutoTDP != AutoTDPPrev || forcedUpdate)
+                if (AutoTDP != AutoTDPPrev)
                 {
                     double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
                     RequestTDP(values, true);
                     AutoTDPPrev = AutoTDP;
+
+                    // Reset interval to default after a TDP change
+                    autotdpWatchdog.Interval = INTERVAL_AUTO;
+                }
+                else
+                {
+                    // Reduce interval to 100ms for quicker reaction next time a change is requierd
+                    autotdpWatchdog.Interval = 115;
                 }
 
                 // are we done ?
@@ -640,10 +629,6 @@ public static class PerformanceManager
                     if (currentProfile.CPUCoreEnabled)
                         RequestCPUCoreCount(currentProfile.CPUCoreCount);
 
-                    // Check if current EPP value has changed and apply if needed
-                    if (currentProfile.EPPOverrideEnabled)
-                        RequestEPP(currentProfile.EPPOverrideValue);
-
                     // Check if active power shceme has changed and apply if needed
                     RequestPowerMode(currentProfile.OSPowerMode);
 
@@ -668,18 +653,8 @@ public static class PerformanceManager
         {
             try
             {
-                tdpWatchdogCounter++;
-
                 bool TDPdone = false;
                 bool MSRdone = true;
-                bool forcedUpdate = false;
-
-                // force update TDP periodically since we don't actually read current TDP
-                if (tdpWatchdogCounter > COUNTER_DEFAULT)
-                {
-                    forcedUpdate = true;
-                    tdpWatchdogCounter = 0;
-                }
 
                 // read current values and (re)apply requested TDP if needed
                 for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
@@ -700,8 +675,7 @@ public static class PerformanceManager
                         tdpWatchdog.Interval = INTERVAL_DEGRADED;
 
                     // only request an update if current limit is different than stored
-                    // or a forced update is requested
-                    if (ReadTDP != TDP || forcedUpdate)
+                    if (ReadTDP != TDP)
                         RequestTDP((PowerType)idx, TDP, true);
 
                     await Task.Delay(20).ConfigureAwait(false); // Avoid blocking the synchronization context
@@ -718,7 +692,7 @@ public static class PerformanceManager
 
                     if (TDPslow != 0.0d && TDPfast != 0.0d)
                         // only request an update if current limit is different than stored
-                        if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast || forcedUpdate)
+                        if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
                         {
                             MSRdone = false;
                             RequestMSR(TDPslow, TDPfast);
@@ -958,6 +932,56 @@ public static class PerformanceManager
         }
     }
 
+    private static void RequestCoreParkingMode(CoreParkingMode coreParkingMode)
+    {
+        /*
+         * HETEROGENEOUS_POLICY values:
+         * 0: Default (no explicit preference)
+         * 1: Prefer heterogeneous scheduling (allows mixed cores based on scheduling hints)
+         * 2: Prefer E-cores exclusively (favor efficiency and battery life)
+         * 3: Prefer P-cores exclusively (favor performance at all costs)
+         
+         * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values: These settings instruct Windows Scheduler about how aggressively it should favor either core type for regular or short-lived threads:
+         * 1: Strongly Prefer P-Cores (high-performance cores only)
+         * 2: Prefer P-Cores (favor P-Cores but allow E-Cores occasionally)
+         * 3: Strongly Prefer E-Cores (efficiency cores only)
+         * 4: Prefer E-Cores (favor E-Cores but allow P-Cores occasionally)
+         * 5: No specific preference (Windows decides automatically)
+         */
+
+        switch (coreParkingMode)
+        {
+            case CoreParkingMode.AllCoresPrefPCore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 1U, 1U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 2U, 2U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 2U, 2U);
+                break;
+            case CoreParkingMode.AllCoresPrefECore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 1U, 1U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 4U, 4U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 4U, 4U);
+                break;
+            case CoreParkingMode.OnlyPCore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 3U, 3U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 1U, 1U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 1U, 1U);
+                break;
+            case CoreParkingMode.OnlyECore:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 2U, 2U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 3U, 3U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 3U, 3U);
+                break;
+            default:
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 0U, 0U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 5U, 5U);
+                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 5U, 5U);
+                break;
+        }
+
+        LogManager.LogDebug("User requested Core Parking Mode: {0}", coreParkingMode);
+    }
+
+    [Obsolete("This function is deprecated and will be removed in future versions.")]
     private static void RequestEPP(uint EPPOverrideValue)
     {
         var requestedEPP = new uint[2]

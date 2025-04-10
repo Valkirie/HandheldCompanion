@@ -56,7 +56,7 @@ public class MultimediaManager : IManager
 
     public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -88,7 +88,7 @@ public class MultimediaManager : IManager
 
     private void QuerySettings()
     {
-        SettingsManager_SettingValueChanged("NativeDisplayOrientation", ManagerFactory.settingsManager.GetString("NativeDisplayOrientation"), false);
+        // do something
     }
 
     private void SettingsManager_Initialized()
@@ -98,7 +98,7 @@ public class MultimediaManager : IManager
 
     public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();
@@ -174,9 +174,13 @@ public class MultimediaManager : IManager
     {
         string friendlyName = GetDisplayName(DeviceName);
 
-        Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
-        if (PrimaryDisplay is not null && !string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
-            friendlyName = PrimaryDisplay.DeviceName;
+        try
+        {
+            Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
+            if (PrimaryDisplay is not null && !string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
+                friendlyName = PrimaryDisplay.DeviceName;
+        }
+        catch { }
 
         return friendlyName;
     }
@@ -185,16 +189,20 @@ public class MultimediaManager : IManager
     {
         string friendlyName = string.Empty;
 
-        Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
-        if (PrimaryDisplay is not null)
+        try
         {
-            if (!string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
-                friendlyName = PrimaryDisplay.DeviceName;
+            Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
+            if (PrimaryDisplay is not null)
+            {
+                if (!string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
+                    friendlyName = PrimaryDisplay.DeviceName;
 
-            PathDisplayTarget? PrimaryTarget = GetDisplayTarget(PrimaryDisplay.DevicePath);
-            if (PrimaryTarget is not null && !string.IsNullOrEmpty(PrimaryTarget.FriendlyName))
-                friendlyName = PrimaryTarget.FriendlyName;
+                PathDisplayTarget? PrimaryTarget = GetDisplayTarget(PrimaryDisplay.DevicePath);
+                if (PrimaryTarget is not null && !string.IsNullOrEmpty(PrimaryTarget.FriendlyName))
+                    friendlyName = PrimaryTarget.FriendlyName;
+            }
         }
+        catch { }
 
         return friendlyName;
     }
@@ -203,159 +211,172 @@ public class MultimediaManager : IManager
     {
         string DevicePath = string.Empty;
 
-        Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
-        if (PrimaryDisplay is not null)
-            DevicePath = PrimaryDisplay.DevicePath;
+        try
+        {
+            Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
+            if (PrimaryDisplay is not null)
+                DevicePath = PrimaryDisplay.DevicePath;
+        }
+        catch { }
 
         return DevicePath;
     }
 
     private PathDisplayTarget? GetDisplayTarget(string DevicePath)
     {
-        PathDisplayTarget PrimaryTarget = PathDisplayTarget.GetDisplayTargets().Where(target => target.DevicePath.Equals(DevicePath)).FirstOrDefault();
-        return PrimaryTarget;
+        return PathDisplayTarget.GetDisplayTargets().Where(target => target.DevicePath.Equals(DevicePath)).FirstOrDefault();
     }
 
+    private object displayLock = new();
     private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
-        // temporary array to store all current screens
-        Dictionary<string, DesktopScreen> desktopScreens = [];
-
-        foreach (Screen screen in Screen.AllScreens)
+        lock (displayLock)
         {
-            if (string.IsNullOrEmpty(screen.DeviceName))
-                continue;
+            // set flag
+            AddStatus(ManagerStatus.Busy);
 
-            DesktopScreen desktopScreen = new(screen);
+            // temporary array to store all current screens
+            Dictionary<string, DesktopScreen> desktopScreens = [];
 
-            // pull resolutions details
-            List<DisplayDevice> resolutions = GetResolutions(desktopScreen.screen.DeviceName);
-            foreach (DisplayDevice mode in resolutions)
+            foreach (Screen screen in Screen.AllScreens)
             {
-                ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
+                if (string.IsNullOrEmpty(screen.DeviceName))
+                    continue;
 
-                List<int> frequencies = resolutions
-                    .Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight)
-                    .Select(b => b.dmDisplayFrequency).Distinct().ToList();
+                DesktopScreen desktopScreen = new(screen);
 
-                foreach (int frequency in frequencies)
-                    res.Frequencies.Add(frequency, frequency);
+                // pull resolutions details
+                List<DisplayDevice> resolutions = GetResolutions(desktopScreen.screen.DeviceName);
+                foreach (DisplayDevice mode in resolutions)
+                {
+                    ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
 
-                if (!desktopScreen.HasResolution(res))
-                    desktopScreen.screenResolutions.Add(res);
-            }
+                    List<int> frequencies = resolutions
+                        .Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight)
+                        .Select(b => b.dmDisplayFrequency).Distinct().ToList();
 
-            // get maximum resolution
-            ScreenResolution currentResolution = new(screen.Bounds.Width, screen.Bounds.Height, screen.BitsPerPixel);
+                    foreach (int frequency in frequencies)
+                        res.Frequencies.Add(frequency, frequency);
 
-            // store maximum resolution as temporary native resolution
-            desktopScreen.nativeResolution = new(screen.Bounds.Width, screen.Bounds.Height, screen.BitsPerPixel);
+                    if (!desktopScreen.HasResolution(res))
+                        desktopScreen.screenResolutions.Add(res);
+                }
 
-            int nativeWidth = desktopScreen.nativeResolution.Width;
-            int nativeHeight = desktopScreen.nativeResolution.Height;
+                // get maximum resolution
+                ScreenResolution currentResolution = new(screen.Bounds.Width, screen.Bounds.Height, screen.BitsPerPixel);
 
-            // get native resolution
-            Regex regex = new Regex(@"^\\\\\?\\DISPLAY#[^#]+#(?<instance>[^#]+)(?=[#\{])", RegexOptions.IgnoreCase);
-            Match match = regex.Match(desktopScreen.DevicePath);
-            if (match.Success && match.Groups.ContainsKey("instance"))
-            {
-                string instanceKeyName = match.Groups["instance"].Value;
-                GetNativeResolutions(instanceKeyName, ref nativeWidth, ref nativeHeight);
+                // store maximum resolution as temporary native resolution
+                desktopScreen.nativeResolution = new(screen.Bounds.Width, screen.Bounds.Height, screen.BitsPerPixel);
 
-                // update native resolution
-                desktopScreen.nativeResolution.Width = nativeWidth;
-                desktopScreen.nativeResolution.Height = nativeHeight;
-            }
+                int nativeWidth = desktopScreen.nativeResolution.Width;
+                int nativeHeight = desktopScreen.nativeResolution.Height;
 
-            // some devices have portrait-native display and therefore reversed width/height
-            if (desktopScreen.nativeResolution.Orientation == ScreenOrientation.Portrait)
-            {
-                // swap values
+                // get native resolution
+                Regex regex = new Regex(@"^\\\\\?\\DISPLAY#[^#]+#(?<instance>[^#]+)(?=[#\{])", RegexOptions.IgnoreCase);
+                Match match = regex.Match(desktopScreen.DevicePath);
+                if (match.Success && match.Groups.ContainsKey("instance"))
+                {
+                    string instanceKeyName = match.Groups["instance"].Value;
+                    GetNativeResolutions(instanceKeyName, ref nativeWidth, ref nativeHeight);
+
+                    // update native resolution
+                    desktopScreen.nativeResolution.Width = nativeWidth;
+                    desktopScreen.nativeResolution.Height = nativeHeight;
+                }
+
+                // some devices have portrait-native display and therefore reversed width/height
+                if (desktopScreen.nativeResolution.Orientation == ScreenOrientation.Portrait)
+                {
+                    // swap values
+                    if (currentResolution.Orientation == ScreenOrientation.Landscape)
+                        (nativeWidth, nativeHeight) = (nativeHeight, nativeWidth);
+                }
+
+                // sort resolutions, based on orientation
                 if (currentResolution.Orientation == ScreenOrientation.Landscape)
-                    (nativeWidth, nativeHeight) = (nativeHeight, nativeWidth);
+                {
+                    desktopScreen.screenResolutions = desktopScreen.screenResolutions
+                        .OrderByDescending(r => r.Width)
+                        .ThenByDescending(r => r.Height)
+                        .ToList();
+                }
+                else
+                {
+                    desktopScreen.screenResolutions = desktopScreen.screenResolutions
+                        .OrderByDescending(r => r.Height)
+                        .ThenByDescending(r => r.Width)
+                        .ToList();
+                }
+
+                // get integer scaling dividers
+                int idx = 1;
+                while (true)
+                {
+                    int height = nativeHeight / idx;
+                    int width = nativeWidth;
+
+                    ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(res => res.Height == height && res.Width <= width);
+                    if (dividedRes is null)
+                        break;
+
+                    desktopScreen.screenDividers.Add(new(idx, dividedRes));
+                    idx++;
+                }
+
+                // add to temporary array
+                desktopScreens.Add(desktopScreen.DevicePath, desktopScreen);
             }
 
-            // sort resolutions, based on orientation
-            if (currentResolution.Orientation == ScreenOrientation.Landscape)
+            // get refreshed primary screen (can't be null)
+            DesktopScreen newPrimary = desktopScreens.Values.FirstOrDefault(a => a.IsPrimary);
+            if (newPrimary is not null)
             {
-                desktopScreen.screenResolutions = desktopScreen.screenResolutions
-                    .OrderByDescending(r => r.Width)
-                    .ThenByDescending(r => r.Height)
-                    .ToList();
+                bool IsNew = PrimaryDesktop?.DevicePath != newPrimary.DevicePath;
+
+                // set or update current primary
+                PrimaryDesktop?.Dispose();
+                PrimaryDesktop = newPrimary;
+
+                // looks like we have a new primary screen
+                if (IsNew)
+                {
+                    LogManager.LogInformation("Primary screen set to {0}", newPrimary.ToString());
+
+                    // raise event (New primary display)
+                    PrimaryScreenChanged?.Invoke(newPrimary);
+                }
             }
-            else
+
+            // raise event (New screen detected)
+            foreach (DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
             {
-                desktopScreen.screenResolutions = desktopScreen.screenResolutions
-                    .OrderByDescending(r => r.Height)
-                    .ThenByDescending(r => r.Width)
-                    .ToList();
+                LogManager.LogInformation("Screen {0} connected", desktop.ToString());
+                ScreenConnected?.Invoke(desktop);
             }
 
-            // get integer scaling dividers
-            int idx = 1;
-            while (true)
+            // raise event (New screen detected)
+            foreach (DesktopScreen desktop in AllScreens.Values.Where(a => !desktopScreens.ContainsKey(a.DevicePath)))
             {
-                int height = nativeHeight / idx;
-                int width = nativeWidth;
-
-                ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(res => res.Height == height && res.Width <= width);
-                if (dividedRes is null)
-                    break;
-
-                desktopScreen.screenDividers.Add(new(idx, dividedRes));
-                idx++;
+                LogManager.LogInformation("Screen {0} disconnected", desktop.ToString());
+                ScreenDisconnected?.Invoke(desktop);
             }
 
-            // add to temporary array
-            desktopScreens.Add(desktopScreen.DevicePath, desktopScreen);
+            // clear array and transfer screens
+            foreach (var screen in AllScreens.Values)
+                screen.Dispose();
+            AllScreens.Clear();
+
+            foreach (DesktopScreen desktop in desktopScreens.Values)
+                AllScreens.TryAdd(desktop.DevicePath, desktop);
+
+            // raise event (Display settings were updated)
+            ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
+            if (screenResolution is not null)
+                DisplaySettingsChanged?.Invoke(PrimaryDesktop, screenResolution);
+
+            // set flag
+            RemoveStatus(ManagerStatus.Busy);
         }
-
-        // get refreshed primary screen (can't be null)
-        DesktopScreen newPrimary = desktopScreens.Values.FirstOrDefault(a => a.IsPrimary);
-        if (newPrimary is not null)
-        {
-            bool IsNew = PrimaryDesktop?.DevicePath != newPrimary.DevicePath;
-
-            // set or update current primary
-            PrimaryDesktop?.Dispose();
-            PrimaryDesktop = newPrimary;
-
-            // looks like we have a new primary screen
-            if (IsNew)
-            {
-                LogManager.LogInformation("Primary screen set to {0}", newPrimary.ToString());
-
-                // raise event (New primary display)
-                PrimaryScreenChanged?.Invoke(newPrimary);
-            }
-        }
-
-        // raise event (New screen detected)
-        foreach (DesktopScreen desktop in desktopScreens.Values.Where(a => !AllScreens.ContainsKey(a.DevicePath)))
-        {
-            LogManager.LogInformation("Screen {0} connected", desktop.ToString());
-            ScreenConnected?.Invoke(desktop);
-        }
-
-        // raise event (New screen detected)
-        foreach (DesktopScreen desktop in AllScreens.Values.Where(a => !desktopScreens.ContainsKey(a.DevicePath)))
-        {
-            LogManager.LogInformation("Screen {0} disconnected", desktop.ToString());
-            ScreenDisconnected?.Invoke(desktop);
-        }
-
-        // clear array and transfer screens
-        foreach (var screen in AllScreens.Values)
-            screen.Dispose();
-        AllScreens.Clear();
-
-        foreach (DesktopScreen desktop in desktopScreens.Values)
-            AllScreens.TryAdd(desktop.DevicePath, desktop);
-
-        // raise event (Display settings were updated)
-        ScreenResolution screenResolution = PrimaryDesktop.GetResolution();
-        if (screenResolution is not null)
-            DisplaySettingsChanged?.Invoke(PrimaryDesktop, screenResolution);
     }
 
     /// <summary>

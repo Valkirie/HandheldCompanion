@@ -33,9 +33,9 @@ public class HotkeysManager : IManager
             Directory.CreateDirectory(HotkeysPath);
     }
 
-    public void Start()
+    public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -77,9 +77,9 @@ public class HotkeysManager : IManager
         base.Start();
     }
 
-    public void Stop()
+    public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();

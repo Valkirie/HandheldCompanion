@@ -64,9 +64,9 @@ public partial class ProfilesPage : Page
         ManagerFactory.profileManager.Initialized += ProfileManagerLoaded;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+        ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        GPUManager.Hooked += GPUManager_Hooked;
-        GPUManager.Unhooked += GPUManager_Unhooked;
 
         UpdateTimer = new Timer(UpdateInterval) { AutoReset = false };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
@@ -265,9 +265,9 @@ public partial class ProfilesPage : Page
         ManagerFactory.profileManager.Initialized -= ProfileManagerLoaded;
         ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+        ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+        ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
-        GPUManager.Hooked -= GPUManager_Hooked;
-        GPUManager.Unhooked -= GPUManager_Unhooked;
 
         UpdateTimer.Elapsed -= (sender, e) => SubmitProfile();
 

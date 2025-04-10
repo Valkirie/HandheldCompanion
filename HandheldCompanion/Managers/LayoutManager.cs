@@ -71,7 +71,7 @@ public class LayoutManager : IManager
 
     public override void Start()
     {
-        if (Status == ManagerStatus.Initializing || Status == ManagerStatus.Initialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
         base.PrepareStart();
@@ -174,7 +174,7 @@ public class LayoutManager : IManager
 
     public override void Stop()
     {
-        if (Status == ManagerStatus.Halting || Status == ManagerStatus.Halted)
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
             return;
 
         base.PrepareStop();
@@ -572,6 +572,24 @@ public class LayoutManager : IManager
                 {
                     switch (action.actionType)
                     {
+                        case ActionType.Button:
+                            {
+                                ButtonActions bAction = action as ButtonActions;
+                                bAction.Execute(InLayout, shiftSlot);
+
+                                bool outVal = bAction.GetValue() || outputState.ButtonState[bAction.Button];
+                                outputState.ButtonState[bAction.Button] = outVal;
+                            }
+                            break;
+
+                        // button to keyboard key
+                        case ActionType.Keyboard:
+                            {
+                                KeyboardActions kAction = action as KeyboardActions;
+                                kAction.Execute(InLayout, shiftSlot);
+                            }
+                            break;
+
                         case ActionType.Joystick:
                             {
                                 AxisActions aAction = action as AxisActions;

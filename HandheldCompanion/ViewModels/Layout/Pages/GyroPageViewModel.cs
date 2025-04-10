@@ -9,13 +9,13 @@ namespace HandheldCompanion.ViewModels
     {
         private static readonly List<AxisLayoutFlags> _pageLayoutFlags = [AxisLayoutFlags.Gyroscope];
 
-        public List<GyroMappingViewModel> GyroMappings { get; private set; } = [];
+        public List<GyroStackViewModel> GyroMappings { get; private set; } = [];
 
         public GyroPageViewModel()
         {
             foreach (var layoutFlag in _pageLayoutFlags)
             {
-                GyroMappings.Add(new GyroMappingViewModel(layoutFlag));
+                GyroMappings.Add(new GyroStackViewModel(layoutFlag));
             }
         }
 

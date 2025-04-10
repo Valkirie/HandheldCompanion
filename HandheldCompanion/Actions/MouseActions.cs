@@ -1,5 +1,6 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
+using HandheldCompanion.Utils;
 using System;
 using System.ComponentModel;
 using System.Numerics;
@@ -110,7 +111,26 @@ namespace HandheldCompanion.Actions
             return false;
         }
 
-        public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
+        private void ExecuteButton(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
+        {
+            // update value
+            this.Vector = layout.vector;
+
+            // call parent, check shiftSlot
+            base.Execute(layout, shiftSlot);
+
+            // skip if zero
+            if (this.Vector == Vector2.Zero && !IsCursorDown)
+                return;
+
+            MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
+            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
+
+            // transition to Button Execute()
+            Execute(ButtonFlags.None, value, shiftSlot);
+        }
+
+        private void ExecuteAxis(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
         {
             // this line needs to be before the next vector zero check
             bool newTouch = IsNewTouch(touched);
@@ -198,10 +218,24 @@ namespace HandheldCompanion.Actions
             {
                 MouseSimulator.MoveBy((int)intVector.X, (int)intVector.Y);
             }
-            else /* if (MouseType == MouseActionsType.Scroll) */
+            else if (MouseType == MouseActionsType.Scroll)
             {
                 // MouseSimulator.HorizontalScroll((int)-intVector.X);
                 MouseSimulator.VerticalScroll((int)-intVector.Y);
+            }
+        }
+
+        public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
+        {
+            switch (MouseType)
+            {
+                case MouseActionsType.Move:
+                case MouseActionsType.Scroll:
+                    ExecuteAxis(layout, touched, shiftSlot);
+                    break;
+                default:
+                    ExecuteButton(layout, touched, shiftSlot);
+                    break;
             }
         }
     }
