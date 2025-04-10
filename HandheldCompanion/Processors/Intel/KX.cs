@@ -13,7 +13,7 @@ public class KX
     private const string pnt_clock = "94";
 
     private string[] mchbar_addresses = new string[] { "0xfedc0000", "0xfed10000" };
-    private string mchbar;
+    private string mchbar = string.Empty;
     private readonly string path;
     private readonly ProcessStartInfo startInfo;
 
@@ -146,6 +146,9 @@ public class KX
 
     internal int get_limit(string pointer)
     {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
         startInfo.Arguments = $"/rdmem16 {mchbar}{pointer}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
@@ -179,6 +182,9 @@ public class KX
 
     internal int get_msr_limit(int pointer)
     {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
         startInfo.Arguments = "/rdmsr 0x610";
         using (var ProcessOutput = Process.Start(startInfo))
         {
@@ -235,7 +241,10 @@ public class KX
 
     internal int set_limit(string pointer1, int limit)
     {
-        var hex = TDPToHex(limit);
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
+        string hex = TDPToHex(limit);
 
         // register command
         startInfo.Arguments = $"/wrmem16 {mchbar}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
@@ -250,8 +259,11 @@ public class KX
 
     internal int set_msr_limits(int PL1, int PL2)
     {
-        var hexPL1 = TDPToHex(PL1);
-        var hexPL2 = TDPToHex(PL2);
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
+        string hexPL1 = TDPToHex(PL1);
+        string hexPL2 = TDPToHex(PL2);
 
         // register command
         startInfo.Arguments = $"/wrmsr 0x610 0x00438{hexPL2} 00DD8{hexPL1}";
@@ -280,11 +292,12 @@ public class KX
 
     internal int set_gfx_clk(int clock)
     {
-        var hex = ClockToHex(clock);
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
 
-        var command = $"/wrmem8 {mchbar}{pnt_clock} {hex}";
+        string hex = ClockToHex(clock);
 
-        startInfo.Arguments = command;
+        startInfo.Arguments = $"/wrmem8 {mchbar}{pnt_clock} {hex}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
             ProcessOutput.StandardOutput.ReadToEnd();
@@ -296,6 +309,9 @@ public class KX
 
     internal int get_gfx_clk()
     {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
         startInfo.Arguments = $"/rdmem8 {mchbar}{pnt_clock}";
         using (var ProcessOutput = Process.Start(startInfo))
         {

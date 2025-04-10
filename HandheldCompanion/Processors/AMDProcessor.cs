@@ -1,6 +1,5 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Processors.AMD;
 using System;
 
@@ -72,12 +71,10 @@ public class AMDProcessor : Processor
 
     public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
     {
-        if (ry == IntPtr.Zero)
-            return;
-
         lock (updateLock)
         {
-            bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
+            int error = 0;
+
             IDevice device = IDevice.GetCurrent();
 
             if (device.Capabilities.HasFlag(DeviceCapabilities.OEMPower) && UseOEM)
@@ -94,26 +91,29 @@ public class AMDProcessor : Processor
             }
             else
             {
-                // 15W : 15000
-                limit *= 1000;
-
-                int error = 0;
-
-                switch (type)
+                if (ry == IntPtr.Zero)
+                    error = 1;
+                else
                 {
-                    case PowerType.Fast:
-                        error = RyzenAdj.set_fast_limit(ry, (uint)limit);
-                        break;
-                    case PowerType.Slow:
-                        error = RyzenAdj.set_slow_limit(ry, (uint)limit);
-                        break;
-                    case PowerType.Stapm:
-                        error = RyzenAdj.set_stapm_limit(ry, (uint)limit);
-                        break;
-                }
+                    // 15W : 15000
+                    limit *= 1000;
 
-                base.SetTDPLimit(type, limit, immediate, error);
+                    switch (type)
+                    {
+                        case PowerType.Fast:
+                            error = RyzenAdj.set_fast_limit(ry, (uint)limit);
+                            break;
+                        case PowerType.Slow:
+                            error = RyzenAdj.set_slow_limit(ry, (uint)limit);
+                            break;
+                        case PowerType.Stapm:
+                            error = RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                            break;
+                    }
+                }
             }
+
+            base.SetTDPLimit(type, limit, immediate, error);
         }
     }
 

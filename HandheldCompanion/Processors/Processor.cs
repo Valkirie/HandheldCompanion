@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Shared;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using System.Timers;
 
 namespace HandheldCompanion.Processors;
@@ -19,6 +21,7 @@ public class Processor
     private static string Manufacturer;
 
     protected readonly Timer updateTimer = new() { Interval = 3000, AutoReset = true };
+    protected bool UseOEM => (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
 
     public bool CanChangeTDP, CanChangeGPU;
     protected object updateLock = new();

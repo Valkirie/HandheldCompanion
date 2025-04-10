@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Processors.Intel;
 
 namespace HandheldCompanion.Processors;
@@ -18,23 +17,27 @@ public class IntelProcessor : Processor
 
             switch (family)
             {
-                default:
-                case "206A7": // SandyBridge
-                case "306A9": // IvyBridge
-                case "40651": // Haswell
-                case "306D4": // Broadwell
-                case "406E3": // Skylake
-                case "906ED": // CoffeeLake
-                case "806E9": // AmberLake
-                case "706E5": // IceLake
-                case "806C1": // TigerLake U
-                case "806C2": // TigerLake U Refresh
-                case "806D1": // TigerLake H
-                case "906A2": // AlderLake-P
-                case "906A3": // AlderLake-P
-                case "906A4": // AlderLake-P
-                case "90672": // AlderLake-S
-                case "90675": // AlderLake-S
+                default:        // Dirty
+                    CanChangeTDP = true;
+                    CanChangeGPU = true;
+                    break;
+
+                case "206A7":   // SandyBridge
+                case "306A9":   // IvyBridge
+                case "40651":   // Haswell
+                case "306D4":   // Broadwell
+                case "406E3":   // Skylake
+                case "906ED":   // CoffeeLake
+                case "806E9":   // AmberLake
+                case "706E5":   // IceLake
+                case "806C1":   // TigerLake U
+                case "806C2":   // TigerLake U Refresh
+                case "806D1":   // TigerLake H
+                case "906A2":   // AlderLake-P
+                case "906A3":   // AlderLake-P
+                case "906A4":   // AlderLake-P
+                case "90672":   // AlderLake-S
+                case "90675":   // AlderLake-S
                     CanChangeTDP = true;
                     CanChangeGPU = true;
                     break;
@@ -46,15 +49,17 @@ public class IntelProcessor : Processor
     {
         lock (updateLock)
         {
-            bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
+            int error = 0;
+
             IDevice device = IDevice.GetCurrent();
 
             // MSI OverBoost will disable VT-d in BIOS and can cause BSOD
             // Force use OEM method
+            bool ForceOEM = false;
             if (device is ClawA1M claw && claw.GetOverBoost())
-                UseOEM = true;
+                ForceOEM = true;
 
-            if (device.Capabilities.HasFlag(DeviceCapabilities.OEMPower) && UseOEM)
+            if (device.Capabilities.HasFlag(DeviceCapabilities.OEMPower) && (UseOEM || ForceOEM))
             {
                 switch (type)
                 {
@@ -68,8 +73,6 @@ public class IntelProcessor : Processor
             }
             else
             {
-                int error = 0;
-
                 switch (type)
                 {
                     case PowerType.Slow:
@@ -79,9 +82,9 @@ public class IntelProcessor : Processor
                         error = platform.set_short_limit((int)limit);
                         break;
                 }
-
-                base.SetTDPLimit(type, limit, immediate, error);
             }
+
+            base.SetTDPLimit(type, limit, immediate, error);
         }
     }
 
