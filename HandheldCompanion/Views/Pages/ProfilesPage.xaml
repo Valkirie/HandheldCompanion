@@ -296,6 +296,7 @@
                                 </Border>
 
                                 <Button
+                                    Name="b_Refresh"
                                     Grid.Row="1"
                                     Margin="0,6,0,0"
                                     HorizontalAlignment="Stretch"
