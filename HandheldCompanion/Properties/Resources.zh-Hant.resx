@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1017,6 +1017,12 @@
   </data>
   <data name="WarningElevated" xml:space="preserve">
     <value>以管理員身份運行此工具以更改這些設置</value>
+      </data>
+  <data name="ControllerPage_SteamControllerMode" xml:space="preserve">
+    <value>Controller mode</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeDesc" xml:space="preserve">
+    <value>更改手柄模式：專屬模式或混合模式。專屬模式將確保所有輸入都由 掌機伴侶 (HC) 管理。混合模式則允許 Steam 管理來自 Steam 應用程式的輸入，而 HC 管理其他應用程式的輸入。</value>
   </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>手柄設置</value>
@@ -1465,6 +1471,18 @@
   <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>目標功耗</value>
   </data>
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+    <value>原生屏幕方向</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+    <value>某些功能可能會依賴原生屏幕方向來運作，如果這裡沒有被正確識別，請手動設置方向，然後點擊檢測</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+    <value>檢測</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+    <value>未設置</value>
+  </data>
   <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
     <value>CPU超頻</value>
   </data>
@@ -1550,7 +1568,7 @@
     <value>重新導向</value>
   </data>
   <data name="Enum_MotionInput_AutoRollYawSwap_Desc" xml:space="preserve">
-    <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
+    <value>此輸入將作為簡單的搖桿運作。適用於筆記型電腦和翻蓋式手持設備，並可根據設備的持握方式（90 或 180 度開啟）自動切換偏航與翻滾。</value>
   </data>
   <data name="Enum_AYANEO2_ButtonFlags_OEM1" xml:space="preserve">
     <value>AYA</value>
@@ -1997,28 +2015,28 @@
     <value>Plus</value>
   </data>
   <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Left-finger swipe</value>
+    <value>Single-touch swipe</value>
   </data>
   <data name="Enum_DS4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Right-finger swipe</value>
+    <value>Multi-touch swipe</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Left-finger click</value>
+    <value>Single-touch click</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Left-finger touch</value>
+    <value>Single-touch tap</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Right-finger click</value>
+    <value>Multi-touch click</value>
   </data>
   <data name="Enum_DS4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Right-finger touch</value>
+    <value>Multi-touch tap</value>
   </data>
   <data name="Enum_DualSenseController_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Left-finger swipe</value>
+    <value>Single-touch swipe</value>
   </data>
   <data name="Enum_DualSenseController_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Right-finger swipe</value>
+    <value>Multi-touch swipe</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_B1" xml:space="preserve">
     <value>Cross</value>
@@ -2036,16 +2054,16 @@
     <value>Share</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Left-finger click</value>
+    <value>Single-touch click</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Left-finger touch</value>
+    <value>Single-touch tap</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Right-finger click</value>
+    <value>Multi-touch click</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Right-finger touch</value>
+    <value>Multi-touch tap</value>
   </data>
   <data name="Enum_DualSenseController_ButtonFlags_Special" xml:space="preserve">
     <value>Sony</value>
@@ -2279,19 +2297,28 @@
     <value>導航</value>
   </data>
   <data name="MainWindow_QuickTools" xml:space="preserve">
-    <value>快速窗口</value>
+    <value>工具窗口</value>
   </data>
   <data name="MainWindow_Select" xml:space="preserve">
     <value>選擇</value>
+      </data>
+  <data name="Hint_SteamInputReadme" xml:space="preserve">
+    <value>掌機伴侶將停用 Steam Input 並重新啟動 Steam</value>
+  </data>
+  <data name="Hint_SteamInputDesc" xml:space="preserve">
+    <value>Steam 已經在運行且 Steam Input 已啟用，這可能會導致意外行為</value>
+  </data>
+  <data name="Hint_SteamInput" xml:space="preserve">
+    <value>Steam Input 已啟用</value>
   </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
-    <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
+    <value>您可能需要卸載 Steam Xbox 手柄增強功能驅動程式</value>
   </data>
   <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
-    <value>Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller</value>
+    <value>已安裝 Steam Xbox 手柄增強功能驅動程式，這會影響 HidHide 隱藏/顯示您的實體手柄的功能</value>
   </data>
   <data name="Hint_SteamXboxDrivers" xml:space="preserve">
-    <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
+    <value>已安裝 Steam Xbox 手柄增強功能驅動程式</value>
   </data>
   <data name="DevicePage_Device" xml:space="preserve">
     <value>裝置</value>
@@ -2500,6 +2527,9 @@
   <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
     <value>M2</value>
   </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>設為默認佈局</value>
+  </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>切換虛擬手柄類型</value>
   </data>
@@ -2528,10 +2558,10 @@
     <value>自動管理以提高相容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
-    <value>Touchpad passthrough</value>
+    <value>觸控板直通</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>允許您將設備的觸控板用作常規鼠標，無需任何軟體處理或映射</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>關閉</value>
@@ -2551,6 +2581,9 @@
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Disable ASUS services</value>
   </data>
+    <data name="Hint_SteamInputAction" xml:space="preserve">
+    <value>停用 Steam Input</value>
+  </data>  
   <data name="MainWindow_navNotifications" xml:space="preserve">
     <value>通知</value>
   </data>
@@ -2561,13 +2594,13 @@
     <value>您目前沒有通知</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
-    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+    <value>前往設定檔設置以更改每個遊戲的模擬手柄類型偏好設定。</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
-    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+    <value>模擬手柄類型由當前應用的遊戲設定檔管理。</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>Emulated controller is managed by profile</value>
+    <value>模擬手柄由設定檔管理</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>核心隔離為已啟用</value>
@@ -2589,6 +2622,12 @@
   </data>
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>啟用子設定檔</value>
+  </data>
+  <data name="Hotkey_CycleSubProfile" xml:space="preserve">
+    <value>循環切換子設定檔</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDesc" xml:space="preserve">
+    <value>在當前遊戲中循環切換子設定檔</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>將風扇轉速設為最大</value>
@@ -2615,7 +2654,7 @@
     <value>覆蓋窗</value>
   </data>
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
-    <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
+    <value>這是預設設備設定，無法編輯。這些與設備原始軟體提供的預設值相當。</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
     <value>Legion Go - Quiet</value>
@@ -2806,8 +2845,8 @@
   <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>裝置設定</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>哎呀，看起來您的設備尚未受支援。軟體可能無法按預期運行。</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
@@ -2852,28 +2891,28 @@
     <value>Disable MSI Center</value>
   </data>
   <data name="Hint_MSIClawCenterCheckDesc" xml:space="preserve">
-    <value>MSI Center is running on your device. This may interfere with the application</value>
+    <value>您的設備正在運行 MSI Center。這可能會干擾應用程式的運行。</value>
   </data>
   <data name="Hint_MSIClawCenterCheckReadme" xml:space="preserve">
-    <value>You should disable MSI Center, so that the application can run smoothly and without any conflicts</value>
+    <value>您應該禁用 MSI Center，以便應用程式可以順利運行且不會發生衝突。</value>
   </data>
   <data name="PowerProfileMSIClawBestPerformance" xml:space="preserve">
-    <value>Extreme Performance</value>
+    <value>極限性能</value>
   </data>
   <data name="PowerProfileMSIClawBestPerformanceDesc" xml:space="preserve">
-    <value>The best system performance for multi-tasking and heavy duty.</value>
+    <value>最佳系統性能，適用於多工處理和重負載作業。</value>
   </data>
   <data name="PowerProfileMSIClawBetterBattery" xml:space="preserve">
-    <value>Super Battery</value>
+    <value>續航優先</value>
   </data>
   <data name="PowerProfileMSIClawBetterBatteryDesc" xml:space="preserve">
-    <value>The longest possible battery life.</value>
+    <value>最長的電池續航時間。</value>
   </data>
   <data name="PowerProfileMSIClawBetterPerformance" xml:space="preserve">
-    <value>Balanced</value>
+    <value>平衡</value>
   </data>
   <data name="PowerProfileMSIClawBetterPerformanceDesc" xml:space="preserve">
-    <value>The best system settings that MSI recommends.</value>
+    <value>MSI 建議的最佳系統設定。</value>
   </data>
   <data name="Enum_InputsHotkeyType_Profiles" xml:space="preserve">
     <value>設定檔</value>
@@ -2963,10 +3002,10 @@
     <value>正在排序中，請稍候...</value>
   </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
-    <value>横屏（翻转）</value>
+    <value>横屏（翻轉）</value>
   </data>
   <data name="SettingsPage_ScreenRotation_FlippedPortrait" xml:space="preserve">
-    <value>豎屏（翻转）</value>
+    <value>豎屏（翻轉）</value>
   </data>
   <data name="SettingsPage_ScreenRotation_Landscape" xml:space="preserve">
     <value>横屏</value>
@@ -3122,7 +3161,7 @@
     <value>顯示</value>
   </data>
   <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
-    <value>快速窗口顯示的螢幕</value>
+    <value>工具窗口顯示的螢幕</value>
   </data>
   <data name="MainWindow_TelemetryText" xml:space="preserve">
     <value>您是否授權掌機伴侶向開發團隊回報資訊? 
@@ -3205,36 +3244,113 @@
   <data name="ControllerPage_SteamControllerModeExclusive" xml:space="preserve">
     <value>專用</value>
   </data>
+  <data name="PowerProfileMinisforumV3BetterBattery" xml:space="preserve">
+    <value>Power save</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterPerformance" xml:space="preserve">
+    <value>Power balance</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BestPerformance" xml:space="preserve">
+    <value>Power premium</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BestPerformanceDesc" xml:space="preserve">
+    <value>28W TDP</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterBatteryDesc" xml:space="preserve">
+    <value>15W TDP</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterPerformanceDesc" xml:space="preserve">
+    <value>22W TDP</value>
+  </data>
+  <data name="ProfilesPage_AFMF" xml:space="preserve">
+    <value>AMD Fluid Motion Frames</value>
+  </data>
+  <data name="ProfilesPage_AFMFDesc" xml:space="preserve">
+    <value>Enhance performance by utilizing frame generation technology to increase FPS beyond the in-game limit, resulting in a smoother experience</value>
+  </data>
+  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
+    <value>Power preset (Plugged)</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsPlugged" xml:space="preserve">
+    <value>UNUSED</value>
+  </data>
+  <data name="Hotkey_muteVolume" xml:space="preserve">
+    <value>Mute volume</value>
+  </data>
+  <data name="Hotkey_muteVolumeDesc" xml:space="preserve">
+    <value>Mute/unmute volume</value>
+  </data>
+  <data name="Hotkey_GameBar" xml:space="preserve">
+    <value>Open Game Bar</value>
+  </data>
+  <data name="Hotkey_GameBarDesc" xml:space="preserve">
+    <value>Press this key: Windows + G</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B5" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B6" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B7" xml:space="preserve">
+    <value>C3</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B8" xml:space="preserve">
+    <value>C4</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B9" xml:space="preserve">
+    <value>T1</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B10" xml:space="preserve">
+    <value>T2</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B11" xml:space="preserve">
+    <value>T3</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_L5" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="ProfilesPage_Pinned" xml:space="preserve">
+    <value>Display the profile in Quick start section from the Quicktools Applications page</value>
+  </data>
+  <data name="Hotkey_SwapScreen" xml:space="preserve">
+    <value>Swap foreground window</value>
+  </data>
+  <data name="Hotkey_SwapScreenDesc" xml:space="preserve">
+    <value>Move the foreground window to next available screen</value>
+  </data>
+  <data name="Controller_Calibrate" xml:space="preserve">
+    <value>Calibrate</value>
+    </data>
   <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value />
+    <value>嘗試 {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
-    <value />
+    <value>電池選項</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
+    <value>最大電池充電電量</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
-    <value />
+    <value>自動 (平衡 P/E cores)</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
-    <value />
+    <value>偏好節能核心 (E-cores)</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
-    <value />
+    <value>偏好效能核心 (P-cores)</value>
   </data>
   <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
-    <value />
+    <value>僅效能核心 (最大化效能)</value>
   </data>
   <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
-    <value />
+    <value>僅節能核心 (最大化節能)</value>
   </data>
   <data name="Hotkey_XGMobile" xml:space="preserve">
-    <value />
+    <value>切換 ROG XG Mobile</value>
   </data>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
-    <value />
+    <value>切換 ROG XG Mobile 狀態</value>
   </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />
