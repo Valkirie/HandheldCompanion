@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -83,6 +85,14 @@ public class ClawA1M : IDevice
         Custom,
     }
 
+    #region imports
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
+
+    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
+    #endregion
+
     private ManagementEventWatcher? specialKeyWatcher;
 
     // todo: find the right value, this is placeholder
@@ -95,6 +105,11 @@ public class ClawA1M : IDevice
     protected const int PID_XINPUT = 0x1901;
     protected const int PID_DINPUT = 0x1902;
     protected const int PID_TESTING = 0x1903;
+
+    protected byte[] CLAW_SET_M1 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x00, 0x7A, 0x05, 0x01, 0x00, 0x00, 0x11, 0x00];
+    protected byte[] CLAW_SET_M2 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x01, 0x1F, 0x05, 0x01, 0x00, 0x00, 0x12, 0x00];
+
+    protected string MsIDCVarData = "DD96BAAF-145E-4F56-B1CF-193256298E99";
 
     protected int WmiMajorVersion;
     protected int WmiMinorVersion;
@@ -194,6 +209,25 @@ public class ClawA1M : IDevice
         if (!success)
             return false;
 
+        // OverBoost
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+
+        if (uefiVariableEx != 0)
+        {
+            if (box[1] == (byte)0)
+                InitOverBoost(true);
+
+            // Check if OverBoostSup is enabled
+            if (box[7] != (byte)0)
+            {
+                // Check if OverBoost is enabled
+                if (box[6] != (byte)0)
+                    SetOverBoost(false);
+            }
+        }
+
         // make sure M1/M2 are recognized as buttons
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
@@ -267,9 +301,6 @@ public class ClawA1M : IDevice
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false);
     }
 
-    protected byte[] CLAW_SET_M1 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x00, 0x7A, 0x05, 0x01, 0x00, 0x00, 0x11, 0x00];
-    protected byte[] CLAW_SET_M2 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x01, 0x1F, 0x05, 0x01, 0x00, 0x00, 0x12, 0x00];
-
     protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
@@ -302,6 +333,44 @@ public class ClawA1M : IDevice
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
+    }
+
+    protected byte[] GetMsiDCVarData(ref int uefiVariableEx)
+    {
+        byte[] box = new byte[4096];
+        uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box);
+        return box;
+    }
+
+    protected void InitOverBoost(bool enabled)
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+
+        // set value
+        box[1] = (byte)(enabled ? 1 : 0);
+        SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+    }
+
+    protected void SetOverBoost(bool enabled)
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+
+        // set value
+        box[6] = (byte)(enabled ? 1 : 0);
+        SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
+    }
+
+    public bool GetOverBoost()
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        return box[6] != 0;
     }
 
     protected void GetWMI()

@@ -143,7 +143,7 @@ namespace HandheldCompanion.ViewModels
 
             // manufacturer watcher
             IDevice device = IDevice.GetCurrent();
-            if (device is ClawA1M || device is Claw8)
+            if (device is ClawA1M || device is ClawA2VM)
                 manufacturerWatcher = new ClawCenterWatcher();
             else if (device is LegionGo)
                 manufacturerWatcher = new LegionSpaceWatcher();

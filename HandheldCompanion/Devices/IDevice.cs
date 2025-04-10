@@ -654,7 +654,7 @@ public abstract class IDevice
                             device = new ClawA1M();
                             break;
                         case "MS-1T52":
-                            device = new Claw8();
+                            device = new ClawA2VM();
                             break;
                     }
                 }

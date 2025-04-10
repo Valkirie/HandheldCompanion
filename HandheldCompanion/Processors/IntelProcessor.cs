@@ -49,6 +49,11 @@ public class IntelProcessor : Processor
             bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
             IDevice device = IDevice.GetCurrent();
 
+            // MSI OverBoost will disable VT-d in BIOS and can cause BSOD
+            // Force use OEM method
+            if (device is ClawA1M claw && claw.GetOverBoost())
+                UseOEM = true;
+
             if (device.Capabilities.HasFlag(DeviceCapabilities.OEMPower) && UseOEM)
             {
                 switch (type)

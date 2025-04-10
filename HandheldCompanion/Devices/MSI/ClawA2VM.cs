@@ -7,21 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
-public class Claw8 : ClawA1M
+public class ClawA2VM : ClawA1M
 {
     #region imports
-    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
-
-    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
-
     [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int getEGmode();
 
@@ -63,7 +56,7 @@ public class Claw8 : ClawA1M
         ChangeToCurrentShiftType,
     }
 
-    public Claw8()
+    public ClawA2VM()
     {
         // device specific settings
         ProductIllustration = "device_msi_claw";
@@ -114,18 +107,6 @@ public class Claw8 : ClawA1M
         var success = base.Open();
         if (!success)
             return false;
-
-        // OverBoost
-        byte[] box = new byte[4096];
-        int uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box);
-        if (uefiVariableEx != 0)
-        {
-            if (box[1] == (byte)0)
-            {
-                box[1] = (byte)1;
-                SetUEFIVariableEx("MsiDCVarData", "{DD96BAAF-145E-4F56-B1CF-193256298E99}", box, uefiVariableEx);
-            }
-        }
 
         SetShiftMode(ShiftModeCalcType.Deactive);
 

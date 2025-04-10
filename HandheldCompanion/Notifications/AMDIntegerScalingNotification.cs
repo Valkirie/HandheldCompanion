@@ -2,8 +2,6 @@
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Notifications
@@ -35,15 +33,7 @@ namespace HandheldCompanion.Notifications
             switch (dialogTask.Result)
             {
                 case ContentDialogResult.Primary:
-                    using (Process shutdown = new())
-                    {
-                        shutdown.StartInfo.FileName = "shutdown.exe";
-                        shutdown.StartInfo.Arguments = "-r -t 3";
-
-                        shutdown.StartInfo.UseShellExecute = false;
-                        shutdown.StartInfo.CreateNoWindow = true;
-                        shutdown.Start();
-                    }
+                    DeviceUtils.RestartComputer();
                     break;
                 case ContentDialogResult.Secondary:
                     break;

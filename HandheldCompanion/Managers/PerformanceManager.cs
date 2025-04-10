@@ -7,6 +7,7 @@ using HandheldCompanion.Utils;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -646,7 +647,7 @@ public static class PerformanceManager
         }
     }
 
-    private static async void tdpWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void tdpWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -680,7 +681,7 @@ public static class PerformanceManager
                     if (ReadTDP != TDP)
                         RequestTDP((PowerType)idx, TDP, true);
 
-                    await Task.Delay(20).ConfigureAwait(false); // Avoid blocking the synchronization context
+                    Thread.Sleep(200);
                 }
 
                 // are we done ?
@@ -876,7 +877,7 @@ public static class PerformanceManager
         for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
             RequestTDP((PowerType)idx, values[idx], immediate);
-            await Task.Delay(20).ConfigureAwait(false); // Avoid blocking the synchronization context
+            await Task.Delay(200).ConfigureAwait(false); // Avoid blocking the synchronization context
         }
     }
 
