@@ -75,6 +75,7 @@
             <converters:StringEmptyConverter x:Key="StringEmptyConverter" />
             <converters:SeparatorConverter x:Key="SeparatorConverter" />
             <converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
+            <converters:CultureToDisplayNameConverter x:Key="CultureToDisplayNameConverter" />
 
             <math:MathConverter x:Key="Math" />
 
