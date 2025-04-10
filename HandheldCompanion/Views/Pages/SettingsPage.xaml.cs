@@ -163,7 +163,7 @@ public partial class SettingsPage : Page
                 case "CurrentCulture":
                     cB_Language.SelectedItem = (string)value switch
                     {
-                        "" => CultureInfo.CurrentCulture,
+                        "" => TranslationSource.Instance.CurrentCulture,
                         _ => new CultureInfo((string)value)
                     };
                     break;
