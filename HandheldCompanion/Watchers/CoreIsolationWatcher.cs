@@ -58,6 +58,7 @@ namespace HandheldCompanion.Watchers
 
         private void HandleEvent(object sender, EventArrivedEventArgs e)
         {
+            /*
             // Access the event details from NewEvent
             ManagementBaseObject registryEvent = e.NewEvent;
 
@@ -65,25 +66,25 @@ namespace HandheldCompanion.Watchers
             string hive = registryEvent["Hive"]?.ToString();
             string keyPath = registryEvent["KeyPath"]?.ToString();
             string valueName = registryEvent["ValueName"]?.ToString();
+            */
 
-            bool value = false;
-            switch (valueName)
-            {
-                case "VulnerableDriverBlocklistEnable":
-                    value = VulnerableDriverBlocklistEnable;
-                    break;
-                case "HypervisorEnforcedCodeIntegrityEnabled":
-                    value = HypervisorEnforcedCodeIntegrityEnabled;
-                    break;
-            }
+            // Control Flow Guard settings
+            string output = ProcessUtils.ExecutePowerShellScript("Get-ProcessMitigation -System");
+            bool controlFlowEnabled = output.Contains("ON");
 
-            UpdateStatus(value);
+            // Get status
+            bool enabled = VulnerableDriverBlocklistEnable || HypervisorEnforcedCodeIntegrityEnabled || controlFlowEnabled;
+
+            UpdateStatus(enabled);
         }
 
         public async void SetSettings(bool enabled)
         {
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity", enabled ? 1 : 0);
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable", enabled ? 1 : 0);
+
+            // Control Flow Guard settings
+            ProcessUtils.ExecutePowerShellScript($"Set-ProcessMitigation -System {(enabled ? "-Enable" : "-Disable")} CFG");
 
             Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
             {
