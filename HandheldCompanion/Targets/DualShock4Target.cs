@@ -37,7 +37,7 @@ namespace HandheldCompanion.Targets
             SendVibrate(e.LargeMotor, e.SmallMotor);
         }
 
-        public override unsafe void UpdateInputs(ControllerState Inputs, GamepadMotion gamepadMotion)
+        public override unsafe void UpdateInputs(ControllerState Inputs, GamepadMotion? gamepadMotion)
         {
             if (!IsConnected)
                 return;
