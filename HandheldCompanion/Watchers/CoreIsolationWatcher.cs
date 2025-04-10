@@ -1,6 +1,9 @@
-﻿using HandheldCompanion.Utils;
+﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.Management;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Watchers
 {
@@ -77,10 +80,30 @@ namespace HandheldCompanion.Watchers
             UpdateStatus(value);
         }
 
-        public void SetSettings(bool enabled)
+        public async void SetSettings(bool enabled)
         {
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity", enabled ? 1 : 0);
             RegistryUtils.SetValue(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable", enabled ? 1 : 0);
+
+            Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+            {
+                Title = Properties.Resources.Dialog_ForceRestartTitle,
+                Content = Properties.Resources.Dialog_ForceRestartDesc,
+                DefaultButton = ContentDialogButton.Close,
+                CloseButtonText = Properties.Resources.Dialog_No,
+                PrimaryButtonText = Properties.Resources.Dialog_Yes
+            }.ShowAsync();
+
+            await dialogTask; // sync call
+
+            switch (dialogTask.Result)
+            {
+                case ContentDialogResult.Primary:
+                    DeviceUtils.RestartComputer();
+                    break;
+                case ContentDialogResult.Secondary:
+                    break;
+            }
         }
 
         private void SetupRegistryWatcher(string regPath, string valueName, ManagementEventWatcher watcher, WqlEventQuery query)

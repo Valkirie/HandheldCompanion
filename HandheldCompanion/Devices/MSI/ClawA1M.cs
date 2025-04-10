@@ -215,8 +215,6 @@ public class ClawA1M : IDevice
         // OverBoost
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
-
         if (uefiVariableEx != 0)
         {
             if (box[1] == (byte)0)
@@ -363,6 +361,7 @@ public class ClawA1M : IDevice
         // set value
         box[1] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
     }
 
     public async void SetOverBoost(bool enabled)
@@ -374,6 +373,7 @@ public class ClawA1M : IDevice
         // set value
         box[6] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
+        SpinWait.SpinUntil(() => false, 600);
 
         Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
         {
