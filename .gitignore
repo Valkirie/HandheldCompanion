@@ -6,3 +6,4 @@ install/
 *Backup.csproj
 *tmp.csproj
 .idea/
+/HandheldCompanion/Properties/Settings.Designer.cs

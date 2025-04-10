@@ -1,12 +1,16 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Localization;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+
 using Sentry;
+
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -104,34 +108,25 @@ public partial class App : Application
         }
 
         // define culture settings
-        var CurrentCulture = ManagerFactory.settingsManager.GetString("CurrentCulture");
-        var culture = CultureInfo.CurrentCulture;
-
-        switch (CurrentCulture)
+        var currentCultureString = ManagerFactory.settingsManager.GetString("CurrentCulture");
+        CultureInfo culture;
+        if (string.IsNullOrEmpty(currentCultureString))
         {
-            default:
-                culture = new CultureInfo("en-US");
-                break;
-            case "fr-FR":
-            case "en-US":
-            case "zh-Hans":
-            case "zh-Hant":
-            case "de-DE":
-            case "it-IT":
-            case "pt-BR":
-            case "es-ES":
-            case "ja-JP":
-            case "ru-RU":
-                culture = new CultureInfo(CurrentCulture);
-                break;
-            case "zh-CN": // fallback change locale name from zh-CN to zh-Hans
-                ManagerFactory.settingsManager.SetProperty("CurrentCulture", "zh-Hans", true);
-                CurrentCulture = "zh-Hans";
-                culture = new CultureInfo(CurrentCulture);
-                break;
+            culture = CultureInfo.CurrentCulture;
+        }
+        else
+        {
+            culture = new CultureInfo(currentCultureString);
         }
 
-        Localization.TranslationSource.Instance.CurrentCulture = culture;
+        while (culture is not null)
+        {
+            if (TranslationSource.ValidCultures.Contains(culture)) break;
+            else culture = culture.Parent;
+        }
+        if (culture is null) culture = new CultureInfo("en-US");
+
+        TranslationSource.Instance.CurrentCulture = culture;
 
         // handle exceptions nicely
         var currentDomain = default(AppDomain);
