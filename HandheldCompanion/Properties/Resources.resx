@@ -1024,7 +1024,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>We couldn't locate the update file.</value>
   </data>
   <data name="SettingsPage_UpdateWarning" xml:space="preserve">
-    <value>Oups. There was an issue.</value>
+    <value>Oops. There was an issue.</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>
@@ -2850,8 +2850,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>Device settings</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>Oops, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
@@ -3359,5 +3359,20 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Unsupported device</value>
+  </data>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value>On-screen display options</value>
+  </data>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value>Rumble on execution</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value>Indicates whether the controller should vibrate when a hotkey is executed</value>
+  </data>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value>Hotkeys Settings</value>
   </data>
 </root>

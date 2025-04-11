@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2285,19 +2285,19 @@
     <value>Select</value>
   </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
-    <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
+    <value>你可能需要卸载 Steam Xbox 扩展功能支持驱动</value>
   </data>
   <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
-    <value>Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller</value>
+    <value>它会令隐藏物理手柄功能失效</value>
   </data>
   <data name="Hint_SteamXboxDrivers" xml:space="preserve">
-    <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
+    <value>已安装 Steam Xbox 扩展功能支持驱动</value>
   </data>
   <data name="DevicePage_Device" xml:space="preserve">
-    <value>Device</value>
+    <value>设备</value>
   </data>
   <data name="MainWindow_navDevice" xml:space="preserve">
-    <value>Device</value>
+    <value>设备</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
     <value>Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond.</value>
@@ -2522,10 +2522,10 @@
     <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Controller management</value>
+    <value>手柄管理</value>
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage your controllers for greater compatibility</value>
+    <value>自动管理手柄以提高兼容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -2534,10 +2534,10 @@
     <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
-    <value>Close</value>
+    <value>关闭</value>
   </data>
   <data name="ControllerPage_TryAgain" xml:space="preserve">
-    <value>Try again</value>
+    <value>重试</value>
   </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
     <value>ASUS services are running</value>
@@ -2552,13 +2552,13 @@
     <value>Disable ASUS services</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
-    <value>Notifications</value>
+    <value>通知</value>
   </data>
   <data name="NotificationsPage_NothingToSee" xml:space="preserve">
-    <value>No notifications yet</value>
+    <value>没有通知</value>
   </data>
   <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
-    <value>You have no notifications right now.</value>
+    <value>你现在没有通知</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
     <value>Go to profiles settings to change per-game emulated controller type preference.</value>
@@ -2597,16 +2597,16 @@
     <value>Fan max speed override</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
-    <value>Integer scaling is not available</value>
+    <value>整倍缩放不可用</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
-    <value>Deploy integer scaling</value>
+    <value>安装整倍缩放</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckDesc" xml:space="preserve">
-    <value>Integer scaling feature is not installed, therefore you won't be able to enable or disable it</value>
+    <value>没有安装整倍缩放，所以你不能使用该功能</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckReadme" xml:space="preserve">
-    <value>We need to execute some script to deploy the integer scaling on your system</value>
+    <value>我们需要运行一些脚本以安装整倍缩放</value>
   </data>
   <data name="QuickOverlayPage_Desc" xml:space="preserve">
     <value>Manage on-screen overlay</value>
@@ -2759,25 +2759,25 @@
     <value>Nearest Neighbor</value>
   </data>
   <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
-    <value>connected to the computer</value>
+    <value>已连接到电脑</value>
   </data>
   <data name="ControllerPage_VirtualDevices" xml:space="preserve">
-    <value>Virtual controller</value>
+    <value>虚拟手柄</value>
   </data>
   <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
-    <value>is what the computer uses</value>
+    <value>目前电脑使用的</value>
   </data>
   <data name="ControllerPage_VirtualStatus" xml:space="preserve">
-    <value>Controller status</value>
+    <value>手柄状态</value>
   </data>
   <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
-    <value>Change virtual controller status</value>
+    <value>更改虚拟手柄状态</value>
   </data>
   <data name="ControllerPage_VirtualType" xml:space="preserve">
-    <value>Controller type</value>
+    <value>手柄类型</value>
   </data>
   <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
-    <value>Change virtual controller type</value>
+    <value>更改虚拟手柄类型</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
     <value>Auto Sleep Time</value>
@@ -2803,8 +2803,21 @@
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Trigger Margin</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>你的设备暂未在支持列表，本程序可能无法正常使用。</value>
+  </data>
+  <data name="SettingsPage_SensorCalibration" xml:space="preserve">
+    <value>校准传感器</value>
+  </data>
+  <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
+    <value>校准设备的惯性传感器</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="OverlayPage_Xbox360Controller" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
+    <value>校准</value>
   </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>预设效果</value>
@@ -2845,7 +2858,9 @@
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>冬日暖阳</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
+    <value>覆盖窗</value>
+  </data>
   <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -2875,6 +2890,21 @@
   </data>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
+  </data>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value>显示选项</value>
+  </data>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value>热键</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value>触发反馈</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value>开启后，触发热键时手柄将会震动</value>
+  </data>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value>设定</value>
   </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />
