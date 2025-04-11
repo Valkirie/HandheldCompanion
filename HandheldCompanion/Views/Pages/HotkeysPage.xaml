@@ -14,7 +14,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Hotkeys"
-    Title="Hotkeys"
+    Title="{l:Static resx:Resources.HotkeysPage_Hotkeys}"
     d:Background="White"
     d:DesignHeight="1500"
     d:DesignWidth="1000"
@@ -25,7 +25,7 @@
     <Grid Name="MainGrid" Margin="20">
 
         <ikw:SimpleStackPanel Name="HotkeysPanel" Spacing="24">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Hotkeys Settings" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_HotkeysSettings}" />
             <ikw:SimpleStackPanel Spacing="6">
 
                 <!--  Rumble on execution  -->
@@ -48,11 +48,11 @@
                                 Glyph="&#xE877;" />
 
                             <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Rumble on execution" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_RumbleOnExecution}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Indicates whether the controller should vibrate when a hotkey is executed"
+                                    Text="{l:Static resx:Resources.HotkeysPage_RumbleOnExecutionDesc}"
                                     TextWrapping="Wrap" />
                             </ikw:SimpleStackPanel>
                         </DockPanel>
@@ -68,7 +68,7 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Hotkeys" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_Hotkeys}" />
             <ikw:SimpleStackPanel Spacing="6">
                 <Button
                     Height="33"
