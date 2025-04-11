@@ -23,7 +23,7 @@
 
             <!--  OSD options  -->
             <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="On-screen display options" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OnScreenDisplayOptions}" />
 
                 <!--  On-screen display update rate  -->
                 <Border

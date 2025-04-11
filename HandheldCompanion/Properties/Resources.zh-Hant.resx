@@ -2807,7 +2807,7 @@
     <value>裝置設定</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+    <value>Oops, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
@@ -3234,6 +3234,21 @@
     <value />
   </data>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
     <value />
   </data>
 </root>
