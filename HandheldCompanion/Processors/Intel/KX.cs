@@ -43,40 +43,35 @@ public class KX
 
         try
         {
-            foreach (string add in mchbar_addresses)
+            foreach (string address in mchbar_addresses)
             {
-                startInfo.Arguments = $"/rdmem32 {add}";
-                using (var ProcessOutput = Process.Start(startInfo))
+                startInfo.Arguments = $"/rdmem32 {address}";
+                using (Process? ProcessOutput = Process.Start(startInfo))
                 {
                     while (!ProcessOutput.StandardOutput.EndOfStream)
                     {
-                        var line = ProcessOutput.StandardOutput.ReadLine();
+                        string line = ProcessOutput.StandardOutput.ReadLine();
+                        if (string.IsNullOrEmpty(line))
+                            continue;
 
                         if (!line.Contains("Return"))
                             continue;
-
+                        
                         // parse result
                         line = CommonUtils.Between(line, "Return ");
-                        var returned = long.Parse(line);
-                        var output = "0x" + returned.ToString("X2").Substring(0, 4);
 
-                        // mcbar is null
-                        if (output == "0xFFFFFFFF")
+                        // check if mchbar is null
+                        if (line.Contains("0xFFFFFFFF"))
                             continue;
 
-                        mchbar = output + pnt_limit;
-
-                        ProcessOutput.Close();
+                        // store mchbar
+                        mchbar = address + pnt_limit;
                         return true;
                     }
-
-                    ProcessOutput.Close();
                 }
             }
         }
-        catch
-        {
-        }
+        catch { }
 
         return false;
     }
