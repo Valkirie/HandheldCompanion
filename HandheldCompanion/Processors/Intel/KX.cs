@@ -59,12 +59,13 @@ public class KX
                         
                         // parse result
                         line = CommonUtils.Between(line, "Return ");
+                        long returned = long.Parse(line);
 
                         // check if mchbar is null
-                        if (line.Contains("0xFFFFFFFF"))
+                        if (returned == 0xFFFFFFFF)
                             continue;
 
-                        // store mchbar
+                        // store mchbar and leave loop
                         mchbar = address + pnt_limit;
                         return true;
                     }
