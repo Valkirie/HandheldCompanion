@@ -58,6 +58,7 @@
   <ItemGroup>
     <None Remove="HandheldCompanion.json" />
     <None Remove="Resources\DeviceImages\device_minisforum_v3.png" />
+    <None Remove="Resources\DeviceImages\device_msi_claw8.png" />
     <None Remove="Resources\DeviceImages\device_rog_ally_x.png" />
     <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2.png" />
@@ -118,6 +119,10 @@
     </Content>
     <Content Include="Resources\icon.ico" />
     <Content Include="Resources\xinput1_x64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\DeviceImages\device_msi_claw8.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -427,7 +427,7 @@ public class ProfileManager : IManager
             Profile profile = GetProfileFromPath(processEx.Path, false);
 
             // skip if current
-            if (profile.Guid == currentProfile.Guid)
+            if (profile.Guid == currentProfile?.Guid)
                 return;
 
             if (!profile.Default)

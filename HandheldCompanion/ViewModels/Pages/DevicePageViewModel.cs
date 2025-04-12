@@ -82,7 +82,9 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != ClawOverBoost)
                 {
-                    ((ClawA2VM)CurrentDevice).SetOverBoost(value);
+                    if (CurrentDevice is ClawA1M clawA1M)
+                        clawA1M.SetOverBoost(value);
+
                     OnPropertyChanged(nameof(ClawOverBoost));
                 }
             }

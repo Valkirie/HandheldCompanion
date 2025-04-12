@@ -56,7 +56,7 @@ public class KX
 
                         if (!line.Contains("Return"))
                             continue;
-                        
+
                         // parse result
                         line = CommonUtils.Between(line, "Return ");
                         long returned = long.Parse(line);
