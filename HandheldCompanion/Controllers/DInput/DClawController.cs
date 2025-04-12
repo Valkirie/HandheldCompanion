@@ -85,7 +85,7 @@ public class DClawController : DInputController
         catch (SharpDX.SharpDXException ex)
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
-                joystick?.Acquire();
+                Plug();
             else if (ex.ResultCode == ResultCode.InputLost)
                 AttachDetails(Details);
         }
@@ -98,7 +98,13 @@ public class DClawController : DInputController
         if (!IsConnected())
             return;
 
-        joystickHid?.Write(new byte[] { 05, 01, 00, 00, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength) });
+        joystickHid?.Write(new byte[]
+        {
+            05, 01, 00, 00,
+            (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength),
+            00,
+            00
+        });
     }
 
     public override string GetGlyph(ButtonFlags button)
