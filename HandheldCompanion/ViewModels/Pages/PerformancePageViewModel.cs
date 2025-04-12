@@ -478,8 +478,8 @@ namespace HandheldCompanion.ViewModels
         private bool _updatingFanCurveUI;
 
         // Use these to easily rebuild 
-        private ProfilesPickerViewModel _devicePresetsPickerVM;
-        private ProfilesPickerViewModel _userPresetsPickerVM;
+        private ProfilesPickerViewModel _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
+        private ProfilesPickerViewModel _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };
 
         private static HashSet<string> _skipPropertyChangedUpdate =
         [
@@ -508,10 +508,19 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
-            ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
-            ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
             // raise events
+            switch (ManagerFactory.powerProfileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPowerProfile();
+                    break;
+            }
+
             switch (ManagerFactory.settingsManager.Status)
             {
                 default:
@@ -628,25 +637,8 @@ namespace HandheldCompanion.ViewModels
             #endregion
 
             #region Main Window Setup
-
             if (IsMainPage)
             {
-                _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
-                _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };
-
-                ProfilePickerItems.Add(_devicePresetsPickerVM);
-                ProfilePickerItems.Add(_userPresetsPickerVM);
-
-                // Fill initial data
-                foreach (var preset in ManagerFactory.powerProfileManager.profiles.Values)
-                {
-                    var index = ProfilePickerItems.IndexOf(preset.IsDefault() || preset.IsDeviceDefault() ? _devicePresetsPickerVM : _userPresetsPickerVM) + 1;
-                    ProfilePickerItems.Insert(index, new ProfilesPickerViewModel { Text = preset.Name, LinkedPresetId = preset.Guid });
-                }
-
-                // Reset Index to Default, 1 item before _userPresetsPickerVM
-                _selectedPresetIndex = ProfilePickerItems.IndexOf(_userPresetsPickerVM) - 1;
-
                 OpenModifyDialogCommand = new DelegateCommand(() =>
                 {
                     ModifyPresetName = PresetName;
@@ -710,7 +702,6 @@ namespace HandheldCompanion.ViewModels
                     });
                 });
             }
-
             #endregion
         }
 
@@ -734,6 +725,31 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged("ConfigurableTDPOverride");
         }
 
+        private void QueryPowerProfile()
+        {
+            ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
+            ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
+
+            if (IsMainPage)
+            {
+                ProfilePickerItems.Add(_devicePresetsPickerVM);
+                ProfilePickerItems.Add(_userPresetsPickerVM);
+
+                foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+
+                // Reset Index to Default
+                ProfilesPickerViewModel profile = ProfilePickerItems.FirstOrDefault(p => p.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid);
+                if (profile is not null)
+                    SelectedPresetIndex = ProfilePickerItems.IndexOf(profile);
+            }
+        }
+
+        private void PowerProfileManager_Initialized()
+        {
+            QueryPowerProfile();
+        }
+
         private void QueryMedia()
         {
             MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
@@ -753,6 +769,8 @@ namespace HandheldCompanion.ViewModels
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
+            ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+
 
             if (IsMainPage)
             {

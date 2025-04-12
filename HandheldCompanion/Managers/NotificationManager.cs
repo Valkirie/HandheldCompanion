@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Notifications;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace HandheldCompanion.Managers
@@ -12,7 +11,7 @@ namespace HandheldCompanion.Managers
         public event DiscardedEventHandler Discarded;
         public delegate void DiscardedEventHandler(Notification notification);
 
-        public List<Notification> Notifications = new();
+        public ConcurrentList<Notification> Notifications = new();
         public bool Any => Notifications.Any();
         public int Count => Notifications.Count;
 
