@@ -1198,7 +1198,10 @@
                         </ComboBox>
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard Description="Maximized the combined performance of the processor and GPU" Header="MSI OverBoost">
+                    <ui:SettingsCard
+                        Description="Maximized the combined performance of the processor and GPU"
+                        Header="MSI OverBoost"
+                        IsEnabled="False">
                         <ui:SettingsCard.HeaderIcon>
                             <Image emoji:EmojiImage.Source="🚀" RenderOptions.BitmapScalingMode="HighQuality" />
                         </ui:SettingsCard.HeaderIcon>
