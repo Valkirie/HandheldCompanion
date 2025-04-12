@@ -85,7 +85,7 @@ public class DClawController : DInputController
         catch (SharpDX.SharpDXException ex)
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
-                joystick?.Acquire();
+                Plug();
             else if (ex.ResultCode == ResultCode.InputLost)
                 AttachDetails(Details);
         }
