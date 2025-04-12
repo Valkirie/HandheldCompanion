@@ -98,7 +98,13 @@ public class DClawController : DInputController
         if (!IsConnected())
             return;
 
-        joystickHid?.Write(new byte[] { 05, 01, 00, 00, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength) });
+        joystickHid?.Write(new byte[]
+        {
+            05, 01, 00, 00,
+            (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength),
+            00,
+            00
+        });
     }
 
     public override string GetGlyph(ButtonFlags button)

@@ -242,8 +242,11 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             device.Write(CLAW_SET_M1);
+            Task.Delay(300).Wait();
             device.Write(CLAW_SET_M2);
+            Task.Delay(300).Wait();
             SyncToROM();
+            Task.Delay(300).Wait();
             SwitchMode(GamepadMode.MSI);
         }
 
