@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace HandheldCompanion.Libraries
 {
+    [Serializable]
     public class LibraryEntry
     {
         public enum LibraryFamily
@@ -25,6 +26,16 @@ namespace HandheldCompanion.Libraries
             this.Id = id;
             this.Name = name;
             this.ReleaseDate = releaseDate;
+        }
+
+        public virtual long GetCoverId()
+        {
+            return 0;
+        }
+
+        public virtual long GetArtworkId()
+        {
+            return 0;
         }
     }
 }

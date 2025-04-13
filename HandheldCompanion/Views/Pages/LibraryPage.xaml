@@ -93,6 +93,7 @@
                                     Margin="12"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
+                                    Foreground="White"
                                     Style="{StaticResource BaseTextBlockStyle}"
                                     Text="{Binding Name}"
                                     TextWrapping="Wrap" />

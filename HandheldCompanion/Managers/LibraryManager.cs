@@ -36,8 +36,7 @@ namespace HandheldCompanion.Managers
         {
             cover,
             artwork,
-            screenshot,
-            directory
+            thumbnails,
         }
 
         #region events
@@ -61,23 +60,21 @@ namespace HandheldCompanion.Managers
                 Directory.CreateDirectory(ManagerPath);
         }
 
-        public string GetGameArtPath(long? gameId, LibraryType libraryType = LibraryType.directory)
-        {
+        public string GetGameArtPath(long gameId, LibraryType libraryType, long imageId)
+        {            
             // check if the game has art
-            string imageId = libraryType switch
+            string filePath = libraryType switch
             {
-                LibraryType.cover => "cover.png",
-                LibraryType.artwork => "artwork.png",
-                LibraryType.screenshot => "screenshot.png",
+                LibraryType.thumbnails => "thumbnails",
                 _ => string.Empty,
             };
 
-            return Path.Combine(ManagerPath, gameId.ToString(), imageId);
+            return Path.Combine(ManagerPath, gameId.ToString(), filePath, $"{imageId}.png");
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType)
+        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId)
         {
-            string fileName = GetGameArtPath(gameId, libraryType);
+            string fileName = GetGameArtPath(gameId, libraryType, imageId);
             if (!File.Exists(fileName))
                 return LibraryResources.MissingCover;
 
@@ -168,7 +165,11 @@ namespace HandheldCompanion.Managers
                                         Storyline = game.Storyline,
                                         Category = game.Category.HasValue ? game.Category.Value : Category.MainGame,
                                         Cover = game.Cover.Value,
+
+                                        Artworks = game.Artworks.Values,
                                         Artwork = game.Artworks.Values?[0],
+
+                                        Screenshots = game.Screenshots.Values,
                                         Screenshot = game.Screenshots.Values?[0],
                                     });
                                 }
@@ -200,6 +201,9 @@ namespace HandheldCompanion.Managers
 
                                     entries.Add(new SteamGridEntry((long)game.Id, game.Name, game.ReleaseDate)
                                     {
+                                        Heroes = heroes,
+                                        Grids = grids,
+
                                         Hero = heroes.FirstOrDefault(),
                                         Grid = grids.FirstOrDefault(),
                                     });
@@ -269,7 +273,7 @@ namespace HandheldCompanion.Managers
                 return false;
 
             if (entry is SteamGridEntry steamGridEntry)
-                return await DownloadGameArts((SteamGridEntry)entry, preview);
+                return await DownloadGameArts(steamGridEntry, preview);
             else if (entry is IGDBEntry igdbEntry)
                 return await DownloadGameArts(igdbEntry, preview);
 
@@ -282,18 +286,29 @@ namespace HandheldCompanion.Managers
             if (!IsConnected)
                 return false;
 
-            // download grid
-            if (entry.Grid != null)
-                await DownloadGameArt(entry.Id, entry.Grid, LibraryType.cover, preview);
-
-            // download hero
-            if (entry.Hero != null)
-                await DownloadGameArt(entry.Id, entry.Hero, LibraryType.artwork, preview);
+            if (preview)
+            {
+                // download grid
+                foreach(SteamGridDbGrid grid in entry.Grids)
+                    await DownloadGameArt(entry.Id, grid, LibraryType.thumbnails);
+                // download hero
+                foreach(SteamGridDbHero hero in entry.Heroes)
+                    await DownloadGameArt(entry.Id, hero, LibraryType.thumbnails);
+            }
+            else
+            {
+                // download grid
+                if (entry.Grid != null)
+                    await DownloadGameArt(entry.Id, entry.Grid, LibraryType.cover);
+                // download hero
+                if (entry.Hero != null)
+                    await DownloadGameArt(entry.Id, entry.Hero, LibraryType.artwork);
+            }
 
             return true;
         }
 
-        public async Task<bool> DownloadGameArt(long? gameId, SteamGridDbObject entry, LibraryType libraryType, bool preview)
+        public async Task<bool> DownloadGameArt(long gameId, SteamGridDbObject entry, LibraryType libraryType)
         {
             try
             {
@@ -302,13 +317,15 @@ namespace HandheldCompanion.Managers
 
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync(entry.FullImageUrl);
+                    string imageUrl = libraryType == LibraryType.thumbnails ? entry.ThumbnailImageUrl : entry.FullImageUrl;
+
+                    HttpResponseMessage response = await client.GetAsync(imageUrl);
                     if (response.IsSuccessStatusCode)
                     {
                         byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
 
-                        string directoryPath = GetGameArtPath(gameId);
-                        string filePath = GetGameArtPath(gameId, libraryType);
+                        string filePath = GetGameArtPath(gameId, libraryType, entry.Id);
+                        string directoryPath = Directory.GetParent(filePath).FullName;
 
                         // If the image directory does not exist, create it
                         if (!Directory.Exists(directoryPath))
@@ -348,12 +365,12 @@ namespace HandheldCompanion.Managers
 
             // download screenshot
             if (entry.Screenshot != null)
-                await DownloadGameArt(entry.Id, entry.Screenshot.ImageId, LibraryType.screenshot, preview);
+                await DownloadGameArt(entry.Id, entry.Screenshot.ImageId, LibraryType.artwork, preview);
 
             return true;
         }
 
-        public async Task<bool> DownloadGameArt(long? gameId, string imageId, LibraryType libraryType, bool preview)
+        public async Task<bool> DownloadGameArt(long gameId, string imageId, LibraryType libraryType, bool preview)
         {
             // check connection
             if (!IsConnected)
@@ -366,7 +383,6 @@ namespace HandheldCompanion.Managers
                     imageSize = preview ? ImageSize.CoverSmall : ImageSize.CoverBig;
                     break;
                 case LibraryType.artwork:
-                case LibraryType.screenshot:
                     imageSize = preview ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
                     break;
             }
@@ -387,8 +403,8 @@ namespace HandheldCompanion.Managers
                     {
                         byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
 
-                        string directoryPath = GetGameArtPath(gameId);
-                        string filePath = GetGameArtPath(gameId, libraryType);
+                        string filePath = GetGameArtPath(gameId, libraryType, long.Parse(imageId));
+                        string directoryPath = Directory.GetParent(filePath).FullName;
 
                         // If the image directory does not exist, create it
                         if (!Directory.Exists(directoryPath))

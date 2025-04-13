@@ -29,7 +29,6 @@
                     IsEnabled="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
                     Spacing="12">
                     <ikw:SimpleStackPanel Spacing="6">
-                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="IGDB" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" />
@@ -66,51 +65,65 @@
 
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <ikw:SimpleStackPanel Margin="0,6,0,6" VerticalAlignment="Center">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{Binding Name}" />
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{Binding Name}" />
 
-                                            <TextBlock
-                                                HorizontalAlignment="Right"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{Binding ReleaseDateYear}" />
-                                        </Grid>
-
-                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
-                                            <TextBlock
-                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Cover"
-                                                TextWrapping="Wrap"
-                                                Visibility="{Binding HasCover, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                            <TextBlock
-                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Artworks"
-                                                TextWrapping="Wrap"
-                                                Visibility="{Binding HasArtworks, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                            <TextBlock
-                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Screenshots"
-                                                TextWrapping="Wrap"
-                                                Visibility="{Binding HasScreenshots, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                        </ikw:SimpleStackPanel>
-                                    </ikw:SimpleStackPanel>
+                                        <TextBlock
+                                            HorizontalAlignment="Right"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{Binding ReleaseDateYear}" />
+                                    </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
 
-                        <Button
-                            HorizontalAlignment="Stretch"
-                            Command="{Binding DownloadLibrary}"
-                            Content="Download"
-                            IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource AccentButtonStyle}" />
+                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />
 
+                            <Grid Height="225">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <ui:FlipView
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ui:FlipView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Image, Mode=OneWay}" Stretch="UniformToFill" />
+                                        </DataTemplate>
+                                    </ui:FlipView.ItemTemplate>
+                                </ui:FlipView>
+
+                                <ui:FlipView
+                                    Grid.Column="1"
+                                    Margin="6,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{Binding LibraryArtworks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedIndex="{Binding LibraryArtworksIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ui:FlipView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Image
+                                                HorizontalAlignment="Center"
+                                                Source="{Binding Image, Mode=OneWay}"
+                                                Stretch="UniformToFill" />
+                                        </DataTemplate>
+                                    </ui:FlipView.ItemTemplate>
+                                </ui:FlipView>
+                            </Grid>
+
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding DownloadLibrary}"
+                                Content="Download"
+                                IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource AccentButtonStyle}" />
+                        </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
             </ui:ContentDialog>

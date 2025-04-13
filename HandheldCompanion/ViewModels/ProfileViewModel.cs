@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static HandheldCompanion.Libraries.LibraryEntry;
+using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -62,17 +63,17 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private bool HasLibrary => Profile.LibraryEntry is not null;
-        private long LibraryId => Profile.LibraryEntry?.Id ?? 0;
-
         public BitmapImage Cover
         {
             get
             {
-                if (!HasLibrary)
+                if (Profile.LibraryEntry is null)
                     return LibraryResources.MissingCover;
 
-                return ManagerFactory.libraryManager.GetGameArt(LibraryId, LibraryManager.LibraryType.cover);
+                long id = Profile.LibraryEntry.Id;
+                long imageId = Profile.LibraryEntry.GetCoverId();
+
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId);
             }
         }
 
@@ -80,21 +81,13 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (!HasLibrary)
+                if (Profile.LibraryEntry is null)
                     return null;
 
-                long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
-                LibraryFamily libraryFamily = ProfilesPage.selectedProfile.LibraryEntry.Family;
+                long id = Profile.LibraryEntry.Id;
+                long imageId = Profile.LibraryEntry.GetArtworkId();
 
-                if (ProfilesPage.selectedProfile?.LibraryEntry is IGDBEntry IGDB)
-                {
-                    if (IGDB.Artwork is not null)
-                        return ManagerFactory.libraryManager.GetGameArt(LibraryId, LibraryManager.LibraryType.artwork);
-                    else if (IGDB.Screenshot is not null)
-                        return ManagerFactory.libraryManager.GetGameArt(LibraryId, LibraryManager.LibraryType.screenshot);
-                }
-                
-                return null;
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId);
             }
         }
 

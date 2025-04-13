@@ -4,6 +4,7 @@ using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
+using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Pages;
 using IGDB;
 using IGDB.Models;
@@ -17,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using static HandheldCompanion.Libraries.LibraryEntry;
+using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -125,8 +127,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private bool _isUpdatingSelection = false;
-
         public bool HasLibraryEntry => _SelectedLibraryEntry != null;
 
         private LibraryEntry _SelectedLibraryEntry;
@@ -135,31 +135,19 @@ namespace HandheldCompanion.ViewModels
             get => _SelectedLibraryEntry;
             set
             {
-                // Only update if the new value is different.
                 if (_SelectedLibraryEntry != value)
                 {
-                    // Prevent recursive updates.
-                    if (_isUpdatingSelection)
-                        return;
+                    // update index
+                    _SelectedLibraryEntry = value;
 
-                    try
+                    if (value != null)
                     {
-                        _isUpdatingSelection = true;
-                        _SelectedLibraryEntry = value;
-                        if (value != null)
-                            _SelectedLibraryIndex = LibraryPickers.IndexOf(LibraryPickers.First(p => p.Id == value.Id));
-                        else
-                            _SelectedLibraryIndex = -1;
+                        _SelectedLibraryIndex = LibraryPickers.IndexOf(LibraryPickers.FirstOrDefault(p => p.Id == value.Id));
+                    }
+                    else
+                        _SelectedLibraryIndex = -1;
 
-                        // Notify about both properties.
-                        OnPropertyChanged(nameof(SelectedLibraryEntry));
-                        OnPropertyChanged(nameof(SelectedLibraryIndex));
-                        OnPropertyChanged(nameof(HasLibraryEntry));
-                    }
-                    finally
-                    {
-                        _isUpdatingSelection = false;
-                    }
+                    SelectedLibraryChanged();
                 }
             }
         }
@@ -170,36 +158,90 @@ namespace HandheldCompanion.ViewModels
             get => _SelectedLibraryIndex;
             set
             {
-                // Only update if index is different.
                 if (_SelectedLibraryIndex != value)
                 {
-                    // Prevent recursive updates.
-                    if (_isUpdatingSelection)
-                        return;
+                    // update index
+                    _SelectedLibraryIndex = value;
 
-                    try
+                    if (value >= 0 && value < LibraryPickers.Count)
                     {
-                        _isUpdatingSelection = true;
-                        _SelectedLibraryIndex = value;
-                        if (value >= 0 && value < LibraryPickers.Count)
-                            _SelectedLibraryEntry = LibraryPickers[value].LibEntry;
-                        else
-                            _SelectedLibraryEntry = null;
-
-                        // Notify about both properties.
-                        OnPropertyChanged(nameof(SelectedLibraryIndex));
-                        OnPropertyChanged(nameof(SelectedLibraryEntry));
-                        OnPropertyChanged(nameof(HasLibraryEntry));
-
-                        // Optionally trigger game art download here if needed.
-                        // ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, true);
+                        _SelectedLibraryEntry = LibraryPickers[value].LibEntry;
                     }
-                    finally
-                    {
-                        _isUpdatingSelection = false;
-                    }
+                    else
+                        _SelectedLibraryEntry = null;
+
+                    SelectedLibraryChanged();
                 }
             }
+        }
+
+        private int _LibraryCoversIndex;
+        public int LibraryCoversIndex
+        {
+            get => _LibraryCoversIndex;
+            set
+            {
+                if (value != _LibraryCoversIndex)
+                {
+                    _LibraryCoversIndex = value;
+                    OnPropertyChanged(nameof(LibraryCoversIndex));
+                }
+            }
+        }
+
+        public ObservableCollection<LibraryVisualViewModel> LibraryCovers
+        {
+            get
+            {
+                if (_SelectedLibraryIndex != -1 && _SelectedLibraryIndex < LibraryPickers.Count)
+                    return LibraryPickers[_SelectedLibraryIndex].LibraryCovers;
+
+                return new();
+            }
+        }
+
+        private int _LibraryArtworksIndex;
+        public int LibraryArtworksIndex
+        {
+            get => _LibraryArtworksIndex;
+            set
+            {
+                if (value != _LibraryArtworksIndex)
+                {
+                    _LibraryArtworksIndex = value;
+                    OnPropertyChanged(nameof(LibraryArtworksIndex));
+                }
+            }
+        }
+
+        public ObservableCollection<LibraryVisualViewModel> LibraryArtworks
+        {
+            get
+            {
+                if (_SelectedLibraryIndex != -1 && _SelectedLibraryIndex < LibraryPickers.Count)
+                    return LibraryPickers[_SelectedLibraryIndex].LibraryArtworks;
+
+                return new();
+            }
+        }
+
+        private async void SelectedLibraryChanged()
+        {
+            // Optionally trigger game art download here if needed.
+            await ManagerFactory.libraryManager.DownloadGameArts(_SelectedLibraryEntry, true);
+
+            OnPropertyChanged(nameof(SelectedLibraryIndex));
+            OnPropertyChanged(nameof(SelectedLibraryEntry));
+            OnPropertyChanged(nameof(HasLibraryEntry));
+
+            OnPropertyChanged(nameof(LibraryCovers));
+            OnPropertyChanged(nameof(LibraryArtworks));
+
+            // reset cover index
+            LibraryCoversIndex = 0;
+            LibraryArtworksIndex = 0;
+            OnPropertyChanged(nameof(LibraryCoversIndex));
+            OnPropertyChanged(nameof(LibraryArtworksIndex));
         }
 
         public bool IsLibraryBusy => ManagerFactory.libraryManager.IsBusy;
@@ -214,6 +256,7 @@ namespace HandheldCompanion.ViewModels
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
+            BindingOperations.EnableCollectionSynchronization(LibraryPickers, new object());
 
             // manage events
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
@@ -253,6 +296,13 @@ namespace HandheldCompanion.ViewModels
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
+                // update library entry
+                if (SelectedLibraryEntry is SteamGridEntry Steam)
+                {
+                    Steam.Grid = Steam.Grids[LibraryCoversIndex];
+                    Steam.Hero = Steam.Heroes[LibraryArtworksIndex];
+                }
+
                 // update target entry
                 ProfilesPage.selectedProfile.LibraryEntry = SelectedLibraryEntry;
 
@@ -320,9 +370,9 @@ namespace HandheldCompanion.ViewModels
                     return LibraryResources.MissingCover;
 
                 long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
-                LibraryFamily libraryFamily = ProfilesPage.selectedProfile.LibraryEntry.Family;
+                long imageId = ProfilesPage.selectedProfile.LibraryEntry.GetCoverId();
 
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.cover);
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId);
             }
         }
 
@@ -334,15 +384,11 @@ namespace HandheldCompanion.ViewModels
                     return null;
 
                 long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
-                LibraryFamily libraryFamily = ProfilesPage.selectedProfile.LibraryEntry.Family;
+                long imageId = ProfilesPage.selectedProfile.LibraryEntry.GetArtworkId();
 
-                BitmapImage artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.artwork);
+                BitmapImage artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId);
                 if (artwork != LibraryResources.MissingCover)
                     return artwork;
-
-                BitmapImage screenshot = ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.screenshot);
-                if (screenshot != LibraryResources.MissingCover)
-                    return screenshot;
 
                 return null;
             }

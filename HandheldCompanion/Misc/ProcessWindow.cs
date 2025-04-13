@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Utils;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Automation;
 
 namespace HandheldCompanion.Misc
@@ -103,7 +104,12 @@ namespace HandheldCompanion.Misc
                         Name = title;
                 }
             }
-            catch { }
+            catch (COMException)
+            {
+                Dispose();
+            }
+            catch
+            { }
         }
 
         public void Dispose()
