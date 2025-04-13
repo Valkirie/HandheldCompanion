@@ -82,56 +82,14 @@ namespace HandheldCompanion.Managers
             return GetGameArt(gameId, libraryType, imageId.ToString());
         }
 
-        public async Task<IEnumerable<SteamGridDbGame>> GetGamesSteam(string name)
-        {
-            // check connection
-            if (!IsConnected)
-                return Array.Empty<SteamGridDbGame>();
-
-            // update status
-            AddStatus(ManagerStatus.Busy);
-
-            try
-            {
-                // Clean the input name and convert to lowercase for case-insensitive comparison.
-                string cleanedName = RemoveSpecialCharacters(name);
-
-                // Split the game name on space characters into words
-                string[] words = cleanedName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                // Try using as many words as possible, then one less, then one less, etc.
-                for (int i = words.Length; i > 0; i--)
-                {
-                    // Join the first i words to form the search query.
-                    string searchQuery = string.Join(" ", words.Take(i));
-
-                    // Query IGDB using the search query.
-                    SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(name);
-
-                    // If results were found, return them.
-                    if (games != null && games.Length > 0)
-                        return games.OrderBy(g => g.Name);
-                }
-            }
-            catch { }
-            finally
-            {
-                // update status
-                RemoveStatus(ManagerStatus.Busy);
-            }
-
-            // If no results were found with any substring, return an empty array.
-            return Array.Empty<SteamGridDbGame>();
-        }
-
-        public async Task<List<LibraryEntry>> GetGames(LibraryFamily libraryFamily, string name)
+        public async Task<IEnumerable<LibraryEntry>> GetGames(LibraryFamily libraryFamily, string name)
         {
             // prepare list
-            List<LibraryEntry> entries = new();
+            Dictionary<long, LibraryEntry> entries = new();
 
             // check connection
             if (!IsConnected)
-                return entries;
+                return entries.Values;
 
             // update status
             AddStatus(ManagerStatus.Busy);
@@ -160,7 +118,9 @@ namespace HandheldCompanion.Managers
 
                                 foreach (Game game in games)
                                 {
-                                    IGDBEntry entry = new IGDBEntry((long)game.Id, game.Name, game.FirstReleaseDate.Value.DateTime)
+                                    long gameId = (long)game.Id;
+
+                                    IGDBEntry entry = new IGDBEntry(gameId, game.Name, game.FirstReleaseDate.Value.DateTime)
                                     {
                                         Summary = game.Summary,
                                         Storyline = game.Storyline,
@@ -194,7 +154,8 @@ namespace HandheldCompanion.Managers
                                         entry.Artwork = entry.Artworks.FirstOrDefault();
                                     }
 
-                                    entries.Add(entry);
+                                    // add to dictionary
+                                    entries[gameId] = entry;
                                 }
                             }
                             break;
@@ -222,20 +183,24 @@ namespace HandheldCompanion.Managers
                                         formats: SteamGridDbFormats.Png,
                                         limit: 4);
 
-                                    entries.Add(new SteamGridEntry((long)game.Id, game.Name, game.ReleaseDate)
+                                    // skip if no visuals are available
+                                    if (grids.Length == 0 && heroes.Length == 0)
+                                        continue;
+
+                                    SteamGridEntry entry = new SteamGridEntry((long)game.Id, game.Name, game.ReleaseDate)
                                     {
                                         Heroes = heroes,
                                         Grids = grids,
-
                                         Hero = heroes.FirstOrDefault(),
                                         Grid = grids.FirstOrDefault(),
-                                    });
+                                    };
+
+                                    // add to dictionary
+                                    entries[game.Id] = entry;
                                 }
                             }
                             break;
                     }
-
-                    return entries.OrderBy(g => g.Name).ToList();
                 }
             }
             catch { }
@@ -246,7 +211,7 @@ namespace HandheldCompanion.Managers
             }
 
             // If no results were found with any substring, return an empty array.
-            return entries;
+            return entries.Values;
         }
 
         /// <summary>

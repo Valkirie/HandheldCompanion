@@ -25,10 +25,10 @@
                     <ui:UniformGridLayout
                         ItemsStretch="Uniform"
                         MaximumRowsOrColumns="6"
-                        MinColumnSpacing="24"
-                        MinItemHeight="214"
-                        MinItemWidth="150"
-                        MinRowSpacing="24"
+                        MinColumnSpacing="12"
+                        MinItemHeight="240"
+                        MinItemWidth="160"
+                        MinRowSpacing="12"
                         Orientation="Horizontal" />
                 </ui:ItemsRepeater.Layout>
 

@@ -281,6 +281,9 @@ namespace HandheldCompanion.ViewModels
                 IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, LibrarySearchField);
                 if (entries.Count() != 0)
                 {
+                    // sort entries
+                    entries = entries.OrderBy(entry => entry.Name);
+
                     foreach (LibraryEntry entry in entries)
                         LibraryPickers.Add(new(entry));
 
