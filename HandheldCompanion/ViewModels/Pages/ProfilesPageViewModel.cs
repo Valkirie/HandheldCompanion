@@ -296,12 +296,15 @@ namespace HandheldCompanion.ViewModels
                 // update library entry
                 if (SelectedLibraryEntry is SteamGridEntry Steam)
                 {
-                    Steam.Grid = Steam.Grids[LibraryCoversIndex];
-                    Steam.Hero = Steam.Heroes[LibraryArtworksIndex];
+                    if (Steam.Grids.Length > LibraryCoversIndex)
+                        Steam.Grid = Steam.Grids[LibraryCoversIndex];
+                    if (Steam.Heroes.Length > LibraryArtworksIndex)
+                        Steam.Hero = Steam.Heroes[LibraryArtworksIndex];
                 }
                 else if (SelectedLibraryEntry is IGDBEntry IGDB)
                 {
-                    IGDB.Artwork = IGDB.Artworks[LibraryArtworksIndex];
+                    if (IGDB.Artworks.Count > LibraryArtworksIndex)
+                        IGDB.Artwork = IGDB.Artworks[LibraryArtworksIndex];
                 }
 
                 // update target entry

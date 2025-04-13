@@ -18,12 +18,16 @@ namespace HandheldCompanion.Libraries
 
         public override long GetCoverId()
         {
-            return Grid.Id;
+            if (Grid is not null)
+                return Grid.Id;
+            return 0;
         }
 
         public override long GetArtworkId()
         {
-            return Hero.Id;
+            if (Hero is not null)
+                return Hero.Id;
+            return 0;
         }
     }
 }
