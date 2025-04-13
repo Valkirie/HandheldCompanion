@@ -1,8 +1,6 @@
-﻿using HandheldCompanion.Libraries;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Diagnostics;
@@ -13,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static HandheldCompanion.Libraries.LibraryEntry;
 using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels

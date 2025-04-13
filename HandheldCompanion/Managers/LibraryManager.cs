@@ -1,26 +1,18 @@
 ﻿using craftersmine.SteamGridDBNet;
 using Fastenshtein;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Libraries;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Views.Pages;
 using IGDB;
 using IGDB.Models;
-using Sentry.Protocol;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static HandheldCompanion.Libraries.LibraryEntry;
-using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.Managers
 {
@@ -32,11 +24,12 @@ namespace HandheldCompanion.Managers
 
     public class LibraryManager : IManager
     {
+        [Flags]
         public enum LibraryType
         {
-            cover,
-            artwork,
-            thumbnails,
+            cover = 1,
+            artwork = 2,
+            thumbnails = 4,
         }
 
         #region events
@@ -60,25 +53,33 @@ namespace HandheldCompanion.Managers
                 Directory.CreateDirectory(ManagerPath);
         }
 
-        public string GetGameArtPath(long gameId, LibraryType libraryType, long imageId)
-        {            
+        public string GetGameArtPath(long gameId, LibraryType libraryType, string imageId)
+        {
             // check if the game has art
-            string filePath = libraryType switch
-            {
-                LibraryType.thumbnails => "thumbnails",
-                _ => string.Empty,
-            };
+            string filePath = string.Empty;
+            if (libraryType.HasFlag(LibraryType.thumbnails))
+                filePath = "thumbnails";
 
             return Path.Combine(ManagerPath, gameId.ToString(), filePath, $"{imageId}.png");
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId)
+        public string GetGameArtPath(long gameId, LibraryType libraryType, long imageId)
+        {
+            return GetGameArtPath(gameId, libraryType, imageId.ToString());
+        }
+
+        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, string imageId)
         {
             string fileName = GetGameArtPath(gameId, libraryType, imageId);
             if (!File.Exists(fileName))
                 return LibraryResources.MissingCover;
 
             return new BitmapImage(new Uri(fileName));
+        }
+
+        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId)
+        {
+            return GetGameArt(gameId, libraryType, imageId.ToString());
         }
 
         public async Task<IEnumerable<SteamGridDbGame>> GetGamesSteam(string name)
@@ -149,7 +150,7 @@ namespace HandheldCompanion.Managers
                     // Join the first i words to form the search query.
                     string searchQuery = string.Join(" ", words.Take(i));
 
-                    switch(libraryFamily)
+                    switch (libraryFamily)
                     {
                         case LibraryFamily.IGDB:
                             {
@@ -159,19 +160,41 @@ namespace HandheldCompanion.Managers
 
                                 foreach (Game game in games)
                                 {
-                                    entries.Add(new IGDBEntry((long)game.Id, game.Name, game.FirstReleaseDate.Value.DateTime)
+                                    IGDBEntry entry = new IGDBEntry((long)game.Id, game.Name, game.FirstReleaseDate.Value.DateTime)
                                     {
                                         Summary = game.Summary,
                                         Storyline = game.Storyline,
-                                        Category = game.Category.HasValue ? game.Category.Value : Category.MainGame,
+                                        Category = game.Category.Value,
                                         Cover = game.Cover.Value,
+                                    };
 
-                                        Artworks = game.Artworks.Values,
-                                        Artwork = game.Artworks.Values?[0],
+                                    if (game.Artworks is not null)
+                                        entry.Artworks.AddRange(game.Artworks.Values);
 
-                                        Screenshots = game.Screenshots.Values,
-                                        Screenshot = game.Screenshots.Values?[0],
-                                    });
+                                    if (game.Screenshots is not null)
+                                    {
+                                        // cast screenshots
+                                        IEnumerable<Artwork> screenshots = game.Screenshots.Values.Select(screenshot => new Artwork
+                                        {
+                                            Id = screenshot.Id,
+                                            ImageId = screenshot.ImageId,
+                                            Url = screenshot.Url,
+                                            Width = screenshot.Width,
+                                            Height = screenshot.Height,
+                                            Checksum = screenshot.Checksum,
+                                            AlphaChannel = screenshot.AlphaChannel,
+                                            Animated = screenshot.Animated,
+                                            Game = screenshot.Game
+                                        });
+
+                                        // add to array
+                                        entry.Artworks.AddRange(screenshots);
+
+                                        // set default artwork
+                                        entry.Artwork = entry.Artworks.FirstOrDefault();
+                                    }
+
+                                    entries.Add(entry);
                                 }
                             }
                             break;
@@ -190,7 +213,7 @@ namespace HandheldCompanion.Managers
                                         dimensions: SteamGridDbDimensions.W600H900,
                                         formats: SteamGridDbFormats.Png,
                                         limit: 4);
-                                    
+
                                     SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                         gameId: game.Id,
                                         types: SteamGridDbTypes.Static,
@@ -210,8 +233,8 @@ namespace HandheldCompanion.Managers
                                 }
                             }
                             break;
-                    }                    
-                    
+                    }
+
                     return entries.OrderBy(g => g.Name).ToList();
                 }
             }
@@ -289,11 +312,11 @@ namespace HandheldCompanion.Managers
             if (preview)
             {
                 // download grid
-                foreach(SteamGridDbGrid grid in entry.Grids)
-                    await DownloadGameArt(entry.Id, grid, LibraryType.thumbnails);
+                foreach (SteamGridDbGrid grid in entry.Grids)
+                    await DownloadGameArt(entry.Id, grid, LibraryType.cover | LibraryType.thumbnails);
                 // download hero
-                foreach(SteamGridDbHero hero in entry.Heroes)
-                    await DownloadGameArt(entry.Id, hero, LibraryType.thumbnails);
+                foreach (SteamGridDbHero hero in entry.Heroes)
+                    await DownloadGameArt(entry.Id, hero, LibraryType.artwork | LibraryType.thumbnails);
             }
             else
             {
@@ -355,39 +378,42 @@ namespace HandheldCompanion.Managers
             if (!IsConnected)
                 return false;
 
-            // download cover
-            if (entry.Cover != null && !string.IsNullOrEmpty(entry.Cover.ImageId))
-                await DownloadGameArt(entry.Id, entry.Cover.ImageId, LibraryType.cover, preview);
-
-            // download artwork
-            if (entry.Artwork != null)
-                await DownloadGameArt(entry.Id, entry.Artwork.ImageId, LibraryType.artwork, preview);
-
-            // download screenshot
-            if (entry.Screenshot != null)
-                await DownloadGameArt(entry.Id, entry.Screenshot.ImageId, LibraryType.artwork, preview);
+            if (preview)
+            {
+                // download cover
+                if (entry.Cover != null)
+                    await DownloadGameArt(entry.Id, entry.Cover.ImageId, entry.Cover.Id.Value, LibraryType.cover | LibraryType.thumbnails, preview);
+                // download artworks
+                foreach (Artwork artwork in entry.Artworks)
+                    await DownloadGameArt(entry.Id, artwork.ImageId, artwork.Id.Value, LibraryType.artwork | LibraryType.thumbnails, preview);
+            }
+            else
+            {
+                // download cover
+                if (entry.Cover != null)
+                    await DownloadGameArt(entry.Id, entry.Cover.ImageId, entry.Cover.Id.Value, LibraryType.cover, preview);
+                // download artwork
+                if (entry.Artwork != null)
+                    await DownloadGameArt(entry.Id, entry.Artwork.ImageId, entry.Artwork.Id.Value, LibraryType.artwork, preview);
+            }
 
             return true;
         }
 
-        public async Task<bool> DownloadGameArt(long gameId, string imageId, LibraryType libraryType, bool preview)
+        public async Task<bool> DownloadGameArt(long gameId, string imageName, long? imageId, LibraryType libraryType, bool preview)
         {
             // check connection
             if (!IsConnected)
                 return false;
 
             ImageSize imageSize = ImageSize.CoverBig;
-            switch(libraryType)
-            {
-                case LibraryType.cover:
-                    imageSize = preview ? ImageSize.CoverSmall : ImageSize.CoverBig;
-                    break;
-                case LibraryType.artwork:
-                    imageSize = preview ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
-                    break;
-            }
 
-            string imageUrl = ImageHelper.GetImageUrl(imageId: imageId, size: imageSize, retina: !preview);
+            if (libraryType.HasFlag(LibraryType.cover))
+                imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.CoverSmall : ImageSize.CoverBig;
+            else if (libraryType.HasFlag(LibraryType.artwork))
+                imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
+
+            string imageUrl = ImageHelper.GetImageUrl(imageId: imageName, size: imageSize, retina: !preview);
             if (string.IsNullOrEmpty(imageUrl))
                 return false;
 
@@ -398,12 +424,14 @@ namespace HandheldCompanion.Managers
 
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync(imageUrl.Replace("//", "https://"));
+                    imageUrl = imageUrl.Replace("//", "https://");
+
+                    HttpResponseMessage response = await client.GetAsync(imageUrl);
                     if (response.IsSuccessStatusCode)
                     {
                         byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
 
-                        string filePath = GetGameArtPath(gameId, libraryType, long.Parse(imageId));
+                        string filePath = GetGameArtPath(gameId, libraryType, (long)imageId);
                         string directoryPath = Directory.GetParent(filePath).FullName;
 
                         // If the image directory does not exist, create it
@@ -452,7 +480,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             base.PrepareStart();
-            
+
             // manage events
             NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
 

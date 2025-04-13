@@ -1,12 +1,9 @@
-using craftersmine.SteamGridDBNet;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
-using IGDB;
-using IGDB.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

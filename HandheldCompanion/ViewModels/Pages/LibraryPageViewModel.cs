@@ -1,13 +1,8 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {

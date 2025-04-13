@@ -1,5 +1,4 @@
 ﻿using craftersmine.SteamGridDBNet;
-using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using System;
 

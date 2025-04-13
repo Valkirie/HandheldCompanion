@@ -1,22 +1,16 @@
-﻿using craftersmine.SteamGridDBNet;
-using HandheldCompanion.Helpers;
-using HandheldCompanion.Libraries;
+﻿using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Pages;
-using IGDB;
-using IGDB.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 using static HandheldCompanion.Libraries.LibraryEntry;
 using static HandheldCompanion.Managers.LibraryManager;
 
@@ -301,6 +295,10 @@ namespace HandheldCompanion.ViewModels
                 {
                     Steam.Grid = Steam.Grids[LibraryCoversIndex];
                     Steam.Hero = Steam.Heroes[LibraryArtworksIndex];
+                }
+                else if (SelectedLibraryEntry is IGDBEntry IGDB)
+                {
+                    IGDB.Artwork = IGDB.Artworks[LibraryArtworksIndex];
                 }
 
                 // update target entry

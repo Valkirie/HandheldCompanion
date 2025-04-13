@@ -1,18 +1,9 @@
 ﻿using craftersmine.SteamGridDBNet;
 using HandheldCompanion.Libraries;
-using HandheldCompanion.Managers;
 using HandheldCompanion.ViewModels.Misc;
-using HandheldCompanion.Views.Pages;
 using IGDB.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 using static HandheldCompanion.Libraries.LibraryEntry;
 
 namespace HandheldCompanion.ViewModels
@@ -50,10 +41,16 @@ namespace HandheldCompanion.ViewModels
 
             if (LibEntry is SteamGridEntry steamEntry)
             {
-                foreach(SteamGridDbGrid grid in steamEntry.Grids)
+                foreach (SteamGridDbGrid grid in steamEntry.Grids)
                     LibraryCovers.Add(new(this, grid.Id));
-                foreach(SteamGridDbHero hero in steamEntry.Heroes)
+                foreach (SteamGridDbHero hero in steamEntry.Heroes)
                     LibraryArtworks.Add(new(this, hero.Id));
+            }
+            else if (LibEntry is IGDBEntry IGDB)
+            {
+                LibraryCovers.Add(new(this, IGDB.Cover.Id.Value));
+                foreach (Artwork artwork in IGDB.Artworks)
+                    LibraryArtworks.Add(new(this, artwork.Id.Value));
             }
         }
 

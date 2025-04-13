@@ -1,7 +1,7 @@
 ﻿using IGDB.Models;
 using Newtonsoft.Json;
 using System;
-using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace HandheldCompanion.Libraries
 {
@@ -14,10 +14,8 @@ namespace HandheldCompanion.Libraries
 
         public Cover Cover;
         public Artwork Artwork;
-        public Screenshot Screenshot;
 
-        [JsonIgnore] public Artwork[] Artworks;
-        [JsonIgnore] public Screenshot[] Screenshots;
+        [JsonIgnore] public List<Artwork> Artworks = new();
 
         public IGDBEntry(long id, string name, DateTime releaseDate) : base(LibraryFamily.IGDB, id, name, releaseDate)
         { }
@@ -33,8 +31,6 @@ namespace HandheldCompanion.Libraries
         {
             if (Artwork != null)
                 return Artwork.Id.Value;
-            else if (Screenshot != null)
-                return Screenshot.Id.Value;
             return 0;
         }
     }
