@@ -154,8 +154,8 @@
                 <ui:NavigationViewItem.InfoBadge>
                     <ui:InfoBadge
                         Name="HasNotifications"
-                        Visibility="Collapsed"
-                        d:Visibility="Visible"/>
+                        d:Visibility="Visible"
+                        Visibility="Collapsed" />
                 </ui:NavigationViewItem.InfoBadge>
             </ui:NavigationViewItem>
 

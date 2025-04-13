@@ -177,6 +177,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="craftersmine.SteamGridDB.Net" Version="1.1.7" />
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
     <PackageReference Include="Fastenshtein" Version="1.0.10" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />

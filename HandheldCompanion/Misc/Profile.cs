@@ -1,5 +1,7 @@
+using craftersmine.SteamGridDBNet;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -61,7 +63,7 @@ public partial class Profile : ICloneable, IComparable
     public Guid Guid { get; set; } = Guid.NewGuid();
 
     // Library
-    public Game IGDB { get; set; }
+    public LibraryEntry LibraryEntry { get; set; }
 
     public string Executable { get; set; } = string.Empty;
 

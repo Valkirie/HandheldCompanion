@@ -12,6 +12,7 @@ namespace HandheldCompanion.Managers
         Halting = 4,
         Halted = 8,
         Busy = 16,
+        Failed = 32,
     }
 
     public class IManager

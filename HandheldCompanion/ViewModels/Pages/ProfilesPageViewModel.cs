@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Helpers;
+﻿using craftersmine.SteamGridDBNet;
+using HandheldCompanion.Helpers;
+using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
@@ -14,13 +16,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
+using static HandheldCompanion.Libraries.LibraryEntry;
 
 namespace HandheldCompanion.ViewModels
 {
     public class ProfilesPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems { get; } = [];
-        public ObservableCollection<GameViewModel> IGDBPickers { get; } = [];
+        public ObservableCollection<LibraryEntryViewModel> LibraryPickers { get; } = [];
 
         private ProfilesPage profilesPage;
         private ProfilesPickerViewModel _devicePresetsPickerVM;
@@ -108,32 +111,32 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private string _IGDBSearch;
-        public string IGDBSearch
+        private string _LibrarySearchField;
+        public string LibrarySearchField
         {
-            get => _IGDBSearch;
+            get => _LibrarySearchField;
             set
             {
-                if (_IGDBSearch != value)
+                if (_LibrarySearchField != value)
                 {
-                    _IGDBSearch = value;
-                    OnPropertyChanged(nameof(IGDBSearch));
+                    _LibrarySearchField = value;
+                    OnPropertyChanged(nameof(LibrarySearchField));
                 }
             }
         }
 
         private bool _isUpdatingSelection = false;
 
-        public bool HasIGDBTarget => _SelectedIGDB != null;
+        public bool HasLibraryEntry => _SelectedLibraryEntry != null;
 
-        private Game _SelectedIGDB;
-        public Game SelectedIGDB
+        private LibraryEntry _SelectedLibraryEntry;
+        public LibraryEntry SelectedLibraryEntry
         {
-            get => _SelectedIGDB;
+            get => _SelectedLibraryEntry;
             set
             {
                 // Only update if the new value is different.
-                if (_SelectedIGDB != value)
+                if (_SelectedLibraryEntry != value)
                 {
                     // Prevent recursive updates.
                     if (_isUpdatingSelection)
@@ -142,16 +145,16 @@ namespace HandheldCompanion.ViewModels
                     try
                     {
                         _isUpdatingSelection = true;
-                        _SelectedIGDB = value;
+                        _SelectedLibraryEntry = value;
                         if (value != null)
-                            _SelectedIGDBIndex = IGDBPickers.IndexOf(IGDBPickers.First(p => p.Id == value.Id));
+                            _SelectedLibraryIndex = LibraryPickers.IndexOf(LibraryPickers.First(p => p.Id == value.Id));
                         else
-                            _SelectedIGDBIndex = -1;
+                            _SelectedLibraryIndex = -1;
 
                         // Notify about both properties.
-                        OnPropertyChanged(nameof(SelectedIGDB));
-                        OnPropertyChanged(nameof(SelectedIGDBIndex));
-                        OnPropertyChanged(nameof(HasIGDBTarget));
+                        OnPropertyChanged(nameof(SelectedLibraryEntry));
+                        OnPropertyChanged(nameof(SelectedLibraryIndex));
+                        OnPropertyChanged(nameof(HasLibraryEntry));
                     }
                     finally
                     {
@@ -161,14 +164,14 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private int _SelectedIGDBIndex;
-        public int SelectedIGDBIndex
+        private int _SelectedLibraryIndex;
+        public int SelectedLibraryIndex
         {
-            get => _SelectedIGDBIndex;
+            get => _SelectedLibraryIndex;
             set
             {
                 // Only update if index is different.
-                if (_SelectedIGDBIndex != value)
+                if (_SelectedLibraryIndex != value)
                 {
                     // Prevent recursive updates.
                     if (_isUpdatingSelection)
@@ -177,16 +180,16 @@ namespace HandheldCompanion.ViewModels
                     try
                     {
                         _isUpdatingSelection = true;
-                        _SelectedIGDBIndex = value;
-                        if (value >= 0 && value < IGDBPickers.Count)
-                            _SelectedIGDB = IGDBPickers[value].Game;
+                        _SelectedLibraryIndex = value;
+                        if (value >= 0 && value < LibraryPickers.Count)
+                            _SelectedLibraryEntry = LibraryPickers[value].LibEntry;
                         else
-                            _SelectedIGDB = null;
+                            _SelectedLibraryEntry = null;
 
                         // Notify about both properties.
-                        OnPropertyChanged(nameof(SelectedIGDBIndex));
-                        OnPropertyChanged(nameof(SelectedIGDB));
-                        OnPropertyChanged(nameof(HasIGDBTarget));
+                        OnPropertyChanged(nameof(SelectedLibraryIndex));
+                        OnPropertyChanged(nameof(SelectedLibraryEntry));
+                        OnPropertyChanged(nameof(HasLibraryEntry));
 
                         // Optionally trigger game art download here if needed.
                         // ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, true);
@@ -199,11 +202,11 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool IGDBBusy => ManagerFactory.libraryManager.IsBusy;
+        public bool IsLibraryBusy => ManagerFactory.libraryManager.IsBusy;
 
-        public ICommand RefreshIGDB { get; private set; }
-        public ICommand DisplayIGDB { get; private set; }
-        public ICommand DownloadIGDB { get; private set; }
+        public ICommand RefreshLibrary { get; private set; }
+        public ICommand DisplayLibrary { get; private set; }
+        public ICommand DownloadLibrary { get; private set; }
 
         public ProfilesPageViewModel(ProfilesPage profilesPage)
         {
@@ -224,36 +227,37 @@ namespace HandheldCompanion.ViewModels
             ProfilePickerItems.Add(_devicePresetsPickerVM);
             ProfilePickerItems.Add(_userPresetsPickerVM);
 
-            DisplayIGDB = new DelegateCommand(async () =>
+            DisplayLibrary = new DelegateCommand(async () =>
             {
                 // clear list
-                IGDBPickers.Clear();
-                SelectedIGDBIndex = -1;
+                LibraryPickers.Clear();
+                SelectedLibraryIndex = -1;
 
-                IGDBSearch = ProfilesPage.selectedProfile.Name;
+                LibrarySearchField = ProfilesPage.selectedProfile.Name;
                 await profilesPage.IGGBDialog.ShowAsync();
             });
 
-            RefreshIGDB = new DelegateCommand(async () =>
+            RefreshLibrary = new DelegateCommand(async () =>
             {
-                IEnumerable<Game> games = await ManagerFactory.libraryManager.GetGames(IGDBSearch);
-                if (games.Count() == 0)
-                    return;
+                LibraryPickers.Clear();
 
-                IGDBPickers.Clear();
-                foreach (Game game in games)
-                    IGDBPickers.Add(new(game));
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, LibrarySearchField);
+                if (entries.Count() != 0)
+                {
+                    foreach (LibraryEntry entry in entries)
+                        LibraryPickers.Add(new(entry));
 
-                SelectedIGDB = ManagerFactory.libraryManager.GetGame(games, IGDBSearch);
+                    SelectedLibraryEntry = ManagerFactory.libraryManager.GetGame(entries, LibrarySearchField);
+                }
             });
 
-            DownloadIGDB = new DelegateCommand(async () =>
+            DownloadLibrary = new DelegateCommand(async () =>
             {
-                // update target IGDB game
-                ProfilesPage.selectedProfile.IGDB = SelectedIGDB;
+                // update target entry
+                ProfilesPage.selectedProfile.LibraryEntry = SelectedLibraryEntry;
 
                 // download arts
-                await ManagerFactory.libraryManager.DownloadGameArts(SelectedIGDB, false);
+                await ManagerFactory.libraryManager.DownloadGameArts(SelectedLibraryEntry, false);
 
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ArtUpdateOnly);
@@ -262,7 +266,7 @@ namespace HandheldCompanion.ViewModels
 
         private void LibraryManager_StatusChanged(ManagerStatus status)
         {
-            OnPropertyChanged(nameof(IGDBBusy));
+            OnPropertyChanged(nameof(IsLibraryBusy));
         }
 
         private void PowerProfileManager_Initialized()
@@ -312,10 +316,12 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (ProfilesPage.selectedProfile?.IGDB?.Id == null)
+                if (ProfilesPage.selectedProfile?.LibraryEntry == null)
                     return LibraryResources.MissingCover;
 
-                long id = (long)ProfilesPage.selectedProfile.IGDB.Id;
+                long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
+                LibraryFamily libraryFamily = ProfilesPage.selectedProfile.LibraryEntry.Family;
+
                 return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.cover);
             }
         }
@@ -324,15 +330,20 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (ProfilesPage.selectedProfile?.IGDB?.Id == null)
+                if (ProfilesPage.selectedProfile?.LibraryEntry == null)
                     return null;
 
-                long id = (long)ProfilesPage.selectedProfile.IGDB.Id;
+                long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
+                LibraryFamily libraryFamily = ProfilesPage.selectedProfile.LibraryEntry.Family;
 
-                if (ProfilesPage.selectedProfile.IGDB.Artworks is not null)
-                    return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.artwork);
-                else if (ProfilesPage.selectedProfile.IGDB.Screenshots is not null)
-                    return ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.screenshot);
+                BitmapImage artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.artwork);
+                if (artwork != LibraryResources.MissingCover)
+                    return artwork;
+
+                BitmapImage screenshot = ManagerFactory.libraryManager.GetGameArt(id, LibraryManager.LibraryType.screenshot);
+                if (screenshot != LibraryResources.MissingCover)
+                    return screenshot;
+
                 return null;
             }
         }

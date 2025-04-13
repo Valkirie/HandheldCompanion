@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Libraries;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static HandheldCompanion.Libraries.LibraryEntry;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -60,17 +62,17 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private bool HasIGDB => Profile.IGDB is not null;
-        private long IGDBId => Profile.IGDB?.Id ?? 0;
+        private bool HasLibrary => Profile.LibraryEntry is not null;
+        private long LibraryId => Profile.LibraryEntry?.Id ?? 0;
 
         public BitmapImage Cover
         {
             get
             {
-                if (!HasIGDB)
+                if (!HasLibrary)
                     return LibraryResources.MissingCover;
 
-                return ManagerFactory.libraryManager.GetGameArt(IGDBId, LibraryManager.LibraryType.cover);
+                return ManagerFactory.libraryManager.GetGameArt(LibraryId, LibraryManager.LibraryType.cover);
             }
         }
 
@@ -78,15 +80,21 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (!HasIGDB)
+                if (!HasLibrary)
                     return null;
 
-                if (Profile.IGDB.Artworks is not null)
-                    return ManagerFactory.libraryManager.GetGameArt(IGDBId, LibraryManager.LibraryType.artwork);
-                else if (Profile.IGDB.Screenshots is not null)
-                    return ManagerFactory.libraryManager.GetGameArt(IGDBId, LibraryManager.LibraryType.screenshot);
-                else
-                    return null;
+                long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
+                LibraryFamily libraryFamily = ProfilesPage.selectedProfile.LibraryEntry.Family;
+
+                if (ProfilesPage.selectedProfile?.LibraryEntry is IGDBEntry IGDB)
+                {
+                    if (IGDB.Artwork is not null)
+                        return ManagerFactory.libraryManager.GetGameArt(LibraryId, LibraryManager.LibraryType.artwork);
+                    else if (IGDB.Screenshot is not null)
+                        return ManagerFactory.libraryManager.GetGameArt(LibraryId, LibraryManager.LibraryType.screenshot);
+                }
+                
+                return null;
             }
         }
 
