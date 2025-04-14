@@ -34,7 +34,10 @@
 
                 <ui:ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <Button x:Name="ImageContainer" Padding="0">
+                        <Button
+                            x:Name="ImageContainer"
+                            Padding="0"
+                            Command="{Binding Navigate}">
                             <Button.RenderTransform>
                                 <TranslateTransform />
                             </Button.RenderTransform>

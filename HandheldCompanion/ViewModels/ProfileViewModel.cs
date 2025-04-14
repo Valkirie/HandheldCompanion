@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Diagnostics;
@@ -18,6 +19,7 @@ namespace HandheldCompanion.ViewModels
     public class ProfileViewModel : BaseViewModel
     {
         public ICommand StartProcessCommand { get; private set; }
+        public ICommand Navigate { get; private set; }
 
         private Profile _Profile;
         public Profile Profile
@@ -141,6 +143,23 @@ namespace HandheldCompanion.ViewModels
 
                 if (process is not null && process.MainWindowHandle != IntPtr.Zero)
                     WinAPI.SetForegroundWindow(process.MainWindowHandle);
+            });
+
+            Navigate = new DelegateCommand(async () =>
+            {
+                if (Profile.IsSubProfile)
+                {
+                    Profile MasterProfile = ManagerFactory.profileManager.GetProfileForSubProfile(Profile);
+                    MainWindow.profilesPage.cB_Profiles.SelectedItem = MasterProfile;
+                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedItem = Profile;
+                }
+                else
+                {
+                    MainWindow.profilesPage.cB_Profiles.SelectedItem = Profile;
+                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedIndex = 0;
+                }
+
+                MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
         }
 
