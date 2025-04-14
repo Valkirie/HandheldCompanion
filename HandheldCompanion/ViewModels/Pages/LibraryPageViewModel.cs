@@ -3,12 +3,24 @@ using HandheldCompanion.Managers;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {
     public class LibraryPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
+
+        private BitmapImage _backgroundImage;
+        public BitmapImage BackgroundImage
+        {
+            get => _backgroundImage;
+            set
+            {
+                _backgroundImage = value;
+                OnPropertyChanged(nameof(BackgroundImage));
+            }
+        }
 
         public LibraryPageViewModel()
         {

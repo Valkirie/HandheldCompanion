@@ -21,6 +21,18 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
+        <Image
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Source="{Binding Artwork}"
+            Stretch="None">
+            <Image.OpacityMask>
+                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="2,-1.5" RadiusX="0.5" RadiusY="1">
+                    <GradientStop Offset="0.2" Color="{DynamicResource MaskGradientStartColor}" />
+                    <GradientStop Offset="0.8" Color="{DynamicResource MaskGradientEndColor}" />
+                </RadialGradientBrush>
+            </Image.OpacityMask>
+        </Image>
 
         <StackPanel>
             <ui:ContentDialog Name="IGGBDialog" CloseButtonText="Close">
@@ -242,34 +254,6 @@
                             </Grid>
                         </Border>
 
-                        <Border
-                            Height="300"
-                            Padding="15,12,12,12"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                            BorderThickness="1"
-                            CornerRadius="{DynamicResource ControlCornerRadius}">
-                            <Border.Background>
-                                <ImageBrush
-                                    AlignmentY="Center"
-                                    ImageSource="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Stretch="UniformToFill" />
-                            </Border.Background>
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Style.Triggers>
-                                        <!--  Hide when Artwork is null  -->
-                                        <DataTrigger Binding="{Binding Artwork}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                        <!--  Hide when Artwork equals MissingCover  -->
-                                        <DataTrigger Binding="{Binding Artwork}" Value="{x:Static managers:LibraryResources.MissingCover}">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
                         <ui:InfoBar
                             Name="WarningInfoBar"
                             d:Visibility="Visible"
@@ -285,44 +269,39 @@
                         <!--  Profile details  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="120" />
+                                <ColumnDefinition Width="160" />
                                 <ColumnDefinition Width="8*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition MinHeight="160" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-
-                                <Border
-                                    Padding="15,12,12,12"
-                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}">
-                                    <Border.Background>
-                                        <ImageBrush
-                                            AlignmentY="Center"
-                                            ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Stretch="UniformToFill" />
-                                    </Border.Background>
-                                </Border>
+                            <Border
+                                Height="240"
+                                Padding="15,12,12,12"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                                <Border.Background>
+                                    <ImageBrush
+                                        AlignmentY="Center"
+                                        ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Stretch="UniformToFill" />
+                                </Border.Background>
 
                                 <Button
                                     Name="b_Refresh"
-                                    Grid.Row="1"
-                                    Margin="0,6,0,0"
                                     HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom"
                                     Command="{Binding DisplayLibrary}"
                                     Content="Refresh"
                                     Style="{DynamicResource AccentButtonStyle}" />
-                            </Grid>
+                            </Border>
 
                             <Border
                                 Grid.Column="1"
                                 Margin="6,0,0,0"
                                 Padding="15,12,12,12"
                                 Background="{DynamicResource ExpanderHeaderBackground}"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="1"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                                 <ikw:SimpleStackPanel Spacing="6">

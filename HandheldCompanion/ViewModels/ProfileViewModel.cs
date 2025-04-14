@@ -151,7 +151,11 @@ namespace HandheldCompanion.ViewModels
                     // Wait for a visible window from the started process (with a 10 second timeout)
                     IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
                     if (hWnd != IntPtr.Zero)
+                    {
+                        if (IsMainPage)
+                            MainWindow.GetCurrent().SwapWindowState();
                         ProcessUtils.SetForegroundWindow(hWnd);
+                    }
                 });
 
                 dialog.Hide();

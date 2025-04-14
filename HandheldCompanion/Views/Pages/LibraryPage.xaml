@@ -19,12 +19,25 @@
     mc:Ignorable="d">
 
     <Grid Margin="20">
-        <ikw:SimpleStackPanel Spacing="6">
+        <Image
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Source="{Binding BackgroundImage}"
+            Stretch="None">
+            <Image.OpacityMask>
+                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,-1.5" RadiusX="0.5" RadiusY="1">
+                    <GradientStop Offset="0.2" Color="{DynamicResource MaskGradientStartColor}" />
+                    <GradientStop Offset="0.8" Color="{DynamicResource MaskGradientEndColor}" />
+                </RadialGradientBrush>
+            </Image.OpacityMask>
+        </Image>
+
+        <ikw:SimpleStackPanel Margin="20" Spacing="6">
             <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
                 <ui:ItemsRepeater.Layout>
                     <ui:UniformGridLayout
                         ItemsStretch="Uniform"
-                        MaximumRowsOrColumns="6"
+                        MaximumRowsOrColumns="8"
                         MinColumnSpacing="12"
                         MinItemHeight="240"
                         MinItemWidth="160"
@@ -38,6 +51,8 @@
                             x:Name="ImageContainer"
                             Padding="0"
                             Command="{Binding Navigate}"
+                            GotFocus="ImageContainer_GotFocus"
+                            LostFocus="ImageContainer_LostFocus"
                             Tag="{Binding}">
                             <Button.RenderTransform>
                                 <TranslateTransform />
