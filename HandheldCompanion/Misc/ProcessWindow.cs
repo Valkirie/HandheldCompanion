@@ -92,17 +92,9 @@ namespace HandheldCompanion.Misc
 
             try
             {
-                string elementName = Element.Current.Name;
-                if (!string.IsNullOrEmpty(elementName))
-                {
-                    Name = elementName;
-                }
-                else
-                {
-                    string title = ProcessUtils.GetWindowTitle(Hwnd);
-                    if (!string.IsNullOrEmpty(title))
-                        Name = title;
-                }
+                string title = ProcessUtils.GetWindowTitle(Hwnd);
+                if (!string.IsNullOrEmpty(title))
+                    Name = title;
             }
             catch (COMException)
             {

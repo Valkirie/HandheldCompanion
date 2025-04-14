@@ -256,7 +256,7 @@ public class ProcessEx : IDisposable
         Executable = executable;
         Filter = filter;
 
-        Refresh();
+        Refresh(true);
         GetMainThread();
 
         // update main thread when disposed
@@ -428,7 +428,6 @@ public class ProcessEx : IDisposable
     {
         get
         {
-            Process.Refresh();
             GetMainThread();
 
             if (MainThread?.ThreadState == ThreadState.Wait && MainThread?.WaitReason == ThreadWaitReason.Suspended)
@@ -459,12 +458,17 @@ public class ProcessEx : IDisposable
         catch { }
     }
 
-    public void Refresh()
+    public void Refresh(bool force)
     {
         try
         {
             if (Process is null || Process.HasExited)
                 return;
+
+            if (ProcessWindows.IsEmpty && !force)
+                return;
+
+            Process.Refresh();
 
             if (MainThread is null)
                 return;
@@ -585,6 +589,9 @@ public class ProcessEx : IDisposable
             {
                 try
                 {
+                    if (thread.ThreadState == ThreadState.Terminated)
+                        continue;
+                    
                     if (thread.StartTime < startTime)
                     {
                         startTime = thread.StartTime;
