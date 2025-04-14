@@ -233,6 +233,51 @@ public static class ProcessUtils
         return closestProcess;
     }
 
+    public static IntPtr WaitForVisibleWindow(Process process, int timeout)
+    {
+        IntPtr windowHandle = IntPtr.Zero;
+        DateTime startTime = DateTime.Now;
+
+        while ((DateTime.Now - startTime).TotalSeconds < timeout)
+        {
+            // Refresh to get updated process info
+            process.Refresh();
+
+            // First, try the main window handle if it exists and is visible
+            if (process.MainWindowHandle != IntPtr.Zero && ProcessUtils.IsWindowVisible(process.MainWindowHandle))
+            {
+                windowHandle = process.MainWindowHandle;
+                break;
+            }
+
+            // If the main window handle is not available, try enumerating all windows on each thread
+            foreach (ProcessThread thread in process.Threads)
+            {
+                ProcessUtils.EnumThreadWindows((uint)thread.Id, (hWnd, lParam) =>
+                {
+                    if (ProcessUtils.IsWindowVisible(hWnd))
+                    {
+                        windowHandle = hWnd;
+                        return false; // Stop enumerating since we've found a visible window
+                    }
+                    return true; // Continue enumerating
+                }, IntPtr.Zero);
+
+                if (windowHandle != IntPtr.Zero)
+                    break;
+            }
+
+            // Exit the loop if a valid window handle was found
+            if (windowHandle != IntPtr.Zero)
+                break;
+
+            // Wait a short interval before trying again
+            Thread.Sleep(1000);
+        }
+
+        return windowHandle;
+    }
+
     /// <summary>
     /// Retrieves all child processes of a given process.
     /// </summary>
@@ -350,14 +395,20 @@ public static class ProcessUtils
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
-    public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
-
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
+    public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
 
     [DllImport("User32.dll")]
     public static extern bool SetForegroundWindow(IntPtr handle);
+
+    [DllImport("user32.dll")]
+    public static extern bool IsWindowVisible(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    public static extern bool EnumThreadWindows(uint dwThreadId, EnumThreadDelegate lpfn, IntPtr lParam);
+    public delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
 
     [DllImport("User32.dll")]
     public static extern bool ShowWindow(IntPtr handle, int nCmdShow);

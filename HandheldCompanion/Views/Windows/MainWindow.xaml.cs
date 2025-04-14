@@ -7,6 +7,7 @@ using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
@@ -294,6 +295,16 @@ public partial class MainWindow : GamepadWindow
                         {
                             GamepadUIToggle.Visibility = Visibility.Visible;
                             GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Toggle;
+                        }
+
+                        if (control.Tag is ProfileViewModel profileViewModel)
+                        {
+                            Profile profile = profileViewModel.Profile;
+                            if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
+                            {
+                                GamepadUIToggle.Visibility = Visibility.Visible;
+                                GamepadUIToggleDesc.Text = "Play";
+                            }
                         }
                     }
                     break;

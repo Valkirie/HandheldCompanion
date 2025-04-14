@@ -225,13 +225,14 @@
                                 Name="PaneText"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
+                                Style="{StaticResource BaseTextBlockStyle}"
                                 Text="Open navigation" />
                         </ikw:SimpleStackPanel>
 
                         <!--  Select  -->
                         <ikw:SimpleStackPanel
                             Name="GamepadUISelect"
+                            d:Visibility="Visible"
                             Orientation="Horizontal"
                             Spacing="2"
                             Visibility="Collapsed">
@@ -252,12 +253,13 @@
                                 Name="GamepadUISelectDesc"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}" />
+                                Style="{StaticResource BaseTextBlockStyle}" />
                         </ikw:SimpleStackPanel>
 
                         <!--  Back  -->
                         <ikw:SimpleStackPanel
                             Name="GamepadUIBack"
+                            d:Visibility="Visible"
                             Orientation="Horizontal"
                             Spacing="2"
                             Visibility="Collapsed">
@@ -278,12 +280,13 @@
                                 Name="GamepadUIBackDesc"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}" />
+                                Style="{StaticResource BaseTextBlockStyle}" />
                         </ikw:SimpleStackPanel>
 
                         <!--  Toggle  -->
                         <ikw:SimpleStackPanel
                             Name="GamepadUIToggle"
+                            d:Visibility="Visible"
                             Orientation="Horizontal"
                             Spacing="2"
                             Visibility="Collapsed">
@@ -304,7 +307,7 @@
                                 Name="GamepadUIToggleDesc"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}" />
+                                Style="{StaticResource BaseTextBlockStyle}" />
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </Border>

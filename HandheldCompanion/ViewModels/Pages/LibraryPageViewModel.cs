@@ -42,7 +42,7 @@ namespace HandheldCompanion.ViewModels
 
             ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
             if (foundProfile is null)
-                Profiles.SafeAdd(new ProfileViewModel(profile));
+                Profiles.SafeAdd(new ProfileViewModel(profile, false));
             else
                 foundProfile.Profile = profile;
         }

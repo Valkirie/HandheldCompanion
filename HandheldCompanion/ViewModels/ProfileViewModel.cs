@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -20,6 +22,9 @@ namespace HandheldCompanion.ViewModels
     {
         public ICommand StartProcessCommand { get; private set; }
         public ICommand Navigate { get; private set; }
+
+        public readonly bool IsQuickTools;
+        public bool IsMainPage => !IsQuickTools;
 
         private Profile _Profile;
         public Profile Profile
@@ -90,9 +95,10 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ProfileViewModel(Profile profile)
+        public ProfileViewModel(Profile profile, bool isQuickTools)
         {
             Profile = profile;
+            IsQuickTools = isQuickTools;
 
             ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
@@ -102,9 +108,9 @@ namespace HandheldCompanion.ViewModels
                 if (!File.Exists(profile.Path))
                 {
                     // localize me
-                    new Dialog(OverlayQuickTools.GetCurrent())
+                    new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
                     {
-                        Title = "Quick start",
+                        Title = "Launching",
                         Content = "The system cannot find the file specified.",
                         PrimaryButtonText = Properties.Resources.ProfilesPage_OK
                     }.Show();
@@ -113,9 +119,9 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // localize me
-                Dialog dialog = new Dialog(OverlayQuickTools.GetCurrent())
+                Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
                 {
-                    Title = "Quick start",
+                    Title = "Launching",
                     Content = "Please wait while we initialize the application.",
                     CanClose = false
                 };
@@ -127,22 +133,28 @@ namespace HandheldCompanion.ViewModels
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = profile.Path,
-                    Arguments = profile.Arguments
+                    Arguments = profile.Arguments,
+                    UseShellExecute = true
                 };
 
-                Process process = new() { StartInfo = startInfo };
+                // Start the process
+                Process process = Process.Start(startInfo);
+                if (process == null)
+                {
+                    dialog.Hide();
+                    return;
+                }
 
                 // Run the process start operation in a task to avoid blocking the UI thread
                 await Task.Run(() =>
                 {
-                    process.Start();
-                    process.WaitForInputIdle(4000);
+                    // Wait for a visible window from the started process (with a 10 second timeout)
+                    IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
+                    if (hWnd != IntPtr.Zero)
+                        ProcessUtils.SetForegroundWindow(hWnd);
                 });
 
                 dialog.Hide();
-
-                if (process is not null && process.MainWindowHandle != IntPtr.Zero)
-                    WinAPI.SetForegroundWindow(process.MainWindowHandle);
             });
 
             Navigate = new DelegateCommand(async () =>

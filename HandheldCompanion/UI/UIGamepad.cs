@@ -3,6 +3,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Windows;
@@ -787,10 +788,17 @@ namespace HandheldCompanion.Managers
                         {
                             case "Button":
                                 {
-                                    // To get the first RadioButton in the list, if any
-                                    RadioButton firstRadioButton = WPFUtils.FindChildren(focusedElement).FirstOrDefault(c => c is RadioButton) as RadioButton;
-                                    if (firstRadioButton is not null)
-                                        firstRadioButton.IsChecked = true;
+                                    if (focusedElement.Tag is ProfileViewModel profileViewModel)
+                                    {
+                                        profileViewModel.StartProcessCommand.Execute(null);
+                                    }
+                                    else
+                                    {
+                                        // To get the first RadioButton in the list, if any
+                                        RadioButton firstRadioButton = WPFUtils.FindChildren(focusedElement).FirstOrDefault(c => c is RadioButton) as RadioButton;
+                                        if (firstRadioButton is not null)
+                                            firstRadioButton.IsChecked = true;
+                                    }
                                 }
                                 break;
                         }
@@ -1040,7 +1048,7 @@ namespace HandheldCompanion.Managers
                         if (focusedElement is not null)
                         {
                             focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, [typeof(NavigationViewItem)]);
-                            
+
                             if (focusedElement is ListView listView)
                             {
                                 int idx = listView.SelectedIndex;
@@ -1049,7 +1057,7 @@ namespace HandheldCompanion.Managers
                                 if (idx != -1)
                                     focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
                             }
-                            
+
                             Focus(focusedElement);
                         }
                     }

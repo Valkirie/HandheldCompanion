@@ -37,7 +37,8 @@
                         <Button
                             x:Name="ImageContainer"
                             Padding="0"
-                            Command="{Binding Navigate}">
+                            Command="{Binding Navigate}"
+                            Tag="{Binding}">
                             <Button.RenderTransform>
                                 <TranslateTransform />
                             </Button.RenderTransform>
