@@ -208,19 +208,19 @@
     <ProjectReference Include="..\steam-hidapi.net\steam-hidapi.net.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DependentUpon>Resources.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.ja-JP.resx">
       <SubType>Designer</SubType>
@@ -2379,7 +2379,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="if exist &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; (&#xA;    copy &quot;.\SentryConfig.cs&quot; &quot;.\SentryConfig.cs.bak&quot;&#xA;    copy &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; &quot;.\SentryConfig.cs&quot;&#xA;)" />
+    <Exec Command="if exist &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; (&#xA;    copy &quot;.\SentryConfig.cs&quot; &quot;.\SentryConfig.cs.bak&quot;&#xA;    copy &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; &quot;.\SentryConfig.cs&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;&quot;$(SDK40ToolsPath)\ResGen.exe&quot; /useSourcePath .\Properties\Resources.resx .\Properties\Resources.resources /str:cs,HandheldCompanion.Properties,Resources,.\Properties\Resources.Designer.cs&#xD;&#xA;del .\Properties\Resources.resources" />
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
