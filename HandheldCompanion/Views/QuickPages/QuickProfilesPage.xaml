@@ -143,7 +143,10 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
-                <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    d:IsExpanded="true"
+                    IsExpanded="False">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -224,7 +227,10 @@
                     </ikw:SimpleStackPanel>
                 </Expander>
 
-                <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    d:IsExpanded="true"
+                    IsExpanded="False">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
