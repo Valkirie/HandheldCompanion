@@ -55,6 +55,7 @@ namespace HandheldCompanion.Managers
 
         private bool _goingBack;
         private bool _goingForward;
+        private bool _navigating;
 
         private bool _rendered;
         private object _rendering = new();
@@ -231,11 +232,11 @@ namespace HandheldCompanion.Managers
                 // halt timer
                 _gamepadTimer.Stop();
 
-                // set rendering state
+                // set state(s)
                 _rendered = false;
 
-                // remove state
-                _goingForward = false;
+                // remove state(s)
+                _navigating = false;
 
                 // store current Frame and listen to render events
                 if (_gamepadPage != (Page)_gamepadFrame.Content)
@@ -287,17 +288,17 @@ namespace HandheldCompanion.Managers
                         // remove state
                         _goingBack = false;
                     }
-                    else if (_goingForward && control is not null)
+                    else if (_navigating && control is not null)
                     {
                         Focus(control);
                     }
-                    else if (_goingForward && control is null)
+                    else if (_navigating && control is null)
                     {
                         control = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
                         Focus(control);
                     }
                 }
-                else if (_goingForward)
+                else if (_navigating)
                 {
                     control = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
                     Focus(control);
@@ -527,12 +528,19 @@ namespace HandheldCompanion.Managers
                     {
                         if (focusedElement is Button button)
                         {
+                            Focus(button);
+
+                            if (focusedElement.Tag is ProfileViewModel profileViewModel)
+                            {
+                                // set state
+                                _goingForward = true;
+                            }
+
                             // raise event
                             button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
                             // execute command
                             button.Command?.Execute(button.CommandParameter);
-                            Focus(button);
                         }
                         else if (focusedElement is RepeatButton repeatButton)
                         {
@@ -600,7 +608,7 @@ namespace HandheldCompanion.Managers
                             UISounds.PlayOggFile(UISounds.Expanded);
 
                             // set state
-                            _goingForward = true;
+                            _navigating = true;
 
                             if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control) && control is not NavigationViewItem)
                             {
@@ -684,29 +692,12 @@ namespace HandheldCompanion.Managers
                                         default:
                                             {
                                                 if (HasDialogOpen && prevControl.TryGetValue(_gamepadPage, out Control control))
+                                                {
                                                     Focus(control);
-                                                else
-                                                    Focus(prevNavigation);
+                                                    return;
+                                                }
                                             }
-                                            return;
-
-                                        // todo: shouldn't be hardcoded
-                                        case "layout":
-                                        case "SettingsMode0":
-                                        case "SettingsMode1":
-                                        case "quickperformance":
-                                            {
-                                                // set state
-                                                _goingBack = true;
-
-                                                // play sound
-                                                UISounds.PlayOggFile(UISounds.Collapse);
-
-                                                // go back to previous page
-                                                if (_gamepadFrame.CanGoBack)
-                                                    _gamepadFrame.GoBack();
-                                            }
-                                            return;
+                                            break;
                                     }
                                 }
                                 break;
@@ -717,31 +708,11 @@ namespace HandheldCompanion.Managers
                                     switch (comboBox.IsDropDownOpen)
                                     {
                                         case true:
-                                            comboBox.IsDropDownOpen = false;
-                                            break;
-                                        case false:
                                             {
-                                                switch (_gamepadPage.Tag)
-                                                {
-                                                    // todo: shouldn't be hardcoded
-                                                    case "quickperformance":
-                                                        {
-                                                            // set state
-                                                            _goingBack = true;
-
-                                                            // go back to previous page
-                                                            if (_gamepadFrame.CanGoBack)
-                                                                _gamepadFrame.GoBack();
-                                                        }
-                                                        break;
-                                                    default:
-                                                        // restore previous NavigationViewItem
-                                                        if (prevNavigation is not null)
-                                                            Focus(prevNavigation);
-                                                        break;
-                                                }
+                                                comboBox.IsDropDownOpen = false;
+                                                return;
                                             }
-                                            return;
+                                            break;
                                     }
                                 }
                                 break;
@@ -749,38 +720,37 @@ namespace HandheldCompanion.Managers
                             case "ComboBoxItem":
                                 {
                                     if (ItemsControl.ItemsControlFromItemContainer(focusedElement) is ComboBox comboBox)
+                                    {
                                         comboBox.IsDropDownOpen = false;
+                                        return;
+                                    }
                                 }
-                                return;
+                                break;
 
                             case "NavigationViewItem":
                                 {
-                                    switch (_gamepadPage.Tag)
-                                    {
-                                        // todo: shouldn't be hardcoded
-                                        case "layout":
-                                        case "SettingsMode0":
-                                        case "SettingsMode1":
-                                        case "quickperformance":
-                                            {
-                                                // set state
-                                                _goingBack = true;
-
-                                                // play sound
-                                                UISounds.PlayOggFile(UISounds.Collapse);
-
-                                                // go back to previous page
-                                                if (_gamepadFrame.CanGoBack)
-                                                    _gamepadFrame.GoBack();
-                                            }
-                                            return;
-                                    }
-
                                     if (_currentWindow is OverlayQuickTools overlayQuickTools)
+                                    {
                                         overlayQuickTools.ToggleVisibility();
+                                        return;
+                                    }
                                 }
                                 break;
                         }
+
+                        // go back to previous page
+                        if (_goingForward)
+                        {
+                            if (_gamepadFrame.CanGoBack)
+                            {
+                                // set state
+                                _goingBack = true;
+                                _goingForward = false;
+                                _gamepadFrame.GoBack();
+                            }
+                        }
+                        else if(prevNavigation is not null)
+                                Focus(prevNavigation);
                     }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B4))
                     {
