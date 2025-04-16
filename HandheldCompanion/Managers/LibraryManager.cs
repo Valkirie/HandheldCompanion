@@ -20,6 +20,8 @@ namespace HandheldCompanion.Managers
     {
         // GameArt
         public static BitmapImage MissingCover = new BitmapImage(new Uri("pack://application:,,,/Resources/IGDB/MissingCover.png"));
+        public static BitmapImage Xbox360Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_0_big.png"));
+        public static BitmapImage DualShock4Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_1_big.png"));
     }
 
     public class LibraryManager : IManager

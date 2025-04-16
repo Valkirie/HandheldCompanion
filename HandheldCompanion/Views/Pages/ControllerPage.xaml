@@ -23,6 +23,21 @@
     </Page.Resources>
 
     <Grid Name="MainGrid" Margin="20">
+        <Image
+            Margin="20,0,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Opacity="0.4"
+            Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+            Stretch="None">
+            <Image.OpacityMask>
+                <RadialGradientBrush Center="0.6,0.4" GradientOrigin="0.6,0.4" RadiusX="1" RadiusY="1.2">
+                    <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
+                    <GradientStop Offset="0.4" Color="{DynamicResource MaskGradientEndColor}" />
+                </RadialGradientBrush>
+            </Image.OpacityMask>
+        </Image>
+
         <ikw:SimpleStackPanel Spacing="24">
 
             <!--  Hints  -->
