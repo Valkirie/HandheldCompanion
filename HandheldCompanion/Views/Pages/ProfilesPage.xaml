@@ -1,4 +1,4 @@
-<Page
+﻿<Page
     x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -126,10 +126,11 @@
                                         <ui:PipsPager
                                             Margin="0,10,0,0"
                                             HorizontalAlignment="Center"
+                                            IsEnabled="False"
                                             MaxVisiblePips="6"
-                                            NextButtonVisibility="Visible"
+                                            NextButtonVisibility="Collapsed"
                                             NumberOfPages="{Binding LibraryCovers.Count}"
-                                            PreviousButtonVisibility="Visible"
+                                            PreviousButtonVisibility="Collapsed"
                                             SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
                                     </StackPanel>
 
@@ -153,10 +154,11 @@
                                         <ui:PipsPager
                                             Margin="0,10,0,0"
                                             HorizontalAlignment="Center"
+                                            IsEnabled="False"
                                             MaxVisiblePips="6"
-                                            NextButtonVisibility="Visible"
+                                            NextButtonVisibility="Collapsed"
                                             NumberOfPages="{Binding LibraryArtworks.Count}"
-                                            PreviousButtonVisibility="Visible"
+                                            PreviousButtonVisibility="Collapsed"
                                             SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewArtworks, Mode=TwoWay}" />
                                     </StackPanel>
                                 </Grid>
