@@ -291,7 +291,6 @@ namespace HandheldCompanion.ViewModels
                 LibraryArtworksIndex = -1;
                 LibraryCoversIndex = -1;
                 SelectedLibraryIndex = -1;
-
                 LibraryPickers.Clear();
 
                 LibrarySearchField = ProfilesPage.selectedProfile.Name;
@@ -300,6 +299,10 @@ namespace HandheldCompanion.ViewModels
 
             RefreshLibrary = new DelegateCommand(async () =>
             {
+                // clear list
+                LibraryArtworksIndex = -1;
+                LibraryCoversIndex = -1;
+                SelectedLibraryIndex = -1;
                 LibraryPickers.Clear();
 
                 IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, LibrarySearchField);
