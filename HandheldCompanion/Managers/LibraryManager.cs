@@ -1,4 +1,4 @@
-using craftersmine.SteamGridDBNet;
+﻿using craftersmine.SteamGridDBNet;
 using Fastenshtein;
 using HandheldCompanion.Libraries;
 using IGDB;
