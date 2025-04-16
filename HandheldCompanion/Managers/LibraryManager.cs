@@ -116,13 +116,13 @@ namespace HandheldCompanion.Managers
                                 Game[] games = await IGDBClient.QueryAsync<Game>(IGDBClient.Endpoints.Games,
                                     query: $"fields id,name,summary,storyline,category,cover.image_id,artworks.image_id,screenshots.image_id,first_release_date; search \"{searchQuery}\";");
 
-                                foreach (Game game in games)
+                                await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
                                 {
                                     long gameId = (long)game.Id;
 
                                     IGDBEntry entry = new IGDBEntry(gameId, game.Name, game.FirstReleaseDate.Value.DateTime)
                                     {
-                                        Summary = game.Summary,
+                                        Description = game.Summary,
                                         Storyline = game.Storyline,
                                         Category = game.Category.Value,
                                         Cover = game.Cover.Value,
@@ -154,9 +154,9 @@ namespace HandheldCompanion.Managers
                                         entry.Artwork = entry.Artworks.FirstOrDefault();
                                     }
 
-                                    // add to dictionary
-                                    entries[gameId] = entry;
-                                }
+                                    lock (entries)
+                                        entries[gameId] = entry;
+                                });
                             }
                             break;
 
@@ -165,29 +165,33 @@ namespace HandheldCompanion.Managers
                                 // Query IGDB using the search query.
                                 SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(name);
 
-                                foreach (SteamGridDbGame game in games)
+                                await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
                                 {
+                                    long gameId = (long)game.Id;
+
                                     SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
                                         gameId: game.Id,
                                         types: SteamGridDbTypes.Static,
                                         styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
                                         dimensions: SteamGridDbDimensions.W600H900,
-                                        formats: SteamGridDbFormats.Png,
-                                        limit: 4);
+                                        formats: SteamGridDbFormats.Png);
+
+                                    grids = grids.Where(game => !game.IsLocked).ToArray();
 
                                     SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                         gameId: game.Id,
                                         types: SteamGridDbTypes.Static,
                                         styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
                                         dimensions: SteamGridDbDimensions.W1920H620,
-                                        formats: SteamGridDbFormats.Png,
-                                        limit: 4);
+                                        formats: SteamGridDbFormats.Png);
 
-                                    // skip if no visuals are available
+                                    heroes = heroes.Where(game => !game.IsLocked).ToArray();
+
+                                    // Skip if no visuals are available
                                     if (grids.Length == 0 && heroes.Length == 0)
-                                        continue;
+                                        return;
 
-                                    SteamGridEntry entry = new SteamGridEntry((long)game.Id, game.Name, game.ReleaseDate)
+                                    SteamGridEntry entry = new SteamGridEntry(gameId, game.Name, game.ReleaseDate)
                                     {
                                         Heroes = heroes,
                                         Grids = grids,
@@ -195,9 +199,9 @@ namespace HandheldCompanion.Managers
                                         Grid = grids.FirstOrDefault(),
                                     };
 
-                                    // add to dictionary
-                                    entries[game.Id] = entry;
-                                }
+                                    lock (entries)
+                                        entries[gameId] = entry;
+                                });
                             }
                             break;
                     }
@@ -296,29 +300,53 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
+        public async Task<bool> DownloadGameArt(LibraryEntry entry, int index, LibraryType libraryType)
+        {
+            if (entry is SteamGridEntry steamEntry)
+                return await DownloadGameArt(steamEntry, index, libraryType);
+            else if (entry is IGDBEntry igdbEntry)
+                return await DownloadGameArt(igdbEntry, index, libraryType);
+
+            return false;
+        }
+
+        public async Task<bool> DownloadGameArt(SteamGridEntry entry, int index, LibraryType libraryType)
+        {
+            SteamGridDbObject[] objects = libraryType.HasFlag(LibraryType.cover) ? entry.Grids : entry.Heroes;
+            if (index < 0 || index >= objects.Length)
+                return false;
+
+            return await DownloadGameArt(entry.Id,
+                libraryType.HasFlag(LibraryType.cover) ? entry.Grids[index] : entry.Heroes[index],
+                libraryType);
+        }
+
         public async Task<bool> DownloadGameArt(long gameId, SteamGridDbObject entry, LibraryType libraryType)
         {
             try
             {
+                string filePath = GetGameArtPath(gameId, libraryType, entry.Id);
+                string directoryPath = Directory.GetParent(filePath).FullName;
+
+                // check if file exists firts
+                if (File.Exists(filePath))
+                    return true;
+
                 // update status
                 AddStatus(ManagerStatus.Busy);
 
+                // If the image directory does not exist, create it
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
+
                 using (HttpClient client = new HttpClient())
                 {
-                    string imageUrl = libraryType == LibraryType.thumbnails ? entry.ThumbnailImageUrl : entry.FullImageUrl;
+                    string imageUrl = libraryType.HasFlag(LibraryType.thumbnails) ? entry.ThumbnailImageUrl : entry.FullImageUrl;
 
                     HttpResponseMessage response = await client.GetAsync(imageUrl);
                     if (response.IsSuccessStatusCode)
                     {
                         byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
-
-                        string filePath = GetGameArtPath(gameId, libraryType, entry.Id);
-                        string directoryPath = Directory.GetParent(filePath).FullName;
-
-                        // If the image directory does not exist, create it
-                        if (!Directory.Exists(directoryPath))
-                            Directory.CreateDirectory(directoryPath);
-
                         using (Stream file = File.Create(filePath))
                         {
                             file.Write(imageBytes, 0, imageBytes.Length);
@@ -365,27 +393,49 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
+        public async Task<bool> DownloadGameArt(IGDBEntry entry, int index, LibraryType libraryType)
+        {
+            if (libraryType.HasFlag(LibraryType.artwork) && index < 0 || index >= entry.Artworks.Count)
+                return false;
+
+            return await DownloadGameArt(entry.Id,
+                libraryType.HasFlag(LibraryType.cover) ? entry.Cover.ImageId : entry.Artworks[index].ImageId,
+                libraryType.HasFlag(LibraryType.cover) ? entry.Cover.Id.Value : entry.Artworks[index].Id.Value,
+                libraryType, false);
+        }
+
         public async Task<bool> DownloadGameArt(long gameId, string imageName, long? imageId, LibraryType libraryType, bool preview)
         {
             // check connection
             if (!IsConnected)
                 return false;
 
-            ImageSize imageSize = ImageSize.CoverBig;
-
-            if (libraryType.HasFlag(LibraryType.cover))
-                imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.CoverSmall : ImageSize.CoverBig;
-            else if (libraryType.HasFlag(LibraryType.artwork))
-                imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
-
-            string imageUrl = ImageHelper.GetImageUrl(imageId: imageName, size: imageSize, retina: !preview);
-            if (string.IsNullOrEmpty(imageUrl))
-                return false;
-
             try
             {
+                string filePath = GetGameArtPath(gameId, libraryType, (long)imageId);
+                string directoryPath = Directory.GetParent(filePath).FullName;
+
+                // check if file exists firts
+                if (File.Exists(filePath))
+                    return true;
+
+                // If the image directory does not exist, create it
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
+
                 // update status
                 AddStatus(ManagerStatus.Busy);
+
+                ImageSize imageSize = ImageSize.CoverBig;
+
+                if (libraryType.HasFlag(LibraryType.cover))
+                    imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.CoverSmall : ImageSize.CoverBig;
+                else if (libraryType.HasFlag(LibraryType.artwork))
+                    imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
+
+                string imageUrl = ImageHelper.GetImageUrl(imageId: imageName, size: imageSize, retina: !preview);
+                if (string.IsNullOrEmpty(imageUrl))
+                    return false;
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -395,14 +445,6 @@ namespace HandheldCompanion.Managers
                     if (response.IsSuccessStatusCode)
                     {
                         byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
-
-                        string filePath = GetGameArtPath(gameId, libraryType, (long)imageId);
-                        string directoryPath = Directory.GetParent(filePath).FullName;
-
-                        // If the image directory does not exist, create it
-                        if (!Directory.Exists(directoryPath))
-                            Directory.CreateDirectory(directoryPath);
-
                         using (Stream file = File.Create(filePath))
                         {
                             file.Write(imageBytes, 0, imageBytes.Length);

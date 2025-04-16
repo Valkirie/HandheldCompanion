@@ -8,7 +8,6 @@ namespace HandheldCompanion.Libraries
     [Serializable]
     public class IGDBEntry : LibraryEntry
     {
-        public string Summary;
         public string Storyline;
         public Category Category;
 

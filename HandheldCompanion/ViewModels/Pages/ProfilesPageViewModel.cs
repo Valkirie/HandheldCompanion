@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -140,6 +141,7 @@ namespace HandheldCompanion.ViewModels
                     }
                     else
                         _SelectedLibraryIndex = -1;
+                    OnPropertyChanged(nameof(SelectedLibraryIndex));
 
                     SelectedLibraryChanged();
                 }
@@ -163,6 +165,7 @@ namespace HandheldCompanion.ViewModels
                     }
                     else
                         _SelectedLibraryEntry = null;
+                    OnPropertyChanged(nameof(SelectedLibraryEntry));
 
                     SelectedLibraryChanged();
                 }
@@ -175,11 +178,11 @@ namespace HandheldCompanion.ViewModels
             get => _LibraryCoversIndex;
             set
             {
-                if (value != _LibraryCoversIndex)
-                {
-                    _LibraryCoversIndex = value;
-                    OnPropertyChanged(nameof(LibraryCoversIndex));
-                }
+                // Launch the download without blocking
+                if (value != -1)
+                    _ = TriggerGameArtDownloadAsync(value, LibraryType.cover | LibraryType.thumbnails);
+                else
+                    RefreshCover(value);
             }
         }
 
@@ -200,11 +203,11 @@ namespace HandheldCompanion.ViewModels
             get => _LibraryArtworksIndex;
             set
             {
-                if (value != _LibraryArtworksIndex)
-                {
-                    _LibraryArtworksIndex = value;
-                    OnPropertyChanged(nameof(LibraryArtworksIndex));
-                }
+                // Launch the download without blocking
+                if (value != -1)
+                    _ = TriggerGameArtDownloadAsync(value, LibraryType.artwork | LibraryType.thumbnails);
+                else
+                    RefreshArtwork(value);
             }
         }
 
@@ -219,22 +222,40 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private async void SelectedLibraryChanged()
+        private async Task TriggerGameArtDownloadAsync(int value, LibraryType libraryType)
         {
-            // Optionally trigger game art download here if needed.
-            await ManagerFactory.libraryManager.DownloadGameArts(_SelectedLibraryEntry, true);
+            await ManagerFactory.libraryManager.DownloadGameArt(_SelectedLibraryEntry, value, libraryType);
 
-            OnPropertyChanged(nameof(SelectedLibraryIndex));
-            OnPropertyChanged(nameof(SelectedLibraryEntry));
+            if (libraryType.HasFlag(LibraryType.cover))
+                RefreshCover(value);
+            else
+                RefreshArtwork(value);
+        }
+
+        private void SelectedLibraryChanged()
+        {
             OnPropertyChanged(nameof(HasLibraryEntry));
 
-            OnPropertyChanged(nameof(LibraryCovers));
-            OnPropertyChanged(nameof(LibraryArtworks));
-
-            // reset cover index
-            LibraryCoversIndex = 0;
+            // reset artworks
+            LibraryArtworksIndex = -1;
             LibraryArtworksIndex = 0;
+
+            // reset cover
+            LibraryCoversIndex = -1;
+            LibraryCoversIndex = 0;
+        }
+
+        private void RefreshCover(int index)
+        {
+            OnPropertyChanged(nameof(LibraryCovers));
+            _LibraryCoversIndex = index;
             OnPropertyChanged(nameof(LibraryCoversIndex));
+        }
+
+        private void RefreshArtwork(int index)
+        {
+            OnPropertyChanged(nameof(LibraryArtworks));
+            _LibraryArtworksIndex = index;
             OnPropertyChanged(nameof(LibraryArtworksIndex));
         }
 
@@ -267,8 +288,11 @@ namespace HandheldCompanion.ViewModels
             DisplayLibrary = new DelegateCommand(async () =>
             {
                 // clear list
-                LibraryPickers.Clear();
+                LibraryArtworksIndex = -1;
+                LibraryCoversIndex = -1;
                 SelectedLibraryIndex = -1;
+
+                LibraryPickers.Clear();
 
                 LibrarySearchField = ProfilesPage.selectedProfile.Name;
                 await profilesPage.IGGBDialog.ShowAsync();

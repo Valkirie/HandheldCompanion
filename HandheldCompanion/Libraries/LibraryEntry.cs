@@ -14,6 +14,7 @@ namespace HandheldCompanion.Libraries
         public LibraryFamily Family;
         public long Id;
         public string Name;
+        public string Description;
         public DateTime ReleaseDate;
 
         public LibraryEntry(LibraryFamily libraryFamily, long id, string name, DateTime releaseDate)

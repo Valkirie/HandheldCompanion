@@ -37,108 +37,140 @@
 
         <StackPanel>
             <ui:ContentDialog Name="IGGBDialog" CloseButtonText="Close">
-                <ikw:SimpleStackPanel
-                    Width="500"
-                    IsEnabled="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
-                    Spacing="12">
-                    <ikw:SimpleStackPanel Spacing="6">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" />
-                                <ColumnDefinition Width="2*" />
-                            </Grid.ColumnDefinitions>
+                <Grid>
+                    <ui:ProgressRing
+                        Panel.ZIndex="1"
+                        IsIndeterminate="True"
+                        Visibility="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                            <TextBox
-                                HorizontalAlignment="Stretch"
-                                ui:ControlHelper.PlaceholderText="Search"
-                                Text="{Binding LibrarySearchField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <Button
-                                Grid.Column="1"
-                                Margin="6,0,0,0"
-                                HorizontalAlignment="Stretch"
-                                Command="{Binding RefreshLibrary}"
-                                Content="Search" />
-                        </Grid>
-
-                        <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                        <ListView
-                            MaxHeight="170"
-                            HorizontalAlignment="Stretch"
-                            ItemsSource="{Binding LibraryPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedIndex="{Binding SelectedLibraryIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
-                            <ListView.ItemContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
-                                    <Setter Property="ToolTip" Value="{Binding Summary}" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock
-                                            HorizontalAlignment="Left"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{Binding Name}" />
-
-                                        <TextBlock
-                                            HorizontalAlignment="Right"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{Binding ReleaseDateYear}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />
-
-                            <Grid Height="225">
+                    <ikw:SimpleStackPanel
+                        Width="500"
+                        IsEnabled="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
+                        Spacing="12">
+                        <ikw:SimpleStackPanel Spacing="6">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="150" />
-                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="9*" />
+                                    <ColumnDefinition Width="2*" />
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FlipView
+                                <TextBox
                                     HorizontalAlignment="Stretch"
-                                    ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ui:FlipView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Image Source="{Binding Image, Mode=OneWay}" Stretch="UniformToFill" />
-                                        </DataTemplate>
-                                    </ui:FlipView.ItemTemplate>
-                                </ui:FlipView>
+                                    ui:ControlHelper.PlaceholderText="Search"
+                                    Text="{Binding LibrarySearchField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                <ui:FlipView
+                                <Button
                                     Grid.Column="1"
                                     Margin="6,0,0,0"
                                     HorizontalAlignment="Stretch"
-                                    ItemsSource="{Binding LibraryArtworks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedIndex="{Binding LibraryArtworksIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ui:FlipView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Image
-                                                HorizontalAlignment="Center"
-                                                Source="{Binding Image, Mode=OneWay}"
-                                                Stretch="UniformToFill" />
-                                        </DataTemplate>
-                                    </ui:FlipView.ItemTemplate>
-                                </ui:FlipView>
+                                    Command="{Binding RefreshLibrary}"
+                                    Content="Search" />
                             </Grid>
 
-                            <Button
+                            <ListView
+                                MaxHeight="170"
                                 HorizontalAlignment="Stretch"
-                                Command="{Binding DownloadLibrary}"
-                                Content="Download"
-                                IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource AccentButtonStyle}" />
+                                ItemsSource="{Binding LibraryPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedIndex="{Binding SelectedLibraryIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                                <ListView.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
+                                        <Setter Property="ToolTip" Value="{Binding Description}" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock
+                                                HorizontalAlignment="Left"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Name}" />
+
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding ReleaseDateYear}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <ui:FlipView
+                                            x:Name="FlipViewCovers"
+                                            Height="180"
+                                            HorizontalAlignment="Stretch"
+                                            ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ui:FlipView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Image
+                                                        HorizontalAlignment="Center"
+                                                        Source="{Binding Image, Mode=OneWay}"
+                                                        Stretch="UniformToFill" />
+                                                </DataTemplate>
+                                            </ui:FlipView.ItemTemplate>
+                                        </ui:FlipView>
+
+                                        <ui:PipsPager
+                                            Margin="0,10,0,0"
+                                            HorizontalAlignment="Center"
+                                            MaxVisiblePips="6"
+                                            NextButtonVisibility="Visible"
+                                            NumberOfPages="{Binding LibraryCovers.Count}"
+                                            PreviousButtonVisibility="Visible"
+                                            SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                        <ui:FlipView
+                                            x:Name="FlipViewArtworks"
+                                            Height="180"
+                                            HorizontalAlignment="Stretch"
+                                            ItemsSource="{Binding LibraryArtworks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            SelectedIndex="{Binding LibraryArtworksIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ui:FlipView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Image
+                                                        HorizontalAlignment="Center"
+                                                        Source="{Binding Image, Mode=OneWay}"
+                                                        Stretch="UniformToFill" />
+                                                </DataTemplate>
+                                            </ui:FlipView.ItemTemplate>
+                                        </ui:FlipView>
+
+                                        <ui:PipsPager
+                                            Margin="0,10,0,0"
+                                            HorizontalAlignment="Center"
+                                            MaxVisiblePips="6"
+                                            NextButtonVisibility="Visible"
+                                            NumberOfPages="{Binding LibraryArtworks.Count}"
+                                            PreviousButtonVisibility="Visible"
+                                            SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewArtworks, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding DownloadLibrary}"
+                                    Content="Update metadata"
+                                    IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource AccentButtonStyle}" />
+                            </ikw:SimpleStackPanel>
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
-                </ikw:SimpleStackPanel>
+                </Grid>
             </ui:ContentDialog>
 
             <ui:ContentDialog
