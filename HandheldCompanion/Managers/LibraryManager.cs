@@ -1,4 +1,4 @@
-﻿using craftersmine.SteamGridDBNet;
+using craftersmine.SteamGridDBNet;
 using Fastenshtein;
 using HandheldCompanion.Libraries;
 using IGDB;
@@ -19,7 +19,7 @@ namespace HandheldCompanion.Managers
     public static class LibraryResources
     {
         // GameArt
-        public static BitmapImage MissingCover = new BitmapImage(new Uri("pack://application:,,,/Resources/IGDB/MissingCover.png"));
+        public static BitmapImage MissingCover = new BitmapImage(new Uri("pack://application:,,,/Resources/MissingCover.png"));
         public static BitmapImage Xbox360Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_0_big.png"));
         public static BitmapImage DualShock4Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_1_big.png"));
     }
