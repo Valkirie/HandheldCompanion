@@ -247,16 +247,30 @@ namespace HandheldCompanion.ViewModels
 
         private void RefreshCover(int index)
         {
-            OnPropertyChanged(nameof(LibraryCovers));
-            _LibraryCoversIndex = index;
-            OnPropertyChanged(nameof(LibraryCoversIndex));
+            try
+            {
+                OnPropertyChanged(nameof(LibraryCovers));
+                _LibraryCoversIndex = index;
+                OnPropertyChanged(nameof(LibraryCoversIndex));
+            }
+            catch(Exception ex)
+            {
+                // dirty, fix me !
+            }
         }
 
         private void RefreshArtwork(int index)
         {
-            OnPropertyChanged(nameof(LibraryArtworks));
-            _LibraryArtworksIndex = index;
-            OnPropertyChanged(nameof(LibraryArtworksIndex));
+            try
+            {
+                OnPropertyChanged(nameof(LibraryArtworks));
+                _LibraryArtworksIndex = index;
+                OnPropertyChanged(nameof(LibraryArtworksIndex));
+            }
+            catch (Exception ex)
+            {
+                // dirty, fix me !
+            }
         }
 
         public bool IsLibraryBusy => ManagerFactory.libraryManager.IsBusy;
