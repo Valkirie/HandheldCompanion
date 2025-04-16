@@ -7365,6 +7365,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change the profile library settings.
+        /// </summary>
+        public static string ProfilesPage_Library_Desc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Library_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Library settings.
+        /// </summary>
+        public static string ProfilesPage_Library_Title {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Library_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        public static string ProfilesPage_LibraryRefreshImage {
+            get {
+                return ResourceManager.GetString("ProfilesPage_LibraryRefreshImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        public static string ProfilesPage_LibraryRefreshImageButton {
+            get {
+                return ResourceManager.GetString("ProfilesPage_LibraryRefreshImageButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download images for this profile. For best results, match the (sub) profile name with the name of the application of IGDB or SteamGridDB.
+        /// </summary>
+        public static string ProfilesPage_LibraryRefreshImageDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_LibraryRefreshImageDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Motion control settings.
         /// </summary>
         public static string ProfilesPage_MotionControlSettings {
@@ -7721,6 +7766,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_Sharpen {
             get {
                 return ResourceManager.GetString("ProfilesPage_Sharpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in library.
+        /// </summary>
+        public static string ProfilesPage_ShowInLibrary {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ShowInLibrary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable to show the profile listed in the library.
+        /// </summary>
+        public static string ProfilesPage_ShowInLibraryDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ShowInLibraryDesc", resourceCulture);
             }
         }
         

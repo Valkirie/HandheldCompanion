@@ -545,6 +545,9 @@ public partial class ProfilesPage : Page
                     cB_Suspend.IsChecked = selectedProfile.SuspendOnSleep;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
 
+                    // Library
+                    Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
+
                     // Emulated controller assigned to the profile
                     cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable combobox
                     cB_EmulatedController.SelectedIndex = new Func<int>(() =>
@@ -1438,6 +1441,20 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.Arguments = tB_ProfileArguments.Text;
+        UpdateProfile();
+    }
+
+    // Toggle to show or hide profile in library or quick start
+    private void ShowInLibrary_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.ShowInLibrary = Toggle_ShowInLibrary.IsOn;
         UpdateProfile();
     }
 }

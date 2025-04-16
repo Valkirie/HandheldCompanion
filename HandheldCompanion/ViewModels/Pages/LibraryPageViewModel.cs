@@ -15,6 +15,14 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
 
+            // Load only the ones that should be shown
+            foreach (var profile in ManagerFactory.profileManager
+                                                  .GetProfiles()
+                                                  .Where(p => !p.Default && p.ShowInLibrary))
+            {
+                Profiles.Add(new ProfileViewModel(profile, false));
+            }
+
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
@@ -40,11 +48,32 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-            if (foundProfile is null)
-                Profiles.SafeAdd(new ProfileViewModel(profile, false));
+            bool shouldShow = profile.ShowInLibrary;
+            // find based on guid
+            var existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+
+            if (shouldShow)
+            {
+                if (existingVm is null)
+                {
+                    // Not yet in list, add
+                    Profiles.SafeAdd(new ProfileViewModel(profile, false));
+                }
+                else
+                {
+                    // Already in list, only update
+                    existingVm.Profile = profile;
+                }
+            }
             else
-                foundProfile.Profile = profile;
+            {
+                if (existingVm is not null)
+                {
+                    // Remove from list and dispose
+                    Profiles.SafeRemove(existingVm);
+                    existingVm.Dispose();
+                }
+            }
         }
 
         public override void Dispose()

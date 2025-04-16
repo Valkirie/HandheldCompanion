@@ -304,15 +304,14 @@
                         <!--  Profile details  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="107" />
                                 <ColumnDefinition Width="8*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <Border
-                                Height="240"
+                                Height="160"
                                 Padding="15,12,12,12"
                                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                BorderThickness="1"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
                                 <Border.Background>
                                     <ImageBrush
@@ -320,14 +319,6 @@
                                         ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         Stretch="UniformToFill" />
                                 </Border.Background>
-
-                                <Button
-                                    Name="b_Refresh"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Bottom"
-                                    Command="{Binding DisplayLibrary}"
-                                    Content="Refresh"
-                                    Style="{DynamicResource AccentButtonStyle}" />
                             </Border>
 
                             <Border
@@ -336,7 +327,6 @@
                                 Padding="15,12,12,12"
                                 Background="{DynamicResource ExpanderHeaderBackground}"
                                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                BorderThickness="1"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                                 <ikw:SimpleStackPanel Spacing="6">
@@ -573,6 +563,100 @@
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
+
+                        <!--  Library settings  -->
+                        <Expander
+                            Name="LibrarySettings"
+                            HorizontalAlignment="Stretch"
+                            Expanded="Expander_Expanded">
+                            <Expander.Header>
+                                <DockPanel Margin="0,12,12,12">
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xE8F1;" />
+
+                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Library_Title}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{l:Static resx:Resources.ProfilesPage_Library_Desc}"
+                                            TextWrapping="Wrap" />
+                                    </ikw:SimpleStackPanel>
+                                </DockPanel>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+
+                                    <!--  Show in library  -->
+                                    <ikw:SimpleStackPanel Name="ShowInLibrary" Spacing="6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ShowInLibrary}" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{l:Static resx:Resources.ProfilesPage_ShowInLibraryDesc}"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <ui:ToggleSwitch
+                                                Name="Toggle_ShowInLibrary"
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                                Toggled="ShowInLibrary_Toggled" />
+                                        </Grid>
+                                    </ikw:SimpleStackPanel>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+
+                                    <!--  Refresh library image  -->
+                                    <ikw:SimpleStackPanel Name="LibraryRefreshImage" Spacing="6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ikw:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImage}" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImageDesc}"
+                                                    TextWrapping="Wrap" />
+                                            </ikw:SimpleStackPanel>
+
+                                            <Button
+                                                Name="b_Refresh"
+                                                Grid.Column="1"
+                                                Width="120"
+                                                Height="40"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding DisplayLibrary}"
+                                                Content="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImageButton}"
+                                                Style="{DynamicResource AccentButtonStyle}" />
+                                        </Grid>
+                                    </ikw:SimpleStackPanel>
+                                </ikw:SimpleStackPanel>
+                            </Expander.Content>
+                        </Expander>
 
                         <!--  Graphics settings  -->
                         <Expander

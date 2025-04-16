@@ -2862,4 +2862,25 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="MainWindow_navLibrary" xml:space="preserve">
     <value />
   </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

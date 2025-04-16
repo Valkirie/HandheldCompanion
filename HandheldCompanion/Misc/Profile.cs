@@ -62,6 +62,8 @@ public partial class Profile : ICloneable, IComparable
     // Library
     public LibraryEntry LibraryEntry { get; set; }
 
+    public bool ShowInLibrary { get; set; } = true;
+
     public string Executable { get; set; } = string.Empty;
 
     public bool Enabled { get; set; }
