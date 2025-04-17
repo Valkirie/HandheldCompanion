@@ -1,14 +1,46 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels
 {
     public class LibraryPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
+
+        private Color _highlightColor = Colors.Red;
+        public Color HighlightColor
+        {
+            get => _highlightColor;
+            set
+            {
+                if (_highlightColor != value)
+                {
+                    _highlightColor = value;
+                    OnPropertyChanged(nameof(HighlightColor));
+                }
+            }
+        }
+
+        private BitmapImage _Artwork;
+        public BitmapImage Artwork
+        {
+            get => _Artwork;
+            set
+            {
+                if (_Artwork != value)
+                {
+                    _Artwork = value;
+                    OnPropertyChanged(nameof(Artwork));
+                }
+            }
+        }
 
         public LibraryPageViewModel()
         {

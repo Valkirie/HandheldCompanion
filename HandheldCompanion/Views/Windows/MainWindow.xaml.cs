@@ -404,7 +404,7 @@ public partial class MainWindow : GamepadWindow
         libraryPage = new LibraryPage("library");
 
         // manage events
-        controllerPage.Loaded += ControllerPage_Loaded;
+        libraryPage.Loaded += HomePage_Loaded;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
@@ -478,7 +478,7 @@ public partial class MainWindow : GamepadWindow
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
     }
 
-    private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
+    private void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
         // home page is ready, display main window
         this.Visibility = Visibility.Visible;
@@ -787,8 +787,8 @@ public partial class MainWindow : GamepadWindow
         // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
-        // navigate
-        NavigateToPage("ControllerPage");
+        // navigate to home page
+        NavigateToPage("LibraryPage");
     }
 
     private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

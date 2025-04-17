@@ -34,18 +34,7 @@ namespace HandheldCompanion.Converters
                 byte avgG = (byte)(g / pixels);
                 byte avgB = (byte)(b / pixels);
 
-                Color original = new Color()
-                {
-                    R = avgR,
-                    G = avgG,
-                    B = avgB,
-                };
-
-                // lighter
-                return Color.FromArgb((byte)(original.A),
-                                    (byte)(original.R + (255 - original.R) * 0.25),
-                                    (byte)(original.G + (255 - original.G) * 0.25),
-                                    (byte)(original.B + (255 - original.B) * 0.25));
+                return Color.FromRgb(avgR, avgG, avgB);
             }
 
             // Fallback color if the conversion fails

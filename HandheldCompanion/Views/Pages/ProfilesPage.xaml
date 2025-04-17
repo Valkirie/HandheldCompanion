@@ -14,7 +14,7 @@
     Title="{l:Static resx:Resources.ProfilesPage_Profiles}"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ProfilesPageViewModel}"
-    d:DesignHeight="2000"
+    d:DesignHeight="4000"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -25,8 +25,22 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Opacity="0.6"
-            Source="{Binding Artwork}"
+            Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
             Stretch="None">
+            <Image.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!--  fade in from 0→1 in 300ms  -->
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="Opacity"
+                                From="0"
+                                To="1"
+                                Duration="0:0:0.3" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Image.Triggers>
             <Image.OpacityMask>
                 <RadialGradientBrush Center="0.8,0.4" GradientOrigin="0.8,0.4" RadiusX="0.8" RadiusY="1.2">
                     <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
@@ -316,9 +330,23 @@
                                 <Border.Background>
                                     <ImageBrush
                                         AlignmentY="Center"
-                                        ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
                                         Stretch="UniformToFill" />
                                 </Border.Background>
+                                <Border.Triggers>
+                                    <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <!--  fade in from 0→1 in 300ms  -->
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    From="0"
+                                                    To="1"
+                                                    Duration="0:0:0.3" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Border.Triggers>
                             </Border>
 
                             <Border
