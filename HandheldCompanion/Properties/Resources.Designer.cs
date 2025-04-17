@@ -4498,7 +4498,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Desktop layout.
+        ///   Looks up a localized string similar to Controller mode.
         /// </summary>
         public static string Hotkey_LayoutMode {
             get {
@@ -4507,7 +4507,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle Desktop controller layout.
+        ///   Looks up a localized string similar to Change controller mode: Auto, Gamepad or Desktop.
         /// </summary>
         public static string Hotkey_LayoutModeDesc {
             get {

@@ -1096,10 +1096,10 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Vibrar o controle físico quando conectado</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>Layout de área de trabalho</value>
+    <value>Controller mode</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>Ligar e desligar o layout de controle para área de trabalho</value>
+    <value>Change controller mode: Auto, Gamepad or Desktop</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>Exibir a Central de Ações</value>
@@ -3342,21 +3342,6 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="MainWindow_navLibrary" xml:space="preserve">
     <value />
   </data>
-  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
-    <value>Orientação da tela</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
-    <value>Alguns recursos dependem do conhecimento da orientação da tela para funcionar corretamente. Se isto não foi detectado apropriadamente, defina a orientação da sua tela correspondente ao seu controle, então clique Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
-    <value>Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
-    <value>Não definida</value>
-  </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Torne este o layout padrão</value>
-  </data>
   <data name="ProfilesPage_Library_Desc" xml:space="preserve">
     <value />
   </data>
@@ -3377,5 +3362,20 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
     <value />
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+    <value>Orientação da tela</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+    <value>Alguns recursos dependem do conhecimento da orientação da tela para funcionar corretamente. Se isto não foi detectado apropriadamente, defina a orientação da sua tela correspondente ao seu controle, então clique Detectar</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+    <value>Detectar</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+    <value>Não definida</value>
+  </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Torne este o layout padrão</value>
   </data>
 </root>

@@ -1096,10 +1096,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Vibrate physical controller when connected</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>Desktop layout</value>
+    <value>Controller mode</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>Toggle Desktop controller layout</value>
+    <value>Change controller mode: Auto, Gamepad or Desktop</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>Display Action center</value>

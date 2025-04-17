@@ -63,7 +63,8 @@
                                 Name="HotkeyDefinition"
                                 HorizontalAlignment="Stretch"
                                 Description="{Binding Description, Mode=OneWay}"
-                                Header="{Binding Name, Mode=OneWay}">
+                                Header="{Binding Name, Mode=OneWay}"
+                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                                 <StackPanel Orientation="Horizontal">
                                     <ToggleButton
@@ -179,8 +180,7 @@
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Stretch"
                                         Command="{Binding PinButtonCommand}"
-                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
