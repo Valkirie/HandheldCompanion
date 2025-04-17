@@ -348,14 +348,15 @@ namespace HandheldCompanion.ViewModels
                         IGDB.Artwork = IGDB.Artworks[LibraryArtworksIndex];
                 }
 
-                // update target entry
+                // update target entry and name
                 ProfilesPage.selectedProfile.LibraryEntry = SelectedLibraryEntry;
+                ProfilesPage.selectedProfile.Name = SelectedLibraryEntry.Name;
 
                 // download arts
                 await ManagerFactory.libraryManager.DownloadGameArts(SelectedLibraryEntry, false);
 
                 // update profile
-                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ArtUpdateOnly);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.LibraryUpdate);
             });
         }
 

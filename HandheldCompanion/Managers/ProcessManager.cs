@@ -293,6 +293,10 @@ public class ProcessManager : IManager
 
             processId = element.Current.ProcessId;
         }
+        catch (COMException)
+        {
+            // Operation timed out
+        }
         catch
         {
             // Automation failed to retrieve process id

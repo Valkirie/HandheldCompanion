@@ -33,7 +33,7 @@ public enum UpdateSource
     Creation = 4,
     Serializer = 5,
     ProfilesPageUpdateOnly = 6,
-    ArtUpdateOnly = 7,
+    LibraryUpdate = 7,
 }
 
 public enum SteeringAxis

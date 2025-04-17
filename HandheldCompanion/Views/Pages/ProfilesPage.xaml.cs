@@ -835,22 +835,11 @@ public partial class ProfilesPage : Page
 
     public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
-        // self call - update ui and return
+        isCurrent = selectedProfile?.Guid == profile?.Guid;
         switch (source)
         {
-            case UpdateSource.ProfilesPage:
-            case UpdateSource.ProfilesPageUpdateOnly:
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Profiles.SelectedItem = profile;
-                });
-                return;
             case UpdateSource.QuickProfilesPage:
-                {
-                    isCurrent = selectedProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                    if (!isCurrent) return;
-                }
+                if (!isCurrent) return;
                 break;
         }
 
@@ -858,11 +847,11 @@ public partial class ProfilesPage : Page
         UIHelper.TryInvoke(() =>
         {
             var idx = -1;
-            if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
+            if (!profile.IsSubProfile)
             {
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    bool isCurrent = pr.Guid == profile.Guid;
                     if (isCurrent)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
@@ -877,16 +866,8 @@ public partial class ProfilesPage : Page
 
                 cB_Profiles.Items.Refresh();
 
-                cB_Profiles.SelectedItem = profile;
-            }
-
-            else if (!profile.IsFavoriteSubProfile)
-                cB_Profiles.SelectedItem = profile;
-
-            else // TODO updateUI to show main & sub profile selected
-            {
-                Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(profile);
-                cB_Profiles.SelectedItem = mainProfile;
+                if (isCurrent)
+                    cB_Profiles.SelectedItem = profile;
             }
 
             UpdateSubProfiles(); // TODO check
@@ -1289,11 +1270,6 @@ public partial class ProfilesPage : Page
     {
         // change main profile name
         selectedMainProfile.Name = tB_ProfileName.Text;
-
-        // change it in 
-        int ind = cB_Profiles.Items.IndexOf(selectedMainProfile);
-        cB_Profiles.Items[ind] = selectedMainProfile;
-
         SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
     }
 
