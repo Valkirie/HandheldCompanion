@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Timers;
 
 namespace HandheldCompanion.Managers;
 
@@ -40,6 +41,7 @@ public class LayoutManager : IManager
     public string TemplatesPath;
 
     public FileSystemWatcher layoutWatcher { get; set; }
+    private Timer layoutTimer;
 
     public LayoutManager()
     {
@@ -66,6 +68,10 @@ public class LayoutManager : IManager
             Filter = "*.json",
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
         };
+
+        // prepare timer
+        layoutTimer = new(100) { AutoReset = false };
+        layoutTimer.Elapsed += LayoutTimer_Elapsed;
     }
 
     public override void Start()
@@ -101,6 +107,7 @@ public class LayoutManager : IManager
 
         // manage events
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
 
@@ -139,6 +146,11 @@ public class LayoutManager : IManager
         }
 
         base.Start();
+    }
+
+    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessEx.ProcessFilter filter)
+    {
+        CheckProfileLayout();
     }
 
     private void GamepadFocusManager_FocusChanged(string Name)
@@ -188,6 +200,9 @@ public class LayoutManager : IManager
 
         base.PrepareStop();
 
+        // stop timer(s)
+        layoutTimer.Stop();
+
         // manage desktop layout events
         desktopLayout.Updated -= DesktopLayout_Updated;
 
@@ -202,6 +217,7 @@ public class LayoutManager : IManager
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         UIGamepad.GotFocus -= GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
+        ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
 
         base.Stop();
     }
@@ -299,7 +315,7 @@ public class LayoutManager : IManager
         UpdateInherit();
     }
 
-    private void CheckProfileLayout()
+    private void LayoutTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
 
@@ -323,6 +339,12 @@ public class LayoutManager : IManager
                 SetActiveLayout(processEx?.IsGame() == true ? profileLayout : desktopLayout);
             }
         }
+    }
+
+    private void CheckProfileLayout()
+    {
+        layoutTimer.Stop();
+        layoutTimer.Start();
     }
 
     public Layout GetCurrent()
