@@ -76,7 +76,6 @@
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
             <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
             <converters:IsNullConverter x:Key="IsNullConverter" />
-            <converters:StringEmptyConverter x:Key="StringEmptyConverter" />
             <converters:SeparatorConverter x:Key="SeparatorConverter" />
             <converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
             <converters:AverageColorConverter x:Key="AverageColorConverter" />

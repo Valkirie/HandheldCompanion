@@ -135,8 +135,8 @@
 
                                     <Image.OpacityMask>
                                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Offset="0.75" Color="Transparent" />
-                                            <GradientStop Offset="0.90" Color="Black" />
+                                            <GradientStop Offset="0.65" Color="Transparent" />
+                                            <GradientStop Offset="0.85" Color="Black" />
                                         </LinearGradientBrush>
                                     </Image.OpacityMask>
                                 </Image>

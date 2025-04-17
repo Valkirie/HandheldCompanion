@@ -227,7 +227,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                return _KeyboardOutputChord;
+                return string.IsNullOrEmpty(_KeyboardOutputChord) ? "Press to define hotkey output" : _KeyboardOutputChord;
             }
             set
             {
