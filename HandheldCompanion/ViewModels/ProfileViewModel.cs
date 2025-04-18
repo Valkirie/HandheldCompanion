@@ -43,7 +43,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public string Name => _Profile.ToString();
+        public string Name => _Profile.Name;
+        public string Description => _Profile.GetOwnerName();
 
         public bool IsAvailable => !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 

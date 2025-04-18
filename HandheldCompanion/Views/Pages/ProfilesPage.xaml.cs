@@ -1,4 +1,4 @@
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -642,7 +642,7 @@ public partial class ProfilesPage : Page
         }
     }
 
-    private void UpdateSubProfiles()
+    private void UpdateSubProfiles(Profile updatedProfile = null)
     {
         if (selectedMainProfile is null)
             return;
@@ -651,30 +651,24 @@ public partial class ProfilesPage : Page
         {
             try
             {
-                int idx = 0; // default or main profile itself
-
-                // add main profile as first subprofile
                 cb_SubProfilePicker.Items.Clear();
-                cb_SubProfilePicker.Items.Add(selectedMainProfile);
 
-                // if main profile is not default, occupy sub profiles dropdown list
+                IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(selectedMainProfile, true);
+                foreach (Profile profile in profiles)
+                    cb_SubProfilePicker.Items.Add(profile);
+
+                // Only need to refresh if we loaded real sub‑profiles
                 if (!selectedMainProfile.Default)
-                {
-                    foreach (Profile subprofile in ManagerFactory.profileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
-                    {
-                        cb_SubProfilePicker.Items.Add(subprofile);
+                    cb_SubProfilePicker.Items.Refresh();
 
-                        // select sub profile if it's favorite for main profile
-                        if (subprofile.IsFavoriteSubProfile)
-                            idx = cb_SubProfilePicker.Items.IndexOf(subprofile);
-                    }
-                }
+                // Decide which index to select
+                int selectedIndex;
+                if (updatedProfile != null)
+                    selectedIndex = cb_SubProfilePicker.Items.IndexOf(updatedProfile);
+                else
+                    selectedIndex = profiles.Select((p, i) => new { p, i }).FirstOrDefault(x => x.p.IsFavoriteSubProfile)?.i ?? 0;
 
-                // refresh sub profiles dropdown
-                cb_SubProfilePicker.Items.Refresh();
-
-                // set subprofile to be applied
-                cb_SubProfilePicker.SelectedIndex = idx;
+                cb_SubProfilePicker.SelectedIndex = selectedIndex;
             }
             catch { }
             finally
@@ -870,7 +864,7 @@ public partial class ProfilesPage : Page
                     cB_Profiles.SelectedItem = profile;
             }
 
-            UpdateSubProfiles(); // TODO check
+            UpdateSubProfiles(profile); // TODO check
         });
     }
 

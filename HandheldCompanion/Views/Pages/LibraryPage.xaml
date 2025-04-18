@@ -62,7 +62,7 @@
                             ItemsStretch="Uniform"
                             MaximumRowsOrColumns="8"
                             MinColumnSpacing="12"
-                            MinItemHeight="240"
+                            MinItemHeight="280"
                             MinItemWidth="160"
                             MinRowSpacing="12"
                             Orientation="Horizontal" />
@@ -75,22 +75,21 @@
                                 Padding="0"
                                 BorderThickness="0"
                                 Command="{Binding Navigate}"
-                                GotFocus="ImageContainer_GotFocus"
-                                LostFocus="ImageContainer_LostFocus"
-                                MouseEnter="ImageContainer_MouseEnter"
-                                MouseLeave="ImageContainer_MouseLeave"
                                 Tag="{Binding}">
-                                <Button.RenderTransform>
-                                    <TranslateTransform />
-                                </Button.RenderTransform>
 
                                 <Button.Triggers>
                                     <EventTrigger RoutedEvent="MouseEnter">
                                         <BeginStoryboard>
                                             <Storyboard>
                                                 <DoubleAnimation
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                    To="-3"
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1.07"
+                                                    Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1.07"
                                                     Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -99,48 +98,59 @@
                                         <BeginStoryboard>
                                             <Storyboard>
                                                 <DoubleAnimation
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                    To="0"
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1.0"
+                                                    Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1.0"
                                                     Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </EventTrigger>
                                 </Button.Triggers>
 
-                                <Grid>
-                                    <Image
-                                        x:Name="MainImage"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Stretch="UniformToFill" />
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="60" />
+                                    </Grid.RowDefinitions>
 
-                                    <Image
-                                        x:Name="BlurBottomImage"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Stretch="UniformToFill">
-                                        <Image.Effect>
-                                            <BlurEffect Radius="10" />
-                                        </Image.Effect>
+                                    <!--  only this Border is clipped to its own cell  -->
+                                    <Border Grid.Row="0" ClipToBounds="True">
+                                        <Image
+                                            x:Name="MainImage"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            Source="{Binding Cover}"
+                                            Stretch="Uniform">
+                                            <Image.RenderTransform>
+                                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            </Image.RenderTransform>
+                                        </Image>
+                                    </Border>
 
-                                        <Image.OpacityMask>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                <GradientStop Offset="0.65" Color="Transparent" />
-                                                <GradientStop Offset="0.85" Color="Black" />
-                                            </LinearGradientBrush>
-                                        </Image.OpacityMask>
-                                    </Image>
+                                    <!--  fixed 50px text row underneath  -->
+                                    <Grid Grid.Row="1" Margin="12">
+                                        <StackPanel>
+                                            <TextBlock
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                Text="{Binding Name}"
+                                                TextWrapping="NoWrap" />
 
-                                    <TextBlock
-                                        Margin="12"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
-                                        Foreground="White"
-                                        Style="{StaticResource BaseTextBlockStyle}"
-                                        Text="{Binding Name}"
-                                        TextWrapping="Wrap" />
+                                            <TextBlock
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Description}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
                                 </Grid>
                             </Button>
                         </DataTemplate>

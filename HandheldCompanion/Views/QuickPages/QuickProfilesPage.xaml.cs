@@ -468,7 +468,7 @@ public partial class QuickProfilesPage : Page
                     else
                     {
                         Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
-                        Profile[] subProfiles = ManagerFactory.profileManager.GetSubProfilesFromPath(selectedProfile.Path, false);
+                        IEnumerable<Profile> subProfiles = ManagerFactory.profileManager.GetSubProfilesFromPath(selectedProfile.Path);
 
                         cb_SubProfiles.Items.Add(mainProfile);
                         foreach (Profile subProfile in subProfiles)

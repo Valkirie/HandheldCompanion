@@ -9,6 +9,7 @@ using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Stfu.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -213,11 +214,19 @@ public class ProfileManager : IManager
         return profile.Enabled ? profile : GetDefault();
     }
 
-    public Profile[] GetSubProfilesFromPath(string path, bool ignoreStatus)
+    public IEnumerable<Profile> GetSubProfilesFromProfile(Profile mainProfile, bool addMain = false)
     {
         // get subprofile corresponding to path
-        List<Profile> filteredSubProfiles = subProfiles.Where(pr => pr.Path == path).ToList();
-        return filteredSubProfiles.OrderBy(pr => pr.Name).ToArray();
+        IEnumerable<Profile> filteredSubProfiles = subProfiles.Where(pr => pr.Path == mainProfile.Path);
+        if (addMain) filteredSubProfiles = filteredSubProfiles.InsertAt(mainProfile, 0);
+        return filteredSubProfiles.OrderBy(pr => pr.Name);
+    }
+
+    public IEnumerable<Profile> GetSubProfilesFromPath(string path)
+    {
+        // get subprofile corresponding to path
+        IEnumerable<Profile> filteredSubProfiles = subProfiles.Where(pr => pr.Path == path);
+        return filteredSubProfiles.OrderBy(pr => pr.Name);
     }
 
     public Profile GetProfileForSubProfile(Profile subProfile)
@@ -233,7 +242,7 @@ public class ProfileManager : IManager
     public void SetSubProfileAsFavorite(Profile subProfile)
     {
         // remove favorite from all subprofiles
-        foreach (var profile in GetSubProfilesFromPath(subProfile.Path, false))
+        foreach (var profile in GetSubProfilesFromPath(subProfile.Path))
         {
             profile.IsFavoriteSubProfile = false;
             SerializeProfile(profile);
@@ -255,7 +264,7 @@ public class ProfileManager : IManager
         List<Profile> subProfilesList =
         [
             GetProfileForSubProfile(currentProfile), // adds main profile as sub profile
-            .. GetSubProfilesFromPath(currentProfile.Path, false).ToList(), // adds all sub profiles
+            .. GetSubProfilesFromPath(currentProfile.Path).ToList(), // adds all sub profiles
         ];
 
         // if profile does not have sub profiles -> do nothing
@@ -726,7 +735,7 @@ public class ProfileManager : IManager
         if (profiles.ContainsKey(profile.Path))
         {
             // delete associated subprofiles
-            foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path, false))
+            foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path))
                 DeleteSubProfile(subprofile);
 
             LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
