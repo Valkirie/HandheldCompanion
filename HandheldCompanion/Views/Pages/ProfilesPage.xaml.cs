@@ -663,7 +663,7 @@ public partial class ProfilesPage : Page
 
                 // Decide which index to select
                 int selectedIndex;
-                if (updatedProfile != null)
+                if (updatedProfile != null && cb_SubProfilePicker.Items.Contains(updatedProfile))
                     selectedIndex = cb_SubProfilePicker.Items.IndexOf(updatedProfile);
                 else
                     selectedIndex = profiles.Select((p, i) => new { p, i }).FirstOrDefault(x => x.p.IsFavoriteSubProfile)?.i ?? 0;

@@ -467,15 +467,12 @@ public partial class QuickProfilesPage : Page
                     }
                     else
                     {
-                        Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
-                        IEnumerable<Profile> subProfiles = ManagerFactory.profileManager.GetSubProfilesFromPath(selectedProfile.Path);
-
-                        cb_SubProfiles.Items.Add(mainProfile);
-                        foreach (Profile subProfile in subProfiles)
+                        IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(selectedProfile, true);
+                        foreach (Profile profile in profiles)
                         {
-                            cb_SubProfiles.Items.Add(subProfile);
-                            if (subProfile.Guid == selectedProfile.Guid)
-                                selectedIndex = cb_SubProfiles.Items.IndexOf(subProfile);
+                            cb_SubProfiles.Items.Add(profile);
+                            if (profile.Guid == selectedProfile.Guid)
+                                selectedIndex = cb_SubProfiles.Items.IndexOf(profile);
                         }
                         cb_SubProfiles.IsEnabled = true;
                     }
