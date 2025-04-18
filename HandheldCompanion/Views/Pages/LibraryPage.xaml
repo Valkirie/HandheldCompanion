@@ -122,11 +122,9 @@
                                     <Border Grid.Row="0" ClipToBounds="True">
                                         <Image
                                             x:Name="MainImage"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
                                             RenderTransformOrigin="0.5,0.5"
                                             Source="{Binding Cover}"
-                                            Stretch="Uniform">
+                                            Stretch="UniformToFill">
                                             <Image.RenderTransform>
                                                 <ScaleTransform ScaleX="1" ScaleY="1" />
                                             </Image.RenderTransform>
