@@ -19,141 +19,140 @@
     mc:Ignorable="d">
 
     <Grid Margin="20">
+
         <Rectangle
-            Height="800"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            Fill="{Binding HighlightColor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ColorToBrushConverter}}"
-            Opacity="0.3"
-            Visibility="Collapsed">
+            x:Name="BackgroundRect"
+            Width="1200"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Stretch"
+            Opacity="0">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}" Stretch="None" />
+            </Rectangle.Fill>
+
             <Rectangle.OpacityMask>
-                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.2" RadiusX="0.5" RadiusY="0.6">
+                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="1.25" RadiusY="0.7">
                     <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
-                    <GradientStop Offset="0.8" Color="{DynamicResource MaskGradientEndColor}" />
+                    <GradientStop Offset="0.4" Color="{DynamicResource MaskGradientEndColor}" />
                 </RadialGradientBrush>
             </Rectangle.OpacityMask>
-        </Rectangle>
 
-        <Image
-            x:Name="ArtworkImage"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
-            Opacity="0"
-            Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-            Stretch="None">
-            <Image.Triggers>
+            <Rectangle.Triggers>
                 <EventTrigger RoutedEvent="Binding.TargetUpdated">
                     <BeginStoryboard>
                         <Storyboard>
-                            <!--  fade in from 0→1 in 300ms  -->
                             <DoubleAnimation
                                 Storyboard.TargetProperty="Opacity"
                                 From="0"
-                                To="0.3"
+                                To="0.2"
                                 Duration="0:0:0.3" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
-            </Image.Triggers>
-            <Image.OpacityMask>
-                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="1" RadiusY="1">
-                    <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
-                    <GradientStop Offset="0.4" Color="{DynamicResource MaskGradientEndColor}" />
-                </RadialGradientBrush>
-            </Image.OpacityMask>
-        </Image>
+            </Rectangle.Triggers>
+        </Rectangle>
 
-        <ikw:SimpleStackPanel Margin="20" Spacing="6">
-            <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
-                <ui:ItemsRepeater.Layout>
-                    <ui:UniformGridLayout
-                        ItemsStretch="Uniform"
-                        MaximumRowsOrColumns="8"
-                        MinColumnSpacing="12"
-                        MinItemHeight="240"
-                        MinItemWidth="160"
-                        MinRowSpacing="12"
-                        Orientation="Horizontal" />
-                </ui:ItemsRepeater.Layout>
+        <ikw:SimpleStackPanel Spacing="12">
+            <!--  Library  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
+            <ikw:SimpleStackPanel Spacing="6">
+                <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:UniformGridLayout
+                            ItemsStretch="Uniform"
+                            MaximumRowsOrColumns="8"
+                            MinColumnSpacing="12"
+                            MinItemHeight="240"
+                            MinItemWidth="160"
+                            MinRowSpacing="12"
+                            Orientation="Horizontal" />
+                    </ui:ItemsRepeater.Layout>
 
-                <ui:ItemsRepeater.ItemTemplate>
-                    <DataTemplate>
-                        <Button
-                            x:Name="ImageContainer"
-                            Padding="0"
-                            BorderThickness="0"
-                            Command="{Binding Navigate}"
-                            GotFocus="ImageContainer_GotFocus"
-                            LostFocus="ImageContainer_LostFocus"
-                            MouseEnter="ImageContainer_MouseEnter"
-                            MouseLeave="ImageContainer_MouseLeave"
-                            Tag="{Binding}">
-                            <Button.RenderTransform>
-                                <TranslateTransform />
-                            </Button.RenderTransform>
+                    <ui:ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                x:Name="ImageContainer"
+                                Padding="0"
+                                BorderThickness="0"
+                                Command="{Binding Navigate}"
+                                GotFocus="ImageContainer_GotFocus"
+                                LostFocus="ImageContainer_LostFocus"
+                                MouseEnter="ImageContainer_MouseEnter"
+                                MouseLeave="ImageContainer_MouseLeave"
+                                Tag="{Binding}">
+                                <Button.RenderTransform>
+                                    <TranslateTransform />
+                                </Button.RenderTransform>
 
-                            <Button.Triggers>
-                                <EventTrigger RoutedEvent="MouseEnter">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                To="-3"
-                                                Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="MouseLeave">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                To="0"
-                                                Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Button.Triggers>
+                                <Button.Triggers>
+                                    <EventTrigger RoutedEvent="MouseEnter">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                    To="-3"
+                                                    Duration="0:0:0.1" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="MouseLeave">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                    To="0"
+                                                    Duration="0:0:0.1" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Button.Triggers>
 
-                            <Grid>
-                                <Image
-                                    x:Name="MainImage"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Stretch="UniformToFill" />
+                                <Grid>
+                                    <Image
+                                        x:Name="MainImage"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Stretch="UniformToFill" />
 
-                                <Image
-                                    x:Name="BlurBottomImage"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Stretch="UniformToFill">
-                                    <Image.Effect>
-                                        <BlurEffect Radius="10" />
-                                    </Image.Effect>
+                                    <Image
+                                        x:Name="BlurBottomImage"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Stretch="UniformToFill">
+                                        <Image.Effect>
+                                            <BlurEffect Radius="10" />
+                                        </Image.Effect>
 
-                                    <Image.OpacityMask>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Offset="0.65" Color="Transparent" />
-                                            <GradientStop Offset="0.85" Color="Black" />
-                                        </LinearGradientBrush>
-                                    </Image.OpacityMask>
-                                </Image>
+                                        <Image.OpacityMask>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Offset="0.65" Color="Transparent" />
+                                                <GradientStop Offset="0.85" Color="Black" />
+                                            </LinearGradientBrush>
+                                        </Image.OpacityMask>
+                                    </Image>
 
-                                <TextBlock
-                                    Margin="12"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Bottom"
-                                    Foreground="White"
-                                    Style="{StaticResource BaseTextBlockStyle}"
-                                    Text="{Binding Name}"
-                                    TextWrapping="Wrap" />
-                            </Grid>
-                        </Button>
-                    </DataTemplate>
-                </ui:ItemsRepeater.ItemTemplate>
-            </ui:ItemsRepeater>
+                                    <TextBlock
+                                        Margin="12"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom"
+                                        Foreground="White"
+                                        Style="{StaticResource BaseTextBlockStyle}"
+                                        Text="{Binding Name}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ui:ItemsRepeater.ItemTemplate>
+                </ui:ItemsRepeater>
+            </ikw:SimpleStackPanel>
+
+            <!--  Settings  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Settings" />
+            <ikw:SimpleStackPanel Spacing="6">
+                <ui:SettingsCard Description="Test" Header="Test" />
+            </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>
 </Page>

@@ -115,7 +115,10 @@ namespace HandheldCompanion.Managers
             HasDialogOpen = false;
 
             if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
-                Focus(control);
+            {
+                if (_focused[_currentName])
+                    Focus(control);
+            }
         }
 
         private bool HasDialogOpen = false;

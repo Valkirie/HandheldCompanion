@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -9,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -129,36 +131,65 @@ namespace HandheldCompanion.ViewModels
                 // display dialog
                 dialog.Show();
 
-                // Create a new instance of ProcessStartInfo
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                try
                 {
-                    FileName = profile.Path,
-                    Arguments = profile.Arguments,
-                    UseShellExecute = true
-                };
-
-                // Start the process
-                Process process = Process.Start(startInfo);
-                if (process == null)
-                {
-                    dialog.Hide();
-                    return;
-                }
-
-                // Run the process start operation in a task to avoid blocking the UI thread
-                await Task.Run(() =>
-                {
-                    // Wait for a visible window from the started process (with a 10 second timeout)
-                    IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
-                    if (hWnd != IntPtr.Zero)
+                    // 3) Kick off the process off the UI thread
+                    await Task.Run(() =>
                     {
-                        if (IsMainPage)
-                            MainWindow.GetCurrent().SwapWindowState();
-                        ProcessUtils.SetForegroundWindow(hWnd);
-                    }
-                });
+                        ProcessStartInfo psi = new ProcessStartInfo
+                        {
+                            FileName = Profile.Path,
+                            Arguments = Profile.Arguments,
+                            UseShellExecute = true
+                        };
 
-                dialog.Hide();
+                        using (Process? process = Process.Start(psi))
+                        {
+                            // failed to start the process
+                            if (process == null)
+                                return;
+
+                            // give it a moment to initialize
+                            try
+                            {
+                                process.WaitForInputIdle(3000);
+                            }
+                            catch { }
+
+                            // process has exited
+                            if (process.HasExited)
+                                return;
+
+                            process.EnableRaisingEvents = true;
+                            process.Exited += (sender, e) =>
+                            {
+                                if (IsMainPage)
+                                    MainWindow.GetCurrent().SetState(WindowState.Normal);
+                            };
+
+                            // wait up to 10 sec for any visible window
+                            IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
+                            if (hWnd != IntPtr.Zero)
+                            {
+                                if (IsMainPage)
+                                    MainWindow.GetCurrent().SetState(WindowState.Minimized);
+
+                                ProcessUtils.SetForegroundWindow(hWnd);
+                            }
+
+                            process.WaitForExit();
+
+                            if (IsMainPage)
+                                MainWindow.GetCurrent().SetState(WindowState.Normal);
+                        }
+                    }).ConfigureAwait(false);
+                }
+                catch { }
+                finally
+                {
+                    // always close the “please wait” dialog
+                    UIHelper.TryInvoke(() => { dialog.Hide(); });
+                }
             });
 
             Navigate = new DelegateCommand(async () =>

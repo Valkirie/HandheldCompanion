@@ -366,6 +366,14 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
+    public void SetState(WindowState windowState)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            WindowState = windowState;
+        });
+    }
+
     public static MainWindow GetCurrent()
     {
         return CurrentWindow;
