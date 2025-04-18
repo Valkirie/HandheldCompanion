@@ -752,8 +752,8 @@ namespace HandheldCompanion.Managers
                                 _gamepadFrame.GoBack();
                             }
                         }
-                        else if(prevNavigation is not null)
-                                Focus(prevNavigation);
+                        else if (prevNavigation is not null)
+                            Focus(prevNavigation);
                     }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B4))
                     {

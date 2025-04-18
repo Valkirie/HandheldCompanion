@@ -591,7 +591,7 @@ public class ProcessEx : IDisposable
                 {
                     if (thread.ThreadState == ThreadState.Terminated)
                         continue;
-                    
+
                     if (thread.StartTime < startTime)
                     {
                         startTime = thread.StartTime;

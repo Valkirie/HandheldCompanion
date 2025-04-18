@@ -309,7 +309,7 @@ namespace HandheldCompanion.ViewModels
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (ShiftSlot shiftSlot in Enum.GetValues<ShiftSlot>())
                 {
-                    switch(shiftSlot)
+                    switch (shiftSlot)
                     {
                         case ShiftSlot.None:
                         case ShiftSlot.Any:
