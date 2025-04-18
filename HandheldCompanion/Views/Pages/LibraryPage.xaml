@@ -78,6 +78,22 @@
                                 Tag="{Binding}">
 
                                 <Button.Triggers>
+                                    <EventTrigger RoutedEvent="GotFocus">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1.07"
+                                                    Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1.07"
+                                                    Duration="0:0:0.1" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
                                     <EventTrigger RoutedEvent="MouseEnter">
                                         <BeginStoryboard>
                                             <Storyboard>
@@ -90,6 +106,22 @@
                                                     Storyboard.TargetName="MainImage"
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1.07"
+                                                    Duration="0:0:0.1" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="LostFocus">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1.0"
+                                                    Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1.0"
                                                     Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
