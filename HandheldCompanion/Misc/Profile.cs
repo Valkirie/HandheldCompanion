@@ -217,7 +217,6 @@ public partial class Profile : ICloneable, IComparable
 
     public string GetOwnerName()
     {
-        // if sub profile, return the following (mainprofile.name - subprofile.name)
         if (IsSubProfile)
             return ManagerFactory.profileManager.GetProfileForSubProfile(this).Name;
         else

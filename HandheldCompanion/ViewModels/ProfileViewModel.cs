@@ -161,13 +161,6 @@ namespace HandheldCompanion.ViewModels
                             if (process.HasExited)
                                 return;
 
-                            process.EnableRaisingEvents = true;
-                            process.Exited += (sender, e) =>
-                            {
-                                if (IsMainPage)
-                                    MainWindow.GetCurrent().SetState(WindowState.Normal);
-                            };
-
                             // wait up to 10 sec for any visible window
                             IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
                             if (hWnd != IntPtr.Zero)
@@ -177,6 +170,9 @@ namespace HandheldCompanion.ViewModels
 
                                 ProcessUtils.SetForegroundWindow(hWnd);
                             }
+
+                            // hide the dialog
+                            UIHelper.TryInvoke(() => dialog.Hide());
 
                             process.WaitForExit();
 
@@ -188,7 +184,7 @@ namespace HandheldCompanion.ViewModels
                 catch { }
                 finally
                 {
-                    // always close the “please wait” dialog
+                    // always hide the dialog
                     UIHelper.TryInvoke(() => { dialog.Hide(); });
                 }
             });
