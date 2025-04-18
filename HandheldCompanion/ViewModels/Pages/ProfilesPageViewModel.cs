@@ -274,6 +274,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool IsLibraryBusy => ManagerFactory.libraryManager.IsBusy;
+        private Profile libraryProfile;
 
         public ICommand RefreshLibrary { get; private set; }
         public ICommand DisplayLibrary { get; private set; }
@@ -334,6 +335,12 @@ namespace HandheldCompanion.ViewModels
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
+                if (ProfilesPage.selectedProfile is null)
+                    return;
+
+                // update library target profile
+                libraryProfile = ProfilesPage.selectedProfile.Clone() as Profile;
+
                 // update library entry
                 if (SelectedLibraryEntry is SteamGridEntry Steam)
                 {
@@ -349,14 +356,14 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // update target entry and name
-                ProfilesPage.selectedProfile.LibraryEntry = SelectedLibraryEntry;
-                ProfilesPage.selectedProfile.Name = SelectedLibraryEntry.Name;
+                libraryProfile.LibraryEntry = SelectedLibraryEntry;
+                libraryProfile.Name = SelectedLibraryEntry.Name;
 
                 // download arts
                 await ManagerFactory.libraryManager.DownloadGameArts(SelectedLibraryEntry, false);
 
                 // update profile
-                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.LibraryUpdate);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(libraryProfile, UpdateSource.LibraryUpdate);
             });
         }
 
