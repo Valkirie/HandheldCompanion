@@ -3,6 +3,7 @@ using HandheldCompanion.Libraries;
 using HandheldCompanion.ViewModels.Misc;
 using IGDB.Models;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Data;
 using static HandheldCompanion.Libraries.LibraryEntry;
 
@@ -43,15 +44,15 @@ namespace HandheldCompanion.ViewModels
             if (LibEntry is SteamGridEntry steamEntry)
             {
                 foreach (SteamGridDbGrid grid in steamEntry.Grids)
-                    LibraryCovers.Add(new(this, grid.Id));
+                    LibraryCovers.Add(new(this, grid.Id, Path.GetExtension(grid.FullImageUrl), Path.GetExtension(grid.ThumbnailImageUrl)));
                 foreach (SteamGridDbHero hero in steamEntry.Heroes)
-                    LibraryArtworks.Add(new(this, hero.Id));
+                    LibraryArtworks.Add(new(this, hero.Id, Path.GetExtension(hero.FullImageUrl), Path.GetExtension(hero.ThumbnailImageUrl)));
             }
             else if (LibEntry is IGDBEntry IGDB)
             {
-                LibraryCovers.Add(new(this, IGDB.Cover.Id.Value));
+                LibraryCovers.Add(new(this, IGDB.Cover.Id.Value, Path.GetExtension(IGDB.Cover.Url)));
                 foreach (Artwork artwork in IGDB.Artworks)
-                    LibraryArtworks.Add(new(this, artwork.Id.Value));
+                    LibraryArtworks.Add(new(this, artwork.Id.Value, Path.GetExtension(artwork.Url)));
             }
         }
 

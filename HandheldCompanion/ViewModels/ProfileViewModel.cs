@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -76,8 +74,9 @@ namespace HandheldCompanion.ViewModels
 
                 long id = Profile.LibraryEntry.Id;
                 long imageId = Profile.LibraryEntry.GetCoverId();
+                string imageExtension = Profile.LibraryEntry.GetCoverExtension(false);
 
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId);
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId, imageExtension);
             }
         }
 
@@ -90,8 +89,9 @@ namespace HandheldCompanion.ViewModels
 
                 long id = Profile.LibraryEntry.Id;
                 long imageId = Profile.LibraryEntry.GetArtworkId();
+                string imageExtension = Profile.LibraryEntry.GetArtworkExtension(false);
 
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId);
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
             }
         }
 

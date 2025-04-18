@@ -55,33 +55,33 @@ namespace HandheldCompanion.Managers
                 Directory.CreateDirectory(ManagerPath);
         }
 
-        public string GetGameArtPath(long gameId, LibraryType libraryType, string imageId)
+        public string GetGameArtPath(long gameId, LibraryType libraryType, string imageId, string extension)
         {
             // check if the game has art
             string filePath = string.Empty;
             if (libraryType.HasFlag(LibraryType.thumbnails))
                 filePath = "thumbnails";
 
-            return Path.Combine(ManagerPath, gameId.ToString(), filePath, $"{imageId}.png");
+            return Path.Combine(ManagerPath, gameId.ToString(), filePath, $"{imageId}{extension}");
         }
 
-        public string GetGameArtPath(long gameId, LibraryType libraryType, long imageId)
+        public string GetGameArtPath(long gameId, LibraryType libraryType, long imageId, string extension)
         {
-            return GetGameArtPath(gameId, libraryType, imageId.ToString());
+            return GetGameArtPath(gameId, libraryType, imageId.ToString(), extension);
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, string imageId)
+        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
         {
-            string fileName = GetGameArtPath(gameId, libraryType, imageId);
+            string fileName = GetGameArtPath(gameId, libraryType, imageId, extension);
             if (!File.Exists(fileName))
-                return LibraryResources.MissingCover;
+                return libraryType.HasFlag(LibraryType.cover) ? LibraryResources.MissingCover : LibraryResources.MissingCover;
 
             return new BitmapImage(new Uri(fileName));
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId)
+        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)
         {
-            return GetGameArt(gameId, libraryType, imageId.ToString());
+            return GetGameArt(gameId, libraryType, imageId.ToString(), extension);
         }
 
         public async Task<IEnumerable<LibraryEntry>> GetGames(LibraryFamily libraryFamily, string name)
@@ -176,7 +176,7 @@ namespace HandheldCompanion.Managers
                                         types: SteamGridDbTypes.Static,
                                         styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
                                         dimensions: SteamGridDbDimensions.W600H900,
-                                        formats: SteamGridDbFormats.Png);
+                                        formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
                                     grids = grids.Where(game => !game.IsLocked).ToArray();
 
@@ -185,7 +185,7 @@ namespace HandheldCompanion.Managers
                                         types: SteamGridDbTypes.Static,
                                         styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
                                         dimensions: SteamGridDbDimensions.W1920H620,
-                                        formats: SteamGridDbFormats.Png);
+                                        formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
                                     heroes = heroes.Where(game => !game.IsLocked).ToArray();
 
@@ -327,7 +327,12 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                string filePath = GetGameArtPath(gameId, libraryType, entry.Id);
+                string imageUrl = libraryType.HasFlag(LibraryType.thumbnails) ? entry.ThumbnailImageUrl : entry.FullImageUrl;
+                if (string.IsNullOrEmpty(imageUrl))
+                    return false;
+
+                string fileExtension = Path.GetExtension(imageUrl);
+                string filePath = GetGameArtPath(gameId, libraryType, entry.Id, fileExtension);
                 string directoryPath = Directory.GetParent(filePath).FullName;
 
                 // check if file exists firts
@@ -343,8 +348,6 @@ namespace HandheldCompanion.Managers
 
                 using (HttpClient client = new HttpClient())
                 {
-                    string imageUrl = libraryType.HasFlag(LibraryType.thumbnails) ? entry.ThumbnailImageUrl : entry.FullImageUrl;
-
                     HttpResponseMessage response = await client.GetAsync(imageUrl);
                     if (response.IsSuccessStatusCode)
                     {
@@ -414,7 +417,19 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                string filePath = GetGameArtPath(gameId, libraryType, (long)imageId);
+                ImageSize imageSize = ImageSize.CoverBig;
+
+                if (libraryType.HasFlag(LibraryType.cover))
+                    imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.CoverSmall : ImageSize.CoverBig;
+                else if (libraryType.HasFlag(LibraryType.artwork))
+                    imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
+
+                string imageUrl = ImageHelper.GetImageUrl(imageId: imageName, size: imageSize, retina: !preview).Replace("//", "https://");
+                if (string.IsNullOrEmpty(imageUrl))
+                    return false;
+
+                string fileExtension = Path.GetExtension(imageUrl);
+                string filePath = GetGameArtPath(gameId, libraryType, (long)imageId, fileExtension);
                 string directoryPath = Directory.GetParent(filePath).FullName;
 
                 // check if file exists firts
@@ -428,21 +443,8 @@ namespace HandheldCompanion.Managers
                 // update status
                 AddStatus(ManagerStatus.Busy);
 
-                ImageSize imageSize = ImageSize.CoverBig;
-
-                if (libraryType.HasFlag(LibraryType.cover))
-                    imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.CoverSmall : ImageSize.CoverBig;
-                else if (libraryType.HasFlag(LibraryType.artwork))
-                    imageSize = libraryType.HasFlag(LibraryType.thumbnails) ? ImageSize.ScreenshotMed : ImageSize.ScreenshotHuge;
-
-                string imageUrl = ImageHelper.GetImageUrl(imageId: imageName, size: imageSize, retina: !preview);
-                if (string.IsNullOrEmpty(imageUrl))
-                    return false;
-
                 using (HttpClient client = new HttpClient())
                 {
-                    imageUrl = imageUrl.Replace("//", "https://");
-
                     HttpResponseMessage response = await client.GetAsync(imageUrl);
                     if (response.IsSuccessStatusCode)
                     {

@@ -603,30 +603,21 @@
                                 <ui:FontIcon Glyph="&#xE8F1;" />
                             </ui:SettingsExpander.HeaderIcon>
 
+                            <Button
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding DisplayLibrary}"
+                                Content="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImageButton}"
+                                Style="{DynamicResource AccentButtonStyle}" />
+
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_ShowInLibraryDesc}" Header="{l:Static resx:Resources.ProfilesPage_ShowInLibrary}">
                                     <ui:ToggleSwitch
                                         Name="Toggle_ShowInLibrary"
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         Style="{DynamicResource InvertedToggleSwitchStyle}"
                                         Toggled="ShowInLibrary_Toggled" />
-                                </ui:SettingsCard>
-
-                                <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImageDesc}" Header="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImage}">
-                                    <Button
-                                        Name="b_Refresh"
-                                        Grid.Column="1"
-                                        Width="120"
-                                        Height="40"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding DisplayLibrary}"
-                                        Content="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImageButton}"
-                                        Style="{DynamicResource AccentButtonStyle}" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>

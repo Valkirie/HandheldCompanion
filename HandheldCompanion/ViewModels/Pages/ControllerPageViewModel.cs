@@ -38,7 +38,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                switch(VirtualManager.HIDmode)
+                switch (VirtualManager.HIDmode)
                 {
                     default:
                     case HIDmode.Xbox360Controller:

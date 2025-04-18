@@ -516,7 +516,7 @@ public partial class ProfilesPage : Page
                     cB_Wrapper.IsEnabled = !selectedProfile.Default;
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
                     UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
-                    b_Refresh.IsEnabled = !selectedProfile.Default;
+                    LibrarySettings.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;

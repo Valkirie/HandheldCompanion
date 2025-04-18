@@ -9,6 +9,8 @@ namespace HandheldCompanion.ViewModels.Misc
     {
         private LibraryEntryViewModel LibraryEntry { get; set; }
         public long Id { get; set; }
+        public string Extension { get; set; }
+        public string ExtensionThumbnail { get; set; }
 
         public BitmapImage Image
         {
@@ -17,14 +19,19 @@ namespace HandheldCompanion.ViewModels.Misc
                 long entryId = LibraryEntry.Id;
                 LibraryFamily libraryFamily = LibraryEntry.Family;
 
-                return ManagerFactory.libraryManager.GetGameArt(entryId, LibraryType.thumbnails, Id);
+                return ManagerFactory.libraryManager.GetGameArt(entryId, LibraryType.thumbnails, Id, ExtensionThumbnail);
             }
         }
 
-        public LibraryVisualViewModel(LibraryEntryViewModel libraryEntry, long id)
+        public LibraryVisualViewModel(LibraryEntryViewModel libraryEntry, long id, string extFull, string extThumb = "")
         {
             this.LibraryEntry = libraryEntry;
             this.Id = id;
+            this.Extension = extFull;
+            if (string.IsNullOrEmpty(extThumb))
+                this.ExtensionThumbnail = this.Extension;
+            else
+                this.ExtensionThumbnail = extThumb;
         }
     }
 }

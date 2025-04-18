@@ -30,9 +30,19 @@ namespace HandheldCompanion.Libraries
             return 0;
         }
 
+        public virtual string GetCoverExtension(bool thumbnail)
+        {
+            return string.Empty;
+        }
+
         public virtual long GetArtworkId()
         {
             return 0;
+        }
+
+        public virtual string GetArtworkExtension(bool thumbnail)
+        {
+            return string.Empty;
         }
     }
 }

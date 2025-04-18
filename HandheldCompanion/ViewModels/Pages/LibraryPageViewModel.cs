@@ -1,12 +1,10 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels
 {

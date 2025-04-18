@@ -253,7 +253,7 @@ namespace HandheldCompanion.ViewModels
                 _LibraryCoversIndex = index;
                 OnPropertyChanged(nameof(LibraryCoversIndex));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // dirty, fix me !
             }
@@ -417,8 +417,9 @@ namespace HandheldCompanion.ViewModels
 
                 long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
                 long imageId = ProfilesPage.selectedProfile.LibraryEntry.GetCoverId();
+                string imageExtension = ProfilesPage.selectedProfile.LibraryEntry.GetCoverExtension(false);
 
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId);
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId, imageExtension);
             }
         }
 
@@ -431,8 +432,9 @@ namespace HandheldCompanion.ViewModels
 
                 long id = ProfilesPage.selectedProfile.LibraryEntry.Id;
                 long imageId = ProfilesPage.selectedProfile.LibraryEntry.GetArtworkId();
+                string imageExtension = ProfilesPage.selectedProfile.LibraryEntry.GetArtworkExtension(false);
 
-                BitmapImage artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId);
+                BitmapImage artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
                 if (artwork != LibraryResources.MissingCover)
                     return artwork;
 
