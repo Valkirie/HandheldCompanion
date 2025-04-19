@@ -217,9 +217,9 @@ public class ProfileManager : IManager
     public IEnumerable<Profile> GetSubProfilesFromProfile(Profile mainProfile, bool addMain = false)
     {
         // get subprofile corresponding to path
-        IEnumerable<Profile> filteredSubProfiles = subProfiles.Where(pr => pr.Path == mainProfile.Path);
+        IEnumerable<Profile> filteredSubProfiles = subProfiles.Where(pr => pr.Path == mainProfile.Path).OrderBy(pr => pr.Name);
         if (addMain) filteredSubProfiles = filteredSubProfiles.InsertAt(mainProfile, 0);
-        return filteredSubProfiles.OrderBy(pr => pr.Name);
+        return filteredSubProfiles;
     }
 
     public IEnumerable<Profile> GetSubProfilesFromPath(string path)

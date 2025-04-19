@@ -522,16 +522,8 @@ public partial class ProfilesPage : Page
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
 
                     // enable delete and rename if not default sub profile
-                    if (cb_SubProfilePicker.SelectedIndex == 0) // main profile
-                    {
-                        b_SubProfileDelete.IsEnabled = false;
-                        b_SubProfileRename.IsEnabled = false;
-                    }
-                    else // actual sub profile
-                    {
-                        b_SubProfileDelete.IsEnabled = true;
-                        b_SubProfileRename.IsEnabled = true;
-                    }
+                    b_SubProfileDelete.IsEnabled = selectedProfile.IsSubProfile ? true : false;
+                    b_SubProfileRename.IsEnabled = selectedProfile.IsSubProfile ? true : false;
 
                     // Profile info
                     tB_ProfileName.Text = selectedMainProfile.Name;
