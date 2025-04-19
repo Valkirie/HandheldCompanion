@@ -475,6 +475,7 @@ public partial class ProfilesPage : Page
             return;
 
         selectedMainProfile = (Profile)cB_Profiles.SelectedItem;
+
         UpdateSubProfiles();
     }
 
@@ -822,6 +823,8 @@ public partial class ProfilesPage : Page
     public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
         isCurrent = selectedProfile?.Guid == profile?.Guid;
+        isCurrent |= source.HasFlag(UpdateSource.Creation);
+
         switch (source)
         {
             case UpdateSource.QuickProfilesPage:
@@ -856,7 +859,7 @@ public partial class ProfilesPage : Page
                     cB_Profiles.SelectedItem = profile;
             }
 
-            UpdateSubProfiles(profile); // TODO check
+            UpdateSubProfiles(profile);
         });
     }
 
@@ -1183,13 +1186,14 @@ public partial class ProfilesPage : Page
     private void b_SubProfileCreate_Click(object sender, RoutedEventArgs e)
     {
         // create a new sub profile matching the original profile's settings
-        Profile newSubProfile = (Profile)selectedProfile.Clone();
-        newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
-        newSubProfile.Guid = Guid.NewGuid(); // must be unique
-        newSubProfile.IsSubProfile = true;
-        newSubProfile.IsFavoriteSubProfile = true;
+        Profile newSubProfile = (Profile)selectedMainProfile.Clone();
+
+        newSubProfile.Name                  = Properties.Resources.ProfilesPage_NewSubProfile;
+        newSubProfile.Guid                  = Guid.NewGuid();
+        newSubProfile.IsSubProfile          = true;
+        newSubProfile.IsFavoriteSubProfile  = true;
+
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
-        UpdateSubProfiles();
     }
 
     private async void b_SubProfileDelete_Click(object sender, RoutedEventArgs e)
@@ -1236,8 +1240,6 @@ public partial class ProfilesPage : Page
 
         // serialize subprofile
         SubmitProfile();
-
-        UpdateSubProfiles();
     }
 
     private void SubProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

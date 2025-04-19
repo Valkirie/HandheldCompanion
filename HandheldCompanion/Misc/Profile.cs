@@ -29,11 +29,11 @@ public enum UpdateSource
     Background = 0,
     ProfilesPage = 1,
     QuickProfilesPage = 2,
-    QuickProfilesCreation = 3,
-    Creation = 4,
-    Serializer = 5,
-    ProfilesPageUpdateOnly = 6,
-    LibraryUpdate = 7,
+    QuickProfilesCreation = 4,
+    Creation = 8,
+    Serializer = 16,
+    ProfilesPageUpdateOnly = 32,
+    LibraryUpdate = 64,
 }
 
 public enum SteeringAxis
