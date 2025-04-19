@@ -279,6 +279,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand RefreshLibrary { get; private set; }
         public ICommand DisplayLibrary { get; private set; }
         public ICommand DownloadLibrary { get; private set; }
+        public ICommand LaunchExecutable { get; private set; }
 
         public ProfilesPageViewModel(ProfilesPage profilesPage)
         {
@@ -299,6 +300,13 @@ namespace HandheldCompanion.ViewModels
 
             ProfilePickerItems.Add(_devicePresetsPickerVM);
             ProfilePickerItems.Add(_userPresetsPickerVM);
+
+            LaunchExecutable = new DelegateCommand(async () =>
+            {
+                // dirty, fix me !
+                ProfileViewModel profileViewModel = new(ProfilesPage.selectedProfile, false);
+                profileViewModel.StartProcessCommand.Execute(null);
+            });
 
             DisplayLibrary = new DelegateCommand(async () =>
             {

@@ -318,36 +318,46 @@
                         <!--  Profile details  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="107" />
+                                <ColumnDefinition Width="150" />
                                 <ColumnDefinition Width="8*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <Border
-                                Height="160"
-                                Padding="15,12,12,12"
-                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}">
-                                <Border.Background>
-                                    <ImageBrush
-                                        AlignmentY="Center"
-                                        ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-                                        Stretch="UniformToFill" />
-                                </Border.Background>
-                                <Border.Triggers>
-                                    <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <!--  fade in from 0→1 in 300ms  -->
-                                                <DoubleAnimation
-                                                    Storyboard.TargetProperty="Opacity"
-                                                    From="0"
-                                                    To="1"
-                                                    Duration="0:0:0.3" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Border.Triggers>
-                            </Border>
+                            <ikw:SimpleStackPanel Spacing="6">
+                                <Border
+                                    Height="225"
+                                    Padding="15,12,12,12"
+                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                                    <Border.Background>
+                                        <ImageBrush
+                                            AlignmentY="Center"
+                                            ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
+                                            Stretch="UniformToFill" />
+                                    </Border.Background>
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <!--  fade in from 0→1 in 300ms  -->
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetProperty="Opacity"
+                                                        From="0"
+                                                        To="1"
+                                                        Duration="0:0:0.3" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+
+                                <Button
+                                    Name="b_Play"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding LaunchExecutable}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Play
+                                </Button>
+                            </ikw:SimpleStackPanel>
 
                             <Border
                                 Grid.Column="1"
