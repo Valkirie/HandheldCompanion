@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.LibraryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
@@ -58,12 +59,13 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
                     <ui:ItemsRepeater.Layout>
+                        <!--  3:2 ratio  -->
                         <ui:UniformGridLayout
                             ItemsStretch="Uniform"
                             MaximumRowsOrColumns="8"
                             MinColumnSpacing="12"
-                            MinItemHeight="280"
-                            MinItemWidth="160"
+                            MinItemHeight="350"
+                            MinItemWidth="200"
                             MinRowSpacing="12"
                             Orientation="Horizontal" />
                     </ui:ItemsRepeater.Layout>
@@ -73,6 +75,7 @@
                             <Button
                                 x:Name="ImageContainer"
                                 Padding="0"
+                                chelper:ControlHelper.CornerRadius="15"
                                 BorderThickness="0"
                                 Command="{Binding Navigate}"
                                 Tag="{Binding}">
