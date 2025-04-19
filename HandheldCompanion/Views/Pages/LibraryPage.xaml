@@ -75,7 +75,7 @@
                             <Button
                                 x:Name="ImageContainer"
                                 Padding="0"
-                                chelper:ControlHelper.CornerRadius="15"
+                                chelper:ControlHelper.CornerRadius="8"
                                 BorderThickness="0"
                                 Command="{Binding Navigate}"
                                 Tag="{Binding}">
