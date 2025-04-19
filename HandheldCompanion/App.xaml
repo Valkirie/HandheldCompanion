@@ -30,7 +30,7 @@
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
                             <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                             <Color x:Key="MaskGradientStartColor">#FF000000</Color>
-                            <Color x:Key="MaskGradientEndColor">#30000000</Color>
+                            <Color x:Key="MaskGradientEndColor">#00000000</Color>
                         </ResourceDictionary>
 
                         <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
