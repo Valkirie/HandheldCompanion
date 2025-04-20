@@ -224,9 +224,6 @@ namespace HandheldCompanion.Managers
                 if (!gamepadWindow.IsActive)
                     continue;
 
-                if (!gamepadWindow.IsIconic)
-                    continue;
-
                 if (!gamepadWindow.IsPrimary)
                     continue;
 
