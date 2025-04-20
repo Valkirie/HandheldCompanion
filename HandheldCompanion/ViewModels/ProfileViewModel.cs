@@ -4,6 +4,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -119,8 +120,13 @@ namespace HandheldCompanion.ViewModels
 
                 if (!File.Exists(profile.Path))
                 {
-                    // display dialog
-                    dialog.Show();
+                    ContentDialogResult result = await dialog.ShowAsync();
+                    switch (result)
+                    {
+                        case ContentDialogResult.None:
+                            dialog.Hide();
+                            break;
+                    }
                     return;
                 }
 
