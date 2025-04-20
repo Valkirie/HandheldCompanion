@@ -228,6 +228,9 @@ public partial class MainWindow : GamepadWindow
 
         // update LastVersion
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
+
+        // load gamepad navigation manager
+        gamepadFocusManager = new(this, ContentFrame);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -476,7 +479,7 @@ public partial class MainWindow : GamepadWindow
         SplashScreen?.Close();
 
         // load gamepad navigation manager
-        gamepadFocusManager = new(this, ContentFrame);
+        gamepadFocusManager.Loaded();
 
         HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
         source.AddHook(WndProc); // Hook into the window's message loop

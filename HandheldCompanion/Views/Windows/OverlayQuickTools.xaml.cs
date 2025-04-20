@@ -142,8 +142,6 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         base.OnSourceInitialized(e);
 
-        hwndSource.AddHook(WndProc);
-
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
         exStyle |= WS_EX_NOACTIVATE;
         WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle);
@@ -356,33 +354,30 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // do something
+        gamepadFocusManager.Loaded();
     }
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    // hack variables
+    private Timer WMPaintTimer = new(100) { AutoReset = false };
+    private bool WMPaintPending = false;
+    private DateTime prevDraw = DateTime.MinValue;
 
-    private const int WA_ACTIVE = 1;
-    private const int WA_CLICKACTIVE = 2;
-    private const int WA_INACTIVE = 0;
-    private static readonly IntPtr HWND_TOP = new IntPtr(0);
-    private const uint SWP_FRAMECHANGED = 0x0020;
-
-    private IntPtr prevWParam = new(0x0000000000000086);
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
         {
             case WM_SYSCOMMAND:
                 {
-                    var command = wParam.ToInt32() & 0xfff0;
+                    int command = wParam.ToInt32() & 0xfff0;
                     if (command == SC_MOVE) handled = true;
                 }
                 break;
 
             case WM_ACTIVATE:
-                handled = true;
-                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                {
+                    handled = true;
+                    WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                }
                 break;
 
             case WM_PAINT:
@@ -419,8 +414,6 @@ public partial class OverlayQuickTools : GamepadWindow
         return IntPtr.Zero;
     }
 
-    DateTime prevDraw = DateTime.MinValue;
-
     private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (WMPaintPending)
@@ -434,9 +427,6 @@ public partial class OverlayQuickTools : GamepadWindow
             LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
         }
     }
-
-    private Timer WMPaintTimer = new(100) { AutoReset = false };
-    private bool WMPaintPending = false;
 
     private void HandleEsc(object sender, KeyEventArgs e)
     {

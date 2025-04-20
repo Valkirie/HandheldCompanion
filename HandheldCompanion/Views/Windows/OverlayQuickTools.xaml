@@ -18,8 +18,6 @@
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.SystemBackdropType="Mica"
-    ui:WindowHelper.UseAcrylicBackdrop="True"
-    ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     Closing="Window_Closing"
     IsVisibleChanged="GamepadWindow_IsVisibleChanged"

@@ -6,12 +6,14 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Windows.Media;
 using WpfScreenHelper;
+using static MS.WindowsAPICodePack.Internal.CoreNativeMethods;
 
 namespace HandheldCompanion.Views.Classes
 {
@@ -25,8 +27,14 @@ namespace HandheldCompanion.Views.Classes
 
         public HwndSource hwndSource;
 
+        public bool HasForeground() => this is OverlayQuickTools || (WinAPI.GetForegroundWindow() == this.hwndSource.Handle);
+        public bool IsPrimary => GetScreen().Primary;
+        public bool IsIconic => ProcessUtils.IsIconic(this.hwndSource.Handle);
+
         public GamepadWindow()
         {
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
             LayoutUpdated += OnLayoutUpdated;
         }
 
@@ -34,8 +42,14 @@ namespace HandheldCompanion.Views.Classes
         {
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
             hwndSource = HwndSource.FromHwnd(hwnd);
+            hwndSource.AddHook(WndProc);
 
             base.OnSourceInitialized(e);
+        }
+
+        protected virtual IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            return IntPtr.Zero;
         }
 
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
@@ -82,25 +96,6 @@ namespace HandheldCompanion.Views.Classes
         public Screen GetScreen()
         {
             return Screen.FromHandle(hwndSource.Handle);
-        }
-
-        public bool IsPrimary()
-        {
-            return GetScreen().Primary;
-        }
-
-        public ScrollViewer GetScrollViewer(DependencyObject depObj)
-        {
-            if (depObj is ScrollViewer) { return depObj as ScrollViewer; }
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-                var result = GetScrollViewer(child);
-                if (result != null && result.Name.Equals("scrollViewer"))
-                    return result;
-            }
-            return null;
         }
 
         private void OnLayoutUpdated(object? sender, EventArgs e)
