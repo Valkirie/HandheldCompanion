@@ -11,9 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
-using System.Windows.Media;
 using WpfScreenHelper;
-using static MS.WindowsAPICodePack.Internal.CoreNativeMethods;
 
 namespace HandheldCompanion.Views.Classes
 {

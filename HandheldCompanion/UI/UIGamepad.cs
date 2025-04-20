@@ -16,7 +16,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Navigation;
 using Frame = iNKORE.UI.WPF.Modern.Controls.Frame;
 using ListView = System.Windows.Controls.ListView;
@@ -90,7 +89,7 @@ namespace HandheldCompanion.Managers
                 quickTools.GotGamepadWindowFocus += (sender) => WindowGotFocus(sender, new RoutedEventArgs());
                 quickTools.LostGamepadWindowFocus += (sender) => WindowLostFocus(sender, new RoutedEventArgs());
             }
-            else if(gamepadWindow is MainWindow mainWindow)
+            else if (gamepadWindow is MainWindow mainWindow)
             {
                 mainWindow.GotFocus += WindowGotFocus;
                 mainWindow.LostFocus += WindowLostFocus;

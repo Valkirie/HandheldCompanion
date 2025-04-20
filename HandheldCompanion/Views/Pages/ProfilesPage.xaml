@@ -81,20 +81,21 @@
                                     Content="Search" />
                             </Grid>
 
-                            <ListView
+                            <ComboBox
                                 MaxHeight="170"
                                 HorizontalAlignment="Stretch"
+                                IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 ItemsSource="{Binding LibraryPickers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectedIndex="{Binding SelectedLibraryIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                <ListView.ItemContainerStyle>
-                                    <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
+                                <ComboBox.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
                                         <Setter Property="ToolTip" Value="{Binding Description}" />
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                     </Style>
-                                </ListView.ItemContainerStyle>
+                                </ComboBox.ItemContainerStyle>
 
-                                <ListView.ItemTemplate>
+                                <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
                                             <TextBlock
@@ -108,8 +109,8 @@
                                                 Text="{Binding ReleaseDateYear}" />
                                         </Grid>
                                     </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
 
                             <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />

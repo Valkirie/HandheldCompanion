@@ -108,26 +108,26 @@ namespace HandheldCompanion.ViewModels
 
             StartProcessCommand = new DelegateCommand(async () =>
             {
-                if (!File.Exists(profile.Path))
-                {
-                    // localize me
-                    new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
-                    {
-                        Title = "Launching",
-                        Content = "The system cannot find the file specified.",
-                        PrimaryButtonText = Properties.Resources.ProfilesPage_OK
-                    }.Show();
-
-                    return;
-                }
-
                 // localize me
                 Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
                 {
                     Title = "Launching",
-                    Content = "Please wait while we initialize the application.",
-                    CanClose = false
+                    Content = "The system cannot find the file specified.",
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_OK,
+                    CanClose = true,
                 };
+
+                if (!File.Exists(profile.Path))
+                {
+                    // display dialog
+                    dialog.Show();
+                    return;
+                }
+
+                // localize me
+                dialog.UpdateContent("Please wait while we initialize the application.");
+                dialog.PrimaryButtonText = string.Empty;
+                dialog.CanClose = false;
 
                 // display dialog
                 dialog.Show();

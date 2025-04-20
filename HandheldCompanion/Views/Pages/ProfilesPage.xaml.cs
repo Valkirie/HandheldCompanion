@@ -1189,10 +1189,10 @@ public partial class ProfilesPage : Page
         // create a new sub profile matching the original profile's settings
         Profile newSubProfile = (Profile)selectedMainProfile.Clone();
 
-        newSubProfile.Name                  = Properties.Resources.ProfilesPage_NewSubProfile;
-        newSubProfile.Guid                  = Guid.NewGuid();
-        newSubProfile.IsSubProfile          = true;
-        newSubProfile.IsFavoriteSubProfile  = true;
+        newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
+        newSubProfile.Guid = Guid.NewGuid();
+        newSubProfile.IsSubProfile = true;
+        newSubProfile.IsFavoriteSubProfile = true;
 
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
     }
