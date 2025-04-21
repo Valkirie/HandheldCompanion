@@ -275,7 +275,7 @@ public class ProfileManager : IManager
             [
                 GetProfileForSubProfile(currentProfile), // adds main profile as sub profile
             .. GetSubProfilesFromPath(currentProfile.Path).ToList(), // adds all sub profiles
-        ];
+            ];
 
             // if profile does not have sub profiles -> do nothing
             if (subProfilesList.Count <= 1)
@@ -304,14 +304,13 @@ public class ProfileManager : IManager
         }
     }
 
-
     private void ApplyProfile(Profile profile, UpdateSource source = UpdateSource.Background, bool announce = true)
     {
+        // might not be the same anymore if disabled
+        profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
+
         lock (profileLock)
         {
-            // might not be the same anymore if disabled
-            profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
-
             // we've already announced this profile
             if (currentProfile is not null)
                 if (currentProfile.Guid == profile.Guid)
@@ -319,71 +318,72 @@ public class ProfileManager : IManager
 
             // update current profile before invoking event
             currentProfile = profile;
+        }
 
-            // refresh error code
-            SanitizeProfile(profile);
+        // refresh error code
+        SanitizeProfile(profile);
 
-            // raise event
-            Applied?.Invoke(profile, source);
+        // raise event
+        Applied?.Invoke(profile, source);
 
-            if (announce)
+        if (announce)
+        {
+            if (!profile.IsSubProfile)
             {
-                if (!profile.IsSubProfile)
-                {
-                    // Log and toast a regular profile announcement
-                    LogManager.LogInformation("Profile {0} applied", profile.Name);
-                    ToastManager.SendToast($"Profile {profile.Name} applied");
-                }
-                else
-                {
-                    // For subprofiles, get the main profile name first
-                    string mainProfileName = GetProfileForSubProfile(profile).Name;
-                    LogManager.LogInformation("Subprofile {0} {1} applied", mainProfileName, profile.Name);
-                    ToastManager.SendToast($"Subprofile {mainProfileName} {profile.Name} applied");
-                }
+                // Log and toast a regular profile announcement
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
+                ToastManager.SendToast($"Profile {profile.Name} applied");
+            }
+            else
+            {
+                // For subprofiles, get the main profile name first
+                string mainProfileName = GetProfileForSubProfile(profile).Name;
+                LogManager.LogInformation("Subprofile {0} {1} applied", mainProfileName, profile.Name);
+                ToastManager.SendToast($"Subprofile {mainProfileName} {profile.Name} applied");
             }
         }
     }
 
     private void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {
-        lock (profileLock)
+        Profile profileToApply = null;
+
+        // update main profiles
+        foreach (Profile profile in profiles.Values)
         {
-            Profile profileToApply = null;
-
-            // update main profiles
-            foreach (Profile profile in profiles.Values)
+            bool isCurrent = profile.PowerProfiles[(int)PowerLineStatus.Online] == powerProfile.Guid || profile.PowerProfiles[(int)PowerLineStatus.Offline] == powerProfile.Guid;
+            if (isCurrent)
             {
-                bool isCurrent = profile.PowerProfiles[(int)PowerLineStatus.Online] == powerProfile.Guid || profile.PowerProfiles[(int)PowerLineStatus.Offline] == powerProfile.Guid;
-                if (isCurrent)
-                {
-                    // update profile
-                    UpdateOrCreateProfile(profile);
+                // update profile
+                UpdateOrCreateProfile(profile);
 
+                lock (profileLock)
+                {
                     if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
                         profileToApply = profile;
                 }
             }
+        }
 
-            // update sub profiles
-            foreach (Profile profile in subProfiles)
+        // update sub profiles
+        foreach (Profile profile in subProfiles)
+        {
+            bool isCurrent = profile.PowerProfiles[(int)PowerLineStatus.Offline] == powerProfile.Guid || profile.PowerProfiles[(int)PowerLineStatus.Online] == powerProfile.Guid;
+            if (isCurrent)
             {
-                bool isCurrent = profile.PowerProfiles[(int)PowerLineStatus.Offline] == powerProfile.Guid || profile.PowerProfiles[(int)PowerLineStatus.Online] == powerProfile.Guid;
-                if (isCurrent)
-                {
-                    // update profile
-                    UpdateOrCreateProfile(profile);
+                // update profile
+                UpdateOrCreateProfile(profile);
 
+                lock (profileLock)
+                {
                     if (currentProfile.Guid == profile.Guid)
-                    {
                         profileToApply = profile;
-                    }
                 }
             }
-
-            if (profileToApply != null)
-                ApplyProfile(profileToApply);
         }
+
+        if (profileToApply != null)
+            ApplyProfile(profileToApply);
     }
 
     private void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -435,45 +435,45 @@ public class ProfileManager : IManager
 
     private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
     {
-        lock (profileLock)
+        switch (filter)
         {
-            switch (filter)
-            {
-                case ProcessFilter.HandheldCompanion:
-                    return;
-            }
+            case ProcessFilter.HandheldCompanion:
+                return;
+        }
 
-            try
-            {
-                Profile profile = GetProfileFromPath(processEx.Path, false);
+        try
+        {
+            Profile profile = GetProfileFromPath(processEx.Path, false);
 
-                // skip if current
+            // skip if current
+            lock (profileLock)
+            {
                 if (profile.Guid == currentProfile?.Guid)
                     return;
-
-                if (!profile.Default)
-                {
-                    if (!profile.Path.Equals(processEx.Path))
-                    {
-                        // update profile path
-                        profile.Path = processEx.Path;
-                        UpdateOrCreateProfile(profile);
-                    }
-                }
-
-                // raise event
-                if (backgroundEx is not null)
-                {
-                    Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
-
-                    if (!backProfile.Guid.Equals(profile.Guid))
-                        Discarded?.Invoke(backProfile, true, profile);
-                }
-
-                ApplyProfile(profile);
             }
-            catch { }
+
+            if (!profile.Default)
+            {
+                if (!profile.Path.Equals(processEx.Path))
+                {
+                    // update profile path
+                    profile.Path = processEx.Path;
+                    UpdateOrCreateProfile(profile);
+                }
+            }
+
+            // raise event
+            if (backgroundEx is not null)
+            {
+                Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
+
+                if (!backProfile.Guid.Equals(profile.Guid))
+                    Discarded?.Invoke(backProfile, true, profile);
+            }
+
+            ApplyProfile(profile);
         }
+        catch { }
     }
 
     private void ProfileCreated(object sender, FileSystemEventArgs e)
@@ -746,97 +746,95 @@ public class ProfileManager : IManager
 
     public void DeleteProfile(Profile profile)
     {
-        lock (profileLock)
+        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
+        pendingDeletion.Add(profilePath);
+
+        if (profiles.ContainsKey(profile.Path))
         {
-            string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
-            pendingDeletion.Add(profilePath);
+            // delete associated subprofiles
+            foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path))
+                DeleteSubProfile(subprofile);
 
-            if (profiles.ContainsKey(profile.Path))
+            LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
+
+            // Unregister application from HidHide
+            HidHide.UnregisterApplication(profile.Path);
+
+            // Remove XInputPlus (extended compatibility)
+            XInputPlus.UnregisterApplication(profile);
+
+            _ = profiles.TryRemove(profile.Path, out Profile removedValue);
+
+            // warn owner
+            bool isCurrent = false;
+
+            lock (profileLock)
             {
-                // delete associated subprofiles
-                foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path))
-                    DeleteSubProfile(subprofile);
-
-                LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
-
-                // Unregister application from HidHide
-                HidHide.UnregisterApplication(profile.Path);
-
-                // Remove XInputPlus (extended compatibility)
-                XInputPlus.UnregisterApplication(profile);
-
-                _ = profiles.TryRemove(profile.Path, out Profile removedValue);
-
-                // warn owner
-                bool isCurrent = false;
-
-                if (currentProfile != null)
-                    isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
-
-                // raise event
-                Discarded?.Invoke(profile, isCurrent, GetDefault());
-
-                // raise event(s)
-                Deleted?.Invoke(profile);
-
-                // send toast
-                // todo: localize me
-                ToastManager.SendToast($"Profile {profile.Name} deleted");
-
-                LogManager.LogInformation("Deleted profile: {0}", profilePath);
-
-                // restore default profile
-                if (isCurrent)
-                    ApplyProfile(GetDefault());
+                isCurrent = profile.Path.Equals(currentProfile?.Path, StringComparison.InvariantCultureIgnoreCase);
             }
 
-            FileUtils.FileDelete(profilePath);
+            // raise event
+            Discarded?.Invoke(profile, isCurrent, GetDefault());
+
+            // raise event(s)
+            Deleted?.Invoke(profile);
+
+            // send toast
+            // todo: localize me
+            ToastManager.SendToast($"Profile {profile.Name} deleted");
+
+            LogManager.LogInformation("Deleted profile: {0}", profilePath);
+
+            // restore default profile
+            if (isCurrent)
+                ApplyProfile(GetDefault());
         }
+
+        FileUtils.FileDelete(profilePath);
     }
 
     public void DeleteSubProfile(Profile subProfile)
     {
-        lock (profileLock)
+        string profilePath = Path.Combine(ManagerPath, subProfile.GetFileName());
+        pendingDeletion.Add(profilePath);
+
+        if (subProfiles.Contains(subProfile))
         {
-            string profilePath = Path.Combine(ManagerPath, subProfile.GetFileName());
-            pendingDeletion.Add(profilePath);
+            // remove sub profile from memory
+            subProfiles.Remove(subProfile);
 
-            if (subProfiles.Contains(subProfile))
+            // warn owner
+            bool isCurrent = false;
+
+            lock (profileLock)
             {
-                // remove sub profile from memory
-                subProfiles.Remove(subProfile);
-
-                // warn owner
-                bool isCurrent = false;
-
-                if (currentProfile != null)
-                    isCurrent = subProfile.Guid == currentProfile.Guid;
-
-                // get original profile (if still exists)
-                Profile originalProfile = profiles.Values.FirstOrDefault(p => p.Path == subProfile.Path, GetDefault());
-
-                // raise event
-                Discarded?.Invoke(subProfile, isCurrent, originalProfile);
-
-                // raise event(s)
-                Deleted?.Invoke(subProfile);
-
-                // send toast
-                // todo: localize me
-                ToastManager.SendToast($"Subprofile {subProfile.Name} deleted");
-
-                LogManager.LogInformation("Deleted subprofile: {0}", profilePath);
-
-                // restore main profile as favorite
-                if (isCurrent)
-                {
-                    // apply backup profile
-                    ApplyProfile(originalProfile);
-                }
+                isCurrent = subProfile.Guid == currentProfile?.Guid;
             }
 
-            FileUtils.FileDelete(profilePath);
+            // get original profile (if still exists)
+            Profile originalProfile = profiles.Values.FirstOrDefault(p => p.Path == subProfile.Path, GetDefault());
+
+            // raise event
+            Discarded?.Invoke(subProfile, isCurrent, originalProfile);
+
+            // raise event(s)
+            Deleted?.Invoke(subProfile);
+
+            // send toast
+            // todo: localize me
+            ToastManager.SendToast($"Subprofile {subProfile.Name} deleted");
+
+            LogManager.LogInformation("Deleted subprofile: {0}", profilePath);
+
+            // restore main profile as favorite
+            if (isCurrent)
+            {
+                // apply backup profile
+                ApplyProfile(originalProfile);
+            }
         }
+
+        FileUtils.FileDelete(profilePath);
     }
 
     public void SerializeProfile(Profile profile)
@@ -913,92 +911,92 @@ public class ProfileManager : IManager
 
     public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
-        lock (profileLock)
+        bool isCurrent = false;
+        switch (source)
         {
-            bool isCurrent = false;
-            switch (source)
-            {
-                // if profile is created from QT -> apply it
-                case UpdateSource.QuickProfilesCreation:
-                    isCurrent = true;
-                    break;
-                case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile in ProfilesPage
-                    isCurrent = false;
-                    break;
-                default:
-                    // check if this is current profile
-                    isCurrent = currentProfile is not null && profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
-                    break;
-            }
-
-            switch (source)
-            {
-                case UpdateSource.Serializer:
-                    LogManager.LogInformation("Loaded {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
-                    break;
-
-                default:
-                    LogManager.LogInformation("Attempting to update/create {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
-                    break;
-            }
-
-            // used to get and store a few previous values
-            XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
-            if (!profile.IsSubProfile && profiles.TryGetValue(profile.Path, out Profile prevProfile))
-            {
-                prevWrapper = prevProfile.XInputPlus;
-            }
-            else if (profile.IsSubProfile) // TODO check if necessary
-            {
-                Profile prevSubProfile = subProfiles.FirstOrDefault(sub => sub.Guid == profile.Guid);
-                if (prevSubProfile != null)
-                    prevWrapper = prevSubProfile.XInputPlus;
-            }
-
-            // update database
-            if (profile.IsSubProfile)
-            {
-                // remove sub profile if it already exists, then add the updated one
-                subProfiles = subProfiles.Where(pr => pr.Guid != profile.Guid).ToList();
-                subProfiles.Add(profile);
-            }
-            else
-                profiles[profile.Path] = profile;
-
-            // refresh error code
-            SanitizeProfile(profile, source);
-
-            // raise event(s)
-            Updated?.Invoke(profile, source, isCurrent);
-
-            if (source == UpdateSource.Serializer)
-                return;
-
-            // do not update wrapper and cloaking from default profile
-            if (!profile.Default)
-            {
-                // update wrapper
-                if (!UpdateProfileWrapper(profile))
+            // if profile is created from QT -> apply it
+            case UpdateSource.QuickProfilesCreation:
+                isCurrent = true;
+                break;
+            case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile in ProfilesPage
+                isCurrent = false;
+                break;
+            default:
+                // check if this is current profile
+                lock (profileLock)
                 {
-                    // restore previous XInputPlus mode if failed to update
-                    profile.XInputPlus = prevWrapper;
-                    source = UpdateSource.Background;
+                    isCurrent = currentProfile is not null && profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
                 }
-
-                // update cloaking
-                UpdateProfileCloaking(profile);
-            }
-
-            // apply profile (silently)
-            if (isCurrent)
-            {
-                SetSubProfileAsFavorite(profile); // if sub profile, set it as favorite for main profile
-                ApplyProfile(profile, source);
-            }
-
-            // serialize profile
-            SerializeProfile(profile);
+                break;
         }
+
+        switch (source)
+        {
+            case UpdateSource.Serializer:
+                LogManager.LogInformation("Loaded {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
+                break;
+
+            default:
+                LogManager.LogInformation("Attempting to update/create {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
+                break;
+        }
+
+        // used to get and store a few previous values
+        XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
+        if (!profile.IsSubProfile && profiles.TryGetValue(profile.Path, out Profile prevProfile))
+        {
+            prevWrapper = prevProfile.XInputPlus;
+        }
+        else if (profile.IsSubProfile) // TODO check if necessary
+        {
+            Profile prevSubProfile = subProfiles.FirstOrDefault(sub => sub.Guid == profile.Guid);
+            if (prevSubProfile != null)
+                prevWrapper = prevSubProfile.XInputPlus;
+        }
+
+        // update database
+        if (profile.IsSubProfile)
+        {
+            // remove sub profile if it already exists, then add the updated one
+            subProfiles = subProfiles.Where(pr => pr.Guid != profile.Guid).ToList();
+            subProfiles.Add(profile);
+        }
+        else
+            profiles[profile.Path] = profile;
+
+        // refresh error code
+        SanitizeProfile(profile, source);
+
+        // raise event(s)
+        Updated?.Invoke(profile, source, isCurrent);
+
+        if (source == UpdateSource.Serializer)
+            return;
+
+        // do not update wrapper and cloaking from default profile
+        if (!profile.Default)
+        {
+            // update wrapper
+            if (!UpdateProfileWrapper(profile))
+            {
+                // restore previous XInputPlus mode if failed to update
+                profile.XInputPlus = prevWrapper;
+                source = UpdateSource.Background;
+            }
+
+            // update cloaking
+            UpdateProfileCloaking(profile);
+        }
+
+        // apply profile (silently)
+        if (isCurrent)
+        {
+            SetSubProfileAsFavorite(profile); // if sub profile, set it as favorite for main profile
+            ApplyProfile(profile, source);
+        }
+
+        // serialize profile
+        SerializeProfile(profile);
     }
 
     public bool UpdateProfileCloaking(Profile profile)

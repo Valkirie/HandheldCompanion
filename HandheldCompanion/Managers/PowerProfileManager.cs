@@ -273,37 +273,36 @@ namespace HandheldCompanion.Managers
 
         public void UpdateOrCreateProfile(PowerProfile profile, UpdateSource source)
         {
+            switch (source)
+            {
+                case UpdateSource.Serializer:
+                    LogManager.LogInformation("Loaded power profile: {0}", profile.Name);
+                    break;
+
+                default:
+                    LogManager.LogInformation("Attempting to update/create power profile: {0}", profile.Name);
+                    break;
+            }
+
+            // update database
+            profiles[profile.Guid] = profile;
+
+            // raise event
+            Updated?.Invoke(profile, source);
+
+            if (source == UpdateSource.Serializer)
+                return;
+
             lock (profileLock)
             {
-                switch (source)
-                {
-                    case UpdateSource.Serializer:
-                        LogManager.LogInformation("Loaded power profile: {0}", profile.Name);
-                        break;
-
-                    default:
-                        LogManager.LogInformation("Attempting to update/create power profile: {0}", profile.Name);
-                        break;
-                }
-
-                // update database
-                profiles[profile.Guid] = profile;
-
-                // raise event
-                Updated?.Invoke(profile, source);
-
-                if (source == UpdateSource.Serializer)
-                    return;
-
                 // warn owner
                 bool isCurrent = profile.Guid == currentProfile?.Guid;
-
                 if (isCurrent)
                     Applied?.Invoke(profile, source);
-
-                // serialize profile
-                SerializeProfile(profile);
             }
+
+            // serialize profile
+            SerializeProfile(profile);
         }
 
         public bool Contains(Guid guid)
@@ -370,32 +369,32 @@ namespace HandheldCompanion.Managers
 
         public void DeleteProfile(PowerProfile profile)
         {
-            lock (profileLock)
+            string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
+
+            if (profiles.ContainsKey(profile.Guid))
             {
-                string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
+                profiles.Remove(profile.Guid);
 
-                if (profiles.ContainsKey(profile.Guid))
+                lock (profileLock)
                 {
-                    profiles.Remove(profile.Guid);
-
                     // warn owner
                     bool isCurrent = profile.Guid == currentProfile?.Guid;
-
-                    // raise event
-                    Discarded?.Invoke(profile);
-
-                    // raise event(s)
-                    Deleted?.Invoke(profile);
-
-                    // send toast
-                    // todo: localize me
-                    ToastManager.SendToast($"Power Profile {profile.FileName} deleted");
-
-                    LogManager.LogInformation("Deleted power profile {0}", profilePath);
                 }
 
-                FileUtils.FileDelete(profilePath);
+                // raise event
+                Discarded?.Invoke(profile);
+
+                // raise event(s)
+                Deleted?.Invoke(profile);
+
+                // send toast
+                // todo: localize me
+                ToastManager.SendToast($"Power Profile {profile.FileName} deleted");
+
+                LogManager.LogInformation("Deleted power profile {0}", profilePath);
             }
+
+            FileUtils.FileDelete(profilePath);
         }
 
         #region events
