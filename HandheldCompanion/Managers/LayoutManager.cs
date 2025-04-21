@@ -106,7 +106,6 @@ public class LayoutManager : IManager
         layoutWatcher.Changed += LayoutWatcher_Template;
 
         // manage events
-        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
@@ -163,6 +162,9 @@ public class LayoutManager : IManager
         // ref
         defaultLayout = ManagerFactory.profileManager.GetDefault().Layout;
         defaultLayout.Updated += DefaultLayout_Updated;
+
+        // manage events
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
 
         ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
     }

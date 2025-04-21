@@ -45,17 +45,38 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
 
-            // Load only the ones that should be shown
-            foreach (var profile in ManagerFactory.profileManager
-                                                  .GetProfiles()
-                                                  .Where(p => !p.Default && p.ShowInLibrary))
+            // raise events
+            switch (ManagerFactory.profileManager.Status)
             {
-                Profiles.Add(new ProfileViewModel(profile, false));
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfile();
+                    break;
             }
+        }
 
+        private void QueryProfile()
+        {
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+
+            // Load only the ones that should be shown
+            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles().Where(p => !p.Default))
+            {
+                ProfileManager_Updated(profile, UpdateSource.Background, false);
+
+                foreach (Profile subProfile in ManagerFactory.profileManager.GetSubProfilesFromProfile(profile))
+                    ProfileManager_Updated(subProfile, UpdateSource.Background, false);
+            }
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfile();
         }
 
         private void ProfileManager_Deleted(Profile profile)
@@ -79,8 +100,9 @@ namespace HandheldCompanion.ViewModels
                 return;
 
             bool shouldShow = profile.ShowInLibrary;
+
             // find based on guid
-            var existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+            ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
 
             if (shouldShow)
             {

@@ -100,7 +100,7 @@ namespace HandheldCompanion.Managers
             gamepadFrame = contentFrame;
             gamepadFrame.Navigated += ContentNavigated;
 
-            gamepadTimer = new Timer(25) { AutoReset = false };
+            gamepadTimer = new Timer(500) { AutoReset = false };
             gamepadTimer.Elapsed += ContentRendered;
 
             tooltipTimer = new Timer(2000) { AutoReset = false };

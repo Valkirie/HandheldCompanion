@@ -45,14 +45,6 @@ public partial class LibraryPage : Page
         }
     }
 
-    private void ImageContainer_LostFocus(object sender, RoutedEventArgs e)
-    {
-    }
-
-    private void ImageContainer_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-    {
-    }
-
     private void Page_Loaded(object sender, RoutedEventArgs e)
     { }
 
