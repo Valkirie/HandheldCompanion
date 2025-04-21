@@ -578,6 +578,11 @@ public partial class MainWindow : GamepadWindow
                         // when device goes to sleep
                         pendingTime = DateTime.Now;
 
+                        // hide subwindow(s)
+                        overlayModel.SetVisibility(Visibility.Collapsed);
+                        overlayTrackpad.SetVisibility(Visibility.Collapsed);
+                        overlayquickTools.SetVisibility(Visibility.Collapsed);
+
                         // suspend manager(s)
                         ManagerFactory.gpuManager.Stop();
                         ManagerFactory.processManager.Suspend();

@@ -433,6 +433,15 @@ public partial class OverlayQuickTools : GamepadWindow
             ToggleVisibility();
     }
 
+    public void SetVisibility(Visibility visibility)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.Visibility = visibility;
+        });
+    }
+
     public void ToggleVisibility()
     {
         // UI thread

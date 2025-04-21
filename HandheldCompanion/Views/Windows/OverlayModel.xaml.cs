@@ -269,6 +269,15 @@ public partial class OverlayModel : OverlayWindow
         }
     }
 
+    public void SetVisibility(Visibility visibility)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.Visibility = visibility;
+        });
+    }
+
     public override void ToggleVisibility()
     {
         // UI thread
@@ -525,9 +534,11 @@ public partial class OverlayModel : OverlayWindow
                     // Update the model material based on the button state
                     // If the button is pressed, use the highlight material;
                     // otherwise, use the default material
-                    model3D.Material = Inputs.ButtonState[button]
-                        ? model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup]
-                        : model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
+                    bool hasButton = Inputs.ButtonState is not null && Inputs.ButtonState[button];
+
+                    model3D.Material = hasButton ?
+                    model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup] :
+                    model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
                 }
             });
         }
@@ -570,15 +581,19 @@ public partial class OverlayModel : OverlayWindow
     Dictionary<Model3DGroup, Material> highlightMaterials)
     {
         GeometryModel3D geometryModel3D = thumbRing.Children[0] as GeometryModel3D;
+
+        float X = Inputs.AxisState is not null ? Inputs.AxisState[stickX] : 0.0f;
+        float Y = Inputs.AxisState is not null ? Inputs.AxisState[stickY] : 0.0f;
+
         // Determine if stick has moved
-        bool isStickMoved = Inputs.AxisState[stickX] != 0.0f || Inputs.AxisState[stickY] != 0.0f;
+        bool isStickMoved = X != 0.0f || Y != 0.0f;
 
         // Adjust material gradually based on distance from center
         if (isStickMoved)
         {
             float gradientFactor = Math.Max(
-                Math.Abs(1 * Inputs.AxisState[stickX] / (float)short.MaxValue),
-                Math.Abs(1 * Inputs.AxisState[stickY] / (float)short.MaxValue));
+                Math.Abs(1 * X / (float)short.MaxValue),
+                Math.Abs(1 * Y / (float)short.MaxValue));
 
             geometryModel3D.Material = GradientHighlight(
                 defaultMaterials[thumbRing],
@@ -591,8 +606,8 @@ public partial class OverlayModel : OverlayWindow
         }
 
         // Define and compute rotation angles
-        float x = maxAngleDeg * Inputs.AxisState[stickX] / short.MaxValue;
-        float y = -1 * maxAngleDeg * Inputs.AxisState[stickY] / short.MaxValue;
+        float x = maxAngleDeg * X / short.MaxValue;
+        float y = -1 * maxAngleDeg * Y / short.MaxValue;
 
         // Create rotation transformations
         RotateTransform3D rotationX = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), x), new Point3D(rotationPointCenter.X, rotationPointCenter.Y, rotationPointCenter.Z));
@@ -655,19 +670,20 @@ public partial class OverlayModel : OverlayWindow
         ref Model3DGroup shoulderTriggerModel,
         ref float triggerAngle,
         float triggerMaxAngleDeg,
-        AxisFlags axisFlag,
+        AxisFlags triggerFlag,
         float shoulderButtonsAngleDeg,
         ref float triggerAnglePrev,
         ref float shoulderButtonsAngleDegPrev,
         Material defaultMaterial,
         Dictionary<Model3DGroup, Material> highlightMaterials)
     {
-        var geometryModel3D = shoulderTriggerModel.Children[0] as GeometryModel3D;
+        GeometryModel3D? geometryModel3D = shoulderTriggerModel.Children[0] as GeometryModel3D;
+        byte triggerValue = (byte)(Inputs.AxisState is not null ? (Inputs.AxisState[triggerFlag] / (float)byte.MaxValue) : 0.0f);
 
         // Adjust trigger color gradient based on amount of pull
-        if (Inputs.AxisState[axisFlag] > 0)
+        if (triggerValue > 0)
         {
-            float gradientFactor = 1 * Inputs.AxisState[axisFlag] / (float)byte.MaxValue;
+            float gradientFactor = 1.0f * triggerValue;
             geometryModel3D.Material = GradientHighlight(defaultMaterial, highlightMaterials[shoulderTriggerModel], gradientFactor);
         }
         else
@@ -676,23 +692,23 @@ public partial class OverlayModel : OverlayWindow
         }
 
         // Determine trigger angle pull in degree
-        triggerAngle = -1 * triggerMaxAngleDeg * Inputs.AxisState[axisFlag] / byte.MaxValue;
+        triggerAngle = -1.0f * triggerMaxAngleDeg * triggerValue;
 
         // In case device pose changes leading to different visibility angle or if trigger angle changes
         if (shoulderButtonsAngleDeg != shoulderButtonsAngleDegPrev || triggerAngle != triggerAnglePrev)
         {
-            Model3DGroup Placeholder = CurrentModel.ButtonMap[axisFlag == AxisFlags.L2 ? ButtonFlags.L1 : ButtonFlags.R1][0];
+            Model3DGroup Placeholder = CurrentModel.ButtonMap[triggerFlag == AxisFlags.L2 ? ButtonFlags.L1 : ButtonFlags.R1][0];
 
             UpwardVisibilityRotationShoulderButtons(shoulderButtonsAngleDeg,
-                axisFlag == AxisFlags.L2 ? CurrentModel.UpwardVisibilityRotationAxisLeft : CurrentModel.UpwardVisibilityRotationAxisRight,
-                axisFlag == AxisFlags.L2 ? CurrentModel.UpwardVisibilityRotationPointLeft : CurrentModel.UpwardVisibilityRotationPointRight,
+                triggerFlag == AxisFlags.L2 ? CurrentModel.UpwardVisibilityRotationAxisLeft : CurrentModel.UpwardVisibilityRotationAxisRight,
+                triggerFlag == AxisFlags.L2 ? CurrentModel.UpwardVisibilityRotationPointLeft : CurrentModel.UpwardVisibilityRotationPointRight,
                 triggerAngle,
-                axisFlag == AxisFlags.L2 ? CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter : CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter,
+                triggerFlag == AxisFlags.L2 ? CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter : CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter,
                 ref shoulderTriggerModel,
                 ref Placeholder
             );
 
-            CurrentModel.ButtonMap[axisFlag == AxisFlags.L2 ? ButtonFlags.L1 : ButtonFlags.R1][0] = Placeholder;
+            CurrentModel.ButtonMap[triggerFlag == AxisFlags.L2 ? ButtonFlags.L1 : ButtonFlags.R1][0] = Placeholder;
 
             triggerAnglePrev = triggerAngle;
             shoulderButtonsAngleDegPrev = shoulderButtonsAngleDeg;
