@@ -544,6 +544,8 @@ public class ProfileManager : IManager
     private void ProcessProfile(string fileName, bool imported = false)
     {
         Profile profile;
+        UpdateSource updateSource = UpdateSource.Serializer;
+
         try
         {
             string rawName = Path.GetFileNameWithoutExtension(fileName);
@@ -723,8 +725,11 @@ public class ProfileManager : IManager
             profile.IsSubProfile = true;
             profile.IsFavoriteSubProfile = false;
 
-            // delete current file, profile manager will take care of creating a proper subprofile
+            // delete current file
             File.Delete(fileName);
+
+            // set update source so UpdateOrCreateProfile() will (re)create the file
+            updateSource = UpdateSource.Creation;
         }
         else
         {
@@ -734,11 +739,11 @@ public class ProfileManager : IManager
                 profile.Path = profile.Executable;
         }
 
-        UpdateOrCreateProfile(profile, UpdateSource.Serializer);
+        UpdateOrCreateProfile(profile, updateSource);
 
         // default specific
         if (profile.Default)
-            ApplyProfile(profile, UpdateSource.Serializer);
+            ApplyProfile(profile, updateSource);
     }
 
     private List<string> pendingCreation = [];
