@@ -2360,19 +2360,19 @@
     <value>Direction</value>
   </data>
   <data name="MainWindow_navPerformance" xml:space="preserve">
-    <value>Performance</value>
+    <value>性能</value>
   </data>
   <data name="PerformancePage_Device" xml:space="preserve">
-    <value>Performance</value>
+    <value>性能</value>
   </data>
   <data name="ProfilesPage_CPUMhz" xml:space="preserve">
     <value>CPU Clock max frequency</value>
   </data>
   <data name="QuickPerformancePage_CPUControl" xml:space="preserve">
-    <value>Manual CPU Clock Control</value>
+    <value>CPU</value>
   </data>
   <data name="QuickPerformancePage_CPUControlDesc" xml:space="preserve">
-    <value>Sets the CPU to a fixed clock</value>
+    <value>手动设置CPU频率</value>
   </data>
   <data name="QuickPerformancePage_CPUUnit" xml:space="preserve">
     <value> Mhz</value>
@@ -2444,10 +2444,10 @@
     <value>Adjust main refresh rate</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
-    <value>Fan settings</value>
+    <value>风扇设置</value>
   </data>
   <data name="ProfilesPage_FanSettingsDesc" xml:space="preserve">
-    <value>Change the fan settings</value>
+    <value>更改风扇设置</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
     <value>Create a new power preset</value>
@@ -2660,16 +2660,16 @@
     <value>Change the graphics settings</value>
   </data>
   <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
-    <value>Preset selection</value>
+    <value>预设选择</value>
   </data>
   <data name="PowerProfilesPage_PresetSelectionDesc" xml:space="preserve">
-    <value>Select the preset you would like to edit</value>
+    <value>选择要更改的预设</value>
   </data>
   <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
-    <value>Device presets</value>
+    <value>设备预设</value>
   </data>
   <data name="PowerProfilesPage_UserPresets" xml:space="preserve">
-    <value>User presets</value>
+    <value>用户预设</value>
   </data>
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>功耗设置</value>
@@ -2812,12 +2812,56 @@
   <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
     <value>校准设备的惯性传感器</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="OverlayPage_Xbox360Controller" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="OverlayPage_SteamDeck" xml:space="preserve">
+    <value>Steam Deck</value>
+  </data>
+  <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
     <value />
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校准</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
+    <value>激进</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Disabled" xml:space="preserve">
+    <value>停用</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientAggressive" xml:space="preserve">
+    <value>高能效激进</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientEnabled" xml:space="preserve">
+    <value>高能效</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
+    <value>设置风扇模式</value>
+  </data>
+  <data name="PerformancePage_FanMode_Hardware" xml:space="preserve">
+    <value>硬件</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Aggressive" xml:space="preserve">
+    <value>激进</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Quiet" xml:space="preserve">
+    <value>静音</value>
+  </data>
+  <data name="PerformancePage_FanMode_Software" xml:space="preserve">
+    <value>软件</value>
+  </data>
+  <data name="PerformancePage_FanMode_Title" xml:space="preserve">
+    <value>风扇模式</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
+    <value>限制 CPU 未停用核心数</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
+    <value>最大 CPU 数量</value>
   </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>预设效果</value>
@@ -2861,6 +2905,7 @@
   <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
     <value>覆盖窗</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -2871,19 +2916,19 @@
     <value />
   </data>
   <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
-    <value />
+    <value>自动（平衡性能/能效核）</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
-    <value />
+    <value>能效核优</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
-    <value />
+    <value>性能核优先</value>
   </data>
   <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
-    <value />
+    <value>仅性能核（最大性能）</value>
   </data>
   <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
-    <value />
+    <value>仅能效核（最高能效）</value>
   </data>
   <data name="Hotkey_XGMobile" xml:space="preserve">
     <value />
@@ -2905,5 +2950,11 @@
   </data>
   <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
     <value>设定</value>
+  </data>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value>CPU核心调度</value>
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value>设置CPU核心调度模式</value>
   </data>
 </root>

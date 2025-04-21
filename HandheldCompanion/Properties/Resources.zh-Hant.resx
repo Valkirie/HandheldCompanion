@@ -3367,4 +3367,10 @@
   <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
     <value />
   </data>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -2865,4 +2865,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
     <value />
   </data>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>
