@@ -47,8 +47,7 @@ public enum SteeringAxis
 public partial class Profile : ICloneable, IComparable
 {
     [JsonIgnore] public const int SensivityArraySize = 49; // x + 1 (hidden)
-
-    public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
+    [JsonIgnore] public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
