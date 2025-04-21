@@ -307,6 +307,9 @@ public class ProfileManager : IManager
         // update current profile before invoking event
         currentProfile = profile;
 
+        // refresh error code
+        SanitizeProfile(profile);
+
         // raise event
         Applied?.Invoke(profile, source);
 

@@ -859,6 +859,10 @@ public partial class ProfilesPage : Page
                 if (isCurrent)
                     cB_Profiles.SelectedItem = profile;
             }
+            else if (isCurrent)
+            {
+                cB_Profiles.SelectedItem = selectedMainProfile;
+            }
 
             UpdateSubProfiles(profile);
         });
