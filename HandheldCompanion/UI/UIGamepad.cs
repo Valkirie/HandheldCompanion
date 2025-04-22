@@ -220,7 +220,7 @@ namespace HandheldCompanion.Managers
                 if (gamepadWindow.WindowState == WindowState.Minimized)
                     continue;
 
-                if (!gamepadWindow.IsActive)
+                if (!gamepadWindow.IsActive && gamepadWindow is MainWindow)
                     continue;
 
                 if (!gamepadWindow.IsPrimary)

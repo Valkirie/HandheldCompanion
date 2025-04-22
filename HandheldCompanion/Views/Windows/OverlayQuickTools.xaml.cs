@@ -142,8 +142,7 @@ public partial class OverlayQuickTools : GamepadWindow
         base.OnSourceInitialized(e);
 
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
-        exStyle |= WS_EX_NOACTIVATE;
-        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle);
+        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
 
         /*
         int Style = WinAPI.GetWindowLong(hwndSource.Handle, GWL_STYLE);
@@ -363,19 +362,31 @@ public partial class OverlayQuickTools : GamepadWindow
 
     protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        // prevent activation on mouse click
+        if (msg == WM_MOUSEACTIVATE)
+        {
+            handled = true;
+            return new IntPtr(MA_NOACTIVATE);
+        }
+
         switch (msg)
         {
             case WM_SYSCOMMAND:
                 {
                     int command = wParam.ToInt32() & 0xfff0;
-                    if (command == SC_MOVE) handled = true;
+                    if (command == SC_MOVE)
+                        handled = true;
                 }
                 break;
 
             case WM_ACTIVATE:
                 {
                     handled = true;
-                    WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                    WPFUtils.SendMessage(
+                        hwndSource.Handle,
+                        WM_NCACTIVATE,
+                        new IntPtr(0),    // FALSE = show as inactive
+                        IntPtr.Zero);
                 }
                 break;
 
