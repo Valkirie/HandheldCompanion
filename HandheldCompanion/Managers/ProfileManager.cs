@@ -882,7 +882,9 @@ public class ProfileManager : IManager
         // Decide which profiles to run through the sanitizer
         IEnumerable<Profile> profilesToSanitize;
         if (source == UpdateSource.Serializer)
-            profilesToSanitize = new[] { profile };
+        {
+            profilesToSanitize = [profile];
+        }
         else
         {
             // full parent+subprofile sweep
@@ -902,13 +904,17 @@ public class ProfileManager : IManager
             {
                 string? processpath = Path.GetDirectoryName(profileToSanitize.Path);
                 if (string.IsNullOrEmpty(processpath) || !Directory.Exists(processpath))
+                {
                     profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPath;
+                }
+                else
+                {
+                    if (!File.Exists(profileToSanitize.Path))
+                        profileToSanitize.ErrorCode |= ProfileErrorCode.MissingExecutable;
 
-                if (!File.Exists(profileToSanitize.Path))
-                    profileToSanitize.ErrorCode |= ProfileErrorCode.MissingExecutable;
-
-                if (!FileUtils.IsDirectoryWritable(processpath))
-                    profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
+                    if (!FileUtils.IsDirectoryWritable(processpath))
+                        profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
+                }
 
                 if (ProcessManager.GetProcesses(profile.Executable).Any())
                     profile.ErrorCode |= ProfileErrorCode.Running;
