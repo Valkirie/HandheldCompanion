@@ -57,23 +57,20 @@
             <!--  Library  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
             <ikw:SimpleStackPanel Spacing="6">
-                <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
-                    <ui:ItemsRepeater.Layout>
-                        <!--  3:2 ratio  -->
-                        <ui:UniformGridLayout
-                            ItemsStretch="Uniform"
-                            MaximumRowsOrColumns="8"
-                            MinColumnSpacing="12"
-                            MinItemHeight="350"
-                            MinItemWidth="200"
-                            MinRowSpacing="12"
-                            Orientation="Horizontal" />
-                    </ui:ItemsRepeater.Layout>
+                <ItemsControl ItemsSource="{Binding ProfilesView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                    <ui:ItemsRepeater.ItemTemplate>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button
                                 x:Name="ImageContainer"
+                                MaxWidth="200"
+                                MaxHeight="350"
+                                Margin="6"
                                 Padding="0"
                                 chelper:ControlHelper.CornerRadius="8"
                                 BorderThickness="0"
@@ -187,14 +184,16 @@
                                 </Grid>
                             </Button>
                         </DataTemplate>
-                    </ui:ItemsRepeater.ItemTemplate>
-                </ui:ItemsRepeater>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ikw:SimpleStackPanel>
 
             <!--  Settings  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Settings" />
             <ikw:SimpleStackPanel Spacing="6">
-                <ui:SettingsCard Description="Test" Header="Test" />
+                <ui:SettingsCard Description="Test" Header="Test">
+                    <Button Command="{Binding ToggleSortCommand}" Content="TEST" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

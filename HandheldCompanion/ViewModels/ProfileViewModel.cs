@@ -44,6 +44,11 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public string Name => _Profile.Name;
         public string Description => _Profile.GetOwnerName();
 

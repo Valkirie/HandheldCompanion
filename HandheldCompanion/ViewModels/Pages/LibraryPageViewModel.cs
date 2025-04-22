@@ -1,8 +1,10 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -11,6 +13,25 @@ namespace HandheldCompanion.ViewModels
     public class LibraryPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
+        public ICollectionView ProfilesView { get; }
+
+        private bool _sortAscending = true;
+        public bool SortAscending
+        {
+            get => _sortAscending;
+            set
+            {
+                if (value != SortAscending)
+                {
+                    _sortAscending = value;
+                    OnPropertyChanged(nameof(SortAscending));
+
+                    UpdateSorting();
+                }
+            }
+        }
+
+        public ICommand ToggleSortCommand { get; }
 
         private Color _highlightColor = Colors.Red;
         public Color HighlightColor
@@ -44,6 +65,13 @@ namespace HandheldCompanion.ViewModels
         {
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+            ProfilesView = CollectionViewSource.GetDefaultView(Profiles);
+            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
+
+            ToggleSortCommand = new DelegateCommand(() =>
+            {
+                SortAscending = !SortAscending;
+            });
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
@@ -77,6 +105,15 @@ namespace HandheldCompanion.ViewModels
         private void ProfileManager_Initialized()
         {
             QueryProfile();
+        }
+
+        private void UpdateSorting()
+        {
+            ListSortDirection direction = SortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
+
+            ProfilesView.SortDescriptions.Clear();
+            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
+            ProfilesView.Refresh();
         }
 
         private void ProfileManager_Deleted(Profile profile)

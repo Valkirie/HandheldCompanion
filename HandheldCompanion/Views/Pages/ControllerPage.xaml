@@ -87,11 +87,13 @@
                             Text="{l:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
                     </DockPanel>
 
-                    <ui:ItemsRepeater ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding VirtualControllers}">
-                        <ui:ItemsRepeater.Layout>
-                            <ui:StackLayout Orientation="Vertical" Spacing="6" />
-                        </ui:ItemsRepeater.Layout>
-                    </ui:ItemsRepeater>
+                    <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding VirtualControllers}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 
@@ -114,11 +116,13 @@
                             Text="{l:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
                     </DockPanel>
 
-                    <ui:ItemsRepeater ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding PhysicalControllers}">
-                        <ui:ItemsRepeater.Layout>
-                            <ui:StackLayout Orientation="Vertical" Spacing="6" />
-                        </ui:ItemsRepeater.Layout>
-                    </ui:ItemsRepeater>
+                    <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding PhysicalControllers}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
                 </ikw:SimpleStackPanel>
 
                 <ui:InfoBar

@@ -819,7 +819,7 @@
                 </TextBlock>
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
@@ -963,8 +963,8 @@
                                         </ComboBox>
 
                                         <!--  Motion activator  -->
-                                        <ui:ItemsRepeater ItemsSource="{Binding HotkeysList}">
-                                            <ui:ItemsRepeater.ItemTemplate>
+                                        <ItemsControl ItemsSource="{Binding HotkeysList}">
+                                            <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
@@ -1002,9 +1002,9 @@
                                                             </ToggleButton.Resources>
 
                                                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                                <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
-                                                                    <ui:ItemsRepeater.Style>
-                                                                        <Style TargetType="ui:ItemsRepeater">
+                                                                <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
+                                                                    <ItemsControl.Style>
+                                                                        <Style TargetType="ItemsControl">
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
                                                                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -1014,18 +1014,15 @@
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
-                                                                    </ui:ItemsRepeater.Style>
+                                                                    </ItemsControl.Style>
 
-                                                                    <ui:ItemsRepeater.Layout>
-                                                                        <ui:UniformGridLayout
-                                                                            ItemsJustification="Center"
-                                                                            ItemsStretch="Uniform"
-                                                                            MaximumRowsOrColumns="10"
-                                                                            MinColumnSpacing="3"
-                                                                            Orientation="Horizontal" />
-                                                                    </ui:ItemsRepeater.Layout>
+                                                                    <ItemsControl.ItemsPanel>
+                                                                        <ItemsPanelTemplate>
+                                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                                                                        </ItemsPanelTemplate>
+                                                                    </ItemsControl.ItemsPanel>
 
-                                                                    <ui:ItemsRepeater.ItemTemplate>
+                                                                    <ItemsControl.ItemTemplate>
                                                                         <DataTemplate>
                                                                             <ui:FontIcon
                                                                                 FontFamily="PromptFont"
@@ -1043,8 +1040,8 @@
                                                                                 </ui:FontIcon.Style>
                                                                             </ui:FontIcon>
                                                                         </DataTemplate>
-                                                                    </ui:ItemsRepeater.ItemTemplate>
-                                                                </ui:ItemsRepeater>
+                                                                    </ItemsControl.ItemTemplate>
+                                                                </ItemsControl>
 
                                                                 <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                                                     <TextBlock.Style>
@@ -1082,8 +1079,8 @@
                                                         </Button>
                                                     </Grid>
                                                 </DataTemplate>
-                                            </ui:ItemsRepeater.ItemTemplate>
-                                        </ui:ItemsRepeater>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </ikw:SimpleStackPanel>
                                 </Grid>
 
@@ -1453,7 +1450,7 @@
                     Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
@@ -2159,7 +2156,7 @@
                 </TextBlock>
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
@@ -2534,7 +2531,7 @@
                 </TextBlock>
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

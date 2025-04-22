@@ -28,12 +28,14 @@
             Severity="Success"
             Visibility="{Binding HasNotifications, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
-        <ui:ItemsRepeater ItemsSource="{Binding Notifications}">
-            <ui:ItemsRepeater.Layout>
-                <ui:StackLayout Spacing="6" />
-            </ui:ItemsRepeater.Layout>
+        <ItemsControl ItemsSource="{Binding Notifications}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-            <ui:ItemsRepeater.ItemTemplate>
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ui:InfoBar
                         Title="{Binding Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -50,7 +52,7 @@
                         </ui:InfoBar.ActionButton>
                     </ui:InfoBar>
                 </DataTemplate>
-            </ui:ItemsRepeater.ItemTemplate>
-        </ui:ItemsRepeater>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </ikw:SimpleStackPanel>
 </Page>
