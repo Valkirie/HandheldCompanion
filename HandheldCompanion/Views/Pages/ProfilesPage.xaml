@@ -349,6 +349,14 @@
                                             </BeginStoryboard>
                                         </EventTrigger>
                                     </Border.Triggers>
+
+                                    <Button
+                                        Name="b_Play"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding LaunchExecutable}"
+                                        Content="Play"
+                                        Style="{DynamicResource AccentButtonStyle}" />
                                 </Border>
                             </ikw:SimpleStackPanel>
 
@@ -430,6 +438,7 @@
                                             <ColumnDefinition MinWidth="110" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
+
                                         <DockPanel>
                                             <ui:FontIcon
                                                 Height="40"
@@ -487,20 +496,9 @@
                                                     Click="b_SubProfileRename_Click">
                                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
                                                 </Button>
-
-                                                <Button
-                                                    Name="b_Play"
-                                                    Grid.Column="4"
-                                                    Margin="6,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Command="{Binding LaunchExecutable}"
-                                                    Style="{DynamicResource AccentButtonStyle}">
-                                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe768;" />
-                                                </Button>
                                             </Grid>
                                         </DockPanel>
                                     </Grid>
-
                                 </ikw:SimpleStackPanel>
                             </Border>
                         </Grid>
@@ -611,8 +609,8 @@
                             Name="LibrarySettings"
                             HorizontalAlignment="Stretch"
                             d:IsExpanded="true"
-                            Description="{l:Static resx:Resources.ProfilesPage_Library_Title}"
-                            Header="{l:Static resx:Resources.ProfilesPage_Library_Desc}">
+                            Description="{l:Static resx:Resources.ProfilesPage_Library_Desc}"
+                            Header="{l:Static resx:Resources.ProfilesPage_Library_Title}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE8F1;" />
                             </ui:SettingsExpander.HeaderIcon>

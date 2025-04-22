@@ -246,10 +246,14 @@ namespace HandheldCompanion.Managers
 
             foreach (LibraryEntry game in entries)
             {
-                // Clean and normalize the game name.
+                // clean and normalize the game name.
                 string gameNameCleaned = RemoveSpecialCharacters(game.Name).ToLowerInvariant();
 
-                // Compute a fuzzy match score between the game name and the input name.
+                // if the game name contains the input name, return it.
+                if (gameNameCleaned.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+                    return game;
+
+                // compute a fuzzy match score between the game name and the input name.
                 int score = Levenshtein.Distance(gameNameCleaned, cleanedName);
                 if (score < bestScore)
                 {
@@ -493,20 +497,85 @@ namespace HandheldCompanion.Managers
 
             base.PrepareStart();
 
-            // get latest known version
-            Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
-            if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
-            {
-                // do something
-            }
-
             // manage events
             NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
+
+            switch (ManagerFactory.profileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfile();
+                    break;
+            }
 
             // raise events
             OnNetworkAvailabilityChanged(null, null);
 
             base.Start();
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfile();
+        }
+
+        private void QueryProfile()
+        {
+            // get latest known version
+            Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+
+            Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
+            {
+                // skip if profile was created with library manager already implemented
+                if (profile.Version >= Version.Parse(Settings.VersionLibraryManager))
+                    return;
+
+                // skip if profile already has a library entry
+                if (profile.LibraryEntry is not null)
+                    return;
+
+                // skip if profile is default
+                if (profile.Default)
+                    return;
+
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
+                LibraryEntry entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+
+                // download arts
+                await UpdateProfileArts(profile, entry);
+
+                // update profile
+                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
+            });
+        }
+
+        public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverIndex = 0, int artworkIndex = 0)
+        {
+            // update library entry
+            if (entry is SteamGridEntry Steam)
+            {
+                if (Steam.Grids.Length > coverIndex)
+                    Steam.Grid = Steam.Grids[coverIndex];
+
+                if (Steam.Heroes.Length > artworkIndex)
+                    Steam.Hero = Steam.Heroes[artworkIndex];
+            }
+            else if (entry is IGDBEntry IGDB)
+            {
+                if (IGDB.Artworks.Count > artworkIndex)
+                    IGDB.Artwork = IGDB.Artworks[artworkIndex];
+            }
+
+            // update target entry and name
+            profile.LibraryEntry = entry;
+            profile.ShowInLibrary = true;
+            profile.Name = entry.Name;
+
+            // download arts
+            await ManagerFactory.libraryManager.DownloadGameArts(entry, false);
         }
 
         public override void Stop()

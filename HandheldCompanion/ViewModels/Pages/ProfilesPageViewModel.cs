@@ -349,26 +349,8 @@ namespace HandheldCompanion.ViewModels
                 // update library target profile
                 libraryProfile = ProfilesPage.selectedProfile.Clone() as Profile;
 
-                // update library entry
-                if (SelectedLibraryEntry is SteamGridEntry Steam)
-                {
-                    if (Steam.Grids.Length > LibraryCoversIndex)
-                        Steam.Grid = Steam.Grids[LibraryCoversIndex];
-                    if (Steam.Heroes.Length > LibraryArtworksIndex)
-                        Steam.Hero = Steam.Heroes[LibraryArtworksIndex];
-                }
-                else if (SelectedLibraryEntry is IGDBEntry IGDB)
-                {
-                    if (IGDB.Artworks.Count > LibraryArtworksIndex)
-                        IGDB.Artwork = IGDB.Artworks[LibraryArtworksIndex];
-                }
-
-                // update target entry and name
-                libraryProfile.LibraryEntry = SelectedLibraryEntry;
-                libraryProfile.Name = SelectedLibraryEntry.Name;
-
                 // download arts
-                await ManagerFactory.libraryManager.DownloadGameArts(SelectedLibraryEntry, false);
+                await ManagerFactory.libraryManager.UpdateProfileArts(libraryProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex);
 
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(libraryProfile, UpdateSource.LibraryUpdate);
