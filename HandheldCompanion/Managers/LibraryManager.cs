@@ -547,6 +547,9 @@ namespace HandheldCompanion.Managers
                 // download arts
                 await UpdateProfileArts(profile, entry);
 
+                // update profile vars
+                profile.ShowInLibrary = true;
+
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
             });
@@ -571,7 +574,6 @@ namespace HandheldCompanion.Managers
 
             // update target entry and name
             profile.LibraryEntry = entry;
-            profile.ShowInLibrary = true;
             profile.Name = entry.Name;
 
             // download arts
