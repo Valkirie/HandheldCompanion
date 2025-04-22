@@ -10,6 +10,7 @@ namespace HandheldCompanion.Misc
         private AutomationPropertyChangedEventHandler handler;
         public event EventHandler Refreshed;
         public event EventHandler Closed;
+        public event EventHandler Disposed;
 
         public AutomationElement Element { get; private set; }
         public readonly int Hwnd;
@@ -138,6 +139,8 @@ namespace HandheldCompanion.Misc
             Element = null;
             handler = null;
             _disposed = true;
+
+            Disposed?.Invoke(this, EventArgs.Empty);
         }
     }
 }

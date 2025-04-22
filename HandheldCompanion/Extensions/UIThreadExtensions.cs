@@ -45,5 +45,13 @@ namespace HandheldCompanion.Extensions
                 collection.Remove(item);
             });
         }
+
+        public static void SafeClear<T>(this ObservableCollection<T> collection)
+        {
+            UIHelper.TryInvoke(() =>
+            {
+                collection.Clear();
+            });
+        }
     }
 }

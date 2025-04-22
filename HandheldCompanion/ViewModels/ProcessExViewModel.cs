@@ -156,7 +156,7 @@ namespace HandheldCompanion.ViewModels
             {
                 foreach (ProcessWindowViewModel processWindow in ProcessWindows)
                     processWindow.Dispose();
-                ProcessWindows.Clear();
+                ProcessWindows.SafeClear();
             }
 
             // dispose commands
