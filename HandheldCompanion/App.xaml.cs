@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Localization;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -48,6 +49,9 @@ public partial class App : Application
     public App()
     {
         InitializeSentry();
+
+        InjectResource();
+
         InitializeComponent();
 
 #if DEBUG
@@ -57,6 +61,19 @@ public partial class App : Application
         // initialize path(s)
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;
         SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion");
+    }
+
+    /// <summary>
+    /// Replaces the default ResourceManager instance in the auto-generated Resources class
+    /// with a custom ResilientResourceManager that supports fallback logic.
+    /// </summary>
+    private void InjectResource()
+    {
+        Type resourcesType = typeof(Resources);
+        var customManager = new ResilientResourceManager(resourcesType.FullName, resourcesType.Assembly);
+        FieldInfo? field = resourcesType.GetField("resourceMan", BindingFlags.Static | BindingFlags.NonPublic);
+        if (field == null) return;
+        field.SetValue(null, customManager);
     }
 
     /// <summary>
