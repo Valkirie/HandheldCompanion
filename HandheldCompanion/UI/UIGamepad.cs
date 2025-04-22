@@ -557,20 +557,27 @@ namespace HandheldCompanion.Managers
                                 _goingForward = true;
                             }
 
-                            // raise event
-                            button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                            if (button.IsEnabled)
+                            {
+                                // raise event
+                                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
-                            // execute command
-                            button.Command?.Execute(button.CommandParameter);
+                                // execute command
+                                button.Command?.Execute(button.CommandParameter);
+                            }
                         }
                         else if (focusedElement is RepeatButton repeatButton)
                         {
-                            // raise event
-                            repeatButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-
-                            // execute command
-                            repeatButton.Command?.Execute(repeatButton.CommandParameter);
                             Focus(repeatButton);
+
+                            if (repeatButton.IsEnabled)
+                            {
+                                // raise event
+                                repeatButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+
+                                // execute command
+                                repeatButton.Command?.Execute(repeatButton.CommandParameter);
+                            }
                         }
                         else if (focusedElement is ToggleButton toggleButton)
                         {
