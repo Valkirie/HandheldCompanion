@@ -2871,6 +2871,24 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value />
+  </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />
   </data>

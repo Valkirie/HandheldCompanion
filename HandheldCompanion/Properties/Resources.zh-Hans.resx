@@ -866,7 +866,7 @@
     <value>Acrylic</value>
   </data>
   <data name="SettingsPage_BackdropDesc" xml:space="preserve">
-    <value>此程序的背景图像</value>
+    <value>此程序的背景</value>
   </data>
   <data name="SettingsPage_BackdropMica" xml:space="preserve">
     <value>Mica</value>
@@ -1304,10 +1304,10 @@
     <value>实体手柄未被隐藏</value>
   </data>
   <data name="ControllerPage_SteamControllerHDRumble" xml:space="preserve">
-    <value>高清震动</value>
+    <value>HD震动</value>
   </data>
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
-    <value>使用高清震动功能可能会占用更多CPU资源</value>
+    <value>使用HD震动功能可能会占用更多CPU资源</value>
   </data>
   <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>控制器设置</value>
@@ -1505,10 +1505,10 @@
     <value>电源选项</value>
   </data>
   <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
-    <value>工具窗口背景图像</value>
+    <value>快速窗口背景</value>
   </data>
   <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
-    <value>工具窗口选项</value>
+    <value>快速窗口设置</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
     <value>窗口位置</value>
@@ -2678,10 +2678,10 @@
     <value>Resolution is currently overridden by profile</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
-    <value>Left</value>
+    <value>靠左</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
-    <value>Right</value>
+    <value>靠右</value>
   </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>On Screen Overlay</value>
@@ -2741,10 +2741,10 @@
     <value>1/1 only supports Exclusive Fullscreen.</value>
   </data>
   <data name="SettingsPage_UISounds" xml:space="preserve">
-    <value>Enable UI sounds</value>
+    <value>启用UI音效</value>
   </data>
   <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
-    <value>Enable or disable UI sounds on navigation</value>
+    <value>启用或禁用UI音效</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
     <value>Scaling type</value>
@@ -2817,6 +2817,12 @@
   </data>
   <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
     <value />
+  </data>
+  <data name="SettingsPage_Telemetry" xml:space="preserve">
+    <value>诊断数据</value>
+  </data>
+  <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
+    <value>启用以自动上传崩溃日志</value>
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校准</value>
@@ -2902,6 +2908,27 @@
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>冬日暖阳</value>
   </data>
+  <data name="SettingsPage_QuickToolsWindowLocationMaximized" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePath" xml:space="preserve">
+    <value>显示器</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
+    <value>快速窗口显示的屏幕</value>
+  </data>
+  <data name="MainWindow_TelemetryText" xml:space="preserve">
+    <value>您是否授权 掌机伴侣 向开发团队回报诊断数据？
+
+如果授权，掌机伴侣 将自动上传崩溃日志，其中包括您系统硬件和操作系统的数据。我们绝不会收集任何个人或特征信息。
+
+这些信息有助于我们提升软件质量，更好地分配开发资源。还能帮助我们找出罕见的漏洞、性能和稳定性问题。此授权为可选授权（默认关闭），您可在设置中随时更改。
+
+感谢您使用 掌机伴侣 并帮助我们不断改进它。</value>
+  </data>
+  <data name="MainWindow_TelemetryTitle" xml:space="preserve">
+    <value>诊断数据</value>
+  </data>
   <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
     <value>覆盖窗</value>
   </data>
@@ -2956,6 +2983,24 @@
   </data>
   <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
     <value>设置CPU核心调度模式</value>
+  </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value>进程优先级</value>
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value>本程序的进程优先级</value>
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value>高于正常</value>
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value>背景</value>
   </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />

@@ -3381,4 +3381,22 @@ Thank you for using HC and helping us make it better.</value>
   <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
     <value>Set current CPU parking mode</value>
   </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value>The application process priority</value>
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value>Above normal</value>
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value>Quicktools backdrop</value>
+  </data>
 </root>
