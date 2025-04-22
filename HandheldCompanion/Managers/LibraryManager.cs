@@ -1,5 +1,6 @@
 ﻿using craftersmine.SteamGridDBNet;
 using Fastenshtein;
+using Gma.System.MouseKeyHook.HotKeys;
 using HandheldCompanion.Libraries;
 using IGDB;
 using IGDB.Models;
@@ -491,6 +492,13 @@ namespace HandheldCompanion.Managers
                 return;
 
             base.PrepareStart();
+
+            // get latest known version
+            Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+            if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
+            {
+                // do something
+            }
 
             // manage events
             NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;

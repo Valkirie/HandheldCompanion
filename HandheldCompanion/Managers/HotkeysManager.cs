@@ -45,7 +45,7 @@ public class HotkeysManager : IManager
             ProcessHotkey(fileName);
 
         // get latest known version
-        // if last time HC version used old hotkey engine and user has no defined hotkeys
+        // if last HC version used old hotkey engine and user has no defined hotkeys
         Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
         if (LastVersion < Version.Parse(Settings.VersionHotkeyManager) && hotkeys.Count == 0)
         {
