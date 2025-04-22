@@ -35,7 +35,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                             <RadioButton
                                 Width="48"
                                 Height="70"
@@ -72,7 +72,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="4">
+                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
                             <RadioButton
                                 Width="100"
                                 Height="38"
@@ -93,8 +93,8 @@
                                 Style="{StaticResource {x:Type ToggleButton}}" />
                         </ikw:SimpleStackPanel>
 
-                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="4">
-                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                 <RadioButton
                                     Width="48"
                                     Height="38"
@@ -114,7 +114,7 @@
                                     GroupName="groupFoo"
                                     Style="{StaticResource {x:Type ToggleButton}}" />
                             </ikw:SimpleStackPanel>
-                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                 <RadioButton
                                     Width="48"
                                     Height="38"

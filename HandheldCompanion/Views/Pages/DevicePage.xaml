@@ -1183,7 +1183,7 @@
                     Name="MSIClawPanel"
                     d:Background="Red"
                     d:Visibility="Visible"
-                    Spacing="4"
+                    Spacing="6"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard Description="Selected the desired controller mode" Header="Controller mode">

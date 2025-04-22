@@ -350,14 +350,6 @@
                                         </EventTrigger>
                                     </Border.Triggers>
                                 </Border>
-
-                                <Button
-                                    Name="b_Play"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding LaunchExecutable}"
-                                    Style="{DynamicResource AccentButtonStyle}">
-                                    Play
-                                </Button>
                             </ikw:SimpleStackPanel>
 
                             <Border
@@ -372,8 +364,8 @@
                                     <!--  Path  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*" MinWidth="70" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
                                         <DockPanel>
@@ -404,8 +396,8 @@
                                     <!--  Arguments  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*" MinWidth="70" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
                                         <DockPanel>
@@ -435,8 +427,8 @@
                                     <!--  Sub Profiles  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*" MinWidth="70" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
                                         <DockPanel>
                                             <ui:FontIcon
@@ -452,9 +444,10 @@
                                                 Text="{l:Static resx:Resources.ProfilesPage_SubProfiles}" />
                                         </DockPanel>
                                         <DockPanel Grid.Column="1">
-                                            <Grid Grid.Column="1" Margin="12,0,0,0">
+                                            <Grid Margin="12,0,0,0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="8*" MinWidth="400" />
+                                                    <ColumnDefinition Width="8*" MinWidth="200" />
+                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="Auto" />
@@ -493,6 +486,16 @@
                                                     VerticalAlignment="Center"
                                                     Click="b_SubProfileRename_Click">
                                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                                </Button>
+
+                                                <Button
+                                                    Name="b_Play"
+                                                    Grid.Column="4"
+                                                    Margin="6,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding LaunchExecutable}"
+                                                    Style="{DynamicResource AccentButtonStyle}">
+                                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe768;" />
                                                 </Button>
                                             </Grid>
                                         </DockPanel>
@@ -1423,7 +1426,10 @@
                                 </Grid>
                             </Expander.Content>
                         </Expander>
+                    </ikw:SimpleStackPanel>
 
+                    <!--  Compatibility settings  -->
+                    <ikw:SimpleStackPanel Spacing="6">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility}" />
 
                         <!--  Fullscreen optimizations  -->
@@ -1491,10 +1497,12 @@
                                     Toggled="UseHighDPIAwareness_Toggled" />
                             </Grid>
                         </Border>
+                    </ikw:SimpleStackPanel>
 
+                    <!--  Controller settings  -->
+                    <ikw:SimpleStackPanel Spacing="6">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
 
-                        <!--  Controller settings  -->
                         <Border
                             Padding="15,12,12,12"
                             Background="{DynamicResource ExpanderHeaderBackground}"
