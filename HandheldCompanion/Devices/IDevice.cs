@@ -530,6 +530,9 @@ public abstract class IDevice
                         case "ONEXPLAYER X1 mini":
                             device = new OneXPlayerX1Mini();
                             break;
+                        case "ONEXPLAYER X1Pro":
+                            device = new OneXPlayerX1Pro();
+                            break;
                         case "ONEXPLAYER F1":
                             {
                                 switch (Version)
