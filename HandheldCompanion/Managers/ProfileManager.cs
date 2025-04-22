@@ -735,7 +735,7 @@ public class ProfileManager : IManager
             // set update source so UpdateOrCreateProfile() will (re)create the file
             updateSource = UpdateSource.Creation;
         }
-        else
+        else if (imported)
         {
             // if imported profile targeted file doesn't exist, use executable as path
             bool pathExist = File.Exists(profile.Path);
