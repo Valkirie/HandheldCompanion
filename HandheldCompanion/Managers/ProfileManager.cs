@@ -543,9 +543,18 @@ public class ProfileManager : IManager
         }
     }
 
-    public List<Profile> GetProfiles()
+    public List<Profile> GetProfiles(bool subProfiles = false)
     {
-        return profiles.Values.ToList();
+        List<Profile> result = profiles.Values.ToList();
+        if (subProfiles)
+            result.AddRange(GetSubProfiles());
+
+        return result;
+    }
+
+    public List<Profile> GetSubProfiles()
+    {
+        return subProfiles;
     }
 
     private void ProcessProfile(string fileName, bool imported = false)

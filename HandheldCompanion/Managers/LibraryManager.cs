@@ -249,10 +249,6 @@ namespace HandheldCompanion.Managers
                 // clean and normalize the game name.
                 string gameNameCleaned = RemoveSpecialCharacters(game.Name).ToLowerInvariant();
 
-                // if the game name contains the input name, return it.
-                if (gameNameCleaned.Contains(name, StringComparison.InvariantCultureIgnoreCase))
-                    return game;
-
                 // compute a fuzzy match score between the game name and the input name.
                 int score = Levenshtein.Distance(gameNameCleaned, cleanedName);
                 if (score < bestScore)
@@ -527,7 +523,7 @@ namespace HandheldCompanion.Managers
             // get latest known version
             Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
 
-            Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
+            Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(true), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
             {
                 // skip if profile was created with library manager already implemented
                 if (profile.Version >= Version.Parse(Settings.VersionLibraryManager))

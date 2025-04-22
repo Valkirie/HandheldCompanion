@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using SharpDX.DirectInput;
@@ -7,6 +8,17 @@ namespace HandheldCompanion.Controllers;
 
 public class DClawController : DInputController
 {
+    public override bool IsReady
+    {
+        get
+        {
+             if (IDevice.GetCurrent() is ClawA1M clawA1M)
+                return clawA1M.IsOpen;
+
+             return false;
+        }
+    }
+
     public DClawController() : base()
     { }
 

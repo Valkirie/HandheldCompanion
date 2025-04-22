@@ -77,7 +77,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navLibrary}"
                 Tag="LibraryPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xECAA;" />
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F1;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
