@@ -162,6 +162,9 @@ public class ClawA1M : IDevice
 
     protected bool isNew_EC => WmiMajorVersion > 1;
 
+    private bool _IsOpen = false;
+    public override bool IsOpen => _IsOpen;
+
     public ClawA1M()
     {
         // device specific settings
@@ -303,13 +306,17 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             device.Write(CLAW_SET_M1);
-            Task.Delay(300).Wait();
+            Thread.Sleep(300);
             device.Write(CLAW_SET_M2);
-            Task.Delay(300).Wait();
+            Thread.Sleep(300);
             SyncToROM();
-            Task.Delay(300).Wait();
+            Thread.Sleep(300);
             SwitchMode(GamepadMode.MSI);
+            Thread.Sleep(2000);
         }
+
+        // set flag
+        _IsOpen = true;
 
         // start WMI event monitor
         GetWMI();
@@ -475,6 +482,9 @@ public class ClawA1M : IDevice
         foreach (HidDevice hidDevice in hidDevices.Values)
             hidDevice.Dispose();
         hidDevices.Clear();
+
+        // set flag
+        _IsOpen = false;
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
