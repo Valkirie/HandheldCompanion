@@ -57,6 +57,9 @@ public partial class Profile : ICloneable, IComparable
     public bool IsFavoriteSubProfile { get; set; }
 
     public Guid Guid { get; set; } = Guid.NewGuid();
+    public DateTime DateCreated { get; set; } = DateTime.MinValue;
+    public DateTime DateModified { get; set; } = DateTime.MinValue;
+    public DateTime LastUsed { get; set; } = DateTime.MinValue;
 
     // Library
     public LibraryEntry LibraryEntry { get; set; }

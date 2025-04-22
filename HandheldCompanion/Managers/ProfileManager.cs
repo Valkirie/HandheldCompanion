@@ -424,11 +424,15 @@ public class ProfileManager : IManager
             if (profile is null || profile.Default)
                 return;
 
-            // update profile executable path
-            profile.Path = processEx.Path;
+            // update vars
+            if (profile.LastUsed != processEx.Process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
+            {
+                profile.LastUsed = processEx.Process.StartTime;
+                profile.Path = processEx.Path;
 
-            // update profile
-            UpdateOrCreateProfile(profile);
+                // update profile
+                UpdateOrCreateProfile(profile);
+            }
         }
         catch { }
     }
@@ -454,10 +458,13 @@ public class ProfileManager : IManager
 
             if (!profile.Default)
             {
-                if (!profile.Path.Equals(processEx.Path))
+                // update vars
+                if (profile.LastUsed != processEx.Process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
                 {
-                    // update profile path
+                    profile.LastUsed = processEx.Process.StartTime;
                     profile.Path = processEx.Path;
+
+                    // update profile
                     UpdateOrCreateProfile(profile);
                 }
             }
@@ -720,10 +727,7 @@ public class ProfileManager : IManager
         {
             // give the profile a new guid
             profile.Guid = Guid.NewGuid();
-
-            // set as sub-profile
             profile.IsSubProfile = true;
-            profile.IsFavoriteSubProfile = false;
 
             // delete current file
             File.Delete(fileName);
@@ -968,6 +972,9 @@ public class ProfileManager : IManager
         }
         else
             profiles[profile.Path] = profile;
+
+        // update vars
+        profile.DateModified = DateTime.Now;
 
         // refresh error code
         SanitizeProfile(profile, source);

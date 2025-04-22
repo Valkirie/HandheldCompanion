@@ -13,7 +13,7 @@ public partial class LibraryPage : Page
     public LibraryPage()
     {
         Tag = "about";
-        DataContext = new LibraryPageViewModel();
+        DataContext = new LibraryPageViewModel(this);
         InitializeComponent();
     }
 

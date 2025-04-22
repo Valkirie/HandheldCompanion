@@ -52,6 +52,10 @@ namespace HandheldCompanion.ViewModels
         public string Name => _Profile.Name;
         public string Description => _Profile.GetOwnerName();
 
+        public DateTime DateCreated => _Profile.DateCreated;
+        public DateTime DateModified => _Profile.DateModified;
+        public DateTime LastUsed => _Profile.LastUsed;
+
         public bool IsAvailable => !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
         public ImageSource Icon
@@ -145,7 +149,9 @@ namespace HandheldCompanion.ViewModels
 
                 try
                 {
-                    // 3) Kick off the process off the UI thread
+                    // set profile as favorite
+                    ManagerFactory.profileManager.SetSubProfileAsFavorite(Profile);
+
                     await Task.Run(() =>
                     {
                         ProcessStartInfo psi = new ProcessStartInfo

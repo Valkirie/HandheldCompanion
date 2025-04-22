@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace HandheldCompanion.ViewModels
     public class LibraryPageViewModel : BaseViewModel
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
-        public ICollectionView ProfilesView { get; }
+        public ListCollectionView ProfilesView { get; }
 
         private bool _sortAscending = true;
         public bool SortAscending
@@ -25,6 +27,22 @@ namespace HandheldCompanion.ViewModels
                 {
                     _sortAscending = value;
                     OnPropertyChanged(nameof(SortAscending));
+
+                    UpdateSorting();
+                }
+            }
+        }
+
+        private int _sortTarget = 0;
+        public int SortTarget
+        {
+            get => _sortTarget;
+            set
+            {
+                if (value != _sortTarget)
+                {
+                    _sortTarget = value;
+                    OnPropertyChanged(nameof(SortTarget));
 
                     UpdateSorting();
                 }
@@ -61,12 +79,18 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public LibraryPageViewModel()
+        private LibraryPage LibraryPage;
+        public LibraryPageViewModel(LibraryPage libraryPage)
         {
+            this.LibraryPage = libraryPage;
+
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
-            ProfilesView = CollectionViewSource.GetDefaultView(Profiles);
-            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
+            ProfilesView = (ListCollectionView)CollectionViewSource.GetDefaultView(Profiles);
+            ProfilesView.IsLiveSorting = true;
+            ProfilesView.IsLiveGrouping = true;
+            ProfilesView.IsLiveFiltering = true;
+            UpdateSorting();
 
             ToggleSortCommand = new DelegateCommand(() =>
             {
@@ -112,8 +136,31 @@ namespace HandheldCompanion.ViewModels
             ListSortDirection direction = SortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
 
             ProfilesView.SortDescriptions.Clear();
-            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
-            ProfilesView.Refresh();
+
+            switch (SortTarget)
+            {
+                default:
+                case 0:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
+                    break;
+                case 1:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
+                    break;
+                case 2:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
+                    break;
+            }
+
+            // hack to get ICollectionView to comply with ItemsRepeater
+            try
+            {
+                LibraryPage.ProfilesRepeater.ItemsSource = null;
+                LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
+            }
+            catch { }
         }
 
         private void ProfileManager_Deleted(Profile profile)
@@ -128,6 +175,8 @@ namespace HandheldCompanion.ViewModels
                 Profiles.SafeRemove(foundProfile);
                 foundProfile.Dispose();
             }
+
+            UIHelper.TryInvoke(UpdateSorting);
         }
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
@@ -163,6 +212,8 @@ namespace HandheldCompanion.ViewModels
                     existingVm.Dispose();
                 }
             }
+
+            UIHelper.TryInvoke(UpdateSorting);
         }
 
         public override void Dispose()

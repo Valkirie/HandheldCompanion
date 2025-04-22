@@ -1196,7 +1196,6 @@ public partial class ProfilesPage : Page
         newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
         newSubProfile.Guid = Guid.NewGuid();
         newSubProfile.IsSubProfile = true;
-        newSubProfile.IsFavoriteSubProfile = true;
 
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
     }
