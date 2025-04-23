@@ -243,6 +243,9 @@ public static class ProcessUtils
             // Refresh to get updated process info
             process.Refresh();
 
+            if (process.HasExited)
+                return windowHandle;
+
             // First, try the main window handle if it exists and is visible
             if (process.MainWindowHandle != IntPtr.Zero && ProcessUtils.IsWindowVisible(process.MainWindowHandle))
             {
@@ -253,9 +256,9 @@ public static class ProcessUtils
             // If the main window handle is not available, try enumerating all windows on each thread
             foreach (ProcessThread thread in process.Threads)
             {
-                ProcessUtils.EnumThreadWindows((uint)thread.Id, (hWnd, lParam) =>
+                EnumThreadWindows((uint)thread.Id, (hWnd, lParam) =>
                 {
-                    if (ProcessUtils.IsWindowVisible(hWnd))
+                    if (IsWindowVisible(hWnd))
                     {
                         windowHandle = hWnd;
                         return false; // Stop enumerating since we've found a visible window

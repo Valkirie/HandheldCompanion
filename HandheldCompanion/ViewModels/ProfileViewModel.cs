@@ -174,10 +174,6 @@ namespace HandheldCompanion.ViewModels
                             }
                             catch { }
 
-                            // process has exited
-                            if (process.HasExited)
-                                return;
-
                             // wait up to 10 sec for any visible window
                             IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
                             if (hWnd != IntPtr.Zero)
