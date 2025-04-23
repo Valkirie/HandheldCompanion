@@ -60,6 +60,10 @@ public class DClawController : DInputController
             // get state
             JoystickState state = joystick.GetCurrentState();
 
+            // dirty, state is corrupted
+            if (state.RotationX == 127 && state.RotationY == 127)
+                return;
+
             Inputs.ButtonState[ButtonFlags.B1] = state.Buttons[1]; // A
             Inputs.ButtonState[ButtonFlags.B2] = state.Buttons[2]; // B
             Inputs.ButtonState[ButtonFlags.B3] = state.Buttons[0]; // X
@@ -114,6 +118,9 @@ public class DClawController : DInputController
         {
             05, 01, 00, 00,
             (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength),
+            00,
+            00,
+            00,
             00,
             00
         });
