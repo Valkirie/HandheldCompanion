@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -125,6 +126,11 @@
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1.07"
                                                     Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                    To="1"
+                                                    Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </EventTrigger>
@@ -140,6 +146,11 @@
                                                     Storyboard.TargetName="MainImage"
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1.07"
+                                                    Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                    To="1"
                                                     Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -157,6 +168,11 @@
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1.0"
                                                     Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                    To="0"
+                                                    Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </EventTrigger>
@@ -172,6 +188,11 @@
                                                     Storyboard.TargetName="MainImage"
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1.0"
+                                                    Duration="0:0:0.1" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="MainImage"
+                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                    To="0"
                                                     Duration="0:0:0.1" />
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -194,6 +215,11 @@
                                             <Image.RenderTransform>
                                                 <ScaleTransform ScaleX="1" ScaleY="1" />
                                             </Image.RenderTransform>
+
+                                            <!--  brightness effect: start at 0  -->
+                                            <Image.Effect>
+                                                <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
+                                            </Image.Effect>
                                         </Image>
                                     </Border>
 
