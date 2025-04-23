@@ -1,7 +1,8 @@
 ﻿using craftersmine.SteamGridDBNet;
 using Fastenshtein;
-using Gma.System.MouseKeyHook.HotKeys;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Libraries;
+using HandheldCompanion.Shared;
 using IGDB;
 using IGDB.Models;
 using System;
@@ -12,8 +13,10 @@ using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using static HandheldCompanion.Libraries.LibraryEntry;
+using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace HandheldCompanion.Managers
 {
@@ -359,6 +362,11 @@ namespace HandheldCompanion.Managers
                             return true;
                         }
                     }
+                    else
+                    {
+                        // Log the error if needed
+                        LogManager.LogError("Failed to download image: {0}", response.ReasonPhrase);
+                    }
                 }
             }
             catch { }
@@ -456,6 +464,11 @@ namespace HandheldCompanion.Managers
                             return true;
                         }
                     }
+                    else
+                    {
+                        // Log the error if needed
+                        LogManager.LogError("Failed to download image: {0}", response.ReasonPhrase);
+                    }
                 }
             }
             catch { }
@@ -522,33 +535,57 @@ namespace HandheldCompanion.Managers
         {
             // get latest known version
             Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+            if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
+            {
+                string Title = Properties.Resources.LibraryDiscoverTitle;
+                string Content = Properties.Resources.LibraryDiscoverText;
 
+                MessageBoxResult result = MessageBoxResult.No;
+
+                UIHelper.TryInvoke(() => { result = MessageBox.Show(Content, Title, MessageBoxButton.YesNo); });
+
+                if (result == MessageBoxResult.Yes)
+                    RefreshProfilesArts();
+            }
+        }
+
+        private void RefreshProfilesArts()
+        {
             Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(true), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
             {
-                // skip if profile was created with library manager already implemented
-                if (profile.Version >= Version.Parse(Settings.VersionLibraryManager))
-                    return;
-
-                // skip if profile already has a library entry
-                if (profile.LibraryEntry is not null)
-                    return;
-
-                // skip if profile is default
-                if (profile.Default)
-                    return;
-
-                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
-                LibraryEntry entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
-
-                // download arts
-                await UpdateProfileArts(profile, entry);
-
-                // update profile vars
-                profile.ShowInLibrary = true;
-
-                // update profile
-                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
+                RefreshProfileArts(profile);
             });
+        }
+
+        private async void RefreshProfileArts(Profile profile)
+        {
+            // skip if profile is default
+            if (profile.Default)
+                return;
+
+            LibraryEntry entry;
+            if (profile.LibraryEntry is SteamGridEntry || profile.LibraryEntry is IGDBEntry)
+            {
+                entry = profile.LibraryEntry;
+            }
+            else
+            {
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
+                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+            }
+
+            // failed to retrieve a library entry
+            if (entry is null)
+                return;
+
+            // download arts
+            await UpdateProfileArts(profile, entry);
+
+            // update profile vars
+            profile.ShowInLibrary = true;
+
+            // update profile
+            ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
         }
 
         public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverIndex = 0, int artworkIndex = 0)
@@ -556,15 +593,15 @@ namespace HandheldCompanion.Managers
             // update library entry
             if (entry is SteamGridEntry Steam)
             {
-                if (Steam.Grids.Length > coverIndex)
+                if (Steam.Grids?.Length > coverIndex)
                     Steam.Grid = Steam.Grids[coverIndex];
 
-                if (Steam.Heroes.Length > artworkIndex)
+                if (Steam.Heroes?.Length > artworkIndex)
                     Steam.Hero = Steam.Heroes[artworkIndex];
             }
             else if (entry is IGDBEntry IGDB)
             {
-                if (IGDB.Artworks.Count > artworkIndex)
+                if (IGDB.Artworks?.Count > artworkIndex)
                     IGDB.Artwork = IGDB.Artworks[artworkIndex];
             }
 
