@@ -3378,4 +3378,10 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Torne este o layout padrão</value>
   </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryDiscoverText" xml:space="preserve">
+    <value />
+  </data>
 </root>

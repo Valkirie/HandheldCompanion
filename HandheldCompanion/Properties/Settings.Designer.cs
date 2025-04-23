@@ -1272,5 +1272,29 @@ namespace HandheldCompanion.Properties
                 this["ConfigurableTDPMethod"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LibrarySortTarget {
+            get {
+                return ((int)(this["LibrarySortTarget"]));
+            }
+            set {
+                this["LibrarySortTarget"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LibrarySortAscending {
+            get {
+                return ((bool)(this["LibrarySortAscending"]));
+            }
+            set {
+                this["LibrarySortAscending"] = value;
+            }
+        }
     }
 }

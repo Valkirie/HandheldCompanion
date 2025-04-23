@@ -2881,4 +2881,10 @@
   <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryDiscoverText" xml:space="preserve">
+    <value />
+  </data>
 </root>

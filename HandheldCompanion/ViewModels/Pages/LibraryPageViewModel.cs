@@ -17,7 +17,7 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
         public ListCollectionView ProfilesView { get; }
 
-        private bool _sortAscending = true;
+        private bool _sortAscending => ManagerFactory.settingsManager.GetBoolean("LibrarySortAscending");
         public bool SortAscending
         {
             get => _sortAscending;
@@ -25,7 +25,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != SortAscending)
                 {
-                    _sortAscending = value;
+                    ManagerFactory.settingsManager.SetProperty("LibrarySortAscending", value);
                     OnPropertyChanged(nameof(SortAscending));
 
                     UpdateSorting();
@@ -33,7 +33,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private int _sortTarget = 0;
+        private int _sortTarget => ManagerFactory.settingsManager.GetInt("LibrarySortTarget");
         public int SortTarget
         {
             get => _sortTarget;
@@ -41,7 +41,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != _sortTarget)
                 {
-                    _sortTarget = value;
+                    ManagerFactory.settingsManager.SetProperty("LibrarySortTarget", value);
                     OnPropertyChanged(nameof(SortTarget));
 
                     UpdateSorting();

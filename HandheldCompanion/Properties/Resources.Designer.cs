@@ -5138,6 +5138,26 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It appears your profiles doesn’t have any artwork yet. Would you like us to automatically find and download matching covers and illustrations?
+        ///
+        ///You can always manually set artwork later in the Profiles page..
+        /// </summary>
+        public static string LibraryDiscoverText {
+            get {
+                return ResourceManager.GetString("LibraryDiscoverText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Library discovery.
+        /// </summary>
+        public static string LibraryDiscoverTitle {
+            get {
+                return ResourceManager.GetString("LibraryDiscoverTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string MainWindow_Back {
