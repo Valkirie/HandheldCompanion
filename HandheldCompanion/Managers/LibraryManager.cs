@@ -183,6 +183,7 @@ namespace HandheldCompanion.Managers
                                         formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
                                     grids = grids.Where(game => !game.IsLocked).ToArray();
+                                    grids = grids.OrderByDescending(grid => grid.Upvotes).ToArray();
 
                                     SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                         gameId: game.Id,
@@ -192,6 +193,7 @@ namespace HandheldCompanion.Managers
                                         formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
                                     heroes = heroes.Where(game => !game.IsLocked).ToArray();
+                                    heroes = heroes.OrderByDescending(hero => hero.Upvotes).ToArray();
 
                                     // Skip if no visuals are available
                                     if (grids.Length == 0 && heroes.Length == 0)
