@@ -6,6 +6,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.Bluetooth;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -389,7 +390,7 @@ namespace HandheldCompanion.Controllers
             });
         }
 
-        // this function cannot be called twice
+        public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
         public virtual void Plug()
         {
             if (isPlaceholder)
@@ -400,7 +401,6 @@ namespace HandheldCompanion.Controllers
             InjectedButtons.Clear();
         }
 
-        // this function cannot be called twice
         public virtual void Unplug()
         {
             if (isPlaceholder)

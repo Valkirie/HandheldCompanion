@@ -15,6 +15,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -318,8 +319,14 @@ public class ClawA1M : IDevice
         // set flag
         _IsOpen = true;
 
-        // start WMI event monitor
+        // prepare WMI
         GetWMI();
+
+        // unlock TDP
+        set_long_limit(30);
+        set_short_limit(35);
+
+        // start WMI event monitor
         StartWatching();
 
         // manage events
@@ -870,17 +877,19 @@ public class ClawA1M : IDevice
          * iDataBlockIndex = 1; // CPU
          * iDataBlockIndex = 2; // GPU
          */
-        byte iDataBlockIndex = 1;
 
-        // default: 49, 0, 40, 49, 58, 67, 75, 75
-        byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
+        for (byte iDataBlockIndex = 1; iDataBlockIndex < 3; iDataBlockIndex++)
+        {
+            // default: 49, 0, 40, 49, 58, 67, 75, 75
+            byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
 
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = iDataBlockIndex;
-        Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
+            // Build the complete 32-byte package:
+            byte[] fullPackage = new byte[32];
+            fullPackage[0] = iDataBlockIndex;
+            Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
 
-        WMI.Set(Scope, Path, "Set_Fan", fullPackage);
+            WMI.Set(Scope, Path, "Set_Fan", fullPackage);
+        }
     }
 
     public override void set_long_limit(int limit)

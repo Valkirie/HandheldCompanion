@@ -50,7 +50,7 @@ public class DClawController : DInputController
     public override void UpdateInputs(long ticks, float delta)
     {
         // skip if controller isn't connected
-        if (!IsConnected() || IsDisposing || IsDisposed || joystick.IsDisposed)
+        if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
@@ -60,8 +60,8 @@ public class DClawController : DInputController
             // get state
             JoystickState state = joystick.GetCurrentState();
 
-            // dirty, state is corrupted
-            if (state.RotationX == 127 && state.RotationY == 127)
+            // dirty, state is corrupted, first state ?
+            if (state.RotationX == 32767 && state.RotationY == 32767 && state.RotationZ == 32767)
                 return;
 
             Inputs.ButtonState[ButtonFlags.B1] = state.Buttons[1]; // A
@@ -101,7 +101,7 @@ public class DClawController : DInputController
         catch (SharpDX.SharpDXException ex)
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
-                Plug();
+                if (IsPlugged) Plug();
             else if (ex.ResultCode == ResultCode.InputLost)
                 AttachDetails(Details);
         }
