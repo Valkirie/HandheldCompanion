@@ -27,6 +27,7 @@
             chelper:ControlHelper.CornerRadius="8"
             BorderThickness="0"
             Command="{Binding Navigate}"
+            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
             Tag="{Binding}">
 
             <Button.Triggers>
@@ -122,6 +123,13 @@
                     <RowDefinition Height="60" />
                 </Grid.RowDefinitions>
 
+                <ui:ProgressRing
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="999"
+                    IsIndeterminate="True"
+                    Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <!--  only this Border is clipped to its own cell  -->
                 <Border Grid.Row="0" ClipToBounds="True">
                     <Image
@@ -132,6 +140,16 @@
                         <Image.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1" />
                         </Image.RenderTransform>
+
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.20" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
 
                         <!--  brightness effect: start at 0  -->
                         <Image.Effect>

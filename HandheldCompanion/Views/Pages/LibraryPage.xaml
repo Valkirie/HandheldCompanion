@@ -22,7 +22,10 @@
     <Grid Margin="20">
         <ikw:SimpleStackPanel Spacing="12">
             <ikw:SimpleStackPanel Spacing="6">
-                <ui:SettingsExpander Description="Manage library metadata" Header="Metadata">
+                <ui:SettingsExpander
+                    d:IsExpanded="True"
+                    Description="Manage library metadata"
+                    Header="Metadata">
                     <ui:SettingsExpander.HeaderIcon>
                         <Image
                             Width="24"
@@ -71,8 +74,8 @@
                     </ikw:SimpleStackPanel>
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Header="Refresh metadata">
-                            <Button Command="{Binding RefreshMetadataCommand}">Refresh</Button>
+                        <ui:SettingsCard Header="Download metadata">
+                            <Button Command="{Binding RefreshMetadataCommand}">Download</Button>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>
