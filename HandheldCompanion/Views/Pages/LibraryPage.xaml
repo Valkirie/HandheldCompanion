@@ -2,9 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.LibraryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -21,75 +19,58 @@
     mc:Ignorable="d">
 
     <Grid Margin="20">
-
-        <Rectangle
-            x:Name="BackgroundRect"
-            Width="1200"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Stretch"
-            Opacity="0">
-            <Rectangle.Fill>
-                <ImageBrush ImageSource="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}" Stretch="None" />
-            </Rectangle.Fill>
-
-            <Rectangle.OpacityMask>
-                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="1.25" RadiusY="0.7">
-                    <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
-                    <GradientStop Offset="0.4" Color="{DynamicResource MaskGradientEndColor}" />
-                </RadialGradientBrush>
-            </Rectangle.OpacityMask>
-
-            <Rectangle.Triggers>
-                <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetProperty="Opacity"
-                                From="0"
-                                To="0.2"
-                                Duration="0:0:0.3" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Rectangle.Triggers>
-        </Rectangle>
-
         <ikw:SimpleStackPanel Spacing="12">
-            <ikw:SimpleStackPanel
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Spacing="6">
-                <ComboBox Width="180" SelectedIndex="{Binding SortTarget}">
-                    <ComboBoxItem Content="Title" />
-                    <ComboBoxItem Content="Recently added" />
-                    <ComboBoxItem Content="Recently played" />
-                </ComboBox>
-                <Button Height="32" Command="{Binding ToggleSortCommand}">
-                    <Button.Style>
-                        <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
-                            <Setter Property="Content">
-                                <Setter.Value>
-                                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
-                                </Setter.Value>
-                            </Setter>
-
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SortAscending}" Value="False">
+            <ikw:SimpleStackPanel Spacing="6">
+                <ui:SettingsExpander Description="Library settings goes here !" Header="Settings">
+                    <ikw:SimpleStackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="6">
+                        <ComboBox
+                            Width="180"
+                            VerticalAlignment="Bottom"
+                            SelectedIndex="{Binding SortTarget}">
+                            <ComboBoxItem Content="Title" />
+                            <ComboBoxItem Content="Recently added" />
+                            <ComboBoxItem Content="Recently played" />
+                        </ComboBox>
+                        <Button
+                            Height="32"
+                            VerticalAlignment="Bottom"
+                            Command="{Binding ToggleSortCommand}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70D;" />
+                                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
                                         </Setter.Value>
                                     </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SortAscending}" Value="False">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70D;" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
             <!--  Library  -->
             <ikw:SimpleStackPanel Spacing="6">
-                <ui:ItemsRepeater Name="ProfilesRepeater" ItemsSource="{Binding ProfilesView}">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
+
+                <ui:ItemsRepeater
+                    Name="ProfilesRepeater"
+                    ItemTemplate="{StaticResource LibraryTemplate}"
+                    ItemsSource="{Binding ProfilesView}">
                     <ui:ItemsRepeater.Layout>
                         <!--  3:2 ratio  -->
                         <ui:UniformGridLayout
@@ -101,150 +82,6 @@
                             MinRowSpacing="12"
                             Orientation="Horizontal" />
                     </ui:ItemsRepeater.Layout>
-
-                    <ui:ItemsRepeater.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                x:Name="ImageContainer"
-                                Padding="0"
-                                chelper:ControlHelper.CornerRadius="8"
-                                BorderThickness="0"
-                                Command="{Binding Navigate}"
-                                Tag="{Binding}">
-
-                                <Button.Triggers>
-                                    <EventTrigger RoutedEvent="GotFocus">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                    To="1.07"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                    To="1.07"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                                    To="1"
-                                                    Duration="0:0:0.1" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseEnter">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                    To="1.07"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                    To="1.07"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                                    To="1"
-                                                    Duration="0:0:0.1" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="LostFocus">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                    To="1.0"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                    To="1.0"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                                    To="0"
-                                                    Duration="0:0:0.1" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseLeave">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                    To="1.0"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                    To="1.0"
-                                                    Duration="0:0:0.1" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="MainImage"
-                                                    Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                                    To="0"
-                                                    Duration="0:0:0.1" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Button.Triggers>
-
-                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="60" />
-                                    </Grid.RowDefinitions>
-
-                                    <!--  only this Border is clipped to its own cell  -->
-                                    <Border Grid.Row="0" ClipToBounds="True">
-                                        <Image
-                                            x:Name="MainImage"
-                                            RenderTransformOrigin="0.5,0.5"
-                                            Source="{Binding Cover}"
-                                            Stretch="UniformToFill">
-                                            <Image.RenderTransform>
-                                                <ScaleTransform ScaleX="1" ScaleY="1" />
-                                            </Image.RenderTransform>
-
-                                            <!--  brightness effect: start at 0  -->
-                                            <Image.Effect>
-                                                <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
-                                            </Image.Effect>
-                                        </Image>
-                                    </Border>
-
-                                    <!--  fixed 50px text row underneath  -->
-                                    <Grid Grid.Row="1" Margin="12">
-                                        <StackPanel>
-                                            <TextBlock
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                Text="{Binding Name}"
-                                                TextWrapping="NoWrap" />
-
-                                            <TextBlock
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{Binding Description}"
-                                                TextWrapping="Wrap" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Grid>
-                            </Button>
-                        </DataTemplate>
-                    </ui:ItemsRepeater.ItemTemplate>
                 </ui:ItemsRepeater>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
