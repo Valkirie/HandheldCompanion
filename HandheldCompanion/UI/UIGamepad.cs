@@ -264,6 +264,11 @@ namespace HandheldCompanion.Managers
                     // store current Page
                     gamepadPage = (Page)gamepadFrame.Content;
                 }
+                else
+                {
+                    // page already rendered
+                    ContentRendered(null, null);
+                }
             }
         }
 
@@ -327,7 +332,8 @@ namespace HandheldCompanion.Managers
 
                 // clear history on page swap
                 if (gamepadPage is not null && gamepadWindow is OverlayQuickTools)
-                    prevControl.Remove(gamepadPage.Tag, out _);
+                    if (prevControl.ContainsKey(gamepadPage.Tag))
+                        prevControl.Remove(gamepadPage.Tag, out _);
 
                 // set rendering state
                 _rendered = true;

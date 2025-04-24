@@ -534,6 +534,14 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void NavView_Navigate(string navItemTag)
     {
+        // Find and select the matching menu item
+        navView.SelectedItem = navView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Give gamepad focus
+        gamepadFocusManager.Focus((NavigationViewItem)navView.SelectedItem);
+
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
 
@@ -548,13 +556,11 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public void NavigateToPage(string navItemTag)
     {
+        if (prevNavItemTag == navItemTag)
+            return;
+
         // Update previous navigation item
         prevNavItemTag = navItemTag;
-
-        // Find and select the matching menu item
-        navView.SelectedItem = navView.MenuItems
-            .OfType<NavigationViewItem>()
-            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
 
         // Navigate to the specified page
         NavView_Navigate(navItemTag);
