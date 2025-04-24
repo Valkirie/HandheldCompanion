@@ -40,6 +40,9 @@ namespace HandheldCompanion.Managers
 
         #region events
         public event EventHandler NetworkAvailabilityChanged;
+
+        public delegate void ProfileStatusChangedEventHandler(Profile profile, ManagerStatus status);
+        public event ProfileStatusChangedEventHandler ProfileStatusChanged;
         #endregion
 
         // Network
@@ -584,8 +587,14 @@ namespace HandheldCompanion.Managers
             }
             else
             {
+                // update status
+                ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
+
                 IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
                 entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+
+                // update status
+                ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
             }
 
             // failed to retrieve a library entry
@@ -604,6 +613,9 @@ namespace HandheldCompanion.Managers
 
         public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverIndex = 0, int artworkIndex = 0)
         {
+            // update status
+            ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
+
             // update library entry
             if (entry is SteamGridEntry Steam)
             {
@@ -625,6 +637,9 @@ namespace HandheldCompanion.Managers
 
             // download arts
             await ManagerFactory.libraryManager.DownloadGameArts(entry, false);
+
+            // update status
+            ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
         }
 
         public override void Stop()

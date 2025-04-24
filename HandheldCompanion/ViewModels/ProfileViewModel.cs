@@ -58,6 +58,20 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
+        private bool _IsBusy;
+        public bool IsBusy
+        {
+            get => _IsBusy;
+            set
+            {
+                if (value !=  _IsBusy)
+                {
+                    _IsBusy = value;
+                    OnPropertyChanged(nameof(IsBusy));
+                }
+            }
+        }
+
         public ImageSource Icon
         {
             get

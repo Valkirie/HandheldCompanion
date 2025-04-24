@@ -1,10 +1,14 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
+using iNKORE.UI.WPF.Modern.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -98,9 +102,26 @@ namespace HandheldCompanion.ViewModels
                 SortAscending = !SortAscending;
             });
             
-            RefreshMetadataCommand = new DelegateCommand(() =>
+            RefreshMetadataCommand = new DelegateCommand(async () =>
             {
-                ManagerFactory.libraryManager.RefreshProfilesArts();
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = "Download Game Metadata?",
+                    Content = "This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?",
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+                }.ShowAsync();
+
+                await dialogTask; // sync call
+
+                switch (dialogTask.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        ManagerFactory.libraryManager.RefreshProfilesArts();
+                        break;
+                    default:
+                        break;
+                }
             });
 
             // raise events
@@ -116,11 +137,20 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private void LibraryManager_ProfileStatusChanged(Profile profile, ManagerStatus status)
+        {
+            ProfileViewModel? profileViewModel = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+
+            if (profileViewModel is not null)
+                profileViewModel.IsBusy = status.HasFlag(ManagerStatus.Busy);
+        }
+
         private void QueryProfile()
         {
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+            ManagerFactory.libraryManager.ProfileStatusChanged += LibraryManager_ProfileStatusChanged;
 
             // Load only the ones that should be shown
             foreach (Profile profile in ManagerFactory.profileManager.GetProfiles().Where(p => !p.Default))
@@ -227,6 +257,7 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
+            ManagerFactory.libraryManager.ProfileStatusChanged -= LibraryManager_ProfileStatusChanged;
 
             base.Dispose();
         }
