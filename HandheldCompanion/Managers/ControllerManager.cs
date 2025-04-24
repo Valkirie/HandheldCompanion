@@ -887,10 +887,8 @@ public static class ControllerManager
 
             if (XInputDrunk)
             {
-                // suspend and resume virtual controller
-                VirtualManager.Suspend(false);
-                Thread.Sleep(1000);
-                VirtualManager.Resume(false);
+                XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                vController?.AttachController(byte.MaxValue);
             }
 
             // user is emulating an Xbox360Controller
