@@ -18,7 +18,17 @@ namespace HandheldCompanion.Views.Classes
     public class GamepadWindow : Window
     {
         public List<Control> controlElements => currentDialog is not null ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements) : frameworkElements.OfType<Control>().ToList();
-        public List<FrameworkElement> frameworkElements => WPFUtils.FindChildren(this);
+        public List<FrameworkElement> frameworkElements
+        {
+            get
+            {
+                List<FrameworkElement> children = WPFUtils.FindChildren(this);
+                foreach(FrameworkElement frameworkElement in children)
+                    frameworkElement.FocusVisualStyle = null;
+
+                return children;
+            }
+        }
 
         public ContentDialog currentDialog;
         private ContentDialog contentDialog => ContentDialog.GetOpenDialog(this);
@@ -57,33 +67,22 @@ namespace HandheldCompanion.Views.Classes
 
         public void SetFocusedElement(Control focusedControl)
         {
-            if (this is MainWindow)
+            // UI thread
+            UIHelper.TryInvoke(() =>
             {
-                // force display keyboard focus rectangle
-                WPFUtils.MakeFocusVisible(this);
-            }
-            else if (this is OverlayQuickTools)
-            {
-                // force hide keyboard focus rectangle
-                WPFUtils.MakeFocusInvisible(this);
-
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                if (_highlightAdorner != null)
                 {
-                    if (_highlightAdorner != null)
-                    {
-                        _adornerLayer.Remove(_highlightAdorner);
-                        _highlightAdorner = null;
-                    }
+                    _adornerLayer.Remove(_highlightAdorner);
+                    _highlightAdorner = null;
+                }
 
-                    _adornerLayer = AdornerLayer.GetAdornerLayer(focusedControl);
-                    if (_adornerLayer != null)
-                    {
-                        _highlightAdorner = new HighlightAdorner(focusedControl);
-                        _adornerLayer.Add(_highlightAdorner);
-                    }
-                });
-            }
+                _adornerLayer = AdornerLayer.GetAdornerLayer(focusedControl);
+                if (_adornerLayer != null)
+                {
+                    _highlightAdorner = new HighlightAdorner(focusedControl);
+                    _adornerLayer.Add(_highlightAdorner);
+                }
+            });
         }
 
         public Screen GetScreen()

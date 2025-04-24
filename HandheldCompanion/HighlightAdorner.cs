@@ -1,5 +1,6 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Helpers;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -10,12 +11,17 @@ namespace HandheldCompanion
 {
     public class HighlightAdorner : Adorner
     {
-        private Rectangle _rectangle;
+        private readonly Rectangle _rectangle;
+        private readonly FrameworkElement _element;
 
         public HighlightAdorner(UIElement adornedElement) : base(adornedElement)
         {
+            // We need FrameworkElement for ActualWidth/Height, SizeChanged, etc.
+            _element = adornedElement as FrameworkElement
+                       ?? throw new InvalidOperationException("HighlightAdorner can only be applied to a FrameworkElement");
+
             // Get the FocusVisualMargin
-            Thickness focusVisualMargin = FocusVisualHelper.GetFocusVisualMargin((FrameworkElement)adornedElement);
+            Thickness focusVisualMargin = FocusVisualHelper.GetFocusVisualMargin(_element);
 
             _rectangle = new Rectangle
             {
@@ -31,10 +37,13 @@ namespace HandheldCompanion
             // Bind the Stroke property to a dynamic resource
             _rectangle.SetResourceReference(Shape.StrokeProperty, "SystemControlForegroundBaseHighBrush");
 
+            // Apply the initial corner radius
+            UpdateCornerRadius();
+
             // workaround
-            if (adornedElement is ToggleSwitch toggleSwitch)
+            if (_element is ToggleSwitch toggleSwitch)
             {
-                this.Margin = new(toggleSwitch.DesiredSize.Height, 0, 0, 0);
+                this.Margin = new Thickness(toggleSwitch.DesiredSize.Height, 0, 0, 0);
                 _rectangle.Width = toggleSwitch.DesiredSize.Width;
             }
 
@@ -45,10 +54,48 @@ namespace HandheldCompanion
 
             // prevent adorner from catching drag & drop
             ScrollViewer.SetPanningMode(this, PanningMode.HorizontalOnly);
+
+            // Re-apply size & corner radius whenever the adorned element changes
+            _element.SizeChanged += AdornedElement_SizeChanged;
+        }
+
+        private void AdornedElement_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _rectangle.Width = e.NewSize.Width;
+            _rectangle.Height = e.NewSize.Height;
+            UpdateCornerRadius();
+            InvalidateArrange();
+        }
+
+        private void UpdateCornerRadius()
+        {
+            double radius = 2; // fallback
+
+            // If the element is a Border, grab its CornerRadius
+            if (_element is Border border)
+            {
+                radius = border.CornerRadius.TopLeft;
+            }
+            // If it's a WinUI/Fluent ToggleSwitch, use its CornerRadius
+            else if (_element is ToggleSwitch ts)
+            {
+                radius = ts.CornerRadius.TopLeft;
+            }
+            // If it's some other Control with a CornerRadius property in its template...
+            else if (_element is Control ctrl)
+            {
+                // try to find the named border in its template
+                var templateBorder = ctrl.Template?.FindName("Border", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("ContainerBorder", ctrl) as Border;
+                if (templateBorder != null)
+                    radius = templateBorder.CornerRadius.TopLeft;
+            }
+
+            _rectangle.RadiusX = radius;
+            _rectangle.RadiusY = radius;
         }
 
         protected override int VisualChildrenCount => 1;
-
         protected override Visual GetVisualChild(int index) => _rectangle;
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -59,7 +106,6 @@ namespace HandheldCompanion
 
         protected override Size MeasureOverride(Size constraint)
         {
-            _rectangle.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             return new Size(_rectangle.DesiredSize.Width, _rectangle.DesiredSize.Height);
         }
     }
