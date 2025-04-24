@@ -17,10 +17,12 @@ namespace HandheldCompanion.Views.Classes
 {
     public class GamepadWindow : Window
     {
-        public List<Control> controlElements = [];
-        public List<FrameworkElement> frameworkElements = [];
+        public List<Control> controlElements => currentDialog is not null ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements) : frameworkElements.OfType<Control>().ToList();
+        public List<FrameworkElement> frameworkElements => WPFUtils.FindChildren(this);
 
         public ContentDialog currentDialog;
+        private ContentDialog contentDialog => ContentDialog.GetOpenDialog(this);
+
         protected UIGamepad gamepadFocusManager;
 
         public HwndSource hwndSource;
@@ -28,6 +30,9 @@ namespace HandheldCompanion.Views.Classes
         public bool HasForeground() => this is OverlayQuickTools || (WinAPI.GetForegroundWindow() == this.hwndSource.Handle);
         public bool IsPrimary => GetScreen().Primary;
         public bool IsIconic => ProcessUtils.IsIconic(this.hwndSource.Handle);
+
+        private AdornerLayer _adornerLayer;
+        private HighlightAdorner _highlightAdorner;
 
         public GamepadWindow()
         {
@@ -50,28 +55,18 @@ namespace HandheldCompanion.Views.Classes
             return IntPtr.Zero;
         }
 
-        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
-        {
-            // Track when objects are added and removed
-            if (visualAdded != null && visualAdded is Control)
-                controlElements.Add((Control)visualAdded);
-
-            if (visualRemoved != null && visualRemoved is Control)
-                controlElements.Remove((Control)visualRemoved);
-
-            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
-        }
-
-        private AdornerLayer _adornerLayer;
-        private HighlightAdorner _highlightAdorner;
-
         public void SetFocusedElement(Control focusedControl)
         {
             if (this is MainWindow)
+            {
                 // force display keyboard focus rectangle
                 WPFUtils.MakeFocusVisible(this);
+            }
             else if (this is OverlayQuickTools)
             {
+                // force hide keyboard focus rectangle
+                WPFUtils.MakeFocusInvisible(this);
+
                 // UI thread
                 UIHelper.TryInvoke(() =>
                 {
@@ -101,33 +96,28 @@ namespace HandheldCompanion.Views.Classes
             if (this.Visibility != Visibility.Visible)
                 return;
 
-            // get all FrameworkElement(s)
-            frameworkElements = WPFUtils.FindChildren(this);
-
-            // do we have a popup ?
-            ContentDialog dialog = ContentDialog.GetOpenDialog(this);
-            if (dialog is not null)
+            // check if a content dialog is open
+            if (contentDialog is not null)
             {
+                // a content dialog just opened
                 if (currentDialog is null)
                 {
-                    currentDialog = dialog;
+                    // store content dialog
+                    currentDialog = contentDialog;
 
-                    frameworkElements = WPFUtils.FindChildren(this);
-
-                    // get all Control(s)
-                    controlElements = WPFUtils.GetElementsFromPopup<Control>(frameworkElements);
-
+                    // raise event
                     ContentDialogOpened?.Invoke(currentDialog);
                 }
             }
-            else if (dialog is null)
+            else if (contentDialog is null)
             {
-                // get all Control(s)
-                controlElements = frameworkElements.OfType<Control>().ToList();
-
+                // a content dialog just closed
                 if (currentDialog is not null)
                 {
+                    // raise event
                     ContentDialogClosed?.Invoke(currentDialog);
+
+                    // clear content dialog
                     currentDialog = null;
                 }
             }
