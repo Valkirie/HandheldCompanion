@@ -105,17 +105,16 @@ public static class WPFUtils
         // If no controls are found, return source
         if (controls.Count == 0) return source;
 
+        /*
         // Group controls by their nearest common parent
         var groupedControls = controls
             .GroupBy(c => GetNearestCommonParent(source, c))
             .OrderBy(g => g.Key == null ? double.MaxValue : GetDistanceV2(source, g.First(), direction))
             .ToList();
+        */
 
         // Flatten the groups and sort controls by distance
-        var closestControls = groupedControls
-            .SelectMany(g => g.OrderBy(c => GetDistanceV2(source, c, direction)))
-            .ToList();
-
+        Control[] closestControls = controls.OrderBy(c => GetDistanceV2(source, c, direction)).ToArray();
         return closestControls.FirstOrDefault();
     }
 
