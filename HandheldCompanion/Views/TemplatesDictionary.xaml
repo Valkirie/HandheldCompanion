@@ -36,17 +36,17 @@
                             <DoubleAnimation
                                 Storyboard.TargetName="MainImage"
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.07"
+                                To="1.05"
                                 Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetName="MainImage"
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.07"
+                                To="1.05"
                                 Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetName="MainImage"
                                 Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                To="1"
+                                To="0.4"
                                 Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
@@ -57,17 +57,17 @@
                             <DoubleAnimation
                                 Storyboard.TargetName="MainImage"
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.07"
+                                To="1.05"
                                 Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetName="MainImage"
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.07"
+                                To="1.05"
                                 Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetName="MainImage"
                                 Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                To="1"
+                                To="0.4"
                                 Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
