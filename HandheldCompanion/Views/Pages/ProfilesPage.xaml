@@ -24,7 +24,7 @@
         <Image
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Opacity="0.6"
+            Opacity="0"
             Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
             Stretch="None">
             <Image.Triggers>
@@ -35,7 +35,7 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="Opacity"
                                 From="0"
-                                To="1"
+                                To="0.6"
                                 Duration="0:0:0.3" />
                         </Storyboard>
                     </BeginStoryboard>
