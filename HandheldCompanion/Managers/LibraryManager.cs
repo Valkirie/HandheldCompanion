@@ -46,8 +46,11 @@ namespace HandheldCompanion.Managers
         public bool IsConnected => CheckInternetConnection();
 
         // IGDB
-        private IGDBClient IGDBClient = new IGDBClient(SecretKeys.IGDB_CLIENT_ID, SecretKeys.IGDB_CLIENT_SECRET);
-        private SteamGridDb steamGridDb = new SteamGridDb(SecretKeys.STEAMGRID_CLIENT_SECRET);
+        private IGDBClient IGDBClient;
+        private SteamGridDb steamGridDb;
+
+        public bool HasIGDBClient => IGDBClient != null;
+        public bool HasSteamGridDb => steamGridDb != null;
 
         public LibraryManager()
         {
@@ -57,6 +60,9 @@ namespace HandheldCompanion.Managers
             // create path
             if (!Directory.Exists(ManagerPath))
                 Directory.CreateDirectory(ManagerPath);
+
+            try { IGDBClient = new IGDBClient(SecretKeys.IGDB_CLIENT_ID, SecretKeys.IGDB_CLIENT_SECRET); } catch { }
+            try { steamGridDb = new SteamGridDb(SecretKeys.STEAMGRID_CLIENT_SECRET); } catch { }
         }
 
         public string GetGameArtPath(long gameId, LibraryType libraryType, string imageId, string extension)
@@ -118,6 +124,9 @@ namespace HandheldCompanion.Managers
                     {
                         case LibraryFamily.IGDB:
                             {
+                                if (!HasIGDBClient)
+                                    return entries.Values;
+
                                 // Query IGDB using the search query.
                                 Game[] games = await IGDBClient.QueryAsync<Game>(IGDBClient.Endpoints.Games,
                                     query: $"fields id,name,summary,storyline,category,cover.image_id,artworks.image_id,screenshots.image_id,first_release_date; search \"{searchQuery}\";");
@@ -168,6 +177,9 @@ namespace HandheldCompanion.Managers
 
                         case LibraryFamily.SteamGrid:
                             {
+                                if (!HasSteamGridDb)
+                                    return entries.Values;
+
                                 // Query IGDB using the search query.
                                 SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(name);
 
