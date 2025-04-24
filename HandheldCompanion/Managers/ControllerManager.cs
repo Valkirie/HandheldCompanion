@@ -151,7 +151,7 @@ public static class ControllerManager
             return;
 
         // Flushing possible JoyShocks...
-        JslDisconnect();
+        SafeJslDisconnectAndDisposeAll();
 
         // unplug on close
         ClearTargetController();
@@ -670,15 +670,6 @@ public static class ControllerManager
             if (controller == null) return;
 
             if (controller is XInputController) return;
-
-            if (controller is JSController)
-            {
-                try
-                {
-                    JslDisconnect(controller.GetUserIndex());
-                }
-                catch { }
-            }
 
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
