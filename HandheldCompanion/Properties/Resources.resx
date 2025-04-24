@@ -3385,11 +3385,9 @@ Thank you for using HC and helping us make it better.</value>
     <value>Download images for this profile. For best results, match the (sub) profile name with the name of the application of IGDB or SteamGridDB</value>
   </data>
   <data name="LibraryDiscoverTitle" xml:space="preserve">
-    <value>Library discovery</value>
+    <value>Download Game Metadata?</value>
   </data>
-  <data name="LibraryDiscoverText" xml:space="preserve">
-    <value>It appears your profiles doesn’t have any artwork yet. Would you like us to automatically find and download matching covers and illustrations?
-
-You can always manually set artwork later in the Profiles page.</value>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
+    <value>This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?</value>
   </data>
 </root>

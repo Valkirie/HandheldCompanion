@@ -2886,7 +2886,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="LibraryDiscoverTitle" xml:space="preserve">
     <value />
   </data>
-  <data name="LibraryDiscoverText" xml:space="preserve">
+  <data name="LibraryDiscoverContent" xml:space="preserve">
     <value />
   </data>
 </root>

@@ -5,6 +5,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -106,8 +107,8 @@ namespace HandheldCompanion.ViewModels
             {
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
                 {
-                    Title = "Download Game Metadata?",
-                    Content = "This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?",
+                    Title = Properties.Resources.LibraryDiscoverTitle,
+                    Content = Properties.Resources.LibraryDiscoverContent,
                     CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
                     PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
                 }.ShowAsync();
@@ -135,6 +136,35 @@ namespace HandheldCompanion.ViewModels
                     QueryProfile();
                     break;
             }
+
+            switch (ManagerFactory.libraryManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.libraryManager.Initialized += LibraryManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryLibrary();
+                    break;
+            }
+        }
+
+        private void QueryLibrary()
+        {
+            // manage events
+            ManagerFactory.libraryManager.ProfileStatusChanged += LibraryManager_ProfileStatusChanged;
+
+            // get latest known version
+            Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+            if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
+            {
+                UIHelper.TryInvoke(() => { RefreshMetadataCommand.Execute(null);  });
+            }
+        }
+
+        private void LibraryManager_Initialized()
+        {
+            QueryLibrary();
         }
 
         private void LibraryManager_ProfileStatusChanged(Profile profile, ManagerStatus status)
@@ -150,7 +180,6 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
-            ManagerFactory.libraryManager.ProfileStatusChanged += LibraryManager_ProfileStatusChanged;
 
             // Load only the ones that should be shown
             foreach (Profile profile in ManagerFactory.profileManager.GetProfiles().Where(p => !p.Default))

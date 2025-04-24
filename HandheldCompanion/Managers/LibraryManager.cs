@@ -550,20 +550,7 @@ namespace HandheldCompanion.Managers
 
         private void QueryProfile()
         {
-            // get latest known version
-            Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
-            if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
-            {
-                string Title = Properties.Resources.LibraryDiscoverTitle;
-                string Content = Properties.Resources.LibraryDiscoverText;
-
-                MessageBoxResult result = MessageBoxResult.No;
-
-                UIHelper.TryInvoke(() => { result = MessageBox.Show(Content, Title, MessageBoxButton.YesNo); });
-
-                if (result == MessageBoxResult.Yes)
-                    RefreshProfilesArts();
-            }
+            // do something
         }
 
         public void RefreshProfilesArts()

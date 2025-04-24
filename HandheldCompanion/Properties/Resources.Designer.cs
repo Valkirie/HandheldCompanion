@@ -5138,18 +5138,16 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It appears your profiles doesn’t have any artwork yet. Would you like us to automatically find and download matching covers and illustrations?
-        ///
-        ///You can always manually set artwork later in the Profiles page..
+        ///   Looks up a localized string similar to This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?.
         /// </summary>
-        public static string LibraryDiscoverText {
+        public static string LibraryDiscoverContent {
             get {
-                return ResourceManager.GetString("LibraryDiscoverText", resourceCulture);
+                return ResourceManager.GetString("LibraryDiscoverContent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Library discovery.
+        ///   Looks up a localized string similar to Download Game Metadata?.
         /// </summary>
         public static string LibraryDiscoverTitle {
             get {
