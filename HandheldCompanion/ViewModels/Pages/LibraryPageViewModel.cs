@@ -50,6 +50,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public ICommand ToggleSortCommand { get; }
+        public ICommand RefreshMetadataCommand { get; }
 
         private Color _highlightColor = Colors.Red;
         public Color HighlightColor
@@ -95,6 +96,11 @@ namespace HandheldCompanion.ViewModels
             ToggleSortCommand = new DelegateCommand(() =>
             {
                 SortAscending = !SortAscending;
+            });
+            
+            RefreshMetadataCommand = new DelegateCommand(() =>
+            {
+                ManagerFactory.libraryManager.RefreshProfilesArts();
             });
 
             // raise events

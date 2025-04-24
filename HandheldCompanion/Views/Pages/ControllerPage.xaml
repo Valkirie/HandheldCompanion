@@ -134,192 +134,199 @@
                     Severity="Error" />
             </ikw:SimpleStackPanel>
 
-            <!--  Virtual controller settings  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
+            <!--  Controller settings  -->
+            <Grid>
+                <ui:ContentDialog
+                    Name="ControllerManagement"
+                    Title="{l:Static resx:Resources.ControllerPage_ControllerManagement}"
+                    Panel.ZIndex="999"
+                    Content="{l:Static resx:Resources.ControllerPage_ControllerManagement_Content}" />
 
-                <!--  Controller status  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                <ikw:SimpleStackPanel Name="ControllerSettings" Spacing="6">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
+                    <!--  Controller status  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xECF0;" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
 
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualStatus}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_VirtualStatusDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xECF0;" />
 
-                        <ComboBox
-                            Name="cB_ServiceSwitch"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_ServiceSwitch_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Disconnected}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Connected}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualStatus}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ControllerPage_VirtualStatusDesc}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
 
-                <!--  Controller type  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                            <ComboBox
+                                Name="cB_ServiceSwitch"
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                SelectionChanged="cB_ServiceSwitch_SelectionChanged">
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Disconnected}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Connected}" />
+                            </ComboBox>
+                        </Grid>
+                    </Border>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
+                    <!--  Controller type  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE7FC;" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
 
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualType}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_VirtualTypeDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE7FC;" />
 
-                        <ComboBox
-                            Name="cB_HidMode"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_HidMode_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualType}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ControllerPage_VirtualTypeDesc}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
 
-                <!--  Vibration Strength  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    IsEnabled="{Binding CanRumble, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBox
+                                Name="cB_HidMode"
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                SelectionChanged="cB_HidMode_SelectionChanged">
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
+                            </ComboBox>
+                        </Grid>
+                    </Border>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
+                    <!--  Vibration Strength  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        IsEnabled="{Binding CanRumble, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE877;" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
 
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VibrationStrength}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_VibrationStrengthExpl}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE877;" />
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBox
-                                Height="32"
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VibrationStrength}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ControllerPage_VibrationStrengthExpl}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
+
+                            <DockPanel
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBox
+                                    Height="32"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderStrength, Mode=OneWay}" />
+                                <Slider
+                                    x:Name="SliderStrength"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="10"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    SmallChange="5"
+                                    Style="{DynamicResource SliderStyle1}"
+                                    TickFrequency="5"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ValueChanged="SliderStrength_ValueChanged"
+                                    Value="100" />
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+
+                    <!--  Controller management  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8*" MinWidth="200" />
+                                <ColumnDefinition Width="2*" MinWidth="120" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xedab;" />
+
+                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_ControllerManagement}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{l:Static resx:Resources.ControllerPage_ControllerManagementDesc}"
+                                        TextWrapping="Wrap" />
+                                </ikw:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch
+                                Name="Toggle_ControllerManagement"
+                                Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                IsReadOnly="True"
-                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderStrength, Mode=OneWay}" />
-                            <Slider
-                                x:Name="SliderStrength"
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                IsMoveToPointEnabled="True"
-                                IsSnapToTickEnabled="True"
-                                LargeChange="10"
-                                Maximum="100"
-                                Minimum="0"
-                                SmallChange="5"
-                                Style="{DynamicResource SliderStyle1}"
-                                TickFrequency="5"
-                                TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                ValueChanged="SliderStrength_ValueChanged"
-                                Value="100" />
-                        </DockPanel>
-                    </Grid>
-                </Border>
-
-                <!--  Controller management  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xedab;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_ControllerManagement}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ControllerPage_ControllerManagementDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_ControllerManagement"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_ControllerManagement_Toggled" />
-                    </Grid>
-                </Border>
-            </ikw:SimpleStackPanel>
-
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_ControllerManagement_Toggled" />
+                        </Grid>
+                    </Border>
+                </ikw:SimpleStackPanel>
+            </Grid>
 
             <!--  Physical controller settings  -->
             <ikw:SimpleStackPanel Name="SteamDeckPanel" Spacing="6">

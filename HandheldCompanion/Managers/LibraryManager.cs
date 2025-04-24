@@ -563,7 +563,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void RefreshProfilesArts()
+        public void RefreshProfilesArts()
         {
             Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(true), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
             {
@@ -571,7 +571,7 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        private async void RefreshProfileArts(Profile profile)
+        public async void RefreshProfileArts(Profile profile)
         {
             // skip if profile is default
             if (profile.Default)
