@@ -164,6 +164,8 @@ public partial class Profile : ICloneable, IComparable
         Enabled = true;
     }
 
+    public bool CanExecute => !(ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable) || ErrorCode.HasFlag(ProfileErrorCode.MissingPath) || ErrorCode.HasFlag(ProfileErrorCode.Running));
+
     public object Clone()
     {
         return CloningHelper.DeepClone(this);

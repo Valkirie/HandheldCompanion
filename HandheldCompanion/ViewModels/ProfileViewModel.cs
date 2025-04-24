@@ -56,7 +56,7 @@ namespace HandheldCompanion.ViewModels
         public DateTime DateModified => _Profile.DateModified;
         public DateTime LastUsed => _Profile.LastUsed;
 
-        public bool IsAvailable => !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
+        public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
         public ImageSource Icon
         {
