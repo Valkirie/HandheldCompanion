@@ -30,14 +30,22 @@ public static class WPFUtils
 
     public static void MakeFocusVisible(Control c)
     {
-        IntPtr hWnd = GetControlHandle(c).Handle;
-        // SendMessage(hWnd, WM_CHANGEUISTATE, (IntPtr)MakeLong((int)UIS_CLEAR, (int)UISF_HIDEFOCUS), IntPtr.Zero);
+        HwndSource hwndSource = GetControlHandle(c);
+        if (hwndSource == null)
+            return;
+
+        IntPtr hWnd = hwndSource.Handle;
         SendMessage(hWnd, 257, 0x0000000000000009, (IntPtr)0x00000000c00f0001);
+        // SendMessage(hWnd, WM_CHANGEUISTATE, (IntPtr)MakeLong((int)UIS_CLEAR, (int)UISF_HIDEFOCUS), IntPtr.Zero);
     }
 
     public static void MakeFocusInvisible(Control c)
     {
-        IntPtr hWnd = GetControlHandle(c).Handle;
+        HwndSource hwndSource = GetControlHandle(c);
+        if (hwndSource == null)
+            return;
+
+        IntPtr hWnd = hwndSource.Handle;
         SendMessage(hWnd, WM_CHANGEUISTATE, MakeLong(UIS_SET, UISF_HIDEFOCUS), IntPtr.Zero);
     }
 
