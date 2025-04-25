@@ -591,9 +591,6 @@ namespace HandheldCompanion.Managers
             // download arts
             await UpdateProfileArts(profile, entry);
 
-            // update profile vars
-            profile.ShowInLibrary = true;
-
             // update profile
             ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
         }
