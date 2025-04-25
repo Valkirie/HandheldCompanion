@@ -880,6 +880,10 @@ public static class ControllerManager
             {
                 XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
                 vController?.AttachController(byte.MaxValue);
+
+                VirtualManager.Suspend(false);
+                Thread.Sleep(1000);
+                VirtualManager.Resume(false);
             }
 
             // user is emulating an Xbox360Controller
@@ -892,8 +896,16 @@ public static class ControllerManager
                     if (vController is null)
                     {
                         // wait until physical controller is here and ready
-                        XInputController? pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
-                        if (pController is null || pController.IsBusy)
+                        XInputController? pController = null;
+
+                        for (int idx = 0; idx < 4; idx++)
+                        {
+                            pController = GetControllerFromSlot<XInputController>((UserIndex)idx, true);
+                            if (pController is not null)
+                                break;
+                        }
+
+                        if (pController is null || (pController.IsBusy && !XInputDrunk))
                             continue;
 
                         // store physical controller Ids to trick the system
