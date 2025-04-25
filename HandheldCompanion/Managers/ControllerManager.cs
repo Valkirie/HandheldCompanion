@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -1003,16 +1004,20 @@ public static class ControllerManager
         }
     }
 
+    private static Notification ManagerBusy = new("Controller Management", "Controller Management is busy, please wait...") { IsInternal = true };
+
     private static void UpdateStatus(ControllerManagerStatus status)
     {
         switch (status)
         {
             case ControllerManagerStatus.Busy:
+                ManagerFactory.notificationManager.Add(ManagerBusy);
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Indeterminate);
                 break;
             case ControllerManagerStatus.Succeeded:
             case ControllerManagerStatus.Failed:
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.None);
+                ManagerFactory.notificationManager.Discard(ManagerBusy);
                 break;
             case ControllerManagerStatus.Pending:
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Paused);

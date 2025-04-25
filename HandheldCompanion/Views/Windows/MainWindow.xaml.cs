@@ -8,6 +8,7 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
+using HandheldCompanion.ViewModels.Pages;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
@@ -93,6 +94,7 @@ public partial class MainWindow : GamepadWindow
     {
         // initialize splash screen
         SplashScreen = new SplashScreen();
+        DataContext = new MainWindowViewModel();
 
         InitializeComponent();
         this.Tag = "MainWindow";

@@ -83,8 +83,6 @@
 
             <!--  Library  -->
             <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
-
                 <ui:ItemsRepeater
                     Name="ProfilesRepeater"
                     ItemTemplate="{StaticResource LibraryTemplate}"

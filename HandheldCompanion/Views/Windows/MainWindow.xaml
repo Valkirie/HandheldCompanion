@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.MainWindow_HandheldCompanion}"
     Width="1280"
     Height="720"
@@ -178,10 +179,71 @@
                 </Grid.RowDefinitions>
 
                 <Grid>
+                    <ui:InfoBar
+                        Title="{Binding InfoBarTitle}"
+                        Margin="0,0,24,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Panel.ZIndex="999"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        BorderBrush="{DynamicResource SliderThumbBorderBrush}"
+                        CloseButtonCommand="{Binding DismissInfoBarCommand}"
+                        IsClosable="True"
+                        IsOpen="{Binding IsInfoBarOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Message="{Binding InfoBarMessage}"
+                        Severity="{Binding InfoBarSeverity}">
+
+                        <ui:InfoBar.RenderTransform>
+                            <TranslateTransform Y="60" />
+                        </ui:InfoBar.RenderTransform>
+
+                        <ui:InfoBar.Style>
+                            <Style TargetType="ui:InfoBar">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="60" />
+                                    </Setter.Value>
+                                </Setter>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsInfoBarOpen}" Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard Name="ShowStoryboard">
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                        To="0"
+                                                        Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <QuadraticEase EasingMode="EaseInOut" />
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard Name="HideStoryboard">
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                        To="60"
+                                                        Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <QuadraticEase EasingMode="EaseInOut" />
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ui:InfoBar.Style>
+                    </ui:InfoBar>
+
                     <ui:ContentDialog Name="ContentDialog" />
                     <common:TouchScrollViewer
                         x:Name="scrollViewer"
-                        Grid.Row="0"
                         VerticalAlignment="Stretch"
                         PanningMode="VerticalOnly">
                         <ui:Frame
