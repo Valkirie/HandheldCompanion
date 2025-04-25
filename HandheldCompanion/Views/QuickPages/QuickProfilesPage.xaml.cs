@@ -460,21 +460,15 @@ public partial class QuickProfilesPage : Page
                     cb_SubProfiles.Items.Clear();
                     int selectedIndex = 0;
 
-                    if (profile.Default)
+                    // get self or main profile
+                    Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
+
+                    IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
+                    foreach (Profile profile in profiles)
                     {
                         cb_SubProfiles.Items.Add(profile);
-                        cb_SubProfiles.IsEnabled = false;
-                    }
-                    else
-                    {
-                        IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(selectedProfile, true);
-                        foreach (Profile profile in profiles)
-                        {
-                            cb_SubProfiles.Items.Add(profile);
-                            if (profile.Guid == selectedProfile.Guid)
-                                selectedIndex = cb_SubProfiles.Items.IndexOf(profile);
-                        }
-                        cb_SubProfiles.IsEnabled = true;
+                        if (profile.Guid == selectedProfile.Guid)
+                            selectedIndex = cb_SubProfiles.Items.IndexOf(profile);
                     }
 
                     cb_SubProfiles.SelectedIndex = selectedIndex;

@@ -933,37 +933,29 @@ public class ProfileManager : IManager
         }
     }
 
+    public bool IsCurrentProfile(Profile profile)
+    {
+        lock (profileLock)
+        {
+            return currentProfile != null
+                && profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+        }
+    }
+
     public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
-        bool isCurrent = false;
-        switch (source)
+        bool isCurrent = source switch
         {
-            // if profile is created from QT -> apply it
-            case UpdateSource.QuickProfilesCreation:
-                isCurrent = true;
-                break;
-            case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile in ProfilesPage
-                isCurrent = false;
-                break;
-            default:
-                // check if this is current profile
-                lock (profileLock)
-                {
-                    isCurrent = currentProfile is not null && profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
-                }
-                break;
-        }
+            UpdateSource.QuickProfilesCreation => true,
+            _ => IsCurrentProfile(profile)
+        };
 
-        switch (source)
-        {
-            case UpdateSource.Serializer:
-                LogManager.LogInformation("Loaded {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
-                break;
+        string profileType = profile.IsSubProfile ? "subprofile" : "profile";
+        string verb = source == UpdateSource.Serializer ? "Loaded" : "Attempting to update/create";
+        LogManager.LogInformation("{0} {1}: {2}", verb, profileType, profile.Name);
 
-            default:
-                LogManager.LogInformation("Attempting to update/create {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profile.Name);
-                break;
-        }
+        if (source is UpdateSource.Creation or UpdateSource.QuickProfilesCreation)
+            ManagerFactory.libraryManager.RefreshProfileArts(profile);
 
         // used to get and store a few previous values
         XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
@@ -988,9 +980,6 @@ public class ProfileManager : IManager
         else
             profiles[profile.Path] = profile;
 
-        // update vars
-        profile.DateModified = DateTime.Now;
-
         // refresh error code
         SanitizeProfile(profile, source);
 
@@ -999,6 +988,9 @@ public class ProfileManager : IManager
 
         if (source == UpdateSource.Serializer)
             return;
+
+        // update vars
+        profile.DateModified = DateTime.Now;
 
         // do not update wrapper and cloaking from default profile
         if (!profile.Default)
