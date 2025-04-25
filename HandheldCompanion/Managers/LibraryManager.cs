@@ -606,13 +606,13 @@ namespace HandheldCompanion.Managers
             // update library entry
             if (entry is SteamGridEntry Steam)
             {
-                if (Steam.Grid is null)
+                if (Steam.Grid is null || coverIndex != 0)
                 {
                     if (Steam.Grids?.Length > coverIndex)
                         Steam.Grid = Steam.Grids[coverIndex];
                 }
 
-                if (Steam.Hero is null)
+                if (Steam.Hero is null || artworkIndex != 0)
                 {
                     if (Steam.Heroes?.Length > artworkIndex)
                         Steam.Hero = Steam.Heroes[artworkIndex];
