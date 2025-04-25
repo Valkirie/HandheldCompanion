@@ -955,7 +955,13 @@ public class ProfileManager : IManager
         LogManager.LogInformation("{0} {1}: {2}", verb, profileType, profile.Name);
 
         if (source is UpdateSource.Creation or UpdateSource.QuickProfilesCreation)
+        {
+            // update vars
+            profile.DateCreated = DateTime.Now;
+
+            // download arts
             ManagerFactory.libraryManager.RefreshProfileArts(profile);
+        }
 
         // used to get and store a few previous values
         XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
