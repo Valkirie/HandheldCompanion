@@ -606,16 +606,25 @@ namespace HandheldCompanion.Managers
             // update library entry
             if (entry is SteamGridEntry Steam)
             {
-                if (Steam.Grids?.Length > coverIndex)
-                    Steam.Grid = Steam.Grids[coverIndex];
+                if (Steam.Grid is null)
+                {
+                    if (Steam.Grids?.Length > coverIndex)
+                        Steam.Grid = Steam.Grids[coverIndex];
+                }
 
-                if (Steam.Heroes?.Length > artworkIndex)
-                    Steam.Hero = Steam.Heroes[artworkIndex];
+                if (Steam.Hero is null)
+                {
+                    if (Steam.Heroes?.Length > artworkIndex)
+                        Steam.Hero = Steam.Heroes[artworkIndex];
+                }
             }
             else if (entry is IGDBEntry IGDB)
             {
-                if (IGDB.Artworks?.Count > artworkIndex)
-                    IGDB.Artwork = IGDB.Artworks[artworkIndex];
+                if (IGDB.Artwork is null)
+                {
+                    if (IGDB.Artworks?.Count > artworkIndex)
+                        IGDB.Artwork = IGDB.Artworks[artworkIndex];
+                }
             }
 
             // update target entry and name
