@@ -957,7 +957,9 @@ public class ProfileManager : IManager
         if (source is UpdateSource.Creation or UpdateSource.QuickProfilesCreation)
         {
             // update vars
-            profile.DateCreated = DateTime.Now;
+            profile.DateModified = profile.DateCreated = DateTime.Now;
+            if (source is UpdateSource.QuickProfilesCreation)
+                profile.LastUsed = profile.DateModified;
 
             // download arts
             ManagerFactory.libraryManager.RefreshProfileArts(profile);
