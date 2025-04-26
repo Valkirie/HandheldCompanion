@@ -13,7 +13,10 @@ namespace HandheldCompanion.Notifications
         public bool IsClosable { get; private set; }
         public bool IsClickable { get; private set; }
 
-        public Notification(string title, string message, string action, InfoBarSeverity severity)
+        public bool IsInternal { get; set; }
+        public bool IsIndeterminate { get; set; }
+
+        public Notification(string title, string message, string action = "", InfoBarSeverity severity = InfoBarSeverity.Informational)
         {
             Title = title;
             Message = message;

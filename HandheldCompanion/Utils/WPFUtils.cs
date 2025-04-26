@@ -30,14 +30,22 @@ public static class WPFUtils
 
     public static void MakeFocusVisible(Control c)
     {
-        IntPtr hWnd = GetControlHandle(c).Handle;
-        // SendMessage(hWnd, WM_CHANGEUISTATE, (IntPtr)MakeLong((int)UIS_CLEAR, (int)UISF_HIDEFOCUS), IntPtr.Zero);
+        HwndSource hwndSource = GetControlHandle(c);
+        if (hwndSource == null)
+            return;
+
+        IntPtr hWnd = hwndSource.Handle;
         SendMessage(hWnd, 257, 0x0000000000000009, (IntPtr)0x00000000c00f0001);
+        // SendMessage(hWnd, WM_CHANGEUISTATE, (IntPtr)MakeLong((int)UIS_CLEAR, (int)UISF_HIDEFOCUS), IntPtr.Zero);
     }
 
     public static void MakeFocusInvisible(Control c)
     {
-        IntPtr hWnd = GetControlHandle(c).Handle;
+        HwndSource hwndSource = GetControlHandle(c);
+        if (hwndSource == null)
+            return;
+
+        IntPtr hWnd = hwndSource.Handle;
         SendMessage(hWnd, WM_CHANGEUISTATE, MakeLong(UIS_SET, UISF_HIDEFOCUS), IntPtr.Zero);
     }
 
@@ -93,7 +101,7 @@ public static class WPFUtils
     public static Control GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
     {
         // Filter list based on requested type
-        controls = controls.Where(c => c is T && c.IsEnabled).ToList();
+        controls = controls.Where(c => c is T && c.IsEnabled && c.Opacity != 0).ToList();
 
         // Filter based on exclusion type list
         if (typesToIgnore is not null)
@@ -105,17 +113,16 @@ public static class WPFUtils
         // If no controls are found, return source
         if (controls.Count == 0) return source;
 
+        /*
         // Group controls by their nearest common parent
         var groupedControls = controls
             .GroupBy(c => GetNearestCommonParent(source, c))
             .OrderBy(g => g.Key == null ? double.MaxValue : GetDistanceV2(source, g.First(), direction))
             .ToList();
+        */
 
         // Flatten the groups and sort controls by distance
-        var closestControls = groupedControls
-            .SelectMany(g => g.OrderBy(c => GetDistanceV2(source, c, direction)))
-            .ToList();
-
+        Control[] closestControls = controls.OrderBy(c => GetDistanceV2(source, c, direction)).ToArray();
         return closestControls.FirstOrDefault();
     }
 
@@ -231,6 +238,8 @@ public static class WPFUtils
                 case "NavigationViewItem":
                 case "ComboBox":
                 case "ComboBoxItem":
+                case "ListView":
+                case "ListViewItem":
                 case "AppBarButton":
                 case "ToggleButton":
                 case "CheckBox":

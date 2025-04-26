@@ -1096,10 +1096,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Vibrate physical controller when connected</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>Desktop layout</value>
+    <value>Controller mode</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>Toggle Desktop controller layout</value>
+    <value>Change controller mode: Auto, Gamepad or Desktop</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>Display Action center</value>
@@ -3398,5 +3398,35 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
     <value>Quicktools backdrop</value>
+  </data>
+  <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value>Change the profile library settings</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value>Show in library</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value>Enable to show the profile listed in the library</value>
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value>Library settings</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
+    <value>Download images for this profile. For best results, match the (sub) profile name with the name of the application of IGDB or SteamGridDB</value>
+  </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value>Download Game Metadata?</value>
+  </data>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
+    <value>This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?</value>
   </data>
 </root>

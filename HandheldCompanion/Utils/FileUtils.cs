@@ -21,25 +21,26 @@ namespace HandheldCompanion.Utils
                 string dirPath = Path.GetDirectoryName(fileName);
                 return IsDirectoryWritable(dirPath);
             }
-            catch
-            {
-                return false;
-            }
+            catch { }
+
+            return false;
         }
 
         public static bool IsDirectoryWritable(string dirPath)
         {
             try
             {
-                using (var fs = File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+                if (Directory.Exists(dirPath))
                 {
-                    return true;
+                    using (var fs = File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+                    {
+                        return true;
+                    }
                 }
             }
-            catch
-            {
-                return false;
-            }
+            catch { }
+
+            return false;
         }
 
         public static bool IsFileUsed(string fileName)
@@ -62,11 +63,8 @@ namespace HandheldCompanion.Utils
                     return true;
                 }
             }
-            else
-            {
-                // If the file does not exist, it is not being used
-                return false;
-            }
+
+            return false;
         }
 
         public static void SetDirectoryWritable(string dirPath)

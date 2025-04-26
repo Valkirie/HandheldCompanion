@@ -95,7 +95,7 @@ namespace HandheldCompanion.Controllers
 
         public override void UpdateInputs(long ticks, float delta)
         {
-            if (input is null || IsDisposing || IsDisposed)
+            if (input is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
             ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);

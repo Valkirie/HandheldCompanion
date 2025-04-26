@@ -82,7 +82,7 @@ public class NeptuneController : SteamController
 
     public override void UpdateInputs(long ticks, float delta)
     {
-        if (Inputs is null || IsDisposing || IsDisposed)
+        if (Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);

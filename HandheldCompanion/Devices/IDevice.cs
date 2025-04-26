@@ -530,6 +530,9 @@ public abstract class IDevice
                         case "ONEXPLAYER X1 mini":
                             device = new OneXPlayerX1Mini();
                             break;
+                        case "ONEXPLAYER X1Pro":
+                            device = new OneXPlayerX1Pro();
+                            break;
                         case "ONEXPLAYER F1":
                             {
                                 switch (Version)
@@ -654,7 +657,8 @@ public abstract class IDevice
                         case "MS-1T41":
                             device = new ClawA1M();
                             break;
-                        case "MS-1T52":
+                        case "MS-1T42": // Claw 7 AI+ A2VM
+                        case "MS-1T52": // Claw 8 AI+ A2VM
                             device = new ClawA2VM();
                             break;
                     }

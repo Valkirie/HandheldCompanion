@@ -395,9 +395,6 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                // Notify subscribers about the controller change
-                ControllerSelected?.Invoke(mode);
-
                 // If target creation failed, log an error (unless it's the NoController case)
                 if (vTarget is null)
                 {
@@ -413,6 +410,9 @@ namespace HandheldCompanion.Managers
 
                 // Update the current mode
                 HIDmode = mode;
+
+                // Notify subscribers about the controller change
+                ControllerSelected?.Invoke(mode);
             }
             catch { }
             finally

@@ -20,7 +20,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand BringProcessCommand { get; private set; }
         public ICommand SwapScreenCommand { get; private set; }
 
-        public string Name => ProcessWindow.Name;
+        public string Name => ProcessWindow?.Name;
 
         private ProcessWindow _ProcessWindow;
         public ProcessWindow ProcessWindow
@@ -39,6 +39,7 @@ namespace HandheldCompanion.ViewModels
         {
             ProcessWindow = processWindow;
             ProcessWindow.Refreshed += ProcessRefreshed;
+            ProcessWindow.Disposed += ProcessDisposed;
             ProcessExViewModel = processExViewModel;
 
             ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
@@ -76,6 +77,11 @@ namespace HandheldCompanion.ViewModels
 
                 OnPropertyChanged(nameof(IsPrimaryScreen));
             });
+        }
+
+        private void ProcessDisposed(object? sender, EventArgs e)
+        {
+            Dispose();
         }
 
         private void MultimediaManager_DisplaySettingsChanged(Managers.Desktop.DesktopScreen screen, Managers.Desktop.ScreenResolution resolution)

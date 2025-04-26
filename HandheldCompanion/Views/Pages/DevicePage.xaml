@@ -1183,12 +1183,15 @@
                     Name="MSIClawPanel"
                     d:Background="Red"
                     d:Visibility="Visible"
-                    Spacing="4"
+                    Spacing="6"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard Description="Selected the desired controller mode" Header="Controller mode">
                         <ui:SettingsCard.HeaderIcon>
-                            <Image emoji:EmojiImage.Source="🎮" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <Image
+                                emoji:EmojiImage.DrawPadding="False"
+                                emoji:EmojiImage.Source="🎮"
+                                RenderOptions.BitmapScalingMode="HighQuality" />
                         </ui:SettingsCard.HeaderIcon>
 
                         <ComboBox SelectedIndex="{Binding ClawControllerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -1203,7 +1206,10 @@
                         Header="MSI OverBoost"
                         IsEnabled="False">
                         <ui:SettingsCard.HeaderIcon>
-                            <Image emoji:EmojiImage.Source="🚀" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <Image
+                                emoji:EmojiImage.DrawPadding="False"
+                                emoji:EmojiImage.Source="🚀"
+                                RenderOptions.BitmapScalingMode="HighQuality" />
                         </ui:SettingsCard.HeaderIcon>
 
                         <ui:ToggleSwitch IsOn="{Binding ClawOverBoost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

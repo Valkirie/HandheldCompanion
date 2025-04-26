@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -151,7 +152,7 @@ public static class ControllerManager
             return;
 
         // Flushing possible JoyShocks...
-        JslDisconnect();
+        SafeJslDisconnectAndDisposeAll();
 
         // unplug on close
         ClearTargetController();
@@ -671,15 +672,6 @@ public static class ControllerManager
 
             if (controller is XInputController) return;
 
-            if (controller is JSController)
-            {
-                try
-                {
-                    JslDisconnect(controller.GetUserIndex());
-                }
-                catch { }
-            }
-
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
 
@@ -887,7 +879,9 @@ public static class ControllerManager
 
             if (XInputDrunk)
             {
-                // suspend and resume virtual controller
+                XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                vController?.AttachController(byte.MaxValue);
+
                 VirtualManager.Suspend(false);
                 Thread.Sleep(1000);
                 VirtualManager.Resume(false);
@@ -903,8 +897,16 @@ public static class ControllerManager
                     if (vController is null)
                     {
                         // wait until physical controller is here and ready
-                        XInputController? pController = GetControllerFromSlot<XInputController>(UserIndex.One, true);
-                        if (pController is null || pController.IsBusy)
+                        XInputController? pController = null;
+
+                        for (int idx = 0; idx < 4; idx++)
+                        {
+                            pController = GetControllerFromSlot<XInputController>((UserIndex)idx, true);
+                            if (pController is not null)
+                                break;
+                        }
+
+                        if (pController is null || (pController.IsBusy && !XInputDrunk))
                             continue;
 
                         // store physical controller Ids to trick the system
@@ -1002,16 +1004,20 @@ public static class ControllerManager
         }
     }
 
+    private static Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might be come irresponsive for a few seconds.") { IsInternal = true };
+
     private static void UpdateStatus(ControllerManagerStatus status)
     {
         switch (status)
         {
             case ControllerManagerStatus.Busy:
+                ManagerFactory.notificationManager.Add(ManagerBusy);
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Indeterminate);
                 break;
             case ControllerManagerStatus.Succeeded:
             case ControllerManagerStatus.Failed:
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.None);
+                ManagerFactory.notificationManager.Discard(ManagerBusy);
                 break;
             case ControllerManagerStatus.Pending:
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Paused);

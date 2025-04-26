@@ -1,0 +1,101 @@
+﻿<Page
+    x:Class="HandheldCompanion.Views.Pages.LibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:emoji="http://schemas.inkore.net/lib/ui/wpf/emojis"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    Name="About"
+    Title="{l:Static resx:Resources.MainWindow_navLibrary}"
+    d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:LibraryPageViewModel}"
+    d:DesignHeight="1000"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    mc:Ignorable="d">
+
+    <Grid Margin="20">
+        <ikw:SimpleStackPanel Spacing="12">
+            <ikw:SimpleStackPanel Spacing="6">
+                <ui:SettingsExpander
+                    d:IsExpanded="True"
+                    Description="Manage library metadata"
+                    Header="Metadata">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE7BC;" />
+                    </ui:SettingsExpander.HeaderIcon>
+
+                    <ikw:SimpleStackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="6">
+                        <ComboBox
+                            Width="180"
+                            VerticalAlignment="Bottom"
+                            SelectedIndex="{Binding SortTarget}">
+                            <ComboBoxItem Content="Title" />
+                            <ComboBoxItem Content="Recently added" />
+                            <ComboBoxItem Content="Recently played" />
+                        </ComboBox>
+                        <Button
+                            Height="32"
+                            VerticalAlignment="Bottom"
+                            Command="{Binding ToggleSortCommand}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SortAscending}" Value="False">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70D;" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </ikw:SimpleStackPanel>
+
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard Header="Download metadata">
+                            <Button Command="{Binding RefreshMetadataCommand}" IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">Download</Button>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+            </ikw:SimpleStackPanel>
+
+            <!--  Library  -->
+            <ikw:SimpleStackPanel Spacing="6">
+                <ui:ItemsRepeater
+                    Name="ProfilesRepeater"
+                    ItemTemplate="{StaticResource LibraryTemplate}"
+                    ItemsSource="{Binding ProfilesView}">
+                    <ui:ItemsRepeater.Layout>
+                        <!--  3:2 ratio  -->
+                        <ui:UniformGridLayout
+                            ItemsStretch="Uniform"
+                            MaximumRowsOrColumns="8"
+                            MinColumnSpacing="12"
+                            MinItemHeight="350"
+                            MinItemWidth="200"
+                            MinRowSpacing="12"
+                            Orientation="Horizontal" />
+                    </ui:ItemsRepeater.Layout>
+                </ui:ItemsRepeater>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
+    </Grid>
+</Page>

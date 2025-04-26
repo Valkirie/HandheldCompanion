@@ -123,7 +123,7 @@ namespace HandheldCompanion.ViewModels
             if (foundProfile is null)
             {
                 if (profile.IsPinned)
-                    Profiles.SafeAdd(new ProfileViewModel(profile));
+                    Profiles.SafeAdd(new ProfileViewModel(profile, true));
             }
             else
             {

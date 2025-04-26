@@ -135,10 +135,6 @@ public static class PerformanceManager
         else
             ProcessorStatusChanged?.Invoke(false, false);
 
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
-
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
         {
@@ -170,6 +166,10 @@ public static class PerformanceManager
 
     private static void QueryPowerProfile()
     {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
+
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
     }
 

@@ -426,8 +426,12 @@ namespace HandheldCompanion.ViewModels
                 // Ensure the index is within the bounds of the collection
                 if (value != _selectedPresetIndex && value >= 0 && value < ProfilePickerItems.Count)
                 {
+                    Guid? presetId = ProfilePickerItems[value].LinkedPresetId;
+                    if (presetId is null)
+                        return;
+
                     _selectedPresetIndex = value;
-                    SelectedPreset = ManagerFactory.powerProfileManager.GetProfile(ProfilePickerItems[_selectedPresetIndex].LinkedPresetId.Value);
+                    SelectedPreset = ManagerFactory.powerProfileManager.GetProfile(presetId.Value);
                 }
             }
         }

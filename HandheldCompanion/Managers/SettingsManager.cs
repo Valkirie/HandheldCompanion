@@ -25,9 +25,14 @@ public static class Settings
     public static readonly string OnScreenDisplayBATTLevel = "OnScreenDisplayBATTLevel";
 
     /// <summary>
-    /// First version that implemented the new hotkey manager
+    /// First version that implemented the new Hotkey manager
     /// </summary>
     public static readonly string VersionHotkeyManager = "0.21.5.0";
+
+    /// <summary>
+    /// First version that implemented Library manager
+    /// </summary>
+    public static readonly string VersionLibraryManager = "0.24.0.0";
 }
 
 public enum LayoutModes

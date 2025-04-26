@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -12,6 +14,18 @@ namespace HandheldCompanion.ViewModels
         ~BaseViewModel()
         {
             Dispose(false);
+        }
+
+        protected bool SetProperty<T>(ref T storage, T value, Action onChanged = null, [CallerMemberName] string propertyName = null)
+        {
+            // If the value hasn’t changed, do nothing
+            if (EqualityComparer<T>.Default.Equals(storage, value))
+                return false;
+
+            storage = value;
+            onChanged?.Invoke();
+            OnPropertyChanged(propertyName);
+            return true;
         }
 
         public void Dispose(bool disposing)

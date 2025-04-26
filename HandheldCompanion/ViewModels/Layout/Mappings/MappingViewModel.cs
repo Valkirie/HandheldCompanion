@@ -16,6 +16,11 @@ namespace HandheldCompanion.ViewModels
     {
         public object Tag { get; set; }
         public string Content { get; set; }
+
+        public override string ToString()
+        {
+            return Content;
+        }
     }
 
     public abstract class MappingViewModel : BaseViewModel

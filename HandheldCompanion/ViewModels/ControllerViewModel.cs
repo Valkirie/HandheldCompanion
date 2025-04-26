@@ -26,7 +26,7 @@ namespace HandheldCompanion.ViewModels
         public string Enumerator => HasController ? _controller.GetEnumerator() : "USB";
         public bool IsBusy => HasController && _controller.IsBusy;
         public bool IsVirtual => HasController && _controller.IsVirtual();
-        public bool IsPlugged => HasController && ControllerManager.IsTargetController(_controller.GetInstanceId());
+        public bool IsPlugged => HasController && _controller.IsPlugged;
         public bool IsHidden => HasController && _controller.IsHidden();
         public bool IsInternal => HasController && _controller.IsInternal();
         public bool IsWireless => HasController && _controller.IsWireless();

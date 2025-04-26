@@ -293,6 +293,10 @@ public class ProcessManager : IManager
 
             processId = element.Current.ProcessId;
         }
+        catch (COMException)
+        {
+            // Operation timed out
+        }
         catch
         {
             // Automation failed to retrieve process id
@@ -323,7 +327,7 @@ public class ProcessManager : IManager
 
             // update current process
             foregroundProcess = process;
-            foregroundProcess.Refresh();
+            foregroundProcess.Refresh(true);
 
             if (foregroundProcess is not null)
                 LogManager.LogDebug("{0} process {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
@@ -536,7 +540,11 @@ public class ProcessManager : IManager
         Parallel.ForEach(Processes, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
         {
             // refresh process
-            try { process.Value.Refresh(); }
+            try
+            {
+                bool IsSuspended = windowsCache.ContainsKey(process.Value.ProcessId);
+                process.Value.Refresh(IsSuspended);
+            }
             catch { }
         });
     }

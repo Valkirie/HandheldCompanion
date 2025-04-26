@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Utils;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Automation;
 
 namespace HandheldCompanion.Misc
@@ -9,6 +10,7 @@ namespace HandheldCompanion.Misc
         private AutomationPropertyChangedEventHandler handler;
         public event EventHandler Refreshed;
         public event EventHandler Closed;
+        public event EventHandler Disposed;
 
         public AutomationElement Element { get; private set; }
         public readonly int Hwnd;
@@ -91,19 +93,16 @@ namespace HandheldCompanion.Misc
 
             try
             {
-                string elementName = Element.Current.Name;
-                if (!string.IsNullOrEmpty(elementName))
-                {
-                    Name = elementName;
-                }
-                else
-                {
-                    string title = ProcessUtils.GetWindowTitle(Hwnd);
-                    if (!string.IsNullOrEmpty(title))
-                        Name = title;
-                }
+                string title = ProcessUtils.GetWindowTitle(Hwnd);
+                if (!string.IsNullOrEmpty(title))
+                    Name = title;
             }
-            catch { }
+            catch (COMException)
+            {
+                Dispose();
+            }
+            catch
+            { }
         }
 
         public void Dispose()
@@ -140,6 +139,8 @@ namespace HandheldCompanion.Misc
             Element = null;
             handler = null;
             _disposed = true;
+
+            Disposed?.Invoke(this, EventArgs.Empty);
         }
     }
 }

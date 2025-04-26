@@ -307,9 +307,16 @@ namespace HandheldCompanion.ViewModels
                     Action = new ShiftActions(ShiftSlot.ShiftA);
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var shiftSlot in Enum.GetValues<ShiftSlot>())
+                foreach (ShiftSlot shiftSlot in Enum.GetValues<ShiftSlot>())
                 {
-                    var mappingTargetVm = new MappingTargetViewModel
+                    switch (shiftSlot)
+                    {
+                        case ShiftSlot.None:
+                        case ShiftSlot.Any:
+                            continue;
+                    }
+
+                    MappingTargetViewModel mappingTargetVm = new MappingTargetViewModel
                     {
                         Tag = shiftSlot,
                         Content = EnumUtils.GetDescriptionFromEnumValue(shiftSlot)

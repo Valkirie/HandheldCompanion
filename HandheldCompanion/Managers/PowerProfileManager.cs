@@ -15,20 +15,19 @@ namespace HandheldCompanion.Managers
 {
     public class PowerProfileManager : IManager
     {
+        private object profileLock = new();
         private PowerProfile currentProfile;
 
         public Dictionary<Guid, PowerProfile> profiles = [];
 
-        private string ProfilesPath;
-
         public PowerProfileManager()
         {
             // initialize path
-            ProfilesPath = Path.Combine(App.SettingsPath, "powerprofiles");
+            ManagerPath = Path.Combine(App.SettingsPath, "powerprofiles");
 
             // create path
-            if (!Directory.Exists(ProfilesPath))
-                Directory.CreateDirectory(ProfilesPath);
+            if (!Directory.Exists(ManagerPath))
+                Directory.CreateDirectory(ManagerPath);
         }
 
         public override void Start()
@@ -39,7 +38,7 @@ namespace HandheldCompanion.Managers
             base.PrepareStart();
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
@@ -165,21 +164,24 @@ namespace HandheldCompanion.Managers
 
         private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
-            if (currentProfile is null || currentProfile.FanProfile is null || value is null)
-                return;
-
-            // update fan profile
-            currentProfile.FanProfile.SetTemperature((float)value);
-
-            switch (currentProfile.FanProfile.fanMode)
+            lock (profileLock)
             {
-                default:
-                case FanMode.Hardware:
+                if (currentProfile is null || currentProfile.FanProfile is null || value is null)
                     return;
-                case FanMode.Software:
-                    double fanSpeed = currentProfile.FanProfile.GetFanSpeed();
-                    IDevice.GetCurrent().SetFanDuty(fanSpeed);
-                    return;
+
+                // update fan profile
+                currentProfile.FanProfile.SetTemperature((float)value);
+
+                switch (currentProfile.FanProfile.fanMode)
+                {
+                    default:
+                    case FanMode.Hardware:
+                        return;
+                    case FanMode.Software:
+                        double fanSpeed = currentProfile.FanProfile.GetFanSpeed();
+                        IDevice.GetCurrent().SetFanDuty(fanSpeed);
+                        return;
+                }
             }
         }
 
@@ -193,36 +195,42 @@ namespace HandheldCompanion.Managers
 
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            // Get the power status
-            PowerStatus powerStatus = SystemInformation.PowerStatus;
+            lock (profileLock)
+            {
+                // Get the power status
+                PowerStatus powerStatus = SystemInformation.PowerStatus;
 
-            // Get the power profile
-            PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
-            if (powerProfile is null)
-                return;
+                // Get the power profile
+                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
+                if (powerProfile is null)
+                    return;
 
-            // update current profile
-            currentProfile = powerProfile;
+                // update current profile
+                currentProfile = powerProfile;
 
-            Applied?.Invoke(powerProfile, source);
+                Applied?.Invoke(powerProfile, source);
+            }
         }
 
         private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
         {
-            // reset current profile
-            currentProfile = null;
+            lock (profileLock)
+            {
+                // reset current profile
+                currentProfile = null;
 
-            // Get the power status
-            PowerStatus powerStatus = SystemInformation.PowerStatus;
+                // Get the power status
+                PowerStatus powerStatus = SystemInformation.PowerStatus;
 
-            // Get the power profile
-            PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
-            if (powerProfile is null)
-                return;
+                // Get the power profile
+                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
+                if (powerProfile is null)
+                    return;
 
-            // don't bother discarding settings, new one will be enforce shortly
-            if (!swapped)
-                Discarded?.Invoke(powerProfile);
+                // don't bother discarding settings, new one will be enforce shortly
+                if (!swapped)
+                    Discarded?.Invoke(powerProfile);
+            }
         }
 
         private void ProcessProfile(string fileName)
@@ -285,11 +293,13 @@ namespace HandheldCompanion.Managers
             if (source == UpdateSource.Serializer)
                 return;
 
-            // warn owner
-            bool isCurrent = profile.Guid == currentProfile?.Guid;
-
-            if (isCurrent)
-                Applied?.Invoke(profile, source);
+            lock (profileLock)
+            {
+                // warn owner
+                bool isCurrent = profile.Guid == currentProfile?.Guid;
+                if (isCurrent)
+                    Applied?.Invoke(profile, source);
+            }
 
             // serialize profile
             SerializeProfile(profile);
@@ -327,10 +337,13 @@ namespace HandheldCompanion.Managers
 
         public PowerProfile GetCurrent()
         {
-            if (currentProfile is not null)
-                return currentProfile;
+            lock (profileLock)
+            {
+                if (currentProfile is not null)
+                    return currentProfile;
 
-            return GetDefault();
+                return GetDefault();
+            }
         }
 
         public void SerializeProfile(PowerProfile profile)
@@ -344,7 +357,7 @@ namespace HandheldCompanion.Managers
             });
 
             // prepare for writing
-            var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+            var profilePath = Path.Combine(ManagerPath, profile.GetFileName());
 
             try
             {
@@ -356,14 +369,17 @@ namespace HandheldCompanion.Managers
 
         public void DeleteProfile(PowerProfile profile)
         {
-            string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+            string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
 
             if (profiles.ContainsKey(profile.Guid))
             {
                 profiles.Remove(profile.Guid);
 
-                // warn owner
-                bool isCurrent = profile.Guid == currentProfile?.Guid;
+                lock (profileLock)
+                {
+                    // warn owner
+                    bool isCurrent = profile.Guid == currentProfile?.Guid;
+                }
 
                 // raise event
                 Discarded?.Invoke(profile);

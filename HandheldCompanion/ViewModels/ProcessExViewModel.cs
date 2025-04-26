@@ -16,6 +16,7 @@ namespace HandheldCompanion.ViewModels
     {
         public QuickApplicationsPageViewModel PageViewModel;
 
+        private readonly object _processWindowsSyncLock = new object();
         public ObservableCollection<ProcessWindowViewModel> ProcessWindows { get; set; } = [];
 
         private ProcessEx _process;
@@ -62,7 +63,7 @@ namespace HandheldCompanion.ViewModels
             Process.WindowDetached += Process_WindowDetached;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ProcessWindows, new object());
+            BindingOperations.EnableCollectionSynchronization(ProcessWindows, _processWindowsSyncLock);
 
             foreach (ProcessWindow processWindow in Process.ProcessWindows.Values)
             {
@@ -151,9 +152,12 @@ namespace HandheldCompanion.ViewModels
             }
 
             // Dispose all ProcessWindows
-            foreach (ProcessWindowViewModel processWindow in ProcessWindows)
-                processWindow.Dispose();
-            ProcessWindows.Clear();
+            lock (_processWindowsSyncLock)
+            {
+                foreach (ProcessWindowViewModel processWindow in ProcessWindows)
+                    processWindow.Dispose();
+                ProcessWindows.SafeClear();
+            }
 
             // dispose commands
             KillProcessCommand = null;

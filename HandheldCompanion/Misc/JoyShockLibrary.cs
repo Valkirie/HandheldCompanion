@@ -105,9 +105,8 @@ public static class JSL
     [DllImport("JoyShockLibrary")]
     public static extern void JslDisconnectAndDisposeAll();
 
-    public static void JslDisconnect()
+    public static void SafeJslDisconnectAndDisposeAll()
     {
-        // Flushing possible JoyShocks...
         Task jslTask = Task.Run(() => JslDisconnectAndDisposeAll());
 
         bool completedInTime = jslTask.Wait(TimeSpan.FromSeconds(2));
@@ -119,6 +118,15 @@ public static class JSL
     public static extern bool JslStillConnected(int deviceId);
     [DllImport("JoyShockLibrary")]
     public static extern void JslDisconnect(int deviceId);
+
+    public static void SafeJslDisconnect(int deviceId)
+    {
+        Task jslTask = Task.Run(() => JslDisconnect(deviceId));
+
+        bool completedInTime = jslTask.Wait(TimeSpan.FromSeconds(2));
+        if (!completedInTime)
+            LogManager.LogWarning("JslDisconnect() timed out.");
+    }
 
     [DllImport("JoyShockLibrary", CallingConvention = CallingConvention.Cdecl)]
     public static extern JOY_SHOCK_STATE JslGetSimpleState(int deviceId);

@@ -17,13 +17,17 @@ namespace HandheldCompanion.Managers
 
         public void Add(Notification notification)
         {
-            Notifications.Add(notification);
+            if (!notification.IsInternal)
+                Notifications.Add(notification);
+
             Added?.Invoke(notification);
         }
 
         public void Discard(Notification notification)
         {
-            Notifications.Remove(notification);
+            if (!notification.IsInternal)
+                Notifications.Remove(notification);
+
             Discarded?.Invoke(notification);
         }
     }

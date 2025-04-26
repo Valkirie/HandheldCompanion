@@ -1,7 +1,9 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
+    xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
@@ -17,6 +19,166 @@
     <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
     <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
     <converters:IsNullConverter x:Key="IsNullConverter" />
+
+    <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
+        <Button
+            x:Name="ImageContainer"
+            Padding="0"
+            chelper:ControlHelper.CornerRadius="8"
+            BorderThickness="0"
+            Command="{Binding Navigate}"
+            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+            Tag="{Binding}">
+
+            <Button.Style>
+                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.20" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+            <Button.Triggers>
+                <EventTrigger RoutedEvent="GotFocus">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                To="0.4"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                To="0.4"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="LostFocus">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                To="1.0"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                To="1.0"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                To="0"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                To="1.0"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                To="1.0"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="MainImage"
+                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                To="0"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Button.Triggers>
+
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="60" />
+                </Grid.RowDefinitions>
+
+                <ui:ProgressRing
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="999"
+                    IsIndeterminate="True"
+                    Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <!--  only this Border is clipped to its own cell  -->
+                <Border Grid.Row="0" ClipToBounds="True">
+                    <Image
+                        x:Name="MainImage"
+                        RenderTransformOrigin="0.5,0.5"
+                        Source="{Binding Cover}"
+                        Stretch="UniformToFill">
+                        <Image.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </Image.RenderTransform>
+
+                        <!--  brightness effect: start at 0  -->
+                        <Image.Effect>
+                            <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
+                        </Image.Effect>
+                    </Image>
+                </Border>
+
+                <!--  fixed 50px text row underneath  -->
+                <Grid Grid.Row="1" Margin="12">
+                    <StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Text="{Binding Name}"
+                            TextWrapping="NoWrap" />
+
+                        <TextBlock
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{Binding Description}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Button>
+    </DataTemplate>
 
     <DataTemplate x:Key="ControllerTemplate" DataType="{x:Type viewmodels:ControllerViewModel}">
         <Border
@@ -819,7 +981,7 @@
                 </TextBlock>
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
@@ -963,8 +1125,8 @@
                                         </ComboBox>
 
                                         <!--  Motion activator  -->
-                                        <ui:ItemsRepeater ItemsSource="{Binding HotkeysList}">
-                                            <ui:ItemsRepeater.ItemTemplate>
+                                        <ItemsControl ItemsSource="{Binding HotkeysList}">
+                                            <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
@@ -1002,9 +1164,9 @@
                                                             </ToggleButton.Resources>
 
                                                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                                <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
-                                                                    <ui:ItemsRepeater.Style>
-                                                                        <Style TargetType="ui:ItemsRepeater">
+                                                                <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
+                                                                    <ItemsControl.Style>
+                                                                        <Style TargetType="ItemsControl">
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
                                                                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -1014,18 +1176,15 @@
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
-                                                                    </ui:ItemsRepeater.Style>
+                                                                    </ItemsControl.Style>
 
-                                                                    <ui:ItemsRepeater.Layout>
-                                                                        <ui:UniformGridLayout
-                                                                            ItemsJustification="Center"
-                                                                            ItemsStretch="Uniform"
-                                                                            MaximumRowsOrColumns="10"
-                                                                            MinColumnSpacing="3"
-                                                                            Orientation="Horizontal" />
-                                                                    </ui:ItemsRepeater.Layout>
+                                                                    <ItemsControl.ItemsPanel>
+                                                                        <ItemsPanelTemplate>
+                                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                                                                        </ItemsPanelTemplate>
+                                                                    </ItemsControl.ItemsPanel>
 
-                                                                    <ui:ItemsRepeater.ItemTemplate>
+                                                                    <ItemsControl.ItemTemplate>
                                                                         <DataTemplate>
                                                                             <ui:FontIcon
                                                                                 FontFamily="PromptFont"
@@ -1043,8 +1202,8 @@
                                                                                 </ui:FontIcon.Style>
                                                                             </ui:FontIcon>
                                                                         </DataTemplate>
-                                                                    </ui:ItemsRepeater.ItemTemplate>
-                                                                </ui:ItemsRepeater>
+                                                                    </ItemsControl.ItemTemplate>
+                                                                </ItemsControl>
 
                                                                 <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                                                     <TextBlock.Style>
@@ -1082,8 +1241,8 @@
                                                         </Button>
                                                     </Grid>
                                                 </DataTemplate>
-                                            </ui:ItemsRepeater.ItemTemplate>
-                                        </ui:ItemsRepeater>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </ikw:SimpleStackPanel>
                                 </Grid>
 
@@ -1453,7 +1612,7 @@
                     Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
@@ -2159,7 +2318,7 @@
                 </TextBlock>
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
@@ -2534,7 +2693,7 @@
                 </TextBlock>
             </DockPanel>
 
-            <ui:ItemsRepeater ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ItemsControl ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

@@ -162,6 +162,9 @@ public class ClawA1M : IDevice
 
     protected bool isNew_EC => WmiMajorVersion > 1;
 
+    private bool _IsOpen = false;
+    public override bool IsOpen => _IsOpen;
+
     public ClawA1M()
     {
         // device specific settings
@@ -303,16 +306,26 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             device.Write(CLAW_SET_M1);
-            Task.Delay(300).Wait();
+            Thread.Sleep(300);
             device.Write(CLAW_SET_M2);
-            Task.Delay(300).Wait();
+            Thread.Sleep(300);
             SyncToROM();
-            Task.Delay(300).Wait();
+            Thread.Sleep(300);
             SwitchMode(GamepadMode.MSI);
+            Thread.Sleep(2000);
         }
 
-        // start WMI event monitor
+        // set flag
+        _IsOpen = true;
+
+        // prepare WMI
         GetWMI();
+
+        // unlock TDP
+        set_long_limit(30);
+        set_short_limit(35);
+
+        // start WMI event monitor
         StartWatching();
 
         // manage events
@@ -475,6 +488,9 @@ public class ClawA1M : IDevice
         foreach (HidDevice hidDevice in hidDevices.Values)
             hidDevice.Dispose();
         hidDevices.Clear();
+
+        // set flag
+        _IsOpen = false;
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
@@ -860,17 +876,19 @@ public class ClawA1M : IDevice
          * iDataBlockIndex = 1; // CPU
          * iDataBlockIndex = 2; // GPU
          */
-        byte iDataBlockIndex = 1;
 
-        // default: 49, 0, 40, 49, 58, 67, 75, 75
-        byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
+        for (byte iDataBlockIndex = 1; iDataBlockIndex < 3; iDataBlockIndex++)
+        {
+            // default: 49, 0, 40, 49, 58, 67, 75, 75
+            byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
 
-        // Build the complete 32-byte package:
-        byte[] fullPackage = new byte[32];
-        fullPackage[0] = iDataBlockIndex;
-        Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
+            // Build the complete 32-byte package:
+            byte[] fullPackage = new byte[32];
+            fullPackage[0] = iDataBlockIndex;
+            Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
 
-        WMI.Set(Scope, Path, "Set_Fan", fullPackage);
+            WMI.Set(Scope, Path, "Set_Fan", fullPackage);
+        }
     }
 
     public override void set_long_limit(int limit)

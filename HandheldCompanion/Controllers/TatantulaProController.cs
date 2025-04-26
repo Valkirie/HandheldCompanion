@@ -199,7 +199,7 @@ namespace HandheldCompanion.Controllers
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
-            if (!IsConnected() || IsDisposing || IsDisposed)
+            if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
             base.UpdateInputs(ticks, delta, false);

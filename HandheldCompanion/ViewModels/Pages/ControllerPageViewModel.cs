@@ -2,10 +2,12 @@
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -32,6 +34,21 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public BitmapImage Artwork
+        {
+            get
+            {
+                switch (VirtualManager.HIDmode)
+                {
+                    default:
+                    case HIDmode.Xbox360Controller:
+                        return LibraryResources.Xbox360Big;
+                    case HIDmode.DualShock4Controller:
+                        return LibraryResources.DualShock4Big;
+                }
+            }
+        }
+
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
 
@@ -47,6 +64,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
             // raise events
             switch (ManagerFactory.layoutManager.Status)
@@ -63,6 +81,11 @@ namespace HandheldCompanion.ViewModels
             // send events
             if (ControllerManager.HasTargetController)
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
+        }
+
+        private void VirtualManager_ControllerSelected(HIDmode mode)
+        {
+            OnPropertyChanged(nameof(Artwork));
         }
 
         private void QueryLayouts()
@@ -139,6 +162,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerUnplugged -= ControllerUnplugged;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;
+            VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
 
             base.Dispose();
         }

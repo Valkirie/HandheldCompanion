@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -142,11 +141,8 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         base.OnSourceInitialized(e);
 
-        hwndSource.AddHook(WndProc);
-
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
-        exStyle |= WS_EX_NOACTIVATE;
-        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle);
+        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
 
         /*
         int Style = WinAPI.GetWindowLong(hwndSource.Handle, GWL_STYLE);
@@ -356,33 +352,42 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // do something
+        gamepadFocusManager.Loaded();
     }
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    // hack variables
+    private Timer WMPaintTimer = new(100) { AutoReset = false };
+    private bool WMPaintPending = false;
+    private DateTime prevDraw = DateTime.MinValue;
 
-    private const int WA_ACTIVE = 1;
-    private const int WA_CLICKACTIVE = 2;
-    private const int WA_INACTIVE = 0;
-    private static readonly IntPtr HWND_TOP = new IntPtr(0);
-    private const uint SWP_FRAMECHANGED = 0x0020;
-
-    private IntPtr prevWParam = new(0x0000000000000086);
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        // prevent activation on mouse click
+        if (msg == WM_MOUSEACTIVATE)
+        {
+            handled = true;
+            return new IntPtr(MA_NOACTIVATE);
+        }
+
         switch (msg)
         {
             case WM_SYSCOMMAND:
                 {
-                    var command = wParam.ToInt32() & 0xfff0;
-                    if (command == SC_MOVE) handled = true;
+                    int command = wParam.ToInt32() & 0xfff0;
+                    if (command == SC_MOVE)
+                        handled = true;
                 }
                 break;
 
             case WM_ACTIVATE:
-                handled = true;
-                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                {
+                    handled = true;
+                    WPFUtils.SendMessage(
+                        hwndSource.Handle,
+                        WM_NCACTIVATE,
+                        new IntPtr(0),    // FALSE = show as inactive
+                        IntPtr.Zero);
+                }
                 break;
 
             case WM_PAINT:
@@ -419,8 +424,6 @@ public partial class OverlayQuickTools : GamepadWindow
         return IntPtr.Zero;
     }
 
-    DateTime prevDraw = DateTime.MinValue;
-
     private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (WMPaintPending)
@@ -435,13 +438,19 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
-    private Timer WMPaintTimer = new(100) { AutoReset = false };
-    private bool WMPaintPending = false;
-
     private void HandleEsc(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
             ToggleVisibility();
+    }
+
+    public void SetVisibility(Visibility visibility)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.Visibility = visibility;
+        });
     }
 
     public void ToggleVisibility()
@@ -525,6 +534,14 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void NavView_Navigate(string navItemTag)
     {
+        // Find and select the matching menu item
+        navView.SelectedItem = navView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Give gamepad focus
+        gamepadFocusManager.Focus((NavigationViewItem)navView.SelectedItem);
+
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
 
@@ -539,13 +556,11 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public void NavigateToPage(string navItemTag)
     {
+        if (prevNavItemTag == navItemTag)
+            return;
+
         // Update previous navigation item
         prevNavItemTag = navItemTag;
-
-        // Find and select the matching menu item
-        navView.SelectedItem = navView.MenuItems
-            .OfType<NavigationViewItem>()
-            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
 
         // Navigate to the specified page
         NavView_Navigate(navItemTag);

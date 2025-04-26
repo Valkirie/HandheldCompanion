@@ -1,4 +1,4 @@
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -475,6 +475,7 @@ public partial class ProfilesPage : Page
             return;
 
         selectedMainProfile = (Profile)cB_Profiles.SelectedItem;
+
         UpdateSubProfiles();
     }
 
@@ -499,6 +500,8 @@ public partial class ProfilesPage : Page
 
         if (profileLock.TryEnter())
         {
+            ((ProfilesPageViewModel)DataContext).ProfileChanged(selectedProfile);
+
             try
             {
                 UIHelper.TryInvoke(() =>
@@ -514,21 +517,14 @@ public partial class ProfilesPage : Page
                     cB_Wrapper.IsEnabled = !selectedProfile.Default;
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
                     UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
+                    LibrarySettings.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
 
                     // enable delete and rename if not default sub profile
-                    if (cb_SubProfilePicker.SelectedIndex == 0) // main profile
-                    {
-                        b_SubProfileDelete.IsEnabled = false;
-                        b_SubProfileRename.IsEnabled = false;
-                    }
-                    else // actual sub profile
-                    {
-                        b_SubProfileDelete.IsEnabled = true;
-                        b_SubProfileRename.IsEnabled = true;
-                    }
+                    b_SubProfileDelete.IsEnabled = selectedProfile.IsSubProfile ? true : false;
+                    b_SubProfileRename.IsEnabled = selectedProfile.IsSubProfile ? true : false;
 
                     // Profile info
                     tB_ProfileName.Text = selectedMainProfile.Name;
@@ -541,6 +537,9 @@ public partial class ProfilesPage : Page
                     cB_Pinned.IsChecked = selectedProfile.IsPinned;
                     cB_Suspend.IsChecked = selectedProfile.SuspendOnSleep;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
+
+                    // Library
+                    Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
 
                     // Emulated controller assigned to the profile
                     cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable combobox
@@ -619,11 +618,9 @@ public partial class ProfilesPage : Page
                     };
 
                     WarningInfoBar.Visibility = warningVisibility;
-                    cB_Whitelist.IsEnabled = controlsEnabled;
-                    cB_Pinned.IsEnabled = controlsEnabled;
-                    cB_Suspend.IsEnabled = controlsEnabled;
-                    cB_Wrapper.IsEnabled = controlsEnabled;
+                    GlobalSettings.IsEnabled = controlsEnabled;
                     cB_Wrapper_Injection.IsEnabled = controlsEnabled;
+                    b_Play.IsEnabled = controlsEnabled;
                     cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
 
                     // update dropdown lists
@@ -639,7 +636,7 @@ public partial class ProfilesPage : Page
         }
     }
 
-    private void UpdateSubProfiles()
+    private void UpdateSubProfiles(Profile updatedProfile = null)
     {
         if (selectedMainProfile is null)
             return;
@@ -648,30 +645,24 @@ public partial class ProfilesPage : Page
         {
             try
             {
-                int idx = 0; // default or main profile itself
-
-                // add main profile as first subprofile
                 cb_SubProfilePicker.Items.Clear();
-                cb_SubProfilePicker.Items.Add(selectedMainProfile);
 
-                // if main profile is not default, occupy sub profiles dropdown list
+                IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(selectedMainProfile, true);
+                foreach (Profile profile in profiles)
+                    cb_SubProfilePicker.Items.Add(profile);
+
+                // Only need to refresh if we loaded real sub‑profiles
                 if (!selectedMainProfile.Default)
-                {
-                    foreach (Profile subprofile in ManagerFactory.profileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
-                    {
-                        cb_SubProfilePicker.Items.Add(subprofile);
+                    cb_SubProfilePicker.Items.Refresh();
 
-                        // select sub profile if it's favorite for main profile
-                        if (subprofile.IsFavoriteSubProfile)
-                            idx = cb_SubProfilePicker.Items.IndexOf(subprofile);
-                    }
-                }
+                // Decide which index to select
+                int selectedIndex;
+                if (updatedProfile != null && cb_SubProfilePicker.Items.Contains(updatedProfile))
+                    selectedIndex = cb_SubProfilePicker.Items.IndexOf(updatedProfile);
+                else
+                    selectedIndex = profiles.Select((p, i) => new { p, i }).FirstOrDefault(x => x.p.IsFavoriteSubProfile)?.i ?? 0;
 
-                // refresh sub profiles dropdown
-                cb_SubProfilePicker.Items.Refresh();
-
-                // set subprofile to be applied
-                cb_SubProfilePicker.SelectedIndex = idx;
+                cb_SubProfilePicker.SelectedIndex = selectedIndex;
             }
             catch { }
             finally
@@ -832,22 +823,13 @@ public partial class ProfilesPage : Page
 
     public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
-        // self call - update ui and return
+        isCurrent = selectedProfile?.Guid == profile?.Guid;
+        isCurrent |= source.HasFlag(UpdateSource.Creation);
+
         switch (source)
         {
-            case UpdateSource.ProfilesPage:
-            case UpdateSource.ProfilesPageUpdateOnly:
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Profiles.SelectedItem = profile;
-                });
-                return;
             case UpdateSource.QuickProfilesPage:
-                {
-                    isCurrent = selectedProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                    if (!isCurrent) return;
-                }
+                if (!isCurrent) return;
                 break;
         }
 
@@ -855,11 +837,11 @@ public partial class ProfilesPage : Page
         UIHelper.TryInvoke(() =>
         {
             var idx = -1;
-            if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
+            if (!profile.IsSubProfile)
             {
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    bool isCurrent = pr.Guid == profile.Guid;
                     if (isCurrent)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
@@ -874,19 +856,15 @@ public partial class ProfilesPage : Page
 
                 cB_Profiles.Items.Refresh();
 
-                cB_Profiles.SelectedItem = profile;
+                if (isCurrent)
+                    cB_Profiles.SelectedItem = profile;
             }
-
-            else if (!profile.IsFavoriteSubProfile)
-                cB_Profiles.SelectedItem = profile;
-
-            else // TODO updateUI to show main & sub profile selected
+            else if (isCurrent)
             {
-                Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(profile);
-                cB_Profiles.SelectedItem = mainProfile;
+                cB_Profiles.SelectedItem = selectedMainProfile;
             }
 
-            UpdateSubProfiles(); // TODO check
+            UpdateSubProfiles(profile);
         });
     }
 
@@ -1213,13 +1191,13 @@ public partial class ProfilesPage : Page
     private void b_SubProfileCreate_Click(object sender, RoutedEventArgs e)
     {
         // create a new sub profile matching the original profile's settings
-        Profile newSubProfile = (Profile)selectedProfile.Clone();
+        Profile newSubProfile = (Profile)selectedMainProfile.Clone();
+
         newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
-        newSubProfile.Guid = Guid.NewGuid(); // must be unique
+        newSubProfile.Guid = Guid.NewGuid();
         newSubProfile.IsSubProfile = true;
-        newSubProfile.IsFavoriteSubProfile = true;
+
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
-        UpdateSubProfiles();
     }
 
     private async void b_SubProfileDelete_Click(object sender, RoutedEventArgs e)
@@ -1266,8 +1244,6 @@ public partial class ProfilesPage : Page
 
         // serialize subprofile
         SubmitProfile();
-
-        UpdateSubProfiles();
     }
 
     private void SubProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -1286,11 +1262,6 @@ public partial class ProfilesPage : Page
     {
         // change main profile name
         selectedMainProfile.Name = tB_ProfileName.Text;
-
-        // change it in 
-        int ind = cB_Profiles.Items.IndexOf(selectedMainProfile);
-        cB_Profiles.Items[ind] = selectedMainProfile;
-
         SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
     }
 
@@ -1438,6 +1409,20 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.Arguments = tB_ProfileArguments.Text;
+        UpdateProfile();
+    }
+
+    // Toggle to show or hide profile in library or quick start
+    private void ShowInLibrary_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.ShowInLibrary = Toggle_ShowInLibrary.IsOn;
         UpdateProfile();
     }
 }

@@ -143,7 +143,10 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
-                <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    d:IsExpanded="true"
+                    IsExpanded="False">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -224,7 +227,10 @@
                     </ikw:SimpleStackPanel>
                 </Expander>
 
-                <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    d:IsExpanded="true"
+                    IsExpanded="False">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -464,11 +470,11 @@
                                 <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
                                 <!--  Motion activator  -->
-                                <ui:ItemsRepeater
+                                <ItemsControl
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
                                     ItemsSource="{Binding HotkeysList}">
-                                    <ui:ItemsRepeater.ItemTemplate>
+                                    <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -506,9 +512,9 @@
                                                     </ToggleButton.Resources>
 
                                                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                        <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
-                                                            <ui:ItemsRepeater.Style>
-                                                                <Style TargetType="ui:ItemsRepeater">
+                                                        <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
+                                                            <ItemsControl.Style>
+                                                                <Style TargetType="ItemsControl">
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
                                                                             <Setter Property="Visibility" Value="Collapsed" />
@@ -518,18 +524,15 @@
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </ui:ItemsRepeater.Style>
+                                                            </ItemsControl.Style>
 
-                                                            <ui:ItemsRepeater.Layout>
-                                                                <ui:UniformGridLayout
-                                                                    ItemsJustification="Center"
-                                                                    ItemsStretch="Uniform"
-                                                                    MaximumRowsOrColumns="10"
-                                                                    MinColumnSpacing="3"
-                                                                    Orientation="Horizontal" />
-                                                            </ui:ItemsRepeater.Layout>
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
 
-                                                            <ui:ItemsRepeater.ItemTemplate>
+                                                            <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
                                                                     <ui:FontIcon
                                                                         FontFamily="PromptFont"
@@ -547,8 +550,8 @@
                                                                         </ui:FontIcon.Style>
                                                                     </ui:FontIcon>
                                                                 </DataTemplate>
-                                                            </ui:ItemsRepeater.ItemTemplate>
-                                                        </ui:ItemsRepeater>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
 
                                                         <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                                             <TextBlock.Style>
@@ -586,8 +589,8 @@
                                                 </Button>
                                             </Grid>
                                         </DataTemplate>
-                                    </ui:ItemsRepeater.ItemTemplate>
-                                </ui:ItemsRepeater>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
                                 <!--  Separator  -->
                                 <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />

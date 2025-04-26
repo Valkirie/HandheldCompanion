@@ -1017,7 +1017,7 @@
   </data>
   <data name="WarningElevated" xml:space="preserve">
     <value>以管理員身份運行此工具以更改這些設置</value>
-      </data>
+  </data>
   <data name="ControllerPage_SteamControllerMode" xml:space="preserve">
     <value>Controller mode</value>
   </data>
@@ -1076,10 +1076,10 @@
     <value>手柄連接時實體手柄震動提示</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>桌面布局</value>
+    <value>Controller mode</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>激活桌面布局</value>
+    <value>Change controller mode: Auto, Gamepad or Desktop</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>操作中心</value>
@@ -1470,18 +1470,6 @@
   </data>
   <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>目標功耗</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
-    <value>原生屏幕方向</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
-    <value>某些功能可能會依賴原生屏幕方向來運作，如果這裡沒有被正確識別，請手動設置方向，然後點擊檢測</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
-    <value>檢測</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
-    <value>未設置</value>
   </data>
   <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
     <value>CPU超頻</value>
@@ -2301,7 +2289,7 @@
   </data>
   <data name="MainWindow_Select" xml:space="preserve">
     <value>選擇</value>
-      </data>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>掌機伴侶將停用 Steam Input 並重新啟動 Steam</value>
   </data>
@@ -2527,9 +2515,6 @@
   <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
     <value>M2</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>設為默認佈局</value>
-  </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
     <value>切換虛擬手柄類型</value>
   </data>
@@ -2581,9 +2566,9 @@
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Disable ASUS services</value>
   </data>
-    <data name="Hint_SteamInputAction" xml:space="preserve">
+  <data name="Hint_SteamInputAction" xml:space="preserve">
     <value>停用 Steam Input</value>
-  </data>  
+  </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
     <value>通知</value>
   </data>
@@ -2844,9 +2829,6 @@
   </data>
   <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>裝置設定</value>
-  </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>哎呀，看起來您的設備尚未受支援。軟體可能無法按預期運行。</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
@@ -3321,7 +3303,7 @@
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrate</value>
-    </data>
+  </data>
   <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
     <value>嘗試 {0}: </value>
   </data>
@@ -3398,6 +3380,51 @@
     <value />
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+    <value>原生屏幕方向</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+    <value>某些功能可能會依賴原生屏幕方向來運作，如果這裡沒有被正確識別，請手動設置方向，然後點擊檢測</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+    <value>檢測</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+    <value>未設置</value>
+  </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>設為默認佈局</value>
+  </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
     <value />
   </data>
 </root>
