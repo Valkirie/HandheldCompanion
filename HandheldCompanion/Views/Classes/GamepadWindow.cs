@@ -23,7 +23,7 @@ namespace HandheldCompanion.Views.Classes
             get
             {
                 List<FrameworkElement> children = WPFUtils.FindChildren(this);
-                foreach(FrameworkElement frameworkElement in children)
+                foreach (FrameworkElement frameworkElement in children)
                     frameworkElement.FocusVisualStyle = null;
 
                 return children;

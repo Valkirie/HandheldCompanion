@@ -12,10 +12,10 @@ public class DClawController : DInputController
     {
         get
         {
-             if (IDevice.GetCurrent() is ClawA1M clawA1M)
+            if (IDevice.GetCurrent() is ClawA1M clawA1M)
                 return clawA1M.IsOpen;
 
-             return false;
+            return false;
         }
     }
 
@@ -102,8 +102,8 @@ public class DClawController : DInputController
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
                 if (IsPlugged) Plug();
-            else if (ex.ResultCode == ResultCode.InputLost)
-                AttachDetails(Details);
+                else if (ex.ResultCode == ResultCode.InputLost)
+                    AttachDetails(Details);
         }
 
         base.UpdateInputs(ticks, delta);
