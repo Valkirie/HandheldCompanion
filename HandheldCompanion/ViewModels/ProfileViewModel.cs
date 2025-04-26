@@ -64,7 +64,7 @@ namespace HandheldCompanion.ViewModels
             get => _IsBusy;
             set
             {
-                if (value !=  _IsBusy)
+                if (value != _IsBusy)
                 {
                     _IsBusy = value;
                     OnPropertyChanged(nameof(IsBusy));

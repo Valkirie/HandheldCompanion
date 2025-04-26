@@ -27,11 +27,7 @@
                     Description="Manage library metadata"
                     Header="Metadata">
                     <ui:SettingsExpander.HeaderIcon>
-                        <Image
-                            Width="24"
-                            emoji:EmojiImage.DrawPadding="False"
-                            emoji:EmojiImage.Source="🔖"
-                            RenderOptions.BitmapScalingMode="HighQuality" />
+                        <ui:FontIcon Glyph="&#xE7BC;" />
                     </ui:SettingsExpander.HeaderIcon>
 
                     <ikw:SimpleStackPanel
@@ -75,7 +71,7 @@
 
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard Header="Download metadata">
-                            <Button Command="{Binding RefreshMetadataCommand}">Download</Button>
+                            <Button Command="{Binding RefreshMetadataCommand}" IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">Download</Button>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>

@@ -274,6 +274,8 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool IsLibraryBusy => ManagerFactory.libraryManager.IsBusy;
+        public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
+
         private Profile libraryProfile;
 
         public ICommand RefreshLibrary { get; private set; }
@@ -289,11 +291,28 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(ProfilePickerItems, new object());
             BindingOperations.EnableCollectionSynchronization(LibraryPickers, new object());
 
-            // manage events
-            ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
-            ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
-            ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-            ManagerFactory.libraryManager.StatusChanged += LibraryManager_StatusChanged;
+            // raise events
+            switch (ManagerFactory.powerProfileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPowerProfile();
+                    break;
+            }
+
+            switch (ManagerFactory.libraryManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.libraryManager.Initialized += LibraryManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryLibrary();
+                    break;
+            }
 
             _devicePresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_DevicePresets };
             _userPresetsPickerVM = new() { IsHeader = true, Text = Resources.PowerProfilesPage_UserPresets };
@@ -357,15 +376,48 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
+        private void QueryLibrary()
+        {
+            // manage events
+            ManagerFactory.libraryManager.StatusChanged += LibraryManager_StatusChanged;
+            ManagerFactory.libraryManager.NetworkAvailabilityChanged += LibraryManager_NetworkAvailabilityChanged;
+
+            // raise events
+            OnPropertyChanged(nameof(IsLibraryConnected));
+            OnPropertyChanged(nameof(IsLibraryBusy));
+        }
+
+        private void LibraryManager_Initialized()
+        {
+            QueryLibrary();
+        }
+
+        private void LibraryManager_NetworkAvailabilityChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(IsLibraryConnected));
+        }
+
         private void LibraryManager_StatusChanged(ManagerStatus status)
         {
             OnPropertyChanged(nameof(IsLibraryBusy));
         }
 
-        private void PowerProfileManager_Initialized()
+        private void QueryPowerProfile()
         {
+            // manage events
+            ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
+            ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
+
+            foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+
             SelectedPresetIndexAC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
             SelectedPresetIndexDC = ProfilePickerItems.IndexOf(ProfilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+        }
+
+        private void PowerProfileManager_Initialized()
+        {
+            QueryPowerProfile();
         }
 
         private object ProfilePickerLock = new();
@@ -460,7 +512,9 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+            ManagerFactory.libraryManager.Initialized -= LibraryManager_Initialized;
             ManagerFactory.libraryManager.StatusChanged -= LibraryManager_StatusChanged;
+            ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
 
             base.Dispose();
         }

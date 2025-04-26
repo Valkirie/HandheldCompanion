@@ -90,12 +90,12 @@ namespace HandheldCompanion.Managers
             Stop();
         }
 
-        protected void AddStatus(ManagerStatus status)
+        protected virtual void AddStatus(ManagerStatus status)
         {
             Status |= status;
         }
 
-        protected void RemoveStatus(ManagerStatus status)
+        protected virtual void RemoveStatus(ManagerStatus status)
         {
             Status &= ~status;
         }

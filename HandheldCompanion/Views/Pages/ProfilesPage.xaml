@@ -620,6 +620,7 @@
                                 VerticalAlignment="Center"
                                 Command="{Binding DisplayLibrary}"
                                 Content="{l:Static resx:Resources.ProfilesPage_LibraryRefreshImageButton}"
+                                IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Style="{DynamicResource AccentButtonStyle}" />
 
                             <ui:SettingsExpander.Items>

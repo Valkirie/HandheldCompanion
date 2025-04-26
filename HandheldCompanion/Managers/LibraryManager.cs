@@ -1,7 +1,7 @@
 ﻿using craftersmine.SteamGridDBNet;
 using Fastenshtein;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Libraries;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using IGDB;
 using IGDB.Models;
@@ -12,11 +12,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using static HandheldCompanion.Libraries.LibraryEntry;
-using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace HandheldCompanion.Managers
 {
@@ -524,7 +523,7 @@ namespace HandheldCompanion.Managers
             base.PrepareStart();
 
             // manage events
-            NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
+            NetworkChange.NetworkAddressChanged += (sender, e) => NetworkChange_NetworkAddressChanged(false);
 
             switch (ManagerFactory.profileManager.Status)
             {
@@ -538,7 +537,7 @@ namespace HandheldCompanion.Managers
             }
 
             // raise events
-            OnNetworkAvailabilityChanged(null, null);
+            NetworkChange_NetworkAddressChanged(true);
 
             base.Start();
         }
@@ -643,7 +642,7 @@ namespace HandheldCompanion.Managers
             base.PrepareStop();
 
             // manage events
-            NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+            NetworkChange.NetworkAddressChanged -= (sender, e) => NetworkChange_NetworkAddressChanged(false);
 
             base.Stop();
         }
@@ -665,10 +664,34 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private async void OnNetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
+        private static Notification IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = true };
+
+        protected override void AddStatus(ManagerStatus status)
         {
-            // Optional: wait a short time to allow network stabilization.
-            await Task.Delay(2000);
+            switch (status)
+            {
+                case ManagerStatus.Busy:
+                    // send internal notification
+                    ManagerFactory.notificationManager.Add(IsBusy);
+                    break;
+            }
+
+            base.AddStatus(status);
+        }
+
+        private static Notification ConnectivityDown = new("Library Manager", "Oops, we're offline! We will let you know when we are back.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification ConnectivityUp = new("Library Manager", "We are back online. All features are available.") { IsInternal = true, IsIndeterminate = true };
+
+        private void NetworkChange_NetworkAddressChanged(bool startup)
+        {
+            if (!startup)
+            {
+                // wait a short time to allow network stabilization
+                Thread.Sleep(4000);
+
+                // send internal notification
+                ManagerFactory.notificationManager.Add(IsConnected ? ConnectivityUp : ConnectivityDown);
+            }
 
             // check connection
             CheckInternetConnection();

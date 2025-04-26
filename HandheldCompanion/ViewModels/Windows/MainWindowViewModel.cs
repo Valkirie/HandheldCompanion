@@ -15,7 +15,7 @@ namespace HandheldCompanion.ViewModels.Pages
         private string _infoBarTitle;
         private InfoBarSeverity _infoBarSeverity;
 
-        private Notification _currentNotification;
+        private Guid _currentNotification;
         private CancellationTokenSource _closeCts;
 
         public MainWindowViewModel()
@@ -56,17 +56,25 @@ namespace HandheldCompanion.ViewModels.Pages
 
         public ICommand DismissInfoBarCommand { get; }
 
-        private void NotificationManager_Added(Notification notification)
+        private async void NotificationManager_Added(Notification notification)
         {
             if (!notification.IsInternal)
+                return;
+
+            // Only display if different to current notification
+            if (notification.Guid == _currentNotification)
                 return;
 
             // Cancel any pending close
             _closeCts?.Cancel();
 
             // Remember this as the “active” one
-            _currentNotification = notification;
+            _currentNotification = notification.Guid;
             _closeCts = new CancellationTokenSource();
+
+            // Hide previous InfoBar
+            IsInfoBarOpen = false;
+            await Task.Delay(1000).ConfigureAwait(false);
 
             // Set up the InfoBar
             InfoBarTitle = notification.Title;
@@ -79,13 +87,13 @@ namespace HandheldCompanion.ViewModels.Pages
                 _ = AutoCloseAfterDelayAsync(_closeCts.Token);
         }
 
-        private void NotificationManager_Discarded(Notification notification)
+        private async void NotificationManager_Discarded(Notification notification)
         {
             if (!notification.IsInternal)
                 return;
 
-            // Only hide if they're discarding the notification we're showing
-            if (notification != _currentNotification)
+            // Only hide if discarding current notification
+            if (notification.Guid != _currentNotification)
                 return;
 
             // cancel the pending auto-close so it doesn't race
@@ -95,7 +103,7 @@ namespace HandheldCompanion.ViewModels.Pages
             IsInfoBarOpen = false;
 
             // Clear the active marker
-            _currentNotification = null;
+            _currentNotification = Guid.Empty;
         }
 
         private async Task AutoCloseAfterDelayAsync(CancellationToken ct)
@@ -108,7 +116,7 @@ namespace HandheldCompanion.ViewModels.Pages
                 if (!ct.IsCancellationRequested)
                 {
                     IsInfoBarOpen = false;
-                    _currentNotification = null;
+                    _currentNotification = Guid.Empty;
                 }
             }
             catch (TaskCanceledException)

@@ -85,6 +85,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
+
         private LibraryPage LibraryPage;
         public LibraryPageViewModel(LibraryPage libraryPage)
         {
@@ -102,7 +104,7 @@ namespace HandheldCompanion.ViewModels
             {
                 SortAscending = !SortAscending;
             });
-            
+
             RefreshMetadataCommand = new DelegateCommand(async () =>
             {
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
@@ -153,13 +155,22 @@ namespace HandheldCompanion.ViewModels
         {
             // manage events
             ManagerFactory.libraryManager.ProfileStatusChanged += LibraryManager_ProfileStatusChanged;
+            ManagerFactory.libraryManager.NetworkAvailabilityChanged += LibraryManager_NetworkAvailabilityChanged;
 
             // get latest known version
             Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
             if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
             {
-                UIHelper.TryInvoke(() => { RefreshMetadataCommand.Execute(null);  });
+                UIHelper.TryInvoke(() => { RefreshMetadataCommand.Execute(null); });
             }
+
+            // raise events
+            OnPropertyChanged(nameof(IsLibraryConnected));
+        }
+
+        private void LibraryManager_NetworkAvailabilityChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(IsLibraryConnected));
         }
 
         private void LibraryManager_Initialized()

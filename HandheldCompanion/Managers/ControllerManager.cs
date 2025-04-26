@@ -1004,7 +1004,7 @@ public static class ControllerManager
         }
     }
 
-    private static Notification ManagerBusy = new("Controller Management", "Controller Management is busy, please wait...") { IsInternal = true };
+    private static Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might be come irresponsive for a few seconds.") { IsInternal = true };
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
