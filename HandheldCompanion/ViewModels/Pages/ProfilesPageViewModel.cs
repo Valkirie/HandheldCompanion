@@ -286,6 +286,8 @@ namespace HandheldCompanion.ViewModels
         public ICommand DownloadLibrary { get; private set; }
         public ICommand LaunchExecutable { get; private set; }
 
+        private ContentDialog contentDialog;
+
         public ProfilesPageViewModel(ProfilesPage profilesPage)
         {
             this.profilesPage = profilesPage;
@@ -332,7 +334,19 @@ namespace HandheldCompanion.ViewModels
 
             DisplayLibrary = new DelegateCommand(async () =>
             {
-                profilesPage.IGGBDialog.ShowAsync(ContentDialogPlacement.InPlace);
+                // capture dialog content
+                object content = profilesPage.IGGBDialog.Content;
+
+                contentDialog = new ContentDialog
+                {
+                    Title = profilesPage.IGGBDialog.Title,
+                    CloseButtonText = profilesPage.IGGBDialog.CloseButtonText,
+                    IsEnabled = this.IsLibraryConnected,
+                    Content = content,
+                    DataContext = this,
+                };
+
+                contentDialog.ShowAsync();
                 RefreshLibrary.Execute(null);
             });
 
@@ -362,6 +376,9 @@ namespace HandheldCompanion.ViewModels
             {
                 // download arts
                 await ManagerFactory.libraryManager.UpdateProfileArts(libraryProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex);
+
+                // hide dialog
+                contentDialog?.Hide();
 
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(libraryProfile, UpdateSource.LibraryUpdate);
