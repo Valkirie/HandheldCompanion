@@ -50,7 +50,10 @@
         </Image>
 
         <StackPanel>
-            <ui:ContentDialog Name="IGGBDialog" CloseButtonText="Close">
+            <ui:ContentDialog
+                Name="IGGBDialog"
+                CloseButtonText="Close"
+                IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <Grid>
                     <ui:ProgressRing
                         Panel.ZIndex="1"
