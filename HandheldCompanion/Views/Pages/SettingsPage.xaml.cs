@@ -1,4 +1,5 @@
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Localization;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Platforms;
@@ -31,16 +32,7 @@ public partial class SettingsPage : Page
         InitializeComponent();
 
         // initialize components
-        cB_Language.Items.Add(new CultureInfo("en-US"));
-        cB_Language.Items.Add(new CultureInfo("fr-FR"));
-        cB_Language.Items.Add(new CultureInfo("de-DE"));
-        cB_Language.Items.Add(new CultureInfo("it-IT"));
-        cB_Language.Items.Add(new CultureInfo("ja-JP"));
-        cB_Language.Items.Add(new CultureInfo("pt-BR"));
-        cB_Language.Items.Add(new CultureInfo("es-ES"));
-        cB_Language.Items.Add(new CultureInfo("zh-Hans"));
-        cB_Language.Items.Add(new CultureInfo("zh-Hant"));
-        cB_Language.Items.Add(new CultureInfo("ru-RU"));
+        cB_Language.ItemsSource = TranslationSource.ValidCultures;
 
         // manage events
         UpdateManager.Updated += UpdateManager_Updated;
@@ -169,7 +161,11 @@ public partial class SettingsPage : Page
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
                     break;
                 case "CurrentCulture":
-                    cB_Language.SelectedItem = new CultureInfo((string)value);
+                    cB_Language.SelectedItem = (string)value switch
+                    {
+                        "" => TranslationSource.Instance.CurrentCulture,
+                        _ => new CultureInfo((string)value)
+                    };
                     break;
                 case "PlatformRTSSEnabled":
                     Toggle_RTSS.IsOn = Convert.ToBoolean(value);

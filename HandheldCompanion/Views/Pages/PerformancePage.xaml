@@ -697,11 +697,11 @@
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="CPU parking mode" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.PerformancePage_CPUParkingMode}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Set current CPU parking mode"
+                                    Text="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </DockPanel>

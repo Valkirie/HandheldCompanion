@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -866,7 +866,7 @@
     <value>Acrylic</value>
   </data>
   <data name="SettingsPage_BackdropDesc" xml:space="preserve">
-    <value>此程序的背景图像</value>
+    <value>此程序的背景</value>
   </data>
   <data name="SettingsPage_BackdropMica" xml:space="preserve">
     <value>Mica</value>
@@ -1304,10 +1304,10 @@
     <value>实体手柄未被隐藏</value>
   </data>
   <data name="ControllerPage_SteamControllerHDRumble" xml:space="preserve">
-    <value>高清震动</value>
+    <value>HD震动</value>
   </data>
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
-    <value>使用高清震动功能可能会占用更多CPU资源</value>
+    <value>使用HD震动功能可能会占用更多CPU资源</value>
   </data>
   <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>控制器设置</value>
@@ -1505,10 +1505,10 @@
     <value>电源选项</value>
   </data>
   <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
-    <value>工具窗口背景图像</value>
+    <value>快速窗口背景</value>
   </data>
   <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
-    <value>工具窗口选项</value>
+    <value>快速窗口设置</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
     <value>窗口位置</value>
@@ -2285,19 +2285,19 @@
     <value>Select</value>
   </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
-    <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
+    <value>你可能需要卸载 Steam Xbox 扩展功能支持驱动</value>
   </data>
   <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
-    <value>Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller</value>
+    <value>它会令隐藏物理手柄功能失效</value>
   </data>
   <data name="Hint_SteamXboxDrivers" xml:space="preserve">
-    <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
+    <value>已安装 Steam Xbox 扩展功能支持驱动</value>
   </data>
   <data name="DevicePage_Device" xml:space="preserve">
-    <value>Device</value>
+    <value>设备</value>
   </data>
   <data name="MainWindow_navDevice" xml:space="preserve">
-    <value>Device</value>
+    <value>设备</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
     <value>Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond.</value>
@@ -2360,19 +2360,19 @@
     <value>Direction</value>
   </data>
   <data name="MainWindow_navPerformance" xml:space="preserve">
-    <value>Performance</value>
+    <value>性能</value>
   </data>
   <data name="PerformancePage_Device" xml:space="preserve">
-    <value>Performance</value>
+    <value>性能</value>
   </data>
   <data name="ProfilesPage_CPUMhz" xml:space="preserve">
     <value>CPU Clock max frequency</value>
   </data>
   <data name="QuickPerformancePage_CPUControl" xml:space="preserve">
-    <value>Manual CPU Clock Control</value>
+    <value>CPU</value>
   </data>
   <data name="QuickPerformancePage_CPUControlDesc" xml:space="preserve">
-    <value>Sets the CPU to a fixed clock</value>
+    <value>手动设置CPU频率</value>
   </data>
   <data name="QuickPerformancePage_CPUUnit" xml:space="preserve">
     <value> Mhz</value>
@@ -2444,10 +2444,10 @@
     <value>Adjust main refresh rate</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
-    <value>Fan settings</value>
+    <value>风扇设置</value>
   </data>
   <data name="ProfilesPage_FanSettingsDesc" xml:space="preserve">
-    <value>Change the fan settings</value>
+    <value>更改风扇设置</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
     <value>Create a new power preset</value>
@@ -2522,10 +2522,10 @@
     <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Controller management</value>
+    <value>手柄管理</value>
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage your controllers for greater compatibility</value>
+    <value>自动管理手柄以提高兼容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -2534,10 +2534,10 @@
     <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
-    <value>Close</value>
+    <value>关闭</value>
   </data>
   <data name="ControllerPage_TryAgain" xml:space="preserve">
-    <value>Try again</value>
+    <value>重试</value>
   </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
     <value>ASUS services are running</value>
@@ -2552,13 +2552,13 @@
     <value>Disable ASUS services</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
-    <value>Notifications</value>
+    <value>通知</value>
   </data>
   <data name="NotificationsPage_NothingToSee" xml:space="preserve">
-    <value>No notifications yet</value>
+    <value>没有通知</value>
   </data>
   <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
-    <value>You have no notifications right now.</value>
+    <value>你现在没有通知</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
     <value>Go to profiles settings to change per-game emulated controller type preference.</value>
@@ -2597,16 +2597,16 @@
     <value>Fan max speed override</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
-    <value>Integer scaling is not available</value>
+    <value>整倍缩放不可用</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
-    <value>Deploy integer scaling</value>
+    <value>安装整倍缩放</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckDesc" xml:space="preserve">
-    <value>Integer scaling feature is not installed, therefore you won't be able to enable or disable it</value>
+    <value>没有安装整倍缩放，所以你不能使用该功能</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheckReadme" xml:space="preserve">
-    <value>We need to execute some script to deploy the integer scaling on your system</value>
+    <value>我们需要运行一些脚本以安装整倍缩放</value>
   </data>
   <data name="QuickOverlayPage_Desc" xml:space="preserve">
     <value>Manage on-screen overlay</value>
@@ -2660,16 +2660,16 @@
     <value>Change the graphics settings</value>
   </data>
   <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
-    <value>Preset selection</value>
+    <value>预设选择</value>
   </data>
   <data name="PowerProfilesPage_PresetSelectionDesc" xml:space="preserve">
-    <value>Select the preset you would like to edit</value>
+    <value>选择要更改的预设</value>
   </data>
   <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
-    <value>Device presets</value>
+    <value>设备预设</value>
   </data>
   <data name="PowerProfilesPage_UserPresets" xml:space="preserve">
-    <value>User presets</value>
+    <value>用户预设</value>
   </data>
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>功耗设置</value>
@@ -2678,10 +2678,10 @@
     <value>Resolution is currently overridden by profile</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
-    <value>Left</value>
+    <value>靠左</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
-    <value>Right</value>
+    <value>靠右</value>
   </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>On Screen Overlay</value>
@@ -2741,10 +2741,10 @@
     <value>1/1 only supports Exclusive Fullscreen.</value>
   </data>
   <data name="SettingsPage_UISounds" xml:space="preserve">
-    <value>Enable UI sounds</value>
+    <value>启用UI音效</value>
   </data>
   <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
-    <value>Enable or disable UI sounds on navigation</value>
+    <value>启用或禁用UI音效</value>
   </data>
   <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
     <value>Scaling type</value>
@@ -2759,25 +2759,25 @@
     <value>Nearest Neighbor</value>
   </data>
   <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
-    <value>connected to the computer</value>
+    <value>已连接到电脑</value>
   </data>
   <data name="ControllerPage_VirtualDevices" xml:space="preserve">
-    <value>Virtual controller</value>
+    <value>虚拟手柄</value>
   </data>
   <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
-    <value>is what the computer uses</value>
+    <value>目前电脑使用的</value>
   </data>
   <data name="ControllerPage_VirtualStatus" xml:space="preserve">
-    <value>Controller status</value>
+    <value>手柄状态</value>
   </data>
   <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
-    <value>Change virtual controller status</value>
+    <value>更改虚拟手柄状态</value>
   </data>
   <data name="ControllerPage_VirtualType" xml:space="preserve">
-    <value>Controller type</value>
+    <value>手柄类型</value>
   </data>
   <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
-    <value>Change virtual controller type</value>
+    <value>更改虚拟手柄类型</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
     <value>Auto Sleep Time</value>
@@ -2803,8 +2803,71 @@
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Trigger Margin</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>你的设备暂未在支持列表，本程序可能无法正常使用。</value>
+  </data>
+  <data name="SettingsPage_SensorCalibration" xml:space="preserve">
+    <value>校准传感器</value>
+  </data>
+  <data name="SettingsPage_SensorCalibrationDesc" xml:space="preserve">
+    <value>校准设备的惯性传感器</value>
+  </data>
+  <data name="OverlayPage_SteamDeck" xml:space="preserve">
+    <value>Steam Deck</value>
+  </data>
+  <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Telemetry" xml:space="preserve">
+    <value>诊断数据</value>
+  </data>
+  <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
+    <value>启用以自动上传崩溃日志</value>
+  </data>
+  <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
+    <value>校准</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
+    <value>激进</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Disabled" xml:space="preserve">
+    <value>停用</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientAggressive" xml:space="preserve">
+    <value>高能效激进</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_EfficientEnabled" xml:space="preserve">
+    <value>高能效</value>
+  </data>
+  <data name="PerformancePage_CPUBoost_Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
+    <value>设置风扇模式</value>
+  </data>
+  <data name="PerformancePage_FanMode_Hardware" xml:space="preserve">
+    <value>硬件</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Aggressive" xml:space="preserve">
+    <value>激进</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="PerformancePage_FanMode_Preset_Quiet" xml:space="preserve">
+    <value>静音</value>
+  </data>
+  <data name="PerformancePage_FanMode_Software" xml:space="preserve">
+    <value>软件</value>
+  </data>
+  <data name="PerformancePage_FanMode_Title" xml:space="preserve">
+    <value>风扇模式</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Desc" xml:space="preserve">
+    <value>限制 CPU 未停用核心数</value>
+  </data>
+  <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
+    <value>最大 CPU 数量</value>
   </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>预设效果</value>
@@ -2845,6 +2908,30 @@
   <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
     <value>冬日暖阳</value>
   </data>
+  <data name="SettingsPage_QuickToolsWindowLocationMaximized" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePath" xml:space="preserve">
+    <value>显示器</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
+    <value>快速窗口显示的屏幕</value>
+  </data>
+  <data name="MainWindow_TelemetryText" xml:space="preserve">
+    <value>您是否授权 掌机伴侣 向开发团队回报诊断数据？
+
+如果授权，掌机伴侣 将自动上传崩溃日志，其中包括您系统硬件和操作系统的数据。我们绝不会收集任何个人或特征信息。
+
+这些信息有助于我们提升软件质量，更好地分配开发资源。还能帮助我们找出罕见的漏洞、性能和稳定性问题。此授权为可选授权（默认关闭），您可在设置中随时更改。
+
+感谢您使用 掌机伴侣 并帮助我们不断改进它。</value>
+  </data>
+  <data name="MainWindow_TelemetryTitle" xml:space="preserve">
+    <value>诊断数据</value>
+  </data>
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
+    <value>覆盖窗</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -2856,25 +2943,64 @@
     <value />
   </data>
   <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
-    <value />
+    <value>自动（平衡性能/能效核）</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
-    <value />
+    <value>能效核优</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
-    <value />
+    <value>性能核优先</value>
   </data>
   <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
-    <value />
+    <value>仅性能核（最大性能）</value>
   </data>
   <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
-    <value />
+    <value>仅能效核（最高能效）</value>
   </data>
   <data name="Hotkey_XGMobile" xml:space="preserve">
     <value />
   </data>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value />
+  </data>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value>显示选项</value>
+  </data>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value>热键</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value>触发反馈</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value>开启后，触发热键时手柄将会震动</value>
+  </data>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value>设定</value>
+  </data>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value>CPU核心调度</value>
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value>设置CPU核心调度模式</value>
+  </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value>进程优先级</value>
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value>本程序的进程优先级</value>
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value>高于正常</value>
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value>背景</value>
   </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />

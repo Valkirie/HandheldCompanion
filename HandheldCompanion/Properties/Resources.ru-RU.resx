@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2835,6 +2835,45 @@
     <value />
   </data>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
     <value />
   </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
