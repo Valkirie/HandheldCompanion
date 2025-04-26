@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace HandheldCompanion.ViewModels.Pages
+namespace HandheldCompanion.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {

@@ -16,6 +16,7 @@
     Height="720"
     MinWidth="960"
     MinHeight="640"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     d:Visibility="Visible"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"

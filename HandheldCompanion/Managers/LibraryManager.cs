@@ -664,7 +664,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static Notification IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = true };
 
         protected override void AddStatus(ManagerStatus status)
         {
@@ -672,15 +672,15 @@ namespace HandheldCompanion.Managers
             {
                 case ManagerStatus.Busy:
                     // send internal notification
-                    ManagerFactory.notificationManager.Add(IsBusy);
+                    ManagerFactory.notificationManager.Add(Notification_IsBusy);
                     break;
             }
 
             base.AddStatus(status);
         }
 
-        private static Notification ConnectivityDown = new("Library Manager", "Oops, we're offline! We will let you know when we are back.") { IsInternal = true, IsIndeterminate = true };
-        private static Notification ConnectivityUp = new("Library Manager", "We are back online. All features are available.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_ConnectivityDown = new("Library Manager", "Oops, we're offline! We will let you know when we are back.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_ConnectivityUp = new("Library Manager", "We are back online. All features are available.") { IsInternal = true, IsIndeterminate = true };
 
         private void NetworkChange_NetworkAddressChanged(bool startup)
         {
@@ -690,7 +690,7 @@ namespace HandheldCompanion.Managers
                 Thread.Sleep(4000);
 
                 // send internal notification
-                ManagerFactory.notificationManager.Add(IsConnected ? ConnectivityUp : ConnectivityDown);
+                ManagerFactory.notificationManager.Add(IsConnected ? Notification_ConnectivityUp : Notification_ConnectivityDown);
             }
 
             // check connection

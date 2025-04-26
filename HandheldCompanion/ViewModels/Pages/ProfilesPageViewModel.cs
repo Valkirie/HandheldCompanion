@@ -1,9 +1,11 @@
-﻿using HandheldCompanion.Libraries;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Pages;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -224,7 +226,8 @@ namespace HandheldCompanion.ViewModels
 
         private async Task TriggerGameArtDownloadAsync(int value, LibraryType libraryType)
         {
-            await ManagerFactory.libraryManager.DownloadGameArt(_SelectedLibraryEntry, value, libraryType);
+            if (_SelectedLibraryEntry is not null)
+                await ManagerFactory.libraryManager.DownloadGameArt(_SelectedLibraryEntry, value, libraryType);
 
             if (libraryType.HasFlag(LibraryType.cover))
                 RefreshCover(value);
@@ -329,24 +332,16 @@ namespace HandheldCompanion.ViewModels
 
             DisplayLibrary = new DelegateCommand(async () =>
             {
-                // clear list
-                LibraryArtworksIndex = -1;
-                LibraryCoversIndex = -1;
-                SelectedLibraryIndex = -1;
-                LibraryPickers.Clear();
-
-                LibrarySearchField = ProfilesPage.selectedProfile.Name;
-                await profilesPage.IGGBDialog.ShowAsync();
+                profilesPage.IGGBDialog.ShowAsync(ContentDialogPlacement.InPlace);
+                RefreshLibrary.Execute(null);
             });
 
             RefreshLibrary = new DelegateCommand(async () =>
             {
                 // clear list
-                LibraryArtworksIndex = -1;
-                LibraryCoversIndex = -1;
-                SelectedLibraryIndex = -1;
-                LibraryPickers.Clear();
+                ClearLibrary();
 
+                // get games
                 IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, LibrarySearchField);
                 if (entries.Count() != 0)
                 {
@@ -354,26 +349,32 @@ namespace HandheldCompanion.ViewModels
                     entries = entries.OrderBy(entry => entry.Name);
 
                     foreach (LibraryEntry entry in entries)
-                        LibraryPickers.Add(new(entry));
+                        LibraryPickers.SafeAdd(new(entry));
 
-                    SelectedLibraryEntry = ManagerFactory.libraryManager.GetGame(entries, LibrarySearchField);
+                    if (libraryProfile.LibraryEntry is not null && entries.Contains(libraryProfile.LibraryEntry))
+                        SelectedLibraryEntry = libraryProfile.LibraryEntry;
+                    else
+                        SelectedLibraryEntry = ManagerFactory.libraryManager.GetGame(entries, LibrarySearchField);
                 }
             });
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
-                if (ProfilesPage.selectedProfile is null)
-                    return;
-
-                // update library target profile
-                libraryProfile = ProfilesPage.selectedProfile.Clone() as Profile;
-
                 // download arts
                 await ManagerFactory.libraryManager.UpdateProfileArts(libraryProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex);
 
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(libraryProfile, UpdateSource.LibraryUpdate);
             });
+        }
+
+        private void ClearLibrary()
+        {
+            // clear list
+            LibraryArtworksIndex = -1;
+            LibraryCoversIndex = -1;
+            SelectedLibraryIndex = -1;
+            LibraryPickers.SafeClear();
         }
 
         private void QueryLibrary()
@@ -493,6 +494,13 @@ namespace HandheldCompanion.ViewModels
 
         public void ProfileChanged(Profile selectedProfile)
         {
+            // clear list
+            ClearLibrary();
+
+            // update library target profile
+            libraryProfile = ProfilesPage.selectedProfile.Clone() as Profile;
+            LibrarySearchField = libraryProfile.Name;
+
             OnPropertyChanged(nameof(Cover));
             OnPropertyChanged(nameof(Artwork));
         }
