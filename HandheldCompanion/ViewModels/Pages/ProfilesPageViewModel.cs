@@ -379,6 +379,7 @@ namespace HandheldCompanion.ViewModels
 
                 // hide dialog
                 contentDialog?.Hide();
+                contentDialog = null;
 
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(libraryProfile, UpdateSource.LibraryUpdate);
