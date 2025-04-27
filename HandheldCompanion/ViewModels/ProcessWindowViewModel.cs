@@ -70,6 +70,7 @@ namespace HandheldCompanion.ViewModels
                 if (screen is null)
                     return;
 
+                QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
                 WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, WpfScreenHelper.Enum.WindowPositions.Maximize);
                 WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
 
