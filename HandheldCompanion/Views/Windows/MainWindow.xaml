@@ -182,17 +182,24 @@
                 <Grid>
                     <ui:InfoBar
                         Title="{Binding InfoBarTitle}"
-                        Margin="0,0,24,0"
+                        Margin="0,0,24,12"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         Panel.ZIndex="999"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                        BorderBrush="{DynamicResource SliderThumbBorderBrush}"
                         CloseButtonCommand="{Binding DismissInfoBarCommand}"
                         IsClosable="True"
                         IsOpen="{Binding IsInfoBarOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Message="{Binding InfoBarMessage}"
                         Severity="{Binding InfoBarSeverity}">
+
+                        <ui:InfoBar.Effect>
+                            <DropShadowEffect
+                                BlurRadius="16"
+                                Direction="270"
+                                Opacity="0.5"
+                                ShadowDepth="2" />
+                        </ui:InfoBar.Effect>
 
                         <ui:InfoBar.RenderTransform>
                             <TranslateTransform Y="60" />
