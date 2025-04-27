@@ -47,14 +47,12 @@ public enum SteeringAxis
 [Serializable]
 public struct ProcessWindowSettings
 {
-    public string Name { get; set; }
     public string DeviceName { get; set; }
     public bool Borderless { get; set; }
     public WindowPositions WindowPositions { get; set; }
 
-    public ProcessWindowSettings(int hwnd, string name, string deviceName, bool borderless, WindowPositions windowPositions)
+    public ProcessWindowSettings(string deviceName, bool borderless, WindowPositions windowPositions)
     {
-        Name = name;
         DeviceName = deviceName;
         Borderless = borderless;
         WindowPositions = windowPositions;
@@ -146,7 +144,7 @@ public partial class Profile : ICloneable, IComparable
     // emulated controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;
 
-    public List<ProcessWindowSettings> WindowsSettings = new();
+    public Dictionary<string, ProcessWindowSettings> WindowsSettings = new();
 
     public Profile()
     {

@@ -16,6 +16,8 @@ namespace HandheldCompanion.Misc
         public readonly int Hwnd;
         private bool _disposed = false;
 
+        public ProcessEx processEx;
+
         private string _Name;
         public string Name
         {
@@ -32,12 +34,13 @@ namespace HandheldCompanion.Misc
 
         private AutomationEventHandler _windowClosedHandler;
 
-        public ProcessWindow(AutomationElement element, bool isPrimary)
+        public ProcessWindow(ProcessEx processEx, AutomationElement element, bool isPrimary)
         {
-            Hwnd = element.Current.NativeWindowHandle;
-            Element = element;
+            this.processEx = processEx;
+            this.Hwnd = element.Current.NativeWindowHandle;
+            this.Element = element;
 
-            handler = new AutomationPropertyChangedEventHandler(OnPropertyChanged);
+            this.handler = new AutomationPropertyChangedEventHandler(OnPropertyChanged);
             if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
             {
                 Automation.AddAutomationPropertyChangedEventHandler(

@@ -62,6 +62,14 @@ namespace HandheldCompanion.ViewModels
                 WinAPI.MakeBorderless(ProcessWindow.Hwnd, viewModel.BorderlessEnabled && viewModel.BorderlessToggle);
                 WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, viewModel.windowPositions);
                 WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
+
+                // Todo: move me !
+                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processWindow.processEx.Path, true);
+                profile = ManagerFactory.profileManager.GetProfileForSubProfile(profile);
+                if (!profile.Default)
+                {
+                    profile.WindowsSettings[processWindow.Name] = new(screen.DeviceName, viewModel.BorderlessEnabled && viewModel.BorderlessToggle, viewModel.windowPositions);
+                }
             });
 
             SwapScreenCommand = new DelegateCommand(async () =>
@@ -73,6 +81,13 @@ namespace HandheldCompanion.ViewModels
                 QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
                 WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, WpfScreenHelper.Enum.WindowPositions.Maximize);
                 WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
+
+                // Todo: move me !
+                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processWindow.processEx.Path, true, true);
+                if (!profile.Default)
+                {
+                    profile.WindowsSettings[processWindow.Name] = new(screen.DeviceName, viewModel.BorderlessEnabled && viewModel.BorderlessToggle, viewModel.windowPositions);
+                }
 
                 OnPropertyChanged(nameof(IsPrimaryScreen));
             });

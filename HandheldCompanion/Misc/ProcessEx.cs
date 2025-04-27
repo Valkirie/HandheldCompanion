@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Automation;
+using System.Windows.Forms;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Misc;
@@ -373,11 +374,29 @@ public class ProcessEx : IDisposable
         if (!ProcessWindows.TryGetValue(hwnd, out var window))
         {
             // create new window object
-            window = new(automationElement, primary);
+            window = new(this, automationElement, primary);
             window.Closed += Window_Closed;
 
             if (string.IsNullOrEmpty(window.Name))
                 return;
+
+            // Todo: move me !
+            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(Path, true, true);
+            if (!profile.Default)
+            {
+                if (profile.WindowsSettings.TryGetValue(window.Name, out ProcessWindowSettings processWindowSettings))
+                {
+                    foreach (Screen screen in Screen.AllScreens)
+                    {
+                        if (screen.DeviceName.Equals(processWindowSettings.DeviceName))
+                        {
+                            WinAPI.MakeBorderless(hwnd, processWindowSettings.Borderless);
+                            WinAPI.MoveWindow(hwnd, screen, processWindowSettings.WindowPositions);
+                            break;
+                        }
+                    }
+                }
+            }
 
             // add window
             ProcessWindows.TryAdd(hwnd, window);
