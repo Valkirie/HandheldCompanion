@@ -1430,6 +1430,61 @@
                         </Expander>
                     </ikw:SimpleStackPanel>
 
+                    <!--  Window settings  -->
+                    <ikw:SimpleStackPanel Spacing="6">
+                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
+
+                        <ui:SettingsExpander
+                            Description="Manage windows associated with profile"
+                            Header="Windows settings"
+                            IsEnabled="{Binding HasWindows}"
+                            ItemsSource="{Binding ProfileWindows}">
+                            <ui:SettingsExpander.ItemTemplate>
+                                <DataTemplate>
+                                    <ui:SettingsCard Header="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <ikw:SimpleStackPanel
+                                            HorizontalAlignment="Right"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+
+                                            <Button
+                                                Height="32"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Command="{Binding BringProcessCommand}"
+                                                Content="&#xe7c4;"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                ToolTip="Snap application window" />
+
+                                            <Button
+                                                Height="32"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Command="{Binding SwapScreenCommand}"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                IsEnabled="{Binding HasTwoScreen, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="True">
+                                                                <Setter Property="ToolTip" Value="Swap to secondary screen" />
+                                                                <Setter Property="Content" Value="&#xe8a7;" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsPrimaryScreen}" Value="False">
+                                                                <Setter Property="ToolTip" Value="Swap to primary screen" />
+                                                                <Setter Property="Content" Value="&#xe78b;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </ikw:SimpleStackPanel>
+                                    </ui:SettingsCard>
+                                </DataTemplate>
+                            </ui:SettingsExpander.ItemTemplate>
+                        </ui:SettingsExpander>
+                    </ikw:SimpleStackPanel>
+
                     <!--  Compatibility settings  -->
                     <ikw:SimpleStackPanel Spacing="6">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility}" />

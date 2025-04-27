@@ -225,10 +225,15 @@
                 <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
                 <ItemsControl IsEnabled="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Processes}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border
-                                Margin="0,0,0,3"
                                 Padding="15,12,12,12"
                                 Background="{DynamicResource ExpanderHeaderBackground}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -300,10 +305,15 @@
                                     </Grid>
 
                                     <ItemsControl ItemsSource="{Binding ProcessWindows}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border
-                                                    Margin="0,0,0,3"
                                                     Padding="15,12,12,12"
                                                     Background="{DynamicResource ExpanderHeaderBackground}"
                                                     CornerRadius="{DynamicResource ControlCornerRadius}">

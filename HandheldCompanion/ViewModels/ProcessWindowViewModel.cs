@@ -11,8 +11,6 @@ namespace HandheldCompanion.ViewModels
 {
     public class ProcessWindowViewModel : BaseViewModel
     {
-        private ProcessExViewModel ProcessExViewModel { get; set; }
-
         public bool HasTwoScreen => Screen.AllScreens.Length > 1;
         private Screen CurrentScreen = Screen.PrimaryScreen;
         public bool IsPrimaryScreen => CurrentScreen.Primary;
@@ -35,12 +33,11 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ProcessWindowViewModel(ProcessWindow processWindow, ProcessExViewModel processExViewModel)
+        public ProcessWindowViewModel(ProcessWindow processWindow)
         {
             ProcessWindow = processWindow;
             ProcessWindow.Refreshed += ProcessRefreshed;
             ProcessWindow.Disposed += ProcessDisposed;
-            ProcessExViewModel = processExViewModel;
 
             ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
@@ -61,8 +58,9 @@ namespace HandheldCompanion.ViewModels
                 if (screen is null)
                     return;
 
-                WinAPI.MakeBorderless(ProcessWindow.Hwnd, processExViewModel.PageViewModel.BorderlessEnabled && processExViewModel.PageViewModel.BorderlessToggle);
-                WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, processExViewModel.PageViewModel.windowPositions);
+                QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
+                WinAPI.MakeBorderless(ProcessWindow.Hwnd, viewModel.BorderlessEnabled && viewModel.BorderlessToggle);
+                WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, viewModel.windowPositions);
                 WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
             });
 
@@ -120,7 +118,6 @@ namespace HandheldCompanion.ViewModels
             SwapScreenCommand = null;
 
             ProcessWindow = null;
-            ProcessExViewModel = null;
 
             base.Dispose();
         }

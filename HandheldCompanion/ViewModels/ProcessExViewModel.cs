@@ -106,7 +106,7 @@ namespace HandheldCompanion.ViewModels
             ProcessWindowViewModel? foundWindow = ProcessWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
             if (foundWindow is null)
             {
-                ProcessWindows.SafeAdd(new ProcessWindowViewModel(processWindow, this));
+                ProcessWindows.SafeAdd(new ProcessWindowViewModel(processWindow));
             }
             else
             {
