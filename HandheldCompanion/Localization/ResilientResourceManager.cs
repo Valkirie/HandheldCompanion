@@ -21,7 +21,7 @@ namespace HandheldCompanion.Localization
             string? result = base.GetString(name, culture);
             if (string.IsNullOrEmpty(result))
                 result = base.GetString(name, fallbackCulture);
-            return result ?? $"[{name}]";
+            return result ?? name;
         }
 
         public override string GetString(string name)
