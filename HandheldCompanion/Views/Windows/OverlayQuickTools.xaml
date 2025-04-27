@@ -57,6 +57,7 @@
             Margin="0,31,0,0"
             BackRequested="navView_BackRequested"
             IsBackButtonVisible="Collapsed"
+            IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack, Mode=OneWay}"
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             ItemInvoked="navView_ItemInvoked"

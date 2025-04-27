@@ -39,7 +39,7 @@
     <ui:NavigationView
         Name="navView"
         BackRequested="navView_BackRequested"
-        IsBackEnabled="True"
+        IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack, Mode=OneWay}"
         IsSettingsVisible="False"
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"

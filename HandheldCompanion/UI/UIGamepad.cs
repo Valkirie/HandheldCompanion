@@ -258,6 +258,9 @@ namespace HandheldCompanion.Managers
                 // store current Frame and listen to render events
                 if (gamepadPage != (Page)gamepadFrame.Content)
                 {
+                    // store navigation
+                    prevNavigation = navigationView.SelectedItem as NavigationViewItem;
+
                     gamepadFrame = (Frame)sender;
                     gamepadFrame.ContentRendered += ContentRendering;
 
@@ -289,7 +292,7 @@ namespace HandheldCompanion.Managers
                 // store top left navigation view item
                 if (prevNavigation is null)
                 {
-                    prevNavigation = navigationView.SelectedItem as Control;
+                    prevNavigation = navigationView.SelectedItem as NavigationViewItem;
                     _navigating = true;
                 }
 
@@ -385,10 +388,6 @@ namespace HandheldCompanion.Managers
             string controlType = control.GetType().Name;
             switch (controlType)
             {
-                case "NavigationViewItem":
-                    // update navigation
-                    prevNavigation = (NavigationViewItem)control;
-                    break;
                 case "ContentDialog":
                     return;
             }
@@ -408,13 +407,14 @@ namespace HandheldCompanion.Managers
             control.Focus();
             control.BringIntoView();
 
+            Keyboard.Focus(control);
             FocusManager.SetFocusedElement(gamepadWindow, control);
             gamepadWindow.SetFocusedElement(control);
         }
 
         public Control GetFocusedElement()
         {
-            IInputElement FocusedElement = forcedFocus is not null ? forcedFocus : FocusManager.GetFocusedElement(gamepadWindow);
+            IInputElement FocusedElement = forcedFocus is not null ? forcedFocus : gamepadWindow.GetFocusedElement();
 
             DependencyObject commonAncestor = VisualTreeHelperExtensions.FindCommonAncestor((DependencyObject)FocusedElement, gamepadWindow);
             if (commonAncestor is null && forcedFocus is null)

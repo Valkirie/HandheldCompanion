@@ -122,7 +122,7 @@ public static class WPFUtils
         */
 
         // Flatten the groups and sort controls by distance
-        Control[] closestControls = controls.OrderBy(c => GetDistanceV2(source, c, direction)).ToArray();
+        Control[] closestControls = controls.OrderBy(c => GetDistanceV3(source, c, direction)).ToArray();
         return closestControls.FirstOrDefault();
     }
 
@@ -187,6 +187,90 @@ public static class WPFUtils
         catch
         {
             return 9999.0d;
+        }
+    }
+
+    private static Rect GetBoundsRelativeTo(FrameworkElement ctrl, Visual relativeTo)
+    {
+        return ctrl
+            .TransformToVisual(relativeTo)
+            .TransformBounds(new Rect(ctrl.RenderSize));
+    }
+
+    // core point-to-point measurer
+    private static double Measure(
+        Rect r1, Rect r2,
+        Func<Rect, Point> a1,
+        Func<Rect, Point> a2)
+    {
+        var p1 = a1(r1);
+        var p2 = a2(r2);
+        return (p2 - p1).Length;
+    }
+
+    public static double GetDistanceV3(
+        FrameworkElement c1,
+        FrameworkElement c2,
+        Direction direction = Direction.None)
+    {
+        // 1) pick a shared coordinate space (their Window)
+        var win = Window.GetWindow(c1)
+                  ?? throw new InvalidOperationException(
+                       "Controls must live in the same Window.");
+
+        // 2) get their bounding boxes in window-coords
+        Rect r1 = GetBoundsRelativeTo(c1, win);
+        Rect r2 = GetBoundsRelativeTo(c2, win);
+
+        // —— NEW: if one rect is fully inside the other, treat as zero distance
+        bool c1InC2 = r2.Contains(r1.TopLeft) && r2.Contains(r1.BottomRight);
+        bool c2InC1 = r1.Contains(r2.TopLeft) && r1.Contains(r2.BottomRight);
+        if (c1InC2 || c2InC1)
+            return 0;
+
+        // 3) direction-aware logic
+        switch (direction)
+        {
+            case Direction.Left:
+                // from c1’s left-edge center → c2’s right-edge center
+                return Measure(
+                  r1, r2,
+                  r => new Point(r.Left, r.Top + r.Height / 2),
+                  r => new Point(r.Right, r.Top + r.Height / 2)
+                );
+
+            case Direction.Right:
+                // from c1’s right center → c2’s left center
+                return Measure(
+                  r1, r2,
+                  r => new Point(r.Right, r.Top + r.Height / 2),
+                  r => new Point(r.Left, r.Top + r.Height / 2)
+                );
+
+            case Direction.Up:
+                // from c1’s top center → c2’s bottom center
+                return Measure(
+                  r1, r2,
+                  r => new Point(r.Left + r.Width / 2, r.Top),
+                  r => new Point(r.Left + r.Width / 2, r.Bottom)
+                );
+
+            case Direction.Down:
+                // from c1’s bottom center → c2’s top center
+                return Measure(
+                  r1, r2,
+                  r => new Point(r.Left + r.Width / 2, r.Bottom),
+                  r => new Point(r.Left + r.Width / 2, r.Top)
+                );
+
+            case Direction.None:
+            default:
+                // edge-to-edge minimal distance:
+                double dx = Math.Max(0,
+                               Math.Max(r1.Left, r2.Left) - Math.Min(r1.Right, r2.Right));
+                double dy = Math.Max(0,
+                               Math.Max(r1.Top, r2.Top) - Math.Min(r1.Bottom, r2.Bottom));
+                return Math.Sqrt(dx * dx + dy * dy);
         }
     }
 

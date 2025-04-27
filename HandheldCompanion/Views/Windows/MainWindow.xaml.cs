@@ -618,14 +618,7 @@ public partial class MainWindow : GamepadWindow
             NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
             string navItemTag = (string)navItem.Tag;
 
-            switch (navItemTag)
-            {
-                default:
-                    prevNavItemTag = navItemTag;
-                    break;
-            }
-
-            NavView_Navigate(prevNavItemTag);
+            NavView_Navigate(navItemTag);
         }
     }
 
@@ -655,9 +648,6 @@ public partial class MainWindow : GamepadWindow
     {
         if (prevNavItemTag == navItemTag)
             return;
-
-        // Update previous navigation item
-        prevNavItemTag = navItemTag;
 
         // Navigate to the specified page
         NavView_Navigate(navItemTag);
@@ -857,11 +847,12 @@ public partial class MainWindow : GamepadWindow
 
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
-        navView.IsBackEnabled = ContentFrame.CanGoBack;
-
         if (ContentFrame.SourcePageType is not null)
         {
             CurrentPageName = ContentFrame.CurrentSourcePageType.Name;
+
+            // Update previous navigation item
+            prevNavItemTag = CurrentPageName;
 
             var NavViewItem = navView.MenuItems
                 .OfType<NavigationViewItem>()

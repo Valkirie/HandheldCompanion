@@ -524,11 +524,8 @@ public partial class OverlayQuickTools : GamepadWindow
             NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
             string navItemTag = (string)navItem.Tag;
 
-            // update prev
-            prevNavItemTag = navItemTag;
-
             // navigate
-            NavView_Navigate(prevNavItemTag);
+            NavView_Navigate(navItemTag);
         }
     }
 
@@ -558,9 +555,6 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         if (prevNavItemTag == navItemTag)
             return;
-
-        // Update previous navigation item
-        prevNavItemTag = navItemTag;
 
         // Navigate to the specified page
         NavView_Navigate(navItemTag);
@@ -602,8 +596,11 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
-        navView.IsBackEnabled = ContentFrame.CanGoBack;
-        // navHeader.Text = ((Page)((ContentControl)sender).Content).Title;
+        if (ContentFrame.SourcePageType is not null)
+        {
+            // Update previous navigation item
+            prevNavItemTag = ContentFrame.CurrentSourcePageType.Name;
+        }
     }
 
     private void UpdateTime(object? sender, EventArgs e)

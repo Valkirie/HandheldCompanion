@@ -67,6 +67,9 @@ namespace HandheldCompanion.Views.Classes
 
         public void SetFocusedElement(Control focusedControl)
         {
+            // store current focused control
+            this.focusedControl = focusedControl;
+
             // UI thread
             UIHelper.TryInvoke(() =>
             {
@@ -83,6 +86,12 @@ namespace HandheldCompanion.Views.Classes
                     _adornerLayer.Add(_highlightAdorner);
                 }
             });
+        }
+
+        private Control focusedControl;
+        public Control GetFocusedElement()
+        {
+            return focusedControl;
         }
 
         public Screen GetScreen()
