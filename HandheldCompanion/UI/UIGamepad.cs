@@ -259,7 +259,8 @@ namespace HandheldCompanion.Managers
                 if (gamepadPage != (Page)gamepadFrame.Content)
                 {
                     // store navigation
-                    prevNavigation = navigationView.SelectedItem as NavigationViewItem;
+                    if (navigationView is not null)
+                        prevNavigation = navigationView.SelectedItem as NavigationViewItem;
 
                     gamepadFrame = (Frame)sender;
                     gamepadFrame.ContentRendered += ContentRendering;
