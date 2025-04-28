@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Misc;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using WpfScreenHelper.Enum;
@@ -7,6 +8,36 @@ namespace HandheldCompanion.Managers
 {
     public static class WindowManager
     {
+        private static string ClearString(string input)
+        {
+            if (input == null)
+                return null;
+
+            // If there’s any '|' at all, split on '|', keep first and last
+            if (input.Contains("|"))
+            {
+                var parts = input.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 2)
+                {
+                    var first = parts[0].Trim();
+                    var last = parts[parts.Length - 1].Trim();
+                    return $"{first} | {last}";
+                }
+                // if somehow only one non-empty segment, just trim and return
+                return input.Trim();
+            }
+
+            // Otherwise if there's a '-', truncate at the first one
+            var dashIndex = input.IndexOf('-');
+            if (dashIndex >= 0)
+            {
+                return input.Substring(0, dashIndex).Trim();
+            }
+
+            // No '|' or '-', just return trimmed original
+            return input.Trim();
+        }
+
         public static ProcessWindowSettings GetWindowSettings(string path, string name, int Hwnd)
         {
             Profile profile = ManagerFactory.profileManager.GetProfileFromPath(path, true, true);
@@ -16,6 +47,9 @@ namespace HandheldCompanion.Managers
                 string hwndName = profile.WindowsSettings.FirstOrDefault(p => p.Value.Hwnd == Hwnd).Key;
                 if (!string.IsNullOrEmpty(hwndName))
                     name = hwndName;
+
+                // clear name
+                name = ClearString(name);
 
                 if (profile.WindowsSettings.TryGetValue(name, out ProcessWindowSettings processWindowSettings))
                 {
@@ -42,11 +76,14 @@ namespace HandheldCompanion.Managers
                 if (!string.IsNullOrEmpty(hwndName))
                     name = hwndName;
 
-                profile.WindowsSettings[name] = new(screen.DeviceName, borderless, windowPositions) { Hwnd = processWindow.Hwnd };
+                // clear name
+                name = ClearString(name);
+
+                profile.WindowsSettings[name] = new(screen.DeviceName, borderless, windowPositions) { Hwnd = processWindow.Hwnd, IsGeneric = false };
             }
 
             // update window settings
-            processWindow.windowSettings = new(screen.DeviceName, borderless, windowPositions) { Hwnd = processWindow.Hwnd };
+            processWindow.windowSettings = new(screen.DeviceName, borderless, windowPositions) { Hwnd = processWindow.Hwnd, IsGeneric = false };
 
             ApplySettings(processWindow);
         }
@@ -64,6 +101,9 @@ namespace HandheldCompanion.Managers
                 if (!string.IsNullOrEmpty(hwndName))
                     name = hwndName;
 
+                // clear name
+                name = ClearString(name);
+
                 if (!profile.WindowsSettings.ContainsKey(name))
                     profile.WindowsSettings[name] = new();
 
@@ -72,6 +112,7 @@ namespace HandheldCompanion.Managers
 
             // update window settings
             processWindow.windowSettings.DeviceName = screen?.DeviceName ?? "\\\\.\\DISPLAY0";
+            processWindow.windowSettings.IsGeneric = false;
 
             ApplySettings(processWindow);
         }
@@ -89,6 +130,9 @@ namespace HandheldCompanion.Managers
                 if (!string.IsNullOrEmpty(hwndName))
                     name = hwndName;
 
+                // clear name
+                name = ClearString(name);
+
                 if (!profile.WindowsSettings.ContainsKey(name))
                     profile.WindowsSettings[name] = new();
 
@@ -97,6 +141,7 @@ namespace HandheldCompanion.Managers
 
             // update window settings
             processWindow.windowSettings.WindowPositions = windowPositions;
+            processWindow.windowSettings.IsGeneric = false;
 
             ApplySettings(processWindow);
         }
@@ -114,6 +159,9 @@ namespace HandheldCompanion.Managers
                 if (!string.IsNullOrEmpty(hwndName))
                     name = hwndName;
 
+                // clear name
+                name = ClearString(name);
+
                 if (!profile.WindowsSettings.ContainsKey(name))
                     profile.WindowsSettings[name] = new();
 
@@ -122,6 +170,7 @@ namespace HandheldCompanion.Managers
 
             // update window settings
             processWindow.windowSettings.Borderless = borderless;
+            processWindow.windowSettings.IsGeneric = false;
 
             ApplySettings(processWindow);
         }
