@@ -4,7 +4,6 @@ using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using WpfScreenHelper.Enum;
@@ -121,7 +120,7 @@ namespace HandheldCompanion.ViewModels
                 Screen screen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName != CurrentScreen.DeviceName);
                 if (screen is null)
                     return;
-                
+
                 WindowManager.SetWindowSettings(processWindow, screen, false, WpfScreenHelper.Enum.WindowPositions.Maximize);
 
                 OnPropertyChanged(nameof(IsPrimaryScreen));

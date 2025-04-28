@@ -13,7 +13,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Automation;
-using System.Windows.Forms;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Misc;

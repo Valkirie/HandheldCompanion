@@ -1,10 +1,8 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Automation;
-using System.Windows.Forms;
 
 namespace HandheldCompanion.Misc
 {
@@ -43,6 +41,7 @@ namespace HandheldCompanion.Misc
             this.processEx = processEx;
             this.Hwnd = element.Current.NativeWindowHandle;
             this.Element = element;
+            this.Name = element.Current.Name;
 
             this.propertyHandle = new(OnPropertyChanged);
             this.eventHandler = new(OnClosed);
@@ -69,7 +68,7 @@ namespace HandheldCompanion.Misc
                 return;
 
             // store window settings
-            windowSettings = WindowManager.GetWindowSettings(processEx.Path, this.Name);
+            windowSettings = WindowManager.GetWindowSettings(processEx.Path, this.Name, this.Hwnd);
             WindowManager.ApplySettings(this);
         }
 
