@@ -4,8 +4,10 @@ using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using WpfScreenHelper.Enum;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -19,6 +21,57 @@ namespace HandheldCompanion.ViewModels
         public ICommand SwapScreenCommand { get; private set; }
 
         public string Name => ProcessWindow?.Name;
+        public int TargetDisplay
+        {
+            get
+            {
+                string deviceName = ProcessWindow?.windowSettings?.DeviceName ?? "\\\\.\\DISPLAY0";
+                string deviceIndex = deviceName.Last().ToString();
+
+                if (int.TryParse(deviceIndex, out int index))
+                    return index;
+
+                return 0;
+            }
+            set
+            {
+                if (value != TargetDisplay)
+                {
+                    Screen screen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals($"\\\\.\\DISPLAY{value}"));
+                    WindowManager.SetTargetDisplay(ProcessWindow, screen);
+                }
+            }
+        }
+
+        public int TargetWindowPosition
+        {
+            get
+            {
+                return (int)(ProcessWindow?.windowSettings?.WindowPositions ?? WindowPositions.Center);
+            }
+            set
+            {
+                if (value != TargetWindowPosition)
+                {
+                    WindowManager.SetTargetWindowPosition(ProcessWindow, (WindowPositions)value);
+                }
+            }
+        }
+
+        public bool Borderless
+        {
+            get
+            {
+                return ProcessWindow?.windowSettings?.Borderless ?? false;
+            }
+            set
+            {
+                if (value != Borderless)
+                {
+                    WindowManager.SetBorderless(ProcessWindow, value);
+                }
+            }
+        }
 
         private ProcessWindow _ProcessWindow;
         public ProcessWindow ProcessWindow
@@ -41,9 +94,6 @@ namespace HandheldCompanion.ViewModels
 
             ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
-            // get page viewmodel
-            QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
-
             BringProcessCommand = new DelegateCommand(async () =>
             {
                 OverlayQuickTools qtWindow = OverlayQuickTools.GetCurrent();
@@ -61,12 +111,14 @@ namespace HandheldCompanion.ViewModels
                 if (screen is null)
                     return;
 
+                // get page viewmodel
+                QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
                 WindowManager.SetWindowSettings(processWindow, screen, viewModel.BorderlessEnabled && viewModel.BorderlessToggle, viewModel.windowPositions);
             });
 
             SwapScreenCommand = new DelegateCommand(async () =>
             {
-                Screen screen = Screen.AllScreens.Where(screen => screen.DeviceName != CurrentScreen.DeviceName).FirstOrDefault();
+                Screen screen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName != CurrentScreen.DeviceName);
                 if (screen is null)
                     return;
                 

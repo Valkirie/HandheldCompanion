@@ -261,12 +261,26 @@ public static class WinAPI
             int newStyle = currentStyle | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
             SetWindowLong(hWnd, GWL_STYLE, newStyle);
         }
+        // Force Windows to re-calc the non-client area in-place, so it won't hide/destroy the window (and fire WindowClosedEvent).
+        SetWindowPos(
+            hWnd,
+            nint.Zero,
+            0, 0, 0, 0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
 
     public static void MoveWindow(nint hWnd, Screen targetScreen, WindowPositions position)
     {
         if (hWnd == IntPtr.Zero)
             return;
+
+        // get current screen
+        Screen currentScreen = Screen.FromHandle(hWnd);
+        if ((targetScreen is null || currentScreen.DeviceName.Equals(targetScreen.DeviceName)) && position == WindowPositions.Center)
+            return;
+
+        if (targetScreen is null)
+            targetScreen = currentScreen;
 
         // WpfScreenHelper.Screen WpfScreen = WpfScreenHelper.Screen.AllScreens.FirstOrDefault(s => s.DeviceName.Equals(targetScreen.DeviceName));
         // IntPtr monitor = GetScreenHandle(targetScreen);

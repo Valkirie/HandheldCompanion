@@ -47,9 +47,12 @@ public enum SteeringAxis
 [Serializable]
 public class ProcessWindowSettings
 {
-    public string DeviceName { get; set; }
-    public bool Borderless { get; set; }
-    public WindowPositions WindowPositions { get; set; }
+    public string DeviceName { get; set; } = "\\\\.\\DISPLAY0";
+    public bool Borderless { get; set; } = false;
+    public WindowPositions WindowPositions { get; set; } = WindowPositions.Center;
+
+    public ProcessWindowSettings()
+    { }
 
     public ProcessWindowSettings(string deviceName, bool borderless, WindowPositions windowPositions)
     {

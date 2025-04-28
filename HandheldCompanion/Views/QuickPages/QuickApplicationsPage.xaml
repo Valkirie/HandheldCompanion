@@ -319,7 +319,7 @@
                                                     CornerRadius="{DynamicResource ControlCornerRadius}">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition MinWidth="168" />
+                                                            <ColumnDefinition MinWidth="260" />
                                                             <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
 

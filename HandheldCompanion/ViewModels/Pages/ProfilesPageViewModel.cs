@@ -600,8 +600,8 @@ namespace HandheldCompanion.ViewModels
 
             if (selectedProcess is not null)
             {
-                selectedProcess.WindowAttached += SelectedProcess_WindowAttached;
-                selectedProcess.WindowDetached += SelectedProcess_WindowDetached;
+                selectedProcess.WindowAttached -= SelectedProcess_WindowAttached;
+                selectedProcess.WindowDetached -= SelectedProcess_WindowDetached;
             }
         }
 
