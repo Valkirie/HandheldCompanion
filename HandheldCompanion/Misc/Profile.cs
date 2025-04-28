@@ -51,7 +51,7 @@ public class ProcessWindowSettings
     public bool Borderless { get; set; } = false;
     public WindowPositions WindowPositions { get; set; } = WindowPositions.Center;
     [JsonIgnore] public bool IsGeneric { get; set; } = true;
-    [JsonIgnore] public int Hwnd { get; set; } = 0;
+    public int Hwnd { get; set; } = 0;
 
     public ProcessWindowSettings()
     { }
