@@ -166,11 +166,6 @@
                                 <Setter Property="IsEnabled" Value="True" />
                                 <Setter Property="Visibility" Value="{Binding Visibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <Setter Property="Width" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsHeader}" Value="True">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
                             </Style>
                         </ComboBox.ItemContainerStyle>
                     </ComboBox>
