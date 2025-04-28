@@ -309,7 +309,7 @@ namespace HandheldCompanion.Managers
             };
 
             // display calibration dialog
-            dialog.Show();
+            dialog.ShowAsync();
 
             // skip if empty
             if (gamepadMotions.Count == 0)

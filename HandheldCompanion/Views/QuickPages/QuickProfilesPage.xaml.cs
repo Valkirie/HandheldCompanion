@@ -1009,7 +1009,7 @@ public partial class QuickProfilesPage : Page
             Title = "Power preset",
             Content = $"{powerProfile.Name} preset was created",
             PrimaryButtonText = Properties.Resources.ProfilesPage_OK
-        }.Show();
+        }.ShowAsync();
     }
 
     private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

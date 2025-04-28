@@ -159,7 +159,7 @@ namespace HandheldCompanion.ViewModels
                 dialog.CanClose = false;
 
                 // display dialog
-                dialog.Show();
+                dialog.ShowAsync();
 
                 try
                 {
