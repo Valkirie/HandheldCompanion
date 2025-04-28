@@ -567,6 +567,8 @@ namespace HandheldCompanion.ViewModels
                 foreach (ProcessWindow processWindow in selectedProcess.ProcessWindows.Values)
                     SelectedProcess_WindowAttached(processWindow);
             }
+
+            OnPropertyChanged(nameof(HasWindows));
         }
 
         private void SelectedProcess_WindowAttached(ProcessWindow processWindow)
