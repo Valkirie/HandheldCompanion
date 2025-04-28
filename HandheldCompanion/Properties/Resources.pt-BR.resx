@@ -3330,48 +3330,6 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
     <value>Nível máximo de carga da bateria</value>
   </data>
-  <data name="Hotkey_XGMobile" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_High" xml:space="preserve">
-    <value />
-  </data>
   <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
     <value>Orientação da tela</value>
   </data>
@@ -3386,8 +3344,5 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Torne este o layout padrão</value>
-  </data>
-  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
-    <value />
   </data>
 </root>

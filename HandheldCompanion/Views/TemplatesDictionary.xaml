@@ -17,6 +17,7 @@
     <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
     <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
     <converters:IsNullConverter x:Key="IsNullConverter" />
+    <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
 
     <DataTemplate x:Key="ControllerTemplate" DataType="{x:Type viewmodels:ControllerViewModel}">
         <Border
@@ -801,7 +802,7 @@
                     VerticalAlignment="Center"
                     FontSize="14">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
                             <Binding
                                 FallbackValue="No Name"
                                 Mode="OneWay"
@@ -2141,7 +2142,7 @@
                     VerticalAlignment="Center"
                     FontSize="14">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
                             <Binding
                                 FallbackValue="No Name"
                                 Mode="OneWay"
@@ -2516,7 +2517,7 @@
                     VerticalAlignment="Center"
                     FontSize="14">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
                             <Binding
                                 FallbackValue="No Name"
                                 Mode="OneWay"

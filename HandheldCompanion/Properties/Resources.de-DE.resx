@@ -2535,12 +2535,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
     <value>The emulated controller to be used when this profile is active</value>
   </data>
-  <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value />
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value />
-  </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
   </data>
@@ -2819,74 +2813,5 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value />
-  </data>
-  <data name="DevicePage_BatteryOptions" xml:space="preserve">
-    <value />
-  </data>
-  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Hotkey_XGMobile" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_High" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
-    <value />
   </data>
 </root>

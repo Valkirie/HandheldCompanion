@@ -85,7 +85,7 @@
                         <TextBlock
                             Margin="12,0,0,0"
                             Style="{StaticResource BodyTextBlockStyle}"
-                            Text="Create new hotkey" />
+                            Text="{l:Static resx:Resources.HotkeysPage_CreateNew}" />
                     </DockPanel>
                 </Button>
 
@@ -273,11 +273,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Command type" />
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_CommandType}" />
                                                 <TextBlock
                                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Define to type of command your hotkey will execute"
+                                                    Text="{l:Static resx:Resources.Hotkey_CommandTypeDesc}"
                                                     TextWrapping="Wrap" />
                                             </ikw:SimpleStackPanel>
 
@@ -308,11 +308,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Command name" />
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_CommandName}" />
                                                 <TextBlock
                                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Define the hotkey custom name"
+                                                    Text="{l:Static resx:Resources.Hotkey_CommandNameDesc}"
                                                     TextWrapping="Wrap" />
                                             </ikw:SimpleStackPanel>
 
@@ -340,11 +340,11 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Function" />
+                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_FunctionToRun}" />
                                                     <TextBlock
                                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                                        Text="Define the function to trigger"
+                                                        Text="{l:Static resx:Resources.Hotkey_FunctionToRunDesc}"
                                                         TextWrapping="Wrap" />
                                                 </ikw:SimpleStackPanel>
 
@@ -393,11 +393,11 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Page" />
+                                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_Page}" />
                                                         <TextBlock
                                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                                            Text="Define the page to navigate when opening Quick Tools"
+                                                            Text="{l:Static resx:Resources.Hotkey_PageDesc}"
                                                             TextWrapping="Wrap" />
                                                     </ikw:SimpleStackPanel>
 
@@ -407,7 +407,7 @@
                                                         HorizontalAlignment="Stretch"
                                                         VerticalAlignment="Center"
                                                         SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                                        <ComboBoxItem Content="Current" />
+                                                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
                                                         <ComboBoxItem Content="{l:Static resx:Resources.QuickHomePage_Title}" />
                                                         <ComboBoxItem Content="{l:Static resx:Resources.QuickDevicePage_Title}" />
                                                         <ComboBoxItem Content="{l:Static resx:Resources.QuickProfilesPage_Title}" />
@@ -540,11 +540,11 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Output" />
+                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_Output}" />
                                                     <TextBlock
                                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                                        Text="Define the output key strokes"
+                                                        Text="{l:Static resx:Resources.Hotkey_OutputDesc}"
                                                         TextWrapping="Wrap" />
                                                 </ikw:SimpleStackPanel>
 
@@ -564,7 +564,7 @@
                                                         <TextBlock
                                                             VerticalAlignment="Center"
                                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                                            Text="{Binding KeyboardOutputChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Press to define hotkey output'}" />
+                                                            Text="{Binding KeyboardOutputChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringEmptyConverter}, ConverterParameter={x:Static resx:Resources.Hotkey_OutputDefineTip}}" />
                                                     </ToggleButton>
 
                                                     <Button
@@ -592,11 +592,11 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Target" />
+                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_ExecutableTarget}" />
                                                     <TextBlock
                                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                                        Text="Define the target executable"
+                                                        Text="{l:Static resx:Resources.Hotkey_ExecutableTargetDesc}"
                                                         TextWrapping="Wrap" />
                                                 </ikw:SimpleStackPanel>
 
@@ -629,11 +629,11 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <ikw:SimpleStackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Arguments" />
+                                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.Hotkey_ExecutableArguments}" />
                                                     <TextBlock
                                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                                        Text="This parameter can be adjusted to modify the behavior of an executable during execution"
+                                                        Text="{l:Static resx:Resources.Hotkey_ExecutableArgumentsDesc}"
                                                         TextWrapping="Wrap" />
                                                 </ikw:SimpleStackPanel>
 
@@ -729,7 +729,7 @@
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 Command="{Binding DeleteHotkeyCommand}"
-                                                Content="Delete hotkey"
+                                                Content="{l:Static resx:Resources.Hotkey_Delete}"
                                                 Style="{StaticResource AccentButtonStyle}" />
                                         </Grid>
                                     </ikw:SimpleStackPanel>
