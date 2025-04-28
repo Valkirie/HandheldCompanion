@@ -1437,8 +1437,13 @@
                         <ui:SettingsExpander
                             Description="Manage windows associated with profile"
                             Header="Windows settings"
-                            IsEnabled="{Binding HasWindows}"
+                            IsEnabled="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsExpanded="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             ItemsSource="{Binding ProfileWindows}">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xf7ed;" />
+                            </ui:SettingsExpander.HeaderIcon>
+
                             <ui:SettingsExpander.ItemTemplate>
                                 <DataTemplate>
                                     <ui:SettingsCard Header="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
