@@ -7,6 +7,7 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Controls;
 using System;
@@ -231,7 +232,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                return string.IsNullOrEmpty(_KeyboardOutputChord) ? "Press to define hotkey output" : _KeyboardOutputChord;
+                return string.IsNullOrEmpty(_KeyboardOutputChord) ? Resources.Hotkey_OutputDefineTip : _KeyboardOutputChord;
             }
             set
             {

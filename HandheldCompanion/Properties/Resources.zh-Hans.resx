@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="icon" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="AboutPage_About" xml:space="preserve">
     <value>关于</value>
   </data>
@@ -232,10 +236,10 @@
     <value>将系统或当前的预设配置TDP增加1W</value>
   </data>
   <data name="Hotkey_overlayGamepad" xml:space="preserve">
-    <value>3D手柄覆盖窗</value>
+    <value>3D手柄悬浮窗</value>
   </data>
   <data name="Hotkey_overlayGamepadDesc" xml:space="preserve">
-    <value>显示/隐藏3D手柄预览覆盖窗</value>
+    <value>显示/隐藏3D手柄预览悬浮窗</value>
   </data>
   <data name="Hotkey_overlayTrackpads" xml:space="preserve">
     <value>虚拟触控板</value>
@@ -244,10 +248,10 @@
     <value>显示/隐藏虚拟触控板</value>
   </data>
   <data name="Hotkey_quickTools" xml:space="preserve">
-    <value>工具窗口</value>
+    <value>快捷工具窗口</value>
   </data>
   <data name="Hotkey_quickToolsDesc" xml:space="preserve">
-    <value>显示/隐藏工具窗口</value>
+    <value>显示/隐藏快捷工具窗口</value>
   </data>
   <data name="Hotkey_Custom" xml:space="preserve">
     <value>自定义快捷方式</value>
@@ -325,7 +329,7 @@
     <value>手柄</value>
   </data>
   <data name="MainWindow_navOverlay" xml:space="preserve">
-    <value>覆盖窗</value>
+    <value>悬浮窗</value>
   </data>
   <data name="MainWindow_navProfiles" xml:space="preserve">
     <value>配置文件</value>
@@ -352,7 +356,7 @@
     <value>始终在顶层</value>
   </data>
   <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
-    <value>开启时，覆盖窗将始终覆盖在其他界面顶层</value>
+    <value>开启时，悬浮窗将始终覆盖在其他界面顶层</value>
   </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>返回</value>
@@ -373,7 +377,7 @@
     <value>背景颜色</value>
   </data>
   <data name="OverlayPage_ColorDesc" xml:space="preserve">
-    <value>更改3D手柄覆盖窗背景颜色</value>
+    <value>更改3D手柄悬浮窗背景颜色</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>3D手柄配置选项</value>
@@ -424,7 +428,7 @@
     <value>修改虚拟触摸板不透明度</value>
   </data>
   <data name="OverlayPage_Overlay" xml:space="preserve">
-    <value>覆盖窗</value>
+    <value>悬浮窗</value>
   </data>
   <data name="OverlayPage_OverlayModel" xml:space="preserve">
     <value>3D手柄模型</value>
@@ -433,7 +437,7 @@
     <value>修改3D手柄模型</value>
   </data>
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
-    <value>覆盖窗预览</value>
+    <value>悬浮窗预览</value>
   </data>
   <data name="OverlayPage_RenderSettings" xml:space="preserve">
     <value>渲染设置</value>
@@ -478,7 +482,7 @@
     <value>ZD O+</value>
   </data>
   <data name="Overlay_Overlay" xml:space="preserve">
-    <value>覆盖窗</value>
+    <value>悬浮窗</value>
   </data>
   <data name="ProcessEx_processResume" xml:space="preserve">
     <value>继续</value>
@@ -670,10 +674,10 @@
     <value>确认</value>
   </data>
   <data name="ProfilesPage_PowerPreset" xml:space="preserve">
-    <value>Power preset</value>
+    <value>电源预设（使用电池）</value>
   </data>
   <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
-    <value>Change the selected power preset</value>
+    <value>更改选择的电源预设</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>配置详情</value>
@@ -682,7 +686,7 @@
     <value>配置名称</value>
   </data>
   <data name="ProfilesPage_ProfilePath" xml:space="preserve">
-    <value>配置路径</value>
+    <value>程序路径</value>
   </data>
   <data name="ProfilesPage_Profiles" xml:space="preserve">
     <value>配置</value>
@@ -1070,10 +1074,10 @@
     <value>手柄连接时实体手柄震动提示</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>Controller mode</value>
+    <value>控制器模式</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>Change controller mode: Auto, Gamepad or Desktop</value>
+    <value>更改控制器模式：自动，游戏手柄，桌面</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>操作中心</value>
@@ -1091,7 +1095,7 @@
     <value>将风扇转速设置为手动配置风扇转速</value>
   </data>
   <data name="Hotkey_OnScreenDisplayDesc" xml:space="preserve">
-    <value>显示/隐藏性能监控覆盖窗</value>
+    <value>显示/隐藏性能监控悬浮窗</value>
   </data>
   <data name="Hotkey_decreaseBrightness" xml:space="preserve">
     <value>降低亮度</value>
@@ -1139,16 +1143,16 @@
     <value>帧率</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevel" xml:space="preserve">
-    <value>覆盖窗显示模式</value>
+    <value>悬浮窗显示模式</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevelDesc" xml:space="preserve">
-    <value>更改覆盖窗显示模式</value>
+    <value>更改悬浮窗显示模式</value>
   </data>
   <data name="OverlayPage_OverlayDisplayUpdateRate" xml:space="preserve">
     <value>更新频率</value>
   </data>
   <data name="OverlayPage_OverlayDisplayUpdateRateDesc" xml:space="preserve">
-    <value>更改性能覆盖窗更新频率</value>
+    <value>更改性能悬浮窗更新频率</value>
   </data>
   <data name="ProfilesPage_FramerateLimit" xml:space="preserve">
     <value>限制帧率</value>
@@ -1226,16 +1230,16 @@
     <value>合作伙伴</value>
   </data>
   <data name="Dialog_Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>是</value>
   </data>
   <data name="Dialog_No" xml:space="preserve">
-    <value>No</value>
+    <value>否</value>
   </data>
   <data name="Dialog_ForceRestartDesc" xml:space="preserve">
-    <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
+    <value>必须重新启动设备才能使更改生效。现在重启吗？</value>
   </data>
   <data name="Dialog_ForceRestartTitle" xml:space="preserve">
-    <value>Restart required</value>
+    <value>需要重启</value>
   </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>制造商</value>
@@ -1499,16 +1503,16 @@
     <value>自动最小化</value>
   </data>
   <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
-    <value>当工具窗口失焦时自动最小化</value>
+    <value>当快捷工具窗口失焦时自动最小化</value>
   </data>
   <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>电源选项</value>
   </data>
   <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
-    <value>快速窗口背景</value>
+    <value>快捷工具窗口背景</value>
   </data>
   <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
-    <value>快速窗口设置</value>
+    <value>快捷工具窗口设置</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
     <value>窗口位置</value>
@@ -2054,10 +2058,10 @@
     <value>Options</value>
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
-    <value>Are you sure you want to apply this template? All layout settings will be overridden.</value>
+    <value>你确定要应用此模板吗？所有的布局设置都将被覆盖。</value>
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
-    <value>You can't undo this action. Previously applied template: {0}</value>
+    <value>你将不能撤销这个操作。 之前应用的模板: {0}</value>
   </data>
   <data name="Enum_KeyFlags_A" xml:space="preserve">
     <value>A</value>
@@ -2267,22 +2271,31 @@
     <value>Virtual </value>
   </data>
   <data name="MainWindow_Back" xml:space="preserve">
-    <value>Back</value>
+    <value>返回</value>
   </data>
   <data name="MainWindow_Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>退出</value>
   </data>
   <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Main Window</value>
+    <value>主窗口</value>
   </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
-    <value>Navigate</value>
+    <value>导航</value>
   </data>
   <data name="MainWindow_QuickTools" xml:space="preserve">
-    <value>Quick Tools</value>
+    <value>快捷工具</value>
   </data>
   <data name="MainWindow_Select" xml:space="preserve">
-    <value>Select</value>
+    <value>选择</value>
+  </data>
+  <data name="Hint_SteamInputReadme" xml:space="preserve">
+    <value>停用 Steam 输入并重新启动 Steam</value>
+  </data>
+  <data name="Hint_SteamInputDesc" xml:space="preserve">
+    <value>Steam 正在运行且 Steam 输入已启用，这可能导致出现意外的结果</value>
+  </data>
+  <data name="Hint_SteamInput" xml:space="preserve">
+    <value>Steam 输入已启用</value>
   </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>你可能需要卸载 Steam Xbox 扩展功能支持驱动</value>
@@ -2381,7 +2394,7 @@
     <value>Default power and fan speed for optimal performance, temperature, noise, and battery life.</value>
   </data>
   <data name="PowerProfileDefaultName" xml:space="preserve">
-    <value>Default</value>
+    <value>默认</value>
   </data>
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>User-defined power and fan speed.</value>
@@ -2411,31 +2424,31 @@
     <value>Settings, display profile</value>
   </data>
   <data name="QuickDevicePage_Title" xml:space="preserve">
-    <value>Device</value>
+    <value>设备</value>
   </data>
   <data name="QuickHomePage_Title" xml:space="preserve">
-    <value>Home</value>
+    <value>主页</value>
   </data>
   <data name="QuickPerformancePage_Title" xml:space="preserve">
-    <value>Performance</value>
+    <value>性能</value>
   </data>
   <data name="QuickProfilesPage_Desc" xml:space="preserve">
     <value>Performance, motion control, graphics</value>
   </data>
   <data name="QuickProfilesPage_Title" xml:space="preserve">
-    <value>Profiles</value>
+    <value>配置</value>
   </data>
   <data name="QuickSettingsPage_Desc" xml:space="preserve">
     <value>Preferred actions</value>
   </data>
   <data name="QuickSettingsPage_Title" xml:space="preserve">
-    <value>Actions</value>
+    <value>操作</value>
   </data>
   <data name="QuickApplicationsPage_Desc" xml:space="preserve">
     <value>Manage applications</value>
   </data>
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
-    <value>Applications</value>
+    <value>应用</value>
   </data>
   <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
     <value>Refresh rate</value>
@@ -2501,25 +2514,25 @@
     <value>M2</value>
   </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
-    <value>Toggle emulated controller type</value>
+    <value>切换虚拟手柄类型</value>
   </data>
   <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
-    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
+    <value>在 Xbox 360 与 Dualshock 4 虚拟手柄之间切换</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller type</value>
+    <value>模拟手柄类型</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
-    <value>Default</value>
+    <value>默认</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDS4" xml:space="preserve">
-    <value>Emulated DualShock 4 controller</value>
+    <value>模拟 DualShock 4 手柄</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
-    <value>Emulated XBOX 360 controller</value>
+    <value>模拟 XBOX 360 手柄</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>The emulated controller to be used when this profile is active</value>
+    <value>这个配置启用时使用的模拟手柄类型</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>手柄管理</value>
@@ -2540,16 +2553,19 @@
     <value>重试</value>
   </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
-    <value>ASUS services are running</value>
+    <value>华硕服务正在运行</value>
   </data>
   <data name="Hint_RogAllyServiceCheckReadme" xml:space="preserve">
-    <value>You should disable ASUS services, so that the application can run smoothly and without any conflicts</value>
+    <value>你需要停用华硕服务以避免冲突</value>
   </data>
   <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
-    <value>ASUS services are already running on your device. This may interfere with the application</value>
+    <value>华硕服务正在你的设备上运行，它可能会干扰本程序运行</value>
   </data>
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
-    <value>Disable ASUS services</value>
+    <value>停用华硕服务</value>
+  </data>
+  <data name="Hint_SteamInputAction" xml:space="preserve">
+    <value>停用 Steam 输入</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
     <value>通知</value>
@@ -2561,34 +2577,37 @@
     <value>你现在没有通知</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
-    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+    <value>前往配置页以更改每个游戏的模拟手柄类型偏好。</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
-    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+    <value>模拟手柄的类型由当前应用的游戏配置管理。</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>Emulated controller is managed by profile</value>
+    <value>模拟手柄由配置文件管理</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
-    <value>Core isolation features are turned on</value>
+    <value>内核隔离已启用</value>
   </data>
   <data name="Hint_CoreIsolationCheckAction" xml:space="preserve">
-    <value>Disable Core isolation</value>
+    <value>关闭内核隔离</value>
   </data>
   <data name="Hint_CoreIsolationCheckDesc" xml:space="preserve">
-    <value>Your system core isolation features are turned on, therefore TDP read/write and fan control might be disabled</value>
+    <value>由于系统的内核隔离功能已启用，TDP读/写与风扇控制可能无法使用</value>
   </data>
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
-    <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
+    <value>你可能需要关闭内核隔离并重启系统以启用TDP控制</value>
   </data>
   <data name="ProfilesPage_SubProfiles" xml:space="preserve">
-    <value>Sub Profiles</value>
+    <value>子配置</value>
   </data>
   <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
-    <value>Add different profiles to the same game</value>
+    <value>为同一游戏添加不同的配置</value>
   </data>
-  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
-    <value>Select a sub profile to apply</value>
+  <data name="Hotkey_CycleSubProfile" xml:space="preserve">
+    <value>循环切换子配置</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDesc" xml:space="preserve">
+    <value>为当前游戏循环切换子配置</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Sets the fan to max speed</value>
@@ -2612,7 +2631,7 @@
     <value>Manage on-screen overlay</value>
   </data>
   <data name="QuickOverlayPage_Title" xml:space="preserve">
-    <value>Overlay</value>
+    <value>覆盖</value>
   </data>
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
     <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
@@ -2639,25 +2658,25 @@
     <value>This is the default preset, you cannot modify the fan curve on this preset.</value>
   </data>
   <data name="Hint_LegionGoServices" xml:space="preserve">
-    <value>Legion Space Tasks and Services are active</value>
+    <value>Legion Space 正在运行</value>
   </data>
   <data name="Hint_LegionGoServicesAction" xml:space="preserve">
-    <value>Disable Legion Space</value>
+    <value>停用 Legion Space</value>
   </data>
   <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
-    <value>Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application.</value>
+    <value>Legion Space 正在你的设备上运行，这可能会导致本程序出现兼容性问题。</value>
   </data>
   <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
-    <value>You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors</value>
+    <value>你需要停用 Legion Space 的进程和服务，以避免使用本程序出现错误</value>
   </data>
   <data name="DevicePage_UseSecondColor" xml:space="preserve">
     <value>Use second color</value>
   </data>
   <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
-    <value>Graphics settings</value>
+    <value>图形设置</value>
   </data>
   <data name="ProfilesPage_GraphicsSettingsDesc" xml:space="preserve">
-    <value>Change the graphics settings</value>
+    <value>更改图形设置</value>
   </data>
   <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
     <value>预设选择</value>
@@ -2684,28 +2703,28 @@
     <value>靠右</value>
   </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
-    <value>On Screen Overlay</value>
+    <value>悬浮窗</value>
   </data>
   <data name="Hotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
-    <value>Toggle on screen overlay</value>
+    <value>切换悬浮窗</value>
   </data>
   <data name="ProfilesPage_GPUScaling" xml:space="preserve">
-    <value>GPU Scaling</value>
+    <value>GPU缩放</value>
   </data>
   <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
-    <value>GPU will scale up lower resolutions to fit the display</value>
+    <value>分辨率较低时，使用GPU放大以适应屏幕</value>
   </data>
   <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
-    <value>Image Sharpening</value>
+    <value>图像锐化</value>
   </data>
   <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
-    <value>Enhances visual detail</value>
+    <value>增强图像细节</value>
   </data>
   <data name="ProfilesPage_IS" xml:space="preserve">
-    <value>Integer scaling</value>
+    <value>整倍缩放</value>
   </data>
   <data name="ProfilesPage_ISDesc" xml:space="preserve">
-    <value>Scales up resolution by multiplying each pixel by an integer</value>
+    <value>以整数倍数放大分辨率</value>
   </data>
   <data name="ProfilesPage_ResolutionScale" xml:space="preserve">
     <value>Resolution scale</value>
@@ -2815,8 +2834,17 @@
   <data name="OverlayPage_SteamDeck" xml:space="preserve">
     <value>Steam Deck</value>
   </data>
-  <data name="OverlayPage_Xbox360Controller" xml:space="preserve">
-    <value />
+  <data name="Hint_MSIClawCenterCheck" xml:space="preserve">
+    <value>MSI Center 正在运行</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheckAction" xml:space="preserve">
+    <value>停用 MSI Center</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheckDesc" xml:space="preserve">
+    <value>MSI Center 正在你的设备上运行，它可能会干扰本程序运行</value>
+  </data>
+  <data name="Hint_MSIClawCenterCheckReadme" xml:space="preserve">
+    <value>你需要停用 MSI Center 以避免冲突</value>
   </data>
   <data name="SettingsPage_Telemetry" xml:space="preserve">
     <value>诊断数据</value>
@@ -2826,6 +2854,9 @@
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校准</value>
+  </data>
+  <data name="LayoutPage_Export" xml:space="preserve">
+    <value>导出布局</value>
   </data>
   <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
     <value>激进</value>
@@ -2868,6 +2899,27 @@
   </data>
   <data name="PerformancePage_MaxCPU_Title" xml:space="preserve">
     <value>最大 CPU 数量</value>
+  </data>
+  <data name="ProfilesPage_Compatibility" xml:space="preserve">
+    <value>兼容性设置</value>
+  </data>
+  <data name="ProfilesPage_Compatibility_Fullscreen" xml:space="preserve">
+    <value>使用全屏优化</value>
+  </data>
+  <data name="ProfilesPage_Compatibility_HighDPI" xml:space="preserve">
+    <value>使用高DPI感知</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Desc" xml:space="preserve">
+    <value>更改图形设置</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSetting_Title" xml:space="preserve">
+    <value>图形设置</value>
+  </data>
+  <data name="ProfilesPage_NewSubProfile" xml:space="preserve">
+    <value>（新配置）</value>
+  </data>
+  <data name="ProfilesPage_SubProfileRenamingDialogue_Name" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>预设效果</value>
@@ -2929,18 +2981,86 @@
   <data name="MainWindow_TelemetryTitle" xml:space="preserve">
     <value>诊断数据</value>
   </data>
+  <data name="ProfilesPage_ProfileArguments" xml:space="preserve">
+    <value>启动参数</value>
+  </data>
+  <data name="Enum_InputsChordType_Click" xml:space="preserve">
+    <value>点击</value>
+  </data>
+  <data name="Enum_InputsChordType_Long" xml:space="preserve">
+    <value>长按</value>
+  </data>
+  <data name="Enum_InputsChordType_None" xml:space="preserve">
+    <value>点击定义热键</value>
+  </data>
+  <data name="Hotkey_Keystrokes" xml:space="preserve">
+    <value>按键</value>
+  </data>
+  <data name="Hotkey_KeystrokesDesc" xml:space="preserve">
+    <value>输入自定义的键盘操作</value>
+  </data>
+  <data name="Hotkey_Executable" xml:space="preserve">
+    <value>执行程序</value>
+  </data>
+  <data name="Hotkey_ExecutableDesc" xml:space="preserve">
+    <value>使用指定参数执行程序</value>
+  </data>
+  <data name="Hotkey_Function" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Hotkey_FunctionDesc" xml:space="preserve">
+    <value>执行指定的功能</value>
+  </data>
+  <data name="Hotkey_None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="Hotkey_NoneDesc" xml:space="preserve">
+    <value>不执行任何操作</value>
+  </data>
+  <data name="Hotkey_ActionCenter" xml:space="preserve">
+    <value>打开 Windows 操作中心</value>
+  </data>
+  <data name="Hotkey_ActionCenterDesc" xml:space="preserve">
+    <value>显示操作中心</value>
+  </data>
+  <data name="Hotkey_Settings" xml:space="preserve">
+    <value>打开 Windows 设置</value>
+  </data>
+  <data name="Hotkey_SettingsDesc" xml:space="preserve">
+    <value>按下按钮或特殊键以更改热键</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacy" xml:space="preserve">
+    <value>显示虚拟键盘（旧版）</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyDesc" xml:space="preserve">
+    <value>显示/隐藏虚拟键盘（旧版）</value>
+  </data>
   <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
-    <value>覆盖窗</value>
+    <value>悬浮窗</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ControllerPage_ControllerManagement_Attempt" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
+    <value>电源预设（插入电源）</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsPlugged" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
-  <data name="DevicePage_BatteryOptions" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Hotkey_muteVolume" xml:space="preserve">
+    <value>静音</value>
   </data>
-  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Hotkey_muteVolumeDesc" xml:space="preserve">
+    <value>开启/关闭静音</value>
+  </data>
+  <data name="Hotkey_GameBar" xml:space="preserve">
+    <value>打开 Game Bar</value>
+  </data>
+  <data name="Hotkey_GameBarDesc" xml:space="preserve">
+    <value>输出指令：Windows + G</value>
+  </data>
+  <data name="Hotkey_SwapScreen" xml:space="preserve">
+    <value>移动窗口所在屏幕</value>
+  </data>
+  <data name="Hotkey_SwapScreenDesc" xml:space="preserve">
+    <value>将当前窗口移动到另一个屏幕</value>
   </data>
   <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
     <value>自动（平衡性能/能效核）</value>
@@ -2958,10 +3078,10 @@
     <value>仅能效核（最高能效）</value>
   </data>
   <data name="Hotkey_XGMobile" xml:space="preserve">
-    <value />
+    <value>切换 ROG XG Mobile</value>
   </data>
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
-    <value />
+    <value>切换 ROG XG Mobile 状态</value>
   </data>
   <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
     <value>显示选项</value>
@@ -3002,43 +3122,154 @@
   <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
     <value>背景</value>
   </data>
-  <data name="SettingsPage_Experimental" xml:space="preserve">
-    <value />
-  </data>
-  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
-    <value />
-  </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value />
-  </data>
   <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value>库</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwriteSecondary" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
-  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+  <data name="HotkeysPage_CreateNew" xml:space="preserve">
+    <value>新建热键</value>
+  </data>
+  <data name="Hotkey_CommandType" xml:space="preserve">
+    <value>命令类型</value>
+  </data>
+  <data name="Hotkey_CommandTypeDesc" xml:space="preserve">
+    <value>触发热键时运行的命令类型</value>
+  </data>
+  <data name="Hotkey_DefaultName" xml:space="preserve">
+    <value>空热键</value>
+  </data>
+  <data name="Hotkey_DefaultDesc" xml:space="preserve">
+    <value>请选择命令类型</value>
+  </data>
+  <data name="Hotkey_CommandName" xml:space="preserve">
+    <value>命令名称</value>
+  </data>
+  <data name="Hotkey_CommandNameDesc" xml:space="preserve">
+    <value>为热键取一个名称</value>
+  </data>
+  <data name="Hotkey_FunctionToRun" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Hotkey_FunctionToRunDesc" xml:space="preserve">
+    <value>指定触发的功能</value>
+  </data>
+  <data name="Hotkey_QuickToolsPage" xml:space="preserve">
+    <value>页面</value>
+  </data>
+  <data name="Hotkey_QuickToolsPageDesc" xml:space="preserve">
+    <value>指定打开快捷工具窗口时展示的页面</value>
+  </data>
+  <data name="Hotkey_Delete" xml:space="preserve">
+    <value>删除热键</value>
+  </data>
+  <data name="Hotkey_Output" xml:space="preserve">
+    <value>输出</value>
+  </data>
+  <data name="Hotkey_OutputDesc" xml:space="preserve">
+    <value>指定输出的按键操作</value>
+  </data>
+  <data name="Hotkey_OutputDefineTip" xml:space="preserve">
+    <value>点击定义热键输出</value>
+  </data>
+  <data name="Hotkey_ExecutableTarget" xml:space="preserve">
+    <value>目标</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetDesc" xml:space="preserve">
+    <value>指定目标可执行程序</value>
+  </data>
+  <data name="Hotkey_ExecutableArguments" xml:space="preserve">
+    <value>参数</value>
+  </data>
+  <data name="Hotkey_ExecutableArgumentsDesc" xml:space="preserve">
+    <value>指定运行可执行程序时的参数</value>
+  </data>
+  <data name="LayoutPage_ExecuteActionsNumFormat" xml:space="preserve">
+    <value>{0} 执行 {1} 个动作</value>
+  </data>
+  <data name="Hotkey_WindowStyle" xml:space="preserve">
+    <value>窗口样式</value>
+  </data>
+  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
+    <value>指定如何显示进程启动打开的新窗口</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
+    <value>隐藏</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
+    <value>以管理员身份运行</value>
+  </data>
+  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
+    <value>以提升的管理员权限启动程序</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
+    <value>点击选择程序</value>
+  </data>
+  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
+    <value>指定打开主窗口时展示的页面</value>
+  </data>
+  <data name="Hotkey_MainWindowPage" xml:space="preserve">
+    <value>页面</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
+    <value>方向</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
+    <value>指定循环方向</value>
+  </data>
+  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
+    <value>向前</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
+    <value>向后</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
+    <value>指定旧版虚拟键盘的显示位置</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
+    <value>底部</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
+    <value>掌机伴侣</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
+    <value>电源与电池</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
     <value />
   </data>
-  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
-    <value />
+  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
+    <value>多任务</value>
   </data>
-  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
-    <value />
+  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
+    <value>显示</value>
   </data>
-  <data name="ProfilesPage_Library_Title" xml:space="preserve">
-    <value />
+  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
+    <value>声音</value>
   </data>
-  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
-    <value />
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>设为默认</value>
   </data>
-  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
-    <value />
+  <data name="Hotkey_Current" xml:space="preserve">
+    <value>上次关闭时的页面</value>
   </data>
-  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="LibraryDiscoverTitle" xml:space="preserve">
-    <value />
-  </data>
-  <data name="LibraryDiscoverContent" xml:space="preserve">
-    <value />
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
+    <value>导航栏</value>
   </data>
 </root>

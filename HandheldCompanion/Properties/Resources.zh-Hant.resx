@@ -2830,6 +2830,9 @@
   <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>裝置設定</value>
   </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value />
+  </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
   </data>
@@ -3334,53 +3337,18 @@
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value>切換 ROG XG Mobile 狀態</value>
   </data>
-  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
-    <value />
-  </data>
-  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_Priority_High" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
-    <value>工具窗口背景</value>
-  </data>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value />
   </data>
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value />
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="HotkeysPage_Hotkeys" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value>工具窗口背景</value>
   </data>
   <data name="MainWindow_navLibrary" xml:space="preserve">
     <value />
@@ -3406,6 +3374,87 @@
   <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_MainWindowPage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
+    <value />
+  </data>
   <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
     <value>原生屏幕方向</value>
   </data>
@@ -3421,10 +3470,7 @@
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>設為默認佈局</value>
   </data>
-  <data name="LibraryDiscoverTitle" xml:space="preserve">
-    <value />
-  </data>
-  <data name="LibraryDiscoverContent" xml:space="preserve">
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
     <value />
   </data>
 </root>

@@ -296,7 +296,7 @@
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource BaseTextBlockStyle}"
-                                Text="Open navigation" />
+                                Text="{l:Static resx:Resources.MainWindow_OpenNavigation}" />
                         </ikw:SimpleStackPanel>
 
                         <!--  Select  -->
