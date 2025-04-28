@@ -4111,6 +4111,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command name.
+        /// </summary>
+        public static string Hotkey_CommandName {
+            get {
+                return ResourceManager.GetString("Hotkey_CommandName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define the hotkey custom name.
+        /// </summary>
+        public static string Hotkey_CommandNameDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_CommandNameDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command type.
+        /// </summary>
+        public static string Hotkey_CommandType {
+            get {
+                return ResourceManager.GetString("Hotkey_CommandType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define the hot key command type.
+        /// </summary>
+        public static string Hotkey_CommandTypeDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_CommandTypeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display Action center.
         /// </summary>
         public static string Hotkey_ControlCenter {
@@ -4125,6 +4161,15 @@ namespace HandheldCompanion.Properties {
         public static string Hotkey_ControlCenterDesc {
             get {
                 return ResourceManager.GetString("Hotkey_ControlCenterDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current.
+        /// </summary>
+        public static string Hotkey_Current {
+            get {
+                return ResourceManager.GetString("Hotkey_Current", resourceCulture);
             }
         }
         
@@ -4219,6 +4264,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please pick a command type.
+        /// </summary>
+        public static string Hotkey_DefaultDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_DefaultDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty hotkey.
+        /// </summary>
+        public static string Hotkey_DefaultName {
+            get {
+                return ResourceManager.GetString("Hotkey_DefaultName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete hotkey.
+        /// </summary>
+        public static string Hotkey_Delete {
+            get {
+                return ResourceManager.GetString("Hotkey_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display and hide the desktop.
         /// </summary>
         public static string Hotkey_Desktop {
@@ -4264,11 +4336,47 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arguments.
+        /// </summary>
+        public static string Hotkey_ExecutableArguments {
+            get {
+                return ResourceManager.GetString("Hotkey_ExecutableArguments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This parameter can be adjusted to modify the behavior of an executable during execution.
+        /// </summary>
+        public static string Hotkey_ExecutableArgumentsDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ExecutableArgumentsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Execute an application with specified arguments.
         /// </summary>
         public static string Hotkey_ExecutableDesc {
             get {
                 return ResourceManager.GetString("Hotkey_ExecutableDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target.
+        /// </summary>
+        public static string Hotkey_ExecutableTarget {
+            get {
+                return ResourceManager.GetString("Hotkey_ExecutableTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define the target executable.
+        /// </summary>
+        public static string Hotkey_ExecutableTargetDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ExecutableTargetDesc", resourceCulture);
             }
         }
         
@@ -4323,6 +4431,24 @@ namespace HandheldCompanion.Properties {
         public static string Hotkey_FunctionDesc {
             get {
                 return ResourceManager.GetString("Hotkey_FunctionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Function.
+        /// </summary>
+        public static string Hotkey_FunctionToRun {
+            get {
+                return ResourceManager.GetString("Hotkey_FunctionToRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define the function to trigger.
+        /// </summary>
+        public static string Hotkey_FunctionToRunDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_FunctionToRunDesc", resourceCulture);
             }
         }
         
@@ -4597,6 +4723,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Output.
+        /// </summary>
+        public static string Hotkey_Output {
+            get {
+                return ResourceManager.GetString("Hotkey_Output", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to define hotkey output.
+        /// </summary>
+        public static string Hotkey_OutputDefineTip {
+            get {
+                return ResourceManager.GetString("Hotkey_OutputDefineTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define the output key strokes.
+        /// </summary>
+        public static string Hotkey_OutputDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_OutputDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display 3D controller.
         /// </summary>
         public static string Hotkey_overlayGamepad {
@@ -4629,6 +4782,24 @@ namespace HandheldCompanion.Properties {
         public static string Hotkey_overlayTrackpadsDesc {
             get {
                 return ResourceManager.GetString("Hotkey_overlayTrackpadsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page.
+        /// </summary>
+        public static string Hotkey_Page {
+            get {
+                return ResourceManager.GetString("Hotkey_Page", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define the page to navigate when opening Quick Tools.
+        /// </summary>
+        public static string Hotkey_PageDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_PageDesc", resourceCulture);
             }
         }
         
@@ -4795,6 +4966,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create new hotkey.
+        /// </summary>
+        public static string HotkeysPage_CreateNew {
+            get {
+                return ResourceManager.GetString("HotkeysPage_CreateNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hotkeys.
         /// </summary>
         public static string HotkeysPage_Hotkeys {
@@ -4936,6 +5116,15 @@ namespace HandheldCompanion.Properties {
         public static string LayoutPage_Dpad {
             get {
                 return ResourceManager.GetString("LayoutPage_Dpad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} executes {1} action(s).
+        /// </summary>
+        public static string LayoutPage_ExecuteActionsNumFormat {
+            get {
+                return ResourceManager.GetString("LayoutPage_ExecuteActionsNumFormat", resourceCulture);
             }
         }
         
