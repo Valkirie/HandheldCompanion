@@ -41,6 +41,9 @@ namespace HandheldCompanion.ViewModels
 
             ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
+            // get page viewmodel
+            QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
+
             BringProcessCommand = new DelegateCommand(async () =>
             {
                 OverlayQuickTools qtWindow = OverlayQuickTools.GetCurrent();
@@ -58,18 +61,7 @@ namespace HandheldCompanion.ViewModels
                 if (screen is null)
                     return;
 
-                QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
-                WinAPI.MakeBorderless(ProcessWindow.Hwnd, viewModel.BorderlessEnabled && viewModel.BorderlessToggle);
-                WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, viewModel.windowPositions);
-                WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
-
-                // Todo: move me !
-                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processWindow.processEx.Path, true);
-                profile = ManagerFactory.profileManager.GetProfileForSubProfile(profile);
-                if (!profile.Default)
-                {
-                    profile.WindowsSettings[processWindow.Name] = new(screen.DeviceName, viewModel.BorderlessEnabled && viewModel.BorderlessToggle, viewModel.windowPositions);
-                }
+                WindowManager.SetWindowSettings(processWindow, screen, viewModel.BorderlessEnabled && viewModel.BorderlessToggle, viewModel.windowPositions);
             });
 
             SwapScreenCommand = new DelegateCommand(async () =>
@@ -77,17 +69,8 @@ namespace HandheldCompanion.ViewModels
                 Screen screen = Screen.AllScreens.Where(screen => screen.DeviceName != CurrentScreen.DeviceName).FirstOrDefault();
                 if (screen is null)
                     return;
-
-                QuickApplicationsPageViewModel viewModel = OverlayQuickTools.GetCurrent().applicationsPage.DataContext as QuickApplicationsPageViewModel;
-                WinAPI.MoveWindow(ProcessWindow.Hwnd, screen, WpfScreenHelper.Enum.WindowPositions.Maximize);
-                WinAPI.SetForegroundWindow(ProcessWindow.Hwnd);
-
-                // Todo: move me !
-                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processWindow.processEx.Path, true, true);
-                if (!profile.Default)
-                {
-                    profile.WindowsSettings[processWindow.Name] = new(screen.DeviceName, viewModel.BorderlessEnabled && viewModel.BorderlessToggle, viewModel.windowPositions);
-                }
+                
+                WindowManager.SetWindowSettings(processWindow, screen, false, WpfScreenHelper.Enum.WindowPositions.Maximize);
 
                 OnPropertyChanged(nameof(IsPrimaryScreen));
             });

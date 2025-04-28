@@ -380,24 +380,6 @@ public class ProcessEx : IDisposable
             if (string.IsNullOrEmpty(window.Name))
                 return;
 
-            // Todo: move me !
-            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(Path, true, true);
-            if (!profile.Default)
-            {
-                if (profile.WindowsSettings.TryGetValue(window.Name, out ProcessWindowSettings processWindowSettings))
-                {
-                    foreach (Screen screen in Screen.AllScreens)
-                    {
-                        if (screen.DeviceName.Equals(processWindowSettings.DeviceName))
-                        {
-                            WinAPI.MakeBorderless(hwnd, processWindowSettings.Borderless);
-                            WinAPI.MoveWindow(hwnd, screen, processWindowSettings.WindowPositions);
-                            break;
-                        }
-                    }
-                }
-            }
-
             // add window
             ProcessWindows.TryAdd(hwnd, window);
 

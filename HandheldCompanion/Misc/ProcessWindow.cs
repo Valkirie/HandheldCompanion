@@ -1,7 +1,10 @@
-﻿using HandheldCompanion.Utils;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Automation;
+using System.Windows.Forms;
 
 namespace HandheldCompanion.Misc
 {
@@ -17,6 +20,7 @@ namespace HandheldCompanion.Misc
         private bool _disposed = false;
 
         public ProcessEx processEx;
+        private ProcessWindowSettings windowSettings;
 
         private string _Name;
         public string Name
@@ -59,6 +63,18 @@ namespace HandheldCompanion.Misc
             }
 
             RefreshName();
+
+            // store window settings
+            windowSettings = WindowManager.GetWindowSettings(processEx.Path, this.Name);
+            if (windowSettings is not null)
+            {
+                Screen? screen = Screen.AllScreens.FirstOrDefault(screen => screen.DeviceName.Equals(windowSettings.DeviceName));
+                if (screen is not null)
+                {
+                    WinAPI.MakeBorderless(this.Hwnd, windowSettings.Borderless);
+                    WinAPI.MoveWindow(this.Hwnd, screen, windowSettings.WindowPositions);
+                }
+            }
         }
 
         private void OnWindowClosed(object sender, AutomationEventArgs e)

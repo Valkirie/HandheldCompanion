@@ -45,7 +45,7 @@ public enum SteeringAxis
 }
 
 [Serializable]
-public struct ProcessWindowSettings
+public class ProcessWindowSettings
 {
     public string DeviceName { get; set; }
     public bool Borderless { get; set; }
