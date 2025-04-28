@@ -108,9 +108,20 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
-                        ItemsSource="{Binding LayoutList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding LayoutCollectionView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectionChanged="cB_Layouts_SelectionChanged">
-
+                        <ComboBox.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Margin="16,0,0,0"
+                                            Style="{StaticResource BaseTextBlockStyle}"
+                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ComboBox.GroupStyle>
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}">
@@ -124,8 +135,7 @@
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE7FC;"
-                                        Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
+                                        Glyph="&#xE7FC;" />
 
                                     <StackPanel Grid.Column="1" Margin="0,0,50,0">
                                         <Grid>
@@ -133,8 +143,7 @@
                                             <ikw:SimpleStackPanel
                                                 HorizontalAlignment="Right"
                                                 Orientation="Horizontal"
-                                                Spacing="6"
-                                                Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
+                                                Spacing="6">
                                                 <TextBlock
                                                     FontStyle="Italic"
                                                     Style="{StaticResource BaseTextBlockStyle}"
@@ -146,8 +155,7 @@
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
                                             Text="{Binding Description, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            TextWrapping="Wrap"
-                                            Visibility="{Binding IsHeader, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
+                                            TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

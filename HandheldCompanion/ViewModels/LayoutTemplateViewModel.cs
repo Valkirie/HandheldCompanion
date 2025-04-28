@@ -1,4 +1,6 @@
 ﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Properties;
+
 using System;
 using System.Windows;
 
@@ -6,6 +8,8 @@ namespace HandheldCompanion.ViewModels
 {
     public class LayoutTemplateViewModel : BaseViewModel
     {
+        public string Header => LayoutTemplate.IsInternal ? Resources.LayoutPage_Templates : Resources.LayoutPage_Community;
+
         private LayoutTemplate _layoutTemplate;
         public LayoutTemplate LayoutTemplate
         {
@@ -14,10 +18,9 @@ namespace HandheldCompanion.ViewModels
             {
                 _layoutTemplate = value;
                 OnPropertyChanged(nameof(LayoutTemplate));
+                OnPropertyChanged(nameof(Header));
             }
         }
-
-        public bool IsHeader { get; set; } = false;
 
         private Guid _guid = Guid.Empty;
         public Guid Guid
