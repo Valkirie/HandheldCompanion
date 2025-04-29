@@ -31,14 +31,15 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 // 0 => "Current",
                 1 => "ControllerPage",
-                2 => "DevicePage",
-                3 => "PerformancePage",
-                4 => "ProfilesPage",
-                5 => "OverlayPage",
-                6 => "HotkeysPage",
-                7 => "AboutPage",
-                8 => "NotificationsPage",
-                9 => "SettingsPage",
+                2 => "LibraryPage",
+                3 => "DevicePage",
+                4 => "PerformancePage",
+                5 => "ProfilesPage",
+                6 => "OverlayPage",
+                7 => "HotkeysPage",
+                8 => "AboutPage",
+                9 => "NotificationsPage",
+                10 => "SettingsPage",
                 _ => string.Empty
             };
 
