@@ -175,30 +175,32 @@ public class ProfileManager : IManager
         return false;
     }
 
-    public Profile GetProfileFromPath(string path, bool ignoreStatus)
+    public Profile GetProfileFromPath(string path, bool ignoreStatus, bool getParent = false)
     {
-        // check if favorite sub profile exists for path
-        Profile profile = subProfiles.FirstOrDefault(pr => pr.Path == path && pr.IsFavoriteSubProfile);
+        if (string.IsNullOrEmpty(path))
+            return GetDefault();
 
-        // get main profile from path instead
-        if (profile is null)
-            profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+        Profile profile = null;
 
+        // Get favorite sub-profile (unless asking for parent)
+        if (!getParent)
+            profile = subProfiles.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) && p.IsFavoriteSubProfile);
+
+        // If null, get profile by path
+        profile ??= profiles.Values.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+
+        // If null, get profile by executable name
         if (profile is null)
         {
-            // otherwise, get profile from executable
-            string fileName = Path.GetFileName(path);
-            profile = profiles.Values.FirstOrDefault(a => a.Executable.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
-
-            if (profile is null)
-                return GetDefault();
+            string exeName = Path.GetFileName(path);
+            profile = profiles.Values.FirstOrDefault(p => p.Executable.Equals(exeName, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        // ignore profile status (enabled/disabled)
-        if (ignoreStatus)
-            return profile;
+        // If null or disabled, return default
+        if (profile is null || (!ignoreStatus && !profile.Enabled))
+            return GetDefault();
 
-        return profile.Enabled ? profile : GetDefault();
+        return profile;
     }
 
     public Profile GetProfileFromGuid(Guid Guid, bool ignoreStatus, bool isSubProfile = false)

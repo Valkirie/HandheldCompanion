@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using static HandheldCompanion.Libraries.LibraryEntry;
 using static HandheldCompanion.Managers.LibraryManager;
+using static HandheldCompanion.Misc.ProcessEx;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -23,6 +24,7 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems { get; } = [];
         public ObservableCollection<LibraryEntryViewModel> LibraryPickers { get; } = [];
+        public ObservableCollection<ProcessWindowViewModel> ProfileWindows { get; } = [];
 
         private ProfilesPage profilesPage;
         private ProfilesPickerViewModel _devicePresetsPickerVM;
@@ -279,8 +281,6 @@ namespace HandheldCompanion.ViewModels
         public bool IsLibraryBusy => ManagerFactory.libraryManager.IsBusy;
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
 
-        private Profile libraryProfile;
-
         public ICommand RefreshLibrary { get; private set; }
         public ICommand DisplayLibrary { get; private set; }
         public ICommand DownloadLibrary { get; private set; }
@@ -316,6 +316,17 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case ManagerStatus.Initialized:
                     QueryLibrary();
+                    break;
+            }
+
+            switch (ManagerFactory.processManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryForeground();
                     break;
             }
 
@@ -365,8 +376,8 @@ namespace HandheldCompanion.ViewModels
                     foreach (LibraryEntry entry in entries)
                         LibraryPickers.SafeAdd(new(entry));
 
-                    if (libraryProfile.LibraryEntry is not null && entries.Contains(libraryProfile.LibraryEntry))
-                        SelectedLibraryEntry = libraryProfile.LibraryEntry;
+                    if (ProfilesPage.selectedProfile.LibraryEntry is not null && entries.Contains(ProfilesPage.selectedProfile.LibraryEntry))
+                        SelectedLibraryEntry = ProfilesPage.selectedProfile.LibraryEntry;
                     else
                         SelectedLibraryEntry = ManagerFactory.libraryManager.GetGame(entries, LibrarySearchField);
                 }
@@ -375,14 +386,14 @@ namespace HandheldCompanion.ViewModels
             DownloadLibrary = new DelegateCommand(async () =>
             {
                 // download arts
-                await ManagerFactory.libraryManager.UpdateProfileArts(libraryProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex);
+                await ManagerFactory.libraryManager.UpdateProfileArts(ProfilesPage.selectedProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex);
 
                 // hide dialog
                 contentDialog?.Hide();
                 contentDialog = null;
 
                 // update profile
-                ManagerFactory.profileManager.UpdateOrCreateProfile(libraryProfile, UpdateSource.LibraryUpdate);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.LibraryUpdate);
             });
         }
 
@@ -393,6 +404,26 @@ namespace HandheldCompanion.ViewModels
             LibraryCoversIndex = -1;
             SelectedLibraryIndex = -1;
             LibraryPickers.SafeClear();
+        }
+
+        private void ProcessManager_Initialized()
+        {
+            QueryForeground();
+        }
+
+        private void QueryForeground()
+        {
+            ProcessEx processEx = ProcessManager.GetForegroundProcess();
+            if (processEx is null)
+                return;
+
+            ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+            ProcessManager_ForegroundChanged(processEx, null, filter);
+        }
+
+        private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
+        {
+            // do something
         }
 
         private void QueryLibrary()
@@ -510,17 +541,68 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private ProcessEx selectedProcess;
+        public bool HasWindows => ProfileWindows.Any();
+
         public void ProfileChanged(Profile selectedProfile)
         {
+            // update library target profile
+            LibrarySearchField = ProfilesPage.selectedProfile.Name;
+
             // clear list
             ClearLibrary();
 
-            // update library target profile
-            libraryProfile = ProfilesPage.selectedProfile.Clone() as Profile;
-            LibrarySearchField = libraryProfile.Name;
-
             OnPropertyChanged(nameof(Cover));
             OnPropertyChanged(nameof(Artwork));
+
+            // windows management
+            ClearWindows();
+
+            selectedProcess = ProcessManager.GetProcesses().Where(process => process.Path.Equals(selectedProfile.Path)).FirstOrDefault();
+            if (selectedProcess is not null)
+            {
+                selectedProcess.WindowAttached += SelectedProcess_WindowAttached;
+                selectedProcess.WindowDetached += SelectedProcess_WindowDetached;
+
+                foreach (ProcessWindow processWindow in selectedProcess.ProcessWindows.Values)
+                    SelectedProcess_WindowAttached(processWindow);
+            }
+
+            OnPropertyChanged(nameof(HasWindows));
+        }
+
+        private void SelectedProcess_WindowAttached(ProcessWindow processWindow)
+        {
+            ProcessWindowViewModel? foundWindow = ProfileWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            if (foundWindow is null)
+                ProfileWindows.SafeAdd(new ProcessWindowViewModel(processWindow));
+            else
+                foundWindow.ProcessWindow = processWindow;
+
+            OnPropertyChanged(nameof(HasWindows));
+        }
+
+        private void SelectedProcess_WindowDetached(ProcessWindow processWindow)
+        {
+            ProcessWindowViewModel? foundWindow = ProfileWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            if (foundWindow is not null)
+            {
+                ProfileWindows.SafeRemove(foundWindow);
+                foundWindow.Dispose();
+            }
+
+            OnPropertyChanged(nameof(HasWindows));
+        }
+
+        private void ClearWindows()
+        {
+            ProfileWindows.SafeClear();
+
+            if (selectedProcess is not null)
+            {
+                selectedProcess.WindowAttached -= SelectedProcess_WindowAttached;
+                selectedProcess.WindowDetached -= SelectedProcess_WindowDetached;
+            }
         }
 
         public void PowerProfileChanged(PowerProfile powerProfileAC, PowerProfile powerProfileDC)

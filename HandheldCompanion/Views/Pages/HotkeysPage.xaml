@@ -279,6 +279,15 @@
                                         <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
                                             <ComboBoxItem Content="Current" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navController}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navLibrary}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navDevice}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navPerformance}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navProfiles}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navOverlay}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navHotkeys}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navAbout}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navNotifications}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_Settings}" />
                                             <!--  …other pages…  -->
                                         </ComboBox>
                                     </ui:SettingsCard>

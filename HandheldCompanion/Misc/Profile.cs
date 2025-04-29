@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using WpfScreenHelper.Enum;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;
@@ -41,6 +42,27 @@ public enum SteeringAxis
     Roll = 0,
     Yaw = 1,
     Auto = 2, // unused
+}
+
+[Serializable]
+public class ProcessWindowSettings
+{
+    public string DeviceName { get; set; } = "\\\\.\\DISPLAY0";
+    public bool Borderless { get; set; } = false;
+    public WindowPositions WindowPositions { get; set; } = WindowPositions.Center;
+    [JsonIgnore] public bool IsGeneric { get; set; } = true;
+    public int Hwnd { get; set; } = 0;
+
+    public ProcessWindowSettings()
+    { }
+
+    public ProcessWindowSettings(string deviceName, bool borderless, WindowPositions windowPositions)
+    {
+        DeviceName = deviceName;
+        Borderless = borderless;
+        WindowPositions = windowPositions;
+        IsGeneric = false;
+    }
 }
 
 [Serializable]
@@ -127,6 +149,8 @@ public partial class Profile : ICloneable, IComparable
 
     // emulated controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;
+
+    public Dictionary<string, ProcessWindowSettings> WindowsSettings = new();
 
     public Profile()
     {

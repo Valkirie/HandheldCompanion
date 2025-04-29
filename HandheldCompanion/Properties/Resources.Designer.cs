@@ -6843,6 +6843,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create as subprofile.
+        /// </summary>
+        public static string ProfilesPage_AreYouSureOverwriteSecondary {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureOverwriteSecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatic TDP.
         /// </summary>
         public static string ProfilesPage_AutoTDP {

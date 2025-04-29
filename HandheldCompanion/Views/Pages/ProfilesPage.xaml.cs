@@ -11,7 +11,8 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
-using Microsoft.Win32;
+using IWshRuntimeLibrary;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,7 @@ using System.Windows.Controls;
 using System.Xml;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Utils.XInputPlusUtils;
+using File = System.IO.File;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Timer = System.Timers.Timer;
@@ -281,123 +283,148 @@ public partial class ProfilesPage : Page
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
-        var openFileDialog = new OpenFileDialog()
+        CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog();
+        openFileDialog.Filters.Add(new CommonFileDialogFilter("Executable", "*.exe"));
+        openFileDialog.Filters.Add(new CommonFileDialogFilter("Shortcuts", "*.lnk"));
+        openFileDialog.Filters.Add(new CommonFileDialogFilter("UWP manifest", "*AppxManifest.xml"));
+        openFileDialog.NavigateToShortcut = false;
+
+        if (openFileDialog.ShowDialog() != CommonFileDialogResult.Ok)
+            return;
+
+        try
         {
-            Filter = "Executable|*.exe|UWP manifest|AppxManifest.xml",
-        };
+            string path = openFileDialog.FileName;
+            string folder = Path.GetDirectoryName(path);
+            string file = Path.GetFileName(path);
+            string ext = Path.GetExtension(file);
+            string arguments = string.Empty;
 
-        if (openFileDialog.ShowDialog() == true)
-            try
+            if (ext.Equals(".lnk"))
             {
-                string path = openFileDialog.FileName;
-                string folder = Path.GetDirectoryName(path);
+                WshShell wsh = new WshShell();
+                IWshShortcut link = (IWshShortcut)wsh.CreateShortcut(path);
 
-                string file = openFileDialog.SafeFileName;
-                string ext = Path.GetExtension(file);
+                // get real path
+                path = link.TargetPath;
 
-                switch (ext)
-                {
-                    default:
-                    case ".exe":
-                        break;
-                    case ".xml":
-                        try
+                // get arguments
+                arguments = link.Arguments;
+
+                folder = Path.GetDirectoryName(path);
+                file = Path.GetFileName(link.TargetPath);
+                ext = Path.GetExtension(file);
+            }
+
+            switch (ext)
+            {
+                default:
+                case ".exe":
+                    break;
+                case ".xml":
+                    try
+                    {
+                        XmlDocument doc = new XmlDocument();
+                        string UWPpath = string.Empty;
+                        string UWPfile = string.Empty;
+
+                        // check if MicrosoftGame.config exists
+                        string configPath = Path.Combine(folder, "MicrosoftGame.config");
+                        if (File.Exists(configPath))
                         {
-                            XmlDocument doc = new XmlDocument();
-                            string UWPpath = string.Empty;
-                            string UWPfile = string.Empty;
+                            doc.Load(configPath);
 
-                            // check if MicrosoftGame.config exists
-                            string configPath = Path.Combine(folder, "MicrosoftGame.config");
-                            if (File.Exists(configPath))
-                            {
-                                doc.Load(configPath);
-
-                                XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
-                                foreach (XmlNode node in ExecutableList)
-                                    foreach (XmlNode child in node.ChildNodes)
-                                        if (child.Name.Equals("Executable"))
-                                            if (child.Attributes is not null)
-                                                foreach (XmlAttribute attribute in child.Attributes)
-                                                    switch (attribute.Name)
-                                                    {
-                                                        case "Name":
-                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                            UWPfile = Path.GetFileName(path);
-                                                            break;
-                                                    }
-                            }
-
-                            // either there was no config file, either we couldn't find an executable within it
-                            if (!File.Exists(UWPpath))
-                            {
-                                doc.Load(path);
-
-                                XmlNodeList Applications = doc.GetElementsByTagName("Applications");
-                                foreach (XmlNode node in Applications)
-                                    foreach (XmlNode child in node.ChildNodes)
-                                        if (child.Name.Equals("Application"))
-                                            if (child.Attributes is not null)
-                                                foreach (XmlAttribute attribute in child.Attributes)
-                                                    switch (attribute.Name)
-                                                    {
-                                                        case "Executable":
-                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                            UWPfile = Path.GetFileName(path);
-                                                            break;
-                                                    }
-                            }
-
-                            // we're good to go
-                            if (File.Exists(UWPpath))
-                            {
-                                path = UWPpath;
-                                file = UWPfile;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            LogManager.LogError(ex.Message, true);
+                            XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
+                            foreach (XmlNode node in ExecutableList)
+                                foreach (XmlNode child in node.ChildNodes)
+                                    if (child.Name.Equals("Executable"))
+                                        if (child.Attributes is not null)
+                                            foreach (XmlAttribute attribute in child.Attributes)
+                                                switch (attribute.Name)
+                                                {
+                                                    case "Name":
+                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                        UWPfile = Path.GetFileName(path);
+                                                        break;
+                                                }
                         }
 
-                        break;
-                }
+                        // either there was no config file, either we couldn't find an executable within it
+                        if (!File.Exists(UWPpath))
+                        {
+                            doc.Load(path);
 
-                // create profile
-                Profile profile = new Profile(path);
+                            XmlNodeList Applications = doc.GetElementsByTagName("Applications");
+                            foreach (XmlNode node in Applications)
+                                foreach (XmlNode child in node.ChildNodes)
+                                    if (child.Name.Equals("Application"))
+                                        if (child.Attributes is not null)
+                                            foreach (XmlAttribute attribute in child.Attributes)
+                                                switch (attribute.Name)
+                                                {
+                                                    case "Executable":
+                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                        UWPfile = Path.GetFileName(path);
+                                                        break;
+                                                }
+                        }
 
-                // check on path rather than profile
-                bool exists = false;
-                if (ManagerFactory.profileManager.Contains(path))
-                {
-                    Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
-                    {
-                        Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
-                        Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
-                        CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
-                        PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
-                    }.ShowAsync();
-
-                    await dialogTask; // sync call
-
-                    switch (dialogTask.Result)
-                    {
-                        case ContentDialogResult.Primary:
-                            exists = false;
-                            break;
-                        default:
-                            exists = true;
-                            break;
+                        // we're good to go
+                        if (File.Exists(UWPpath))
+                        {
+                            path = UWPpath;
+                            file = UWPfile;
+                        }
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError(ex.Message, true);
+                    }
 
-                if (!exists)
-                    ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Creation);
+                    break;
             }
-            catch (Exception ex)
+
+            // create profile
+            Profile profile = new Profile(path);
+            profile.Arguments = arguments;
+
+            // check on path rather than profile
+            bool exists = false;
+            if (ManagerFactory.profileManager.Contains(path))
             {
-                LogManager.LogError(ex.Message);
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
+                    Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes,
+                    SecondaryButtonText = Properties.Resources.ProfilesPage_AreYouSureOverwriteSecondary,
+                }.ShowAsync();
+
+                await dialogTask; // sync call
+
+                switch (dialogTask.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        exists = false;
+                        break;
+                    case ContentDialogResult.Secondary:
+                        profile.IsSubProfile = true;
+                        exists = false;
+                        break;
+                    default:
+                        exists = true;
+                        break;
+                }
             }
+
+            if (!exists)
+                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Creation);
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError(ex.Message);
+        }
     }
 
     private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)

@@ -268,6 +268,14 @@ public static class WinAPI
         if (hWnd == IntPtr.Zero)
             return;
 
+        // get current screen
+        Screen currentScreen = Screen.FromHandle(hWnd);
+        if ((targetScreen is null || currentScreen.DeviceName.Equals(targetScreen.DeviceName)) && position == WindowPositions.Center)
+            return;
+
+        if (targetScreen is null)
+            targetScreen = currentScreen;
+
         // WpfScreenHelper.Screen WpfScreen = WpfScreenHelper.Screen.AllScreens.FirstOrDefault(s => s.DeviceName.Equals(targetScreen.DeviceName));
         // IntPtr monitor = GetScreenHandle(targetScreen);
         // double taskbarHeight = SystemParameters.MaximizedPrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight;

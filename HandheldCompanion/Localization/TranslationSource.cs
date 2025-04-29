@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace HandheldCompanion.Localization;
 public class TranslationSource : INotifyPropertyChanged
-{   
+{
     public static readonly CultureInfo[] ValidCultures = [
         new CultureInfo("en-US"),
         new CultureInfo("fr-FR"),

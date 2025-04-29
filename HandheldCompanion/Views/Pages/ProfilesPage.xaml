@@ -1430,6 +1430,57 @@
                         </Expander>
                     </ikw:SimpleStackPanel>
 
+                    <!--  Window settings  -->
+                    <ikw:SimpleStackPanel Spacing="6">
+                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
+
+                        <ui:SettingsExpander
+                            Description="Manage windows associated with profile"
+                            Header="Windows settings"
+                            IsEnabled="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsExpanded="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            ItemsSource="{Binding ProfileWindows}">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xf7ed;" />
+                            </ui:SettingsExpander.HeaderIcon>
+
+                            <ui:SettingsExpander.ItemTemplate>
+                                <DataTemplate>
+                                    <ui:SettingsCard Header="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <ikw:SimpleStackPanel
+                                            HorizontalAlignment="Right"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+
+                                            <ComboBox SelectedIndex="{Binding TargetDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>Current</ComboBoxItem>
+                                                <ComboBoxItem>\\.\DISPLAY1</ComboBoxItem>
+                                                <ComboBoxItem>\\.\DISPLAY2</ComboBoxItem>
+                                                <ComboBoxItem>\\.\DISPLAY3</ComboBoxItem>
+                                                <ComboBoxItem>\\.\DISPLAY4</ComboBoxItem>
+                                            </ComboBox>
+
+                                            <ComboBox SelectedIndex="{Binding TargetWindowPosition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>Center</ComboBoxItem>
+                                                <ComboBoxItem>Left</ComboBoxItem>
+                                                <ComboBoxItem>Top</ComboBoxItem>
+                                                <ComboBoxItem>Right</ComboBoxItem>
+                                                <ComboBoxItem>Bottom</ComboBoxItem>
+                                                <ComboBoxItem>TopLeft</ComboBoxItem>
+                                                <ComboBoxItem>TopRight</ComboBoxItem>
+                                                <ComboBoxItem>BottomRight</ComboBoxItem>
+                                                <ComboBoxItem>BottomLeft</ComboBoxItem>
+                                                <ComboBoxItem>Maximize</ComboBoxItem>
+                                            </ComboBox>
+
+                                            <CheckBox IsChecked="{Binding Borderless, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">Borderless</CheckBox>
+                                        </ikw:SimpleStackPanel>
+                                    </ui:SettingsCard>
+                                </DataTemplate>
+                            </ui:SettingsExpander.ItemTemplate>
+                        </ui:SettingsExpander>
+                    </ikw:SimpleStackPanel>
+
                     <!--  Compatibility settings  -->
                     <ikw:SimpleStackPanel Spacing="6">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility}" />

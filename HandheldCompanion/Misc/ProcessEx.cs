@@ -373,7 +373,7 @@ public class ProcessEx : IDisposable
         if (!ProcessWindows.TryGetValue(hwnd, out var window))
         {
             // create new window object
-            window = new(automationElement, primary);
+            window = new(this, automationElement, primary);
             window.Closed += Window_Closed;
 
             if (string.IsNullOrEmpty(window.Name))
