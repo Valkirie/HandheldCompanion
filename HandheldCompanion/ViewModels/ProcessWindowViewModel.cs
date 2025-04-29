@@ -2,6 +2,7 @@
 using HandheldCompanion.Misc;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using Microsoft.Win32;
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -72,6 +73,11 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool HasDisplay1 => Screen.AllScreens.Any(screen => screen.DeviceName == "\\\\.\\DISPLAY1");
+        public bool HasDisplay2 => Screen.AllScreens.Any(screen => screen.DeviceName == "\\\\.\\DISPLAY2");
+        public bool HasDisplay3 => Screen.AllScreens.Any(screen => screen.DeviceName == "\\\\.\\DISPLAY3");
+        public bool HasDisplay4 => Screen.AllScreens.Any(screen => screen.DeviceName == "\\\\.\\DISPLAY4");
+
         private ProcessWindow _ProcessWindow;
         public ProcessWindow ProcessWindow
         {
@@ -91,7 +97,10 @@ namespace HandheldCompanion.ViewModels
             ProcessWindow.Refreshed += ProcessRefreshed;
             ProcessWindow.Disposed += ProcessDisposed;
 
+            // manage events
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+            SystemEvents_DisplaySettingsChanged(null, null);
 
             BringProcessCommand = new DelegateCommand(async () =>
             {
@@ -125,6 +134,14 @@ namespace HandheldCompanion.ViewModels
 
                 OnPropertyChanged(nameof(IsPrimaryScreen));
             });
+        }
+
+        private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(HasDisplay1));
+            OnPropertyChanged(nameof(HasDisplay2));
+            OnPropertyChanged(nameof(HasDisplay3));
+            OnPropertyChanged(nameof(HasDisplay4));
         }
 
         private void ProcessDisposed(object? sender, EventArgs e)
@@ -161,7 +178,9 @@ namespace HandheldCompanion.ViewModels
             if (ProcessWindow is not null)
                 ProcessWindow.Refreshed -= ProcessRefreshed;
 
+            // manage events
             ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+            SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
 
             // dispose commands
             BringProcessCommand = null;

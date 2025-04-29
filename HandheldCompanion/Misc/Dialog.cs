@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Windows;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace HandheldCompanion.Misc
 {

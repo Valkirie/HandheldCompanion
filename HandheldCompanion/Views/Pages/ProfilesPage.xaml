@@ -1454,10 +1454,10 @@
 
                                             <ComboBox SelectedIndex="{Binding TargetDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ComboBoxItem>Current</ComboBoxItem>
-                                                <ComboBoxItem>\\.\DISPLAY1</ComboBoxItem>
-                                                <ComboBoxItem>\\.\DISPLAY2</ComboBoxItem>
-                                                <ComboBoxItem>\\.\DISPLAY3</ComboBoxItem>
-                                                <ComboBoxItem>\\.\DISPLAY4</ComboBoxItem>
+                                                <ComboBoxItem IsEnabled="{Binding HasDisplay1, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">\\.\DISPLAY1</ComboBoxItem>
+                                                <ComboBoxItem IsEnabled="{Binding HasDisplay2, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">\\.\DISPLAY2</ComboBoxItem>
+                                                <ComboBoxItem IsEnabled="{Binding HasDisplay3, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">\\.\DISPLAY3</ComboBoxItem>
+                                                <ComboBoxItem IsEnabled="{Binding HasDisplay4, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">\\.\DISPLAY4</ComboBoxItem>
                                             </ComboBox>
 
                                             <ComboBox SelectedIndex="{Binding TargetWindowPosition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
