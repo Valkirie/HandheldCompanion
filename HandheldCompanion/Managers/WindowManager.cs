@@ -10,6 +10,8 @@ namespace HandheldCompanion.Managers
     {
         private static string ClearString(string input)
         {
+            // todo: improve me
+            // make me executable specific to improve the window's name cleaning logic ?
             if (input == null)
                 return null;
 
