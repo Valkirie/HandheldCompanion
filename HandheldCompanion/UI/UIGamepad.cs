@@ -297,6 +297,9 @@ namespace HandheldCompanion.Managers
                     _navigating = true;
                 }
 
+                // update status
+                _navigating = _goingForward;
+
                 // specific-cases
                 switch (gamepadPage.Tag)
                 {

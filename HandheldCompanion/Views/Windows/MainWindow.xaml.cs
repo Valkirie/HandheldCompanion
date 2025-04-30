@@ -623,13 +623,21 @@ public partial class MainWindow : GamepadWindow
 
     private void NavView_Navigate(string navItemTag)
     {
-        // Find and select the matching menu item
-        navView.SelectedItem = navView.MenuItems
+        NavigationViewItem? selectedItem = navView.MenuItems
             .OfType<NavigationViewItem>()
             .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
 
+        // is it a footer item ?
+        if (selectedItem is null)
+            selectedItem = navView.FooterMenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Find and select the matching menu item
+        navView.SelectedItem = selectedItem;
+
         // Give gamepad focus
-        gamepadFocusManager.Focus((NavigationViewItem)navView.SelectedItem);
+        gamepadFocusManager.Focus((NavigationViewItem)selectedItem);
 
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
