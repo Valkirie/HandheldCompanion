@@ -295,10 +295,15 @@ public partial class ProfilesPage : Page
         try
         {
             string path = openFileDialog.FileName;
+            if (string.IsNullOrEmpty(path))
+                return;
+
             string folder = Path.GetDirectoryName(path);
             string file = Path.GetFileName(path);
             string ext = Path.GetExtension(file);
+
             string arguments = string.Empty;
+            string name = file.Replace(ext, string.Empty);
 
             if (ext.Equals(".lnk"))
             {
@@ -387,6 +392,8 @@ public partial class ProfilesPage : Page
             // create profile
             Profile profile = new Profile(path);
             profile.Arguments = arguments;
+            if (ext.Equals(".lnk"))
+                profile.Name = name;
 
             // check on path rather than profile
             bool exists = false;
