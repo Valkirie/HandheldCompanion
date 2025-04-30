@@ -232,11 +232,20 @@
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
                                         <ComboBox
                                             Width="290"
-                                            ItemsSource="{Binding FunctionItems}"
+                                            ItemsSource="{Binding FunctionCollectionView}"
                                             SelectedIndex="{Binding FunctionIndex, Mode=TwoWay}">
                                             <ComboBox.Resources>
                                                 <converters:SeparatorConverter x:Key="SeparatorConverter" />
                                             </ComboBox.Resources>
+                                            <ComboBox.GroupStyle>
+                                                <GroupStyle>
+                                                    <GroupStyle.HeaderTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </DataTemplate>
+                                                    </GroupStyle.HeaderTemplate>
+                                                </GroupStyle>
+                                            </ComboBox.GroupStyle>
                                             <ComboBox.ItemContainerStyle>
                                                 <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
                                                     <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />

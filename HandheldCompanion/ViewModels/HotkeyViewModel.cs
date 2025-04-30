@@ -29,7 +29,11 @@ namespace HandheldCompanion.ViewModels
     public class HotkeyViewModel : BaseViewModel
     {
         public ObservableCollection<FontIconViewModel> ButtonGlyphs { get; set; } = [];
-        public ObservableCollection<ComboBoxItemViewModel> FunctionItems { get; set; } = [];
+
+        private List<Type> _functionTypes;
+
+        private ObservableCollection<ComboBoxItemViewModel> _functionItems = [];
+        public ListCollectionView FunctionCollectionView { get; set; }
 
         private Hotkey _Hotkey;
         public Hotkey Hotkey
@@ -272,9 +276,7 @@ namespace HandheldCompanion.ViewModels
                             Hotkey.command = new EmptyCommands();
                             break;
                         case CommandType.Function:
-                            // pick first available function command
-                            int index = FunctionCommands.Functions.FindIndex(item => item is Type);
-                            FunctionIndex = index;
+                            FunctionIndex = 0;
                             break;
                         case CommandType.Keyboard:
                             Hotkey.command = new KeyboardCommands();
@@ -298,8 +300,8 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 Type typeToSearch = Hotkey.command.GetType();
-                if (FunctionCommands.Functions.Contains(typeToSearch))
-                    return FunctionCommands.Functions.IndexOf(typeToSearch);
+                if (_functionTypes.Contains(typeToSearch))
+                    return _functionTypes.IndexOf(typeToSearch);
                 else
                     return 0;
             }
@@ -307,7 +309,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != FunctionIndex)
                 {
-                    Type typeToCreate = (Type)FunctionCommands.Functions[value];
+                    Type typeToCreate = _functionTypes[value];
                     Hotkey.command = Activator.CreateInstance(typeToCreate) as ICommands;
 
                     // reset custom name
@@ -480,35 +482,40 @@ namespace HandheldCompanion.ViewModels
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, new object());
-            BindingOperations.EnableCollectionSynchronization(FunctionItems, new object());
 
-            // Fill initial data
-            foreach (object value in FunctionCommands.Functions)
+            _functionTypes = FunctionCommands.Functions.Where(item => item is Type type && type.IsAssignableTo(typeof(FunctionCommands))).Cast<Type>().ToList();
+            UIHelper.TryInvoke(() =>
             {
-                if (value is string)
+                FunctionCollectionView = new ListCollectionView(_functionItems);
+                FunctionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+                // Fill initial data
+                string currentCategory = "Ungrouped";
+                foreach (object value in FunctionCommands.Functions)
                 {
-                    string category = Convert.ToString(value);
-                    FunctionItems.SafeAdd(new ComboBoxItemViewModel($"# {category}", false));
-                }
-                else
-                {
-                    Type function = value as Type;
-                    if (function == typeof(Separator))
+                    if (value is string)
                     {
-                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(string.Empty, false));
+                        currentCategory = Convert.ToString(value);
                     }
                     else
                     {
-                        ICommands command = Activator.CreateInstance(function) as ICommands;
+                        Type function = value as Type;
+                        if (function == typeof(Separator))
+                        {
+                            _functionItems.Add(new ComboBoxItemViewModel(string.Empty, false, string.Empty));
+                        }
+                        else
+                        {
+                            ICommands command = Activator.CreateInstance(function) as ICommands;
 
-                        bool canUnpin = command.CanUnpin;
-                        bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
-                        bool isEnabled = canUnpin && isSupported;
+                            bool canUnpin = command.CanUnpin;
+                            bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
+                            bool isEnabled = canUnpin && isSupported;
 
-                        FunctionItems.SafeAdd(new ComboBoxItemViewModel(command.Name, isEnabled));
+                            _functionItems.Add(new ComboBoxItemViewModel(command.Name, isEnabled, currentCategory));
+                        }
                     }
                 }
-            }
+            });            
 
             DefineButtonCommand = new DelegateCommand(async () =>
             {

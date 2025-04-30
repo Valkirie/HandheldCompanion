@@ -53,7 +53,24 @@
             }
         }
 
-        public ComboBoxItemViewModel(string Text, bool IsEnabled)
+        private string _category;
+        public string Category
+        {
+            get
+            {
+                return _category;
+            }
+            set
+            {
+                if (_category != value)
+                {
+                    _category = value;
+                    OnPropertyChanged(nameof(Category));
+                }
+            }
+        }
+
+        public ComboBoxItemViewModel(string Text, bool IsEnabled, string category)
         {
             if (string.IsNullOrEmpty(Text))
                 this.IsSeparator = true;
@@ -61,6 +78,7 @@
                 this.Text = Text;
 
             this.IsEnabled = IsEnabled;
+            this.Category = category;
         }
 
         public override string ToString()

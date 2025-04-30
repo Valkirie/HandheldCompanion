@@ -65,19 +65,22 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 DisplayMemberPath="Text"
-                                ItemsSource="{Binding ProfilePickerItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                ItemsSource="{Binding ProfilePickerCollectionView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectedIndex="{Binding SelectedPresetIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectedValuePath="Text">
-                                <ComboBox.ItemContainerStyle>
-                                    <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
-                                        <Setter Property="IsEnabled" Value="True" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsHeader}" Value="True">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ComboBox.ItemContainerStyle>
+                                <ComboBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="4,0,0,0"
+                                                    Style="{StaticResource BaseTextBlockStyle}"
+                                                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ComboBox.GroupStyle>
                             </ComboBox>
 
                             <!--  Create power profile  -->
