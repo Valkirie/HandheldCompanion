@@ -334,17 +334,6 @@ public class ClawA1M : IDevice
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
 
         // raise events
-        switch (ManagerFactory.settingsManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QuerySettings();
-                break;
-        }
-
         switch (ManagerFactory.powerProfileManager.Status)
         {
             default:
@@ -437,23 +426,17 @@ public class ClawA1M : IDevice
         }
     }
 
-    private void SettingsManager_Initialized()
+    protected override void QuerySettings()
     {
-        QuerySettings();
-    }
-
-    private void QuerySettings()
-    {
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetInt("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false);
+
+        base.QuerySettings();
     }
 
-    protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
@@ -472,6 +455,8 @@ public class ClawA1M : IDevice
                 }
                 break;
         }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 
     public override void Close()
@@ -492,8 +477,6 @@ public class ClawA1M : IDevice
         // set flag
         _IsOpen = false;
 
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 

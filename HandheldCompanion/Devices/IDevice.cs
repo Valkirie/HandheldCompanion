@@ -176,7 +176,7 @@ public abstract class IDevice
 
     public IDevice()
     {
-        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
 
         // add default power profile
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
@@ -227,6 +227,18 @@ public abstract class IDevice
             return false;
         }
 
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
         // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
@@ -246,6 +258,20 @@ public abstract class IDevice
         return true;
     }
 
+    protected virtual void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+    }
+
+    protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    { }
+
+    protected virtual void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public virtual void Close()
     {
         if (openLibSys is null)
@@ -256,6 +282,8 @@ public abstract class IDevice
         openLibSys.Dispose();
         openLibSys = null;
 
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;

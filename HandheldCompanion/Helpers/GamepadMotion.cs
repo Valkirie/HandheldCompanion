@@ -44,7 +44,7 @@ namespace HandheldCompanion.Helpers
 
         private const string DllName = "GamepadMotion.dll";
 
-        public GamepadMotion(string deviceInstanceId, CalibrationMode calibrationMode = CalibrationMode.SensorFusion | CalibrationMode.Stillness)
+        public GamepadMotion(string deviceInstanceId, CalibrationMode calibrationMode = CalibrationMode.Manual /* | CalibrationMode.SensorFusion | CalibrationMode.Stillness */)
         {
             handle = CreateGamepadMotion();
 

@@ -323,17 +323,6 @@ public class LegionGo : IDevice
                 break;
         }
 
-        switch (ManagerFactory.settingsManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QuerySettings();
-                break;
-        }
-
         return true;
     }
 
@@ -396,18 +385,24 @@ public class LegionGo : IDevice
         QueryPowerProfile();
     }
 
-    private void SettingsManager_Initialized()
+    protected override void QuerySettings()
     {
-        QuerySettings();
-    }
-
-    private void QuerySettings()
-    {
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // raise events
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+
+        base.QuerySettings();
+    }
+
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "BatteryChargeLimit":
+                SetBatteryChargeLimit(Convert.ToBoolean(value));
+                break;
+        }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 
     public override void Close()
@@ -425,8 +420,6 @@ public class LegionGo : IDevice
 
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
@@ -591,15 +584,5 @@ public class LegionGo : IDevice
         }
 
         return defaultGlyph;
-    }
-
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        switch (name)
-        {
-            case "BatteryChargeLimit":
-                SetBatteryChargeLimit(Convert.ToBoolean(value));
-                break;
-        }
     }
 }

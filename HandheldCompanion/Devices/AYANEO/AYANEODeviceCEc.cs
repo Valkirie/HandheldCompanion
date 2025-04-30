@@ -93,33 +93,15 @@ namespace HandheldCompanion.Devices.AYANEO
             // manage events
             PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
 
-            // raise events
-            switch (ManagerFactory.settingsManager.Status)
-            {
-                default:
-                case ManagerStatus.Initializing:
-                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                    break;
-                case ManagerStatus.Initialized:
-                    QuerySettings();
-                    break;
-            }
-
             return true;
         }
 
-        private void SettingsManager_Initialized()
+        protected override void QuerySettings()
         {
-            QuerySettings();
-        }
-
-        private void QuerySettings()
-        {
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
             // raise events
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
+
+            base.QuerySettings();
         }
 
         public override void Close()
@@ -129,8 +111,6 @@ namespace HandheldCompanion.Devices.AYANEO
                 this.CEcControl_RgbReleaseControl();
             }
 
-            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             PowerManager.RemainingChargePercentChanged -= PowerManager_RemainingChargePercentChanged;
 
             base.Close();
