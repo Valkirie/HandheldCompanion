@@ -116,7 +116,7 @@ namespace HandheldCompanion.Devices.AYANEO
             base.Close();
         }
 
-        protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {
@@ -135,6 +135,8 @@ namespace HandheldCompanion.Devices.AYANEO
                     }
                     break;
             }
+
+            base.SettingsManager_SettingValueChanged(name, value, temporary);
         }
 
         private void PowerManager_RemainingChargePercentChanged(object? sender, object e)
