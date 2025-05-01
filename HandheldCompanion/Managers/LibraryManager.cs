@@ -229,7 +229,10 @@ namespace HandheldCompanion.Managers
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogManager.LogError(ex.Message);
+            }
             finally
             {
                 // update status
