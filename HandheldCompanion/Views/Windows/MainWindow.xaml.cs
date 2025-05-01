@@ -153,22 +153,10 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
+        CurrentDevice.Initialize(FirstStart);
 
-        if (FirstStart)
-        {
-            if (CurrentDevice is SteamDeck steamDeck)
-            {
-                // do something
-            }
-            else if (CurrentDevice is AYANEOFlipDS flipDS)
-            {
-                // set Quicktools to Maximize on bottom screen
-                ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", 2);
-                ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
-            }
-
-            ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-        }
+        // initialize device settings
+        ManagerFactory.settingsManager.SetProperty("FirstStart", false);
 
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();

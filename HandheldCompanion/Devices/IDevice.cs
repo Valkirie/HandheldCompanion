@@ -289,6 +289,9 @@ public abstract class IDevice
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
     }
 
+    public virtual void Initialize(bool FirstStart)
+    { }
+
     private void VirtualManager_ControllerSelected(HIDmode mode)
     {
         SetKeyPressDelay(mode);
