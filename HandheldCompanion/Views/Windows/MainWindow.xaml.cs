@@ -88,6 +88,7 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
+    private const int WM_INPUTLANGCHANGE = 0x0051;
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -222,7 +223,7 @@ public partial class MainWindow : GamepadWindow
         gamepadFocusManager = new(this, ContentFrame);
     }
 
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
         {
@@ -232,9 +233,11 @@ public partial class MainWindow : GamepadWindow
                 break;
             case WM_QUERYENDSESSION:
                 break;
+            case WM_INPUTLANGCHANGE:
+                break;
         }
 
-        return IntPtr.Zero;
+        return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -469,9 +472,6 @@ public partial class MainWindow : GamepadWindow
 
         // load gamepad navigation manager
         gamepadFocusManager.Loaded();
-
-        HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
-        source.AddHook(WndProc); // Hook into the window's message loop
 
         // restore window state
         WindowState = ManagerFactory.settingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState");

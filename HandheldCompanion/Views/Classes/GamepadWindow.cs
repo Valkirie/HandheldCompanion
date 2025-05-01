@@ -46,8 +46,6 @@ namespace HandheldCompanion.Views.Classes
 
         public GamepadWindow()
         {
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
             LayoutUpdated += OnLayoutUpdated;
         }
 

@@ -133,6 +133,18 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
+                <ui:NavigationViewItem
+                    Name="navKeyboard"
+                    Content="Keyboard"
+                    FontSize="12"
+                    Style="{StaticResource NavigationViewItemStyle1}"
+                    Tag="QuickKeyboardPage"
+                    Visibility="Collapsed">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
                 <ui:NavigationViewItem IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon
@@ -146,6 +158,14 @@
             </ui:NavigationView.MenuItems>
 
             <Grid>
+                <Button
+                    Margin="0,0,16,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Panel.ZIndex="999"
+                    Click="Key_Clicked">
+                    KEY
+                </Button>
                 <ui:ContentDialog Name="ContentDialog" />
                 <common:TouchScrollViewer
                     x:Name="scrollViewer"
