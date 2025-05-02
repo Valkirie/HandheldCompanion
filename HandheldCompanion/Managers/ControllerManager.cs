@@ -1000,7 +1000,7 @@ public static class ControllerManager
 
                     ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                 }
-                else
+                else if (HasVirtualController<XInputController>())
                 {
                     // physical controller: none
                     // virtual controller: not slot 1
@@ -1010,6 +1010,11 @@ public static class ControllerManager
                         VirtualManager.Suspend(false);
                         Thread.Sleep(1000);
                         VirtualManager.Resume(false);
+
+                        // resume virtual controller and wait until it's back
+                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
+                            Thread.Sleep(100);
                     }
                 }
             }
