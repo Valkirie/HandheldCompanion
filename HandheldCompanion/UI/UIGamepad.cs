@@ -408,11 +408,11 @@ namespace HandheldCompanion.Managers
             }
 
             // set focus to control
-            if (control.Focus())
-            {
-                control.BringIntoView();
-                gamepadWindow.SetFocusedElement(control);
-            }
+            control.Focus();
+            control.BringIntoView();
+            Keyboard.Focus(control);
+            FocusManager.SetFocusedElement(gamepadWindow, control);
+            gamepadWindow.SetFocusedElement(control);
         }
 
         public Control GetFocusedElement()
