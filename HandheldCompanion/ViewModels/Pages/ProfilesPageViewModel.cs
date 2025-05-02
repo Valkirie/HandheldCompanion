@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.ViewModels.Misc;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -341,13 +342,15 @@ namespace HandheldCompanion.ViewModels
             DisplayLibrary = new DelegateCommand(async () =>
             {
                 // capture dialog content
-                object content = profilesPage.IGGBDialog.Content;
+                ContentDialog storedDialog = profilesPage.IGGBDialog;
+                object content = storedDialog.Content;
 
                 contentDialog = new ContentDialog
                 {
-                    Title = profilesPage.IGGBDialog.Title,
-                    CloseButtonText = profilesPage.IGGBDialog.CloseButtonText,
-                    IsEnabled = this.IsLibraryConnected,
+                    Title = storedDialog.Title,
+                    CloseButtonText = storedDialog.CloseButtonText,
+                    PrimaryButtonText = storedDialog.PrimaryButtonText,
+                    IsEnabled = storedDialog.IsEnabled,
                     Content = content,
                     DataContext = this,
                 };

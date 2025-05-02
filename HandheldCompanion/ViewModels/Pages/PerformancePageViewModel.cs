@@ -5,6 +5,7 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using LiveCharts;
@@ -493,6 +494,8 @@ namespace HandheldCompanion.ViewModels
             ""
         ];
 
+        private ContentDialog contentDialog;
+
         public PerformancePageViewModel(bool isQuickTools)
         {
             // Enable thread-safe access to the collection
@@ -647,9 +650,26 @@ namespace HandheldCompanion.ViewModels
             {
                 OpenModifyDialogCommand = new DelegateCommand(() =>
                 {
+                    // capture dialog content
+                    ContentDialog storedDialog = MainWindow.performancePage.PowerProfileSettingsDialog;
+                    object content = storedDialog.Content;
+
+                    contentDialog = new ContentDialog
+                    {
+                        Title = storedDialog.Title,
+                        CloseButtonText = storedDialog.CloseButtonText,
+                        PrimaryButtonText = storedDialog.PrimaryButtonText,
+                        PrimaryButtonCommand = storedDialog.PrimaryButtonCommand,
+                        IsEnabled = storedDialog.IsEnabled,
+                        Content = content,
+                        DataContext = this,
+                    };
+
+                    // update vars
                     ModifyPresetName = PresetName;
                     ModifyPresetDescription = PresetDescription;
-                    _modifyDialog.ShowAsync();
+
+                    contentDialog.ShowAsync();
                 });
 
                 ConfirmModifyCommand = new DelegateCommand(() =>
