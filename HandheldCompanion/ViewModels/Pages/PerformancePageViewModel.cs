@@ -70,7 +70,7 @@ namespace HandheldCompanion.ViewModels
                         case false:
                             ProfilesPickerViewModel profile = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == _selectedPreset.Guid);
                             if (profile is not null)
-                                _selectedPresetIndex = _profilePickerItems.IndexOf(profile);
+                                _selectedPresetIndex = ProfilePickerCollectionView.IndexOf(profile);
                             break;
                     }
 
@@ -428,7 +428,7 @@ namespace HandheldCompanion.ViewModels
                 // Ensure the index is within the bounds of the collection
                 if (value != _selectedPresetIndex && value >= 0 && value < _profilePickerItems.Count)
                 {
-                    Guid? presetId = _profilePickerItems[value].LinkedPresetId;
+                    Guid? presetId = ((ProfilesPickerViewModel)ProfilePickerCollectionView.GetItemAt(value)).LinkedPresetId;
                     if (presetId is null)
                         return;
 
