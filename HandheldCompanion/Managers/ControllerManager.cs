@@ -1000,6 +1000,18 @@ public static class ControllerManager
 
                     ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                 }
+                else
+                {
+                    // physical controller: none
+                    // virtual controller: not slot 1
+                    XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                    if (vController is null)
+                    {
+                        VirtualManager.Suspend(false);
+                        Thread.Sleep(1000);
+                        VirtualManager.Resume(false);
+                    }
+                }
             }
         }
     }
