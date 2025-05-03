@@ -761,6 +761,18 @@ public static class ControllerManager
                             }
                         }
                         break;
+
+                    // MSI
+                    case "0x0DB0":
+                        {
+                            switch (details.GetProductID())
+                            {
+                                case "0x1901":
+                                    try { controller = new XClawController(details); } catch { }
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
 

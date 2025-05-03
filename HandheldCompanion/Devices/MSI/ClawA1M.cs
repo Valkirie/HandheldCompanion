@@ -700,7 +700,9 @@ public class ClawA1M : IDevice
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            device.MonitorDeviceEvents = false;
             device.Removed -= Device_Removed;
+            device.CloseDevice();
             device.Dispose();
         }
 
