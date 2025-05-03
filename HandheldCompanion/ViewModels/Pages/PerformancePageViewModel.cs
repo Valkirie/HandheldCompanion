@@ -427,7 +427,7 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 // Ensure the index is within the bounds of the collection
-                if (value != _selectedPresetIndex && value >= 0 && value < _profilePickerItems.Count)
+                if (value != _selectedPresetIndex && value >= 0 && value < ProfilePickerCollectionView.Count)
                 {
                     Guid? presetId = ((ProfilesPickerViewModel)ProfilePickerCollectionView.GetItemAt(value)).LinkedPresetId;
                     if (presetId is null)
@@ -758,13 +758,16 @@ namespace HandheldCompanion.ViewModels
 
             if (IsMainPage)
             {
-                foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
-                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+                UIHelper.TryInvoke(() =>
+                {
+                    foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                        PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
 
-                // Reset Index to Default
-                ProfilesPickerViewModel profile = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid);
-                if (profile is not null)
-                    SelectedPresetIndex = _profilePickerItems.IndexOf(profile);
+                    // Reset Index to Default
+                    ProfilesPickerViewModel profile = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid);
+                    if (profile is not null)
+                        SelectedPresetIndex = _profilePickerItems.IndexOf(profile);
+                });
             }
         }
 
