@@ -168,7 +168,10 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quick start" />
 
-                <ItemsControl ItemsSource="{Binding Profiles}">
+                <ItemsControl
+                    ItemsSource="{Binding Profiles}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="3" />
@@ -181,6 +184,7 @@
                                 Margin="3"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
+                                CacheMode="BitmapCache"
                                 Command="{Binding StartProcessCommand}"
                                 IsEnabled="{Binding IsAvailable, UpdateSourceTrigger=PropertyChanged}">
 
@@ -224,7 +228,11 @@
 
                 <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
-                <ItemsControl IsEnabled="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Processes}">
+                <ItemsControl
+                    IsEnabled="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding Processes}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
@@ -250,6 +258,7 @@
                                             Grid.Column="0"
                                             Width="24"
                                             Height="24"
+                                            CacheMode="BitmapCache"
                                             Source="{Binding Icon}" />
 
                                         <StackPanel
