@@ -5,7 +5,6 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using LiveCharts;
@@ -764,7 +763,7 @@ namespace HandheldCompanion.ViewModels
                         PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
 
                     // Reset Index to Default
-                    ProfilesPickerViewModel profile = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid);
+                    ProfilesPickerViewModel profile = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == Guid.Empty);
                     if (profile is not null)
                         SelectedPresetIndex = _profilePickerItems.IndexOf(profile);
                 });
@@ -869,7 +868,7 @@ namespace HandheldCompanion.ViewModels
                 else
                 {
                     index = 0;
-                    _profilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name , IsInternal = preset.IsDefault() || preset.IsDeviceDefault() });
+                    _profilePickerItems.Insert(index, new() { LinkedPresetId = preset.Guid, Text = preset.Name, IsInternal = preset.IsDefault() || preset.IsDeviceDefault() });
                 }
 
                 OnPropertyChanged(nameof(ProfilePickerCollectionView));
