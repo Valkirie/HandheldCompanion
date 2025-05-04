@@ -82,7 +82,9 @@
                 <ui:ItemsRepeater
                     Name="ProfilesRepeater"
                     ItemTemplate="{StaticResource LibraryTemplate}"
-                    ItemsSource="{Binding ProfilesView}">
+                    ItemsSource="{Binding ProfilesView}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
                     <ui:ItemsRepeater.Layout>
                         <!--  3:2 ratio  -->
                         <ui:UniformGridLayout

@@ -24,8 +24,8 @@
         <Button
             x:Name="ImageContainer"
             Padding="0"
-            chelper:ControlHelper.CornerRadius="8"
             BorderThickness="0"
+            CacheMode="BitmapCache"
             Command="{Binding Navigate}"
             IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
             Tag="{Binding}">
@@ -40,143 +40,129 @@
                 </Style>
             </Button.Style>
 
-            <Button.Triggers>
-                <EventTrigger RoutedEvent="GotFocus">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.05"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.05"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                To="0.4"
-                                Duration="0:0:0.1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="MouseEnter">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.05"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.05"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                To="0.4"
-                                Duration="0:0:0.1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="LostFocus">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.0"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.0"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                To="0"
-                                Duration="0:0:0.1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="MouseLeave">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.0"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.0"
-                                Duration="0:0:0.1" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="MainImage"
-                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                To="0"
-                                Duration="0:0:0.1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Button.Triggers>
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid x:Name="RootGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="60" />
+                            </Grid.RowDefinitions>
 
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="60" />
-                </Grid.RowDefinitions>
+                            <ui:ProgressRing
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Panel.ZIndex="999"
+                                IsIndeterminate="True"
+                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <ui:ProgressRing
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Panel.ZIndex="999"
-                    IsIndeterminate="True"
-                    Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Border Grid.Row="0" ClipToBounds="True">
+                                <Image
+                                    x:Name="MainImage"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Source="{Binding Cover}"
+                                    Stretch="UniformToFill">
+                                    <Image.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                    </Image.RenderTransform>
+                                    <Image.Effect>
+                                        <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
+                                    </Image.Effect>
+                                </Image>
+                            </Border>
 
-                <!--  only this Border is clipped to its own cell  -->
-                <Border Grid.Row="0" ClipToBounds="True">
-                    <Image
-                        x:Name="MainImage"
-                        RenderTransformOrigin="0.5,0.5"
-                        Source="{Binding Cover}"
-                        Stretch="UniformToFill">
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1" />
-                        </Image.RenderTransform>
+                            <Grid Grid.Row="1" Margin="12">
+                                <StackPanel>
+                                    <TextBlock
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BaseTextBlockStyle}"
+                                        Text="{Binding Name}"
+                                        TextWrapping="NoWrap" />
+                                    <TextBlock
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding Description}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
 
-                        <!--  brightness effect: start at 0  -->
-                        <Image.Effect>
-                            <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
-                        </Image.Effect>
-                    </Image>
-                </Border>
+                        <!--  Visual states MUST live on the template root  -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1.0"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="1.0"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                            To="0"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
 
-                <!--  fixed 50px text row underneath  -->
-                <Grid Grid.Row="1" Margin="12">
-                    <StackPanel>
-                        <TextBlock
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            Text="{Binding Name}"
-                            TextWrapping="NoWrap" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                            To="0.4"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
 
-                        <TextBlock
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Text="{Binding Description}"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
-                </Grid>
-            </Grid>
+                                <VisualState x:Name="Focused">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                            To="0.4"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
         </Button>
     </DataTemplate>
 
