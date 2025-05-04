@@ -515,7 +515,7 @@ namespace HandheldCompanion.ViewModels
                 else
                 {
                     index = 0;
-                    _profilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() });
+                    _profilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
                 }
             }
         }
