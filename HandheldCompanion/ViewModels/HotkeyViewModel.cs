@@ -515,7 +515,7 @@ namespace HandheldCompanion.ViewModels
                         }
                     }
                 }
-            });            
+            });
 
             DefineButtonCommand = new DelegateCommand(async () =>
             {
