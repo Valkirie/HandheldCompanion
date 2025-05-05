@@ -8,6 +8,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="QuickTools"
     Width="450"
@@ -28,6 +29,11 @@
     Topmost="True"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <sys:Double x:Key="SettingsCardWrapThreshold">286</sys:Double>
+        <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+    </Window.Resources>
 
     <Grid>
         <DockPanel Margin="12,2,0,0" VerticalAlignment="Top">

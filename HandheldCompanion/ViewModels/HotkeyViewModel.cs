@@ -276,7 +276,7 @@ namespace HandheldCompanion.ViewModels
                             Hotkey.command = new EmptyCommands();
                             break;
                         case CommandType.Function:
-                            FunctionIndex = 0;
+                            FunctionIndex = 1;
                             break;
                         case CommandType.Keyboard:
                             Hotkey.command = new KeyboardCommands();
@@ -515,7 +515,7 @@ namespace HandheldCompanion.ViewModels
                         }
                     }
                 }
-            });            
+            });
 
             DefineButtonCommand = new DelegateCommand(async () =>
             {

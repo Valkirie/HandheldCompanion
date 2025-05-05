@@ -1,8 +1,8 @@
 ﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Properties;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -42,8 +42,11 @@ namespace HandheldCompanion.ViewModels
                     // update variable
                     _selectedPresetDC = value;
 
+                    // get the power profile view model
+                    ProfilesPickerViewModel profilesPickerViewModel = _profilePickerItems.First(p => p.LinkedPresetId == _selectedPresetDC.Guid);
+                    _selectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(profilesPickerViewModel);
+
                     // page-specific behaviors
-                    _selectedPresetIndexDC = _profilePickerItems.IndexOf(_profilePickerItems.First(p => p.LinkedPresetId == _selectedPresetDC.Guid));
                     profilesPage.PowerProfile_Selected(_selectedPresetDC, false);
 
                     // refresh all properties
@@ -59,11 +62,15 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 // Ensure the index is within the bounds of the collection
-                if (value != _selectedPresetIndexDC && value >= 0 && value < _profilePickerItems.Count)
+                if (value != _selectedPresetIndexDC && value >= 0 && value < ProfilePickerCollectionViewDC.Count)
                 {
                     _selectedPresetIndexDC = value;
 
-                    SelectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(_profilePickerItems[_selectedPresetIndexDC].LinkedPresetId.Value);
+                    // get the power profile view model
+                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePickerCollectionViewDC.GetItemAt(_selectedPresetIndexDC) as ProfilesPickerViewModel;
+                    SelectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(profilesPickerViewModel.LinkedPresetId.Value);
+
+                    // refresh property
                     OnPropertyChanged(nameof(SelectedPresetIndexDC));
                 }
             }
@@ -80,8 +87,11 @@ namespace HandheldCompanion.ViewModels
                     // update variable
                     _selectedPresetAC = value;
 
+                    // get the power profile view model
+                    ProfilesPickerViewModel profilesPickerViewModel = _profilePickerItems.First(p => p.LinkedPresetId == _selectedPresetAC.Guid);
+                    _selectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(profilesPickerViewModel);
+
                     // page-specific behaviors
-                    _selectedPresetIndexAC = _profilePickerItems.IndexOf(_profilePickerItems.First(p => p.LinkedPresetId == _selectedPresetAC.Guid));
                     profilesPage.PowerProfile_Selected(_selectedPresetAC, true);
 
                     // refresh all properties
@@ -97,11 +107,15 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 // Ensure the index is within the bounds of the collection
-                if (value != _selectedPresetIndexAC && value >= 0 && value < _profilePickerItems.Count)
+                if (value != _selectedPresetIndexAC && value >= 0 && value < ProfilePickerCollectionViewAC.Count)
                 {
                     _selectedPresetIndexAC = value;
 
-                    SelectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(_profilePickerItems[_selectedPresetIndexAC].LinkedPresetId.Value);
+                    // get the power profile view model
+                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePickerCollectionViewAC.GetItemAt(_selectedPresetIndexAC) as ProfilesPickerViewModel;
+                    SelectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(profilesPickerViewModel.LinkedPresetId.Value);
+
+                    // refresh property
                     OnPropertyChanged(nameof(SelectedPresetIndexAC));
                 }
             }
@@ -291,6 +305,11 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(_profilePickerItems, new object());
             BindingOperations.EnableCollectionSynchronization(LibraryPickers, new object());
 
+            ProfilePickerCollectionViewDC = new ListCollectionView(_profilePickerItems);
+            ProfilePickerCollectionViewDC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
+            ProfilePickerCollectionViewAC = new ListCollectionView(_profilePickerItems);
+            ProfilePickerCollectionViewAC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
+
             // raise events
             switch (ManagerFactory.powerProfileManager.Status)
             {
@@ -325,12 +344,6 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
-            ProfilePickerCollectionViewDC = new ListCollectionView(_profilePickerItems);
-            ProfilePickerCollectionViewDC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
-
-            ProfilePickerCollectionViewAC = new ListCollectionView(_profilePickerItems);
-            ProfilePickerCollectionViewAC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
-
             LaunchExecutable = new DelegateCommand(async () =>
             {
                 // dirty, fix me !
@@ -341,13 +354,15 @@ namespace HandheldCompanion.ViewModels
             DisplayLibrary = new DelegateCommand(async () =>
             {
                 // capture dialog content
-                object content = profilesPage.IGGBDialog.Content;
+                ContentDialog storedDialog = profilesPage.IGGBDialog;
+                object content = storedDialog.Content;
 
                 contentDialog = new ContentDialog
                 {
-                    Title = profilesPage.IGGBDialog.Title,
-                    CloseButtonText = profilesPage.IGGBDialog.CloseButtonText,
-                    IsEnabled = this.IsLibraryConnected,
+                    Title = storedDialog.Title,
+                    CloseButtonText = storedDialog.CloseButtonText,
+                    PrimaryButtonText = storedDialog.PrimaryButtonText,
+                    IsEnabled = storedDialog.IsEnabled,
                     Content = content,
                     DataContext = this,
                 };
@@ -453,11 +468,14 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-            foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
-                PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+            UIHelper.TryInvoke(() =>
+            {
+                foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
 
-            SelectedPresetIndexAC = _profilePickerItems.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
-            SelectedPresetIndexDC = _profilePickerItems.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+                SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+            });
         }
 
         private void PowerProfileManager_Initialized()
@@ -476,9 +494,9 @@ namespace HandheldCompanion.ViewModels
                     _profilePickerItems.Remove(foundPreset);
 
                     if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexAC = _profilePickerItems.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+                        SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
                     if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexDC = _profilePickerItems.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == ManagerFactory.powerProfileManager.GetDefault().Guid));
+                        SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
                 }
             }
         }
@@ -497,7 +515,7 @@ namespace HandheldCompanion.ViewModels
                 else
                 {
                     index = 0;
-                    _profilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name ,IsInternal = profile.IsDefault() });
+                    _profilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
                 }
             }
         }
@@ -604,8 +622,11 @@ namespace HandheldCompanion.ViewModels
         {
             lock (ProfilePickerLock)
             {
-                SelectedPresetIndexAC = _profilePickerItems.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
-                SelectedPresetIndexDC = _profilePickerItems.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+                UIHelper.TryInvoke(() =>
+                {
+                    SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
+                    SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+                });
             }
         }
 

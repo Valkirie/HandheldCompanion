@@ -209,6 +209,8 @@ namespace HandheldCompanion.Managers
                 currentProfile = powerProfile;
 
                 Applied?.Invoke(powerProfile, source);
+
+                LogManager.LogInformation("Power profile {0} applied", powerProfile.Name);
             }
         }
 

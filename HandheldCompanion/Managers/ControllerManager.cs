@@ -761,6 +761,18 @@ public static class ControllerManager
                             }
                         }
                         break;
+
+                    // MSI
+                    case "0x0DB0":
+                        {
+                            switch (details.GetProductID())
+                            {
+                                case "0x1901":
+                                    try { controller = new XClawController(details); } catch { }
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
 
@@ -999,6 +1011,23 @@ public static class ControllerManager
                     HostRadioDisabled = false;
 
                     ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
+                }
+                else if (HasVirtualController<XInputController>())
+                {
+                    // physical controller: none
+                    // virtual controller: not slot 1
+                    XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                    if (vController is null)
+                    {
+                        VirtualManager.Suspend(false);
+                        Thread.Sleep(1000);
+                        VirtualManager.Resume(false);
+
+                        // resume virtual controller and wait until it's back
+                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
+                            Thread.Sleep(100);
+                    }
                 }
             }
         }
