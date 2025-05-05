@@ -112,9 +112,9 @@ namespace HandheldCompanion.Views.QuickPages
                     AddShiftToggle(Row3Panel);
                     BuildDynamicRow(Row3Panel, _row3Sc);
                     AddBackspace(Row3Panel);
-                    AddSwitchKey(Row4Panel, "?123", LayoutState.Switch1);
+                    AddSwitchKey(Row4Panel, "&123", LayoutState.Switch1);
                     AddScanKey(Row4Panel, 0xBC); // comma
-                    AddUnicodeKey(Row4Panel, ' ');
+                    AddUnicodeKey(Row4Panel, ' ', 128); // space
                     AddScanKey(Row4Panel, 0xBE); // period
                     AddReturn(Row4Panel);
                     break;
@@ -125,15 +125,15 @@ namespace HandheldCompanion.Views.QuickPages
                     // Row2: symbols ! @ # $ € & _ - = +
                     BuildUnicodeRow(Row2Panel, new[] { "!", "@", "#", "$", "€", "&", "_", "-", "=", "+" });
                     // Row3: SWITCH2 button, then ; : ( ) / ' " BACKSPACE
-                    AddSwitchKey(Row3Panel, "SWITCH2", LayoutState.Switch2);
+                    AddSwitchKey(Row3Panel, "›", LayoutState.Switch2);
                     BuildUnicodeRow(Row3Panel, new[] { ";", ":", "(", ")", "/", "'", "\"" });
                     AddBackspace(Row3Panel);
                     // Row4: SWITCH (default), comma, space, period, question mark, return
-                    AddSwitchKey(Row4Panel, "SWITCH", LayoutState.Default);
+                    AddSwitchKey(Row4Panel, "abc", LayoutState.Default);
                     BuildUnicodeRow(Row4Panel, new[] { ",", "+" });
                     // Correction:
                     Row4Panel.Children.Clear(); // Clear any accidental additions
-                    AddSwitchKey(Row4Panel, "SWITCH", LayoutState.Default);
+                    AddSwitchKey(Row4Panel, "abc", LayoutState.Default);
                     AddUnicodeKey(Row4Panel, ',');
                     AddUnicodeKey(Row4Panel, ' ');
                     AddUnicodeKey(Row4Panel, '.');
@@ -147,12 +147,12 @@ namespace HandheldCompanion.Views.QuickPages
                     // Row2: % [ ] { } < > ^ £ ¥
                     BuildUnicodeRow(Row2Panel, new[] { "%", "[", "]", "{", "}", "<", ">", "^", "£", "¥" });
                     // Row3: SWITCH1 button, then * § « » ~ |
-                    AddSwitchKey(Row3Panel, "SWITCH1", LayoutState.Switch1);
+                    AddSwitchKey(Row3Panel, "&123", LayoutState.Switch1);
                     BuildUnicodeRow(Row3Panel, new[] { "*", "§", "«", "»", "~", "|" });
                     AddBackspace(Row3Panel);
                     // Row4: SWITCH (default), comma, space, backslash, return
                     Row4Panel.Children.Clear();
-                    AddSwitchKey(Row4Panel, "SWITCH", LayoutState.Default);
+                    AddSwitchKey(Row4Panel, "abc", LayoutState.Default);
                     AddUnicodeKey(Row4Panel, ',');
                     AddUnicodeKey(Row4Panel, ' ');
                     AddUnicodeKey(Row4Panel, '\\');
@@ -206,17 +206,17 @@ namespace HandheldCompanion.Views.QuickPages
             tb.Unchecked += (s, e) => { _shiftToggled = false; RelabelAll(); };
             p.Children.Add(tb);
         }
-        private void AddBackspace(Panel p) => AddScanKey(p, 0x0E, "⌫");
+        private void AddBackspace(Panel p) => AddScanKey(p, 0x0E, "⌫", 64);
         private void AddReturn(Panel p) => AddScanKey(p, 0x1C, "⏎");
-        private void AddUnicodeKey(Panel p, char c)
+        private void AddUnicodeKey(Panel p, char c, int width = 36)
         {
-            var b = new Button { Tag = (object)c, Width = 36, Height = 60, Margin = new Thickness(2), Content = c.ToString() };
+            var b = new Button { Tag = (object)c, Width = width, Height = 60, Margin = new Thickness(2), Content = c.ToString() };
             b.Click += Unicode_Click;
             p.Children.Add(b);
         }
-        private void AddScanKey(Panel p, uint sc, string label = null)
+        private void AddScanKey(Panel p, uint sc, string label = null, int width = 36)
         {
-            var b = new Button { Tag = (sc, false), Width = 36, Height = 60, Margin = new Thickness(2) };
+            var b = new Button { Tag = (sc, false), Width = width, Height = 60, Margin = new Thickness(2) };
             if (label != null) b.Content = label;
             b.Click += ScanKey_Click;
             p.Children.Add(b);

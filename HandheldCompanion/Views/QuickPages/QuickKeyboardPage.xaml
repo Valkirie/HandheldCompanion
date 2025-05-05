@@ -17,7 +17,7 @@
 
     <ikw:SimpleStackPanel
         Margin="10"
-        HorizontalAlignment="Center"
+        HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
         Orientation="Vertical"
         Spacing="2">
