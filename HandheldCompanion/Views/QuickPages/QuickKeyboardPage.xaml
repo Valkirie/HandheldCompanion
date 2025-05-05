@@ -11,10 +11,6 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickKeyboard"
     Margin="15,0,0,6"
-    d:Background="White"
-    d:DataContext="{d:DesignInstance Type=viewmodels:QuickKeyboardPageViewModel}"
-    d:DesignHeight="640"
-    d:DesignWidth="640"
     KeepAlive="True"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -26,26 +22,11 @@
         Orientation="Vertical"
         Spacing="2">
 
-        <!--  Row 1: 10 keys  -->
-        <UniformGrid
-            x:Name="Row1Panel"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Columns="10" />
-
-        <!--  Row 2: 9 keys  -->
-        <UniformGrid
-            x:Name="Row2Panel"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Columns="10" />
-
-        <!--  Row 3: SHIFT + 6 letters + BACKSPACE = 8 keys  -->
-        <UniformGrid
-            x:Name="Row3Panel"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Columns="10" />
+        <!--  Default letter rows + bottom function row  -->
+        <UniformGrid x:Name="Row1Panel" Columns="10" />
+        <UniformGrid x:Name="Row2Panel" Columns="10" />
+        <UniformGrid x:Name="Row3Panel" Columns="10" />
+        <UniformGrid x:Name="Row4Panel" Columns="10" />
 
     </ikw:SimpleStackPanel>
 </Page>
