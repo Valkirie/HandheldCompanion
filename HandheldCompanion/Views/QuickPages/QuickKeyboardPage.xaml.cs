@@ -1,12 +1,12 @@
-﻿using System;
+﻿using iNKORE.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Threading;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages
 {
@@ -17,6 +17,7 @@ namespace HandheldCompanion.Views.QuickPages
         public QuickKeyboardPage()
         {
             InitializeComponent();
+
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
             _timer.Tick += Timer_Tick;
             _timer.Start();
@@ -33,12 +34,10 @@ namespace HandheldCompanion.Views.QuickPages
         private IntPtr _lastHkl;
 
         // Physical scan-codes for default letter layout (dynamic per HKL)
-        private static readonly uint[] _row1Sc = { 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19 };
-        private static readonly uint[] _row2Sc = { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27 };
-        private static readonly uint[] _row3Sc = { 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32 }; // Z,X,C,V,B,N,M positions
-
-        // Numeric keys scan-codes
-        private static readonly uint[] _numSc = { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B };
+        private static readonly object[] _row1Sc = { 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19 };      // Q,W,E,R,T,Y,U,I,O,P
+        private static readonly object[] _row2Sc = { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27 };      // A,S,D,F,G,H,J,K,L,;
+        private static readonly object[] _row3Sc = { 0x00, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x0E };             // SHIFT,Z,X,C,V,B,N,M,BACKSPACE
+        private static readonly object[] _row4Sc = { string.Empty, ",", " ", ".", "?", 0x1C };                          // SWITCH,COMMA,SPACE,LANGUAGE,PERIOD,RETURN
 
         // P/Invoke
         private const uint INPUT_KEYBOARD = 1;
@@ -84,148 +83,162 @@ namespace HandheldCompanion.Views.QuickPages
             _lastHkl = GetKeyboardLayout(tid);
             Build();
         }
+
         private void Page_Unloaded(object s, RoutedEventArgs e) => _timer.Stop();
 
         // Poll Windows HKL changes
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (_targetHwnd == IntPtr.Zero) return;
+
             uint tid = GetWindowThreadProcessId(_targetHwnd, out _);
-            var h = GetKeyboardLayout(tid);
-            if (h != _lastHkl) { _lastHkl = h; Build(); }
+            nint h = GetKeyboardLayout(tid);
+            if (h != _lastHkl)
+            {
+                _lastHkl = h;
+                Build();
+            }
         }
 
-        // Build all rows based on current _state
+        private void ShiftToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            _shiftToggled = true; 
+            RelabelAll();
+        }
+
+        private void ShiftToggle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _shiftToggled = false;
+            RelabelAll();
+        }
+
+        private void LayoutSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            switch (_state)
+            {
+                case LayoutState.Switch1:
+                    _state = LayoutState.Switch2;
+                    break;
+                case LayoutState.Switch2:
+                    _state = LayoutState.Switch1;
+                    break;
+            }
+
+            Build();
+        }
+
+        private void SwitchTo123_Click(object sender, RoutedEventArgs e)
+        {
+            switch(_state)
+            {
+                case LayoutState.Default:
+                    _state = LayoutState.Switch1;
+                    break;
+                case LayoutState.Switch1:
+                case LayoutState.Switch2:
+                    _state = LayoutState.Default;
+                    break;
+            }
+
+            Build();
+        }
+
         private void Build()
         {
-            Row1Panel.Children.Clear();
-            Row2Panel.Children.Clear();
-            Row3Panel.Children.Clear();
-            Row4Panel.Children.Clear();
+            // reset vars
             _shiftToggled = false;
+            // todo: use MVVM
+            ShiftToggle.IsChecked = _shiftToggled;
 
             switch (_state)
             {
                 case LayoutState.Default:
-                    BuildDynamicRow(Row1Panel, _row1Sc);
-                    BuildDynamicRow(Row2Panel, _row2Sc);
-                    AddShiftToggle(Row3Panel);
-                    BuildDynamicRow(Row3Panel, _row3Sc);
-                    AddBackspace(Row3Panel);
-                    AddSwitchKey(Row4Panel, "&123", LayoutState.Switch1);
-                    AddScanKey(Row4Panel, 0xBC); // comma
-                    AddUnicodeKey(Row4Panel, ' ', 128); // space
-                    AddScanKey(Row4Panel, 0xBE); // period
-                    AddReturn(Row4Panel);
+                    {
+                        ShiftToggle.Visibility = Visibility.Visible;
+                        LayoutSwitch.Visibility = Visibility.Collapsed;
+                        BuildDynamicRow(Row1Panel, _row1Sc);
+                        BuildDynamicRow(Row2Panel, _row2Sc);
+                        BuildDynamicRow(Row3Panel, _row3Sc);
+                    }
                     break;
-
                 case LayoutState.Switch1:
-                    // Row1: digits 1-0 as Unicode
-                    BuildUnicodeRow(Row1Panel, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" });
-                    // Row2: symbols ! @ # $ € & _ - = +
-                    BuildUnicodeRow(Row2Panel, new[] { "!", "@", "#", "$", "€", "&", "_", "-", "=", "+" });
-                    // Row3: SWITCH2 button, then ; : ( ) / ' " BACKSPACE
-                    AddSwitchKey(Row3Panel, "›", LayoutState.Switch2);
-                    BuildUnicodeRow(Row3Panel, new[] { ";", ":", "(", ")", "/", "'", "\"" });
-                    AddBackspace(Row3Panel);
-                    // Row4: SWITCH (default), comma, space, period, question mark, return
-                    AddSwitchKey(Row4Panel, "abc", LayoutState.Default);
-                    BuildUnicodeRow(Row4Panel, new[] { ",", "+" });
-                    // Correction:
-                    Row4Panel.Children.Clear(); // Clear any accidental additions
-                    AddSwitchKey(Row4Panel, "abc", LayoutState.Default);
-                    AddUnicodeKey(Row4Panel, ',');
-                    AddUnicodeKey(Row4Panel, ' ');
-                    AddUnicodeKey(Row4Panel, '.');
-                    AddUnicodeKey(Row4Panel, '?');
-                    AddReturn(Row4Panel);
+                    {
+                        ShiftToggle.Visibility = Visibility.Collapsed;
+                        LayoutSwitch.Visibility = Visibility.Visible;
+                        BuildDynamicRow(Row1Panel, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]);
+                        BuildDynamicRow(Row2Panel, ["!", "@", "#", "$", "€", "&", "_", "-", "=", "+"]);
+                        BuildDynamicRow(Row3Panel, [string.Empty, ";", ":", "(", ")", "/", "'", "\"", string.Empty]);
+                        if (LayoutSwitch.Content is FontIcon fontIcon)
+                            fontIcon.Glyph = "\ue761";
+                    }
                     break;
-
                 case LayoutState.Switch2:
-                    // Row1: 1-0
-                    BuildUnicodeRow(Row1Panel, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" });
-                    // Row2: % [ ] { } < > ^ £ ¥
-                    BuildUnicodeRow(Row2Panel, new[] { "%", "[", "]", "{", "}", "<", ">", "^", "£", "¥" });
-                    // Row3: SWITCH1 button, then * § « » ~ |
-                    AddSwitchKey(Row3Panel, "&123", LayoutState.Switch1);
-                    BuildUnicodeRow(Row3Panel, new[] { "*", "§", "«", "»", "~", "|" });
-                    AddBackspace(Row3Panel);
-                    // Row4: SWITCH (default), comma, space, backslash, return
-                    Row4Panel.Children.Clear();
-                    AddSwitchKey(Row4Panel, "abc", LayoutState.Default);
-                    AddUnicodeKey(Row4Panel, ',');
-                    AddUnicodeKey(Row4Panel, ' ');
-                    AddUnicodeKey(Row4Panel, '\\');
-                    AddReturn(Row4Panel);
+                    {
+                        ShiftToggle.Visibility = Visibility.Collapsed;
+                        LayoutSwitch.Visibility = Visibility.Visible;
+                        BuildDynamicRow(Row1Panel, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]);
+                        BuildDynamicRow(Row2Panel, ["%", "[", "]", "{", "}", "<", ">", "^", "£", "¥"]);
+                        BuildDynamicRow(Row3Panel, [string.Empty, "*", "`", "§", "«", "»", "~", "|", string.Empty]);
+                        if (LayoutSwitch.Content is FontIcon fontIcon)
+                            fontIcon.Glyph = "\ue760";
+                    }
                     break;
             }
+
+            BuildDynamicRow(Row4Panel, _row4Sc);
 
             RelabelAll();
         }
 
-        // Dynamic row: physical scan-codes, MapVirtualKeyEx + ToUnicodeEx for label
-        private void BuildDynamicRow(Panel p, uint[] scans)
+        private void BuildDynamicRow(Panel p, object[] objects)
         {
-            foreach (var sc in scans)
+            for (int i = 0; i < p.Children.Count; i++)
             {
-                var b = new Button { Tag = (sc, false), Width = 36, Height = 60, Margin = new Thickness(2) };
-                b.Click += ScanKey_Click;
-                p.Children.Add(b);
-            }
-        }
+                object o = objects[i];
+                if (o is null)
+                    continue;
 
-        // Static scan row (digits with forced SHIFT)
-        private void BuildScanRow(Panel p, uint[] scans, bool forceShift)
-        {
-            foreach (var sc in scans)
-            {
-                var b = new Button { Tag = (sc, forceShift), Width = 36, Height = 60, Margin = new Thickness(2) };
-                b.Click += ScanKey_Click;
-                p.Children.Add(b);
-            }
-        }
+                if (o is int scan)
+                {
+                    if (scan == 0x00)
+                        continue; // skip empty buttons
 
-        // Static unicode row
-        private void BuildUnicodeRow(Panel p, string[] labels)
-        {
-            foreach (string label in labels)
-            {
-                var b = new Button { Tag = label.ToCharArray()[0], Width = 36, Height = 60, Margin = new Thickness(2), Content = label };
-                b.Click += Unicode_Click;
-                p.Children.Add(b);
-            }
-        }
-        private void BuildUnicodeRow(Panel p, IEnumerable<string> labels) => BuildUnicodeRow(p, labels is string[] arr ? arr : new List<string>(labels).ToArray());
-        private void AddUnicodeRowSymbols(Panel p, string[] syms) => BuildUnicodeRow(p, syms);
+                    if (p.Children[i] is Button button)
+                    {
+                        button.Tag = ((uint)scan, false);
 
-        // Helpers to add function keys
-        private void AddShiftToggle(Panel p)
-        {
-            var tb = new ToggleButton { Width = 60, Height = 60, Margin = new Thickness(2), Content = "⇧" };
-            tb.Checked += (s, e) => { _shiftToggled = true; RelabelAll(); };
-            tb.Unchecked += (s, e) => { _shiftToggled = false; RelabelAll(); };
-            p.Children.Add(tb);
-        }
-        private void AddBackspace(Panel p) => AddScanKey(p, 0x0E, "⌫", 64);
-        private void AddReturn(Panel p) => AddScanKey(p, 0x1C, "⏎");
-        private void AddUnicodeKey(Panel p, char c, int width = 36)
-        {
-            var b = new Button { Tag = (object)c, Width = width, Height = 60, Margin = new Thickness(2), Content = c.ToString() };
-            b.Click += Unicode_Click;
-            p.Children.Add(b);
-        }
-        private void AddScanKey(Panel p, uint sc, string label = null, int width = 36)
-        {
-            var b = new Button { Tag = (sc, false), Width = width, Height = 60, Margin = new Thickness(2) };
-            if (label != null) b.Content = label;
-            b.Click += ScanKey_Click;
-            p.Children.Add(b);
-        }
-        private void AddSwitchKey(Panel p, string text, LayoutState tgt)
-        {
-            var b = new Button { Content = text, Width = 60, Height = 60, Margin = new Thickness(2) };
-            b.Click += (s, e) => { _state = tgt; Build(); };
-            p.Children.Add(b);
+                        // dirty
+                        button.Click -= ScanKey_Click;
+                        button.Click -= Unicode_Click;
+
+                        button.Click += ScanKey_Click;
+                    }
+                }
+                else if (o is string s)
+                {
+                    if (string.IsNullOrEmpty(s))
+                        continue;
+
+                    char c = s.ToCharArray()[0];
+                    if (p.Children[i] is Button button)
+                    {
+                        button.Tag = c;
+                        if (!string.IsNullOrEmpty(s))
+                        {
+                            if (button.Content is FontIcon fontIcon)
+                                fontIcon.Glyph = s;
+                            else
+                                button.Content = s;
+                        }
+
+                        // dirty
+                        button.Click -= ScanKey_Click;
+                        button.Click -= Unicode_Click;
+
+                        button.Click += Unicode_Click;
+                    }
+                }
+            }
         }
 
         // Relabel dynamic buttons
@@ -235,23 +248,30 @@ namespace HandheldCompanion.Views.QuickPages
             GetKeyboardState(ks);
             if (_shiftToggled) ks[0x10] = 0x80; // SHIFT keycode
 
-            foreach (var panel in new[] { Row1Panel, Row2Panel, Row3Panel })
-                foreach (var child in panel.Children)
+            foreach (Grid? panel in new[] { Row1Panel, Row2Panel, Row3Panel, Row4Panel })
+            {
+                foreach (object? child in panel.Children)
                 {
                     if (child is Button b && b.Tag is ValueTuple<uint, bool> t)
                     {
-                        var (sc, fs) = t;
+                        if (!string.IsNullOrEmpty(b.Name))
+                            continue; // skip named buttons
+
+                        (uint sc, bool fs) = t;
                         byte[] st = (byte[])ks.Clone();
                         if (fs) st[0x10] = 0x80;
                         uint vk = MapVirtualKeyEx(sc, MAPVK_VSC_TO_VK_EX, _lastHkl);
-                        var sb = new StringBuilder(2);
+                        StringBuilder sb = new StringBuilder(2);
                         int cnt = ToUnicodeEx(vk, sc, st, sb, sb.Capacity, 0, _lastHkl);
-                        b.Content = cnt > 0 ? sb[0].ToString() : ((Key)KeyInterop.KeyFromVirtualKey((int)vk)).ToString();
+
+                        string content = sb[0].ToString();
+                        if (cnt > 0 && !string.IsNullOrEmpty(content))
+                            b.Content = content;
                     }
                 }
+            }
         }
 
-        // Scan key click => restores focus and sends scan codes
         private void ScanKey_Click(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button b && b.Tag is ValueTuple<uint, bool> t)) return;
@@ -260,14 +280,13 @@ namespace HandheldCompanion.Views.QuickPages
             fs = _shiftToggled;
 
             var seq = new List<INPUT>();
-            if (fs) seq.Add(MakeScan(0x2A, false)); // SHIFT down
-            seq.Add(MakeScan(sc, false));            // key down
-            seq.Add(MakeScan(sc, true));             // key up
-            if (fs) seq.Add(MakeScan(0x2A, true));   // SHIFT up
+            if (fs) seq.Add(MakeScan(0x2A, false));     // Shift down
+            seq.Add(MakeScan(sc, false));               // Key down
+            seq.Add(MakeScan(sc, true));                // Key up
+            if (fs) seq.Add(MakeScan(0x2A, true));      // Shift up
             SendInput((uint)seq.Count, seq.ToArray(), Marshal.SizeOf<INPUT>());
         }
 
-        // Unicode key click (static symbols)
         private void Unicode_Click(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button b && b.Tag is char c)) return;
@@ -278,37 +297,6 @@ namespace HandheldCompanion.Views.QuickPages
             var up = new INPUT { type = INPUT_KEYBOARD, U = new InputUnion { ki = new KEYBDINPUT { wVk = 0, wScan = c, dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP, dwExtraInfo = GetMessageExtraInfo() } } };
             SendInput(1, new[] { down }, Marshal.SizeOf<INPUT>());
             SendInput(1, new[] { up }, Marshal.SizeOf<INPUT>());
-        }
-
-        private void SendScan(uint scanCode)
-        {
-            const uint INPUT_KEYBOARD = 1;
-            const uint KEYEVENTF_SCANCODE = 0x0008;
-            const uint KEYEVENTF_KEYUP = 0x0002;
-
-            var inputs = new INPUT[2];
-
-            inputs[0].type = INPUT_KEYBOARD;
-            inputs[0].U.ki = new KEYBDINPUT
-            {
-                wVk = 0,
-                wScan = (ushort)scanCode,
-                dwFlags = KEYEVENTF_SCANCODE,
-                time = 0,
-                dwExtraInfo = GetMessageExtraInfo()
-            };
-
-            inputs[1].type = INPUT_KEYBOARD;
-            inputs[1].U.ki = new KEYBDINPUT
-            {
-                wVk = 0,
-                wScan = (ushort)scanCode,
-                dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP,
-                time = 0,
-                dwExtraInfo = GetMessageExtraInfo()
-            };
-
-            SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<INPUT>());
         }
 
         private static INPUT MakeScan(uint scanCode, bool up)
