@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Page = System.Windows.Controls.Page;
 
@@ -12,11 +13,17 @@ namespace HandheldCompanion.Views.QuickPages
 {
     public partial class QuickKeyboardPage : Page
     {
+        // the one animation template
+        private readonly Storyboard _tapTemplate;
+
         // Constructors
         public QuickKeyboardPage(string tag) : this() => Tag = tag;
         public QuickKeyboardPage()
         {
             InitializeComponent();
+
+            // grab the *templates* from your XAML resources
+            _tapTemplate = (Storyboard)TryFindResource("KeyTapAnimation");
 
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
             _timer.Tick += Timer_Tick;
@@ -314,6 +321,20 @@ namespace HandheldCompanion.Views.QuickPages
             };
 
             return input;
+        }
+
+        private void Key_Tap(object sender, RoutedEventArgs e)
+        {
+            if (_tapTemplate == null) return;
+            if (!(sender is FrameworkElement el)) return;
+
+            // clone so back-to-back presses don’t stomp on each other
+            var sb = _tapTemplate.Clone();
+            foreach (Timeline tl in sb.Children)
+                Storyboard.SetTarget(tl, el);
+
+            // start the full shrink→grow on this key
+            sb.Begin(el, true);
         }
     }
 }
