@@ -2,6 +2,7 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Commands;
+using HandheldCompanion.Views.QuickPages;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -12,8 +13,22 @@ namespace HandheldCompanion.ViewModels
 {
     public class QuickKeyboardPageViewModel : BaseViewModel
     {
-        public QuickKeyboardPageViewModel()
+        private QuickKeyboardPage quickKeyboardPage;
+
+        private bool shiftToggleChecked;
+        public bool ShiftToggleChecked
         {
+            get => shiftToggleChecked;
+            set
+            {
+                if (SetProperty(ref shiftToggleChecked, value))
+                    quickKeyboardPage.RelabelAll();
+            }
+        }
+
+        public QuickKeyboardPageViewModel(QuickKeyboardPage quickKeyboardPage)
+        {
+            this.quickKeyboardPage = quickKeyboardPage;
         }
 
         public override void Dispose()

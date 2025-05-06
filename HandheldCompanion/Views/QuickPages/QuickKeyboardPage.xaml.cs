@@ -1,4 +1,5 @@
-﻿using iNKORE.UI.WPF.Modern.Controls;
+﻿using HandheldCompanion.ViewModels;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -20,6 +21,7 @@ namespace HandheldCompanion.Views.QuickPages
         public QuickKeyboardPage(string tag) : this() => Tag = tag;
         public QuickKeyboardPage()
         {
+            DataContext = new QuickKeyboardPageViewModel(this);
             InitializeComponent();
 
             // grab the *templates* from your XAML resources
@@ -33,7 +35,11 @@ namespace HandheldCompanion.Views.QuickPages
         // Layout modes
         private enum LayoutState { Default, Switch1, Switch2 }
         private LayoutState _state = LayoutState.Default;
-        private bool _shiftToggled;
+        private bool _shiftToggled
+        {
+            get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked;
+            set => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked = value;
+        }
 
         // Original target window to restore focus
         private IntPtr _targetHwnd;
@@ -107,18 +113,6 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void ShiftToggle_Checked(object sender, RoutedEventArgs e)
-        {
-            _shiftToggled = true; 
-            RelabelAll();
-        }
-
-        private void ShiftToggle_Unchecked(object sender, RoutedEventArgs e)
-        {
-            _shiftToggled = false;
-            RelabelAll();
-        }
-
         private void LayoutSwitch_Click(object sender, RoutedEventArgs e)
         {
             switch (_state)
@@ -154,8 +148,6 @@ namespace HandheldCompanion.Views.QuickPages
         {
             // reset vars
             _shiftToggled = false;
-            // todo: use MVVM
-            ShiftToggle.IsChecked = _shiftToggled;
 
             switch (_state)
             {
@@ -249,7 +241,7 @@ namespace HandheldCompanion.Views.QuickPages
         }
 
         // Relabel dynamic buttons
-        private void RelabelAll()
+        public void RelabelAll()
         {
             byte[] ks = new byte[256];
             GetKeyboardState(ks);

@@ -11,6 +11,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickKeyboard"
     Margin="15,0,0,6"
+    d:DataContext="{d:DesignInstance Type=viewmodels:QuickKeyboardPageViewModel}"
     d:Height="450"
     d:Width="940"
     KeepAlive="True"
@@ -158,9 +159,8 @@
             <Grid Grid.Column="0">
                 <ToggleButton
                     x:Name="ShiftToggle"
-                    Checked="ShiftToggle_Checked"
-                    Tag="Shift"
-                    Unchecked="ShiftToggle_Unchecked">
+                    IsChecked="{Binding ShiftToggleChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Tag="Shift">
                     <ui:FontIcon Glyph="&#xe752;" />
                 </ToggleButton>
                 <Button x:Name="LayoutSwitch" Click="LayoutSwitch_Click">
