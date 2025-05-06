@@ -154,8 +154,8 @@ public static class ControllerManager
         // Flushing possible JoyShocks...
         SafeJslDisconnectAndDisposeAll();
 
-        // unplug on close
-        ClearTargetController();
+        // halt controlelr manager and unplug on close
+        Suspend(true);
 
         // manage events
         ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
