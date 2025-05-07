@@ -11,6 +11,7 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -94,6 +95,10 @@ public partial class MainWindow : GamepadWindow
         // initialize splash screen
         SplashScreen = new SplashScreen();
         DataContext = new MainWindowViewModel();
+
+        // set theme
+        var currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
+        ThemeManager.SetRequestedTheme(this, currentTheme);
 
         InitializeComponent();
         this.Tag = "MainWindow";
