@@ -110,7 +110,7 @@ namespace HandheldCompanion.ViewModels
             // UI thread
             UIHelper.TryInvoke(() =>
             {
-                GlyphForeground = new SolidColorBrush(glyphIconInfo.Color);
+                GlyphForeground = glyphIconInfo.Color.HasValue ? new SolidColorBrush(glyphIconInfo.Color.Value) : null;
             });
         }
 

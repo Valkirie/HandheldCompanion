@@ -926,7 +926,7 @@
                     Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:FontIcon.Style>
                         <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource WindowTextBrush}" />
                             <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
                             <Setter Property="FontSize" Value="14" />
                             <Style.Triggers>

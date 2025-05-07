@@ -685,12 +685,12 @@ namespace HandheldCompanion.Controllers
             };
         }
 
-        public Color GetGlyphColor(ButtonFlags button)
+        public Color? GetGlyphColor(ButtonFlags button)
         {
             if (ColoredButtons.TryGetValue(button, out Color color))
                 return color;
 
-            return Colors.White;
+            return null;
         }
 
         public Color GetGlyphColor(AxisLayoutFlags axis)

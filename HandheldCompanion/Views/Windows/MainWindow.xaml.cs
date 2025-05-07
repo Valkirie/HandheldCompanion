@@ -254,14 +254,17 @@ public partial class MainWindow : GamepadWindow
         // UI thread
         UIHelper.TryInvoke(() =>
         {
+            var color1 = Controller.GetGlyphColor(ButtonFlags.B1);
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
-            GamepadUISelectIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B1));
+            GamepadUISelectIcon.Foreground = color1.HasValue ? new SolidColorBrush(color1.Value) : null;
 
+            var color2 = Controller.GetGlyphColor(ButtonFlags.B2);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
-            GamepadUIBackIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B2));
+            GamepadUIBackIcon.Foreground = color2.HasValue ? new SolidColorBrush(color2.Value) : null;
 
+            var color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
-            GamepadUIToggleIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B4));
+            GamepadUIToggleIcon.Foreground = color4.HasValue ? new SolidColorBrush(color4.Value) : null;
         });
     }
 
