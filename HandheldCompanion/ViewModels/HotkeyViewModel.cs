@@ -505,13 +505,17 @@ namespace HandheldCompanion.ViewModels
                         }
                         else
                         {
-                            ICommands command = Activator.CreateInstance(function) as ICommands;
+                            var instance = Activator.CreateInstance(function);
+                            ICommands command = (ICommands)instance!;
+                            IDisposable? disposable = instance as IDisposable;
 
                             bool canUnpin = command.CanUnpin;
                             bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
                             bool isEnabled = canUnpin && isSupported;
 
                             _functionItems.Add(new ComboBoxItemViewModel(command.Name, isEnabled, currentCategory));
+
+                            disposable?.Dispose();
                         }
                     }
                 }
