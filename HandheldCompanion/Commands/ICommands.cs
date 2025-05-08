@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+
 using System;
 
 namespace HandheldCompanion.Commands
@@ -27,8 +28,8 @@ namespace HandheldCompanion.Commands
         [JsonIgnore] public bool OnKeyDown = false;
         [JsonIgnore] public bool OnKeyUp = false;
 
-        [JsonIgnore] public string Name = "Empty hotkey";
-        [JsonIgnore] public string Description = "Please pick a command type";
+        [JsonIgnore] public string Name = Properties.Resources.Hotkey_DefaultName;
+        [JsonIgnore] public string Description = Properties.Resources.Hotkey_DefaultDesc;
         [JsonIgnore] public string Glyph = "\ue895";
 
         [JsonIgnore] private string _LiveGlyph = string.Empty;

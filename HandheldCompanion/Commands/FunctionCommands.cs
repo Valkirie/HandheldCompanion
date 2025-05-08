@@ -3,6 +3,8 @@ using HandheldCompanion.Commands.Functions.Multimedia;
 using HandheldCompanion.Commands.Functions.Multitasking;
 using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Properties;
+
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +15,7 @@ namespace HandheldCompanion.Commands
     {
         public static List<object> Functions =
         [
-            "Handheld Companion",
+            Resources.Hotkey_FunctionCategory_HandheldCompanion,
             typeof(QuickToolsCommands),
             typeof(MainWindowCommands),
             typeof(OverlayGamepadCommands),
@@ -22,26 +24,26 @@ namespace HandheldCompanion.Commands
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
             typeof(QuickOverlayCommands),
-            "Power & battery",
+            Resources.Hotkey_FunctionCategory_PowerAndBattery,
             typeof(TDPIncrease),
             typeof(TDPDecrease),
             typeof(RogGPU),
-            "Windows",
+            Resources.Hotkey_FunctionCategory_Windows,
             typeof(OnScreenKeyboardCommands),
             typeof(OnScreenKeyboardLegacyCommands),
             typeof(ActionCenterCommands),
             typeof(SettingsCommands),
             typeof(ScreenshotCommands),
             typeof(GameBarCommands),
-            "Multitasking",
+            Resources.Hotkey_FunctionCategory_Multitasking,
             typeof(KillForegroundCommands),
             typeof(TaskManagerCommands),
             typeof(SwapScreenCommands),
             typeof(DesktopCommands),
-            "Display",
+            Resources.Hotkey_FunctionCategory_Display,
             typeof(BrightnessIncrease),
             typeof(BrightnessDecrease),
-            "Sound",
+            Resources.Hotkey_FunctionCategory_Sound,
             typeof(VolumeIncrease),
             typeof(VolumeDecrease),
             typeof(VolumeMute),
