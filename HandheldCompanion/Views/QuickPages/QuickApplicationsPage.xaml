@@ -174,7 +174,7 @@
                     VirtualizingPanel.VirtualizationMode="Recycling">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="3" />
+                            <UniformGrid Columns="5" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
@@ -184,6 +184,8 @@
                                 Margin="3"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
+                                Background="Transparent"
+                                BorderThickness="0"
                                 CacheMode="BitmapCache"
                                 Command="{Binding StartProcessCommand}"
                                 IsEnabled="{Binding IsAvailable, UpdateSourceTrigger=PropertyChanged}">
