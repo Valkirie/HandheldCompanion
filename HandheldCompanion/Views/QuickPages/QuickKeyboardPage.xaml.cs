@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.ViewModels;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,6 @@ namespace HandheldCompanion.Views.QuickPages
         }
 
         // Original target window to restore focus
-        private IntPtr _targetHwnd;
         private readonly DispatcherTimer _timer;
         private IntPtr _lastHkl;
 
@@ -89,12 +89,7 @@ namespace HandheldCompanion.Views.QuickPages
         // Page events
         private void Page_Loaded(object s, RoutedEventArgs e)
         {
-            // store target and layout
-            _targetHwnd = GetForegroundWindow();
-            if (_targetHwnd == IntPtr.Zero) return;
-            uint tid = GetWindowThreadProcessId(_targetHwnd, out _);
-            _lastHkl = GetKeyboardLayout(tid);
-            Build();
+            Timer_Tick(s, e); // initial build
         }
 
         private void Page_Unloaded(object s, RoutedEventArgs e) => _timer.Stop();
@@ -102,6 +97,7 @@ namespace HandheldCompanion.Views.QuickPages
         // Poll Windows HKL changes
         private void Timer_Tick(object sender, EventArgs e)
         {
+            nint _targetHwnd = GetForegroundWindow();
             if (_targetHwnd == IntPtr.Zero) return;
 
             uint tid = GetWindowThreadProcessId(_targetHwnd, out _);
@@ -109,7 +105,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (h != _lastHkl)
             {
                 _lastHkl = h;
-                Build();
+                UIHelper.TryInvoke(() => { Build(); });
             }
         }
 
@@ -158,6 +154,7 @@ namespace HandheldCompanion.Views.QuickPages
                         BuildDynamicRow(Row1Panel, _row1Sc);
                         BuildDynamicRow(Row2Panel, _row2Sc);
                         BuildDynamicRow(Row3Panel, _row3Sc);
+                        BuildDynamicRow(Row4Panel, _row4Sc);
                     }
                     break;
                 case LayoutState.Switch1:
@@ -167,6 +164,7 @@ namespace HandheldCompanion.Views.QuickPages
                         BuildDynamicRow(Row1Panel, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]);
                         BuildDynamicRow(Row2Panel, ["!", "@", "#", "$", "€", "&", "_", "-", "=", "+"]);
                         BuildDynamicRow(Row3Panel, [string.Empty, ";", ":", "(", ")", "/", "'", "\"", string.Empty]);
+                        BuildDynamicRow(Row4Panel, [string.Empty, ",", " ", ".", "?", 0x1C]);
                         if (LayoutSwitch.Content is FontIcon fontIcon)
                             fontIcon.Glyph = "\ue761";
                     }
@@ -183,8 +181,6 @@ namespace HandheldCompanion.Views.QuickPages
                     }
                     break;
             }
-
-            BuildDynamicRow(Row4Panel, _row4Sc);
 
             RelabelAll();
         }

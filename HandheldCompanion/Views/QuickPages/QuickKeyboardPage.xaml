@@ -81,7 +81,10 @@
         </Style>
     </Page.Resources>
 
-    <Grid MaxHeight="450" Margin="-4">
+    <Grid
+        Height="300"
+        Margin="-4"
+        VerticalAlignment="Bottom">
         <Grid.RowDefinitions>
             <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
