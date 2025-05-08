@@ -46,7 +46,6 @@
                     Command="{Binding CreateHotkeyCommand}"
                     Header="{l:Static resx:Resources.HotkeysPage_CreateNew}"
                     IsClickEnabled="True"
-                    IsEnabled="True"
                     Style="{DynamicResource AccentSettingsCard}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xe710;" />
@@ -66,8 +65,7 @@
                                 Name="HotkeyDefinition"
                                 HorizontalAlignment="Stretch"
                                 Description="{Binding Description, Mode=OneWay}"
-                                Header="{Binding Name, Mode=OneWay}"
-                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                Header="{Binding Name, Mode=OneWay}">
 
                                 <StackPanel Orientation="Horizontal">
                                     <ToggleButton
@@ -180,7 +178,8 @@
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Stretch"
                                         Command="{Binding PinButtonCommand}"
-                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -208,7 +207,10 @@
 
                                 <ui:SettingsExpander.Items>
                                     <!--  ICommand selector  -->
-                                    <ui:SettingsCard Description="{l:Static resx:Resources.Hotkey_CommandTypeDesc}" Header="{l:Static resx:Resources.Hotkey_CommandType}">
+                                    <ui:SettingsCard
+                                        Description="{l:Static resx:Resources.Hotkey_CommandTypeDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_CommandType}"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBox SelectedIndex="{Binding CommandTypeIndex, Mode=TwoWay}">
                                             <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_None}" ToolTip="{l:Static resx:Resources.Hotkey_NoneDesc}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Function}" ToolTip="{l:Static resx:Resources.Hotkey_FunctionDesc}" />
@@ -229,6 +231,7 @@
                                     <ui:SettingsCard
                                         Description="{l:Static resx:Resources.Hotkey_FunctionToRunDesc}"
                                         Header="{l:Static resx:Resources.Hotkey_FunctionToRun}"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
                                         <ComboBox
                                             Width="290"
@@ -399,6 +402,7 @@
                                             HorizontalAlignment="Stretch"
                                             Command="{Binding DeleteHotkeyCommand}"
                                             Content="{l:Static resx:Resources.Hotkey_Delete}"
+                                            IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             Style="{StaticResource AccentButtonStyle}" />
                                     </ui:SettingsCard>
 
