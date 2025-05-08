@@ -11,6 +11,7 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -94,6 +95,10 @@ public partial class MainWindow : GamepadWindow
         // initialize splash screen
         SplashScreen = new SplashScreen();
         DataContext = new MainWindowViewModel();
+
+        // set theme
+        var currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
+        ThemeManager.SetRequestedTheme(this, currentTheme);
 
         InitializeComponent();
         this.Tag = "MainWindow";
@@ -254,17 +259,14 @@ public partial class MainWindow : GamepadWindow
         // UI thread
         UIHelper.TryInvoke(() =>
         {
-            var color1 = Controller.GetGlyphColor(ButtonFlags.B1);
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
-            GamepadUISelectIcon.Foreground = color1.HasValue ? new SolidColorBrush(color1.Value) : null;
+            GamepadUISelectIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B1));
 
-            var color2 = Controller.GetGlyphColor(ButtonFlags.B2);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
-            GamepadUIBackIcon.Foreground = color2.HasValue ? new SolidColorBrush(color2.Value) : null;
+            GamepadUIBackIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B2));
 
-            var color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
-            GamepadUIToggleIcon.Foreground = color4.HasValue ? new SolidColorBrush(color4.Value) : null;
+            GamepadUIToggleIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B4));
         });
     }
 
