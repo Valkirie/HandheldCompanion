@@ -19,6 +19,7 @@
     <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
     <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
     <converters:IsNullConverter x:Key="IsNullConverter" />
+    <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
 
     <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Button
@@ -926,7 +927,7 @@
                     Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:FontIcon.Style>
                         <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource WindowTextBrush}" />
                             <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
                             <Setter Property="FontSize" Value="14" />
                             <Style.Triggers>
@@ -949,7 +950,7 @@
                     VerticalAlignment="Center"
                     FontSize="14">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
                             <Binding
                                 FallbackValue="No Name"
                                 Mode="OneWay"
@@ -2286,7 +2287,7 @@
                     VerticalAlignment="Center"
                     FontSize="14">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
                             <Binding
                                 FallbackValue="No Name"
                                 Mode="OneWay"
@@ -2661,7 +2662,7 @@
                     VerticalAlignment="Center"
                     FontSize="14">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} executes {1} action(s)">
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
                             <Binding
                                 FallbackValue="No Name"
                                 Mode="OneWay"
