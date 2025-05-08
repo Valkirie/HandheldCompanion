@@ -8,7 +8,7 @@ namespace HandheldCompanion.Misc
         public string? Glyph { get; set; }
         public FontFamily? FontFamily { get; set; }
         public double FontSize { get; set; }
-        public Color Color { get; set; }
+        public Color? Color { get; set; }
 
     }
 }

@@ -599,7 +599,9 @@ namespace HandheldCompanion.ViewModels
                 foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
                 {
                     string glyphString = string.Empty;
-                    Brush glyphColor = new SolidColorBrush(controller.GetGlyphColor(buttonFlags));
+
+                    var color = controller.GetGlyphColor(buttonFlags);
+                    Brush? glyphColor = color.HasValue ? new SolidColorBrush(color.Value) : null;
 
                     switch (buttonFlags)
                     {
