@@ -3455,21 +3455,6 @@
   <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
     <value />
   </data>
-  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
-    <value>原生屏幕方向</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
-    <value>某些功能可能會依賴原生屏幕方向來運作，如果這裡沒有被正確識別，請手動設置方向，然後點擊檢測</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
-    <value>檢測</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
-    <value>未設置</value>
-  </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>設為默認佈局</value>
-  </data>
   <data name="MainWindow_OpenNavigation" xml:space="preserve">
     <value />
   </data>

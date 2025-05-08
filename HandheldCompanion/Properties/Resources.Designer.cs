@@ -4165,6 +4165,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current.
+        /// </summary>
+        public static string Hotkey_Current {
+            get {
+                return ResourceManager.GetString("Hotkey_Current", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom shortcut.
         /// </summary>
         public static string Hotkey_Custom {

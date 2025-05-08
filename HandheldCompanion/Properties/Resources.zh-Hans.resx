@@ -3263,13 +3263,10 @@
   <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
     <value>声音</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>设为默认</value>
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
+    <value>导航栏</value>
   </data>
   <data name="Hotkey_Current" xml:space="preserve">
     <value>上次关闭时的页面</value>
-  </data>
-  <data name="MainWindow_OpenNavigation" xml:space="preserve">
-    <value>导航栏</value>
   </data>
 </root>

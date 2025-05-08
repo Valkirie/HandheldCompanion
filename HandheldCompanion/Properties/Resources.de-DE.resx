@@ -2994,10 +2994,10 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
     <value />
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
-  </data>
   <data name="MainWindow_OpenNavigation" xml:space="preserve">
     <value />
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
 </root>
