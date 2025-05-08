@@ -125,7 +125,7 @@ public partial class App : Application
         }
 
         // define culture settings
-        var currentCultureString = ManagerFactory.settingsManager.GetString("CurrentCulture");
+        string currentCultureString = ManagerFactory.settingsManager.GetString("CurrentCulture");
         CultureInfo culture;
         if (string.IsNullOrEmpty(currentCultureString))
         {
@@ -139,9 +139,16 @@ public partial class App : Application
         while (culture is not null)
         {
             if (TranslationSource.ValidCultures.Contains(culture)) break;
-            else culture = culture.Parent;
+
+            // if we're already at the top of the chain, bail out
+            if (culture.Equals(CultureInfo.InvariantCulture) || culture.Equals(culture.Parent))
+                break;
+
+            culture = culture.Parent;
         }
-        if (culture is null) culture = new CultureInfo("en-US");
+
+        if (culture is null || !TranslationSource.ValidCultures.Contains(culture))
+            culture = new CultureInfo("en-US");
 
         TranslationSource.Instance.CurrentCulture = culture;
 
