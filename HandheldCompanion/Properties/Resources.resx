@@ -3357,9 +3357,6 @@ Thank you for using HC and helping us make it better.</value>
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value>Suspend and resume the application when the system enters or exits standby state</value>
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>Unsupported device</value>
-  </data>
   <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
     <value>On-screen display options</value>
   </data>
@@ -3431,5 +3428,146 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwriteSecondary" xml:space="preserve">
     <value>Create as subprofile</value>
+  </data>
+  <data name="HotkeysPage_CreateNew" xml:space="preserve">
+    <value>Create new hotkey</value>
+  </data>
+  <data name="Hotkey_CommandType" xml:space="preserve">
+    <value>Command type</value>
+  </data>
+  <data name="Hotkey_CommandTypeDesc" xml:space="preserve">
+    <value>Define the type of command your hotkey will execute</value>
+  </data>
+  <data name="Hotkey_DefaultName" xml:space="preserve">
+    <value>Empty hotkey</value>
+  </data>
+  <data name="Hotkey_DefaultDesc" xml:space="preserve">
+    <value>Please pick a command type</value>
+  </data>
+  <data name="Hotkey_CommandName" xml:space="preserve">
+    <value>Command name</value>
+  </data>
+  <data name="Hotkey_CommandNameDesc" xml:space="preserve">
+    <value>Define the hotkey custom name</value>
+  </data>
+  <data name="Hotkey_FunctionToRun" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="Hotkey_FunctionToRunDesc" xml:space="preserve">
+    <value>Define the function to trigger</value>
+  </data>
+  <data name="Hotkey_QuickToolsPage" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Hotkey_QuickToolsPageDesc" xml:space="preserve">
+    <value>Define the page to navigate when opening Quick Tools</value>
+  </data>
+  <data name="Hotkey_Delete" xml:space="preserve">
+    <value>Delete hotkey</value>
+  </data>
+  <data name="Hotkey_Output" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="Hotkey_OutputDesc" xml:space="preserve">
+    <value>Define the output key strokes</value>
+  </data>
+  <data name="Hotkey_OutputDefineTip" xml:space="preserve">
+    <value>Press to define hotkey output</value>
+  </data>
+  <data name="Hotkey_ExecutableTarget" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetDesc" xml:space="preserve">
+    <value>Define the target executable</value>
+  </data>
+  <data name="Hotkey_ExecutableArguments" xml:space="preserve">
+    <value>Arguments</value>
+  </data>
+  <data name="Hotkey_ExecutableArgumentsDesc" xml:space="preserve">
+    <value>Modify the behavior of an executable during execution</value>
+  </data>
+  <data name="LayoutPage_ExecuteActionsNumFormat" xml:space="preserve">
+    <value>{0} executes {1} action(s)</value>
+  </data>
+  <data name="Hotkey_WindowStyle" xml:space="preserve">
+    <value>Window style</value>
+  </data>
+  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
+    <value>Specifies how a new window should appear when the process starts</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
+    <value>Minimized</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
+    <value>Maximized</value>
+  </data>
+  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
+    <value>Run as administrator</value>
+  </data>
+  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
+    <value>Start with administrator elevation</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
+    <value>Press to select an executable</value>
+  </data>
+  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
+    <value>Define the page to navigate when opening the main window</value>
+  </data>
+  <data name="Hotkey_MainWindowPage" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
+    <value>Define the sub profile cycling direction</value>
+  </data>
+  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
+    <value>Define legacy virtual keyboard position</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
+    <value>Power &amp; battery</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
+    <value>Multitasking</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
+    <value>Open navigation</value>
+  </data>
+  <data name="Hotkey_Current" xml:space="preserve">
+    <value>Current</value>
   </data>
 </root>

@@ -11,6 +11,7 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -88,13 +89,17 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
-    private const int WM_INPUTLANGCHANGE = 0x0051;
+												  
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
         // initialize splash screen
         SplashScreen = new SplashScreen();
         DataContext = new MainWindowViewModel();
+
+        // set theme
+        var currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
+        ThemeManager.SetRequestedTheme(this, currentTheme);
 
         InitializeComponent();
         this.Tag = "MainWindow";
@@ -157,8 +162,8 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice.Initialize(FirstStart);
 
         // initialize device settings
-        ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-
+		ManagerFactory.settingsManager.SetProperty("FirstStart", false);
+		
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
@@ -233,8 +238,8 @@ public partial class MainWindow : GamepadWindow
                 break;
             case WM_QUERYENDSESSION:
                 break;
-            case WM_INPUTLANGCHANGE:
-                break;
+									
+					  
         }
 
         return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
@@ -245,14 +250,17 @@ public partial class MainWindow : GamepadWindow
         // UI thread
         UIHelper.TryInvoke(() =>
         {
+            var color1 = Controller.GetGlyphColor(ButtonFlags.B1);
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
-            GamepadUISelectIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B1));
+            GamepadUISelectIcon.Foreground = color1.HasValue ? new SolidColorBrush(color1.Value) : null;
 
+            var color2 = Controller.GetGlyphColor(ButtonFlags.B2);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
-            GamepadUIBackIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B2));
+            GamepadUIBackIcon.Foreground = color2.HasValue ? new SolidColorBrush(color2.Value) : null;
 
+            var color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
-            GamepadUIToggleIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B4));
+            GamepadUIToggleIcon.Foreground = color4.HasValue ? new SolidColorBrush(color4.Value) : null;
         });
     }
 
@@ -472,6 +480,9 @@ public partial class MainWindow : GamepadWindow
 
         // load gamepad navigation manager
         gamepadFocusManager.Loaded();
+
+        HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+        source.AddHook(WndProc); // Hook into the window's message loop
 
         // restore window state
         WindowState = ManagerFactory.settingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState");

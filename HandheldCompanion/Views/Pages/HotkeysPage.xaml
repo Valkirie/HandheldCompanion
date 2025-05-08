@@ -27,10 +27,10 @@
         <ikw:SimpleStackPanel Name="HotkeysPanel" Spacing="12">
 
             <!--  Settings  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Hotkeys Settings" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_HotkeysSettings}" />
             <ikw:SimpleStackPanel Spacing="6">
                 <!--  Rumble on execution  -->
-                <ui:SettingsCard Description="Indicates whether the controller should vibrate when a hotkey is executed" Header="Rumble on execution">
+                <ui:SettingsCard Description="{l:Static resx:Resources.HotkeysPage_RumbleOnExecutionDesc}" Header="{l:Static resx:Resources.HotkeysPage_RumbleOnExecution}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE877;" />
                     </ui:SettingsCard.HeaderIcon>
@@ -40,13 +40,12 @@
             </ikw:SimpleStackPanel>
 
             <!--  Hotkeys  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Hotkeys" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_Hotkeys}" />
             <ikw:SimpleStackPanel Spacing="6">
                 <ui:SettingsCard
                     Command="{Binding CreateHotkeyCommand}"
-                    Header="Create new hotkey"
+                    Header="{l:Static resx:Resources.HotkeysPage_CreateNew}"
                     IsClickEnabled="True"
-                    IsEnabled="True"
                     Style="{DynamicResource AccentSettingsCard}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xe710;" />
@@ -66,8 +65,7 @@
                                 Name="HotkeyDefinition"
                                 HorizontalAlignment="Stretch"
                                 Description="{Binding Description, Mode=OneWay}"
-                                Header="{Binding Name, Mode=OneWay}"
-                                IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                Header="{Binding Name, Mode=OneWay}">
 
                                 <StackPanel Orientation="Horizontal">
                                     <ToggleButton
@@ -180,7 +178,8 @@
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Stretch"
                                         Command="{Binding PinButtonCommand}"
-                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -208,7 +207,10 @@
 
                                 <ui:SettingsExpander.Items>
                                     <!--  ICommand selector  -->
-                                    <ui:SettingsCard Description="Define the type of command your hotkey will execute" Header="Command type">
+                                    <ui:SettingsCard
+                                        Description="{l:Static resx:Resources.Hotkey_CommandTypeDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_CommandType}"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBox SelectedIndex="{Binding CommandTypeIndex, Mode=TwoWay}">
                                             <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_None}" ToolTip="{l:Static resx:Resources.Hotkey_NoneDesc}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Function}" ToolTip="{l:Static resx:Resources.Hotkey_FunctionDesc}" />
@@ -219,16 +221,17 @@
 
                                     <!--  Custom name (only if CanCustom)  -->
                                     <ui:SettingsCard
-                                        Description="Define the hotkey custom name"
-                                        Header="Command name"
+                                        Description="{l:Static resx:Resources.Hotkey_CommandNameDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_CommandName}"
                                         Visibility="{Binding CanCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <TextBox Width="290" Text="{Binding CustomName, Mode=TwoWay}" />
                                     </ui:SettingsCard>
 
                                     <!--  Function pick (only if CommandTypeIndex == 1)  -->
                                     <ui:SettingsCard
-                                        Description="Define the function to trigger"
-                                        Header="Function"
+                                        Description="{l:Static resx:Resources.Hotkey_FunctionToRunDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_FunctionToRun}"
+                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
                                         <ComboBox
                                             Width="290"
@@ -268,11 +271,11 @@
 
                                     <!--  QuickToolsCommands  -->
                                     <ui:SettingsCard
-                                        Description="Define the page to navigate when opening Quick Tools"
-                                        Header="Page"
+                                        Description="{l:Static resx:Resources.Hotkey_QuickToolsPageDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_QuickToolsPage}"
                                         Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:QuickToolsCommands}}">
                                         <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
-                                            <ComboBoxItem Content="Current" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.QuickHomePage_Title}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.QuickDevicePage_Title}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.QuickProfilesPage_Title}" />
@@ -282,11 +285,11 @@
 
                                     <!--  MainWindowCommands  -->
                                     <ui:SettingsCard
-                                        Description="Define the page to navigate when opening the main window"
-                                        Header="Page"
+                                        Description="{l:Static resx:Resources.Hotkey_MainWindowPageDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_MainWindowPage}"
                                         Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:MainWindowCommands}}">
                                         <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
-                                            <ComboBoxItem Content="Current" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navController}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navLibrary}" />
                                             <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navDevice}" />
@@ -303,30 +306,30 @@
 
                                     <!--  OnScreenKeyboardLegacyCommands  -->
                                     <ui:SettingsCard
-                                        Description="Define legacy virtual keyboard position"
-                                        Header="Position"
+                                        Description="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_KeyboardLegacyPosition}"
                                         Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdWIN:OnScreenKeyboardLegacyCommands}}">
                                         <ComboBox SelectedIndex="{Binding OnScreenKeyboardLegacyPosition, Mode=TwoWay}">
-                                            <ComboBoxItem Content="Bottom" />
-                                            <ComboBoxItem Content="Maximize" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionBottom}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionMaximize}" />
                                         </ComboBox>
                                     </ui:SettingsCard>
 
                                     <!--  CycleSubProfileCommands  -->
                                     <ui:SettingsCard
-                                        Description="Define the sub profile cycling direction"
-                                        Header="Direction"
+                                        Description="{l:Static resx:Resources.Hotkey_CycleSubProfileDirectionDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_CycleSubProfileDirection}"
                                         Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:CycleSubProfileCommands}}">
                                         <ComboBox SelectedIndex="{Binding CyclingDirection, Mode=TwoWay}">
-                                            <ComboBoxItem Content="Previous" />
-                                            <ComboBoxItem Content="Next" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfilePrev}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfileNext}" />
                                         </ComboBox>
                                     </ui:SettingsCard>
 
                                     <!--  Keystrokes (CommandTypeIndex == 2)  -->
                                     <ui:SettingsCard
-                                        Description="Define the output key strokes"
-                                        Header="Output"
+                                        Description="{l:Static resx:Resources.Hotkey_OutputDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_Output}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
                                         <StackPanel Orientation="Horizontal">
                                             <ToggleButton
@@ -351,12 +354,12 @@
 
                                     <!--  Executable (CommandTypeIndex == 3)  -->
                                     <ui:SettingsCard
-                                        Description="Define the target executable"
-                                        Header="Target"
+                                        Description="{l:Static resx:Resources.Hotkey_ExecutableTargetDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_ExecutableTarget}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
                                         <TextBox
                                             Width="290"
-                                            ui:ControlHelper.PlaceholderText="Press to select an executable"
+                                            ui:ControlHelper.PlaceholderText="{l:Static resx:Resources.Hotkey_ExecutableTargetPlaceholder}"
                                             IsReadOnly="True"
                                             Text="{Binding ExecutablePath, Mode=OneWay}">
                                             <i:Interaction.Triggers>
@@ -368,27 +371,27 @@
                                     </ui:SettingsCard>
 
                                     <ui:SettingsCard
-                                        Description="Modify the behavior of an executable during execution"
-                                        Header="Arguments"
+                                        Description="{l:Static resx:Resources.Hotkey_ExecutableArgumentsDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_ExecutableArguments}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
                                         <TextBox Width="290" Text="{Binding ExecutableArguments, Mode=TwoWay}" />
                                     </ui:SettingsCard>
 
                                     <ui:SettingsCard
-                                        Description="Specifies how a new window should appear when the process starts"
-                                        Header="Window style"
+                                        Description="{l:Static resx:Resources.Hotkey_WindowStyleDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_WindowStyle}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
                                         <ComboBox SelectedIndex="{Binding ExecutableWindowStyle, Mode=TwoWay}">
-                                            <ComboBoxItem>Normal</ComboBoxItem>
-                                            <ComboBoxItem>Hidden</ComboBoxItem>
-                                            <ComboBoxItem>Minimized</ComboBoxItem>
-                                            <ComboBoxItem>Maximized</ComboBoxItem>
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Normal}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Hidden}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Minimized}" />
+                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Maximized}" />
                                         </ComboBox>
                                     </ui:SettingsCard>
 
                                     <ui:SettingsCard
-                                        Description="Start with administrator elevation"
-                                        Header="Run as administrator"
+                                        Description="{l:Static resx:Resources.Hotkey_RunAsAdministratorDesc}"
+                                        Header="{l:Static resx:Resources.Hotkey_RunAsAdministrator}"
                                         Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
                                         <ui:ToggleSwitch HorizontalAlignment="Right" IsOn="{Binding ExecutableRunAs, Mode=TwoWay}" />
                                     </ui:SettingsCard>
@@ -398,7 +401,8 @@
                                         <Button
                                             HorizontalAlignment="Stretch"
                                             Command="{Binding DeleteHotkeyCommand}"
-                                            Content="Delete hotkey"
+                                            Content="{l:Static resx:Resources.Hotkey_Delete}"
+                                            IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             Style="{StaticResource AccentButtonStyle}" />
                                     </ui:SettingsCard>
 

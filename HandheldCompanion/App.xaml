@@ -82,6 +82,7 @@
             <converters:AverageColorConverter x:Key="AverageColorConverter" />
             <converters:OrConverter x:Key="OrConverter" />
             <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+            <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
 
             <math:MathConverter x:Key="Math" />
 
