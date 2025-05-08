@@ -43,7 +43,6 @@ public class AYANEOFlipDS : AYANEOFlipKB
 
     public override bool Open()
     {
-        OverlayQuickTools.GetCurrent().SetVisibility(Visibility.Visible);
         return base.Open();
     }
 
@@ -83,13 +82,14 @@ public class AYANEOFlipDS : AYANEOFlipKB
                     switch (enabled)
                     {
                         case true:
+                            OverlayQuickTools.GetCurrent().SetVisibility(Visibility.Visible);
                             short brightness = (short)ManagerFactory.settingsManager.GetDouble("AYANEOFlipScreenBrightness");
                             CEcControl_SetSecDispBrightness(brightness);
                             break;
 
                         case false:
                             CEcControl_SetSecDispBrightness(0);
-                            OverlayQuickTools.GetCurrent().ToggleVisibility();
+                            OverlayQuickTools.GetCurrent().SetVisibility(Visibility.Collapsed);
                             break;
                     }
                 }
