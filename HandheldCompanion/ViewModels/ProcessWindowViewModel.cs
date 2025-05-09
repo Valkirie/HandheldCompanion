@@ -176,7 +176,10 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             if (ProcessWindow is not null)
+            {
                 ProcessWindow.Refreshed -= ProcessRefreshed;
+                ProcessWindow.Disposed -= ProcessDisposed;
+            }
 
             // manage events
             ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
