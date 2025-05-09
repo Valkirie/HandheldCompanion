@@ -140,30 +140,6 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-                <ui:NavigationViewItem
-                    Name="navQuickKeyboard"
-                    Content="Keyboard (HIDDEN)"
-                    FontSize="12"
-                    Style="{StaticResource NavigationViewItemStyle1}"
-                    Tag="QuickKeyboardPage"
-                    Visibility="Collapsed">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-
-                <ui:NavigationViewItem
-                    Name="navKeyboard"
-                    Content="Keyboard"
-                    FontSize="12"
-                    Style="{StaticResource NavigationViewItemStyle1}"
-                    Tag="QuickKeyboardPage"
-                    Visibility="Collapsed">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-
                 <ui:NavigationViewItem IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon
@@ -174,18 +150,21 @@
                             Glyph="&#x2199;" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem Name="navKeyboard" Tag="QuickKeyboardPage">
+                    <ui:NavigationViewItem.Content>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;" />
+                    </ui:NavigationViewItem.Content>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem Name="navKeyboard2" Tag="QuickKeyboardPage">
+                    <ui:NavigationViewItem.Content>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
+                    </ui:NavigationViewItem.Content>
+                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
 
             <Grid>
-                <Button
-                    Margin="0,0,16,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Panel.ZIndex="999"
-                    Click="Key_Clicked"
-                    Tag="Navigation">
-                    KEY
-                </Button>
                 <ui:ContentDialog Name="ContentDialog" />
                 <common:TouchScrollViewer
                     x:Name="scrollViewer"
