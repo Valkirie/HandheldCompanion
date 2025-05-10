@@ -174,10 +174,10 @@ namespace HandheldCompanion.Views.QuickPages
                     {
                         ShiftToggle.Visibility = Visibility.Collapsed;
                         LayoutSwitch.Visibility = Visibility.Visible;
-                        BuildDynamicRow(Row1Panel, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]);
-                        BuildDynamicRow(Row2Panel, ["!", "@", "#", "$", "€", "&", "_", "-", "=", "+"]);
-                        BuildDynamicRow(Row3Panel, [string.Empty, ";", ":", "(", ")", "/", "'", "\"", string.Empty]);
-                        BuildDynamicRow(Row4Panel, [string.Empty, ",", " ", ".", "?", 0x1C]);
+                        BuildDynamicRow(Row1Panel, [("1", KEYEVENTF_UNICODE), ("2", KEYEVENTF_UNICODE), ("3", KEYEVENTF_UNICODE), ("4", KEYEVENTF_UNICODE), ("5", KEYEVENTF_UNICODE), ("6", KEYEVENTF_UNICODE), ("7", KEYEVENTF_UNICODE), ("8", KEYEVENTF_UNICODE), ("9", KEYEVENTF_UNICODE), ("0", KEYEVENTF_UNICODE)]);
+                        BuildDynamicRow(Row2Panel, [("!", KEYEVENTF_UNICODE), ("@", KEYEVENTF_UNICODE), ("#", KEYEVENTF_UNICODE), ("$", KEYEVENTF_UNICODE), ("€", KEYEVENTF_UNICODE), ("&", KEYEVENTF_UNICODE), ("_", KEYEVENTF_UNICODE), ("-", KEYEVENTF_UNICODE), ("=", KEYEVENTF_UNICODE), ("+", KEYEVENTF_UNICODE)]);
+                        BuildDynamicRow(Row3Panel, [(string.Empty, KEYEVENTF_UNICODE), (";", KEYEVENTF_UNICODE), (":", KEYEVENTF_UNICODE), ("(", KEYEVENTF_UNICODE), (")", KEYEVENTF_UNICODE), ("/", KEYEVENTF_UNICODE), ("'", KEYEVENTF_UNICODE), ("\"", KEYEVENTF_UNICODE), (string.Empty, KEYEVENTF_UNICODE)]);
+                        BuildDynamicRow(Row4Panel, [(string.Empty, KEYEVENTF_UNICODE), (",", KEYEVENTF_UNICODE), (" ", KEYEVENTF_UNICODE), (".", KEYEVENTF_UNICODE), ("?", KEYEVENTF_UNICODE), (0x1C, KEYEVENTF_SCANCODE)]);
                         if (LayoutSwitch.Content is FontIcon fontIcon)
                             fontIcon.Glyph = "\ue761";
                     }
@@ -186,9 +186,9 @@ namespace HandheldCompanion.Views.QuickPages
                     {
                         ShiftToggle.Visibility = Visibility.Collapsed;
                         LayoutSwitch.Visibility = Visibility.Visible;
-                        BuildDynamicRow(Row1Panel, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]);
-                        BuildDynamicRow(Row2Panel, ["%", "[", "]", "{", "}", "<", ">", "^", "£", "¥"]);
-                        BuildDynamicRow(Row3Panel, [string.Empty, "*", "`", "§", "«", "»", "~", "|", string.Empty]);
+                        BuildDynamicRow(Row1Panel, [("1", KEYEVENTF_UNICODE), ("2", KEYEVENTF_UNICODE), ("3", KEYEVENTF_UNICODE), ("4", KEYEVENTF_UNICODE), ("5", KEYEVENTF_UNICODE), ("6", KEYEVENTF_UNICODE), ("7", KEYEVENTF_UNICODE), ("8", KEYEVENTF_UNICODE), ("9", KEYEVENTF_UNICODE), ("0", KEYEVENTF_UNICODE)]);
+                        BuildDynamicRow(Row2Panel, [("%", KEYEVENTF_UNICODE), ("[", KEYEVENTF_UNICODE), ("]", KEYEVENTF_UNICODE), ("{", KEYEVENTF_UNICODE), ("}", KEYEVENTF_UNICODE), ("<", KEYEVENTF_UNICODE), (">", KEYEVENTF_UNICODE), ("^", KEYEVENTF_UNICODE), ("£", KEYEVENTF_UNICODE), ("¥", KEYEVENTF_UNICODE)]);
+                        BuildDynamicRow(Row3Panel, [(string.Empty, KEYEVENTF_UNICODE), ("*", KEYEVENTF_UNICODE), ("`", KEYEVENTF_UNICODE), ("§", KEYEVENTF_UNICODE), ("«", KEYEVENTF_UNICODE), ("»", KEYEVENTF_UNICODE), ("~", KEYEVENTF_UNICODE), ("|", KEYEVENTF_UNICODE), (string.Empty, KEYEVENTF_UNICODE)]);
                         if (LayoutSwitch.Content is FontIcon fontIcon)
                             fontIcon.Glyph = "\ue760";
                     }
