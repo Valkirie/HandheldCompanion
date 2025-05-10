@@ -162,11 +162,24 @@
             <Grid Grid.Column="0">
                 <ToggleButton
                     x:Name="ShiftToggle"
+                    Command="{Binding ShiftToggleClicked}"
                     IsChecked="{Binding ShiftToggleChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Tag="Shift">
-                    <ui:FontIcon Glyph="&#xe752;" />
+                    <Grid>
+                        <ui:FontIcon Glyph="&#xe752;" />
+
+                        <ui:FontIcon
+                            Margin="14,10,0,0"
+                            FontSize="6"
+                            Glyph="&#xe72e;"
+                            Visibility="{Binding ShiftToggleLocked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
                 </ToggleButton>
-                <Button x:Name="LayoutSwitch" Click="LayoutSwitch_Click">
+
+                <Button
+                    x:Name="LayoutSwitch"
+                    d:Visibility="Collapsed"
+                    Click="LayoutSwitch_Click">
                     <ui:FontIcon Glyph="&#xe761;" />
                 </Button>
             </Grid>
@@ -201,7 +214,7 @@
                 x:Name="SwitchTo123"
                 Grid.Column="0"
                 Click="SwitchTo123_Click"
-                Content="123" />
+                Content="&amp;123" />
 
             <Button Grid.Column="1" />
 

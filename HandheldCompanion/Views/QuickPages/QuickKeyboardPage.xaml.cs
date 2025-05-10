@@ -36,10 +36,16 @@ namespace HandheldCompanion.Views.QuickPages
         // Layout modes
         private enum LayoutState { Default, Switch1, Switch2 }
         private LayoutState _state = LayoutState.Default;
+
         private bool _shiftToggled
         {
             get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked;
             set => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked = value;
+        }
+
+        private bool _shiftToggleLocked
+        {
+            get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleLocked;
         }
 
         // Original target window to restore focus
@@ -200,7 +206,7 @@ namespace HandheldCompanion.Views.QuickPages
 
                     if (p.Children[i] is Button button)
                     {
-                        button.Tag = ((uint)scan, false);
+                        button.Tag = scan;
 
                         // dirty
                         button.Click -= ScanKey_Click;
@@ -241,23 +247,22 @@ namespace HandheldCompanion.Views.QuickPages
         {
             byte[] ks = new byte[256];
             GetKeyboardState(ks);
-            if (_shiftToggled) ks[0x10] = 0x80; // SHIFT keycode
+            ks[0x10] = (byte)(_shiftToggled ? 0x80 : 0x00); // SHIFT keycode
 
             foreach (Grid? panel in new[] { Row1Panel, Row2Panel, Row3Panel, Row4Panel })
             {
                 foreach (object? child in panel.Children)
                 {
-                    if (child is Button b && b.Tag is ValueTuple<uint, bool> t)
+                    if (child is Button b && b.Tag is int sc)
                     {
                         if (!string.IsNullOrEmpty(b.Name))
                             continue; // skip named buttons
 
-                        (uint sc, bool fs) = t;
                         byte[] st = (byte[])ks.Clone();
-                        if (fs) st[0x10] = 0x80;
-                        uint vk = MapVirtualKeyEx(sc, MAPVK_VSC_TO_VK_EX, _lastHkl);
+                        st[0x10] = (byte)(_shiftToggled ? 0x80 : 0x00); // SHIFT keycode
+                        uint vk = MapVirtualKeyEx((uint)sc, MAPVK_VSC_TO_VK_EX, _lastHkl);
                         StringBuilder sb = new StringBuilder(2);
-                        int cnt = ToUnicodeEx(vk, sc, st, sb, sb.Capacity, 0, _lastHkl);
+                        int cnt = ToUnicodeEx(vk, (uint)sc, st, sb, sb.Capacity, 0, _lastHkl);
 
                         string content = sb[0].ToString();
                         if (cnt > 0 && !string.IsNullOrEmpty(content))
@@ -269,17 +274,20 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ScanKey_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is Button b && b.Tag is ValueTuple<uint, bool> t)) return;
-            var (sc, fs) = t;
-
-            fs = _shiftToggled;
+            if (!(sender is Button b && b.Tag is int sc)) return;
 
             var seq = new List<INPUT>();
-            if (fs) seq.Add(MakeScan(0x2A, false));     // Shift down
-            seq.Add(MakeScan(sc, false));               // Key down
-            seq.Add(MakeScan(sc, true));                // Key up
-            if (fs) seq.Add(MakeScan(0x2A, true));      // Shift up
+
+            if (_shiftToggled) seq.Add(MakeScan(0x2A, false));     // Shift down
+            seq.Add(MakeScan((uint)sc, false));               // Key down
+            seq.Add(MakeScan((uint)sc, true));                // Key up
+            if (_shiftToggled) seq.Add(MakeScan(0x2A, true));      // Shift up
+
             SendInput((uint)seq.Count, seq.ToArray(), Marshal.SizeOf<INPUT>());
+
+            // disable shift toggle (if not locked)
+            if (!_shiftToggleLocked)
+                _shiftToggled = false;
         }
 
         private void Unicode_Click(object sender, RoutedEventArgs e)
@@ -292,6 +300,10 @@ namespace HandheldCompanion.Views.QuickPages
             var up = new INPUT { type = INPUT_KEYBOARD, U = new InputUnion { ki = new KEYBDINPUT { wVk = 0, wScan = c, dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP, dwExtraInfo = GetMessageExtraInfo() } } };
             SendInput(1, new[] { down }, Marshal.SizeOf<INPUT>());
             SendInput(1, new[] { up }, Marshal.SizeOf<INPUT>());
+
+            // disable shift toggle (if not locked)
+            if (!_shiftToggleLocked)
+                _shiftToggled = false;
         }
 
         private static INPUT MakeScan(uint scanCode, bool up)

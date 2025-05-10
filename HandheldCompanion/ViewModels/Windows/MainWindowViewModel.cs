@@ -33,25 +33,25 @@ namespace HandheldCompanion.ViewModels
         public bool IsInfoBarOpen
         {
             get => _isInfoBarOpen;
-            set => SetProperty(ref _isInfoBarOpen, value);
+            set => SetProperty(ref _isInfoBarOpen, value, null, nameof(IsInfoBarOpen));
         }
 
         public string InfoBarMessage
         {
             get => _infoBarMessage;
-            set => SetProperty(ref _infoBarMessage, value);
+            set => SetProperty(ref _infoBarMessage, value, null, nameof(InfoBarMessage));
         }
 
         public string InfoBarTitle
         {
             get => _infoBarTitle;
-            set => SetProperty(ref _infoBarTitle, value);
+            set => SetProperty(ref _infoBarTitle, value, null, nameof(InfoBarTitle));
         }
 
         public InfoBarSeverity InfoBarSeverity
         {
             get => _infoBarSeverity;
-            set => SetProperty(ref _infoBarSeverity, value);
+            set => SetProperty(ref _infoBarSeverity, value, null, nameof(InfoBarSeverity));
         }
 
         public ICommand DismissInfoBarCommand { get; }

@@ -1,13 +1,6 @@
-﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using HandheldCompanion.ViewModels.Commands;
-using HandheldCompanion.Views.QuickPages;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Data;
+﻿using HandheldCompanion.Views.QuickPages;
+using System;
 using System.Windows.Input;
-using WpfScreenHelper.Enum;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -21,14 +14,48 @@ namespace HandheldCompanion.ViewModels
             get => shiftToggleChecked;
             set
             {
-                if (SetProperty(ref shiftToggleChecked, value))
+                if (SetProperty(ref shiftToggleChecked, value, null, nameof(ShiftToggleChecked)))
                     quickKeyboardPage.RelabelAll();
             }
         }
 
+        private bool shiftToggleLocked = false;
+        public bool ShiftToggleLocked
+        {
+            get => shiftToggleLocked;
+            set
+            {
+                SetProperty(ref shiftToggleLocked, value, null, nameof(ShiftToggleLocked));
+            }
+        }
+
+        public ICommand ShiftToggleClicked { get; private set; }
+        private DateTime lastShiftToggleClick = DateTime.MinValue;
+
         public QuickKeyboardPageViewModel(QuickKeyboardPage quickKeyboardPage)
         {
             this.quickKeyboardPage = quickKeyboardPage;
+
+            ShiftToggleClicked = new DelegateCommand(async () =>
+            {
+                DateTime now = DateTime.Now;
+
+                // detect double click
+                if (now - lastShiftToggleClick < TimeSpan.FromMilliseconds(200))
+                {
+                    // set lock on double click
+                    ShiftToggleChecked = true;
+                    ShiftToggleLocked = true;
+                }
+                else
+                {
+                    // disable lock on single click
+                    ShiftToggleLocked = false;
+                }
+
+                // update vars
+                lastShiftToggleClick = now;
+            });
         }
 
         public override void Dispose()
