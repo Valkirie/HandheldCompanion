@@ -168,11 +168,7 @@
                     <Grid>
                         <ui:FontIcon Glyph="&#xe752;" />
 
-                        <ui:FontIcon
-                            Margin="14,10,0,0"
-                            FontSize="6"
-                            Glyph="&#xe72e;"
-                            Visibility="{Binding ShiftToggleLocked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <ui:FontIcon Glyph="&#xE889;" Visibility="{Binding ShiftToggleLocked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </ToggleButton>
 
