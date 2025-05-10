@@ -81,19 +81,46 @@
         </Style>
     </Page.Resources>
 
-    <Grid
-        Height="300"
-        Margin="-4"
-        VerticalAlignment="Bottom">
+    <Grid Height="300" VerticalAlignment="Bottom">
         <Grid.RowDefinitions>
+            <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
         </Grid.RowDefinitions>
 
+        <!--  Row 0: ?? keys  -->
+        <Grid x:Name="Row0Panel" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Esc" />
+            <Button Grid.Column="1" Content="Tab" />
+            <Button Grid.Column="2" Content="F1" />
+            <Button Grid.Column="3" Content="F2" />
+            <Button Grid.Column="4" Content="F3" />
+            <Button Grid.Column="5" Content="F4" />
+            <Button Grid.Column="6">
+                <ui:FontIcon Glyph="&#xe76b;" />
+            </Button>
+            <Button Grid.Column="7">
+                <ui:FontIcon Glyph="&#xe76c;" />
+            </Button>
+            <Button Grid.Column="8" Content="Del" />
+        </Grid>
+
         <!--  Row 1: 10 keys  -->
-        <Grid x:Name="Row1Panel" Grid.Row="0">
+        <Grid x:Name="Row1Panel" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -119,7 +146,7 @@
         </Grid>
 
         <!--  Row 2: 10 keys  -->
-        <Grid x:Name="Row2Panel" Grid.Row="1">
+        <Grid x:Name="Row2Panel" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -145,7 +172,7 @@
         </Grid>
 
         <!--  Row 3: Shift + 7 letters + Backspace  -->
-        <Grid x:Name="Row3Panel" Grid.Row="2">
+        <Grid x:Name="Row3Panel" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*" />
                 <ColumnDefinition Width="*" />
@@ -196,7 +223,7 @@
         </Grid>
 
         <!--  Row 4: Switch, comma, space, period, return  -->
-        <Grid x:Name="Row4Panel" Grid.Row="3">
+        <Grid x:Name="Row4Panel" Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*" />
                 <ColumnDefinition Width="*" />
@@ -220,8 +247,7 @@
                 Tag=" " />
 
             <Button Grid.Column="3" />
-
-            <Button Grid.Column="4" Content="?" />
+            <Button Grid.Column="4" />
 
             <Button x:Name="Return" Grid.Column="5">
                 <ui:FontIcon Glyph="&#xe751;" />

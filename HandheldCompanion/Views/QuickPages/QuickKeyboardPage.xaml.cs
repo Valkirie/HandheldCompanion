@@ -53,16 +53,20 @@ namespace HandheldCompanion.Views.QuickPages
         private IntPtr _lastHkl;
 
         // Physical scan-codes for default letter layout (dynamic per HKL)
-        private static readonly object[] _row1Sc = { 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19 };      // Q,W,E,R,T,Y,U,I,O,P
-        private static readonly object[] _row2Sc = { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27 };      // A,S,D,F,G,H,J,K,L,;
-        private static readonly object[] _row3Sc = { 0x00, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x0E };             // SHIFT,Z,X,C,V,B,N,M,BACKSPACE
-        private static readonly object[] _row4Sc = { string.Empty, ",", " ", ".", "?", 0x1C };                          // SWITCH,COMMA,SPACE,LANGUAGE,PERIOD,RETURN
+        private static readonly object[] _row0Sc = { (0x01, KEYEVENTF_SCANCODE), (0x0F, KEYEVENTF_SCANCODE), (0x3B, KEYEVENTF_SCANCODE), (0x3C, KEYEVENTF_SCANCODE), (0x3D, KEYEVENTF_SCANCODE), (0x3E, KEYEVENTF_SCANCODE), (0x4B, KEYEVENTF_SCANCODE_EXT), (0x4D, KEYEVENTF_SCANCODE_EXT), (0x53, KEYEVENTF_SCANCODE_EXT) };            // ESC, TAB, xxxx, DEL
+        private static readonly object[] _row1Sc = { (0x10, KEYEVENTF_SCANCODE), (0x11, KEYEVENTF_SCANCODE), (0x12, KEYEVENTF_SCANCODE), (0x13, KEYEVENTF_SCANCODE), (0x14, KEYEVENTF_SCANCODE), (0x15, KEYEVENTF_SCANCODE), (0x16, KEYEVENTF_SCANCODE), (0x17, KEYEVENTF_SCANCODE), (0x18, KEYEVENTF_SCANCODE), (0x19, KEYEVENTF_SCANCODE) };      // Q,W,E,R,T,Y,U,I,O,P
+        private static readonly object[] _row2Sc = { (0x1E, KEYEVENTF_SCANCODE), (0x1F, KEYEVENTF_SCANCODE), (0x20, KEYEVENTF_SCANCODE), (0x21, KEYEVENTF_SCANCODE), (0x22, KEYEVENTF_SCANCODE), (0x23, KEYEVENTF_SCANCODE), (0x24, KEYEVENTF_SCANCODE), (0x25, KEYEVENTF_SCANCODE), (0x26, KEYEVENTF_SCANCODE), (0x27, KEYEVENTF_SCANCODE) };      // A,S,D,F,G,H,J,K,L,;
+        private static readonly object[] _row3Sc = { (0x00, KEYEVENTF_SCANCODE), (0x2C, KEYEVENTF_SCANCODE), (0x2D, KEYEVENTF_SCANCODE), (0x2E, KEYEVENTF_SCANCODE), (0x2F, KEYEVENTF_SCANCODE), (0x30, KEYEVENTF_SCANCODE), (0x31, KEYEVENTF_SCANCODE), (0x32, KEYEVENTF_SCANCODE), (0x0E, KEYEVENTF_SCANCODE) };            // SHIFT,Z,X,C,V,B,N,M,BACKSPACE
+        private static readonly object[] _row4Sc = { (string.Empty, KEYEVENTF_UNICODE), (",", KEYEVENTF_UNICODE), (" ", KEYEVENTF_UNICODE), (".", KEYEVENTF_UNICODE), ("?", KEYEVENTF_UNICODE), (0x1C, KEYEVENTF_SCANCODE) };                          // SWITCH,COMMA,SPACE,LANGUAGE,PERIOD,RETURN
 
         // P/Invoke
         private const uint INPUT_KEYBOARD = 1;
+        private const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
+        private const uint KEYEVENTF_UNICODE = 0x0004;
         private const uint KEYEVENTF_SCANCODE = 0x0008;
         private const uint KEYEVENTF_KEYUP = 0x0002;
         private const uint MAPVK_VSC_TO_VK_EX = 3;
+        private const uint KEYEVENTF_SCANCODE_EXT = KEYEVENTF_SCANCODE | KEYEVENTF_EXTENDEDKEY;
 
         [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll", SetLastError = true)] static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pid);
@@ -135,10 +139,12 @@ namespace HandheldCompanion.Views.QuickPages
             switch(_state)
             {
                 case LayoutState.Default:
+                    SwitchTo123.Content = "abc";
                     _state = LayoutState.Switch1;
                     break;
                 case LayoutState.Switch1:
                 case LayoutState.Switch2:
+                    SwitchTo123.Content = "&123";
                     _state = LayoutState.Default;
                     break;
             }
@@ -157,6 +163,7 @@ namespace HandheldCompanion.Views.QuickPages
                     {
                         ShiftToggle.Visibility = Visibility.Visible;
                         LayoutSwitch.Visibility = Visibility.Collapsed;
+                        BuildDynamicRow(Row0Panel, _row0Sc);
                         BuildDynamicRow(Row1Panel, _row1Sc);
                         BuildDynamicRow(Row2Panel, _row2Sc);
                         BuildDynamicRow(Row3Panel, _row3Sc);
@@ -196,34 +203,26 @@ namespace HandheldCompanion.Views.QuickPages
             for (int i = 0; i < p.Children.Count; i++)
             {
                 object o = objects[i];
-                if (o is null)
-                    continue;
 
-                if (o is int scan)
+                if (p.Children[i] is Button button)
                 {
-                    if (scan == 0x00)
-                        continue; // skip empty buttons
-
-                    if (p.Children[i] is Button button)
+                    if (o is ValueTuple<int, uint> it)
                     {
-                        button.Tag = scan;
+                        (int sc, uint ext) = it;
+                        if (sc == 0x00)
+                            continue; // skip empty buttons
 
-                        // dirty
-                        button.Click -= ScanKey_Click;
-                        button.Click -= Unicode_Click;
-
-                        button.Click += ScanKey_Click;
+                        button.Tag = (sc, ext);
                     }
-                }
-                else if (o is string s)
-                {
-                    if (string.IsNullOrEmpty(s))
-                        continue;
-
-                    char c = s.ToCharArray()[0];
-                    if (p.Children[i] is Button button)
+                    else if (o is ValueTuple<string, uint> st)
                     {
-                        button.Tag = c;
+                        (string s, uint ext) = st;
+                        if (string.IsNullOrEmpty(s))
+                            continue;
+
+                        char c = s.ToCharArray()[0];
+
+                        button.Tag = (c, ext);
                         if (!string.IsNullOrEmpty(s))
                         {
                             if (button.Content is FontIcon fontIcon)
@@ -231,13 +230,11 @@ namespace HandheldCompanion.Views.QuickPages
                             else
                                 button.Content = s;
                         }
-
-                        // dirty
-                        button.Click -= ScanKey_Click;
-                        button.Click -= Unicode_Click;
-
-                        button.Click += Unicode_Click;
                     }
+
+                    // reset event
+                    button.Click -= Button_Click;
+                    button.Click += Button_Click;
                 }
             }
         }
@@ -253,10 +250,12 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 foreach (object? child in panel.Children)
                 {
-                    if (child is Button b && b.Tag is int sc)
+                    if (child is Button b && b.Tag is ValueTuple<int, uint> it)
                     {
                         if (!string.IsNullOrEmpty(b.Name))
                             continue; // skip named buttons
+
+                       (int sc, uint ext) = it;
 
                         byte[] st = (byte[])ks.Clone();
                         st[0x10] = (byte)(_shiftToggled ? 0x80 : 0x00); // SHIFT keycode
@@ -272,17 +271,26 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void ScanKey_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is Button b && b.Tag is int sc)) return;
+            List<INPUT> seq = new List<INPUT>();
 
-            var seq = new List<INPUT>();
-
-            if (_shiftToggled) seq.Add(MakeScan(0x2A, false));     // Shift down
-            seq.Add(MakeScan((uint)sc, false));               // Key down
-            seq.Add(MakeScan((uint)sc, true));                // Key up
-            if (_shiftToggled) seq.Add(MakeScan(0x2A, true));      // Shift up
-
+            if (sender is Button b)
+            {
+                if (b.Tag is ValueTuple<int, uint> it)
+                {
+                    if (_shiftToggled) seq.Add(MakeScan(0x2A, KEYEVENTF_SCANCODE, false));      // Shift down
+                    seq.Add(MakeScan((uint)it.Item1, it.Item2, false));                         // Key down
+                    seq.Add(MakeScan((uint)it.Item1, it.Item2, true));                          // Key up
+                    if (_shiftToggled) seq.Add(MakeScan(0x2A, KEYEVENTF_SCANCODE, true));       // Shift up
+                }
+                else if (b.Tag is ValueTuple<char, uint> ct)
+                {
+                    seq.Add(MakeScan((uint)ct.Item1, ct.Item2, false));                         // Key down
+                    seq.Add(MakeScan((uint)ct.Item1, ct.Item2, true));                          // Key up
+                }
+            }
+            
             SendInput((uint)seq.Count, seq.ToArray(), Marshal.SizeOf<INPUT>());
 
             // disable shift toggle (if not locked)
@@ -290,23 +298,7 @@ namespace HandheldCompanion.Views.QuickPages
                 _shiftToggled = false;
         }
 
-        private void Unicode_Click(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is Button b && b.Tag is char c)) return;
-
-            // send Unicode via KEYEVENTF_UNICODE
-            const uint KEYEVENTF_UNICODE = 0x0004;
-            var down = new INPUT { type = INPUT_KEYBOARD, U = new InputUnion { ki = new KEYBDINPUT { wVk = 0, wScan = c, dwFlags = KEYEVENTF_UNICODE, dwExtraInfo = GetMessageExtraInfo() } } };
-            var up = new INPUT { type = INPUT_KEYBOARD, U = new InputUnion { ki = new KEYBDINPUT { wVk = 0, wScan = c, dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP, dwExtraInfo = GetMessageExtraInfo() } } };
-            SendInput(1, new[] { down }, Marshal.SizeOf<INPUT>());
-            SendInput(1, new[] { up }, Marshal.SizeOf<INPUT>());
-
-            // disable shift toggle (if not locked)
-            if (!_shiftToggleLocked)
-                _shiftToggled = false;
-        }
-
-        private static INPUT MakeScan(uint scanCode, bool up)
+        private static INPUT MakeScan(uint scanCode, uint ext, bool up)
         {
             INPUT input = new();
 
@@ -315,7 +307,7 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 wVk = 0,
                 wScan = (ushort)scanCode,
-                dwFlags = KEYEVENTF_SCANCODE | (up ? KEYEVENTF_KEYUP : 0),
+                dwFlags = ext | (up ? KEYEVENTF_KEYUP : 0),
                 time = 0,
                 dwExtraInfo = GetMessageExtraInfo()
             };
