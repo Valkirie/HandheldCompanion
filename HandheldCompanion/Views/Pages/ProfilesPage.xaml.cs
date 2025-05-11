@@ -392,7 +392,7 @@ public partial class ProfilesPage : Page
             // create profile
             Profile profile = new Profile(path);
             profile.Arguments = arguments;
-            if (ext.Equals(".lnk"))
+            if (!string.IsNullOrEmpty(arguments))
                 profile.Name = name;
 
             // check on path rather than profile
