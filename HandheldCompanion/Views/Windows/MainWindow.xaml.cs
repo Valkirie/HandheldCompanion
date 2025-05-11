@@ -89,6 +89,7 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
+												  
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -158,23 +159,11 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
+        CurrentDevice.Initialize(FirstStart);
 
-        if (FirstStart)
-        {
-            if (CurrentDevice is SteamDeck steamDeck)
-            {
-                // do something
-            }
-            else if (CurrentDevice is AYANEOFlipDS flipDS)
-            {
-                // set Quicktools to Maximize on bottom screen
-                ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", 2);
-                ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
-            }
-
-            ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-        }
-
+        // initialize device settings
+		ManagerFactory.settingsManager.SetProperty("FirstStart", false);
+		
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
@@ -239,7 +228,7 @@ public partial class MainWindow : GamepadWindow
         gamepadFocusManager = new(this, ContentFrame);
     }
 
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
         {
@@ -249,9 +238,11 @@ public partial class MainWindow : GamepadWindow
                 break;
             case WM_QUERYENDSESSION:
                 break;
+									
+					  
         }
 
-        return IntPtr.Zero;
+        return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)

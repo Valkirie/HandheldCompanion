@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -53,6 +54,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int WM_SETFOCUS = 0x0007;
     private const int WM_KILLFOCUS = 0x0008;
     private const int WM_NCACTIVATE = 0x0086;
+    private const int WM_INPUTLANGCHANGE = 0x0051;
     private const int WM_SYSCOMMAND = 0x0112;
     private const int WM_WINDOWPOSCHANGING = 0x0046;
     private const int WM_SHOWWINDOW = 0x0018;
@@ -83,6 +85,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public QuickProfilesPage profilesPage;
     public QuickOverlayPage overlayPage;
     public QuickApplicationsPage applicationsPage;
+    public QuickKeyboardPage keyboardPage;
 
     private static OverlayQuickTools CurrentWindow;
     public string prevNavItemTag;
@@ -130,11 +133,13 @@ public partial class OverlayQuickTools : GamepadWindow
         devicePage = new("quickdevice");
         profilesPage = new("quickprofiles");
         applicationsPage = new("quickapplications");
+        keyboardPage = new("quickkeyboard");
 
         _pages.Add("QuickHomePage", homePage);
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickApplicationsPage", applicationsPage);
+        _pages.Add("QuickKeyboardPage", keyboardPage);
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -143,14 +148,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
         WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
-
-        /*
-        int Style = WinAPI.GetWindowLong(hwndSource.Handle, GWL_STYLE);
-        exStyle &= ~WS_SIZEBOX;
-        WinAPI.SetWindowLong(hwndSource.Handle, GWL_STYLE, Style);
-        */
-
-        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
+        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);;
     }
 
     public void LoadPages_MVVM()
@@ -371,6 +369,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
         switch (msg)
         {
+            case WM_INPUTLANGCHANGE:
+                break;
+
             case WM_SYSCOMMAND:
                 {
                     int command = wParam.ToInt32() & 0xfff0;
@@ -513,6 +514,11 @@ public partial class OverlayQuickTools : GamepadWindow
         devicePage.Close();
         profilesPage.Close();
         applicationsPage.Close();
+    }
+
+    private void Key_Clicked(object sender, RoutedEventArgs e)
+    {
+        NavView_Navigate("QuickKeyboardPage");
     }
 
     #region navView

@@ -150,6 +150,21 @@
                             Glyph="&#x2199;" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem Name="navKeyboard" Tag="QuickKeyboardPage">
+                    <ui:NavigationViewItem.Content>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;" />
+                    </ui:NavigationViewItem.Content>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem
+                    Name="navTrackpad"
+                    IsEnabled="False"
+                    Tag="QuickTrackpadPage">
+                    <ui:NavigationViewItem.Content>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
+                    </ui:NavigationViewItem.Content>
+                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
 
             <Grid>

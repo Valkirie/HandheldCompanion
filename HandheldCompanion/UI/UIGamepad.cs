@@ -565,6 +565,11 @@ namespace HandheldCompanion.Managers
                                 // set state
                                 _goingForward = true;
                             }
+                            else if (focusedElement.Tag is "Navigation")
+                            {
+                                // set state
+                                _goingForward = true;
+                            }
 
                             if (button.IsEnabled)
                             {
