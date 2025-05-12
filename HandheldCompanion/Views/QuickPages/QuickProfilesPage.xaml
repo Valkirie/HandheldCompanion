@@ -196,7 +196,8 @@
                                     Height="32"
                                     Margin="6,0,0,0"
                                     Click="PowerProfileOnBatteryMore_Click"
-                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Style="{DynamicResource AccentButtonStyle}"
+                                    Tag="Navigation">
                                     <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
                                 </Button>
                             </Grid>
@@ -257,7 +258,8 @@
                                     Height="32"
                                     HorizontalAlignment="Right"
                                     Click="PowerProfilePluggedMore_Click"
-                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Style="{DynamicResource AccentButtonStyle}"
+                                    Tag="Navigation">
                                     <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
                                 </Button>
                             </Grid>

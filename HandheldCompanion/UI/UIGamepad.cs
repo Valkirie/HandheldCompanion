@@ -259,8 +259,8 @@ namespace HandheldCompanion.Managers
                 if (gamepadPage != (Page)gamepadFrame.Content)
                 {
                     // store navigation
-                    if (navigationView is not null)
-                        prevNavigation = navigationView.SelectedItem as NavigationViewItem;
+                    if (navigationView is not null && navigationView.SelectedItem is NavigationViewItem navigationViewItem)
+                        prevNavigation = navigationViewItem;
 
                     gamepadFrame = (Frame)sender;
                     gamepadFrame.ContentRendered += ContentRendering;
@@ -291,25 +291,14 @@ namespace HandheldCompanion.Managers
             UIHelper.TryInvoke(() =>
             {
                 // store top left navigation view item
-                if (prevNavigation is null)
+                if (prevNavigation is null && navigationView.SelectedItem is NavigationViewItem navigationViewItem)
                 {
-                    prevNavigation = navigationView.SelectedItem as NavigationViewItem;
+                    prevNavigation = navigationViewItem;
                     _navigating = true;
                 }
 
                 // update status
                 _navigating = _goingForward;
-
-                // specific-cases
-                switch (gamepadPage.Tag)
-                {
-                    case "layout":
-                    case "SettingsMode0":
-                    case "SettingsMode1":
-                    case "quickperformance":
-                        _goingForward = true;
-                        break;
-                }
 
                 Control control;
                 if (prevControl.TryGetValue(gamepadPage.Tag, out control))
@@ -565,10 +554,24 @@ namespace HandheldCompanion.Managers
                                 // set state
                                 _goingForward = true;
                             }
-                            else if (focusedElement.Tag is "Navigation")
+                            else
                             {
-                                // set state
-                                _goingForward = true;
+                                switch(focusedElement.Tag)
+                                {
+                                    case "Navigation":
+                                        // set state
+                                        _goingForward = true;
+                                        break;
+                                    case "GoBack":
+                                        if (gamepadFrame.CanGoBack)
+                                        {
+                                            // set state
+                                            _goingBack = true;
+                                            _goingForward = false;
+                                            gamepadFrame.GoBack();
+                                        }
+                                        break;
+                                }
                             }
 
                             if (button.IsEnabled)

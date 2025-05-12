@@ -1382,7 +1382,8 @@
                                                 Name="MotionControlAdditional"
                                                 HorizontalAlignment="Stretch"
                                                 Click="b_AdditionalSettings_Click"
-                                                Content="{l:Static resx:Resources.ProfilesPage_AdditionalSettings}" />
+                                                Content="{l:Static resx:Resources.ProfilesPage_AdditionalSettings}"
+                                                Tag="Navigation" />
                                         </Grid>
                                     </ikw:SimpleStackPanel>
                                 </Grid>
@@ -1571,7 +1572,8 @@
                             Click="ControllerSettingsButton_Click"
                             Description="{l:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
-                            IsClickEnabled="True">
+                            IsClickEnabled="True"
+                            Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE7FC;" />
                             </ui:SettingsCard.HeaderIcon>
