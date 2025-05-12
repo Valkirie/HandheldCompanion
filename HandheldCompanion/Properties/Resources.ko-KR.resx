@@ -2604,7 +2604,7 @@
     <value>적용할 하위 프로필 선택</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
-    <value>팬을 최대 속도로 설정합니다</div></value>
+    <value>팬을 최대 속도로 설정합니다</value>
   </data>
   <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
     <value>팬 최대 속도 재정의</value>
