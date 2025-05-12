@@ -586,7 +586,7 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedProcess_WindowAttached(ProcessWindow processWindow)
         {
-            ProcessWindowViewModel? foundWindow = ProfileWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            ProcessWindowViewModel? foundWindow = ProfileWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
             if (foundWindow is null)
                 ProfileWindows.SafeAdd(new ProcessWindowViewModel(processWindow));
             else
@@ -597,7 +597,7 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedProcess_WindowDetached(ProcessWindow processWindow)
         {
-            ProcessWindowViewModel? foundWindow = ProfileWindows.ToList().FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            ProcessWindowViewModel? foundWindow = ProfileWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
             if (foundWindow is not null)
             {
                 ProfileWindows.SafeRemove(foundWindow);

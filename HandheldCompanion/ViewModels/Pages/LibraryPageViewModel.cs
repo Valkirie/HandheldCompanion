@@ -245,7 +245,7 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
             if (foundProfile is not null)
             {
                 Profiles.SafeRemove(foundProfile);

@@ -124,7 +124,7 @@ namespace HandheldCompanion.ViewModels
             lock (lockcollection)
             {
                 ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-                ControllerViewModel? foundController = controllers.ToList().FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
+                ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
                 if (foundController is not null && !IsPowerCycling)
                 {
                     controllers.SafeRemove(foundController);

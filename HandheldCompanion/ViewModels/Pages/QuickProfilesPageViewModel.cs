@@ -221,7 +221,7 @@ namespace HandheldCompanion.ViewModels
 
             lock (HotkeyListLock)
             {
-                HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
                     HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
                 else
