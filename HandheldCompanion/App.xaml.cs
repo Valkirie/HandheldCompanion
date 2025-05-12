@@ -122,6 +122,7 @@ public partial class App : Application
             case "es-ES":
             case "ja-JP":
             case "ru-RU":
+            case "ko-KR":
                 culture = new CultureInfo(CurrentCulture);
                 break;
             case "zh-CN": // fallback change locale name from zh-CN to zh-Hans

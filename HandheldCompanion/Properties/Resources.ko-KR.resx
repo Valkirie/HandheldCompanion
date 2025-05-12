@@ -1,0 +1,3062 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AboutPage_About" xml:space="preserve">
+    <value>정보</value>
+  </data>
+  <data name="AboutPage_AboutDescription" xml:space="preserve">
+    <value>Windows 서비스와 터치 인터페이스에 최적화된 GUI의 조합으로, 핸드헬드 게임 컴퓨터의 경험이 향상됩니다. 기능에는 자이로 컨트롤, 가상 컨트롤러 시뮬레이션, 빠른 도구 오버레이, 가상 터치패드, 3D 컨트롤러 모델, 애플리케이션별 기반의 프로파일 설정 시스템이 포함됩니다. Handheld Companion은 ViGEmBus 드라이버와 ViGEmClient 라이브러리, 그리고 HidHide 커널 모드 필터 드라이버에 의존하고 있습니다. 모션 컨트롤 알고리즘은 Jibbsmart에 의한 연구와 GyroWiki에서 얻은 정보에 기반하고 있습니다.</value>
+  </data>
+  <data name="AboutPage_Accelerometer" xml:space="preserve">
+    <value>가속도계</value>
+  </data>
+  <data name="AboutPage_Author" xml:space="preserve">
+    <value>작성자</value>
+  </data>
+  <data name="AboutPage_Contributors" xml:space="preserve">
+    <value>기여자</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="AboutPage_Donate" xml:space="preserve">
+    <value>기부하기</value>
+  </data>
+  <data name="AboutPage_Gyrometer" xml:space="preserve">
+    <value>자이로</value>
+  </data>
+  <data name="AboutPage_Inclinometer" xml:space="preserve">
+    <value>경사계</value>
+  </data>
+  <data name="AboutPage_NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="AboutPage_RelatedLinks" xml:space="preserve">
+    <value>관련 링크</value>
+  </data>
+  <data name="AboutPage_SensorExternal" xml:space="preserve">
+    <value>외부</value>
+  </data>
+  <data name="AboutPage_SensorInternal" xml:space="preserve">
+    <value>내부</value>
+  </data>
+  <data name="AboutPage_SensorName" xml:space="preserve">
+    <value>센서명</value>
+  </data>
+  <data name="AboutPage_SensorSpecification" xml:space="preserve">
+    <value>센서 사양</value>
+  </data>
+  <data name="AboutPage_Service" xml:space="preserve">
+    <value>서비스</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>소스 코드</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>버전</value>
+  </data>
+  <data name="AboutPage_Wiki" xml:space="preserve">
+    <value>Wiki</value>
+  </data>
+  <data name="Administrator" xml:space="preserve">
+    <value>관리자</value>
+  </data>
+  <data name="ControllerPage_CloakDevice" xml:space="preserve">
+    <value>연결 시 컨트롤러 숨김</value>
+  </data>
+  <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
+    <value>연결될 때 물리적 컨트롤러를 숨깁니다.</value>
+  </data>
+  <data name="ControllerPage_Connect" xml:space="preserve">
+    <value>연결</value>
+  </data>
+  <data name="ControllerPage_Controller" xml:space="preserve">
+    <value>컨트롤러</value>
+  </data>
+  <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
+    <value>컨트롤러 숨김</value>
+  </data>
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
+    <value>가상 컨트롤러 설정</value>
+  </data>
+  <data name="ControllerPage_Disconnect" xml:space="preserve">
+    <value>연결 끊기</value>
+  </data>
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
+    <value>물리적 컨트롤러</value>
+  </data>
+  <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
+    <value>닫을 때 컨트롤러 숨김 해제</value>
+  </data>
+  <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
+    <value>애플리케이션 종료 시 모든 물리적 컨트롤러를 복원합니다.</value>
+  </data>
+  <data name="ControllerPage_VibrationStrength" xml:space="preserve">
+    <value>진동의 세기</value>
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>컨트롤러의 진동의 세기를 변경</value>
+  </data>
+  <data name="Hotkey_decreaseTDP" xml:space="preserve">
+    <value>열 설계 전력(TDP) 감소</value>
+  </data>
+  <data name="Hotkey_decreaseTDPDesc" xml:space="preserve">
+    <value>시스템 또는 현재 적용되고 있는 프로파일의 TDP를 1와트 감소시킵니다.</value>
+  </data>
+  <data name="Hotkey_fallbackInput" xml:space="preserve">
+    <value>누르고 핫키 입력을 설정</value>
+  </data>
+  <data name="Hotkey_fallbackOutput" xml:space="preserve">
+    <value>누르고 키보드 출력을 설정</value>
+  </data>
+  <data name="Hotkey_increaseTDP" xml:space="preserve">
+    <value>열 설계 전력(TDP) 증가</value>
+  </data>
+  <data name="Hotkey_increaseTDPDesc" xml:space="preserve">
+    <value>시스템 또는 현재 적용되고 있는 프로파일의 TDP를 1와트 증가시킵니다.</value>
+  </data>
+  <data name="Hotkey_overlayGamepad" xml:space="preserve">
+    <value>3D 컨트롤러 표시</value>
+  </data>
+  <data name="Hotkey_overlayGamepadDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 3D 핫키를 변경</value>
+  </data>
+  <data name="Hotkey_overlayTrackpads" xml:space="preserve">
+    <value>가상 트랙패드를 표시합니다.</value>
+  </data>
+  <data name="Hotkey_overlayTrackpadsDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 핫키를 변경합니다.</value>
+  </data>
+  <data name="Hotkey_quickTools" xml:space="preserve">
+    <value>빠른 도구 윈도우 호출</value>
+  </data>
+  <data name="Hotkey_quickToolsDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키 변경하기</value>
+  </data>
+  <data name="Hotkey_Custom" xml:space="preserve">
+    <value>커스텀 단축키</value>
+  </data>
+  <data name="Hotkey_CustomDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키를 변경합니다.</value>
+  </data>
+  <data name="Hotkey_Desktop" xml:space="preserve">
+    <value>데스크톱 표시 및 숨기기</value>
+  </data>
+  <data name="Hotkey_DesktopDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Windows + D</value>
+  </data>
+  <data name="Hotkey_ESC" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="Hotkey_ESCDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Escape</value>
+  </data>
+  <data name="Hotkey_Expand" xml:space="preserve">
+    <value>창과 전체 화면 간 전환</value>
+  </data>
+  <data name="Hotkey_ExpandDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Alt + Enter</value>
+  </data>
+  <data name="Hotkey_Guide" xml:space="preserve">
+    <value>가이드 또는 PS 버튼</value>
+  </data>
+  <data name="Hotkey_GuideDesc" xml:space="preserve">
+    <value>Xbox 가이드 또는 Sony PS 버튼 입력을 시뮬레이트합니다.</value>
+  </data>
+  <data name="Hotkey_Keyboard" xml:space="preserve">
+    <value>터치 키보드를 표시합니다.</value>
+  </data>
+  <data name="Hotkey_KeyboardDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 핫키를 변경합니다.</value>
+  </data>
+  <data name="Hotkey_KillApp" xml:space="preserve">
+    <value>애플리케이션 강제 종료</value>
+  </data>
+  <data name="Hotkey_KillAppDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키를 변경합니다.</value>
+  </data>
+  <data name="Hotkey_Mainwindow" xml:space="preserve">
+    <value>기본 창 표시 및 숨기기</value>
+  </data>
+  <data name="Hotkey_MainwindowDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키를 변경합니다.</value>
+  </data>
+  <data name="Hotkey_TaskManager" xml:space="preserve">
+    <value>작업 관리자 열기</value>
+  </data>
+  <data name="Hotkey_TaskManagerDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Ctrl + Shift + Esc</value>
+  </data>
+  <data name="Hotkey_Taskview" xml:space="preserve">
+    <value>작업 보기 열기</value>
+  </data>
+  <data name="Hotkey_TaskviewDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Windows + Tab</value>
+  </data>
+  <data name="Hotkey_suspendResumeTask" xml:space="preserve">
+    <value>어플리케이션 전환</value>
+  </data>
+  <data name="Hotkey_suspendResumeTaskDesc" xml:space="preserve">
+    <value>포그라운드 애플리케이션을 일시 중단 또는 재개</value>
+  </data>
+  <data name="MainWindow_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="MainWindow_navAbout" xml:space="preserve">
+    <value>정보</value>
+  </data>
+  <data name="MainWindow_navController" xml:space="preserve">
+    <value>컨트롤러</value>
+  </data>
+  <data name="MainWindow_navOverlay" xml:space="preserve">
+    <value>오버레이</value>
+  </data>
+  <data name="MainWindow_navProfiles" xml:space="preserve">
+    <value>프로필</value>
+  </data>
+  <data name="MainWindow_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="MainWindow_Settings" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
+    <value>8BitDo Lite 2</value>
+  </data>
+  <data name="OverlayPage_Alignment" xml:space="preserve">
+    <value>구성</value>
+  </data>
+  <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
+    <value>3D 컨트롤러 오버레이의 위치를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
+    <value>트랙패드 오버레이의 위치를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
+    <value>항상 위에 표시</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
+    <value>이 옵션을 켜면 3D 컨트롤러 오버레이가 다른 창 위에 유지됩니다.</value>
+  </data>
+  <data name="OverlayPage_BackButton" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="OverlayPage_CameraAngle" xml:space="preserve">
+    <value>페이스 카메라</value>
+  </data>
+  <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
+    <value>카메라를 향한 경우의 3D 컨트롤러 오버레이 모델의 동작을 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+    <value>피치</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+    <value>각도를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_Color" xml:space="preserve">
+    <value>배경색</value>
+  </data>
+  <data name="OverlayPage_ColorDesc" xml:space="preserve">
+    <value>3D 컨트롤러 오버레이의 배경색을 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_ControllerOptions" xml:space="preserve">
+    <value>컨트롤러 옵션</value>
+  </data>
+  <data name="OverlayPage_DualSenseController" xml:space="preserve">
+    <value>PlayStation DualSense</value>
+  </data>
+  <data name="OverlayPage_EmulatedController" xml:space="preserve">
+    <value>에뮬레이트된 컨트롤러</value>
+  </data>
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
+    <value>페이스 카메라</value>
+  </data>
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+    <value>3D 모델은 기본 위치로 카메라를 향해 천천히 회전합니다</value>
+  </data>
+  <data name="OverlayPage_Listening" xml:space="preserve">
+    <value>Listening...</value>
+  </data>
+  <data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
+    <value>MACHENIKE HG510</value>
+  </data>
+  <data name="OverlayPage_MainTrigger" xml:space="preserve">
+    <value>메인 트리거</value>
+  </data>
+  <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
+    <value>3D 컨트롤러 오버레이의 메인 트리거를 변경합니다</value>
+  </data>
+  <data name="OverlayPage_MotionActivated" xml:space="preserve">
+    <value>모션</value>
+  </data>
+  <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
+    <value>센서 정보를 기반으로 사용자의 움직임에 따라 모델이 움직입니다.</value>
+  </data>
+  <data name="OverlayPage_N64Controller" xml:space="preserve">
+    <value>N64</value>
+  </data>
+  <data name="OverlayPage_OEMController" xml:space="preserve">
+    <value>OEM 컨트롤러</value>
+  </data>
+  <data name="OverlayPage_Opacity" xml:space="preserve">
+    <value>불투명도</value>
+  </data>
+  <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
+    <value>3D 컨트롤러 오버레이의 불투명도를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
+    <value>트랙패드 오버레이의 불투명도를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_Overlay" xml:space="preserve">
+    <value>오버레이</value>
+  </data>
+  <data name="OverlayPage_OverlayModel" xml:space="preserve">
+    <value>오버레이 모델</value>
+  </data>
+  <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
+    <value>3D 컨트롤러 오버레이 모델을 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_OverlayPreview" xml:space="preserve">
+    <value>오버레이 미리보기</value>
+  </data>
+  <data name="OverlayPage_RenderSettings" xml:space="preserve">
+    <value>렌더링 설정</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
+    <value>안티 에일리어싱</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
+    <value>렌더링의 안티 에일리어싱 상태를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
+    <value>고정 3D 오버레이 컨트롤러 모델의 렌더링 설정을 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
+    <value>업데이트 주기</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
+    <value>1초당 렌더링의 업데이트 주기를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_Size" xml:space="preserve">
+    <value>크기</value>
+  </data>
+  <data name="OverlayPage_SizeDesc" xml:space="preserve">
+    <value>3D 컨트롤러 오버레이 크기를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
+    <value>트랙패드 오버레이 크기를 변경합니다.</value>
+  </data>
+  <data name="OverlayPage_StartButton" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="OverlayPage_ToyController" xml:space="preserve">
+    <value>Fisher-Price controller</value>
+  </data>
+  <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
+    <value>트랙패드의 옵션</value>
+  </data>
+  <data name="OverlayPage_XboxOneController" xml:space="preserve">
+    <value>Xbox One</value>
+  </data>
+  <data name="OverlayPage_ZDOPlusController" xml:space="preserve">
+    <value>ZD O+</value>
+  </data>
+  <data name="Overlay_Overlay" xml:space="preserve">
+    <value>오버레이</value>
+  </data>
+  <data name="ProcessEx_processResume" xml:space="preserve">
+    <value>재개</value>
+  </data>
+  <data name="ProcessEx_processSuspend" xml:space="preserve">
+    <value>일시 정지</value>
+  </data>
+  <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
+    <value>추가 설정</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
+    <value>조준 사격 모션 배율</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+    <value>활성화 버튼</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+    <value>설정된 활성화 버튼을 사용하여 조준경 또는 조준경을 조준할 때 추가 모션 감도 배율 적용합니다.</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+    <value>조준 사격 모션 배율</value>
+  </data>
+  <data name="SettingsMode0_CameraOptions" xml:space="preserve">
+    <value>카메라 옵션</value>
+  </data>
+  <data name="SettingsMode0_CustomResponseCurve" xml:space="preserve">
+    <value>커스텀 응답 곡선</value>
+  </data>
+  <data name="SettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+    <value>게임으로 전송되는 출력</value>
+  </data>
+  <data name="SettingsMode0_CustomResponseIntensity" xml:space="preserve">
+    <value>움직임의 강도</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+    <value>공격적</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+    <value>프리셋 옵션</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+    <value>정확</value>
+  </data>
+  <data name="SettingsMode0_Sensitivity" xml:space="preserve">
+    <value>감도</value>
+  </data>
+  <data name="SettingsMode0_SensitivityDesc" xml:space="preserve">
+    <value>수평축과 수직축의 모션 감도를 변경합니다.</value>
+  </data>
+  <data name="SettingsMode0_SensitivityX" xml:space="preserve">
+    <value>X축 감도</value>
+  </data>
+  <data name="SettingsMode0_SensitivityXDesc" xml:space="preserve">
+    <value>수평축의 모션 감도를 변경합니다.</value>
+  </data>
+  <data name="SettingsMode0_SensitivityY" xml:space="preserve">
+    <value>Y축 감도</value>
+  </data>
+  <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
+    <value>수직축의 모션 감도를 변경합니다.</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
+    <value>스틱 감도</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
+    <value>회전 속도를 변경합니다.</value>
+  </data>
+  <data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
+    <value>추가 설정</value>
+  </data>
+  <data name="SettingsMode1_Deadzone" xml:space="preserve">
+    <value>데드존</value>
+  </data>
+  <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
+    <value>스티어링 데드존을 변경합니다. 스티어링 직진성이 개선됩니다.</value>
+  </data>
+  <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
+    <value>조이스틱 게임 입력</value>
+  </data>
+  <data name="SettingsMode1_JoystickSteering" xml:space="preserve">
+    <value>조이스틱 스티어링</value>
+  </data>
+  <data name="SettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+    <value>조이스틱 스티어링 옵션</value>
+  </data>
+  <data name="SettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+    <value>조이스틱 스티어링 미리보기</value>
+  </data>
+  <data name="SettingsMode1_MaxSteeringAngle" xml:space="preserve">
+    <value>최대 스티어링 각도</value>
+  </data>
+  <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+    <value>스티어링 각도의 최대값을 변경합니다.</value>
+  </data>
+  <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
+    <value>스티어링 선형성</value>
+  </data>
+  <data name="SettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+    <value>입력과 스티어링 사이의 매핑. 값이 낮을수록 테두리 근처에서는 정확도가 높아지지만 중앙 근처에서는 정확도가 낮아집니다. 값이 높을수록 중앙 부근의 정확도는 높아지지만 테두리 부근의 정확도는 낮아집니다. 1.0은 선형 매핑입니다.</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
+    <value>가속도계 배율</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
+    <value>시스템이 보고하는 가속도계의 값을 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
+    <value>추가 설정</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
+    <value>안티 데드존</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
+    <value>게임 내의 안티 데드존을 퍼센트 단위로 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+    <value> %</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
+    <value>삭제하시겠습니까?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
+    <value>이 항목은 즉시 삭제됩니다. 이 작업은 되돌릴 수 없습니다</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
+    <value>이 프로파일을 덮어쓰시겠습니까?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
+    <value>{0}는 덮어쓰여집니다. 이 작업은 되돌릴 수 없습니다</value>
+  </data>
+  <data name="ProfilesPage_BoostPower" xml:space="preserve">
+    <value>부스트 TDP</value>
+  </data>
+  <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
+    <value>부스트 TDP를 변경</value>
+  </data>
+  <data name="ProfilesPage_Cancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
+    <value>새로운 프로파일을 만들기</value>
+  </data>
+  <data name="ProfilesPage_Delete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
+    <value>프로파일을 삭제합니다.</value>
+  </data>
+  <data name="ProfilesPage_EnableProfile" xml:space="preserve">
+    <value>게임별 사용자 프로파일</value>
+  </data>
+  <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
+    <value>연관된 애플리케이션이 감지되면 프로파일이 자동으로 적용됩니다.</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
+    <value>전역 설정</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
+    <value>전역 프로파일 설정을 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
+    <value>자이로미터 배율</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
+    <value>시스템이 보고하는 자이로미터의 값을 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
+    <value>자이로 스티어링 축</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
+    <value>컨트롤러의 수평 방향의 움직임을 제어하려면, 회전 축 또는 수평 축을 사용할 수 있습니다</value>
+  </data>
+  <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
+    <value>수평 축을 반전</value>
+  </data>
+  <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
+    <value>수직 축을 반전</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
+    <value>모션 컨트롤 설정</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
+    <value>전역 모션 컨트롤 설정을 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ProfilesPage_PowerPreset" xml:space="preserve">
+    <value>전력 설정</value>
+  </data>
+  <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
+    <value>선택한 전력 설정을 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
+    <value>프로파일 상세 정보</value>
+  </data>
+  <data name="ProfilesPage_ProfileName" xml:space="preserve">
+    <value>프로파일명</value>
+  </data>
+  <data name="ProfilesPage_ProfilePath" xml:space="preserve">
+    <value>프로파일 경로</value>
+  </data>
+  <data name="ProfilesPage_Profiles" xml:space="preserve">
+    <value>프로파일</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
+    <value>프로파일 선택</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
+    <value>편집할 프로파일을 선택합니다.</value>
+  </data>
+  <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
+    <value>프로파일 설정</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
+    <value>프로파일 업데이트 완료</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
+    <value>업데이트되었습니다</value>
+  </data>
+  <data name="ProfilesPage_Roll" xml:space="preserve">
+    <value>롤</value>
+  </data>
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="ProfilesPage_StyleofInput" xml:space="preserve">
+    <value>입력 스타일</value>
+  </data>
+  <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
+    <value>컨트롤러의 물리 입력은 다양한 유형의 장치처럼 작동하도록 프로그래밍할 수 있습니다</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
+    <value>출력 장치</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
+    <value>모션 명령을 수신할 디바이스를 선택합니다.</value>
+  </data>
+  <data name="ProfilesPage_SustainedPower" xml:space="preserve">
+    <value>TDP 제한</value>
+  </data>
+  <data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
+    <value>TDP 변경</value>
+  </data>
+  <data name="ProfilesPage_TDPOverride" xml:space="preserve">
+    <value>TDP(열 설계 전력)를 변경합니다.</value>
+  </data>
+  <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
+    <value>프로세서의 전력을 제한하여 총 전력을 감소시킵니다.</value>
+  </data>
+  <data name="ProfilesPage_UMCEnable" xml:space="preserve">
+    <value>유니버설 모션 컨트롤러를 활성화합니다.</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
+    <value>비활성화, 버튼으로 활성화합니다.</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
+    <value>활성화, 버튼으로 비활성화합니다.</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
+    <value>버튼으로 활성화와 비활성화를 전환합니다.</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
+    <value>모션 활성화</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
+    <value>모션 입력이 무효한 상태에서, 선택한 버튼을 사용하여 모션을 활성화하고
+모션 입력이 활성화된 경우, 선택한 버튼을 사용하여 모션을 비활성화합니다</value>
+  </data>
+  <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
+    <value>모션 명령을 수신할 디바이스를 선택합니다.</value>
+  </data>
+  <data name="ProfilesPage_UMCSettings" xml:space="preserve">
+    <value>유니버설 모션 컨트롤 설정</value>
+  </data>
+  <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
+    <value>디바이스의 움직임을 컨트롤러 입력으로 변환합니다<div class=""></div></value>
+  </data>
+  <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
+    <value>프로파일 업데이트</value>
+  </data>
+  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+    <value>애플리케이션이 디바이스의 물리적 컨트롤러에 접근할 수 있도록 허용합니다</value>
+  </data>
+  <data name="ProfilesPage_Wrapper" xml:space="preserve">
+    <value>확장 호환성 (XInputPlus)</value>
+  </data>
+  <data name="ProfilesPage_Yaw" xml:space="preserve">
+    <value>회전</value>
+  </data>
+  <data name="ProfilesPage_Yes" xml:space="preserve">
+    <value>예</value>
+  </data>
+  <data name="Properties_Resources_ControllerPage_Disconnect" xml:space="preserve">
+    <value>연결 해제</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
+    <value>수동 GPU 클럭 제어</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
+    <value>GPU를 고정 클럭으로 설정합니다.</value>
+  </data>
+  <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
+    <value> MHz</value>
+  </data>
+  <data name="QuickPerformancePage_PowerMode" xml:space="preserve">
+    <value>전력 모드</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
+    <value>균형</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
+    <value>전력 사용량과 성능에 기반하여 디바이스를 최적화합니다.</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
+    <value>효율</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
+    <value>성능</value>
+  </data>
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+    <value>부스트</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
+    <value>TDP 제한</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
+    <value>프로세서의 전력을 제한하여 총 전력을 감소시킵니다.</value>
+  </data>
+  <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
+    <value>TDP 제한은 프로파일에 의해 덮어쓰기 됩니다.</value>
+  </data>
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+    <value>기본</value>
+  </data>
+  <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
+    <value> W</value>
+  </data>
+  <data name="QuickProfilesPage_Create" xml:space="preserve">
+    <value>프로파일 만들기</value>
+  </data>
+  <data name="QuickProfilesPage_Waiting" xml:space="preserve">
+    <value>프로세스를 기다리고 있습니다...</value>
+  </data>
+  <data name="ServiceDescription" xml:space="preserve">
+    <value>가상 컨트롤러를 사용하여 Windows 핸드헬드 컴퓨터에 자이로스코프와 가속도계의 지원을 제공합니다. 서비스가 활성화된 경우, 내장 컨트롤러는 화이트리스트 외의 애플리케이션에서 숨겨집니다. 서비스가 비활성화된 경우, 내장 컨트롤러의 숨김이 해제되고 가상 컨트롤러가 비활성화됩니다</value>
+  </data>
+  <data name="ServiceName" xml:space="preserve">
+    <value>컨트롤러 서비스</value>
+  </data>
+  <data name="SettingsPage_AppLanguage" xml:space="preserve">
+    <value>언어</value>
+  </data>
+  <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
+    <value>애플리케이션 언어</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
+    <value>재시작이 필요합니다</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
+    <value>변경을 적용하려면, 애플리케이션을 재시작하십시오</value>
+  </data>
+  <data name="SettingsPage_AppTheme" xml:space="preserve">
+    <value>테마</value>
+  </data>
+  <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
+    <value>라이트 모드 또는 다크 모드</value>
+  </data>
+  <data name="SettingsPage_AutoStartApp" xml:space="preserve">
+    <value>애플리케이션 자동 시작</value>
+  </data>
+  <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
+    <value>Windows에 로그인하면 애플리케이션이 자동으로 시작됩니다</value>
+  </data>
+  <data name="SettingsPage_Backdrop" xml:space="preserve">
+    <value>애플리케이션 배경</value>
+  </data>
+  <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
+    <value>acrylic</value>
+  </data>
+  <data name="SettingsPage_BackdropDesc" xml:space="preserve">
+    <value>애플리케이션의 배경, 없음, Mica, tabbed, acrylic</value>
+  </data>
+  <data name="SettingsPage_BackdropMica" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="SettingsPage_BackdropNone" xml:space="preserve">
+    <value>없음</value>
+  </data>
+  <data name="SettingsPage_BackdropTabbed" xml:space="preserve">
+    <value>tabbed</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
+    <value>업데이트 확인</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
+    <value>닫으면 최소화</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
+    <value>애플리케이션을 닫지 않고 최소화합니다</value>
+  </data>
+  <data name="SettingsPage_EnableDesktopLayoutOnStart" xml:space="preserve">
+    <value>시작 시 데스크톱 프로파일을 활성화합니다</value>
+  </data>
+  <data name="SettingsPage_EnableDesktopLayoutOnStartDesc" xml:space="preserve">
+    <value>데스크톱 프로파일은 애플리케이션의 시작 시 자동으로 활성화됩니다</value>
+  </data>
+  <data name="SettingsPage_Download" xml:space="preserve">
+    <value>다운로드</value>
+  </data>
+  <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
+    <value>다운로드 중 - </value>
+  </data>
+  <data name="SettingsPage_EcoQoS" xml:space="preserve">
+    <value>스마트 효율</value>
+  </data>
+  <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
+    <value>스마트 효율 모드는 백그라운드 프로세스의 우선 순위를 낮추고 에너지 효율을 향상시킵니다</value>
+  </data>
+  <data name="SettingsPage_GeneralOptions" xml:space="preserve">
+    <value>일반 옵션</value>
+  </data>
+  <data name="SettingsPage_InstallNow" xml:space="preserve">
+    <value>지금 설치</value>
+  </data>
+  <data name="SettingsPage_LastChecked" xml:space="preserve">
+    <value>마지막 확인일: </value>
+  </data>
+  <data name="SettingsPage_NotificationOptions" xml:space="preserve">
+    <value>알림 옵션</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
+    <value>애플리케이션을 백그라운드에서 엽니다</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
+    <value>애플리케이션은 처음에 최소화되어 시작되며, 작업 표시줄에 표시됩니다</value>
+  </data>
+  <data name="SettingsPage_SensorExternal" xml:space="preserve">
+    <value>외부</value>
+  </data>
+  <data name="SettingsPage_SensorInternal" xml:space="preserve">
+    <value>내부</value>
+  </data>
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
+    <value>센서 옵션</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+    <value>외부 센서의 설치 방향</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+    <value>센서가 장치의 어느 쪽에 설치되어 있는지 선택합니다</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>외부 센서의 상하 반전</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+    <value>센서는 거꾸로 설치되어 있으며, USB-C 변환기를 통해 가능합니다.</value>
+  </data>
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
+    <value>센서 선택</value>
+  </data>
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+    <value>모션 입력에 사용될 센서를 선택합니다</value>
+  </data>
+  <data name="SettingsPage_Settings" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="SettingsPage_StartupType" xml:space="preserve">
+    <value>시작 유형</value>
+  </data>
+  <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
+    <value>서비스 관리자가 서비스 시작 유형을 정의하는 데 사용합니다</value>
+  </data>
+  <data name="SettingsPage_TDPMax" xml:space="preserve">
+    <value>최대 전력</value>
+  </data>
+  <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
+    <value>프로세서에 공급되는 최대 전력 (와트 단위)</value>
+  </data>
+  <data name="SettingsPage_TDPMin" xml:space="preserve">
+    <value>최소 전력</value>
+  </data>
+  <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
+    <value>프로세서에 공급되는 최소 전력 (와트 단위)</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
+    <value>설정 가능한 전력 (cTDP) 덮어쓰기</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
+    <value>CPU 사양을 초과하여 최솟값 및 최댓값 전력 (TDP) 을 변경할 수 있습니다</value>
+  </data>
+  <data name="SettingsPage_ThemeDark" xml:space="preserve">
+    <value>다크</value>
+  </data>
+  <data name="SettingsPage_ThemeLight" xml:space="preserve">
+    <value>라이트</value>
+  </data>
+  <data name="SettingsPage_ToastNotification" xml:space="preserve">
+    <value>알림</value>
+  </data>
+  <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
+    <value>Windows 알림 센터에서 애플리케이션의 알림을 가져옵니다</value>
+  </data>
+  <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
+    <value>이용 가능한 업데이트가 있습니다</value>
+  </data>
+  <data name="SettingsPage_UpdateCheck" xml:space="preserve">
+    <value>업데이트를 확인하고 있습니다...</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
+    <value>업데이트 파일을 다운로드할 수 없습니다</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
+    <value>github에 접근할 수 없습니다</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
+    <value>업데이트 파일이 발견되지 않았습니다</value>
+  </data>
+  <data name="SettingsPage_UpdateWarning" xml:space="preserve">
+    <value>문제가 발생했습니다</value>
+  </data>
+  <data name="SettingsPage_UpToDate" xml:space="preserve">
+    <value>최신 버전입니다.</value>
+  </data>
+  <data name="ToastNewControllerEx" xml:space="preserve">
+    <value>컨트롤러가 숨겨지고 입력이 가상 컨트롤러로 전송됩니다</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>사용자</value>
+  </data>
+  <data name="WarningElevated" xml:space="preserve">
+    <value>이 설정의 잠금을 해제하려면 관리자 권한으로 이 도구를 실행해야 합니다</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
+    <value>컨트롤러 설정</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
+    <value>가상 컨트롤러의 설정을 변경합니다</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
+    <value>모션 안티 데드존</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
+    <value>게임 내의 데드존을 보정하고, 작은 움직임의 인식을 개선합니다</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
+    <value>스틱의 원형성 개선</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
+    <value>원형성 스틱 왼쪽</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
+    <value>원형성 스틱 오른쪽</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
+    <value>왼쪽 조이스틱 데드존 %</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
+    <value>왼쪽 조이스틱의 내부 및 외부 데드존 비율을 조정합니다.</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
+    <value>오른쪽 조이스틱 데드존 %</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
+    <value>오른쪽 조이스틱의 내부 및 외부 데드존 비율을 조정합니다.</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
+    <value>왼쪽 트리거 데드존 %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
+    <value>왼쪽 트리거의 내부 및 외부 데드존 비율을 조정합니다.</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
+    <value>오른쪽 트리거 데드존 %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
+    <value>오른쪽 트리거의 내부 및 외부 데드존 비율을 조정합니다.</value>
+  </data>
+  <data name="ControllerPage_VibrateDevice" xml:space="preserve">
+    <value>연결 시 컨트롤러 진동</value>
+  </data>
+  <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
+    <value>연결 시 물리적 컨트롤러를 진동시킵니다</value>
+  </data>
+  <data name="Hotkey_LayoutMode" xml:space="preserve">
+    <value>데스크탑 레이아웃</value>
+  </data>
+  <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
+    <value>컨트롤러의 데스크탑 레이아웃 사용여부를 전환합니다</value>
+  </data>
+  <data name="Hotkey_ControlCenter" xml:space="preserve">
+    <value>알림 센터를 표시</value>
+  </data>
+  <data name="Hotkey_ControlCenterDesc" xml:space="preserve">
+    <value>Windows 알림 센터의 표시 및 숨기기</value>
+  </data>
+  <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
+    <value>컨트롤러 레이아웃</value>
+  </data>
+  <data name="Hotkey_QuietModeToggled" xml:space="preserve">
+    <value>팬 재정의</value>
+  </data>
+  <data name="Hotkey_QuietModeToggledDesc" xml:space="preserve">
+    <value>팬 듀티 사이클을 사용자 정의 값으로 설정합니다</value>
+  </data>
+  <data name="Hotkey_OnScreenDisplayDesc" xml:space="preserve">
+    <value>스크린 표시 지원 활성화</value>
+  </data>
+  <data name="Hotkey_decreaseBrightness" xml:space="preserve">
+    <value>화면 밝기 감소</value>
+  </data>
+  <data name="Hotkey_decreaseBrightnessDesc" xml:space="preserve">
+    <value>현재의 디스플레이의 밝기를 2% 감소합니다</value>
+  </data>
+  <data name="Hotkey_decreaseVolume" xml:space="preserve">
+    <value>음량 감소</value>
+  </data>
+  <data name="Hotkey_decreaseVolumeDesc" xml:space="preserve">
+    <value>시스템의 음량을 2% 감소합니다</value>
+  </data>
+  <data name="Hotkey_increaseBrightness" xml:space="preserve">
+    <value>밝기 증가</value>
+  </data>
+  <data name="Hotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>현재의 디스플레이의 밝기를 2% 증가합니다</value>
+  </data>
+  <data name="Hotkey_increaseVolume" xml:space="preserve">
+    <value>음량 증가</value>
+  </data>
+  <data name="Hotkey_increaseVolumeDesc" xml:space="preserve">
+    <value>시스템의 음량을 2% 증가합니다</value>
+  </data>
+  <data name="ProfilesPage_AutoTDP" xml:space="preserve">
+    <value>AutoTDP</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
+    <value>측정된 FPS와 요구된 FPS 타겟에 따라 TDP를 자동 조정합니다</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
+    <value>Framerate 목표</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPFPSDesc" xml:space="preserve">
+    <value>AutoTDP 컨트롤러의 원하는 FPS 목표 값</value>
+  </data>
+  <data name="ProfilesPage_GPUMhz" xml:space="preserve">
+    <value>GPU 클럭의 최대 주파수</value>
+  </data>
+  <data name="ProfilesPage_GPUMhzDesc" xml:space="preserve">
+    <value>GPU의 최대 클럭 속도 (Mhz)</value>
+  </data>
+  <data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
+    <value>FPS</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel" xml:space="preserve">
+    <value>오버레이 표시 레벨</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevelDesc" xml:space="preserve">
+    <value>화면 상의 정보 표시 레벨을 변경</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayUpdateRate" xml:space="preserve">
+    <value>업데이트 주기</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayUpdateRateDesc" xml:space="preserve">
+    <value>온스크린 표시의 업데이트 주기를 변경</value>
+  </data>
+  <data name="ProfilesPage_FramerateLimit" xml:space="preserve">
+    <value>프레임레이트 제한</value>
+  </data>
+  <data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
+    <value>3D 애플리케이션의 프레임레이트를 제한합니다</value>
+  </data>
+  <data name="Hotkey_PrintScreen" xml:space="preserve">
+    <value>캡처 도구 열기</value>
+  </data>
+  <data name="Hotkey_PrintScreenDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Windows + Shift + S</value>
+  </data>
+  <data name="MainWindow_navHotkeys" xml:space="preserve">
+    <value>단축키</value>
+  </data>
+  <data name="SettingsPage_ThemeDefault" xml:space="preserve">
+    <value>시스템 설정 사용</value>
+  </data>
+  <data name="ButtonsPage_ABXY" xml:space="preserve">
+    <value>A,B,X,Y</value>
+  </data>
+  <data name="ButtonsPage_Back_Grips" xml:space="preserve">
+    <value>백 버튼</value>
+  </data>
+  <data name="ButtonsPage_Bumpers" xml:space="preserve">
+    <value>범퍼</value>
+  </data>
+  <data name="ButtonsPage_Menu" xml:space="preserve">
+    <value>메뉴</value>
+  </data>
+  <data name="ButtonsPage_OEM" xml:space="preserve">
+    <value>OEM</value>
+  </data>
+  <data name="DPadPage_DPad" xml:space="preserve">
+    <value>D패드</value>
+  </data>
+  <data name="JoystickPage_Joystick_Left" xml:space="preserve">
+    <value>왼쪽 조이스틱</value>
+  </data>
+  <data name="JoystickPage_Joystick_Left_Buttons" xml:space="preserve">
+    <value>왼쪽 조이스틱 버튼</value>
+  </data>
+  <data name="JoystickPage_Joystick_Right" xml:space="preserve">
+    <value>오른쪽 조이스틱</value>
+  </data>
+  <data name="JoystickPage_Joystick_Right_Buttons" xml:space="preserve">
+    <value>오른쪽 조이스틱 버튼</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Left" xml:space="preserve">
+    <value>왼쪽 트랙패드</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Left_Buttons" xml:space="preserve">
+    <value>왼쪽 트랙패드 버튼</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Right" xml:space="preserve">
+    <value>오른쪽 트랙패드</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Right_Buttons" xml:space="preserve">
+    <value>오른쪽 트랙패드 버튼</value>
+  </data>
+  <data name="TriggersPage_Trigger_Left" xml:space="preserve">
+    <value>왼쪽 트리거</value>
+  </data>
+  <data name="TriggersPage_Trigger_Left_Button" xml:space="preserve">
+    <value>왼쪽 트리거 버튼</value>
+  </data>
+  <data name="TriggersPage_Trigger_Right" xml:space="preserve">
+    <value>오른쪽 트리거</value>
+  </data>
+  <data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
+    <value>오른쪽 트리거 버튼</value>
+  </data>
+  <data name="AboutPage_Partner" xml:space="preserve">
+    <value>파트너</value>
+  </data>
+  <data name="Dialog_Yes" xml:space="preserve">
+    <value>예</value>
+  </data>
+  <data name="Dialog_No" xml:space="preserve">
+    <value>아니오</value>
+  </data>
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
+    <value>변경 사항을 적용하려면 장치를 재시작해야 합니다. 지금 재시작하시겠습니까?</value>
+  </data>
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
+    <value>재시작 필요</value>
+  </data>
+  <data name="AboutPage_Manufacturer" xml:space="preserve">
+    <value>제조업체</value>
+  </data>
+  <data name="AboutPage_ProductName" xml:space="preserve">
+    <value>제품명</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerWarning" xml:space="preserve">
+    <value>물리적 컨트롤러가 연결되어 있지 않습니다</value>
+  </data>
+  <data name="ControllerPage_DesktopLayout" xml:space="preserve">
+    <value>데스크톱 레이아웃</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutDefine" xml:space="preserve">
+    <value>데스크톱 레이아웃 정의</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutDefineController" xml:space="preserve">
+    <value>데스크톱 모드에서 컨트롤러 레이아웃 정의</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutEdit" xml:space="preserve">
+    <value>편집</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
+    <value>데스크톱 레이아웃 활성화</value>
+  </data>
+  <data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
+    <value>비게임 컨트롤러 레이아웃</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerAction" xml:space="preserve">
+    <value>연결된 컨트롤러 옆에 있는 연결 버튼을 클릭하세요</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDesc" xml:space="preserve">
+    <value>물리적 컨트롤러가 연결되어 있지 않습니다. 입력이 HC 또는 해당 서비스로 전송되지 않습니다.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
+    <value>호환되는 XInput 또는 DirectInput 장치가 연결되어 있는지 확인하세요.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
+    <value>물리적 컨트롤러가 감지되지 않았습니다</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerAction" xml:space="preserve">
+    <value>companion 서비스를 시작하거나 가상 컨트롤러 상태가 연결됨으로 설정되어 있는지 확인하세요</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerDesc" xml:space="preserve">
+    <value>물리적 컨트롤러가 숨겨져 있으며, 가상 컨트롤러가 없습니다. 입력이 게임에 전송되지 않습니다.</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
+    <value>가상 컨트롤러가 감지되지 않았습니다</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
+    <value>가상 컨트롤러의 음소거를 해제하거나 물리적 컨트롤러의 숨기기를 해제할 수 있습니다.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenDesc" xml:space="preserve">
+    <value>물리적 컨트롤러가 숨겨져 있으며, 가상 컨트롤러가 없습니다. 입력이 게임에 전송되지 않습니다.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenWarning" xml:space="preserve">
+    <value>물리적 컨트롤러가 숨겨져 있습니다</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenAction" xml:space="preserve">
+    <value>물리적 컨트롤러를 숨기거나 가상 컨트롤러의 음소거를 해제할 수 있습니다.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenDesc" xml:space="preserve">
+    <value>물리적 컨트롤러가 숨겨져 있지 않으며, 연결된 가상 컨트롤러가 있습니다. 게임에서 이중 입력이 발생할 수 있습니다.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
+    <value>물리적 컨트롤러가 숨겨져 있지 않습니다</value>
+  </data>
+  <data name="ControllerPage_SteamControllerHDRumble" xml:space="preserve">
+    <value>HD 진동</value>
+  </data>
+  <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
+    <value>고화질 진동 엔진을 사용하지만 CPU 사용량이 증가합니다</value>
+  </data>
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
+    <value>컨트롤러 설정</value>
+  </data>
+  <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
+    <value>템플릿 적용</value>
+  </data>
+  <data name="LayoutPage_Buttons" xml:space="preserve">
+    <value>버튼</value>
+  </data>
+  <data name="LayoutPage_Cancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="LayoutPage_Community" xml:space="preserve">
+    <value>커뮤니티</value>
+  </data>
+  <data name="LayoutPage_Confirm" xml:space="preserve">
+    <value>확인</value>
+  </data>
+  <data name="LayoutPage_Dpad" xml:space="preserve">
+    <value>D패드</value>
+  </data>
+  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
+    <value>현재 컨트롤러용 내보내기</value>
+  </data>
+  <data name="LayoutPage_ExportLayout" xml:space="preserve">
+    <value>레이아웃 내보내기</value>
+  </data>
+  <data name="LayoutPage_Gyro" xml:space="preserve">
+    <value>자이로</value>
+  </data>
+  <data name="LayoutPage_Joysticks" xml:space="preserve">
+    <value>조이스틱</value>
+  </data>
+  <data name="LayoutPage_LayoutAuthor" xml:space="preserve">
+    <value>레이아웃 작성자</value>
+  </data>
+  <data name="LayoutPage_LayoutDesc" xml:space="preserve">
+    <value>레이아웃 설명</value>
+  </data>
+  <data name="LayoutPage_LayoutTitle" xml:space="preserve">
+    <value>레이아웃 제목</value>
+  </data>
+  <data name="LayoutPage_SaveGameInfoLayout" xml:space="preserve">
+    <value>레이아웃과 함께 게임 정보 저장합니다</value>
+  </data>
+  <data name="LayoutPage_ShowCurrentControllerTemplates" xml:space="preserve">
+    <value>현재 컨트롤러 템플릿만 표시합니다</value>
+  </data>
+  <data name="LayoutPage_TemplatePicker" xml:space="preserve">
+    <value>템플릿 선택기</value>
+  </data>
+  <data name="LayoutPage_Templates" xml:space="preserve">
+    <value>템플릿</value>
+  </data>
+  <data name="LayoutPage_Trackpads" xml:space="preserve">
+    <value>트랙패드</value>
+  </data>
+  <data name="LayoutPage_Triggers" xml:space="preserve">
+    <value>트리거</value>
+  </data>
+  <data name="OverlayPage_Millisecond" xml:space="preserve">
+    <value>ms</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Disabled" xml:space="preserve">
+    <value>비활성화</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Extended" xml:space="preserve">
+    <value>확장</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Full" xml:space="preserve">
+    <value>전체</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
+    <value>최소</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
+    <value>사용자 정의</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
+    <value>외부</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
+    <value>비활성화</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
+    <value>전체</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
+    <value>최소</value>
+  </data>
+  <data name="OverlayPage_CustomSettings" xml:space="preserve">
+    <value>사용자 정의 설정</value>
+  </data>
+  <data name="OverlayPage_TimeLevel" xml:space="preserve">
+    <value>시간 수준</value>
+  </data>
+  <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
+    <value>당신의 시간에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="OverlayPage_FPSLevel" xml:space="preserve">
+    <value>FPS 수준</value>
+  </data>
+  <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
+    <value>당신의 FPS에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="OverlayPage_CPULevel" xml:space="preserve">
+    <value>CPU 수준</value>
+  </data>
+  <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
+    <value>당신의 CPU에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="OverlayPage_RAMLevel" xml:space="preserve">
+    <value>RAM 수준</value>
+  </data>
+  <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
+    <value>당신의 RAM에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="OverlayPage_GPULevel" xml:space="preserve">
+    <value>GPU 수준</value>
+  </data>
+  <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
+    <value>당신의 GPU에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="OverlayPage_VRAMLevel" xml:space="preserve">
+    <value>VRAM 수준</value>
+  </data>
+  <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
+    <value>당신의 VRAM에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="OverlayPage_BATTLevel" xml:space="preserve">
+    <value>배터리 수준</value>
+  </data>
+  <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
+    <value>당신의 배터리에 대한 정보 수준입니다.</value>
+  </data>
+  <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
+    <value>가상 컨트롤러 레이아웃 변경</value>
+  </data>
+  <data name="ProfilesPage_CPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ProfilesPage_EPP" xml:space="preserve">
+    <value>에너지 성능 선호도 (EPP)</value>
+  </data>
+  <data name="ProfilesPage_EPPBalance" xml:space="preserve">
+    <value>CPU/GPU 전력 균형</value>
+  </data>
+  <data name="ProfilesPage_EPPDesc" xml:space="preserve">
+    <value>CPU와 GPU 간의 전력 분배 정책을 지정합니다.</value>
+  </data>
+  <data name="ProfilesPage_GPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
+    <value>전력 제한 목표</value>
+  </data>
+  <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
+    <value>CPU 부스트 모드</value>
+  </data>
+  <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
+    <value>현재 CPU 부스트 모드를 설정합니다.</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
+    <value>디스플레이 해상도 및 주사율</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+    <value>주 디스플레이 해상도 및 주사율을 조정합니다.</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
+    <value>팬 재정의</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverrideDesc" xml:space="preserve">
+    <value>팬의 작동 정도를 사용자 정의 값으로 설정합니다.</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverridePercentage" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="QuickProfilesPage_CurrentProfile" xml:space="preserve">
+    <value>현재 프로필:</value>
+  </data>
+  <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
+    <value>기본</value>
+  </data>
+  <data name="QuickProfilesPage_PowerLimitTarget" xml:space="preserve">
+    <value>전력 제한 목표</value>
+  </data>
+  <data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
+    <value>자동 숨기기</value>
+  </data>
+  <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
+    <value>사용자가 창 외부를 클릭하면 빠른 도구가 자동으로 숨겨집니다.</value>
+  </data>
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
+    <value>전원 옵션</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
+    <value>빠른 도구 배경, 없음, mica, tabbed, acrylic</value>
+  </data>
+  <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
+    <value>빠른 도구 옵션</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
+    <value>창 위치</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
+    <value>왼쪽 하단</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomRight" xml:space="preserve">
+    <value>오른쪽 하단</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
+    <value>빠른 도구 창 위치를 정의합니다.</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
+    <value>왼쪽 상단</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
+    <value>오른쪽 상단</value>
+  </data>
+  <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
+    <value>RivaTuner Statistics Server</value>
+  </data>
+  <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
+    <value>Companion이 닫힐 때 RTSS를 자동으로 끕니다.</value>
+  </data>
+  <data name="SettingsPage_SensorNone" xml:space="preserve">
+    <value>없음</value>
+  </data>
+  <data name="SettingsPage_ThirdPartyApps" xml:space="preserve">
+    <value>타사 애플리케이션</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
+    <value>비활성화됨</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Injection" xml:space="preserve">
+    <value>주입 (권장)</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
+    <value>재지정 (권장)</value>
+  </data>
+  <data name="Enum_MotionInput_AutoRollYawSwap_Desc" xml:space="preserve">
+    <value>이 입력은 간단한 조이스틱으로 작동합니다. 노트북 및 클램셸형 핸드헬드에 적합하며, 디바이스 보유 방식(90도 또는 180도 열림)에 따라 자동으로 요 롤이 전환됩니다..</value>
+  </data>
+  <data name="Enum_AYANEO2_ButtonFlags_OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum_AYANEO2_ButtonFlags_OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum_AYANEO2_ButtonFlags_OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum_AYANEO2_ButtonFlags_OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum_AYANEOAIR_ButtonFlags_OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum_AYANEOAIRLite_ButtonFlags_OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>가위표</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>동그라미</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>네모</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>세모</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>공유</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>옵션</value>
+  </data>
+  <data name="Enum_HIDmode_DualShock4Controller" xml:space="preserve">
+    <value>DualShock 4 컨트롤러</value>
+  </data>
+  <data name="Enum_HIDmode_NoController" xml:space="preserve">
+    <value>컨트롤러 무효</value>
+  </data>
+  <data name="Enum_HIDmode_Xbox360Controller" xml:space="preserve">
+    <value>XBOX 360 컨트롤러</value>
+  </data>
+  <data name="Enum_HIDstatus_Connected" xml:space="preserve">
+    <value>연결됨</value>
+  </data>
+  <data name="Enum_HIDstatus_Disconnected" xml:space="preserve">
+    <value>연결 끊김</value>
+  </data>
+  <data name="Enum_Input_AutoRollYawSwap" xml:space="preserve">
+    <value>자동 롤, 요 전환</value>
+  </data>
+  <data name="Enum_Input_WorldSpace" xml:space="preserve">
+    <value>조이스틱 카메라</value>
+  </data>
+  <data name="Enum_Input_JoystickSteering" xml:space="preserve">
+    <value>조이스틱 스티어링</value>
+  </data>
+  <data name="Enum_Input_PlayerSpace" xml:space="preserve">
+    <value>플레이어 공간</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_HC" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Overlay" xml:space="preserve">
+    <value>오버레이</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Quicktools" xml:space="preserve">
+    <value>빠른 도구</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_Back" xml:space="preserve">
+    <value>보기</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_Start" xml:space="preserve">
+    <value>메뉴</value>
+  </data>
+  <data name="Enum_Output_LeftStick" xml:space="preserve">
+    <value>왼쪽 조이스틱</value>
+  </data>
+  <data name="Enum_Output_RightStick" xml:space="preserve">
+    <value>오른쪽 조이스틱</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_Default" xml:space="preserve">
+    <value>기본 컨트롤러 프로파일</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_MissingExecutable" xml:space="preserve">
+    <value>실행 가능한 파일이 없습니다</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_MissingPath" xml:space="preserve">
+    <value>애플리케이션 경로가 없습니다</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_MissingPermission" xml:space="preserve">
+    <value>콘텐츠를 변경할 권한이 없습니다</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_None" xml:space="preserve">
+    <value>여기에는 아무것도 표시되지 않습니다</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_Running" xml:space="preserve">
+    <value>이 프로파일은 실행 중입니다</value>
+  </data>
+  <data name="Enum_QualityOfServiceLevel_Default" xml:space="preserve">
+    <value>기본</value>
+  </data>
+  <data name="Enum_QualityOfServiceLevel_Eco" xml:space="preserve">
+    <value>친환경</value>
+  </data>
+  <data name="Enum_QualityOfServiceLevel_High" xml:space="preserve">
+    <value>높음</value>
+  </data>
+  <data name="Enum_ServiceStartMode_Automatic" xml:space="preserve">
+    <value>자동</value>
+  </data>
+  <data name="Enum_ServiceStartMode_Disabled" xml:space="preserve">
+    <value>비활성화됨</value>
+  </data>
+  <data name="Enum_ServiceStartMode_Manual" xml:space="preserve">
+    <value>수동</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_Special" xml:space="preserve">
+    <value>가이드</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_Start" xml:space="preserve">
+    <value>메뉴</value>
+  </data>
+  <data name="Enum_MotionInput_WorldSpace_Desc" xml:space="preserve">
+    <value>단순한 조이스틱으로 동작합니다. 이는 기존의 조이스틱 애플리케이션을 대상으로 하고 있습니다</value>
+  </data>
+  <data name="Enum_MotionInput_JoystickSteering_Desc" xml:space="preserve">
+    <value>스티어링 휠이나 레이싱 게임의 제어에 최적화된 조이스틱으로 동작합니다</value>
+  </data>
+  <data name="Enum_MotionInput_PlayerSpace_Desc" xml:space="preserve">
+    <value>1인칭 또는 3인칭 카메라의 제어에 최적화된 조이스틱으로 동작합니다</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Handheld" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum_SteamDeck_ButtonFlags_OEM1" xml:space="preserve">
+    <value>옵션</value>
+  </data>
+  <data name="Enum_NeptuneController_ButtonFlags_Special" xml:space="preserve">
+    <value>STEAM</value>
+  </data>
+  <data name="Enum_ROGAlly_ButtonFlags_OEM1" xml:space="preserve">
+    <value>Command center</value>
+  </data>
+  <data name="Enum_ROGAlly_ButtonFlags_OEM2" xml:space="preserve">
+    <value>Armory crate</value>
+  </data>
+  <data name="Enum_ROGAlly_ButtonFlags_OEM3" xml:space="preserve">
+    <value>M1</value>
+  </data>
+  <data name="Enum_AYANEO2021Pro_ButtonFlags_OEM1" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="Enum_AYANEO2021Pro_ButtonFlags_OEM2" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="Enum_AYANEO2021Pro_ButtonFlags_OEM3" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Custom" xml:space="preserve">
+    <value>커스텀</value>
+  </data>
+  <data name="Enum_InputsHotkeyType_Device" xml:space="preserve">
+    <value>장치</value>
+  </data>
+  <data name="Enum_MotionInput_AutoRollYawSwap" xml:space="preserve">
+    <value>자동 롤 요우 스왑</value>
+  </data>
+  <data name="Enum_MotionInput_WorldSpace" xml:space="preserve">
+    <value>월드 공간</value>
+  </data>
+  <data name="Enum_MotionInput_JoystickSteering" xml:space="preserve">
+    <value>조이스틱 스티어링</value>
+  </data>
+  <data name="Enum_MotionInput_PlayerSpace" xml:space="preserve">
+    <value>플레이어 공간</value>
+  </data>
+  <data name="Enum_MotionOutput_LeftStick" xml:space="preserve">
+    <value>왼쪽 스틱</value>
+  </data>
+  <data name="Enum_MotionOutput_RightStick" xml:space="preserve">
+    <value>오른쪽 스틱</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_LeftThumb" xml:space="preserve">
+    <value>왼쪽 엄지</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_RightThumb" xml:space="preserve">
+    <value>오른쪽 엄지</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_DPadDown" xml:space="preserve">
+    <value>D패드 아래</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_DPadLeft" xml:space="preserve">
+    <value>D패드 왼쪽</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_DPadRight" xml:space="preserve">
+    <value>D패드 오른쪽</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_DPadUp" xml:space="preserve">
+    <value>D패드 위</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_LeftThumb" xml:space="preserve">
+    <value>왼쪽 엄지</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbDown" xml:space="preserve">
+    <value>왼쪽 엄지 아래</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbLeft" xml:space="preserve">
+    <value>왼쪽 엄지 왼쪽</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbRight" xml:space="preserve">
+    <value>왼쪽 엄지 오른쪽</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_LeftThumbUp" xml:space="preserve">
+    <value>왼쪽 엄지 위</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_RightThumb" xml:space="preserve">
+    <value>오른쪽 엄지</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_RightThumbDown" xml:space="preserve">
+    <value>오른쪽 엄지 아래</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_RightThumbLeft" xml:space="preserve">
+    <value>오른쪽 엄지 왼쪽</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_RightThumbRight" xml:space="preserve">
+    <value>오른쪽 엄지 오른쪽</value>
+  </data>
+  <data name="Enum_XInputController_ButtonFlags_RightThumbUp" xml:space="preserve">
+    <value>오른쪽 엄지 위</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_AlwaysOn" xml:space="preserve">
+    <value>항상 켜짐</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_Back" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_DPadDown" xml:space="preserve">
+    <value>D패드 아래</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_DPadLeft" xml:space="preserve">
+    <value>D패드 왼쪽</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_DPadRight" xml:space="preserve">
+    <value>D패드 오른쪽</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_DPadUp" xml:space="preserve">
+    <value>D패드 위</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_LeftShoulder" xml:space="preserve">
+    <value>왼쪽 범퍼</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_LeftThumb" xml:space="preserve">
+    <value>왼쪽 엄지</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_LeftTrigger" xml:space="preserve">
+    <value>왼쪽 트리거</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_RightShoulder" xml:space="preserve">
+    <value>오른쪽 범퍼</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_RightThumb" xml:space="preserve">
+    <value>오른쪽 엄지</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_RightTrigger" xml:space="preserve">
+    <value>오른쪽 트리거</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_Start" xml:space="preserve">
+    <value>시작</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_GamepadButtonFlagsExt_Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_ProfileErrorCode_IsRunning" xml:space="preserve">
+    <value>죄송합니다. 이 프로필이 실행 중인 것 같습니다. 실행 파일이 필요한 일부 옵션이 비활성화되어 있을 수 있습니다.</value>
+  </data>
+  <data name="Enum_ProController_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="Enum_ProController_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_B1" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_B2" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_B3" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_B4" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_Back" xml:space="preserve">
+    <value>마이너스</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_L1" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_R1" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_Special" xml:space="preserve">
+    <value>홈</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_Special2" xml:space="preserve">
+    <value>캡처</value>
+  </data>
+  <data name="Enum_ProController_ButtonFlags_Start" xml:space="preserve">
+    <value>플러스</value>
+  </data>
+  <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
+    <value>왼쪽 손가락 스와이프</value>
+  </data>
+  <data name="Enum_DS4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
+    <value>오른쪽 손가락 스와이프</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
+    <value>왼쪽 손가락 클릭</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
+    <value>왼쪽 손가락 터치</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
+    <value>오른쪽 손가락 클릭</value>
+  </data>
+  <data name="Enum_DS4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
+    <value>오른쪽 손가락 터치</value>
+  </data>
+  <data name="Enum_DualSenseController_AxisLayoutFlags_LeftPad" xml:space="preserve">
+    <value>왼쪽 손가락 스와이프</value>
+  </data>
+  <data name="Enum_DualSenseController_AxisLayoutFlags_RightPad" xml:space="preserve">
+    <value>오른쪽 손가락 스와이프</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_B1" xml:space="preserve">
+    <value>가위표</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_B2" xml:space="preserve">
+    <value>동그라미</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_B3" xml:space="preserve">
+    <value>네모</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_B4" xml:space="preserve">
+    <value>세모</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_Back" xml:space="preserve">
+    <value>공유</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_LeftPadClick" xml:space="preserve">
+    <value>왼쪽 손가락 클릭</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_LeftPadTouch" xml:space="preserve">
+    <value>왼쪽 손가락 터치</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_RightPadClick" xml:space="preserve">
+    <value>오른쪽 손가락 클릭</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_RightPadTouch" xml:space="preserve">
+    <value>오른쪽 손가락 터치</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum_DualSenseController_ButtonFlags_Start" xml:space="preserve">
+    <value>옵션</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
+    <value>이 템플릿을 적용하시겠습니까? 모든 레이아웃 설정이 덮어쓰여집니다.</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
+    <value>이 작업은 취소할 수 없습니다. 이전에 적용된 템플릿: {0}</value>
+  </data>
+  <data name="Enum_KeyFlags_A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_KeyFlags_Alt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="Enum_KeyFlags_Apostrophe" xml:space="preserve">
+    <value>Apostrophe</value>
+  </data>
+  <data name="Enum_KeyFlags_B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_KeyFlags_Backslash" xml:space="preserve">
+    <value>Backslash</value>
+  </data>
+  <data name="Enum_KeyFlags_Backspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="Enum_KeyFlags_C" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Enum_KeyFlags_Comma" xml:space="preserve">
+    <value>Comma</value>
+  </data>
+  <data name="Enum_KeyFlags_Control" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="Enum_KeyFlags_D" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="Enum_KeyFlags_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Enum_KeyFlags_E" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="Enum_KeyFlags_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="Enum_KeyFlags_Enter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="Enum_KeyFlags_Equal" xml:space="preserve">
+    <value>Equal</value>
+  </data>
+  <data name="Enum_KeyFlags_Escape" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="Enum_KeyFlags_F" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="Enum_KeyFlags_F1" xml:space="preserve">
+    <value>F1</value>
+  </data>
+  <data name="Enum_KeyFlags_F10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="Enum_KeyFlags_F11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="Enum_KeyFlags_F12" xml:space="preserve">
+    <value>F12</value>
+  </data>
+  <data name="Enum_KeyFlags_F2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="Enum_KeyFlags_F3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="Enum_KeyFlags_F4" xml:space="preserve">
+    <value>F4</value>
+  </data>
+  <data name="Enum_KeyFlags_F5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="Enum_KeyFlags_F6" xml:space="preserve">
+    <value>F6</value>
+  </data>
+  <data name="Enum_KeyFlags_F7" xml:space="preserve">
+    <value>F7</value>
+  </data>
+  <data name="Enum_KeyFlags_F8" xml:space="preserve">
+    <value>F8</value>
+  </data>
+  <data name="Enum_KeyFlags_F9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="Enum_KeyFlags_G" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="Enum_KeyFlags_Grave" xml:space="preserve">
+    <value>Grave</value>
+  </data>
+  <data name="Enum_KeyFlags_H" xml:space="preserve">
+    <value>H</value>
+  </data>
+  <data name="Enum_KeyFlags_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum_KeyFlags_I" xml:space="preserve">
+    <value>I</value>
+  </data>
+  <data name="Enum_KeyFlags_Insert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Enum_KeyFlags_J" xml:space="preserve">
+    <value>J</value>
+  </data>
+  <data name="Enum_KeyFlags_K" xml:space="preserve">
+    <value>K</value>
+  </data>
+  <data name="Enum_KeyFlags_L" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum_KeyFlags_M" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Enum_KeyFlags_Minus" xml:space="preserve">
+    <value>Minus</value>
+  </data>
+  <data name="Enum_KeyFlags_N" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="Enum_KeyFlags_O" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="Enum_KeyFlags_P" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Enum_KeyFlags_Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Enum_KeyFlags_Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Enum_KeyFlags_Q" xml:space="preserve">
+    <value>Q</value>
+  </data>
+  <data name="Enum_KeyFlags_R" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum_KeyFlags_S" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Enum_KeyFlags_Semicolon" xml:space="preserve">
+    <value>Semicolon</value>
+  </data>
+  <data name="Enum_KeyFlags_Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="Enum_KeyFlags_Slash" xml:space="preserve">
+    <value>Slash</value>
+  </data>
+  <data name="Enum_KeyFlags_Space" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="Enum_KeyFlags_T" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="Enum_KeyFlags_Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Enum_KeyFlags_U" xml:space="preserve">
+    <value>U</value>
+  </data>
+  <data name="Enum_KeyFlags_V" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="Enum_KeyFlags_W" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="Enum_KeyFlags_X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_KeyFlags_Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_KeyFlags_Z" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="Enum_MotionOuput_MoveCursor" xml:space="preserve">
+    <value>커서 움직임</value>
+  </data>
+  <data name="Enum_MotionOuput_ScrollWheel" xml:space="preserve">
+    <value>스크롤 휠</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_LeftStick" xml:space="preserve">
+    <value>왼쪽 스틱</value>
+  </data>
+  <data name="Enum_XInputController_AxisLayoutFlags_RightStick" xml:space="preserve">
+    <value>오른쪽 스틱</value>
+  </data>
+  <data name="Controller_Connect" xml:space="preserve">
+    <value>연결</value>
+  </data>
+  <data name="Controller_Disconnect" xml:space="preserve">
+    <value>연결 해제</value>
+  </data>
+  <data name="Controller_Hide" xml:space="preserve">
+    <value>숨기기</value>
+  </data>
+  <data name="Controller_Unhide" xml:space="preserve">
+    <value>숨김 해제</value>
+  </data>
+  <data name="Controller_Virtual" xml:space="preserve">
+    <value>가상 </value>
+  </data>
+  <data name="MainWindow_Back" xml:space="preserve">
+    <value>뒤로가기</value>
+  </data>
+  <data name="MainWindow_Exit" xml:space="preserve">
+    <value>종료</value>
+  </data>
+  <data name="MainWindow_MainWindow" xml:space="preserve">
+    <value>메인 창</value>
+  </data>
+  <data name="MainWindow_Navigate" xml:space="preserve">
+    <value>탐색</value>
+  </data>
+  <data name="MainWindow_QuickTools" xml:space="preserve">
+    <value>빠른 도구</value>
+  </data>
+  <data name="MainWindow_Select" xml:space="preserve">
+    <value>선택</value>
+  </data>
+  <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
+    <value>Steam Xbox 컨트롤러 향상된 기능 드라이버를 제거할 수 있습니다.</value>
+  </data>
+  <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
+    <value>Steam Xbox Controller Enhanced Features Driver가 설치되어 있으며, 물리적 컨트롤러를 숨기거나 표시하는 HidHide 기능을 방해하고 있습니다.</value>
+  </data>
+  <data name="Hint_SteamXboxDrivers" xml:space="preserve">
+    <value>Steam Xbox Controller Enhanced Features Driver가 설치되어 있습니다.</value>
+  </data>
+  <data name="DevicePage_Device" xml:space="preserve">
+    <value>장치</value>
+  </data>
+  <data name="MainWindow_navDevice" xml:space="preserve">
+    <value>장치</value>
+  </data>
+  <data name="XInputController_Warning_BTH" xml:space="preserve">
+    <value>블루투스 신호의 전원을 껐다 켜는 동안 잠시 기다려 주세요. 다른 Bluetooth 장치가 더 이상 응답하지 않을 수 있습니다.</value>
+  </data>
+  <data name="DevicePage_DynamicLighting" xml:space="preserve">
+    <value>효과</value>
+  </data>
+  <data name="DevicePage_DynamicLightingDesc" xml:space="preserve">
+    <value>조명 색상 테마 및 효과 선택하기</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Ambilight" xml:space="preserve">
+    <value>앰비언트 라이트</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_SolidColor" xml:space="preserve">
+    <value>색</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Brightness" xml:space="preserve">
+    <value>밝기</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_BrightnessDesc" xml:space="preserve">
+    <value>조명의 밝기를 변경합니다.</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_MainColorSelection" xml:space="preserve">
+    <value>주 색상</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_None" xml:space="preserve">
+    <value>없음</value>
+  </data>
+  <data name="DevicePage_AmbilightVerticalBlackBarDetection" xml:space="preserve">
+    <value>앰비라이트 수직 블랙바 감지</value>
+  </data>
+  <data name="DevicePage_AmbilightVerticalBlackBarDetectionDesc" xml:space="preserve">
+    <value>4:3 화면 비율 게임 또는 비디오를 위한 수직 블랙바 감지</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Breathing" xml:space="preserve">
+    <value>숨쉬기</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Gradient" xml:space="preserve">
+    <value>그라디언트</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Rainbow" xml:space="preserve">
+    <value>무지개</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Wave" xml:space="preserve">
+    <value>파동</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Wheel" xml:space="preserve">
+    <value>휠</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_MatchAccentColor" xml:space="preserve">
+    <value>내 Windows 강조 색상과 일치</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_SecondColorSelection" xml:space="preserve">
+    <value>두 번째 색상</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_EffectSpeed" xml:space="preserve">
+    <value>효과 속도</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_EffectDirection" xml:space="preserve">
+    <value>방향</value>
+  </data>
+  <data name="MainWindow_navPerformance" xml:space="preserve">
+    <value>성능</value>
+  </data>
+  <data name="PerformancePage_Device" xml:space="preserve">
+    <value>성능</value>
+  </data>
+  <data name="ProfilesPage_CPUMhz" xml:space="preserve">
+    <value>CPU 클럭 최대 주파수</value>
+  </data>
+  <data name="QuickPerformancePage_CPUControl" xml:space="preserve">
+    <value>수동 CPU 클럭 제어</value>
+  </data>
+  <data name="QuickPerformancePage_CPUControlDesc" xml:space="preserve">
+    <value>CPU를 고정 클럭으로 설정합니다.</value>
+  </data>
+  <data name="QuickPerformancePage_CPUUnit" xml:space="preserve">
+    <value> Mhz</value>
+  </data>
+  <data name="PowerProfileDefaultDescription" xml:space="preserve">
+    <value>최적의 성능, 온도, 소음 및 배터리 수명을 위한 기본 전원 및 팬 속도</value>
+  </data>
+  <data name="PowerProfileDefaultName" xml:space="preserve">
+    <value>기본</value>
+  </data>
+  <data name="PowerProfileManualDescription" xml:space="preserve">
+    <value>사용자 정의 전원 및 팬 속도</value>
+  </data>
+  <data name="PowerProfileManualName" xml:space="preserve">
+    <value>수동 모드: {0}</value>
+  </data>
+  <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
+    <value>모든 시나리오에서 성능, 온도 및 소음 균형 유지.</value>
+  </data>
+  <data name="PowerProfileROGAllyBetterPerformance" xml:space="preserve">
+    <value>ROG Ally - Performance</value>
+  </data>
+  <data name="PowerProfileROGAllyBetterBatteryDesc" xml:space="preserve">
+    <value>CPU 및 GPU 전력을 제한하지만 소음 수준을 낮게 유지합니다.</value>
+  </data>
+  <data name="PowerProfileROGAllyBetterBattery" xml:space="preserve">
+    <value>ROG Ally - Silent</value>
+  </data>
+  <data name="PowerProfileROGAllyBestPerformanceDesc" xml:space="preserve">
+    <value>팬의 공기 흐름을 극대화하여 고성능 게임과 작업을 위해 CPU와 GPU의 전력을 최대화합니다.</value>
+  </data>
+  <data name="PowerProfileROGAllyBestPerformance" xml:space="preserve">
+    <value>ROG Ally - Turbo</value>
+  </data>
+  <data name="QuickDevicePage_Desc" xml:space="preserve">
+    <value>설정, 디스플레이 프로필</value>
+  </data>
+  <data name="QuickDevicePage_Title" xml:space="preserve">
+    <value>장치</value>
+  </data>
+  <data name="QuickHomePage_Title" xml:space="preserve">
+    <value>홈</value>
+  </data>
+  <data name="QuickPerformancePage_Title" xml:space="preserve">
+    <value>성능</value>
+  </data>
+  <data name="QuickProfilesPage_Desc" xml:space="preserve">
+    <value>성능, 모션 제어, 그래픽</value>
+  </data>
+  <data name="QuickProfilesPage_Title" xml:space="preserve">
+    <value>프로필</value>
+  </data>
+  <data name="QuickSettingsPage_Desc" xml:space="preserve">
+    <value>선호하는 작업</value>
+  </data>
+  <data name="QuickSettingsPage_Title" xml:space="preserve">
+    <value>작업</value>
+  </data>
+  <data name="QuickApplicationsPage_Desc" xml:space="preserve">
+    <value>응용 프로그램 관리</value>
+  </data>
+  <data name="QuickApplicationsPage_Title" xml:space="preserve">
+    <value>응용 프로그램</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+    <value>새로 고침 빈도</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+    <value>주요 새로 고침 빈도를 조정합니다</value>
+  </data>
+  <data name="ProfilesPage_FanSettings" xml:space="preserve">
+    <value>팬 설정</value>
+  </data>
+  <data name="ProfilesPage_FanSettingsDesc" xml:space="preserve">
+    <value>팬 설정을 변경합니다</value>
+  </data>
+  <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
+    <value>새 전원 프리셋을 만듭니다</value>
+  </data>
+  <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
+    <value>전원 프리셋 만들기</value>
+  </data>
+  <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
+    <value>전원 프리셋 삭제</value>
+  </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>전환</value>
+  </data>
+  <data name="XInputController_Warning_USB" xml:space="preserve">
+    <value>컨트롤러의 전원을 껐다 켭니다. 잠시 기다려 주십시오.</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_B5" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_L4" xml:space="preserve">
+    <value>Y1</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_L5" xml:space="preserve">
+    <value>Y2</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_R4" xml:space="preserve">
+    <value>M3</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_R5" xml:space="preserve">
+    <value>Y3</value>
+  </data>
+  <data name="Enum_LegionGo_ButtonFlags_OEM1" xml:space="preserve">
+    <value>LegionR</value>
+  </data>
+  <data name="Enum_LegionGo_ButtonFlags_OEM2" xml:space="preserve">
+    <value>LegionL</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_B6" xml:space="preserve">
+    <value>마우스 휠 클릭</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_B7" xml:space="preserve">
+    <value>마우스 휠 위로</value>
+  </data>
+  <data name="Enum_LegionController_ButtonFlags_B8" xml:space="preserve">
+    <value>마우스 휠 아래로</value>
+  </data>
+  <data name="IController_ControllerIndex" xml:space="preserve">
+    <value>게임패드: {0}</value>
+  </data>
+  <data name="Enum_ROGAlly_ButtonFlags_OEM4" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
+    <value>에뮬레이트된 컨트롤러 유형을 전환합니다.</value>
+  </data>
+  <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
+    <value>Xbox 360 및 듀얼쇼크 4 에뮬레이트 컨트롤러 간 전환</value>
+  </data>
+  <data name="ProfilesPage_EmulatedController" xml:space="preserve">
+    <value>에뮬레이트된 컨트롤러 유형</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDS4" xml:space="preserve">
+    <value>에뮬레이트된 듀얼쇼크 4 컨트롤러</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
+    <value>에뮬레이트된 XBOX 360 컨트롤러</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
+    <value>이 프로필이 활성화될 때 사용되는 에뮬레이트된 컨트롤러</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement" xml:space="preserve">
+    <value>컨트롤러 관리(실험적 기능)</value>
+  </data>
+  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
+    <value>자동으로 컨트롤러를 관리하여 호환성을 높입니다</value>
+  </data>
+  <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
+    <value>터치패드 패스스루</value>
+  </data>
+  <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
+    <value>장치의 터치패드를 일반 마우스로 사용하도록 허용하며, 소프트웨어 처리나 매핑 없이 작동합니다</value>
+  </data>
+  <data name="ControllerPage_Close" xml:space="preserve">
+    <value>닫기</value>
+  </data>
+  <data name="ControllerPage_TryAgain" xml:space="preserve">
+    <value>다시 시도</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
+    <value>ASUS 서비스가 실행 중입니다</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckReadme" xml:space="preserve">
+    <value>ASUS 서비스를 비활성화하여 애플리케이션이 원활하게 실행되고 충돌이 없도록 해야 합니다</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
+    <value>ASUS 서비스가 이미 귀하의 장치에서 실행 중입니다. 이는 애플리케이션에 영향을 줄 수 있습니다</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
+    <value>ASUS 서비스 비활성화</value>
+  </data>
+  <data name="MainWindow_navNotifications" xml:space="preserve">
+    <value>알림</value>
+  </data>
+  <data name="NotificationsPage_NothingToSee" xml:space="preserve">
+    <value>아직 알림이 없습니다</value>
+  </data>
+  <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
+    <value>현재 알림이 없습니다.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
+    <value>프로필 설정으로 이동하여 게임별 에뮬레이트된 컨트롤러 유형 기본값을 변경합니다.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
+    <value>에뮬레이트된 컨트롤러 유형은 현재 적용된 게임 프로필에 의해 관리되고 있습니다.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
+    <value>에뮬레이트된 컨트롤러는 프로필에 의해 관리되고 있습니다.</value>
+  </data>
+  <data name="Hint_CoreIsolationCheck" xml:space="preserve">
+    <value>코어 격리 기능이 켜져 있습니다</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckAction" xml:space="preserve">
+    <value>코어 격리 비활성화</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckDesc" xml:space="preserve">
+    <value>시스템의 코어 격리 기능이 켜져 있으므로 TDP 읽기/쓰기 및 팬 제어가 비활성화될 수 있습니다</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
+    <value>코어 격리를 비활성화하고 시스템을 재시작하여 TDP 조작을 활성화할 수 있습니다</value>
+  </data>
+  <data name="ProfilesPage_SubProfiles" xml:space="preserve">
+    <value>하위 프로필</value>
+  </data>
+  <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>같은 게임에 다른 프로필 추가</value>
+  </data>
+  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>적용할 하위 프로필 선택</value>
+  </data>
+  <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
+    <value>팬을 최대 속도로 설정합니다</div></value>
+  </data>
+  <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
+    <value>팬 최대 속도 재정의</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
+    <value>정수 스케일링을 사용할 수 없습니다</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
+    <value>정수 스케일링 배포</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckDesc" xml:space="preserve">
+    <value>정수 스케일링 기능이 설치되어 있지 않으므로 활성화하거나 비활성화할 수 없습니다</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckReadme" xml:space="preserve">
+    <value>시스템에 정수 스케일링을 배포하기 위해 일부 스크립트를 실행해야 합니다</value>
+  </data>
+  <data name="QuickOverlayPage_Desc" xml:space="preserve">
+    <value>화면 오버레이 관리</value>
+  </data>
+  <data name="QuickOverlayPage_Title" xml:space="preserve">
+    <value>오버레이</value>
+  </data>
+  <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
+    <value>이것은 기본 장치 사전 설정이며 편집할 수 없습니다. 이는 디바이스의 원래 소프트웨어에서 제공하는 사전 설정과 비슷합니다.</value>
+  </data>
+  <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
+    <value>Legion Go - Quiet</value>
+  </data>
+  <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
+    <value>LS의 저소음 모드와 유사한 프리셋. TDP 제한: 8W</value>
+  </data>
+  <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
+    <value>Legion Go - Balanced</value>
+  </data>
+  <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
+    <value>LS의 균형 모드와 유사한 프리셋. TDP 제한: 15W</value>
+  </data>
+  <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
+    <value>Legion Go - Performance</value>
+  </data>
+  <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
+    <value>LS의 성능 모드와 유사한 프리셋. TDP 제한: 20W</value>
+  </data>
+  <data name="ProfilesPage_DefaultProfile" xml:space="preserve">
+    <value>기본 프리셋이며, 이 프리셋에서는 팬 커브를 수정할 수 없습니다.</value>
+  </data>
+  <data name="Hint_LegionGoServices" xml:space="preserve">
+    <value>Legion Space Tasks and Services 활성화됨</value>
+  </data>
+  <data name="Hint_LegionGoServicesAction" xml:space="preserve">
+    <value>Legion Space 비활성화</value>
+  </data>
+  <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
+    <value>Legion Space Tasks and Services는 이미 콘솔에서 활성화되어 있습니다. 이는 애플리케이션과의 호환성 문제를 일으킬 수 있습니다.</value>
+  </data>
+  <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
+    <value>Legion Space Tasks and Services를 비활성화하여 애플리케이션이 제대로 실행되고 오류 없이 작동할 수 있도록 해야 합니다</value>
+  </data>
+  <data name="DevicePage_UseSecondColor" xml:space="preserve">
+    <value>두 번째 색상 사용</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
+    <value>그래픽 설정</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSettingsDesc" xml:space="preserve">
+    <value>그래픽 설정 변경</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
+    <value>프리셋 선택</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelectionDesc" xml:space="preserve">
+    <value>편집할 프리셋을 선택하세요</value>
+  </data>
+  <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
+    <value>장치 프리셋</value>
+  </data>
+  <data name="PowerProfilesPage_UserPresets" xml:space="preserve">
+    <value>사용자 프리셋</value>
+  </data>
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
+    <value>전원 설정</value>
+  </data>
+  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+    <value>해상도가 현재 프로필에 의해 재정의되었습니다</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
+    <value>왼쪽</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
+    <value>오른쪽</value>
+  </data>
+  <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
+    <value>화면 오버레이 전환</value>
+  </data>
+  <data name="Hotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
+    <value>화면 오버레이 전환</value>
+  </data>
+  <data name="ProfilesPage_GPUScaling" xml:space="preserve">
+    <value>GPU 스케일링</value>
+  </data>
+  <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
+    <value>GPU는 낮은 해상도를 스크린에 맞게 확대합니다</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
+    <value>이미지 선명화</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
+    <value>시각적 세부 사항을 향상시킵니다</value>
+  </data>
+  <data name="ProfilesPage_IS" xml:space="preserve">
+    <value>정수 스케일링</value>
+  </data>
+  <data name="ProfilesPage_ISDesc" xml:space="preserve">
+    <value>각 픽셀을 정수로 곱하여 해상도를 확대합니다</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScale" xml:space="preserve">
+    <value>해상도 스케일</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleDesc" xml:space="preserve">
+    <value>정수 스케일링이 적용될 해상도 스케일</value>
+  </data>
+  <data name="ProfilesPage_RSR" xml:space="preserve">
+    <value>Radeon Super Resolution</value>
+  </data>
+  <data name="ProfilesPage_RSRDesc" xml:space="preserve">
+    <value>더 빠른 프레임 속도를 위한 드라이버 기반 업스케일링 기능</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode" xml:space="preserve">
+    <value>스케일링 모드</value>
+  </data>
+  <data name="ProfilesPage_ScalingModeDesc" xml:space="preserve">
+    <value>디스플레이에 맞게 이미지를 늘리고 위치를 조정하는 데 사용되는 방법을 선택하세요</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_Center" xml:space="preserve">
+    <value>센터</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_FullPanel" xml:space="preserve">
+    <value>채우기</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_PreserveAspectRatio" xml:space="preserve">
+    <value>비율 유지</value>
+  </data>
+  <data name="ProfilesPage_Sharpen" xml:space="preserve">
+    <value>선명화 효과</value>
+  </data>
+  <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
+    <value>1/1은 독점 전체 화면만 지원합니다.</value>
+  </data>
+  <data name="SettingsPage_UISounds" xml:space="preserve">
+    <value>UI 소리 활성화</value>
+  </data>
+  <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
+    <value>탐색 중 UI 소리 활성화 또는 비활성화</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
+    <value>스케일링 유형</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeDesc" xml:space="preserve">
+    <value>스케일링 비율에 맞게 스케일링 유형을 선택하세요</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
+    <value>정수 스케일링</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
+    <value>최단입점</value>
+  </data>
+  <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
+    <value>컴퓨터에 연결됨</value>
+  </data>
+  <data name="ControllerPage_VirtualDevices" xml:space="preserve">
+    <value>가상 컨트롤러</value>
+  </data>
+  <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
+    <value>이(가) 컴퓨터에서 사용하는 것입니다</value>
+  </data>
+  <data name="ControllerPage_VirtualStatus" xml:space="preserve">
+    <value>컨트롤러 정보</value>
+  </data>
+  <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
+    <value>가상 컨트롤러 상태 변경</value>
+  </data>
+  <data name="ControllerPage_VirtualType" xml:space="preserve">
+    <value>컨트롤러 유형</value>
+  </data>
+  <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
+    <value>가상 컨트롤러 유형 변경</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
+    <value>자동 절전 시간</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
+    <value>조이스틱 데드존</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
+    <value>왼쪽 Legion 컨트롤러</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
+    <value>왼쪽 Legion 컨트롤러의 설정을 변경합니다</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
+    <value>오른쪽 Legion 컨트롤러</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
+    <value>오른쪽 Legion 컨트롤러의 설정을 변경합니다.</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
+    <value>트리거 데드존</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
+    <value>트리거 마진</value>
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
+    <value>프리셋 효과</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_PresetsSelection" xml:space="preserve">
+    <value>프리셋 선택</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset01" xml:space="preserve">
+    <value>Monster Woke</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset02" xml:space="preserve">
+    <value>Flowing Light</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset03" xml:space="preserve">
+    <value>Sunset Afterglow</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset04" xml:space="preserve">
+    <value>Colorful Neon</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset05" xml:space="preserve">
+    <value>Dreamy</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset06" xml:space="preserve">
+    <value>Cyberpunk</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset07" xml:space="preserve">
+    <value>Colorful</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset08" xml:space="preserve">
+    <value>AOK classic</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset09" xml:space="preserve">
+    <value>OXP classic</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset10" xml:space="preserve">
+    <value>Aurora</value>
+  </data>
+  <data name="LEDPreset_OneXPlayerX1_Preset11" xml:space="preserve">
+    <value>Warm Sun</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationMaximized" xml:space="preserve">
+    <value>최대화</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePath" xml:space="preserve">
+    <value>디스플레이</value>
+  </data>
+  <data name="SettingsPage_QuickToolsDevicePathDesc" xml:space="preserve">
+    <value>Quicktools가 표시될 디스플레이</value>
+  </data>
+  <data name="MainWindow_TelemetryText" xml:space="preserve">
+    <value>Handheld Companion이 HC 개발자에게 정보를 보고하도록 승인하시겠습니까?
+
+승인을 받으면 HC는 시스템 하드웨어 및 운영 체제에 대한 데이터를 포함한 충돌 보고서를 자동으로 업로드합니다. 개인 정보나 개인 식별 데이터는 수집되지 않습니다.
+
+이 정보를 통해 소프트웨어의 품질을 개선하고 우선순위를 정할 수 있습니다. 또한 버그, 성능 및 안정성 문제를 일으키는 드문 구성을 식별하는 데 도움이 됩니다. 이 권한은 옵트인(기본값 해제)으로 설정되어 있으며 언제든지 기본 설정에서 변경할 수 있습니다.
+
+HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와주셔서 감사합니다.</value>
+  </data>
+  <data name="MainWindow_TelemetryTitle" xml:space="preserve">
+    <value>원격 분석</value>
+  </data>
+  <data name="ProfilesPage_ProfileArguments" xml:space="preserve">
+    <value>인자</value>
+  </data>
+  <data name="Enum_InputsChordType_Click" xml:space="preserve">
+    <value>클릭</value>
+  </data>
+  <data name="Enum_InputsChordType_Long" xml:space="preserve">
+    <value>길게 누르기</value>
+  </data>
+  <data name="Enum_InputsChordType_None" xml:space="preserve">
+    <value>단축키 입력을 정의하려면 누릅니다.</value>
+  </data>
+  <data name="Hotkey_Keystrokes" xml:space="preserve">
+    <value>키 입력</value>
+  </data>
+  <data name="Hotkey_KeystrokesDesc" xml:space="preserve">
+    <value>사용자 지정 키보드 입력 시퀀스를 보냅니다.</value>
+  </data>
+  <data name="Hotkey_Executable" xml:space="preserve">
+    <value>실행 파일</value>
+  </data>
+  <data name="Hotkey_ExecutableDesc" xml:space="preserve">
+    <value>지정된 인자로 애플리케이션 실행합니다.</value>
+  </data>
+  <data name="Hotkey_Function" xml:space="preserve">
+    <value>기능</value>
+  </data>
+  <data name="Hotkey_FunctionDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키 변경하기</value>
+  </data>
+  <data name="Hotkey_None" xml:space="preserve">
+    <value>없음</value>
+  </data>
+  <data name="Hotkey_NoneDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키 변경하기</value>
+  </data>
+  <data name="Hotkey_ActionCenter" xml:space="preserve">
+    <value>윈도우 알림센터 호출</value>
+  </data>
+  <data name="Hotkey_ActionCenterDesc" xml:space="preserve">
+    <value>알림 센터 전환</value>
+  </data>
+  <data name="Hotkey_Settings" xml:space="preserve">
+    <value>윈도우 설정 호출</value>
+  </data>
+  <data name="Hotkey_SettingsDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키 변경하기</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacy" xml:space="preserve">
+    <value>Display touch keyboard (Legacy)</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyDesc" xml:space="preserve">
+    <value>버튼 또는 특수 키를 눌러 단축키 변경하기</value>
+  </data>
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
+    <value>온스크린 디스플레이</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeHybrid" xml:space="preserve">
+    <value>하이브리드</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeExclusive" xml:space="preserve">
+    <value>독점</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterBattery" xml:space="preserve">
+    <value>전력 절약</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterPerformance" xml:space="preserve">
+    <value>전력 균형</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BestPerformance" xml:space="preserve">
+    <value>전력 프리미엄</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BestPerformanceDesc" xml:space="preserve">
+    <value>28W TDP</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterBatteryDesc" xml:space="preserve">
+    <value>15W TDP</value>
+  </data>
+  <data name="PowerProfileMinisforumV3BetterPerformanceDesc" xml:space="preserve">
+    <value>22W TDP</value>
+  </data>
+  <data name="ProfilesPage_AFMF" xml:space="preserve">
+    <value>AMD Fluid Motion Frames</value>
+  </data>
+  <data name="ProfilesPage_AFMFDesc" xml:space="preserve">
+    <value>프레임 생성 기술을 활용하여 게임 내 한계를 뛰어넘는 FPS로 성능을 향상시켜 더욱 부드러운 경험을 제공합니다.</value>
+  </data>
+  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
+    <value>전원 프리셋 (전원 공급됨)</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsPlugged" xml:space="preserve">
+    <value>사용되지 않음</value>
+  </data>
+  <data name="Hotkey_muteVolume" xml:space="preserve">
+    <value>음소거</value>
+  </data>
+  <data name="Hotkey_muteVolumeDesc" xml:space="preserve">
+    <value>음소거/음소거 해제</value>
+  </data>
+  <data name="Hotkey_GameBar" xml:space="preserve">
+    <value>게임 바 열기</value>
+  </data>
+  <data name="Hotkey_GameBarDesc" xml:space="preserve">
+    <value>다음 키를 누르세요: Windows + G</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B5" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B6" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B7" xml:space="preserve">
+    <value>C3</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B8" xml:space="preserve">
+    <value>C4</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B9" xml:space="preserve">
+    <value>T1</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B10" xml:space="preserve">
+    <value>T2</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_B11" xml:space="preserve">
+    <value>T3</value>
+  </data>
+  <data name="Enum_TatantulaProController_ButtonFlags_L5" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="ProfilesPage_Pinned" xml:space="preserve">
+    <value>빠른 도구 애플리케이션 페이지의 빠른 시작 섹션에 프로필을 표시합니다.</value>
+  </data>
+  <data name="Hotkey_SwapScreen" xml:space="preserve">
+    <value>창 전환</value>
+  </data>
+  <data name="Hotkey_SwapScreenDesc" xml:space="preserve">
+    <value>창을 사용 가능한 다음 화면으로 이동</value>
+  </data>
+  <data name="Controller_Calibrate" xml:space="preserve">
+    <value>보정</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value>시도 횟수 {0}: </value>
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value>배터리 옵션</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
+    <value>최대 배터리 충전 수준</value>
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
+    <value>자동 (균형 잡힌 P/E 코어)</value>
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
+    <value>효율성 코어 (E-cores) 선호</value>
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
+    <value>성능 코어 (P-cores) 선호</value>
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
+    <value>성능 코어만 (최대 성능)</value>
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
+    <value>E-cores만 (최대 효율)</value>
+  </data>
+  <data name="Hotkey_XGMobile" xml:space="preserve">
+    <value>ROG XG Mobile 전환</value>
+  </data>
+  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
+    <value>ROG XG Mobile 상태 전환</value>
+  </data>
+  <data name="SettingsPage_Experimental" xml:space="preserve">
+    <value>실험적 옵션</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
+    <value>시스템이 대기 상태에 들어가거나 나올 때 애플리케이션을 일시 중지하고 재개합니다.</value>
+  </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>지원되지 않는 장치</value>
+  </data>
+</root>
