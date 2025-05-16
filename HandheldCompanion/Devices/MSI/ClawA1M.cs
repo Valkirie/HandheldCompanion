@@ -703,6 +703,9 @@ public class ClawA1M : IDevice
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            device.Removed -= Device_Removed;
+
+            device.MonitorDeviceEvents = false;
             device.CloseDevice();
             device.Dispose();
         }
@@ -713,6 +716,9 @@ public class ClawA1M : IDevice
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            device.Removed += Device_Removed;
+
+            device.MonitorDeviceEvents = true;
             device.OpenDevice();
 
             SwitchMode(gamepadMode);
