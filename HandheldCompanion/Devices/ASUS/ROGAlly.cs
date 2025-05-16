@@ -675,70 +675,20 @@ public class ROGAlly : IDevice
 
     private void ConfigureController(bool Remap)
     {
-        /*
-        Generic function
-        23 HID commands of 64 bytes each
+        SendHidControlWrite(modeGame);
+        SendHidControlWrite(dPadUpDownDefault);
+        SendHidControlWrite(dPadLeftRightDefault);
+        SendHidControlWrite(joySticksDefault);
+        SendHidControlWrite(shoulderButtonsDefault);
+        SendHidControlWrite(faceButtonsABDefault);
+        SendHidControlWrite(faceButtonsXYDefault);
+        SendHidControlWrite(viewAndMenuDefault);
+        SendHidControlWrite(Remap ? M1F18M2F17 : M1M2Default);
 
-        1.  Mode
-        2.  Flush buffer, write changes
-        3.  DPad up and down
-        4.  Flush buffer, write changes
-        5.  DPad left and right
-        6.  Flush buffer, write changes
-        7.  JoysSticks
-        8.  Flush buffer, write changes
-        9.  Shoulder buttons
-        10. Flush buffer, write changes
-        11. AB Facebuttons
-        12. Flush buffer, write changes 
-        13. XY Facebuttons
-        14. Flush buffer, write changes
-        15. View and menu
-        16. Flush buffer, write changes
-        17. M1 and M2
-        18. Flush buffer, write changes
-        19. Triggers
-        20. Commit and reset 1 of 4
-        21. Commit and reset 2 of 4
-        22. Commit and reset 3 of 4
-        23. Commit and reset 4 of 4
-        */
-
-        SendHidControlWrite(modeGame);                  // 1
-        SendHidControlWrite(flushBufferWriteChanges);   // 2
-
-        SendHidControlWrite(dPadUpDownDefault);         // 3
-        SendHidControlWrite(flushBufferWriteChanges);   // 4
-
-        SendHidControlWrite(dPadLeftRightDefault);      // 5
-        SendHidControlWrite(flushBufferWriteChanges);   // 6
-
-        SendHidControlWrite(joySticksDefault);          // 7
-        SendHidControlWrite(flushBufferWriteChanges);   // 8
-
-        SendHidControlWrite(shoulderButtonsDefault);    // 9
-        SendHidControlWrite(flushBufferWriteChanges);   // 10
-
-        SendHidControlWrite(faceButtonsABDefault);      // 11
-        SendHidControlWrite(flushBufferWriteChanges);   // 12
-
-        SendHidControlWrite(faceButtonsXYDefault);      // 13
-        SendHidControlWrite(flushBufferWriteChanges);   // 14
-
-        SendHidControlWrite(viewAndMenuDefault);        // 15
-        SendHidControlWrite(flushBufferWriteChanges);   // 16
-
-        // Choose the appropriate mapping based on the 'Remap' flag
-        SendHidControlWrite(Remap ? M1F18M2F17 : M1M2Default);  // Step 17
-
-        SendHidControlWrite(flushBufferWriteChanges);   // 18
-
-        SendHidControlWrite(triggersDefault);           // 19
-
-        SendHidControlWrite(commitReset1of4);           // 20
-        SendHidControlWrite(commitReset2of4);           // 21
-        SendHidControlWrite(commitReset3of4);           // 22
-        SendHidControlWrite(commitReset4of4);           // 23
+        SendHidControlWrite(commitReset1of4);
+        SendHidControlWrite(commitReset2of4);
+        SendHidControlWrite(commitReset3of4);
+        SendHidControlWrite(commitReset4of4);
     }
 
     public void SendHidControlWrite(byte[] data)
