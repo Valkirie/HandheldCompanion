@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
@@ -735,6 +736,12 @@ public abstract class IDevice
     public virtual bool IsReady()
     {
         return true;
+    }
+
+    protected async Task WaitUntilReadyAndReattachAsync()
+    {
+        while (!IsReady())
+            await Task.Delay(250).ConfigureAwait(false);
     }
 
     public virtual void SetKeyPressDelay(HIDmode controllerMode)
