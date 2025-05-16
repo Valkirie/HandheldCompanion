@@ -126,15 +126,12 @@ public static class OSDManager
         try
         {
             // clear previous display
-            if (OnScreenDisplay.TryGetValue(processId, out OSD? OSD))
+            if (OnScreenDisplay.TryGetValue(processId, out var OSD))
             {
-                if (OSD is not null)
-                {
-                    OSD.Update(string.Empty);
-                    OSD.Dispose();
-                }
+                OSD.Update("");
+                OSD.Dispose();
 
-                OnScreenDisplay.Remove(processId, out _);
+                OnScreenDisplay.TryRemove(new KeyValuePair<int, OSD>(processId, OSD));
             }
         }
         catch { }

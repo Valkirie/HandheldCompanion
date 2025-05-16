@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.Misc.ProcessEx;
 using Timer = System.Timers.Timer;
@@ -32,7 +31,6 @@ public class RTSS : IPlatform
 
     private bool ProfileLoaded;
     private AppEntry appEntry;
-    private CancellationTokenSource? _tryHookCts;
 
     public RTSS()
     {
@@ -205,32 +203,23 @@ public class RTSS : IPlatform
                 return;
         }
 
-        // cancel any in‐flight hook attempt
-        _tryHookCts?.Cancel();
-        _tryHookCts?.Dispose();
-
         // unhook previous process
         UnhookProcess(TargetProcessId);
 
         // update foreground process id
         TargetProcessId = processEx.ProcessId;
 
-        // create a fresh CTS for this hook attempt
-        _tryHookCts = new CancellationTokenSource();
-
-        // fire off the new hook attempt, passing the token
-        Task.Run(() => TryHookProcess(TargetProcessId, _tryHookCts.Token), _tryHookCts.Token);
+        // try to hook new process
+        new Thread(() => TryHookProcess(TargetProcessId)).Start();
     }
 
-    private async Task TryHookProcess(int processId, CancellationToken ct)
+    private void TryHookProcess(int processId)
     {
         if (!IsRunning)
             return;
 
         do
         {
-            ct.ThrowIfCancellationRequested();
-
             try
             {
                 appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == processId).FirstOrDefault();
@@ -238,15 +227,11 @@ public class RTSS : IPlatform
             catch (FileNotFoundException) { return; }
             catch { }
 
-            // wait a bit, but abort early if cancelled
-            await Task.Delay(1000, ct).ConfigureAwait(false);
-
+            // wait a bit
+            Thread.Sleep(1000);
         } while (appEntry is null && TargetProcessId == processId && KeepAlive);
 
         if (appEntry is null)
-            return;
-
-        if (ct.IsCancellationRequested || appEntry is null)
             return;
 
         // set HookedProcessId
