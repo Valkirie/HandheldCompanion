@@ -215,6 +215,9 @@ public class RTSS : IPlatform
 
     private void TryHookProcess(int processId)
     {
+        if (!IsRunning)
+            return;
+
         do
         {
             try

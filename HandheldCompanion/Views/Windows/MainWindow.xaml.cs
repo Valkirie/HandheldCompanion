@@ -556,11 +556,11 @@ public partial class MainWindow : GamepadWindow
                     }
 
                     // open device, when ready
-                    new Thread(() =>
+                    new Task(async () =>
                     {
                         // wait for all HIDs to be ready
                         while (!CurrentDevice.IsReady())
-                            Thread.Sleep(1000);
+                            await Task.Delay(250).ConfigureAwait(false);
 
                         // open current device (threaded to avoid device to hang)
                         CurrentDevice.Open();
