@@ -406,7 +406,7 @@ public class ClawA1M : IDevice
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
     {
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Inserted();
+            Device_Inserted(true);
     }
 
     private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
@@ -711,8 +711,19 @@ public class ClawA1M : IDevice
         }
     }
 
-    private void Device_Inserted()
+    private async void WaitUntilReadyAndReattachAsync()
     {
+        // spin until we detect the device again
+        while (!IsReady())
+            await Task.Delay(100).ConfigureAwait(false);
+    }
+
+    private void Device_Inserted(bool reScan = false)
+    {
+        // if you still want to automatically re-attach:
+        if (reScan)
+            WaitUntilReadyAndReattachAsync();
+
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
