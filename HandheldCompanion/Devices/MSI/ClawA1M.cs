@@ -406,14 +406,17 @@ public class ClawA1M : IDevice
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
     {
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Removed();
+            Device_Inserted();
     }
 
     private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
     {
         // hack, force rescan
+        // controller is not properly rescanned sometime, maybe due to tight interval
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
         {
+            Device_Removed();
+
             switch (Controller.GetProductID())
             {
                 case PID_XINPUT:
@@ -477,9 +480,9 @@ public class ClawA1M : IDevice
         // set flag
         _IsOpen = false;
 
+        // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
@@ -634,7 +637,7 @@ public class ClawA1M : IDevice
             // improve detection maybe using if device.ReadFeatureData() ?
             if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
-
+            
             hidDevices[INPUT_HID_ID] = device;
 
             return true;
@@ -695,43 +698,22 @@ public class ClawA1M : IDevice
         return data.ToArray();
     }
 
-    private async void Device_Removed()
+    private void Device_Removed()
     {
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.MonitorDeviceEvents = false;
-            device.Removed -= Device_Removed;
             device.CloseDevice();
             device.Dispose();
         }
-
-        while (!IsReady())
-            await Task.Delay(500);
-
-        Device_Inserted();
     }
 
-    private async void Device_Inserted()
+    private void Device_Inserted()
     {
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed += Device_Removed;
-            device.MonitorDeviceEvents = true;
-
-            /*
-            GamepadMode currentMode = GamepadMode.Offline;
-            switch (device.Attributes.ProductId)
-            {
-                case PID_XINPUT:
-                    currentMode = GamepadMode.XInput;
-                    break;
-                case PID_DINPUT:
-                    currentMode = GamepadMode.DirectInput;
-                    break;
-            }
-            */
+            device.OpenDevice();
 
             SwitchMode(gamepadMode);
         }

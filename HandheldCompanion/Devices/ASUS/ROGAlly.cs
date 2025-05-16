@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -32,13 +33,6 @@ public class ROGAlly : IDevice
 
     private const byte INPUT_HID_ID = 0x5a;
     private const byte AURA_HID_ID = 0x5d;
-    private const int ASUS_ID = 0x0b05;
-
-    public static readonly byte[] LED_INIT1 = new byte[] { AURA_HID_ID, 0xb9 };
-    public static readonly byte[] LED_INIT2 = Encoding.ASCII.GetBytes("]ASUS Tech.Inc.");
-    public static readonly byte[] LED_INIT3 = new byte[] { AURA_HID_ID, 0x05, 0x20, 0x31, 0, 0x1a };
-    public static readonly byte[] LED_INIT4 = Encoding.ASCII.GetBytes("^ASUS Tech.Inc.");
-    public static readonly byte[] LED_INIT5 = new byte[] { 0x5e, 0x05, 0x20, 0x31, 0, 0x1a };
 
     static byte[] MESSAGE_APPLY = { AURA_HID_ID, 0xb4 };
     static byte[] MESSAGE_SET = { AURA_HID_ID, 0xb5, 0, 0, 0 };
@@ -326,50 +320,86 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        // check if Asus ACPI is open
-        if (!AsusACPI.IsOpen)
-            return false;
+        // manage events
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-        {
-            device.MonitorDeviceEvents = true;
-            device.OpenDevice();
-
-            Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
-            ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
-        }
-
-        // force M1/M2 to send F17 and F18
-        ConfigureController(true);
-
-        // raise events
-        switch (ManagerFactory.settingsManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QuerySettings();
-                break;
-        }
+        Device_Inserted();
 
         return true;
     }
 
-    private void SettingsManager_Initialized()
+    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
     {
-        QuerySettings();
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Inserted();
     }
 
-    private void QuerySettings()
+    private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
     {
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        // hack, force rescan
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Removed();
+    }
 
+    private bool IsReading = false;
+
+    private void Device_Removed()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.CloseDevice();
+            device.Dispose();
+        }
+
+        // stop further reads
+        IsReading = false;
+    }
+
+    private void Device_Inserted()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.OpenDevice();
+
+            // fire‐and‐forget the read loop
+            IsReading = true;
+            _ = ReadLoopAsync(device);
+
+            // force M1/M2 to send F17 and F18
+            ConfigureController(true);
+        }
+    }
+
+    private async Task ReadLoopAsync(HidDevice device)
+    {
+        try
+        {
+            while (IsReading)
+            {
+                HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
+                HandleReport(report, device);
+            }
+        }
+        catch { }
+    }
+
+    private void HandleReport(HidReport report, HidDevice device)
+    {
+        lock (this.updateLock)
+        {
+            byte key = report.Data[0];
+            HandleEvent(key);
+        }
+    }
+
+    protected override void QuerySettings()
+    {
         // raise events
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false);
+
+        base.QuerySettings();
     }
 
     public override void Close()
@@ -388,28 +418,25 @@ public class ROGAlly : IDevice
             hidDevices.Clear();
         }
 
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        // manage events
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
     }
 
     public override bool IsReady()
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 64);
         foreach (HidDevice device in devices)
         {
             if (!device.IsConnected)
                 continue;
 
             if (device.ReadFeatureData(out byte[] data, INPUT_HID_ID))
-            {
                 hidDevices[INPUT_HID_ID] = device;
-            }
             else if (device.ReadFeatureData(out data, AURA_HID_ID))
-            {
                 hidDevices[AURA_HID_ID] = device;
-            }
         }
 
         try
@@ -430,42 +457,9 @@ public class ROGAlly : IDevice
                 catch { }
             }
         }
-        catch (ArgumentException)
-        {
-            return false;
-        }
+        catch { }
 
         return false;
-    }
-
-    private byte[] prevReportData = null;
-    private void OnReport(HidReport result, HidDevice device)
-    {
-        lock (this.updateLock)
-        {
-            // Continuously read the next report.
-            Task<HidReport> nextReportTask = Task.Run(async () => await device.ReadReportAsync());
-            nextReportTask.ContinueWith(t => OnReport(nextReportTask.Result, device));
-
-            // Get the whole report data.
-            byte[] reportData = result.Data;
-
-            // If we already have a previous report and it matches the new one...
-            if (prevReportData != null && reportData.SequenceEqual(prevReportData))
-            {
-                // Something is wrong with the HidDevice - restart it.
-                device.CloseDevice();
-                Task.Delay(1000);
-                device.OpenDevice();
-            }
-
-            // Update prevReportData with a copy of the new report.
-            prevReportData = (byte[])reportData.Clone();
-
-            // get key
-            byte key = result.Data[0];
-            HandleEvent(key);
-        }
     }
 
     public override void SetFanControl(bool enable, int mode = 0)
@@ -527,7 +521,6 @@ public class ROGAlly : IDevice
                 KeyRelease(button);
                 break;
 
-            default:
             case 56:    // Armory crate: Click
             case 166:   // Command center: Click
                 {
@@ -772,7 +765,7 @@ public class ROGAlly : IDevice
         AsusACPI.DeviceSet(AsusACPI.PPT_APUC1, limit);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         switch (name)
         {
@@ -797,5 +790,7 @@ public class ROGAlly : IDevice
                 }
                 break;
         }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 }
