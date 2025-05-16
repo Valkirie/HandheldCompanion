@@ -7,9 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -359,18 +356,11 @@ public class ROGAlly : IDevice
         IsReading = false;
     }
 
-    private async void WaitUntilReadyAndReattachAsync()
-    {
-        // spin until we detect the device again
-        while (!IsReady())
-            await Task.Delay(100).ConfigureAwait(false);
-    }
-
-    private void Device_Inserted(bool reScan = false)
+    private async void Device_Inserted(bool reScan = false)
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            WaitUntilReadyAndReattachAsync();
+            await WaitUntilReadyAndReattachAsync();
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {

@@ -711,18 +711,11 @@ public class ClawA1M : IDevice
         }
     }
 
-    private async void WaitUntilReadyAndReattachAsync()
-    {
-        // spin until we detect the device again
-        while (!IsReady())
-            await Task.Delay(100).ConfigureAwait(false);
-    }
-
-    private void Device_Inserted(bool reScan = false)
+    private async void Device_Inserted(bool reScan = false)
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            WaitUntilReadyAndReattachAsync();
+            await WaitUntilReadyAndReattachAsync();
 
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
