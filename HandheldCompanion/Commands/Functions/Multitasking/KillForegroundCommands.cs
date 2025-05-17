@@ -21,7 +21,7 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
             try
             {
                 // get current foreground process
-                ProcessEx processEx = ProcessManager.GetForegroundProcess();
+                ProcessEx processEx = ProcessManager.GetCurrent();
                 if (processEx is null)
                     return;
 

@@ -134,7 +134,7 @@ public class RTSS : IPlatform
 
     private void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 

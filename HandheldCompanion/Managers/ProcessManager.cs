@@ -1,5 +1,6 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -56,9 +57,8 @@ public class ProcessManager : IManager
     private readonly Timer ProcessWatcher;
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
-    private object processLock = new();
 
-    private static ProcessEx foregroundProcess;
+    private static ProcessEx currentProcess;
     private IntPtr foregroundWindow;
 
     private AutomationEventHandler _windowOpenedHandler;
@@ -99,7 +99,63 @@ public class ProcessManager : IManager
         ForegroundTimer.Start();
         ProcessWatcher.Start();
 
+        // manage events
+        UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
+        UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
+
         base.Start();
+    }
+
+    private nint processHandle = IntPtr.Zero;
+    private int processId = 0;
+
+    private async void GamepadFocusManager_GotFocus(string Name)
+    {
+        switch(Name)
+        {
+            case "QuickTools":
+                {
+                    Profile currentProfile = ManagerFactory.profileManager.GetProfileFromPath(currentProcess.Path, false);
+                    if (!currentProfile.SuspendOnQT)
+                        return;
+
+                    // we already have a suspended process
+                    if (processHandle != IntPtr.Zero)
+                        return;
+
+                    if (currentProcess is not null && currentProcess.IsGame())
+                    {
+                        bool success = SuspendProcess(currentProcess.Handle, currentProcess.ProcessId);
+                        if (success)
+                        {
+                            processHandle = currentProcess.Handle;
+                            processId = currentProcess.ProcessId;
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    private async void GamepadFocusManager_LostFocus(string Name)
+    {
+        switch (Name)
+        {
+            case "QuickTools":
+                {
+                    // no suspended process
+                    if (processHandle == IntPtr.Zero)
+                        return;
+
+                    bool success = ResumeProcess(processHandle, processId);
+                    if (success)
+                    {
+                        processHandle = IntPtr.Zero;
+                        processId = 0;
+                    }
+                }
+                break;
+        }
     }
 
     public override void Stop()
@@ -126,6 +182,10 @@ public class ProcessManager : IManager
         // stop processes monitor
         ForegroundTimer.Stop();
         ProcessWatcher.Stop();
+
+        // manage events
+        UIGamepad.GotFocus -= GamepadFocusManager_GotFocus;
+        UIGamepad.LostFocus -= GamepadFocusManager_LostFocus;
 
         base.Stop();
     }
@@ -236,14 +296,9 @@ public class ProcessManager : IManager
         return true;
     }
 
-    public static ProcessEx GetForegroundProcess()
+    public static ProcessEx GetCurrent()
     {
-        return foregroundProcess;
-    }
-
-    public static ProcessEx GetLastSuspendedProcess()
-    {
-        return Processes.Values.LastOrDefault(item => item.IsSuspended);
+        return currentProcess;
     }
 
     public static ProcessEx GetProcess(int processId)
@@ -320,17 +375,17 @@ public class ProcessManager : IManager
                 return;
 
             // store previous process
-            ProcessEx prevProcess = foregroundProcess;
+            ProcessEx prevProcess = currentProcess;
 
             // get filter
             ProcessFilter filter = GetFilter(process.Executable, process.Path);
 
             // update current process
-            foregroundProcess = process;
-            foregroundProcess.Refresh(true);
+            currentProcess = process;
+            currentProcess.Refresh(true);
 
-            if (foregroundProcess is not null)
-                LogManager.LogDebug("{0} process {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
+            if (currentProcess is not null)
+                LogManager.LogDebug("{0} process {1} now has the foreground", currentProcess.Platform, currentProcess.Executable);
             else
             {
                 LogManager.LogDebug("No current foreground process or it is ignored");
@@ -358,10 +413,10 @@ public class ProcessManager : IManager
                 return;
 
             // If the halted process had foreground, log and raise event.
-            if (foregroundProcess == processEx)
+            if (currentProcess == processEx)
             {
-                LogManager.LogDebug("{0} process {1} that had foreground has halted", foregroundProcess.Platform, foregroundProcess.Executable);
-                ForegroundChanged?.Invoke(null, foregroundProcess, ProcessFilter.Allowed);
+                LogManager.LogDebug("{0} process {1} that had foreground has halted", currentProcess.Platform, currentProcess.Executable);
+                ForegroundChanged?.Invoke(null, currentProcess, ProcessFilter.Allowed);
             }
 
             // Remove the process from the dictionary and raise the stopped event.
@@ -551,17 +606,17 @@ public class ProcessManager : IManager
 
     private static Dictionary<int, int[]> windowsCache = new();
 
-    public static async Task ResumeProcess(ProcessEx processEx, bool restoreWindow = true)
+    public static async Task<bool> ResumeProcess(ProcessEx processEx, bool restoreWindow = true)
     {
         // process has exited
         if (processEx.Process.HasExited)
-            return;
+            return false;
 
-        // refresh processes handles
-        List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
-        handles.Insert(0, processEx.Handle);
+        // suspend main handle
+        bool success = ProcessUtils.NtResumeProcess(processEx.Handle) == 0;
 
-        // resume processes
+        // refresh processes handles and resume
+        IEnumerable<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle);
         foreach (nint handle in handles)
             ProcessUtils.NtResumeProcess(handle);
 
@@ -577,13 +632,39 @@ public class ProcessManager : IManager
             // clear cache
             windowsCache.Remove(processEx.ProcessId);
         }
+
+        return success;
     }
 
-    public static async Task SuspendProcess(ProcessEx processEx, bool hideWindow = true)
+    public static bool ResumeProcess(nint mainHandle, int mainId)
+    {
+        // suspend main handle
+        bool success = ProcessUtils.NtResumeProcess(mainHandle) == 0;
+
+        // refresh processes handles and resume
+        IEnumerable<nint> handles = ProcessUtils.GetChildProcesses(mainId).Select(p => p.Handle);
+        foreach (nint handle in handles)
+            ProcessUtils.NtResumeProcess(handle);
+
+        return success;
+    }
+
+    public static bool SuspendProcess(nint mainHandle, int mainId)
+    {
+        // refresh processes handles and suspend
+        IEnumerable<nint> handles = ProcessUtils.GetChildProcesses(mainId).Select(p => p.Handle);
+        foreach (nint handle in handles)
+            ProcessUtils.NtSuspendProcess(handle);
+
+        // suspend main handle
+        return ProcessUtils.NtSuspendProcess(mainHandle) == 0;
+    }
+
+    public static async Task<bool> SuspendProcess(ProcessEx processEx, bool hideWindow = true)
     {
         // process has exited
         if (processEx.Process.HasExited)
-            return;
+            return false;
 
         if (hideWindow)
         {
@@ -598,13 +679,13 @@ public class ProcessManager : IManager
             await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
         }
 
-        // refresh processes handles
-        List<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle).ToList();
-        handles.Insert(0, processEx.Handle);
-
-        // suspend processes
+        // refresh processes handles and suspend
+        IEnumerable<nint> handles = ProcessUtils.GetChildProcesses(processEx.ProcessId).Select(p => p.Handle);
         foreach (nint handle in handles)
             ProcessUtils.NtSuspendProcess(handle);
+
+        // suspend main handle
+        return ProcessUtils.NtSuspendProcess(processEx.Handle) == 0;
     }
 
     // A function that takes a Process as a parameter and returns true if it has any xinput related dlls in its modules

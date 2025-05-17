@@ -423,7 +423,7 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryForeground()
         {
-            ProcessEx processEx = ProcessManager.GetForegroundProcess();
+            ProcessEx processEx = ProcessManager.GetCurrent();
             if (processEx is null)
                 return;
 

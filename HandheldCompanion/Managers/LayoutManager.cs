@@ -337,8 +337,8 @@ public class LayoutManager : IManager
             }
             else
             {
-                ProcessEx processEx = ProcessManager.GetForegroundProcess();
-                SetActiveLayout((processEx == null || processEx.IsGame()) ? profileLayout : desktopLayout);
+                ProcessEx processEx = ProcessManager.GetCurrent();
+                SetActiveLayout((processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout);
             }
         }
     }
