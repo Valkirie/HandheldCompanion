@@ -3458,4 +3458,34 @@
   <data name="MainWindow_OpenNavigation" xml:space="preserve">
     <value />
   </data>
+  <data name="ProfilesPage_Play" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_TDPControlMethod" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_TDPControlMethodDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_SecurityOptions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_CoreIsolation" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_CoreIsolationDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_PlatformOptions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_ManufacturerApplication" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_ManufacturerApplicationDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MainWindow_CloseNavigation" xml:space="preserve">
+    <value />
+  </data>
 </root>

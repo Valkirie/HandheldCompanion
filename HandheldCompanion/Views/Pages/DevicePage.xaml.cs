@@ -43,7 +43,7 @@ namespace HandheldCompanion.Views.Pages
             // Adjust UI element availability based on device capabilities
             DynamicLightingPanel.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting) ? Visibility.Visible : Visibility.Collapsed;
             LEDBrightness.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
-            StackSecondColor.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+            SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
             if (device is LegionGo)
             {
