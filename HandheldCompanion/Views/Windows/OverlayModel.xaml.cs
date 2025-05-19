@@ -13,6 +13,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using NumQuaternion = System.Numerics.Quaternion;
 using NumVector3 = System.Numerics.Vector3;
 
 namespace HandheldCompanion.Views.Windows;
@@ -59,6 +60,9 @@ public partial class OverlayModel : OverlayWindow
         InitializeComponent();
 
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        float samplePeriod = TimerManager.GetPeriod() / 1000f;
+        madgwickAHRS = new(samplePeriod, 0.1f);
 
         // initialize timers
         UpdateTimer = new Timer(33)
@@ -196,6 +200,7 @@ public partial class OverlayModel : OverlayWindow
         ShoulderTriggerAngleLeftPrev = 0;
         ShoulderTriggerAngleRightPrev = 0;
 
+        madgwickAHRS.Reset();
         gamepadMotion.Reset();
     }
 
@@ -307,6 +312,8 @@ public partial class OverlayModel : OverlayWindow
     private RotateTransform3D DeviceRotateTransformFaceCameraY;
     private RotateTransform3D DeviceRotateTransformFaceCameraZ;
 
+    private static MadgwickAHRS madgwickAHRS;
+
     public void UpdateReport(ControllerState Inputs, GamepadMotion gamepadMotion, float deltaSeconds)
     {
         // Update only if 3D overlay is visible
@@ -327,11 +334,28 @@ public partial class OverlayModel : OverlayWindow
         // Motion algorithm uses DS4 coordinate system
         // 3D model, has Z+ up, X+ to the right, Y+ towards the screen
 
-        // Update Madgwick orientation filter with IMU sensor data for 3D overlay
+        /*
         gamepadMotion.GetOrientation(out float oW, out float oX, out float oY, out float oZ);
+        DevicePose = new Quaternion(-oX, -oY, oZ, oW);
+        */
+
+        gamepadMotion.GetCalibratedGyro(out float gyroX, out float gyroY, out float gyroZ);
+        gamepadMotion.GetGravity(out float accelX, out float accelY, out float accelZ);
+
+        // Update Madgwick orientation filter with IMU sensor data for 3D overlay
+        madgwickAHRS.UpdateReport(
+            -InputUtils.deg2rad(gyroX),
+            InputUtils.deg2rad(gyroY),
+            -InputUtils.deg2rad(gyroZ),
+            -accelX,
+            accelY,
+            -accelZ,
+            gamepadMotion.deltaTime
+            );
 
         // System.Numerics to Media.3D, library really requires System.Numerics
-        DevicePose = new Quaternion(-oX, -oY, oZ, oW);
+        NumQuaternion quaternion = madgwickAHRS.GetQuaternion();
+        DevicePose = new Quaternion(quaternion.W, quaternion.X, quaternion.Y, quaternion.Z);
 
         // Dirty fix for devices without Accelerometer (MSI Claw 8)
         if (gamepadMotion.accelX == 0 && gamepadMotion.accelY == 0 && gamepadMotion.accelZ == 0)
