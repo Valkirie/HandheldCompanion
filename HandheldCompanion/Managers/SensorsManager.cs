@@ -327,6 +327,7 @@ namespace HandheldCompanion.Managers
 
                 // reset motion values
                 gamepadMotion.ResetMotion();
+                gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness);
 
                 // wait until device is steady
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
@@ -352,6 +353,9 @@ namespace HandheldCompanion.Managers
                     else
                         dialog.UpdateContent($"Calibration device is unsteady, calibration may be incorrect.");
                 }
+
+                // restore calibration mode
+                gamepadMotion.SetCalibrationMode(CalibrationMode.Manual);
 
                 // start continuous calibration
                 gamepadMotion.StartContinuousCalibration();
