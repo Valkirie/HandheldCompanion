@@ -858,7 +858,7 @@ public static class ControllerManager
         }
     }
 
-    private static bool HostRadioDisabled = false;
+    // private static bool HostRadioDisabled = false;
     private static void watchdogThreadLoop(object? obj)
     {
         HashSet<byte> UserIndexes = [];
@@ -932,6 +932,23 @@ public static class ControllerManager
                             // suspend physical controller
                             SuspendController(pController.GetContainerInstanceId());
 
+                            bool HasBusyWireless = false;
+                            bool HasCyclingController = false;
+
+                            // do we have a pending wireless controller ?
+                            XInputController? wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
+                            if (wirelessController is not null)
+                            {
+                                // update busy flag
+                                HasBusyWireless = true;
+
+                                // is the controller power cycling ?
+                                PowerCyclers.TryGetValue(wirelessController.GetContainerInstanceId(), out HasCyclingController);
+                                if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
+                                    return;
+                            }
+
+                            /*
                             // suspend bluetooth controller, if any
                             if (pController.IsBluetooth())
                             {
@@ -944,6 +961,7 @@ public static class ControllerManager
                                     }
                                 }
                             }
+                            */
 
                             // disconnect main virtual controller and wait until it's gone
                             VirtualManager.SetControllerMode(HIDmode.NoController);
@@ -980,7 +998,7 @@ public static class ControllerManager
 
                             UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
-                            HostRadioDisabled = false;
+                            // HostRadioDisabled = false;
 
                             ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                         }
@@ -993,7 +1011,7 @@ public static class ControllerManager
                         // give us one extra loop to make sure we're good
                         UpdateStatus(ControllerManagerStatus.Succeeded);
                         ControllerManagementAttempts = 0;
-                        HostRadioDisabled = false;
+                        // HostRadioDisabled = false;
                     }
                     else
                     {
@@ -1008,7 +1026,7 @@ public static class ControllerManager
 
                     UpdateStatus(ControllerManagerStatus.Failed);
                     ControllerManagementAttempts = 0;
-                    HostRadioDisabled = false;
+                    // HostRadioDisabled = false;
 
                     ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                 }
@@ -1297,6 +1315,7 @@ public static class ControllerManager
         foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
             ResumeController(baseContainerDeviceInstanceId);
 
+        /*
         if (HostRadioDisabled)
         {
             using (HostRadio hostRadio = new())
@@ -1305,6 +1324,7 @@ public static class ControllerManager
                 HostRadioDisabled = false;
             }
         }
+        */
     }
 
     public static IController? GetTarget()

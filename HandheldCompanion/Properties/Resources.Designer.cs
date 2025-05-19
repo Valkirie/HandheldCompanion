@@ -10357,7 +10357,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond..
+        ///   Looks up a localized string similar to Please switch your controller off and on by pressing and holding the power button to finalize pairing..
         /// </summary>
         public static string XInputController_Warning_BTH {
             get {
