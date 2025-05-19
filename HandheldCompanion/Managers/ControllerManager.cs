@@ -380,7 +380,7 @@ public static class ControllerManager
 
     private static void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 

@@ -159,7 +159,7 @@ public partial class QuickProfilesPage : Page
 
     private void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 

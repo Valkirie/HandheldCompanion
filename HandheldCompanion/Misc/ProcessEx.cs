@@ -17,7 +17,7 @@ using System.Windows.Media;
 
 namespace HandheldCompanion.Misc;
 
-public class ProcessEx : IDisposable
+public class ProcessEx : IDisposable, ICloneable
 {
     #region filters
     public enum ProcessFilter
@@ -284,6 +284,7 @@ public class ProcessEx : IDisposable
         switch (Filter)
         {
             case ProcessFilter.Desktop:
+            case ProcessFilter.HandheldCompanion:
                 return false;
         }
 
@@ -646,5 +647,10 @@ public class ProcessEx : IDisposable
         }
 
         _disposed = true;
+    }
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
     }
 }
