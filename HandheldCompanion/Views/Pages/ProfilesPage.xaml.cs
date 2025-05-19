@@ -552,6 +552,7 @@ public partial class ProfilesPage : Page
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
                     UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
                     LibrarySettings.IsEnabled = !selectedProfile.Default;
+                    Toggle_SuspendOnQuicktools.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
