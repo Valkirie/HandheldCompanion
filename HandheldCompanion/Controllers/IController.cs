@@ -6,6 +6,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.Bluetooth;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -462,6 +463,11 @@ namespace HandheldCompanion.Controllers
                 case "BTHENUM":
                 case "BTHLEDEVICE":
                     {
+                        if (Details.Uninstall(false))
+                            Task.Delay(3000).Wait();
+                        success = Devcon.Refresh();
+                        
+                        /*
                         if (HostRadio.IsEnabled && HostRadio.IsAvailable)
                         {
                             try
@@ -476,6 +482,7 @@ namespace HandheldCompanion.Controllers
                             }
                             catch { }
                         }
+                        */
                     }
                     break;
                 case "USB":
