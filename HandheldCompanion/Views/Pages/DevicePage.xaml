@@ -157,8 +157,8 @@
                     <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                         <Label
                             VerticalAlignment="Center"
-                            Content="{Binding Value, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}"
-                            ContentStringFormat="{}{0:N0} %" />
+                            Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                         <Slider
                             x:Name="Slider_BatteryChargeLimitPercent"
                             Width="200"
@@ -245,8 +245,8 @@
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <Label
                                 VerticalAlignment="Center"
-                                Content="{Binding Value, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}"
-                                ContentStringFormat="{}{0:N0} %" />
+                                Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                             <Slider
                                 x:Name="SliderLEDBrightness"
                                 Width="200"
@@ -342,8 +342,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderLEDSpeed}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDSpeed}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         x:Name="SliderLEDSpeed"
                                         Width="200"
@@ -710,8 +710,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderLeftAutoSleepTime}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} min" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderLeftAutoSleepTime}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderLeftAutoSleepTime"
                                         Width="200"
@@ -732,8 +732,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderLeftJoystickDeadzone"
                                         Width="200"
@@ -754,8 +754,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderLeftTriggerDeadzone"
                                         Width="200"
@@ -777,8 +777,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderLeftTriggerMargin"
                                         Width="200"
@@ -811,8 +811,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderRightAutoSleepTime}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} min" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderRightAutoSleepTime}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderRightAutoSleepTime"
                                         Width="200"
@@ -833,8 +833,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderRightJoystickDeadzone"
                                         Width="200"
@@ -855,8 +855,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderRightTriggerDeadzone"
                                         Width="200"
@@ -878,8 +878,8 @@
                                 <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                     <Label
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}"
-                                        ContentStringFormat="{}{0:N0} %" />
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                     <Slider
                                         Name="SliderRightTriggerMargin"
                                         Width="200"
