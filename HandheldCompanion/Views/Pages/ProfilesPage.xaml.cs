@@ -552,6 +552,7 @@ public partial class ProfilesPage : Page
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
                     UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
                     LibrarySettings.IsEnabled = !selectedProfile.Default;
+                    Toggle_SuspendOnQuicktools.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
@@ -574,6 +575,9 @@ public partial class ProfilesPage : Page
 
                     // Library
                     Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
+
+                    // Window(s)
+                    Toggle_SuspendOnQuicktools.IsOn = selectedProfile.SuspendOnQT;
 
                     // Emulated controller assigned to the profile
                     cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable combobox
@@ -1457,6 +1461,19 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.ShowInLibrary = Toggle_ShowInLibrary.IsOn;
+        UpdateProfile();
+    }
+
+    private void Toggle_SuspendOnQuicktools_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.SuspendOnQT = Toggle_SuspendOnQuicktools.IsOn;
         UpdateProfile();
     }
 }

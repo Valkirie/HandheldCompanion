@@ -240,12 +240,12 @@ namespace HandheldCompanion.Controllers
                 {
                     Controller.OnControllerInputReceived += HandleControllerInput;
 
+                    // open controller
+                    Controller.Open();
+
                     Controller.SetLizardMode(false);
                     Controller.SetGyroscope(true);
                     Controller.SetIdleTimeout(300);  // ~5 min
-
-                    // open controller
-                    Controller.Open();
                 }
             }
             catch (Exception ex)

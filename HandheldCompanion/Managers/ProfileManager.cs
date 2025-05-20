@@ -122,7 +122,7 @@ public class ProfileManager : IManager
 
     private void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 

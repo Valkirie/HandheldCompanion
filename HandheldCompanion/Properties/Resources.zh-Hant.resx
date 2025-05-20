@@ -2315,7 +2315,7 @@
     <value>裝置</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond.</value>
+    <value>Please switch your controller off and on by pressing and holding the power button to finalize pairing.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>燈光效果</value>

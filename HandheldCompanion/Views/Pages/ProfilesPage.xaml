@@ -1395,6 +1395,14 @@
                     <ikw:SimpleStackPanel Spacing="6">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
 
+                        <ui:SettingsCard Description="Pauses the active game or foreground application whenever the QuickTools sidebar is displayed." Header="Suspend on overlay">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xe769;" />
+                            </ui:SettingsCard.HeaderIcon>
+
+                            <ui:ToggleSwitch Name="Toggle_SuspendOnQuicktools" Toggled="Toggle_SuspendOnQuicktools_Toggled" />
+                        </ui:SettingsCard>
+
                         <ui:SettingsExpander
                             Description="Manage windows associated with profile"
                             Header="Windows settings"
