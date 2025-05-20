@@ -24,1149 +24,588 @@
     <Grid Name="MainGrid" Margin="20">
         <ikw:SimpleStackPanel Spacing="24">
             <!--  Power options  -->
-            <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="6">
+            <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="4">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PowerOptions}" />
-
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xea86;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Thermal Design Power (TDP) Control method" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Select the preferred method to manage the device's TDP"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectedIndex="{Binding ConfigurableTDPMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem>Default</ComboBoxItem>
-                            <ComboBoxItem IsEnabled="{Binding HasWMIMethod, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">WMI</ComboBoxItem>
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                <ui:SettingsCard
+                    HorizontalContentAlignment="Stretch"
+                    Description="{l:Static resx:Resources.DevicePage_TDPControlMethodDesc}"
+                    Header="{l:Static resx:Resources.DevicePage_TDPControlMethod}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xea86;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox SelectedIndex="{Binding ConfigurableTDPMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem>Default</ComboBoxItem>
+                        <ComboBoxItem IsEnabled="{Binding HasWMIMethod, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">WMI</ComboBoxItem>
+                    </ComboBox>
+                </ui:SettingsCard>
 
                 <!--  Configurable TDP  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe785;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_cTDP"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_cTDP_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}" Header="{l:Static resx:Resources.SettingsPage_TDPRangeOverride}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xe785;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch
+                        Name="Toggle_cTDP"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="Toggle_cTDP_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Configurable TDP down  -->
-                <Border
-                    Padding="15,12,12,12"
+                <ui:SettingsCard
                     d:Visibility="Visible"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Description="{l:Static resx:Resources.SettingsPage_TDPMinDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_TDPMin}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE713;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_TDPMin}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_TDPMinDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:NumberBox
-                            Name="NumberBox_TDPMin"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Minimum="3"
-                            SpinButtonPlacementMode="Inline"
-                            ValueChanged="NumberBox_TDPMin_ValueChanged" />
-                    </Grid>
-                </Border>
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE713;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:NumberBox
+                        Name="NumberBox_TDPMin"
+                        MinWidth="20"
+                        Minimum="3"
+                        SpinButtonPlacementMode="Inline"
+                        ValueChanged="NumberBox_TDPMin_ValueChanged" />
+                </ui:SettingsCard>
 
                 <!--  Configurable TDP up  -->
-                <Border
-                    Padding="15,12,12,12"
+                <ui:SettingsCard
                     d:Visibility="Visible"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Description="{l:Static resx:Resources.SettingsPage_TDPMaxDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_TDPMax}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE713;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_TDPMax}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_TDPMaxDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:NumberBox
-                            Name="NumberBox_TDPMax"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Maximum="75"
-                            SpinButtonPlacementMode="Inline"
-                            ValueChanged="NumberBox_TDPMax_ValueChanged" />
-                    </Grid>
-                </Border>
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE713;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:NumberBox
+                        Name="NumberBox_TDPMax"
+                        MinWidth="20"
+                        Maximum="75"
+                        SpinButtonPlacementMode="Inline"
+                        ValueChanged="NumberBox_TDPMax_ValueChanged" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Security options  -->
-            <ikw:SimpleStackPanel Name="SecurityOptionsStack" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Security options" />
+            <ikw:SimpleStackPanel Name="SecurityOptionsStack" Spacing="4">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_SecurityOptions}" />
 
                 <!--  Core isolation  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE705;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Core isolation" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Security features available on your device that use virtualization-based security. May prevent TDP manipulations."
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding MemoryIntegrity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_CoreIsolationDesc}" Header="{l:Static resx:Resources.DevicePage_CoreIsolation}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE705;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch IsOn="{Binding MemoryIntegrity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Platform options  -->
-            <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Platform options" />
+            <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="4">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PlatformOptions}" />
 
                 <!--  OEM Frontend  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xF156;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Manufacturer application" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Enable or disable manufacturer-installed applications on your gaming device."
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ToggleButton
-                            Grid.Column="1"
-                            Width="120"
-                            HorizontalAlignment="Right"
-                            IsChecked="{Binding ManufacturerAppStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            IsEnabled="{Binding ManufacturerAppBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ToggleButton.Style>
-                                <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
-                                    <Setter Property="Content" Value="Restore" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ManufacturerAppStatus}" Value="True">
-                                            <Setter Property="Content" Value="Disable" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ToggleButton.Style>
-                        </ToggleButton>
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_ManufacturerApplicationDesc}" Header="{l:Static resx:Resources.DevicePage_ManufacturerApplication}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xF156;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ToggleButton IsChecked="{Binding ManufacturerAppStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ManufacturerAppBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ToggleButton.Style>
+                            <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
+                                <Setter Property="Content" Value="Restore" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ManufacturerAppStatus}" Value="True">
+                                        <Setter Property="Content" Value="Disable" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Battery options  -->
             <ikw:SimpleStackPanel
                 Name="BatteryChargeStack"
                 d:Visibility="Visible"
-                Spacing="6"
+                Spacing="4"
                 Visibility="{Binding BatteryBypassVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryOptions}" />
-
                 <!--  Battery Charge  -->
-                <Border
+                <ui:SettingsCard
                     Name="BatteryChargeLimitToggle"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    Description="{l:Static resx:Resources.DevicePage_BatteryChargeLimit_Desc}"
+                    Header="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xebb2;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch
+                        Name="Toggle_BatteryChargeLimit"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="Toggle_BatteryChargeLimit_Toggled" />
+                </ui:SettingsCard>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xebb2;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimit_Desc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_BatteryChargeLimit"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_BatteryChargeLimit_Toggled" />
-                    </Grid>
-                </Border>
-
-                <Border
+                <ui:SettingsCard
                     Name="BatteryChargeLimitPercent"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Description="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent_Desc}"
+                    Header="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent}"
                     IsEnabled="{Binding BatteryChargeLimitPercent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE713;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent_Desc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBox
-                                Height="32"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                IsReadOnly="True"
-                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Slider_BatteryChargeLimitPercent, Mode=OneWay}" />
-                            <Slider
-                                x:Name="Slider_BatteryChargeLimitPercent"
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                IsMoveToPointEnabled="True"
-                                IsSnapToTickEnabled="True"
-                                LargeChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                Maximum="{Binding BatteryBypassMax, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                Minimum="{Binding BatteryBypassMin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SmallChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource SliderStyle1}"
-                                TickFrequency="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                ValueChanged="Slider_BatteryChargeLimitPercent_OnValueChanged"
-                                Value="100" />
-                        </DockPanel>
-                    </Grid>
-                </Border>
-
-                <Border
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE713;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                        <Label
+                            VerticalAlignment="Center"
+                            Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        <Slider
+                            x:Name="Slider_BatteryChargeLimitPercent"
+                            Width="200"
+                            Margin="6,0,0,0"
+                            VerticalAlignment="Center"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Maximum="{Binding BatteryBypassMax, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Minimum="{Binding BatteryBypassMin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SmallChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            TickFrequency="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            ValueChanged="Slider_BatteryChargeLimitPercent_OnValueChanged"
+                            Value="100" />
+                    </DockPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard
                     Name="BatteryBypassCharging"
-                    Padding="15,12,12,12"
                     d:Visibility="Visible"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Description="{l:Static resx:Resources.DevicePage_BatteryBypassCharging_Desc}"
+                    Header="{l:Static resx:Resources.DevicePage_BatteryBypassCharging}"
                     Visibility="{Binding BatteryBypassModeVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE713;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryBypassCharging}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.DevicePage_BatteryBypassCharging_Desc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="CB_BatteryBypassCharging"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
-                            <ComboBox.ItemTemplate>
-                                <ItemContainerTemplate>
-                                    <WrapPanel>
-                                        <TextBlock
-                                            Height="25"
-                                            Margin="10,6,0,0"
-                                            Text="{Binding DisplayName}" />
-                                    </WrapPanel>
-                                </ItemContainerTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE713;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        Name="CB_BatteryBypassCharging"
+                        Grid.Column="1"
+                        Margin="12,0,0,0"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <ItemContainerTemplate>
+                                <WrapPanel>
+                                    <TextBlock
+                                        Height="25"
+                                        Margin="10,6,0,0"
+                                        Text="{Binding DisplayName}" />
+                                </WrapPanel>
+                            </ItemContainerTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Dynamic lighting settings  -->
             <ikw:SimpleStackPanel
                 Name="DynamicLightingPanel"
                 d:Visibility="Visible"
-                Spacing="6"
+                Spacing="4"
                 Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLightTitle}" />
 
                 <!--  Use Dynamic lighting  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE781;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLightDesc}" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="UseDynamicLightingToggle"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="UseDynamicLightingToggle_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Header="{l:Static resx:Resources.DevicePage_DynamicLightDesc}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE781;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch
+                        Name="UseDynamicLightingToggle"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="UseDynamicLightingToggle_Toggled" />
+                </ui:SettingsCard>
 
                 <ikw:SimpleStackPanel
                     Name="LEDPanel"
                     IsEnabled="{Binding ElementName=UseDynamicLightingToggle, Path=IsOn}"
-                    Spacing="6">
+                    Spacing="4">
                     <!--  Static LED Brightness  -->
-                    <Border
+                    <ui:SettingsCard
                         Name="LEDBrightness"
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE706;" />
-
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.DevicePage_DynamicLighting_BrightnessDesc}"
-                                        TextWrapping="Wrap" />
-                                </ikw:SimpleStackPanel>
-                            </DockPanel>
-
-                            <DockPanel
-                                Grid.Column="1"
-                                Margin="12,0,0,0"
-                                ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBox
-                                    Height="32"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Center"
-                                    IsReadOnly="True"
-                                    Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLEDBrightness, Mode=OneWay}" />
-                                <Slider
-                                    x:Name="SliderLEDBrightness"
-                                    Margin="6,0,0,0"
-                                    VerticalAlignment="Center"
-                                    IsMoveToPointEnabled="True"
-                                    IsSnapToTickEnabled="True"
-                                    LargeChange="10"
-                                    Maximum="100"
-                                    Minimum="0"
-                                    SmallChange="5"
-                                    Style="{DynamicResource SliderStyle1}"
-                                    TickFrequency="5"
-                                    TickPlacement="BottomRight"
-                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                    ValueChanged="SliderLEDBrightness_ValueChanged"
-                                    Value="100" />
-                            </DockPanel>
-                        </Grid>
-                    </Border>
+                        Description="{l:Static resx:Resources.DevicePage_DynamicLighting_BrightnessDesc}"
+                        Header="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE706;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <Label
+                                VerticalAlignment="Center"
+                                Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Slider
+                                x:Name="SliderLEDBrightness"
+                                Width="200"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="100"
+                                Minimum="0"
+                                SmallChange="5"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="SliderLEDBrightness_ValueChanged"
+                                Value="100" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
                     <!--  Dynamic lighting effects  -->
-                    <Expander
+                    <ui:SettingsExpander
                         Name="DynamicLightingEffects"
-                        HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded">
+                        Description="{l:Static resx:Resources.DevicePage_DynamicLightingDesc}"
+                        Expanded="Expander_Expanded"
+                        Header="{l:Static resx:Resources.DevicePage_DynamicLighting}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xF4A5;" />
+                        </ui:SettingsExpander.HeaderIcon>
+                        <ComboBox
+                            Name="LEDSettingsLevel"
+                            Grid.Column="1"
+                            Width="220"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            SelectionChanged="LEDSettingsLevel_SelectionChanged">
 
-                        <Expander.Header>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel Margin="0,12,12,12">
-                                    <ui:FontIcon
-                                        Height="40"
-                                        HorizontalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xF4A5;" />
-
-                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLighting}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_DynamicLightingDesc}"
-                                            TextWrapping="Wrap" />
-                                    </ikw:SimpleStackPanel>
+                            <ComboBoxItem
+                                Name="LEDSolidColor"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
+                                IsEnabled="False"
+                                Tag="0"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDBreathing"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
+                                IsEnabled="False"
+                                Tag="1"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDRainbow"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
+                                IsEnabled="False"
+                                Tag="2"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDWave"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
+                                IsEnabled="False"
+                                Tag="4"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDWheel"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
+                                IsEnabled="False"
+                                Tag="8"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDGradient"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
+                                IsEnabled="False"
+                                Tag="16"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDAmbilight"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
+                                IsEnabled="False"
+                                Tag="32"
+                                Visibility="Collapsed" />
+                            <ComboBoxItem
+                                Name="LEDPreset"
+                                Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Presets}"
+                                IsEnabled="False"
+                                Tag="64"
+                                Visibility="Collapsed" />
+                        </ComboBox>
+                        <ui:SettingsExpander.Items>
+                            <!--  Effect speed  -->
+                            <ui:SettingsCard
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDSpeed}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        x:Name="SliderLEDSpeed"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="10"
+                                        Maximum="100"
+                                        Minimum="10"
+                                        SmallChange="5"
+                                        TickFrequency="5"
+                                        TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderLEDSpeed_ValueChanged"
+                                        Value="100" />
                                 </DockPanel>
+                            </ui:SettingsCard>
+                            <!--  Direction  -->
+                            <!--  Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|3|4|5}"  -->
+                            <ui:SettingsCard
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}"
+                                Visibility="Collapsed">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <ComboBox
+                                        Name="LEDDirection"
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        SelectedIndex="0"
+                                        SelectionChanged="LEDDirection_SelectionChanged" />
+                                </DockPanel>
+                            </ui:SettingsCard>
 
-                                <ComboBox
-                                    Name="LEDSettingsLevel"
+                            <!--  Main color  -->
+                            <!--  Match my Windows accent color  -->
+                            <ui:SettingsCard
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
+                                <ui:ToggleSwitch
+                                    Name="MatchAccentColor"
                                     Grid.Column="1"
-                                    Width="220"
-                                    Margin="12,0,0,0"
                                     HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="MatchAccentColor_Toggled" />
+                            </ui:SettingsCard>
+                            <!--  Main color picker  -->
+                            <ui:SettingsCard
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_MainColorSelection}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
+                                <colorpicker:PortableColorPicker
+                                    Name="MainColorPicker"
+                                    Width="32"
+                                    Height="32"
+                                    ColorChanged="MainColorPicker_ColorChanged"
+                                    ScrollViewer.PanningMode="HorizontalOnly"
+                                    Style="{StaticResource DefaultColorPickerStyle}" />
+                            </ui:SettingsCard>
+                            <!--  Use second color  -->
+                            <ui:SettingsCard
+                                Name="SecondColorToggleCard"
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_UseSecondColor}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
+                                <ui:ToggleSwitch
+                                    Name="Toggle_UseSecondColor"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Toggle_UseSecondColor_Toggled" />
+                            </ui:SettingsCard>
+                            <!--  Second color  -->
+                            <ui:SettingsCard
+                                Name="SecondColorPickerCard"
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_SecondColorSelection}"
+                                IsEnabled="{Binding Source={x:Reference Toggle_UseSecondColor}, Path=IsOn}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
+                                <colorpicker:PortableColorPicker
+                                    Name="SecondColorPicker"
+                                    Width="32"
+                                    Height="32"
+                                    ColorChanged="SecondColorPicker_ColorChanged"
+                                    ScrollViewer.PanningMode="HorizontalOnly"
+                                    Style="{StaticResource DefaultColorPickerStyle}" />
+                            </ui:SettingsCard>
+                            <!--  Vertical blackbar detection  -->
+                            <ui:SettingsCard
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_AmbilightVerticalBlackBarDetectionDesc}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=6}">
+                                <ui:ToggleSwitch
+                                    Name="Toggle_AmbilightVerticalBlackBarDetection"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Toggle_AmbilightVerticalBlackBarDetection_Toggled" />
+                            </ui:SettingsCard>
+                            <!--  OEM Presets  -->
+                            <ui:SettingsCard
+                                d:Visibility="Visible"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_PresetsSelection}"
+                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=7}">
+                                <ComboBox
+                                    Name="LedPresetsComboBox"
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    SelectionChanged="LEDSettingsLevel_SelectionChanged">
-
-                                    <ComboBoxItem
-                                        Name="LEDSolidColor"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
-                                        IsEnabled="False"
-                                        Tag="0"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDBreathing"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
-                                        IsEnabled="False"
-                                        Tag="1"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDRainbow"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
-                                        IsEnabled="False"
-                                        Tag="2"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDWave"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
-                                        IsEnabled="False"
-                                        Tag="4"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDWheel"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
-                                        IsEnabled="False"
-                                        Tag="8"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDGradient"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
-                                        IsEnabled="False"
-                                        Tag="16"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDAmbilight"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
-                                        IsEnabled="False"
-                                        Tag="32"
-                                        Visibility="Collapsed" />
-                                    <ComboBoxItem
-                                        Name="LEDPreset"
-                                        Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Presets}"
-                                        IsEnabled="False"
-                                        Tag="64"
-                                        Visibility="Collapsed" />
+                                    SelectionChanged="LEDOEMPreset_SelectionChanged">
+                                    <ComboBox.ItemTemplate>
+                                        <ItemContainerTemplate>
+                                            <WrapPanel>
+                                                <Image
+                                                    Width="25"
+                                                    Height="25"
+                                                    Source="{Binding IconPath}" />
+                                                <TextBlock
+                                                    Height="25"
+                                                    Margin="10,6,0,0"
+                                                    Text="{Binding DisplayName}" />
+                                            </WrapPanel>
+                                        </ItemContainerTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
-
-                            </Grid>
-                        </Expander.Header>
-
-                        <Expander.Content>
-                            <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
-
-                                <!--  Effect speed  -->
-                                <ikw:SimpleStackPanel
-                                    d:Visibility="Visible"
-                                    Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLEDSpeed, Mode=OneWay}" />
-                                            <Slider
-                                                x:Name="SliderLEDSpeed"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="10"
-                                                Maximum="100"
-                                                Minimum="10"
-                                                SmallChange="5"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                TickFrequency="5"
-                                                TickPlacement="BottomRight"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderLEDSpeed_ValueChanged"
-                                                Value="100" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Direction  -->
-                                <!--  Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|3|4|5}"  -->
-                                <ikw:SimpleStackPanel
-                                    d:Visibility="Visible"
-                                    Spacing="6"
-                                    Visibility="Collapsed">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}" />
-
-                                        <ComboBox
-                                            Name="LEDDirection"
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="0"
-                                            SelectionChanged="LEDDirection_SelectionChanged" />
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Main color  -->
-                                <ikw:SimpleStackPanel
-                                    d:Visibility="Visible"
-                                    Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
-
-                                    <!--  Match my Windows accent color  -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}" />
-
-                                        <ui:ToggleSwitch
-                                            Name="MatchAccentColor"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="MatchAccentColor_Toggled" />
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-
-                                    <!--  Main color picker  -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_MainColorSelection}" />
-
-                                        <colorpicker:PortableColorPicker
-                                            Name="MainColorPicker"
-                                            Grid.Column="1"
-                                            Height="40"
-                                            Margin="12,0,0,0"
-                                            ColorChanged="MainColorPicker_ColorChanged"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{StaticResource DefaultColorPickerStyle}" />
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Name="StackSecondColor">
-                                    <!--  Use second color  -->
-                                    <ikw:SimpleStackPanel
-                                        d:Visibility="Visible"
-                                        Spacing="6"
-                                        Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{l:Static resx:Resources.DevicePage_UseSecondColor}"
-                                                TextWrapping="Wrap" />
-
-                                            <ui:ToggleSwitch
-                                                Name="Toggle_UseSecondColor"
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Right"
-                                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                                Toggled="Toggle_UseSecondColor_Toggled" />
-                                        </Grid>
-                                    </ikw:SimpleStackPanel>
-
-                                    <!--  Second color  -->
-                                    <ikw:SimpleStackPanel
-                                        d:Visibility="Visible"
-                                        IsEnabled="{Binding ElementName=Toggle_UseSecondColor, Path=IsOn}"
-                                        Spacing="6"
-                                        Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
-
-                                        <!--  Second color  -->
-                                        <Grid Height="40">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{l:Static resx:Resources.DevicePage_DynamicLighting_SecondColorSelection}" />
-
-                                            <colorpicker:PortableColorPicker
-                                                Name="SecondColorPicker"
-                                                Grid.Column="1"
-                                                Height="40"
-                                                Margin="12,0,0,0"
-                                                ColorChanged="SecondColorPicker_ColorChanged"
-                                                ScrollViewer.PanningMode="HorizontalOnly"
-                                                Style="{StaticResource DefaultColorPickerStyle}" />
-                                        </Grid>
-
-                                        <!--  Separator  -->
-                                        <Separator
-                                            Margin="-46,0,-16,0"
-                                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                            BorderThickness="0,1,0,0" />
-                                    </ikw:SimpleStackPanel>
-                                </ikw:SimpleStackPanel>
-                                <!--  Vertical blackbar detection  -->
-                                <ikw:SimpleStackPanel
-                                    d:Visibility="Visible"
-                                    Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=6}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_AmbilightVerticalBlackBarDetectionDesc}"
-                                            TextWrapping="Wrap" />
-
-                                        <ui:ToggleSwitch
-                                            Name="Toggle_AmbilightVerticalBlackBarDetection"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="Toggle_AmbilightVerticalBlackBarDetection_Toggled" />
-                                    </Grid>
-                                </ikw:SimpleStackPanel>
-
-                                <!--  OEM Presets  -->
-                                <ikw:SimpleStackPanel
-                                    d:Visibility="Visible"
-                                    Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=7}">
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_DynamicLighting_PresetsSelection}"
-                                            TextWrapping="Wrap" />
-
-                                        <ComboBox
-                                            Name="LedPresetsComboBox"
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Center"
-                                            SelectionChanged="LEDOEMPreset_SelectionChanged">
-                                            <ComboBox.ItemTemplate>
-                                                <ItemContainerTemplate>
-                                                    <WrapPanel>
-                                                        <Image
-                                                            Width="25"
-                                                            Height="25"
-                                                            Source="{Binding IconPath}" />
-                                                        <TextBlock
-                                                            Height="25"
-                                                            Margin="10,6,0,0"
-                                                            Text="{Binding DisplayName}" />
-                                                    </WrapPanel>
-                                                </ItemContainerTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-
-                                    </Grid>
-                                </ikw:SimpleStackPanel>
-
-                            </ikw:SimpleStackPanel>
-                        </Expander.Content>
-                    </Expander>
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 
             <!--  Sensor options  -->
-            <ikw:SimpleStackPanel Name="SensorOptionsStack" Spacing="6">
+            <ikw:SimpleStackPanel Name="SensorOptionsStack" Spacing="4">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorOptions}" />
 
                 <!--  Sensor Selection  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE950;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorSelection}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_SensorSelection"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_SensorSelection_SelectionChanged">
-
-                            <ComboBoxItem
-                                Name="SensorNone"
-                                Content="{l:Static resx:Resources.SettingsPage_SensorNone}"
-                                IsEnabled="True" />
-                            <ComboBoxItem
-                                Name="SensorInternal"
-                                Content="{l:Static resx:Resources.SettingsPage_SensorInternal}"
-                                IsEnabled="False" />
-                            <ComboBoxItem
-                                Name="SensorExternal"
-                                Content="{l:Static resx:Resources.SettingsPage_SensorExternal}"
-                                IsEnabled="False" />
-                            <ComboBoxItem
-                                Name="SensorController"
-                                Content="{l:Static resx:Resources.MainWindow_navController}"
-                                IsEnabled="False" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                <ui:SettingsCard
+                    Name="SensorSelectionCard"
+                    Description="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_SensorSelection}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE950;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_SensorSelection" SelectionChanged="cB_SensorSelection_SelectionChanged">
+                        <ComboBoxItem
+                            Name="SensorNone"
+                            Content="{l:Static resx:Resources.SettingsPage_SensorNone}"
+                            IsEnabled="True" />
+                        <ComboBoxItem
+                            Name="SensorInternal"
+                            Content="{l:Static resx:Resources.SettingsPage_SensorInternal}"
+                            IsEnabled="False" />
+                        <ComboBoxItem
+                            Name="SensorExternal"
+                            Content="{l:Static resx:Resources.SettingsPage_SensorExternal}"
+                            IsEnabled="False" />
+                        <ComboBoxItem
+                            Name="SensorController"
+                            Content="{l:Static resx:Resources.MainWindow_navController}"
+                            IsEnabled="False" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
                 <!--  Sensor Calibration  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE950;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorCalibration}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_SensorCalibrationDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <Button
-                            Name="ui_button_calibrate"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            Click="ui_button_calibrate_Click"
-                            Content="{l:Static resx:Resources.DevicePage_SensorCalibration_Button}"
-                            FontSize="14"
-                            Style="{DynamicResource AccentButtonStyle}" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_SensorCalibrationDesc}" Header="{l:Static resx:Resources.SettingsPage_SensorCalibration}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE950;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <Button
+                        Name="ui_button_calibrate"
+                        Click="ui_button_calibrate_Click"
+                        Content="{l:Static resx:Resources.DevicePage_SensorCalibration_Button}"
+                        FontSize="14"
+                        Style="{DynamicResource AccentButtonStyle}" />
+                </ui:SettingsCard>
 
                 <!--  Sensor Placement Direction  -->
-                <Border
+                <ui:SettingsCard
                     Name="SensorPlacementVisualisation"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="{Binding ElementName=cB_SensorSelection, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE80A;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorPlacementDirection}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <Grid Grid.Column="1">
-                            <ikw:SimpleStackPanel
-                                Name="Grid_SensorPlacementVisualisation"
-                                HorizontalAlignment="Right"
-                                IsEnabled="False"
-                                Spacing="6">
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Tag="99"
-                                        Visibility="Hidden" />
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Click="SensorPlacement_Click"
-                                        Tag="0" />
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Tag="99"
-                                        Visibility="Hidden" />
-                                </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Click="SensorPlacement_Click"
-                                        Tag="1" />
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Tag="99"
-                                        Visibility="Hidden" />
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Click="SensorPlacement_Click"
-                                        Tag="2" />
-                                </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Tag="99"
-                                        Visibility="Hidden" />
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Click="SensorPlacement_Click"
-                                        Tag="3" />
-                                    <Button
-                                        Width="50"
-                                        Height="50"
-                                        Tag="99"
-                                        Visibility="Hidden" />
-                                </ikw:SimpleStackPanel>
-                            </ikw:SimpleStackPanel>
-                        </Grid>
-                    </Grid>
-                </Border>
-
+                    Description="{l:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_SensorPlacementDirection}"
+                    Visibility="{Binding Source={x:Reference cB_SensorSelection}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE80A;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ikw:SimpleStackPanel
+                        Name="Grid_SensorPlacementVisualisation"
+                        HorizontalAlignment="Right"
+                        IsEnabled="False"
+                        Spacing="6">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Tag="99"
+                                Visibility="Hidden" />
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Click="SensorPlacement_Click"
+                                Tag="0" />
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Tag="99"
+                                Visibility="Hidden" />
+                        </ikw:SimpleStackPanel>
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Click="SensorPlacement_Click"
+                                Tag="1" />
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Tag="99"
+                                Visibility="Hidden" />
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Click="SensorPlacement_Click"
+                                Tag="2" />
+                        </ikw:SimpleStackPanel>
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Tag="99"
+                                Visibility="Hidden" />
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Click="SensorPlacement_Click"
+                                Tag="3" />
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Tag="99"
+                                Visibility="Hidden" />
+                        </ikw:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsCard>
                 <!--  Sensor Placement Mirror  -->
-                <Border
+                <ui:SettingsCard
                     Name="SensorPlacementUpsideDown"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="{Binding ElementName=cB_SensorSelection, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE1CA;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_SensorPlacementUpsideDown"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsEnabled="False"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_SensorPlacementUpsideDown_Toggled" />
-                    </Grid>
-                </Border>
+                    Description="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}">
+                    <!--  Visibility="{Binding Source={x:Reference cB_SensorSelection}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}"  -->
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE1CA;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch
+                        Name="Toggle_SensorPlacementUpsideDown"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        IsEnabled="False"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="Toggle_SensorPlacementUpsideDown_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Device settings  -->
@@ -1174,7 +613,7 @@
                 Name="DeviceSettingsPanel"
                 Grid.Row="1"
                 d:Visibility="Visible"
-                Spacing="6"
+                Spacing="4"
                 Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
@@ -1183,7 +622,7 @@
                     Name="MSIClawPanel"
                     d:Background="Red"
                     d:Visibility="Visible"
-                    Spacing="6"
+                    Spacing="4"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard Description="Selected the desired controller mode" Header="Controller mode">
@@ -1221,542 +660,243 @@
                     Name="LegionGoPanel"
                     d:Background="Blue"
                     d:Visibility="Visible"
-                    Spacing="6"
+                    Spacing="4"
                     Visibility="Collapsed">
 
-                    <Border
+                    <ui:SettingsCard
                         Name="TouchpadPassthrough"
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        Description="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
+                        Header="{l:Static resx:Resources.ControllerPage_LegionGoPassthrough}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xe772;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch
+                            Name="Toggle_TouchpadPassthrough"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_TouchpadPassthrough_Toggled" />
+                    </ui:SettingsCard>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="8*" MinWidth="200" />
-                                <ColumnDefinition Width="2*" MinWidth="120" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xe772;" />
-
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
-                                        TextWrapping="Wrap" />
-                                </ikw:SimpleStackPanel>
-                            </DockPanel>
-
-                            <ui:ToggleSwitch
-                                Name="Toggle_TouchpadPassthrough"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="Toggle_TouchpadPassthrough_Toggled" />
-                        </Grid>
-                    </Border>
-
-                    <Border
+                    <ui:SettingsCard
                         Name="GyroController"
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        Description="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                        Header="{l:Static resx:Resources.SettingsPage_SensorSelection}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE950;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ComboBox
+                            Name="ComboBox_GyroController"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            SelectionChanged="ComboBox_GyroController_SelectionChanged">
+                            <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_Lenovo_LeftController}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_Lenovo_RightController}" />
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE950;" />
-
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorSelection}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
-                                        TextWrapping="Wrap" />
-                                </ikw:SimpleStackPanel>
-                            </DockPanel>
-
-                            <ComboBox
-                                Name="ComboBox_GyroController"
-                                Grid.Column="1"
-                                Margin="12,0,0,0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                SelectionChanged="ComboBox_GyroController_SelectionChanged">
-                                <ComboBoxItem Content="Left controller" />
-                                <ComboBoxItem Content="Right controller" />
-                            </ComboBox>
-                        </Grid>
-                    </Border>
-
-                    <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
-                        <Expander.Header>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel Margin="0,12,12,12">
-                                    <ui:FontIcon
-                                        Height="40"
-                                        HorizontalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE7FC;" />
-
-                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
-                                            TextWrapping="Wrap" />
-                                    </ikw:SimpleStackPanel>
+                    <ui:SettingsExpander
+                        Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
+                        Expanded="Expander_Expanded"
+                        Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE7FC;" />
+                        </ui:SettingsExpander.HeaderIcon>
+                        <ui:SettingsExpander.Items>
+                            <!--  Left Joycon Sleep Time  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderLeftAutoSleepTime}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderLeftAutoSleepTime"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="60"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderLeftAutoSleepTime_ValueChanged" />
                                 </DockPanel>
-                            </Grid>
-                        </Expander.Header>
-
-                        <Expander.Content>
-                            <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
-
-                                <!--  Left Joycon Sleep Time  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} min, ElementName=SliderLeftAutoSleepTime, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderLeftAutoSleepTime"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="60"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderLeftAutoSleepTime_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Left Joystick deadzone  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftJoystickDeadzone, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderLeftJoystickDeadzone"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="100"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Left Trigger deadzone  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftTriggerDeadzone, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderLeftTriggerDeadzone"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="{Binding ElementName=SliderLeftTriggerMargin, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderLeftTriggerDeadzone_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Left Trigger margin  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLeftTriggerMargin, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderLeftTriggerMargin"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="{Binding ElementName=SliderLeftTriggerDeadzone, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderLeftTriggerMargin_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                            </ikw:SimpleStackPanel>
-                        </Expander.Content>
-                    </Expander>
+                            </ui:SettingsCard>
+                            <!--  Left Joystick deadzone  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderLeftJoystickDeadzone"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="100"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
+                                </DockPanel>
+                            </ui:SettingsCard>
+                            <!--  Left Trigger deadzone  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderLeftTriggerDeadzone"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="{Binding Source={x:Reference SliderLeftTriggerMargin}, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderLeftTriggerDeadzone_ValueChanged"
+                                        Value="{Binding LeftTriggerDeadzoneValue}" />
+                                </DockPanel>
+                            </ui:SettingsCard>
+                            <!--  Left Trigger margin  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderLeftTriggerMargin"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="{Binding LeftTriggerDeadzoneValue, Converter={StaticResource InvertPercentageConverter}}"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderLeftTriggerMargin_ValueChanged" />
+                                </DockPanel>
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
 
                     <!--  Right Joycon  -->
-
-                    <Expander HorizontalAlignment="Stretch" Expanded="Expander_Expanded">
-                        <Expander.Header>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel Margin="0,12,12,12">
-                                    <ui:FontIcon
-                                        Height="40"
-                                        HorizontalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE7FC;" />
-
-                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
-                                            TextWrapping="Wrap" />
-                                    </ikw:SimpleStackPanel>
+                    <ui:SettingsExpander
+                        Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
+                        Expanded="Expander_Expanded"
+                        Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE7FC;" />
+                        </ui:SettingsExpander.HeaderIcon>
+                        <ui:SettingsExpander.Items>
+                            <!--  Right Joycon Sleep Time  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderRightAutoSleepTime}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderRightAutoSleepTime"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="60"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderRightAutoSleepTime_ValueChanged" />
                                 </DockPanel>
-                            </Grid>
-                        </Expander.Header>
-
-                        <Expander.Content>
-                            <ikw:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
-
-                                <!--  Right Joycon Sleep Time  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} min, ElementName=SliderRightAutoSleepTime, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderRightAutoSleepTime"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="60"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderRightAutoSleepTime_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Right Joystick deadzone  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightJoystickDeadzone, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderRightJoystickDeadzone"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="100"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Right Trigger deadzone  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightTriggerDeadzone, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderRightTriggerDeadzone"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="{Binding ElementName=SliderRightTriggerMargin, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderRightTriggerDeadzone_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                                <!--  Trigger margin  -->
-                                <ikw:SimpleStackPanel d:Visibility="Visible" Spacing="6">
-
-                                    <Grid Height="40">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                            <ColumnDefinition Width="5*" MinWidth="200" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}" />
-
-                                        <DockPanel
-                                            Grid.Column="1"
-                                            Margin="12,0,0,0"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBox
-                                                Height="32"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderRightTriggerMargin, Mode=OneWay}" />
-                                            <Slider
-                                                Name="SliderRightTriggerMargin"
-                                                Margin="6,0,0,0"
-                                                VerticalAlignment="Center"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="{Binding ElementName=SliderRightTriggerDeadzone, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                                Minimum="1"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderRightTriggerMargin_ValueChanged" />
-                                        </DockPanel>
-                                    </Grid>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-
-                            </ikw:SimpleStackPanel>
-                        </Expander.Content>
-                    </Expander>
+                            </ui:SettingsCard>
+                            <!--  Right Joystick deadzone  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderRightJoystickDeadzone"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="100"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
+                                </DockPanel>
+                            </ui:SettingsCard>
+                            <!--  Right Trigger deadzone  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderRightTriggerDeadzone"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="{Binding Source={x:Reference SliderRightTriggerMargin}, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderRightTriggerDeadzone_ValueChanged"
+                                        Value="{Binding RightTriggerDeadzoneValue}" />
+                                </DockPanel>
+                            </ui:SettingsCard>
+                            <!--  Right Trigger margin  -->
+                            <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
+                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Slider
+                                        Name="SliderRightTriggerMargin"
+                                        Width="200"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        Maximum="{Binding RightTriggerDeadzoneValue, Converter={StaticResource InvertPercentageConverter}}"
+                                        Minimum="1"
+                                        SmallChange="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        ValueChanged="SliderRightTriggerMargin_ValueChanged" />
+                                </DockPanel>
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>

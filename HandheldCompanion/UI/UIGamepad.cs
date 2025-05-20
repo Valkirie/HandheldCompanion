@@ -629,6 +629,36 @@ namespace HandheldCompanion.Managers
                                 toggleButton.IsChecked = !toggleButton.IsChecked;
                             }
                         }
+                        else if (focusedElement is SettingsCard settingsCard)
+                        {
+                            if (settingsCard.IsClickEnabled)
+                            {
+                                Focus(settingsCard);
+
+                                // raise event
+                                settingsCard.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+
+                                // execute command
+                                settingsCard.Command?.Execute(settingsCard.CommandParameter);
+                                
+                                switch (focusedElement.Tag)
+                                {
+                                    case "Navigation":
+                                        // set state
+                                        _goingForward = true;
+                                        break;
+                                    case "GoBack":
+                                        if (gamepadFrame.CanGoBack)
+                                        {
+                                            // set state
+                                            _goingBack = true;
+                                            _goingForward = false;
+                                            gamepadFrame.GoBack();
+                                        }
+                                        break;
+                                }
+                            }
+                        }
                         else if (focusedElement is ToggleSwitch toggleSwitch)
                         {
                             // set state

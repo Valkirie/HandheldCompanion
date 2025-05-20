@@ -26,7 +26,6 @@
                 Title="{l:Static resx:Resources.AboutPage_UnsupportedDevice}"
                 IsClosable="False"
                 IsOpen="True"
-                Message="{l:Static resx:Resources.AboutPage_UnsupportedDeviceDesc}"
                 Severity="Warning"
                 Visibility="{Binding IsUnsupportedDevice, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 

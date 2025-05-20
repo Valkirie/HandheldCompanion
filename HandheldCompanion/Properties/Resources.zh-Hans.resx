@@ -176,7 +176,7 @@
     <value>版本</value>
   </data>
   <data name="AboutPage_Wiki" xml:space="preserve">
-    <value>维基百科</value>
+    <value>百科</value>
   </data>
   <data name="Administrator" xml:space="preserve">
     <value>管理员</value>
@@ -945,7 +945,7 @@
     <value>外置传感器反向</value>
   </data>
   <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
-    <value>外置传感器面向方向相反，可能是C口转接器的愿意</value>
+    <value>由于USB-C转接器的原因，外置传感器可能倒置</value>
   </data>
   <data name="SettingsPage_SensorSelection" xml:space="preserve">
     <value>传感器</value>
@@ -2313,7 +2313,7 @@
     <value>设备</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please switch your controller off and on by pressing and holding the power button to finalize pairing.</value>
+    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>灯光效果</value>
@@ -2322,55 +2322,55 @@
     <value>选择灯光的颜色主题和效果</value>
   </data>
   <data name="DevicePage_DynamicLighting_Ambilight" xml:space="preserve">
-    <value>Ambilight</value>
+    <value>流光溢彩</value>
   </data>
   <data name="DevicePage_DynamicLighting_SolidColor" xml:space="preserve">
     <value>纯色</value>
   </data>
   <data name="DevicePage_DynamicLighting_Brightness" xml:space="preserve">
-    <value>Brightness</value>
+    <value>亮度</value>
   </data>
   <data name="DevicePage_DynamicLighting_BrightnessDesc" xml:space="preserve">
-    <value>Change the brightness of your lights</value>
+    <value>修改灯光亮度</value>
   </data>
   <data name="DevicePage_DynamicLighting_MainColorSelection" xml:space="preserve">
-    <value>Main color</value>
+    <value>主要颜色</value>
   </data>
   <data name="DevicePage_DynamicLighting_None" xml:space="preserve">
-    <value>None</value>
+    <value>无</value>
   </data>
   <data name="DevicePage_AmbilightVerticalBlackBarDetection" xml:space="preserve">
     <value>Ambilight Vertical Blackbar detection</value>
   </data>
   <data name="DevicePage_AmbilightVerticalBlackBarDetectionDesc" xml:space="preserve">
-    <value>Vertical black bar detection for 4:3 aspect ratio games or videos</value>
+    <value>检测 4:3 宽高比内容的垂直黑条</value>
   </data>
   <data name="DevicePage_DynamicLighting_Breathing" xml:space="preserve">
-    <value>Breathing</value>
+    <value>呼吸</value>
   </data>
   <data name="DevicePage_DynamicLighting_Gradient" xml:space="preserve">
-    <value>Gradient</value>
+    <value>渐变</value>
   </data>
   <data name="DevicePage_DynamicLighting_Rainbow" xml:space="preserve">
-    <value>Rainbow</value>
+    <value>彩虹</value>
   </data>
   <data name="DevicePage_DynamicLighting_Wave" xml:space="preserve">
-    <value>Wave</value>
+    <value>波浪</value>
   </data>
   <data name="DevicePage_DynamicLighting_Wheel" xml:space="preserve">
-    <value>Wheel</value>
+    <value>滚动</value>
   </data>
   <data name="DevicePage_DynamicLighting_MatchAccentColor" xml:space="preserve">
-    <value>Match my Windows accent color</value>
+    <value>匹配 Windows 主题色</value>
   </data>
   <data name="DevicePage_DynamicLighting_SecondColorSelection" xml:space="preserve">
-    <value>Second color</value>
+    <value>次要颜色</value>
   </data>
   <data name="DevicePage_DynamicLighting_EffectSpeed" xml:space="preserve">
-    <value>Effect speed</value>
+    <value>效果速度</value>
   </data>
   <data name="DevicePage_DynamicLighting_EffectDirection" xml:space="preserve">
-    <value>Direction</value>
+    <value>方向</value>
   </data>
   <data name="MainWindow_navPerformance" xml:space="preserve">
     <value>性能</value>
@@ -2541,10 +2541,10 @@
     <value>自动管理手柄以提高兼容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
-    <value>Touchpad passthrough</value>
+    <value>触摸板直通</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>无需软件映射，直接将触摸板作为鼠标使用</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>关闭</value>
@@ -2670,7 +2670,7 @@
     <value>你需要停用 Legion Space 的进程和服务，以避免使用本程序出现错误</value>
   </data>
   <data name="DevicePage_UseSecondColor" xml:space="preserve">
-    <value>Use second color</value>
+    <value>使用次要颜色</value>
   </data>
   <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
     <value>图形设置</value>
@@ -2799,28 +2799,31 @@
     <value>更改虚拟手柄类型</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
-    <value>Auto Sleep Time</value>
+    <value>自动休眠时间</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
-    <value>Joystick Deadzone</value>
+    <value>摇杆死区</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
-    <value>Left Legion Controller</value>
+    <value>左 Legion 手柄</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
-    <value>Change settings for the left legion controller</value>
+    <value>更改左 Legion 手柄的设置</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
-    <value>Right Legion Controller</value>
+    <value>右 Legion 手柄</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
-    <value>Change settings for the right legion controller</value>
+    <value>更改右 Legion 手柄的设置</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
-    <value>Trigger Deadzone</value>
+    <value>扳机死区</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
-    <value>Trigger Margin</value>
+    <value>扳机边缘</value>
+  </data>
+  <data name="DevicePage_DeviceSettings" xml:space="preserve">
+    <value>设备设置</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>你的设备暂未在支持列表，本程序可能无法正常使用。</value>
@@ -2846,11 +2849,32 @@
   <data name="Hint_MSIClawCenterCheckReadme" xml:space="preserve">
     <value>你需要停用 MSI Center 以避免冲突</value>
   </data>
+  <data name="DevicePage_BatteryChargeLimit" xml:space="preserve">
+    <value>电池充电限制</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimit_Desc" xml:space="preserve">
+    <value>设置电池的最大充电量以延长电池寿命</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent_Desc" xml:space="preserve">
+    <value>设置最大电池充电量百分比</value>
+  </data>
+  <data name="DevicePage_BatteryBypassCharging" xml:space="preserve">
+    <value>旁路供电</value>
+  </data>
+  <data name="DevicePage_BatteryBypassCharging_Desc" xml:space="preserve">
+    <value>设置旁路供电以延长电池寿命</value>
+  </data>
   <data name="SettingsPage_Telemetry" xml:space="preserve">
     <value>诊断数据</value>
   </data>
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>启用以自动上传崩溃日志</value>
+  </data>
+  <data name="DevicePage_DynamicLightDesc" xml:space="preserve">
+    <value>在设备上使用动态灯光</value>
+  </data>
+  <data name="DevicePage_DynamicLightTitle" xml:space="preserve">
+    <value>动态灯光设置</value>
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校准</value>
@@ -3062,6 +3086,12 @@
   <data name="Hotkey_SwapScreenDesc" xml:space="preserve">
     <value>将当前窗口移动到另一个屏幕</value>
   </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value>电池选项</value>
+  </data>
+  <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
+    <value>最大电池充电量</value>
+  </data>
   <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
     <value>自动（平衡性能/能效核）</value>
   </data>
@@ -3096,7 +3126,7 @@
     <value>开启后，触发热键时手柄将会震动</value>
   </data>
   <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
-    <value>设定</value>
+    <value>设置</value>
   </data>
   <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
     <value>CPU核心调度</value>
@@ -3124,6 +3154,24 @@
   </data>
   <data name="MainWindow_navLibrary" xml:space="preserve">
     <value>库</value>
+  </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value>更改配置的库设置</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value>在库中显示</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value>启用以在库中展示这个配置</value>
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value>库设置</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value>下载</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwriteSecondary" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -3264,9 +3312,45 @@
     <value>声音</value>
   </data>
   <data name="MainWindow_OpenNavigation" xml:space="preserve">
-    <value>导航栏</value>
+    <value>打开导航栏</value>
   </data>
   <data name="Hotkey_Current" xml:space="preserve">
     <value>上次关闭时的页面</value>
+  </data>
+  <data name="ProfilesPage_Play" xml:space="preserve">
+    <value>启动</value>
+  </data>
+  <data name="DevicePage_TDPControlMethod" xml:space="preserve">
+    <value>热设计功耗（TDP）控制模式</value>
+  </data>
+  <data name="DevicePage_TDPControlMethodDesc" xml:space="preserve">
+    <value>选择管理设备TDP的首选方法</value>
+  </data>
+  <data name="DevicePage_SecurityOptions" xml:space="preserve">
+    <value>安全选项</value>
+  </data>
+  <data name="DevicePage_CoreIsolation" xml:space="preserve">
+    <value>内核隔离</value>
+  </data>
+  <data name="DevicePage_CoreIsolationDesc" xml:space="preserve">
+    <value>设备上基于虚拟化的安全功能。会阻止 TDP 操作。</value>
+  </data>
+  <data name="DevicePage_PlatformOptions" xml:space="preserve">
+    <value>平台选项</value>
+  </data>
+  <data name="DevicePage_ManufacturerApplication" xml:space="preserve">
+    <value>OEM前端</value>
+  </data>
+  <data name="DevicePage_ManufacturerApplicationDesc" xml:space="preserve">
+    <value>启用或禁用OEM前端</value>
+  </data>
+  <data name="MainWindow_CloseNavigation" xml:space="preserve">
+    <value>关闭导航栏</value>
+  </data>
+  <data name="DevicePage_Lenovo_LeftController" xml:space="preserve">
+    <value>左手柄</value>
+  </data>
+  <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value>右手柄</value>
   </data>
 </root>

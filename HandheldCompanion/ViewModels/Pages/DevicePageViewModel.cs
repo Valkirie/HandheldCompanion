@@ -90,6 +90,40 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public double leftTriggerDeadzoneValue = 100;
+        public double LeftTriggerDeadzoneValue
+        {
+            get
+            {
+                return leftTriggerDeadzoneValue;
+            }
+            set
+            {
+                if (value != leftTriggerDeadzoneValue)
+                {
+                    leftTriggerDeadzoneValue = value;
+                    OnPropertyChanged(nameof(LeftTriggerDeadzoneValue));
+                }
+            }
+        }
+
+        public double rightTriggerDeadzoneValue = 100;
+        public double RightTriggerDeadzoneValue
+        {
+            get
+            {
+                return rightTriggerDeadzoneValue;
+            }
+            set
+            {
+                if (value != rightTriggerDeadzoneValue)
+                {
+                    rightTriggerDeadzoneValue = value;
+                    OnPropertyChanged(nameof(RightTriggerDeadzoneValue));
+                }
+            }
+        }
+
         #region MemoryIntegrity
         private CoreIsolationWatcher coreIsolationWatcher = new CoreIsolationWatcher();
         public bool MemoryIntegrity

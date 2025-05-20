@@ -289,21 +289,24 @@ public static class WPFUtils
                 case "TextBox":
                     {
                         TextBox textBox = (TextBox)current;
-                        if (!textBox.IsReadOnly)
-                            goto case "Slider";
+
+                        // skip if read only
+                        if (textBox.IsReadOnly)
+                            break;
+                        
+                        goto case "Slider";
                     }
-                    break;
 
                 case "RepeatButton":
                     {
                         RepeatButton repeatButton = (RepeatButton)current;
-                        if (!repeatButton.Name.StartsWith("PART_"))
-                        {
-                            // skip if repeat button is part of scrollbar
-                            goto case "Slider";
-                        }
+
+                        // skip if repeat button is part of scrollbar
+                        if (repeatButton.Name.StartsWith("PART_"))
+                            break;
+
+                        goto case "Slider";
                     }
-                    break;
 
                 case "Button":
                     {
@@ -315,7 +318,17 @@ public static class WPFUtils
                         else
                             goto case "Slider";
                     }
-                    break;
+
+                case "SettingsCard":
+                    {
+                        SettingsCard settingsCard = (SettingsCard)current;
+
+                        // skip if not clickable
+                        if (!settingsCard.IsClickEnabled)
+                            break;
+
+                        goto case "Slider";
+                    }
 
                 case "Slider":
                 case "ToggleSwitch":

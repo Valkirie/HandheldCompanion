@@ -1069,6 +1069,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Core isolation.
+        /// </summary>
+        public static string DevicePage_CoreIsolation {
+            get {
+                return ResourceManager.GetString("DevicePage_CoreIsolation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security features available on your device that use virtualization-based security. May prevent TDP manipulations..
+        /// </summary>
+        public static string DevicePage_CoreIsolationDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_CoreIsolationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device.
         /// </summary>
         public static string DevicePage_Device {
@@ -1366,6 +1384,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Left controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_LeftController {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_LeftController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_RightController {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_RightController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manufacturer application.
+        /// </summary>
+        public static string DevicePage_ManufacturerApplication {
+            get {
+                return ResourceManager.GetString("DevicePage_ManufacturerApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable manufacturer-installed applications on your gaming device..
+        /// </summary>
+        public static string DevicePage_ManufacturerApplicationDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_ManufacturerApplicationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Platform options.
+        /// </summary>
+        public static string DevicePage_PlatformOptions {
+            get {
+                return ResourceManager.GetString("DevicePage_PlatformOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power options.
         /// </summary>
         public static string DevicePage_PowerOptions {
@@ -1375,11 +1438,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Security options.
+        /// </summary>
+        public static string DevicePage_SecurityOptions {
+            get {
+                return ResourceManager.GetString("DevicePage_SecurityOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calibrate.
         /// </summary>
         public static string DevicePage_SensorCalibration_Button {
             get {
                 return ResourceManager.GetString("DevicePage_SensorCalibration_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thermal Design Power (TDP) Control method.
+        /// </summary>
+        public static string DevicePage_TDPControlMethod {
+            get {
+                return ResourceManager.GetString("DevicePage_TDPControlMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the preferred method to manage the device&apos;s TDP.
+        /// </summary>
+        public static string DevicePage_TDPControlMethodDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_TDPControlMethodDesc", resourceCulture);
             }
         }
         
@@ -5606,6 +5696,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close navigation.
+        /// </summary>
+        public static string MainWindow_CloseNavigation {
+            get {
+                return ResourceManager.GetString("MainWindow_CloseNavigation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MainWindow_Exit {
@@ -7955,6 +8054,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_Pinned {
             get {
                 return ResourceManager.GetString("ProfilesPage_Pinned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        public static string ProfilesPage_Play {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Play", resourceCulture);
             }
         }
         

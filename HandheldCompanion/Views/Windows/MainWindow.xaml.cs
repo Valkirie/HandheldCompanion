@@ -842,13 +842,13 @@ public partial class MainWindow : GamepadWindow
     private void navView_PaneOpened(NavigationView sender, object args)
     {
         // todo: localize me
-        PaneText.Text = "Close navigation";
+        PaneText.Text = Properties.Resources.MainWindow_CloseNavigation;
     }
 
     private void navView_PaneClosed(NavigationView sender, object args)
     {
         // todo: localize me
-        PaneText.Text = "Open navigation";
+        PaneText.Text = Properties.Resources.MainWindow_OpenNavigation;
     }
 
     private void On_Navigated(object sender, NavigationEventArgs e)
