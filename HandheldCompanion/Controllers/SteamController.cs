@@ -19,6 +19,11 @@ namespace HandheldCompanion.Controllers
             base.AttachDetails(details);
         }
 
+        public override string ToString()
+        {
+            return "Steam Controller";
+        }
+
         public override string GetGlyph(ButtonFlags button)
         {
             switch (button)
