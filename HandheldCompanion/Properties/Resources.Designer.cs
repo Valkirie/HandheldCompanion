@@ -1384,6 +1384,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Left controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_LeftController {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_LeftController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_RightController {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_RightController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manufacturer application.
         /// </summary>
         public static string DevicePage_ManufacturerApplication {

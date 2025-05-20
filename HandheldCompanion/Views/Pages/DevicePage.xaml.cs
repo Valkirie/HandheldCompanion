@@ -471,9 +471,9 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LEDUseSecondColor", Toggle_UseSecondColor.IsOn);
         }
 
-        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        private void Expander_Expanded(object sender, EventArgs e)
         {
-            ((Expander)sender).BringIntoView();
+            ((SettingsExpander)sender).BringIntoView();
         }
 
         private void SliderLEDSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -723,5 +723,6 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #endregion
+
     }
 }

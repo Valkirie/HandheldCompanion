@@ -2541,10 +2541,10 @@
     <value>自动管理手柄以提高兼容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
-    <value>Touchpad passthrough</value>
+    <value>触摸板直通</value>
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
-    <value>Allows you to use your device's touchpad as a regular mouse, without any software processing or mapping</value>
+    <value>无需软件映射，直接将触摸板作为鼠标使用</value>
   </data>
   <data name="ControllerPage_Close" xml:space="preserve">
     <value>关闭</value>
@@ -2799,28 +2799,31 @@
     <value>更改虚拟手柄类型</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
-    <value>Auto Sleep Time</value>
+    <value>自动休眠时间</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
-    <value>Joystick Deadzone</value>
+    <value>摇杆死区</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
-    <value>Left Legion Controller</value>
+    <value>左 Legion 手柄</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
-    <value>Change settings for the left legion controller</value>
+    <value>更改左 Legion 手柄的设置</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
-    <value>Right Legion Controller</value>
+    <value>右 Legion 手柄</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
-    <value>Change settings for the right legion controller</value>
+    <value>更改右 Legion 手柄的设置</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
-    <value>Trigger Deadzone</value>
+    <value>扳机死区</value>
   </data>
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
-    <value>Trigger Margin</value>
+    <value>扳机边缘</value>
+  </data>
+  <data name="DevicePage_DeviceSettings" xml:space="preserve">
+    <value>设备设置</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value>你的设备暂未在支持列表，本程序可能无法正常使用。</value>
@@ -2871,7 +2874,7 @@
     <value>在设备上使用动态灯光</value>
   </data>
   <data name="DevicePage_DynamicLightTitle" xml:space="preserve">
-    <value>动态灯光设定</value>
+    <value>动态灯光设置</value>
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校准</value>
@@ -3123,7 +3126,7 @@
     <value>开启后，触发热键时手柄将会震动</value>
   </data>
   <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
-    <value>设定</value>
+    <value>设置</value>
   </data>
   <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
     <value>CPU核心调度</value>
@@ -3343,5 +3346,11 @@
   </data>
   <data name="MainWindow_CloseNavigation" xml:space="preserve">
     <value>关闭导航栏</value>
+  </data>
+  <data name="DevicePage_Lenovo_LeftController" xml:space="preserve">
+    <value>左手柄</value>
+  </data>
+  <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value>右手柄</value>
   </data>
 </root>
