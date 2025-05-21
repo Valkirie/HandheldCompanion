@@ -64,6 +64,7 @@ public partial class Layout : ICloneable, IDisposable
             { ButtonFlags.LeftPadClickDown, ButtonFlags.DPadDown },
             { ButtonFlags.LeftPadClickLeft, ButtonFlags.DPadLeft },
             { ButtonFlags.LeftPadClickRight, ButtonFlags.DPadRight },
+            { ButtonFlags.RightPadClick, ButtonFlags.RightStickClick },
         };
 
         foreach (KeyValuePair<ButtonFlags, ButtonFlags> mapping in specialButtonMappings)
