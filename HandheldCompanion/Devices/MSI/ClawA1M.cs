@@ -540,18 +540,31 @@ public class ClawA1M : IDevice
         }
     }
 
+    public bool HasOverBoost()
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        if (uefiVariableEx != 0)
+            return box[1] != 0;
+        return false;
+    }
+
     public bool GetOverBoost()
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        return box[6] != 0;
+        if (uefiVariableEx != 0)
+            return box[6] != 0;
+        return false;
     }
 
     public bool GetOverBoostSup()
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        return box[7] != 0;
+        if (uefiVariableEx != 0)
+            return box[7] != 0;
+        return false;
     }
 
     protected void GetWMI()

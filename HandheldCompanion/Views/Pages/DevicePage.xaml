@@ -15,6 +15,7 @@
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:DevicePageViewModel}"
     d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
@@ -625,7 +626,7 @@
                     Spacing="4"
                     Visibility="Collapsed">
 
-                    <ui:SettingsCard Description="Selected the desired controller mode" Header="Controller mode">
+                    <ui:SettingsCard Description="Select the desired controller mode" Header="Controller mode">
                         <ui:SettingsCard.HeaderIcon>
                             <Image
                                 emoji:EmojiImage.DrawPadding="False"
@@ -641,9 +642,9 @@
                     </ui:SettingsCard>
 
                     <ui:SettingsCard
-                        Description="Maximized the combined performance of the processor and GPU"
+                        Description="Maximize the combined performance of the processor and GPU"
                         Header="MSI OverBoost"
-                        IsEnabled="False">
+                        IsEnabled="{Binding HasOverBoost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <ui:SettingsCard.HeaderIcon>
                             <Image
                                 emoji:EmojiImage.DrawPadding="False"

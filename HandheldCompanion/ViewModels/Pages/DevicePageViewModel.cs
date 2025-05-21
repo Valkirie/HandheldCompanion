@@ -72,6 +72,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool HasOverBoost => CurrentDevice is ClawA1M clawA1M && clawA1M.HasOverBoost();
+
         public bool ClawOverBoost
         {
             get
