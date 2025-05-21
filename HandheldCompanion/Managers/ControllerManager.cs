@@ -570,9 +570,8 @@ public static class ControllerManager
                                         // MI == 1-4 are 4 controllers
                                         // TODO: The dongle registers 4 controller devices, regardless how many are
                                         // actually connected. There is no easy way to check for connection without
-                                        // actually talking to each controller. Handle only the first for now.
-                                        if (details.GetMI() == 1)
-                                            try { controller = new GordonController(details); } catch { }
+                                        // actually talking to each controller.
+                                        try { controller = new GordonController(details); } catch { }
                                         break;
 
                                     // STEAM DECK

@@ -77,7 +77,7 @@ namespace HandheldCompanion.Controllers
             UserIndex = (byte)details.GetMI();
 
             // (re)plug controller if needed
-            if (WasPlugged) Open();
+            Open();
         }
 
         public override string ToString()
@@ -87,6 +87,8 @@ namespace HandheldCompanion.Controllers
                 return baseName;
             return "Steam Controller Gordon";
         }
+
+        public override bool IsReady => this.input is not null;
 
         public override bool IsConnected()
         {
@@ -153,16 +155,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.LeftPadTouch] = input.State.ButtonState[GordonControllerButton.BtnLPadTouch];
             Inputs.ButtonState[ButtonFlags.LeftPadClick] = input.State.ButtonState[GordonControllerButton.BtnLPadPress];
 
-            if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
-            {
-                Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[GordonControllerAxis.LeftPadX];
-                Inputs.AxisState[AxisFlags.LeftPadY] = input.State.AxesState[GordonControllerAxis.LeftPadY];
-            }
-            else
-            {
-                Inputs.AxisState[AxisFlags.LeftPadX] = 0;
-                Inputs.AxisState[AxisFlags.LeftPadY] = 0;
-            }
+            Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[GordonControllerAxis.LeftPadX];
+            Inputs.AxisState[AxisFlags.LeftPadY] = input.State.AxesState[GordonControllerAxis.LeftPadY];
 
             if (Inputs.ButtonState[ButtonFlags.LeftPadClick])
             {
@@ -184,16 +178,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = input.State.ButtonState[GordonControllerButton.BtnRPadTouch];
             Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[GordonControllerButton.BtnRPadPress];
 
-            if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[GordonControllerAxis.RightPadX];
-                Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[GordonControllerAxis.RightPadY];
-            }
-            else
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = 0;
-                Inputs.AxisState[AxisFlags.RightPadY] = 0;
-            }
+            Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[GordonControllerAxis.RightPadX];
+            Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[GordonControllerAxis.RightPadY];
 
             if (Inputs.ButtonState[ButtonFlags.RightPadClick])
             {
