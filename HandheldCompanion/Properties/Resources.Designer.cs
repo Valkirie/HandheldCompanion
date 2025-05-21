@@ -918,9 +918,9 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Change controller vibration strength.
         /// </summary>
-        public static string ControllerPage_VibrationStrengthExpl {
+        public static string ControllerPage_VibrationStrengthDesc {
             get {
-                return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_VibrationStrengthDesc", resourceCulture);
             }
         }
         

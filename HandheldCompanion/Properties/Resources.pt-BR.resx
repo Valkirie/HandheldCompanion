@@ -229,7 +229,7 @@
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>Força da vibração</value>
   </data>
-  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+  <data name="ControllerPage_VibrationStrengthDesc" xml:space="preserve">
     <value>Alterar a força da vibração do controle</value>
   </data>
   <data name="Hotkey_decreaseTDP" xml:space="preserve">

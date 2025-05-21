@@ -223,7 +223,7 @@
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>Intensidad de vibración</value>
   </data>
-  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+  <data name="ControllerPage_VibrationStrengthDesc" xml:space="preserve">
     <value>Cambiar intensidad de vibración del mando</value>
   </data>
   <data name="Hotkey_decreaseTDP" xml:space="preserve">
