@@ -145,7 +145,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // set focus (if window is on primary screen)
-            bool gamepadFocused = ((gamepadWindow is MainWindow mainWindow && (mainWindow.IsFocused)) || (gamepadWindow is OverlayQuickTools overlayQuickTools && overlayQuickTools.IsHitTestVisible));
+            bool gamepadFocused = ((gamepadWindow is MainWindow mainWindow && (mainWindow.IsActive)) || (gamepadWindow is OverlayQuickTools overlayQuickTools && overlayQuickTools.IsHitTestVisible));
             _focused[windowName] = gamepadWindow.IsPrimary && gamepadFocused;
 
             // raise event
