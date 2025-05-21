@@ -285,6 +285,7 @@ public class ProcessEx : IDisposable, ICloneable
         {
             case ProcessFilter.Desktop:
             case ProcessFilter.HandheldCompanion:
+            case ProcessFilter.Restricted:
                 return false;
         }
 

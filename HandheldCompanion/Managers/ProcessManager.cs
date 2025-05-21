@@ -558,6 +558,7 @@ public class ProcessManager : IManager
             // Other
             case "bdagent.exe": // Bitdefender Agent
             case "monotificationux.exe":
+            case "shellexperiencehost.exe":
                 return ProcessFilter.Restricted;
 
             // Desktop
@@ -580,7 +581,6 @@ public class ProcessManager : IManager
             case "rtkuwp.exe":
             case "searchapp.exe":
             case "searchhost.exe":
-            case "shellexperiencehost.exe":
             case "startmenuexperiencehost.exe":
             case "textinputhost.exe":
                 return ProcessFilter.Desktop;
