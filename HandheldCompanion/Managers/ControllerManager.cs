@@ -1117,18 +1117,20 @@ public static class ControllerManager
     {
         lock (targetLock)
         {
-            // unplug previous controller
-            if (targetController is not null)
-            {
-                targetController.InputsUpdated -= UpdateInputs;
-                targetController.SetLightColor(0, 0, 0);
-                targetController.Unplug();
-                targetController = null;
-
-                // update HIDInstancePath
-                ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
-            }
+            ClearTargetControllerInternal();
         }
+    }
+
+    private static void ClearTargetControllerInternal()
+    {
+        if (targetController is null)
+            return;
+
+        targetController.InputsUpdated -= UpdateInputs;
+        targetController.SetLightColor(0, 0, 0);
+        targetController.Unplug();
+        targetController = null;
+        ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
     }
 
     public static void PickTargetController()
@@ -1150,7 +1152,7 @@ public static class ControllerManager
                 return;
 
             // clear current target
-            ClearTargetController();
+            ClearTargetControllerInternal();
 
             // update target controller
             targetController = controller;
