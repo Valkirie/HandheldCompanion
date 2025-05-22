@@ -3458,22 +3458,4 @@
   <data name="MainWindow_OpenNavigation" xml:space="preserve">
     <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM1" xml:space="preserve">
-    <value>AYA</value>
-  </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM2" xml:space="preserve">
-    <value>≈</value>
-  </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM3" xml:space="preserve">
-    <value>RC</value>
-  </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM4" xml:space="preserve">
-    <value>LC</value>
-  </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM5" xml:space="preserve">
-    <value>RC1</value>
-  </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM6" xml:space="preserve">
-    <value>LC1</value>
-  </data>
 </root>
