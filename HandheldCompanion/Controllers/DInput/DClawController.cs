@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using SharpDX.DirectInput;
@@ -7,6 +8,17 @@ namespace HandheldCompanion.Controllers;
 
 public class DClawController : DInputController
 {
+    public override bool IsReady
+    {
+        get
+        {
+            if (IDevice.GetCurrent() is ClawA1M clawA1M)
+                return clawA1M.IsOpen;
+
+            return false;
+        }
+    }
+
     public DClawController() : base()
     { }
 
@@ -38,7 +50,7 @@ public class DClawController : DInputController
     public override void UpdateInputs(long ticks, float delta)
     {
         // skip if controller isn't connected
-        if (!IsConnected() || IsDisposing || IsDisposed || joystick.IsDisposed)
+        if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
@@ -47,6 +59,10 @@ public class DClawController : DInputController
         {
             // get state
             JoystickState state = joystick.GetCurrentState();
+
+            // dirty, state is corrupted, first state ?
+            if (state.RotationX == 32767 && state.RotationY == 32767 && state.RotationZ == 32767)
+                return;
 
             Inputs.ButtonState[ButtonFlags.B1] = state.Buttons[1]; // A
             Inputs.ButtonState[ButtonFlags.B2] = state.Buttons[2]; // B
@@ -85,9 +101,9 @@ public class DClawController : DInputController
         catch (SharpDX.SharpDXException ex)
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
-                joystick?.Acquire();
-            else if (ex.ResultCode == ResultCode.InputLost)
-                AttachDetails(Details);
+                if (IsPlugged) Plug();
+                else if (ex.ResultCode == ResultCode.InputLost)
+                    AttachDetails(Details);
         }
 
         base.UpdateInputs(ticks, delta);
@@ -98,7 +114,16 @@ public class DClawController : DInputController
         if (!IsConnected())
             return;
 
-        joystickHid?.Write(new byte[] { 05, 01, 00, 00, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength) });
+        joystickHid?.Write(new byte[]
+        {
+            05, 01, 00, 00,
+            (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength),
+            00,
+            00,
+            00,
+            00,
+            00
+        });
     }
 
     public override string GetGlyph(ButtonFlags button)

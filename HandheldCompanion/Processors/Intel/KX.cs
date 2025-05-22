@@ -13,7 +13,7 @@ public class KX
     private const string pnt_clock = "94";
 
     private string[] mchbar_addresses = new string[] { "0xfedc0000", "0xfed10000" };
-    private string mchbar;
+    private string mchbar = string.Empty;
     private readonly string path;
     private readonly ProcessStartInfo startInfo;
 
@@ -43,40 +43,36 @@ public class KX
 
         try
         {
-            foreach (string add in mchbar_addresses)
+            foreach (string address in mchbar_addresses)
             {
-                startInfo.Arguments = $"/rdmem32 {add}";
-                using (var ProcessOutput = Process.Start(startInfo))
+                startInfo.Arguments = $"/rdmem32 {address}";
+                using (Process? ProcessOutput = Process.Start(startInfo))
                 {
                     while (!ProcessOutput.StandardOutput.EndOfStream)
                     {
-                        var line = ProcessOutput.StandardOutput.ReadLine();
+                        string line = ProcessOutput.StandardOutput.ReadLine();
+                        if (string.IsNullOrEmpty(line))
+                            continue;
 
                         if (!line.Contains("Return"))
                             continue;
 
                         // parse result
                         line = CommonUtils.Between(line, "Return ");
-                        var returned = long.Parse(line);
-                        var output = "0x" + returned.ToString("X2").Substring(0, 4);
+                        long returned = long.Parse(line);
 
-                        // mcbar is null
-                        if (output == "0xFFFFFFFF")
+                        // check if mchbar is null
+                        if (returned == 0xFFFFFFFF)
                             continue;
 
-                        mchbar = output + pnt_limit;
-
-                        ProcessOutput.Close();
+                        // store mchbar and leave loop
+                        mchbar = address + pnt_limit;
                         return true;
                     }
-
-                    ProcessOutput.Close();
                 }
             }
         }
-        catch
-        {
-        }
+        catch { }
 
         return false;
     }
@@ -94,28 +90,25 @@ public class KX
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
-                    var line = ProcessOutput.StandardOutput.ReadLine();
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
 
-                    if (!line.Contains("Return"))
+                    if (line.Contains("Return"))
                         continue;
 
                     // parse result
                     line = CommonUtils.Between(line, "Return ");
-                    var returned = long.Parse(line);
-                    var output = "0x" + returned.ToString("X2").Substring(0, 4);
+                    long returned = long.Parse(line);
+                    string output = "0x" + returned.ToString("X2").Substring(0, 4);
 
+                    // store mchbar and leave loop
                     mchbar = output + pnt_limit;
-
-                    ProcessOutput.Close();
                     return true;
                 }
-
-                ProcessOutput.Close();
             }
         }
-        catch
-        {
-        }
+        catch { }
 
         return false;
     }
@@ -146,6 +139,9 @@ public class KX
 
     internal int get_limit(string pointer)
     {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
         startInfo.Arguments = $"/rdmem16 {mchbar}{pointer}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
@@ -153,25 +149,22 @@ public class KX
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
-                    var line = ProcessOutput.StandardOutput.ReadLine();
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
 
-                    if (!line.Contains("Return"))
+                    if (line.Contains("Return"))
                         continue;
 
                     // parse result
                     line = CommonUtils.Between(line, "Return ");
-                    var returned = long.Parse(line);
-                    var output = ((double)returned + short.MinValue) / 8.0d;
+                    long returned = long.Parse(line);
+                    double output = ((double)returned + short.MinValue) / 8.0d;
 
-                    ProcessOutput.Close();
                     return (int)output;
                 }
             }
-            catch
-            {
-            }
-
-            ProcessOutput.Close();
+            catch { }
         }
 
         return -1; // failed
@@ -179,6 +172,9 @@ public class KX
 
     internal int get_msr_limit(int pointer)
     {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
         startInfo.Arguments = "/rdmsr 0x610";
         using (var ProcessOutput = Process.Start(startInfo))
         {
@@ -186,28 +182,25 @@ public class KX
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
-                    var line = ProcessOutput.StandardOutput.ReadLine();
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
 
-                    if (!line.Contains("Msr Data"))
+                    if (line.Contains("Return"))
                         continue;
 
                     // parse result
                     line = CommonUtils.Between(line, "Msr Data     : ");
 
-                    var values = line.Split(" ");
-                    var hex = values[pointer];
+                    string[] values = line.Split(" ");
+                    string hex = values[pointer];
                     hex = values[pointer].Substring(hex.Length - 3);
-                    var output = Convert.ToInt32(hex, 16) / 8;
+                    int output = Convert.ToInt32(hex, 16) / 8;
 
-                    ProcessOutput.Close();
                     return output;
                 }
             }
-            catch
-            {
-            }
-
-            ProcessOutput.Close();
+            catch { }
         }
 
         return -1; // failed
@@ -235,33 +228,41 @@ public class KX
 
     internal int set_limit(string pointer1, int limit)
     {
-        var hex = TDPToHex(limit);
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
+        string hex = TDPToHex(limit);
 
         // register command
         startInfo.Arguments = $"/wrmem16 {mchbar}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
-            ProcessOutput.StandardOutput.ReadToEnd();
-            ProcessOutput.Close();
+            string? line = ProcessOutput.StandardOutput.ReadLine();
+            if (string.IsNullOrEmpty(line))
+                return 0;
         }
 
-        return 0; // implement error code support
+        return -1; // implement error code support
     }
 
     internal int set_msr_limits(int PL1, int PL2)
     {
-        var hexPL1 = TDPToHex(PL1);
-        var hexPL2 = TDPToHex(PL2);
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
+        string hexPL1 = TDPToHex(PL1);
+        string hexPL2 = TDPToHex(PL2);
 
         // register command
         startInfo.Arguments = $"/wrmsr 0x610 0x00438{hexPL2} 00DD8{hexPL1}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
-            ProcessOutput.StandardOutput.ReadToEnd();
-            ProcessOutput.Close();
+            string? line = ProcessOutput.StandardOutput.ReadLine();
+            if (string.IsNullOrEmpty(line))
+                return 0;
         }
 
-        return 0; // implement error code support
+        return -1; // implement error code support
     }
 
     private string TDPToHex(int decValue)
@@ -280,22 +281,27 @@ public class KX
 
     internal int set_gfx_clk(int clock)
     {
-        var hex = ClockToHex(clock);
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
 
-        var command = $"/wrmem8 {mchbar}{pnt_clock} {hex}";
+        string hex = ClockToHex(clock);
 
-        startInfo.Arguments = command;
+        startInfo.Arguments = $"/wrmem8 {mchbar}{pnt_clock} {hex}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
-            ProcessOutput.StandardOutput.ReadToEnd();
-            ProcessOutput.Close();
+            string? line = ProcessOutput.StandardOutput.ReadLine();
+            if (string.IsNullOrEmpty(line))
+                return 0;
         }
 
-        return 0; // implement error code support
+        return -1; // implement error code support
     }
 
     internal int get_gfx_clk()
     {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
         startInfo.Arguments = $"/rdmem8 {mchbar}{pnt_clock}";
         using (var ProcessOutput = Process.Start(startInfo))
         {
@@ -303,25 +309,22 @@ public class KX
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
-                    var line = ProcessOutput.StandardOutput.ReadLine();
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
 
-                    if (!line.Contains("Return"))
+                    if (line.Contains("Return"))
                         continue;
 
                     // parse result
                     line = CommonUtils.Between(line, "Return ");
-                    var returned = int.Parse(line);
-                    var clock = returned * 50;
+                    int returned = int.Parse(line);
+                    int clock = returned * 50;
 
-                    ProcessOutput.Close();
                     return clock;
                 }
             }
-            catch
-            {
-            }
-
-            ProcessOutput.Close();
+            catch { }
         }
 
         return -1; // failed

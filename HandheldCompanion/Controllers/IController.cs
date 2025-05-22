@@ -389,7 +389,7 @@ namespace HandheldCompanion.Controllers
             });
         }
 
-        // this function cannot be called twice
+        public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
         public virtual void Plug()
         {
             if (isPlaceholder)
@@ -400,7 +400,6 @@ namespace HandheldCompanion.Controllers
             InjectedButtons.Clear();
         }
 
-        // this function cannot be called twice
         public virtual void Unplug()
         {
             if (isPlaceholder)
@@ -686,12 +685,12 @@ namespace HandheldCompanion.Controllers
             };
         }
 
-        public Color GetGlyphColor(ButtonFlags button)
+        public Color? GetGlyphColor(ButtonFlags button)
         {
             if (ColoredButtons.TryGetValue(button, out Color color))
                 return color;
 
-            return Colors.White;
+            return null;
         }
 
         public Color GetGlyphColor(AxisLayoutFlags axis)

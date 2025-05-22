@@ -24,8 +24,8 @@ namespace HandheldCompanion.ViewModels.Controls
             }
         }
 
-        private Brush _Foreground;
-        public Brush Foreground
+        private Brush? _Foreground;
+        public Brush? Foreground
         {
             get
             {
@@ -41,7 +41,7 @@ namespace HandheldCompanion.ViewModels.Controls
             }
         }
 
-        public FontIconViewModel(Hotkey hotkey, HotkeyViewModel hotkeyViewModel, string glyph, Brush glyphColor)
+        public FontIconViewModel(Hotkey hotkey, HotkeyViewModel hotkeyViewModel, string glyph, Brush? glyphColor)
         {
             Hotkey = hotkey;
             HotkeyViewModel = hotkeyViewModel;

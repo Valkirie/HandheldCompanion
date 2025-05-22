@@ -22,9 +22,8 @@ public static class EnumUtils
         else
             key = $"Enum_{value.GetType().Name}_{value}";
 
-        var root = Resources.ResourceManager.GetString(key);
-
-        if (root is not null)
+        string? root = Resources.ResourceManager.GetString(key);
+        if (!string.IsNullOrEmpty(root) && !root.Equals(key))
             return root;
 
         // return description otherwise

@@ -1,55 +1,40 @@
 ﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Processors.Intel;
 
 namespace HandheldCompanion.Processors;
 
 public class IntelProcessor : Processor
 {
-    public string family;
+    public readonly string family;
     public KX platform = new();
 
     public IntelProcessor()
     {
-        IsInitialized = platform.init();
-        if (IsInitialized)
-        {
-            family = ProcessorID.Substring(ProcessorID.Length - 5);
+        bool PlatformInit = platform.init();
 
-            switch (family)
-            {
-                default:
-                case "206A7": // SandyBridge
-                case "306A9": // IvyBridge
-                case "40651": // Haswell
-                case "306D4": // Broadwell
-                case "406E3": // Skylake
-                case "906ED": // CoffeeLake
-                case "806E9": // AmberLake
-                case "706E5": // IceLake
-                case "806C1": // TigerLake U
-                case "806C2": // TigerLake U Refresh
-                case "806D1": // TigerLake H
-                case "906A2": // AlderLake-P
-                case "906A3": // AlderLake-P
-                case "906A4": // AlderLake-P
-                case "90672": // AlderLake-S
-                case "90675": // AlderLake-S
-                    CanChangeTDP = true;
-                    CanChangeGPU = true;
-                    break;
-            }
-        }
+        // get family
+        family = ProcessorID.Substring(ProcessorID.Length - 5);
+
+        // check capabilities
+        CanChangeTDP = PlatformInit || HasOEMCPU;
+        CanChangeGPU = PlatformInit || HasOEMGPU;
+
+        IsInitialized = CanChangeTDP || CanChangeGPU;
     }
 
     public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
     {
         lock (updateLock)
         {
-            bool UseOEM = (TDPMethod)ManagerFactory.settingsManager.GetInt("ConfigurableTDPMethod") == TDPMethod.OEM;
+            if (!CanChangeTDP)
+                return;
+
             IDevice device = IDevice.GetCurrent();
 
-            if (device.Capabilities.HasFlag(DeviceCapabilities.OEMPower) && UseOEM)
+            // MSI OverBoost will disable VT-d in BIOS and can cause BSOD
+            bool ForceOEM = device is ClawA1M claw && claw.GetOverBoost();
+
+            if (HasOEMCPU && (UseOEM || ForceOEM))
             {
                 switch (type)
                 {
@@ -63,38 +48,56 @@ public class IntelProcessor : Processor
             }
             else
             {
-                int error = 0;
-
                 switch (type)
                 {
                     case PowerType.Slow:
-                        error = platform.set_long_limit((int)limit);
+                        result = platform.set_long_limit((int)limit);
                         break;
                     case PowerType.Fast:
-                        error = platform.set_short_limit((int)limit);
+                        result = platform.set_short_limit((int)limit);
                         break;
                 }
-
-                base.SetTDPLimit(type, limit, immediate, error);
             }
+
+            base.SetTDPLimit(type, limit, immediate, result);
         }
     }
 
     public void SetMSRLimit(double PL1, double PL2)
     {
-        platform.set_msr_limits((int)PL1, (int)PL2);
-    }
-
-    public override void SetGPUClock(double clock, ref int result)
-    {
-        if (!CanChangeGPU)
-            return;
-
         lock (updateLock)
         {
-            result = platform.set_gfx_clk((int)clock);
+            if (!CanChangeTDP)
+                return;
 
-            base.SetGPUClock(clock, ref result);
+            if (HasOEMCPU && UseOEM)
+            {
+                // do something
+            }
+            else
+            {
+                platform.set_msr_limits((int)PL1, (int)PL2);
+            }
+        }
+    }
+
+    public override void SetGPUClock(double clock, int result)
+    {
+        lock (updateLock)
+        {
+            if (!CanChangeGPU)
+                return;
+
+            if (HasOEMGPU)
+            {
+                // do something
+            }
+            else
+            {
+                result = platform.set_gfx_clk((int)clock);
+            }
+
+            base.SetGPUClock(clock, result);
         }
     }
 }

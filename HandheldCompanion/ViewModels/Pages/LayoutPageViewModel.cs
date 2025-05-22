@@ -2,7 +2,6 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Properties;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,25 +12,21 @@ namespace HandheldCompanion.ViewModels
 {
     public class LayoutPageViewModel : BaseViewModel
     {
-        public ObservableCollection<LayoutTemplateViewModel> LayoutList { get; set; } = [];
-        private LayoutTemplateViewModel _layoutTemplates;
-        private LayoutTemplateViewModel _layoutCommunity;
+        private ObservableCollection<LayoutTemplateViewModel> layoutList = [];
+        public ListCollectionView LayoutCollectionView { get; set; }
 
         public LayoutPageViewModel(LayoutPage layoutPage)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(LayoutList, new object());
+            BindingOperations.EnableCollectionSynchronization(layoutList, new object());
 
             // manage events
             ManagerFactory.layoutManager.Updated += LayoutManager_Updated;
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
-            _layoutTemplates = new() { IsHeader = true, Name = Resources.LayoutPage_Templates, Guid = new() };
-            _layoutCommunity = new() { IsHeader = true, Name = Resources.LayoutPage_Community, Guid = new() };
-
-            LayoutList.Add(_layoutTemplates);
-            LayoutList.Add(_layoutCommunity);
+            LayoutCollectionView = new ListCollectionView(layoutList);
+            LayoutCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
 
             // raise events
             switch (ManagerFactory.layoutManager.Status)
@@ -85,16 +80,15 @@ namespace HandheldCompanion.ViewModels
             lock (lockcollection)
             {
                 int index;
-                LayoutTemplateViewModel? foundPreset = LayoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
+                LayoutTemplateViewModel? foundPreset = layoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
                 if (foundPreset is not null)
                 {
-                    index = LayoutList.IndexOf(foundPreset);
+                    index = layoutList.IndexOf(foundPreset);
                     foundPreset = new(layoutTemplate);
                 }
                 else
                 {
-                    index = LayoutList.IndexOf(layoutTemplate.IsInternal ? _layoutTemplates : _layoutCommunity) + 1;
-                    LayoutList.Insert(index, new(layoutTemplate));
+                    layoutList.Insert(0, new(layoutTemplate));
                 }
             }
 
@@ -112,7 +106,7 @@ namespace HandheldCompanion.ViewModels
 
             lock (lockcollection)
             {
-                foreach (LayoutTemplateViewModel layoutTemplate in LayoutList)
+                foreach (LayoutTemplateViewModel layoutTemplate in layoutList)
                 {
                     if (layoutTemplate.ControllerType is not null && FilterOnDevice)
                     {

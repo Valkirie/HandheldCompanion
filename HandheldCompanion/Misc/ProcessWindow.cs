@@ -1,18 +1,26 @@
-﻿using HandheldCompanion.Utils;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Automation;
 
 namespace HandheldCompanion.Misc
 {
     public class ProcessWindow : IDisposable
     {
-        private AutomationPropertyChangedEventHandler handler;
+        private AutomationPropertyChangedEventHandler propertyHandle;
+        private AutomationEventHandler eventHandler;
+
         public event EventHandler Refreshed;
         public event EventHandler Closed;
+        public event EventHandler Disposed;
 
         public AutomationElement Element { get; private set; }
         public readonly int Hwnd;
         private bool _disposed = false;
+
+        public ProcessEx processEx;
+        public ProcessWindowSettings windowSettings = new();
 
         private string _Name;
         public string Name
@@ -28,35 +36,43 @@ namespace HandheldCompanion.Misc
             }
         }
 
-        private AutomationEventHandler _windowClosedHandler;
-
-        public ProcessWindow(AutomationElement element, bool isPrimary)
+        public ProcessWindow(ProcessEx processEx, AutomationElement element, bool isPrimary)
         {
-            Hwnd = element.Current.NativeWindowHandle;
-            Element = element;
+            this.processEx = processEx;
+            this.Hwnd = element.Current.NativeWindowHandle;
+            this.Element = element;
+            this.Name = element.Current.Name;
 
-            handler = new AutomationPropertyChangedEventHandler(OnPropertyChanged);
+            this.propertyHandle = new(OnPropertyChanged);
+            this.eventHandler = new(OnClosed);
+
             if (element.TryGetCurrentPattern(WindowPattern.Pattern, out object patternObj))
             {
                 Automation.AddAutomationPropertyChangedEventHandler(
                     Element,
                     TreeScope.Element,
-                    handler,
+                    propertyHandle,
                     AutomationElement.NameProperty,
                     AutomationElement.BoundingRectangleProperty);
 
-                _windowClosedHandler = OnWindowClosed;
                 Automation.AddAutomationEventHandler(
                     WindowPattern.WindowClosedEvent,
-                    element,
-                    TreeScope.Subtree,
-                    _windowClosedHandler);
+                    Element,
+                    TreeScope.Element,
+                    eventHandler);
             }
 
             RefreshName();
+
+            if (string.IsNullOrEmpty(this.Name))
+                return;
+
+            // store window settings
+            windowSettings = WindowManager.GetWindowSettings(processEx.Path, this.Name, this.Hwnd);
+            WindowManager.ApplySettings(this);
         }
 
-        private void OnWindowClosed(object sender, AutomationEventArgs e)
+        private void OnClosed(object sender, AutomationEventArgs e)
         {
             Closed?.Invoke(this, EventArgs.Empty);
         }
@@ -91,19 +107,16 @@ namespace HandheldCompanion.Misc
 
             try
             {
-                string elementName = Element.Current.Name;
-                if (!string.IsNullOrEmpty(elementName))
-                {
-                    Name = elementName;
-                }
-                else
-                {
-                    string title = ProcessUtils.GetWindowTitle(Hwnd);
-                    if (!string.IsNullOrEmpty(title))
-                        Name = title;
-                }
+                string title = ProcessUtils.GetWindowTitle(Hwnd);
+                if (!string.IsNullOrEmpty(title))
+                    Name = title;
             }
-            catch { }
+            catch (COMException)
+            {
+                Dispose();
+            }
+            catch
+            { }
         }
 
         public void Dispose()
@@ -122,15 +135,18 @@ namespace HandheldCompanion.Misc
                 {
                     if (Element != null)
                     {
-                        if (handler != null)
+                        if (propertyHandle is not null)
                             ProcessUtils.TaskWithTimeout(() =>
-                                Automation.RemoveAutomationPropertyChangedEventHandler(Element, handler),
-                                TimeSpan.FromSeconds(3));
+                            Automation.RemoveAutomationPropertyChangedEventHandler(Element, propertyHandle),
+                            TimeSpan.FromSeconds(3));
 
-                        if (_windowClosedHandler != null)
+                        if (eventHandler is not null)
                             ProcessUtils.TaskWithTimeout(() =>
-                                Automation.RemoveAutomationEventHandler(WindowPattern.WindowClosedEvent, Element, _windowClosedHandler),
-                                TimeSpan.FromSeconds(3));
+                            Automation.RemoveAutomationEventHandler(
+                            WindowPattern.WindowClosedEvent,
+                            Element,
+                            eventHandler),
+                            TimeSpan.FromSeconds(3));
                     }
                 }
                 catch { }
@@ -138,8 +154,10 @@ namespace HandheldCompanion.Misc
 
             // Clear references and mark as disposed
             Element = null;
-            handler = null;
+            propertyHandle = null;
             _disposed = true;
+
+            Disposed?.Invoke(this, EventArgs.Empty);
         }
     }
 }

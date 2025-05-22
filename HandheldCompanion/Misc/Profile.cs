@@ -1,11 +1,14 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using WpfScreenHelper.Enum;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;
@@ -27,10 +30,11 @@ public enum UpdateSource
     Background = 0,
     ProfilesPage = 1,
     QuickProfilesPage = 2,
-    QuickProfilesCreation = 3,
-    Creation = 4,
-    Serializer = 5,
-    ProfilesPageUpdateOnly = 6
+    QuickProfilesCreation = 4,
+    Creation = 8,
+    Serializer = 16,
+    ProfilesPageUpdateOnly = 32,
+    LibraryUpdate = 64,
 }
 
 public enum SteeringAxis
@@ -41,11 +45,31 @@ public enum SteeringAxis
 }
 
 [Serializable]
+public class ProcessWindowSettings
+{
+    public string DeviceName { get; set; } = "\\\\.\\DISPLAY0";
+    public bool Borderless { get; set; } = false;
+    public WindowPositions WindowPositions { get; set; } = WindowPositions.Center;
+    [JsonIgnore] public bool IsGeneric { get; set; } = true;
+    public int Hwnd { get; set; } = 0;
+
+    public ProcessWindowSettings()
+    { }
+
+    public ProcessWindowSettings(string deviceName, bool borderless, WindowPositions windowPositions)
+    {
+        DeviceName = deviceName;
+        Borderless = borderless;
+        WindowPositions = windowPositions;
+        IsGeneric = false;
+    }
+}
+
+[Serializable]
 public partial class Profile : ICloneable, IComparable
 {
     [JsonIgnore] public const int SensivityArraySize = 49; // x + 1 (hidden)
-
-    public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
+    [JsonIgnore] public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
@@ -55,6 +79,15 @@ public partial class Profile : ICloneable, IComparable
     public bool IsFavoriteSubProfile { get; set; }
 
     public Guid Guid { get; set; } = Guid.NewGuid();
+    public DateTime DateCreated { get; set; } = DateTime.MinValue;
+    public DateTime DateModified { get; set; } = DateTime.MinValue;
+    public DateTime LastUsed { get; set; } = DateTime.MinValue;
+
+    // Library
+    public LibraryEntry LibraryEntry { get; set; }
+
+    public bool ShowInLibrary { get; set; } = true;
+
     public string Executable { get; set; } = string.Empty;
 
     public bool Enabled { get; set; }
@@ -117,6 +150,8 @@ public partial class Profile : ICloneable, IComparable
     // emulated controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;
 
+    public Dictionary<string, ProcessWindowSettings> WindowsSettings = new();
+
     public Profile()
     {
         // initialize aiming array
@@ -153,6 +188,8 @@ public partial class Profile : ICloneable, IComparable
         Enabled = true;
     }
 
+    public bool CanExecute => !(ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable) || ErrorCode.HasFlag(ProfileErrorCode.MissingPath) || ErrorCode.HasFlag(ProfileErrorCode.Running));
+
     public object Clone()
     {
         return CloningHelper.DeepClone(this);
@@ -186,6 +223,32 @@ public partial class Profile : ICloneable, IComparable
             name = $"{name} - {Guid}";
 
         return $"{name}.json";
+    }
+
+    public static string RemoveSpecialCharacters(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        // Define a set of allowed characters (letters, digits, '.', '_', and space)
+        var allowedCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._ ");
+        var sanitizedString = new StringBuilder(input.Length);
+
+        // Iterate over each character in the input string
+        foreach (char character in input)
+            if (allowedCharacters.Contains(character))
+                sanitizedString.Append(character);
+
+        // Return the sanitized string
+        return sanitizedString.ToString();
+    }
+
+    public string GetOwnerName()
+    {
+        if (IsSubProfile)
+            return ManagerFactory.profileManager.GetProfileForSubProfile(this).Name;
+        else
+            return string.Empty;
     }
 
     public override string ToString()

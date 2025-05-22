@@ -106,13 +106,6 @@ public partial class ControllerPage : Page
         ((ControllerPageViewModel)DataContext).Dispose();
     }
 
-    private Dialog dialog = new Dialog(MainWindow.GetCurrent())
-    {
-        Title = Properties.Resources.ControllerPage_ControllerManagement,
-        Content = Properties.Resources.ControllerPage_ControllerManagement_Content,
-        CanClose = false
-    };
-
     private void ControllerManager_Working(ControllerManagerStatus status, int attempts)
     {
         // UI thread
@@ -122,51 +115,49 @@ public partial class ControllerPage : Page
             {
                 case ControllerManagerStatus.Busy:
                     {
-                        Toggle_ControllerManagement.IsEnabled = false;
+                        ControllerSettings.IsEnabled = false;
 
                         switch (attempts)
                         {
                             case 0:
                                 // set dialog settings
-                                dialog.CanClose = false;
-                                dialog.DefaultButton = ContentDialogButton.Primary;
-                                dialog.CloseButtonText = string.Empty;
-                                dialog.PrimaryButtonText = string.Empty;
+                                ControllerManagement.DefaultButton = ContentDialogButton.Primary;
+                                ControllerManagement.CloseButtonText = string.Empty;
+                                ControllerManagement.PrimaryButtonText = string.Empty;
                                 break;
                         }
 
                         // update content
-                        dialog.UpdateContent(CreateFormattedContent(
+                        ControllerManagement.Content = CreateFormattedContent(
                             string.Format(Properties.Resources.ControllerPage_ControllerManagement_Attempt, attempts + 1),
-                            GetResourceString("ControllerPage_ControllerManagement_Attempt", attempts)));
+                            GetResourceString("ControllerPage_ControllerManagement_Attempt", attempts));
 
-                        dialog.Show();
+                        await ControllerManagement.ShowAsync(ContentDialogPlacement.InPlace);
                     }
                     break;
 
                 case ControllerManagerStatus.Succeeded:
                     {
-                        Toggle_ControllerManagement.IsEnabled = true;
+                        ControllerSettings.IsEnabled = true;
 
-                        dialog.UpdateContent(Properties.Resources.ControllerPage_ControllerManagement_Success);
+                        ControllerManagement.Content = Properties.Resources.ControllerPage_ControllerManagement_Success;
                         await Task.Delay(2000); // Captures synchronization context
-                        dialog.Hide();
+                        ControllerManagement.Hide();
                     }
                     break;
 
                 case ControllerManagerStatus.Failed:
                     {
-                        Toggle_ControllerManagement.IsEnabled = true;
+                        ControllerSettings.IsEnabled = true;
 
                         // set dialog settings
-                        dialog.CanClose = true;
-                        dialog.DefaultButton = ContentDialogButton.Close;
-                        dialog.CloseButtonText = Properties.Resources.ControllerPage_Close;
-                        dialog.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
+                        ControllerManagement.DefaultButton = ContentDialogButton.Close;
+                        ControllerManagement.CloseButtonText = Properties.Resources.ControllerPage_Close;
+                        ControllerManagement.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
 
-                        dialog.Content = Properties.Resources.ControllerPage_ControllerManagement_Failed;
+                        ControllerManagement.Content = Properties.Resources.ControllerPage_ControllerManagement_Failed;
 
-                        Task<ContentDialogResult> dialogTask = dialog.ShowAsync();
+                        Task<ContentDialogResult> dialogTask = ControllerManagement.ShowAsync(ContentDialogPlacement.InPlace);
 
                         await dialogTask; // sync call
 
@@ -177,7 +168,7 @@ public partial class ControllerPage : Page
                                 break;
                         }
 
-                        dialog.Hide();
+                        ControllerManagement.Hide();
                     }
                     break;
             }

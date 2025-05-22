@@ -105,7 +105,7 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
             if (foundProfile is not null)
             {
                 Profiles.SafeRemove(foundProfile);
@@ -119,11 +119,11 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.ToList().FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
             if (foundProfile is null)
             {
                 if (profile.IsPinned)
-                    Profiles.SafeAdd(new ProfileViewModel(profile));
+                    Profiles.SafeAdd(new ProfileViewModel(profile, true));
             }
             else
             {
@@ -145,7 +145,7 @@ namespace HandheldCompanion.ViewModels
             if (processEx is null)
                 return;
 
-            ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+            ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is not null)
             {
                 Processes.SafeRemove(foundProcess);
@@ -158,7 +158,7 @@ namespace HandheldCompanion.ViewModels
             if (processEx is null)
                 return;
 
-            ProcessExViewModel? foundProcess = Processes.ToList().FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+            ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {
                 Processes.SafeAdd(new ProcessExViewModel(processEx, this));

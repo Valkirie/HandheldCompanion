@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Management;
 
@@ -70,5 +71,14 @@ public class DeviceUtils
         catch { }
 
         return serials;
+    }
+
+    public static void RestartComputer()
+    {
+        Process.Start(new ProcessStartInfo("shutdown", "/r /f /t 0")
+        {
+            CreateNoWindow = true,
+            UseShellExecute = false
+        });
     }
 }

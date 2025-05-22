@@ -6,6 +6,18 @@ using System.Threading;
 namespace HandheldCompanion.Localization;
 public class TranslationSource : INotifyPropertyChanged
 {
+    public static readonly CultureInfo[] ValidCultures = [
+        new CultureInfo("en-US"),
+        new CultureInfo("fr-FR"),
+        new CultureInfo("de-DE"),
+        new CultureInfo("it-IT"),
+        new CultureInfo("ja-JP"),
+        new CultureInfo("pt-BR"),
+        new CultureInfo("es-ES"),
+        new CultureInfo("zh-Hans"),
+        new CultureInfo("zh-Hant"),
+        new CultureInfo("ru-RU")];
+
     private static readonly TranslationSource instance = new TranslationSource();
 
     public static TranslationSource Instance

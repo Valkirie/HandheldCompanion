@@ -460,24 +460,15 @@ public partial class QuickProfilesPage : Page
                     cb_SubProfiles.Items.Clear();
                     int selectedIndex = 0;
 
-                    if (profile.Default)
+                    // get self or main profile
+                    Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
+
+                    IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
+                    foreach (Profile profile in profiles)
                     {
                         cb_SubProfiles.Items.Add(profile);
-                        cb_SubProfiles.IsEnabled = false;
-                    }
-                    else
-                    {
-                        Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
-                        Profile[] subProfiles = ManagerFactory.profileManager.GetSubProfilesFromPath(selectedProfile.Path, false);
-
-                        cb_SubProfiles.Items.Add(mainProfile);
-                        foreach (Profile subProfile in subProfiles)
-                        {
-                            cb_SubProfiles.Items.Add(subProfile);
-                            if (subProfile.Guid == selectedProfile.Guid)
-                                selectedIndex = cb_SubProfiles.Items.IndexOf(subProfile);
-                        }
-                        cb_SubProfiles.IsEnabled = true;
+                        if (profile.Guid == selectedProfile.Guid)
+                            selectedIndex = cb_SubProfiles.Items.IndexOf(profile);
                     }
 
                     cb_SubProfiles.SelectedIndex = selectedIndex;
@@ -1018,7 +1009,7 @@ public partial class QuickProfilesPage : Page
             Title = "Power preset",
             Content = $"{powerProfile.Name} preset was created",
             PrimaryButtonText = Properties.Resources.ProfilesPage_OK
-        }.Show();
+        }.ShowAsync();
     }
 
     private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

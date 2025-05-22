@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Notifications;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace HandheldCompanion.Managers
@@ -12,19 +11,23 @@ namespace HandheldCompanion.Managers
         public event DiscardedEventHandler Discarded;
         public delegate void DiscardedEventHandler(Notification notification);
 
-        public List<Notification> Notifications = new();
+        public ConcurrentList<Notification> Notifications = new();
         public bool Any => Notifications.Any();
         public int Count => Notifications.Count;
 
         public void Add(Notification notification)
         {
-            Notifications.Add(notification);
+            if (!notification.IsInternal)
+                Notifications.Add(notification);
+
             Added?.Invoke(notification);
         }
 
         public void Discard(Notification notification)
         {
-            Notifications.Remove(notification);
+            if (!notification.IsInternal)
+                Notifications.Remove(notification);
+
             Discarded?.Invoke(notification);
         }
     }

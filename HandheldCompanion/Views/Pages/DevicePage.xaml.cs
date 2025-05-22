@@ -66,7 +66,7 @@ namespace HandheldCompanion.Views.Pages
                 // Show LegionGoPanel
                 LegionGoPanel.Visibility = Visibility.Visible;
             }
-            else if (device is Claw8 || device is ClawA1M)
+            else if (device is ClawA2VM || device is ClawA1M)
             {
                 // Show MSIClawPanel
                 MSIClawPanel.Visibility = Visibility.Visible;

@@ -35,7 +35,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                             <RadioButton
                                 Width="48"
                                 Height="70"
@@ -72,7 +72,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="4">
+                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
                             <RadioButton
                                 Width="100"
                                 Height="38"
@@ -93,8 +93,8 @@
                                 Style="{StaticResource {x:Type ToggleButton}}" />
                         </ikw:SimpleStackPanel>
 
-                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="4">
-                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                 <RadioButton
                                     Width="48"
                                     Height="38"
@@ -114,7 +114,7 @@
                                     GroupName="groupFoo"
                                     Style="{StaticResource {x:Type ToggleButton}}" />
                             </ikw:SimpleStackPanel>
-                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                 <RadioButton
                                     Width="48"
                                     Height="38"
@@ -168,23 +168,25 @@
             <ikw:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quick start" />
 
-                <ui:ItemsRepeater ItemsSource="{Binding Profiles}">
-                    <ui:ItemsRepeater.Layout>
-                        <ui:UniformGridLayout
-                            ItemsStretch="Fill"
-                            MaximumRowsOrColumns="6"
-                            MinColumnSpacing="6"
-                            MinItemHeight="84"
-                            MinItemWidth="130"
-                            MinRowSpacing="6"
-                            Orientation="Horizontal" />
-                    </ui:ItemsRepeater.Layout>
+                <ItemsControl
+                    ItemsSource="{Binding Profiles}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="5" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                    <ui:ItemsRepeater.ItemTemplate>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button
+                                Margin="3"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                CacheMode="BitmapCache"
                                 Command="{Binding StartProcessCommand}"
                                 IsEnabled="{Binding IsAvailable, UpdateSourceTrigger=PropertyChanged}">
 
@@ -219,8 +221,8 @@
                                 </ikw:SimpleStackPanel>
                             </Button>
                         </DataTemplate>
-                    </ui:ItemsRepeater.ItemTemplate>
-                </ui:ItemsRepeater>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ikw:SimpleStackPanel>
 
             <ikw:SimpleStackPanel Spacing="6">
@@ -228,12 +230,18 @@
 
                 <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
-                <ui:ItemsRepeater IsEnabled="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Processes}">
-                    <ui:ItemsRepeater.Layout>
-                        <ui:StackLayout Spacing="6" />
-                    </ui:ItemsRepeater.Layout>
+                <ItemsControl
+                    IsEnabled="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding Processes}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                    <ui:ItemsRepeater.ItemTemplate>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border
                                 Padding="15,12,12,12"
@@ -252,6 +260,7 @@
                                             Grid.Column="0"
                                             Width="24"
                                             Height="24"
+                                            CacheMode="BitmapCache"
                                             Source="{Binding Icon}" />
 
                                         <StackPanel
@@ -306,12 +315,14 @@
                                         </ikw:SimpleStackPanel>
                                     </Grid>
 
-                                    <ui:ItemsRepeater ItemsSource="{Binding ProcessWindows}">
-                                        <ui:ItemsRepeater.Layout>
-                                            <ui:StackLayout />
-                                        </ui:ItemsRepeater.Layout>
+                                    <ItemsControl ItemsSource="{Binding ProcessWindows}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
 
-                                        <ui:ItemsRepeater.ItemTemplate>
+                                        <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border
                                                     Padding="15,12,12,12"
@@ -319,7 +330,7 @@
                                                     CornerRadius="{DynamicResource ControlCornerRadius}">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition MinWidth="168" />
+                                                            <ColumnDefinition MinWidth="260" />
                                                             <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
 
@@ -370,13 +381,13 @@
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
-                                        </ui:ItemsRepeater.ItemTemplate>
-                                    </ui:ItemsRepeater>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </ikw:SimpleStackPanel>
                             </Border>
                         </DataTemplate>
-                    </ui:ItemsRepeater.ItemTemplate>
-                </ui:ItemsRepeater>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

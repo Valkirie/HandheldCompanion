@@ -47,7 +47,10 @@ namespace HandheldCompanion.ViewModels.Pages
 
         public void NotificationManager_Discarded(Notification notification)
         {
-            NotificationViewModel? foundNotification = Notifications.ToList().FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
+            if (notification.IsInternal)
+                return;
+
+            NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
             if (foundNotification is not null)
             {
                 Notifications.SafeRemove(foundNotification);
@@ -59,7 +62,10 @@ namespace HandheldCompanion.ViewModels.Pages
 
         public void NotificationManager_Added(Notification notification)
         {
-            NotificationViewModel? foundNotification = Notifications.ToList().FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
+            if (notification.IsInternal)
+                return;
+
+            NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
             if (foundNotification is null)
                 Notifications.SafeAdd(new NotificationViewModel(notification));
             else

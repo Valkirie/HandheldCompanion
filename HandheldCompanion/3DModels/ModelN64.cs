@@ -79,6 +79,8 @@ internal class ModelN64 : IModel
                         case ButtonFlags.B2:
                             buttonMaterial = MaterialPlasticGreen;
                             break;
+                        case ButtonFlags.L1:
+                        case ButtonFlags.R1:
                         case ButtonFlags.DPadDown:
                         case ButtonFlags.DPadUp:
                         case ButtonFlags.DPadLeft:

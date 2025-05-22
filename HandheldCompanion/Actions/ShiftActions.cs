@@ -8,13 +8,13 @@ namespace HandheldCompanion.Actions
     {
         [Description("None")]
         None,
-        [Description("Enabled with shift A")]
+        [Description("Enable shift A")]
         ShiftA,
-        [Description("Enabled with shift B")]
+        [Description("Enable shift B")]
         ShiftB,
-        [Description("Enabled with shift C")]
+        [Description("Enable shift C")]
         ShiftC,
-        [Description("Enabled with shift D")]
+        [Description("Enable shift D")]
         ShiftD,
         [Description("Always enabled")]
         Any,

@@ -7,9 +7,11 @@ using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -60,6 +62,7 @@ public partial class MainWindow : GamepadWindow
     public static HotkeysPage hotkeysPage;
     public static LayoutPage layoutPage;
     public static NotificationsPage notificationsPage;
+    public static LibraryPage libraryPage;
 
     // overlay(s) vars
     public static OverlayModel overlayModel;
@@ -86,11 +89,17 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
+												  
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
         // initialize splash screen
         SplashScreen = new SplashScreen();
+        DataContext = new MainWindowViewModel();
+
+        // set theme
+        var currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
+        ThemeManager.SetRequestedTheme(this, currentTheme);
 
         InitializeComponent();
         this.Tag = "MainWindow";
@@ -150,23 +159,11 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
+        CurrentDevice.Initialize(FirstStart);
 
-        if (FirstStart)
-        {
-            if (CurrentDevice is SteamDeck steamDeck)
-            {
-                // do something
-            }
-            else if (CurrentDevice is AYANEOFlipDS flipDS)
-            {
-                // set Quicktools to Maximize on bottom screen
-                ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", 2);
-                ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
-            }
-
-            ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-        }
-
+        // initialize device settings
+		ManagerFactory.settingsManager.SetProperty("FirstStart", false);
+		
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
@@ -226,9 +223,12 @@ public partial class MainWindow : GamepadWindow
 
         // update LastVersion
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
+
+        // load gamepad navigation manager
+        gamepadFocusManager = new(this, ContentFrame);
     }
 
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
         {
@@ -238,9 +238,11 @@ public partial class MainWindow : GamepadWindow
                 break;
             case WM_QUERYENDSESSION:
                 break;
+									
+					  
         }
 
-        return IntPtr.Zero;
+        return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -248,14 +250,17 @@ public partial class MainWindow : GamepadWindow
         // UI thread
         UIHelper.TryInvoke(() =>
         {
+            var color1 = Controller.GetGlyphColor(ButtonFlags.B1);
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
-            GamepadUISelectIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B1));
+            GamepadUISelectIcon.Foreground = color1.HasValue ? new SolidColorBrush(color1.Value) : null;
 
+            var color2 = Controller.GetGlyphColor(ButtonFlags.B2);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
-            GamepadUIBackIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B2));
+            GamepadUIBackIcon.Foreground = color2.HasValue ? new SolidColorBrush(color2.Value) : null;
 
+            var color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
-            GamepadUIToggleIcon.Foreground = new SolidColorBrush(Controller.GetGlyphColor(ButtonFlags.B4));
+            GamepadUIToggleIcon.Foreground = color4.HasValue ? new SolidColorBrush(color4.Value) : null;
         });
     }
 
@@ -293,6 +298,16 @@ public partial class MainWindow : GamepadWindow
                         {
                             GamepadUIToggle.Visibility = Visibility.Visible;
                             GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Toggle;
+                        }
+
+                        if (control.Tag is ProfileViewModel profileViewModel)
+                        {
+                            Profile profile = profileViewModel.Profile;
+                            if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
+                            {
+                                GamepadUIToggle.Visibility = Visibility.Visible;
+                                GamepadUIToggleDesc.Text = "Play";
+                            }
                         }
                     }
                     break;
@@ -354,6 +369,14 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
+    public void SetState(WindowState windowState)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            WindowState = windowState;
+        });
+    }
+
     public static MainWindow GetCurrent()
     {
         return CurrentWindow;
@@ -389,9 +412,10 @@ public partial class MainWindow : GamepadWindow
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
         notificationsPage = new NotificationsPage("notifications");
+        libraryPage = new LibraryPage("library");
 
         // manage events
-        controllerPage.Loaded += ControllerPage_Loaded;
+        libraryPage.Loaded += HomePage_Loaded;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
@@ -401,6 +425,7 @@ public partial class MainWindow : GamepadWindow
         _pages.Add("SettingsPage", settingsPage);
         _pages.Add("HotkeysPage", hotkeysPage);
         _pages.Add("NotificationsPage", notificationsPage);
+        _pages.Add("LibraryPage", libraryPage);
     }
 
     private void LoadPages_MVVM()
@@ -454,7 +479,7 @@ public partial class MainWindow : GamepadWindow
         SplashScreen?.Close();
 
         // load gamepad navigation manager
-        gamepadFocusManager = new(this, ContentFrame);
+        gamepadFocusManager.Loaded();
 
         HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
         source.AddHook(WndProc); // Hook into the window's message loop
@@ -464,7 +489,7 @@ public partial class MainWindow : GamepadWindow
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
     }
 
-    private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
+    private void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
         // home page is ready, display main window
         this.Visibility = Visibility.Visible;
@@ -531,11 +556,11 @@ public partial class MainWindow : GamepadWindow
                     }
 
                     // open device, when ready
-                    new Thread(() =>
+                    new Task(async () =>
                     {
                         // wait for all HIDs to be ready
                         while (!CurrentDevice.IsReady())
-                            Thread.Sleep(1000);
+                            await Task.Delay(250).ConfigureAwait(false);
 
                         // open current device (threaded to avoid device to hang)
                         CurrentDevice.Open();
@@ -552,6 +577,11 @@ public partial class MainWindow : GamepadWindow
 
                         // when device goes to sleep
                         pendingTime = DateTime.Now;
+
+                        // hide subwindow(s)
+                        overlayModel.SetVisibility(Visibility.Collapsed);
+                        overlayTrackpad.SetVisibility(Visibility.Collapsed);
+                        overlayquickTools.SetVisibility(Visibility.Collapsed);
 
                         // suspend manager(s)
                         ManagerFactory.gpuManager.Stop();
@@ -586,19 +616,28 @@ public partial class MainWindow : GamepadWindow
             NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
             string navItemTag = (string)navItem.Tag;
 
-            switch (navItemTag)
-            {
-                default:
-                    prevNavItemTag = navItemTag;
-                    break;
-            }
-
-            NavView_Navigate(prevNavItemTag);
+            NavView_Navigate(navItemTag);
         }
     }
 
     private void NavView_Navigate(string navItemTag)
     {
+        NavigationViewItem? selectedItem = navView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // is it a footer item ?
+        if (selectedItem is null)
+            selectedItem = navView.FooterMenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Find and select the matching menu item
+        navView.SelectedItem = selectedItem;
+
+        // Give gamepad focus
+        gamepadFocusManager.Focus((NavigationViewItem)selectedItem);
+
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
 
@@ -613,13 +652,8 @@ public partial class MainWindow : GamepadWindow
 
     public void NavigateToPage(string navItemTag)
     {
-        // Update previous navigation item
-        prevNavItemTag = navItemTag;
-
-        // Find and select the matching menu item
-        navView.SelectedItem = navView.MenuItems
-            .OfType<NavigationViewItem>()
-            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+        if (prevNavItemTag == navItemTag)
+            return;
 
         // Navigate to the specified page
         NavView_Navigate(navItemTag);
@@ -676,6 +710,7 @@ public partial class MainWindow : GamepadWindow
             hotkeysPage.Page_Closed();
             layoutPage.Page_Closed();
             notificationsPage.Page_Closed();
+            libraryPage.Page_Closed();
         });
 
         // remove all automation event handlers
@@ -772,8 +807,8 @@ public partial class MainWindow : GamepadWindow
         // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
-        // navigate
-        NavigateToPage("ControllerPage");
+        // navigate to home page
+        NavigateToPage("LibraryPage");
     }
 
     private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -818,11 +853,12 @@ public partial class MainWindow : GamepadWindow
 
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
-        navView.IsBackEnabled = ContentFrame.CanGoBack;
-
         if (ContentFrame.SourcePageType is not null)
         {
             CurrentPageName = ContentFrame.CurrentSourcePageType.Name;
+
+            // Update previous navigation item
+            prevNavItemTag = CurrentPageName;
 
             var NavViewItem = navView.MenuItems
                 .OfType<NavigationViewItem>()

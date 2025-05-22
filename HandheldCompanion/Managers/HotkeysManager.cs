@@ -21,16 +21,15 @@ namespace HandheldCompanion.Managers;
 public class HotkeysManager : IManager
 {
     public ConcurrentDictionary<ButtonFlags, Hotkey> hotkeys = new();
-    private readonly string HotkeysPath;
 
     public HotkeysManager()
     {
         // initialize path
-        HotkeysPath = Path.Combine(App.SettingsPath, "hotkeys");
+        ManagerPath = Path.Combine(App.SettingsPath, "hotkeys");
 
         // create path
-        if (!Directory.Exists(HotkeysPath))
-            Directory.CreateDirectory(HotkeysPath);
+        if (!Directory.Exists(ManagerPath))
+            Directory.CreateDirectory(ManagerPath);
     }
 
     public override void Start()
@@ -41,12 +40,12 @@ public class HotkeysManager : IManager
         base.PrepareStart();
 
         // process existing hotkeys
-        string[] fileEntries = Directory.GetFiles(HotkeysPath, "*.json", SearchOption.AllDirectories);
+        string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
         foreach (string fileName in fileEntries)
             ProcessHotkey(fileName);
 
         // get latest known version
-        // if last time HC version used old hotkey engine and user has no defined hotkeys
+        // if last HC version used old hotkey engine and user has no defined hotkeys
         Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
         if (LastVersion < Version.Parse(Settings.VersionHotkeyManager) && hotkeys.Count == 0)
         {
@@ -345,7 +344,7 @@ public class HotkeysManager : IManager
 
     public void SerializeHotkey(Hotkey hotkey)
     {
-        string hotkeyPath = Path.Combine(HotkeysPath, $"{hotkey.ButtonFlags}.json");
+        string hotkeyPath = Path.Combine(ManagerPath, $"{hotkey.ButtonFlags}.json");
 
         // update profile version to current build
         hotkey.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
@@ -360,7 +359,7 @@ public class HotkeysManager : IManager
 
     public void DeleteHotkey(Hotkey hotkey)
     {
-        var hotkeyPath = Path.Combine(HotkeysPath, $"{hotkey.ButtonFlags}.json");
+        var hotkeyPath = Path.Combine(ManagerPath, $"{hotkey.ButtonFlags}.json");
 
         if (hotkeys.ContainsKey(hotkey.ButtonFlags))
         {

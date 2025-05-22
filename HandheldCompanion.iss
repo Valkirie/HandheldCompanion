@@ -26,7 +26,7 @@
 #define InstallerVersion '0.2'
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.23.3.0'
+#define MyAppVersion '0.24.0.11'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -91,7 +91,9 @@ SetupLogging=yes
 MinVersion={#WindowsVersion}
 OutputDir={#SourcePath}\install 
 PrivilegesRequired=admin
-SolidCompression=yes 
+SolidCompression=yes
+LZMAUseSeparateProcess=yes
+LZMANumBlockThreads=6
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
 UninstallDisplayIcon={app}\{#MyAppExeName}

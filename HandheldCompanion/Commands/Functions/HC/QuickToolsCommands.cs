@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Views.Windows;
 using System;
+using System.Windows;
 
 namespace HandheldCompanion.Commands.Functions.HC
 {
@@ -36,26 +37,28 @@ namespace HandheldCompanion.Commands.Functions.HC
                 _ => string.Empty
             };
 
-            var overlayQuickTools = OverlayQuickTools.GetCurrent();
+            OverlayQuickTools overlayQuickTools = OverlayQuickTools.GetCurrent();
 
-            // Toggle visibility if no page change or the page being navigated to is different from the current one
-            if (string.IsNullOrEmpty(pageTag) || pageTag == overlayQuickTools.prevNavItemTag)
-                overlayQuickTools.ToggleVisibility();
+            // Toggle visibility
+            overlayQuickTools.ToggleVisibility();
 
-            // Navigate to the specified page if valid
-            if (!string.IsNullOrEmpty(pageTag))
+            // UI thread
+            UIHelper.TryInvoke(() =>
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                switch (overlayQuickTools.Visibility)
                 {
-                    overlayQuickTools.NavigateToPage(pageTag);
-                });
-            }
+                    case Visibility.Visible:
+                        // Navigate to the specified page if valid
+                        if (!string.IsNullOrEmpty(pageTag))
+                            overlayQuickTools.NavigateToPage(pageTag);
+                        break;
+                }
+            });
 
             base.Execute(isKeyDown, isKeyUp, false);
         }
 
-        public override bool IsToggled => OverlayQuickTools.GetCurrent().Visibility == System.Windows.Visibility.Visible;
+        public override bool IsToggled => OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible;
 
         public override object Clone()
         {

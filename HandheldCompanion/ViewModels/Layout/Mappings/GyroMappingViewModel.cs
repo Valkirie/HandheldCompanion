@@ -206,7 +206,7 @@ namespace HandheldCompanion.ViewModels
             GyroHotkey = hotkey;
 
             // update hotkey UI
-            HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
             if (foundHotkey is null)
                 HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
             else
@@ -365,7 +365,7 @@ namespace HandheldCompanion.ViewModels
                 GyroHotkey.inputsChord.ButtonState = ((GyroActions)newAction).MotionTrigger.Clone() as ButtonState;
 
                 // update hotkey UI
-                HotkeyViewModel? foundHotkey = HotkeysList.ToList().FirstOrDefault(p => p.Hotkey.ButtonFlags == GyroHotkey.ButtonFlags);
+                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == GyroHotkey.ButtonFlags);
                 if (foundHotkey is not null)
                     foundHotkey.Hotkey = GyroHotkey;
 

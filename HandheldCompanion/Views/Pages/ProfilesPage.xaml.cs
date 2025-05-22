@@ -1,4 +1,4 @@
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -11,7 +11,8 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
-using Microsoft.Win32;
+using IWshRuntimeLibrary;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,7 @@ using System.Windows.Controls;
 using System.Xml;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Utils.XInputPlusUtils;
+using File = System.IO.File;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Timer = System.Timers.Timer;
@@ -281,123 +283,155 @@ public partial class ProfilesPage : Page
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
-        var openFileDialog = new OpenFileDialog()
+        CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog();
+        openFileDialog.Filters.Add(new CommonFileDialogFilter("Executable", "*.exe"));
+        openFileDialog.Filters.Add(new CommonFileDialogFilter("Shortcuts", "*.lnk"));
+        openFileDialog.Filters.Add(new CommonFileDialogFilter("UWP manifest", "*AppxManifest.xml"));
+        openFileDialog.NavigateToShortcut = false;
+
+        if (openFileDialog.ShowDialog() != CommonFileDialogResult.Ok)
+            return;
+
+        try
         {
-            Filter = "Executable|*.exe|UWP manifest|AppxManifest.xml",
-        };
+            string path = openFileDialog.FileName;
+            if (string.IsNullOrEmpty(path))
+                return;
 
-        if (openFileDialog.ShowDialog() == true)
-            try
+            string folder = Path.GetDirectoryName(path);
+            string file = Path.GetFileName(path);
+            string ext = Path.GetExtension(file);
+
+            string arguments = string.Empty;
+            string name = file.Replace(ext, string.Empty);
+
+            if (ext.Equals(".lnk"))
             {
-                string path = openFileDialog.FileName;
-                string folder = Path.GetDirectoryName(path);
+                WshShell wsh = new WshShell();
+                IWshShortcut link = (IWshShortcut)wsh.CreateShortcut(path);
 
-                string file = openFileDialog.SafeFileName;
-                string ext = Path.GetExtension(file);
+                // get real path
+                path = link.TargetPath;
 
-                switch (ext)
-                {
-                    default:
-                    case ".exe":
-                        break;
-                    case ".xml":
-                        try
+                // get arguments
+                arguments = link.Arguments;
+
+                folder = Path.GetDirectoryName(path);
+                file = Path.GetFileName(link.TargetPath);
+                ext = Path.GetExtension(file);
+            }
+
+            switch (ext)
+            {
+                default:
+                case ".exe":
+                    break;
+                case ".xml":
+                    try
+                    {
+                        XmlDocument doc = new XmlDocument();
+                        string UWPpath = string.Empty;
+                        string UWPfile = string.Empty;
+
+                        // check if MicrosoftGame.config exists
+                        string configPath = Path.Combine(folder, "MicrosoftGame.config");
+                        if (File.Exists(configPath))
                         {
-                            XmlDocument doc = new XmlDocument();
-                            string UWPpath = string.Empty;
-                            string UWPfile = string.Empty;
+                            doc.Load(configPath);
 
-                            // check if MicrosoftGame.config exists
-                            string configPath = Path.Combine(folder, "MicrosoftGame.config");
-                            if (File.Exists(configPath))
-                            {
-                                doc.Load(configPath);
-
-                                XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
-                                foreach (XmlNode node in ExecutableList)
-                                    foreach (XmlNode child in node.ChildNodes)
-                                        if (child.Name.Equals("Executable"))
-                                            if (child.Attributes is not null)
-                                                foreach (XmlAttribute attribute in child.Attributes)
-                                                    switch (attribute.Name)
-                                                    {
-                                                        case "Name":
-                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                            UWPfile = Path.GetFileName(path);
-                                                            break;
-                                                    }
-                            }
-
-                            // either there was no config file, either we couldn't find an executable within it
-                            if (!File.Exists(UWPpath))
-                            {
-                                doc.Load(path);
-
-                                XmlNodeList Applications = doc.GetElementsByTagName("Applications");
-                                foreach (XmlNode node in Applications)
-                                    foreach (XmlNode child in node.ChildNodes)
-                                        if (child.Name.Equals("Application"))
-                                            if (child.Attributes is not null)
-                                                foreach (XmlAttribute attribute in child.Attributes)
-                                                    switch (attribute.Name)
-                                                    {
-                                                        case "Executable":
-                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                            UWPfile = Path.GetFileName(path);
-                                                            break;
-                                                    }
-                            }
-
-                            // we're good to go
-                            if (File.Exists(UWPpath))
-                            {
-                                path = UWPpath;
-                                file = UWPfile;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            LogManager.LogError(ex.Message, true);
+                            XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
+                            foreach (XmlNode node in ExecutableList)
+                                foreach (XmlNode child in node.ChildNodes)
+                                    if (child.Name.Equals("Executable"))
+                                        if (child.Attributes is not null)
+                                            foreach (XmlAttribute attribute in child.Attributes)
+                                                switch (attribute.Name)
+                                                {
+                                                    case "Name":
+                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                        UWPfile = Path.GetFileName(path);
+                                                        break;
+                                                }
                         }
 
-                        break;
-                }
+                        // either there was no config file, either we couldn't find an executable within it
+                        if (!File.Exists(UWPpath))
+                        {
+                            doc.Load(path);
 
-                // create profile
-                Profile profile = new Profile(path);
+                            XmlNodeList Applications = doc.GetElementsByTagName("Applications");
+                            foreach (XmlNode node in Applications)
+                                foreach (XmlNode child in node.ChildNodes)
+                                    if (child.Name.Equals("Application"))
+                                        if (child.Attributes is not null)
+                                            foreach (XmlAttribute attribute in child.Attributes)
+                                                switch (attribute.Name)
+                                                {
+                                                    case "Executable":
+                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                        UWPfile = Path.GetFileName(path);
+                                                        break;
+                                                }
+                        }
 
-                // check on path rather than profile
-                bool exists = false;
-                if (ManagerFactory.profileManager.Contains(path))
-                {
-                    Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
-                    {
-                        Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
-                        Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
-                        CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
-                        PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
-                    }.ShowAsync();
-
-                    await dialogTask; // sync call
-
-                    switch (dialogTask.Result)
-                    {
-                        case ContentDialogResult.Primary:
-                            exists = false;
-                            break;
-                        default:
-                            exists = true;
-                            break;
+                        // we're good to go
+                        if (File.Exists(UWPpath))
+                        {
+                            path = UWPpath;
+                            file = UWPfile;
+                        }
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError(ex.Message, true);
+                    }
 
-                if (!exists)
-                    ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Creation);
+                    break;
             }
-            catch (Exception ex)
+
+            // create profile
+            Profile profile = new Profile(path);
+            profile.Arguments = arguments;
+            if (!string.IsNullOrEmpty(arguments))
+                profile.Name = name;
+
+            // check on path rather than profile
+            bool exists = false;
+            if (ManagerFactory.profileManager.Contains(path))
             {
-                LogManager.LogError(ex.Message);
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
+                    Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes,
+                    SecondaryButtonText = Properties.Resources.ProfilesPage_AreYouSureOverwriteSecondary,
+                }.ShowAsync();
+
+                await dialogTask; // sync call
+
+                switch (dialogTask.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        exists = false;
+                        break;
+                    case ContentDialogResult.Secondary:
+                        profile.IsSubProfile = true;
+                        exists = false;
+                        break;
+                    default:
+                        exists = true;
+                        break;
+                }
             }
+
+            if (!exists)
+                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Creation);
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError(ex.Message);
+        }
     }
 
     private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
@@ -475,6 +509,7 @@ public partial class ProfilesPage : Page
             return;
 
         selectedMainProfile = (Profile)cB_Profiles.SelectedItem;
+
         UpdateSubProfiles();
     }
 
@@ -499,6 +534,8 @@ public partial class ProfilesPage : Page
 
         if (profileLock.TryEnter())
         {
+            ((ProfilesPageViewModel)DataContext).ProfileChanged(selectedProfile);
+
             try
             {
                 UIHelper.TryInvoke(() =>
@@ -514,21 +551,14 @@ public partial class ProfilesPage : Page
                     cB_Wrapper.IsEnabled = !selectedProfile.Default;
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
                     UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
+                    LibrarySettings.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
 
                     // enable delete and rename if not default sub profile
-                    if (cb_SubProfilePicker.SelectedIndex == 0) // main profile
-                    {
-                        b_SubProfileDelete.IsEnabled = false;
-                        b_SubProfileRename.IsEnabled = false;
-                    }
-                    else // actual sub profile
-                    {
-                        b_SubProfileDelete.IsEnabled = true;
-                        b_SubProfileRename.IsEnabled = true;
-                    }
+                    b_SubProfileDelete.IsEnabled = selectedProfile.IsSubProfile ? true : false;
+                    b_SubProfileRename.IsEnabled = selectedProfile.IsSubProfile ? true : false;
 
                     // Profile info
                     tB_ProfileName.Text = selectedMainProfile.Name;
@@ -541,6 +571,9 @@ public partial class ProfilesPage : Page
                     cB_Pinned.IsChecked = selectedProfile.IsPinned;
                     cB_Suspend.IsChecked = selectedProfile.SuspendOnSleep;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
+
+                    // Library
+                    Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
 
                     // Emulated controller assigned to the profile
                     cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable combobox
@@ -619,11 +652,9 @@ public partial class ProfilesPage : Page
                     };
 
                     WarningInfoBar.Visibility = warningVisibility;
-                    cB_Whitelist.IsEnabled = controlsEnabled;
-                    cB_Pinned.IsEnabled = controlsEnabled;
-                    cB_Suspend.IsEnabled = controlsEnabled;
-                    cB_Wrapper.IsEnabled = controlsEnabled;
+                    GlobalSettings.IsEnabled = controlsEnabled;
                     cB_Wrapper_Injection.IsEnabled = controlsEnabled;
+                    b_Play.IsEnabled = controlsEnabled;
                     cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
 
                     // update dropdown lists
@@ -639,7 +670,7 @@ public partial class ProfilesPage : Page
         }
     }
 
-    private void UpdateSubProfiles()
+    private void UpdateSubProfiles(Profile updatedProfile = null)
     {
         if (selectedMainProfile is null)
             return;
@@ -648,30 +679,24 @@ public partial class ProfilesPage : Page
         {
             try
             {
-                int idx = 0; // default or main profile itself
-
-                // add main profile as first subprofile
                 cb_SubProfilePicker.Items.Clear();
-                cb_SubProfilePicker.Items.Add(selectedMainProfile);
 
-                // if main profile is not default, occupy sub profiles dropdown list
+                IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(selectedMainProfile, true);
+                foreach (Profile profile in profiles)
+                    cb_SubProfilePicker.Items.Add(profile);
+
+                // Only need to refresh if we loaded real sub‑profiles
                 if (!selectedMainProfile.Default)
-                {
-                    foreach (Profile subprofile in ManagerFactory.profileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
-                    {
-                        cb_SubProfilePicker.Items.Add(subprofile);
+                    cb_SubProfilePicker.Items.Refresh();
 
-                        // select sub profile if it's favorite for main profile
-                        if (subprofile.IsFavoriteSubProfile)
-                            idx = cb_SubProfilePicker.Items.IndexOf(subprofile);
-                    }
-                }
+                // Decide which index to select
+                int selectedIndex;
+                if (updatedProfile != null && cb_SubProfilePicker.Items.Contains(updatedProfile))
+                    selectedIndex = cb_SubProfilePicker.Items.IndexOf(updatedProfile);
+                else
+                    selectedIndex = profiles.Select((p, i) => new { p, i }).FirstOrDefault(x => x.p.IsFavoriteSubProfile)?.i ?? 0;
 
-                // refresh sub profiles dropdown
-                cb_SubProfilePicker.Items.Refresh();
-
-                // set subprofile to be applied
-                cb_SubProfilePicker.SelectedIndex = idx;
+                cb_SubProfilePicker.SelectedIndex = selectedIndex;
             }
             catch { }
             finally
@@ -832,22 +857,13 @@ public partial class ProfilesPage : Page
 
     public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
-        // self call - update ui and return
+        isCurrent = selectedProfile?.Guid == profile?.Guid;
+        isCurrent |= source.HasFlag(UpdateSource.Creation);
+
         switch (source)
         {
-            case UpdateSource.ProfilesPage:
-            case UpdateSource.ProfilesPageUpdateOnly:
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Profiles.SelectedItem = profile;
-                });
-                return;
             case UpdateSource.QuickProfilesPage:
-                {
-                    isCurrent = selectedProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                    if (!isCurrent) return;
-                }
+                if (!isCurrent) return;
                 break;
         }
 
@@ -855,11 +871,11 @@ public partial class ProfilesPage : Page
         UIHelper.TryInvoke(() =>
         {
             var idx = -1;
-            if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
+            if (!profile.IsSubProfile)
             {
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    bool isCurrent = pr.Guid == profile.Guid;
                     if (isCurrent)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
@@ -874,19 +890,15 @@ public partial class ProfilesPage : Page
 
                 cB_Profiles.Items.Refresh();
 
-                cB_Profiles.SelectedItem = profile;
+                if (isCurrent)
+                    cB_Profiles.SelectedItem = profile;
             }
-
-            else if (!profile.IsFavoriteSubProfile)
-                cB_Profiles.SelectedItem = profile;
-
-            else // TODO updateUI to show main & sub profile selected
+            else if (isCurrent)
             {
-                Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(profile);
-                cB_Profiles.SelectedItem = mainProfile;
+                cB_Profiles.SelectedItem = selectedMainProfile;
             }
 
-            UpdateSubProfiles(); // TODO check
+            UpdateSubProfiles(profile);
         });
     }
 
@@ -1213,13 +1225,13 @@ public partial class ProfilesPage : Page
     private void b_SubProfileCreate_Click(object sender, RoutedEventArgs e)
     {
         // create a new sub profile matching the original profile's settings
-        Profile newSubProfile = (Profile)selectedProfile.Clone();
+        Profile newSubProfile = (Profile)selectedMainProfile.Clone();
+
         newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
-        newSubProfile.Guid = Guid.NewGuid(); // must be unique
+        newSubProfile.Guid = Guid.NewGuid();
         newSubProfile.IsSubProfile = true;
-        newSubProfile.IsFavoriteSubProfile = true;
+
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
-        UpdateSubProfiles();
     }
 
     private async void b_SubProfileDelete_Click(object sender, RoutedEventArgs e)
@@ -1266,8 +1278,6 @@ public partial class ProfilesPage : Page
 
         // serialize subprofile
         SubmitProfile();
-
-        UpdateSubProfiles();
     }
 
     private void SubProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -1286,11 +1296,6 @@ public partial class ProfilesPage : Page
     {
         // change main profile name
         selectedMainProfile.Name = tB_ProfileName.Text;
-
-        // change it in 
-        int ind = cB_Profiles.Items.IndexOf(selectedMainProfile);
-        cB_Profiles.Items[ind] = selectedMainProfile;
-
         SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
     }
 
@@ -1438,6 +1443,20 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.Arguments = tB_ProfileArguments.Text;
+        UpdateProfile();
+    }
+
+    // Toggle to show or hide profile in library or quick start
+    private void ShowInLibrary_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.ShowInLibrary = Toggle_ShowInLibrary.IsOn;
         UpdateProfile();
     }
 }

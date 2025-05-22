@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -12,10 +12,11 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.23.3.0</Version>
+    <Version>0.24.0.11</Version>
     <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	  <NeutralResourcesLanguage>en-US</NeutralResourcesLanguage>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -52,12 +53,15 @@
       <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
       <SubType>Designer</SubType>
     </None>
-    <None Include="SentryConfig.cs" />
+    <None Include="SecretKeys.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="HandheldCompanion.json" />
+    <None Remove="Resources\controller_0_big.png" />
+    <None Remove="Resources\controller_1_big.png" />
     <None Remove="Resources\DeviceImages\device_minisforum_v3.png" />
+    <None Remove="Resources\DeviceImages\device_msi_claw8.png" />
     <None Remove="Resources\DeviceImages\device_rog_ally_x.png" />
     <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2.png" />
@@ -122,6 +126,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\controller_0_big.png" />
+    <Resource Include="Resources\controller_1_big.png" />
+    <Resource Include="Resources\DeviceImages\device_msi_claw8.png" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<Resource Include="Resources\DeviceImages\device_aya_flip_ds.png" />
 	<Resource Include="Resources\DeviceImages\device_aya_flip_kb.png" />
 	<Resource Include="Resources\DeviceImages\device_aya_kun.png" />
@@ -158,6 +168,7 @@
     <Resource Include="Resources\DeviceImages\device_valve_jupiter.png" />
     <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
+    <Resource Include="Resources\MissingCover.png" />
     <Resource Include="Resources\led_presets\onexplayer\preset01.png" />
     <Resource Include="Resources\led_presets\onexplayer\preset02.png" />
     <Resource Include="Resources\led_presets\onexplayer\preset03.png" />
@@ -172,13 +183,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="craftersmine.SteamGridDB.Net" Version="1.1.7" />
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="dotnetCampus.Microsoft.Expression.Effects" Version="2.0.20525-alpha02" />
     <PackageReference Include="Fastenshtein" Version="1.0.10" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.27.0" />
+    <PackageReference Include="IGDB" Version="5.1.0" />
+    <PackageReference Include="iNKORE.UI.WPF.Emojis" Version="0.3.6.4" />
     <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.0" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre396" />
+    <PackageReference Include="Interop.IWshRuntimeLibrary" Version="1.0.1" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre412" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.1" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
@@ -192,14 +208,14 @@
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2" />
     <PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
-    <PackageReference Include="Sentry" Version="5.4.0" />
+    <PackageReference Include="Sentry" Version="5.6.0" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.3" />
-    <PackageReference Include="System.Text.Json" Version="9.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.4" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
     <PackageReference Include="WindowsAPICodePack" Version="8.0.6" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
@@ -2389,11 +2405,11 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="if exist &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; (&#xA;    copy &quot;.\SentryConfig.cs&quot; &quot;.\SentryConfig.cs.bak&quot;&#xA;    copy &quot;%25LocalAppData%25\HandheldCompanion\SentryConfig.cs&quot; &quot;.\SentryConfig.cs&quot;&#xA;)" />
+    <Exec Command="if exist &quot;%25LocalAppData%25\HandheldCompanion\SecretKeys.cs&quot; (&#xA;    copy &quot;.\SecretKeys.cs&quot; &quot;.\SecretKeys.cs.bak&quot;&#xA;    copy &quot;%25LocalAppData%25\HandheldCompanion\SecretKeys.cs&quot; &quot;.\SecretKeys.cs&quot;&#xA;)" />
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist &quot;.\SentryConfig.cs.bak&quot; (&#xA;    copy &quot;.\SentryConfig.cs.bak&quot; &quot;.\SentryConfig.cs&quot;&#xA;    del &quot;.\SentryConfig.cs.bak&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;if exist &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; (&#xA;  echo Signing executable...&#xA;  &quot;C:\Program Files (x86)\Windows Kits\10\bin\$(TargetPlatformVersion)\x64\signtool.exe&quot; sign /fd SHA256 /f &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; /p HandheldCompanion /d &quot;Handheld Companion&quot; /du &quot;https://github.com/Valkirie/HandheldCompanion&quot; /t http://timestamp.digicert.com &quot;$(OutDir)HandheldCompanion.exe&quot;&#xA;  if errorlevel 1 (&#xA;    echo Post-build signing failed.&#xA;    exit /B 1&#xA;  ) else (&#xA;    echo Post-build signing succeeded.&#xA;  )&#xA;)" />
+    <Exec Command="if exist &quot;.\SecretKeys.cs.bak&quot; (&#xA;    copy &quot;.\SecretKeys.cs.bak&quot; &quot;.\SecretKeys.cs&quot;&#xA;    del &quot;.\SecretKeys.cs.bak&quot;&#xA;)&#xD;&#xA;&#xD;&#xA;if exist &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; (&#xA;  echo Signing executable...&#xA;  &quot;C:\Program Files (x86)\Windows Kits\10\bin\$(TargetPlatformVersion)\x64\signtool.exe&quot; sign /fd SHA256 /f &quot;%25LocalAppData%25\HandheldCompanion\Certificate.pfx&quot; /p HandheldCompanion /d &quot;Handheld Companion&quot; /du &quot;https://github.com/Valkirie/HandheldCompanion&quot; /t http://timestamp.digicert.com &quot;$(OutDir)HandheldCompanion.exe&quot;&#xA;  if errorlevel 1 (&#xA;    echo Post-build signing failed.&#xA;    exit /B 1&#xA;  ) else (&#xA;    echo Post-build signing succeeded.&#xA;  )&#xA;)" />
   </Target>
 
 </Project>

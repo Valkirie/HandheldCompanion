@@ -6,24 +6,43 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
-using System.Windows.Media;
 using WpfScreenHelper;
 
 namespace HandheldCompanion.Views.Classes
 {
     public class GamepadWindow : Window
     {
-        public List<Control> controlElements = [];
-        public List<FrameworkElement> frameworkElements = [];
+        public List<Control> controlElements => currentDialog is not null ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements) : frameworkElements.OfType<Control>().ToList();
+        public List<FrameworkElement> frameworkElements
+        {
+            get
+            {
+                List<FrameworkElement> children = WPFUtils.FindChildren(this);
+                foreach (FrameworkElement frameworkElement in children)
+                    frameworkElement.FocusVisualStyle = null;
+
+                return children;
+            }
+        }
 
         public ContentDialog currentDialog;
+        private ContentDialog contentDialog => ContentDialog.GetOpenDialog(this);
+
         protected UIGamepad gamepadFocusManager;
 
         public HwndSource hwndSource;
+
+        public bool HasForeground() => this is OverlayQuickTools || (WinAPI.GetForegroundWindow() == this.hwndSource.Handle);
+        public bool IsPrimary => GetScreen().Primary;
+        public bool IsIconic => ProcessUtils.IsIconic(this.hwndSource.Handle);
+
+        private AdornerLayer _adornerLayer;
+        private HighlightAdorner _highlightAdorner;
 
         public GamepadWindow()
         {
@@ -34,49 +53,43 @@ namespace HandheldCompanion.Views.Classes
         {
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
             hwndSource = HwndSource.FromHwnd(hwnd);
+            hwndSource.AddHook(WndProc);
 
             base.OnSourceInitialized(e);
         }
 
-        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
+        protected virtual IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            // Track when objects are added and removed
-            if (visualAdded != null && visualAdded is Control)
-                controlElements.Add((Control)visualAdded);
-
-            if (visualRemoved != null && visualRemoved is Control)
-                controlElements.Remove((Control)visualRemoved);
-
-            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+            return IntPtr.Zero;
         }
-
-        private AdornerLayer _adornerLayer;
-        private HighlightAdorner _highlightAdorner;
 
         public void SetFocusedElement(Control focusedControl)
         {
-            if (this is MainWindow)
-                // force display keyboard focus rectangle
-                WPFUtils.MakeFocusVisible(this);
-            else if (this is OverlayQuickTools)
-            {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    if (_highlightAdorner != null)
-                    {
-                        _adornerLayer.Remove(_highlightAdorner);
-                        _highlightAdorner = null;
-                    }
+            // store current focused control
+            this.focusedControl = focusedControl;
 
-                    _adornerLayer = AdornerLayer.GetAdornerLayer(focusedControl);
-                    if (_adornerLayer != null)
-                    {
-                        _highlightAdorner = new HighlightAdorner(focusedControl);
-                        _adornerLayer.Add(_highlightAdorner);
-                    }
-                });
-            }
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                if (_highlightAdorner != null)
+                {
+                    _adornerLayer.Remove(_highlightAdorner);
+                    _highlightAdorner = null;
+                }
+
+                _adornerLayer = AdornerLayer.GetAdornerLayer(focusedControl);
+                if (_adornerLayer != null)
+                {
+                    _highlightAdorner = new HighlightAdorner(focusedControl);
+                    _adornerLayer.Add(_highlightAdorner);
+                }
+            });
+        }
+
+        private Control focusedControl;
+        public Control GetFocusedElement()
+        {
+            return focusedControl;
         }
 
         public Screen GetScreen()
@@ -84,57 +97,33 @@ namespace HandheldCompanion.Views.Classes
             return Screen.FromHandle(hwndSource.Handle);
         }
 
-        public bool IsPrimary()
-        {
-            return GetScreen().Primary;
-        }
-
-        public ScrollViewer GetScrollViewer(DependencyObject depObj)
-        {
-            if (depObj is ScrollViewer) { return depObj as ScrollViewer; }
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-                var result = GetScrollViewer(child);
-                if (result != null && result.Name.Equals("scrollViewer"))
-                    return result;
-            }
-            return null;
-        }
-
         private void OnLayoutUpdated(object? sender, EventArgs e)
         {
             if (this.Visibility != Visibility.Visible)
                 return;
 
-            // get all FrameworkElement(s)
-            frameworkElements = WPFUtils.FindChildren(this);
-
-            // do we have a popup ?
-            ContentDialog dialog = ContentDialog.GetOpenDialog(this);
-            if (dialog is not null)
+            // check if a content dialog is open
+            if (contentDialog is not null)
             {
+                // a content dialog just opened
                 if (currentDialog is null)
                 {
-                    currentDialog = dialog;
+                    // store content dialog
+                    currentDialog = contentDialog;
 
-                    frameworkElements = WPFUtils.FindChildren(this);
-
-                    // get all Control(s)
-                    controlElements = WPFUtils.GetElementsFromPopup<Control>(frameworkElements);
-
+                    // raise event
                     ContentDialogOpened?.Invoke(currentDialog);
                 }
             }
-            else if (dialog is null)
+            else if (contentDialog is null)
             {
-                // get all Control(s)
-                controlElements = frameworkElements.OfType<Control>().ToList();
-
+                // a content dialog just closed
                 if (currentDialog is not null)
                 {
+                    // raise event
                     ContentDialogClosed?.Invoke(currentDialog);
+
+                    // clear content dialog
                     currentDialog = null;
                 }
             }

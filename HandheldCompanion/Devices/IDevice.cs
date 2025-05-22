@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
@@ -36,7 +37,8 @@ public enum DeviceCapabilities : ushort
     BatteryChargeLimitPercent = 128,
     BatteryBypassCharging = 256,
     FanOverride = 512,
-    OEMPower = 1024,
+    OEMCPU = 1024,
+    OEMGPU = 2048,
 }
 
 public enum TDPMethod
@@ -176,7 +178,7 @@ public abstract class IDevice
 
     public IDevice()
     {
-        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual | CalibrationMode.SensorFusion);
+        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
 
         // add default power profile
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
@@ -227,6 +229,18 @@ public abstract class IDevice
             return false;
         }
 
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
         // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
@@ -246,6 +260,20 @@ public abstract class IDevice
         return true;
     }
 
+    protected virtual void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+    }
+
+    protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    { }
+
+    protected virtual void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public virtual void Close()
     {
         if (openLibSys is null)
@@ -256,10 +284,15 @@ public abstract class IDevice
         openLibSys.Dispose();
         openLibSys = null;
 
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
     }
+
+    public virtual void Initialize(bool FirstStart)
+    { }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
     {
@@ -533,6 +566,9 @@ public abstract class IDevice
                         case "ONEXPLAYER X1 mini":
                             device = new OneXPlayerX1Mini();
                             break;
+                        case "ONEXPLAYER X1Pro":
+                            device = new OneXPlayerX1Pro();
+                            break;
                         case "ONEXPLAYER F1":
                             {
                                 switch (Version)
@@ -657,8 +693,9 @@ public abstract class IDevice
                         case "MS-1T41":
                             device = new ClawA1M();
                             break;
-                        case "MS-1T52":
-                            device = new Claw8();
+                        case "MS-1T42": // Claw 7 AI+ A2VM
+                        case "MS-1T52": // Claw 8 AI+ A2VM
+                            device = new ClawA2VM();
                             break;
                     }
                 }
@@ -703,6 +740,12 @@ public abstract class IDevice
     public virtual bool IsReady()
     {
         return true;
+    }
+
+    protected async Task WaitUntilReadyAndReattachAsync()
+    {
+        while (!IsReady())
+            await Task.Delay(250).ConfigureAwait(false);
     }
 
     public virtual void SetKeyPressDelay(HIDmode controllerMode)
@@ -918,6 +961,15 @@ public abstract class IDevice
     { }
 
     public virtual void set_short_limit(int limit)
+    { }
+
+    public virtual void set_min_gfxclk_freq(uint clock)
+    { }
+
+    public virtual void set_max_gfxclk_freq(uint clock)
+    { }
+
+    public virtual void set_gfx_clk(uint clock)
     { }
 
     protected virtual void SendECCommand(byte command)

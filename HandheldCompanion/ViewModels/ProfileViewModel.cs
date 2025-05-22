@@ -1,21 +1,31 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels
 {
     public class ProfileViewModel : BaseViewModel
     {
         public ICommand StartProcessCommand { get; private set; }
+        public ICommand Navigate { get; private set; }
+
+        public readonly bool IsQuickTools;
+        public bool IsMainPage => !IsQuickTools;
 
         private Profile _Profile;
         public Profile Profile
@@ -34,9 +44,33 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public string Name => _Profile.ToString();
+        public override string ToString()
+        {
+            return Name;
+        }
 
-        public bool IsAvailable => !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
+        public string Name => _Profile.Name;
+        public string Description => _Profile.GetOwnerName();
+
+        public DateTime DateCreated => _Profile.DateCreated;
+        public DateTime DateModified => _Profile.DateModified;
+        public DateTime LastUsed => _Profile.LastUsed;
+
+        public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
+
+        private bool _IsBusy;
+        public bool IsBusy
+        {
+            get => _IsBusy;
+            set
+            {
+                if (value != _IsBusy)
+                {
+                    _IsBusy = value;
+                    OnPropertyChanged(nameof(IsBusy));
+                }
+            }
+        }
 
         public ImageSource Icon
         {
@@ -58,59 +92,145 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ProfileViewModel(Profile profile)
+        public BitmapImage Cover
+        {
+            get
+            {
+                if (Profile.LibraryEntry is null)
+                    return LibraryResources.MissingCover;
+
+                long id = Profile.LibraryEntry.Id;
+                long imageId = Profile.LibraryEntry.GetCoverId();
+                string imageExtension = Profile.LibraryEntry.GetCoverExtension(false);
+
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId, imageExtension);
+            }
+        }
+
+        public BitmapImage Artwork
+        {
+            get
+            {
+                if (Profile.LibraryEntry is null)
+                    return null;
+
+                long id = Profile.LibraryEntry.Id;
+                long imageId = Profile.LibraryEntry.GetArtworkId();
+                string imageExtension = Profile.LibraryEntry.GetArtworkExtension(false);
+
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
+            }
+        }
+
+        public ProfileViewModel(Profile profile, bool isQuickTools)
         {
             Profile = profile;
+            IsQuickTools = isQuickTools;
 
             ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
             StartProcessCommand = new DelegateCommand(async () =>
             {
+                // localize me
+                Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
+                {
+                    Title = "Launching",
+                    Content = "The system cannot find the file specified.",
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_OK,
+                    CanClose = true,
+                };
+
                 if (!File.Exists(profile.Path))
                 {
-                    // localize me
-                    new Dialog(OverlayQuickTools.GetCurrent())
+                    ContentDialogResult result = await dialog.ShowAsync();
+                    switch (result)
                     {
-                        Title = "Quick start",
-                        Content = "The system cannot find the file specified.",
-                        PrimaryButtonText = Properties.Resources.ProfilesPage_OK
-                    }.Show();
-
+                        case ContentDialogResult.None:
+                            dialog.Hide();
+                            break;
+                    }
                     return;
                 }
 
                 // localize me
-                Dialog dialog = new Dialog(OverlayQuickTools.GetCurrent())
-                {
-                    Title = "Quick start",
-                    Content = "Please wait while we initialize the application.",
-                    CanClose = false
-                };
+                dialog.UpdateContent("Please wait while we initialize the application.");
+                dialog.PrimaryButtonText = string.Empty;
+                dialog.CanClose = false;
 
                 // display dialog
-                dialog.Show();
+                dialog.ShowAsync();
 
-                // Create a new instance of ProcessStartInfo
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                try
                 {
-                    FileName = profile.Path,
-                    Arguments = profile.Arguments
-                };
+                    // set profile as favorite
+                    ManagerFactory.profileManager.SetSubProfileAsFavorite(Profile);
 
-                Process process = new() { StartInfo = startInfo };
+                    await Task.Run(() =>
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo
+                        {
+                            FileName = Profile.Path,
+                            Arguments = Profile.Arguments,
+                            UseShellExecute = true
+                        };
 
-                // Run the process start operation in a task to avoid blocking the UI thread
-                await Task.Run(() =>
+                        using (Process? process = Process.Start(psi))
+                        {
+                            // failed to start the process
+                            if (process == null)
+                                return;
+
+                            // give it a moment to initialize
+                            try
+                            {
+                                process.WaitForInputIdle(3000);
+                            }
+                            catch { }
+
+                            // wait up to 10 sec for any visible window
+                            IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
+                            if (hWnd != IntPtr.Zero)
+                            {
+                                if (IsMainPage)
+                                    MainWindow.GetCurrent().SetState(WindowState.Minimized);
+
+                                ProcessUtils.SetForegroundWindow(hWnd);
+                            }
+
+                            // hide the dialog
+                            UIHelper.TryInvoke(() => dialog.Hide());
+
+                            process.WaitForExit();
+
+                            if (IsMainPage)
+                                MainWindow.GetCurrent().SetState(WindowState.Normal);
+                        }
+                    }).ConfigureAwait(false);
+                }
+                catch { }
+                finally
                 {
-                    process.Start();
-                    process.WaitForInputIdle(4000);
-                });
+                    // always hide the dialog
+                    UIHelper.TryInvoke(() => { dialog.Hide(); });
+                }
+            });
 
-                dialog.Hide();
+            Navigate = new DelegateCommand(async () =>
+            {
+                if (Profile.IsSubProfile)
+                {
+                    Profile MasterProfile = ManagerFactory.profileManager.GetProfileForSubProfile(Profile);
+                    MainWindow.profilesPage.cB_Profiles.SelectedItem = MasterProfile;
+                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedItem = Profile;
+                }
+                else
+                {
+                    MainWindow.profilesPage.cB_Profiles.SelectedItem = Profile;
+                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedIndex = 0;
+                }
 
-                if (process is not null && process.MainWindowHandle != IntPtr.Zero)
-                    WinAPI.SetForegroundWindow(process.MainWindowHandle);
+                MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
         }
 

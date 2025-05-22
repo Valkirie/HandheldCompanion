@@ -370,7 +370,13 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_Language_SelectionChanged" />
+                            SelectionChanged="cB_Language_SelectionChanged">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource CultureToDisplayNameConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </Border>
 
@@ -470,11 +476,11 @@
                                 Glyph="&#xE8D0;" />
 
                             <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Priority" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Priority}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="The application process priority"
+                                    Text="{l:Static resx:Resources.SettingsPage_PriorityDesc}"
                                     TextWrapping="Wrap" />
                             </ikw:SimpleStackPanel>
                         </DockPanel>
@@ -485,9 +491,9 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_Priority_SelectionChanged">
-                            <ComboBoxItem Content="Normal" />
-                            <ComboBoxItem Content="Above normal" />
-                            <ComboBoxItem Content="High" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_Normal}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_AboveNormal}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -600,7 +606,7 @@
                                 Glyph="&#xE790;" />
 
                             <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsBackdropHeader}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"

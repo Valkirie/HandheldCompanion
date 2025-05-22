@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Views;
 using System;
+using System.Windows;
 
 namespace HandheldCompanion.Commands.Functions.HC
 {
@@ -30,37 +31,40 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 // 0 => "Current",
                 1 => "ControllerPage",
-                2 => "DevicePage",
-                3 => "PerformancePage",
-                4 => "ProfilesPage",
-                5 => "OverlayPage",
-                6 => "HotkeysPage",
-                7 => "AboutPage",
-                8 => "NotificationsPage",
-                9 => "SettingsPage",
+                2 => "LibraryPage",
+                3 => "DevicePage",
+                4 => "PerformancePage",
+                5 => "ProfilesPage",
+                6 => "OverlayPage",
+                7 => "HotkeysPage",
+                8 => "AboutPage",
+                9 => "NotificationsPage",
+                10 => "SettingsPage",
                 _ => string.Empty
             };
 
-            var mainWindow = MainWindow.GetCurrent();
+            MainWindow mainWindow = MainWindow.GetCurrent();
 
-            // Toggle visibility if no page change or the page being navigated to is different from the current one
-            if (string.IsNullOrEmpty(pageTag) || pageTag == mainWindow.prevNavItemTag)
-                mainWindow.SwapWindowState();
+            // Toggle state
+            mainWindow.SwapWindowState();
 
-            // Navigate to the specified page if valid
-            if (!string.IsNullOrEmpty(pageTag))
+            // UI thread
+            UIHelper.TryInvoke(() =>
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                switch (mainWindow.Visibility)
                 {
-                    mainWindow.NavigateToPage(pageTag);
-                });
-            }
+                    case Visibility.Visible:
+                        // Navigate to the specified page if valid
+                        if (!string.IsNullOrEmpty(pageTag))
+                            mainWindow.NavigateToPage(pageTag);
+                        break;
+                }
+            });
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => MainWindow.GetCurrent().WindowState != System.Windows.WindowState.Minimized;
+        public override bool IsToggled => MainWindow.GetCurrent().WindowState != WindowState.Minimized;
 
         public override object Clone()
         {

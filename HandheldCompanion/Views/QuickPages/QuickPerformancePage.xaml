@@ -21,6 +21,14 @@
 
     <ikw:SimpleStackPanel Margin="0,6,0,6">
 
+        <Button
+            Width="40"
+            Height="32"
+            HorizontalAlignment="Right"
+            Tag="GoBack">
+            <ui:FontIcon FontSize="10" Glyph="&#xe72b;" />
+        </Button>
+
         <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
 

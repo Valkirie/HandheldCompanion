@@ -314,7 +314,7 @@ public abstract class IPlatform : IDisposable
                 process.EnableRaisingEvents = true;
                 process.Exited += Process_Exited;
 
-                process.WaitForInputIdle();
+                process.WaitForInputIdle(3000);
 
                 // (re)start watchdog
                 PlatformWatchdog.Start();

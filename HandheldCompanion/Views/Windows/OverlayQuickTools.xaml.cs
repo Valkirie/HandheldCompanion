@@ -54,6 +54,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int WM_SETFOCUS = 0x0007;
     private const int WM_KILLFOCUS = 0x0008;
     private const int WM_NCACTIVATE = 0x0086;
+    private const int WM_INPUTLANGCHANGE = 0x0051;
     private const int WM_SYSCOMMAND = 0x0112;
     private const int WM_WINDOWPOSCHANGING = 0x0046;
     private const int WM_SHOWWINDOW = 0x0018;
@@ -84,6 +85,7 @@ public partial class OverlayQuickTools : GamepadWindow
     public QuickProfilesPage profilesPage;
     public QuickOverlayPage overlayPage;
     public QuickApplicationsPage applicationsPage;
+    public QuickKeyboardPage keyboardPage;
 
     private static OverlayQuickTools CurrentWindow;
     public string prevNavItemTag;
@@ -131,30 +133,22 @@ public partial class OverlayQuickTools : GamepadWindow
         devicePage = new("quickdevice");
         profilesPage = new("quickprofiles");
         applicationsPage = new("quickapplications");
+        keyboardPage = new("quickkeyboard");
 
         _pages.Add("QuickHomePage", homePage);
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickApplicationsPage", applicationsPage);
+        _pages.Add("QuickKeyboardPage", keyboardPage);
     }
 
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
 
-        hwndSource.AddHook(WndProc);
-
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
-        exStyle |= WS_EX_NOACTIVATE;
-        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle);
-
-        /*
-        int Style = WinAPI.GetWindowLong(hwndSource.Handle, GWL_STYLE);
-        exStyle &= ~WS_SIZEBOX;
-        WinAPI.SetWindowLong(hwndSource.Handle, GWL_STYLE, Style);
-        */
-
-        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOACTIVATE);
+        WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
+        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);;
     }
 
     public void LoadPages_MVVM()
@@ -356,33 +350,45 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // do something
+        gamepadFocusManager.Loaded();
     }
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    // hack variables
+    private Timer WMPaintTimer = new(100) { AutoReset = false };
+    private bool WMPaintPending = false;
+    private DateTime prevDraw = DateTime.MinValue;
 
-    private const int WA_ACTIVE = 1;
-    private const int WA_CLICKACTIVE = 2;
-    private const int WA_INACTIVE = 0;
-    private static readonly IntPtr HWND_TOP = new IntPtr(0);
-    private const uint SWP_FRAMECHANGED = 0x0020;
-
-    private IntPtr prevWParam = new(0x0000000000000086);
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        // prevent activation on mouse click
+        if (msg == WM_MOUSEACTIVATE)
+        {
+            handled = true;
+            return new IntPtr(MA_NOACTIVATE);
+        }
+
         switch (msg)
         {
+            case WM_INPUTLANGCHANGE:
+                break;
+
             case WM_SYSCOMMAND:
                 {
-                    var command = wParam.ToInt32() & 0xfff0;
-                    if (command == SC_MOVE) handled = true;
+                    int command = wParam.ToInt32() & 0xfff0;
+                    if (command == SC_MOVE)
+                        handled = true;
                 }
                 break;
 
             case WM_ACTIVATE:
-                handled = true;
-                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                {
+                    handled = true;
+                    WPFUtils.SendMessage(
+                        hwndSource.Handle,
+                        WM_NCACTIVATE,
+                        new IntPtr(0),    // FALSE = show as inactive
+                        IntPtr.Zero);
+                }
                 break;
 
             case WM_PAINT:
@@ -419,8 +425,6 @@ public partial class OverlayQuickTools : GamepadWindow
         return IntPtr.Zero;
     }
 
-    DateTime prevDraw = DateTime.MinValue;
-
     private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (WMPaintPending)
@@ -435,13 +439,19 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
-    private Timer WMPaintTimer = new(100) { AutoReset = false };
-    private bool WMPaintPending = false;
-
     private void HandleEsc(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
             ToggleVisibility();
+    }
+
+    public void SetVisibility(Visibility visibility)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.Visibility = visibility;
+        });
     }
 
     public void ToggleVisibility()
@@ -506,6 +516,11 @@ public partial class OverlayQuickTools : GamepadWindow
         applicationsPage.Close();
     }
 
+    private void Key_Clicked(object sender, RoutedEventArgs e)
+    {
+        NavView_Navigate("QuickKeyboardPage");
+    }
+
     #region navView
 
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -515,16 +530,21 @@ public partial class OverlayQuickTools : GamepadWindow
             NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
             string navItemTag = (string)navItem.Tag;
 
-            // update prev
-            prevNavItemTag = navItemTag;
-
             // navigate
-            NavView_Navigate(prevNavItemTag);
+            NavView_Navigate(navItemTag);
         }
     }
 
     private void NavView_Navigate(string navItemTag)
     {
+        // Find and select the matching menu item
+        navView.SelectedItem = navView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+
+        // Give gamepad focus
+        gamepadFocusManager.Focus((NavigationViewItem)navView.SelectedItem);
+
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
 
@@ -539,13 +559,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public void NavigateToPage(string navItemTag)
     {
-        // Update previous navigation item
-        prevNavItemTag = navItemTag;
-
-        // Find and select the matching menu item
-        navView.SelectedItem = navView.MenuItems
-            .OfType<NavigationViewItem>()
-            .FirstOrDefault(item => item.Tag?.ToString() == navItemTag);
+        if (prevNavItemTag == navItemTag)
+            return;
 
         // Navigate to the specified page
         NavView_Navigate(navItemTag);
@@ -587,8 +602,11 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
-        navView.IsBackEnabled = ContentFrame.CanGoBack;
-        // navHeader.Text = ((Page)((ContentControl)sender).Content).Title;
+        if (ContentFrame.SourcePageType is not null)
+        {
+            // Update previous navigation item
+            prevNavItemTag = ContentFrame.CurrentSourcePageType.Name;
+        }
     }
 
     private void UpdateTime(object? sender, EventArgs e)

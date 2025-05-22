@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Linq;
+using System.Windows;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -30,6 +31,21 @@ public class AYANEOFlipDS : AYANEOFlipKB
         ControllerManager.InputsUpdated += ControllerManager_InputsUpdated;
     }
 
+    public override void Initialize(bool FirstStart)
+    {
+        if (FirstStart)
+        {
+            // set Quicktools to Maximize on bottom screen
+            ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", 2);
+            ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
+        }
+    }
+
+    public override bool Open()
+    {
+        return base.Open();
+    }
+
     private ButtonState prevState = new();
     private void ControllerManager_InputsUpdated(ControllerState Inputs)
     {
@@ -43,9 +59,17 @@ public class AYANEOFlipDS : AYANEOFlipKB
         if (Inputs.ButtonState.Buttons.Contains(ButtonFlags.OEM5))
         {
             bool enabled = ManagerFactory.settingsManager.GetBoolean("AYANEOFlipScreenEnabled");
-            if (!enabled)
-                ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenEnabled", true);
+            ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenEnabled", !enabled);
         }
+    }
+
+    protected override void QuerySettings()
+    {
+        // raise events
+        SettingsManager_SettingValueChanged("AYANEOFlipScreenEnabled", ManagerFactory.settingsManager.GetString("AYANEOFlipScreenEnabled"), false);
+        SettingsManager_SettingValueChanged("AYANEOFlipScreenBrightness", ManagerFactory.settingsManager.GetString("AYANEOFlipScreenBrightness"), false);
+
+        base.QuerySettings();
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -58,13 +82,14 @@ public class AYANEOFlipDS : AYANEOFlipKB
                     switch (enabled)
                     {
                         case true:
+                            OverlayQuickTools.GetCurrent().SetVisibility(Visibility.Visible);
                             short brightness = (short)ManagerFactory.settingsManager.GetDouble("AYANEOFlipScreenBrightness");
                             CEcControl_SetSecDispBrightness(brightness);
                             break;
 
                         case false:
                             CEcControl_SetSecDispBrightness(0);
-                            OverlayQuickTools.GetCurrent().ToggleVisibility();
+                            OverlayQuickTools.GetCurrent().SetVisibility(Visibility.Collapsed);
                             break;
                     }
                 }

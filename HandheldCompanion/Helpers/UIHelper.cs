@@ -13,7 +13,37 @@ namespace HandheldCompanion.Helpers
             {
                 try
                 {
-                    dispatcher.Invoke(callback);
+                    if (dispatcher.CheckAccess())
+                    {
+                        callback();
+                    }
+                    else
+                    {
+                        dispatcher.Invoke(callback);
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    // Gracefully handle dispatcher shutdown
+                }
+                catch { }
+            }
+        }
+
+        public static void TryBeginInvoke(Action callback)
+        {
+            if (Application.Current?.Dispatcher is Dispatcher dispatcher && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
+            {
+                try
+                {
+                    if (dispatcher.CheckAccess())
+                    {
+                        callback();
+                    }
+                    else
+                    {
+                        dispatcher.BeginInvoke(callback);
+                    }
                 }
                 catch (TaskCanceledException)
                 {
@@ -29,7 +59,14 @@ namespace HandheldCompanion.Helpers
             {
                 try
                 {
-                    return dispatcher.Invoke(func);
+                    if (dispatcher.CheckAccess())
+                    {
+                        return func();
+                    }
+                    else
+                    {
+                        return dispatcher.Invoke(func);
+                    }
                 }
                 catch (TaskCanceledException)
                 {

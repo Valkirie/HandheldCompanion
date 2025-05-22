@@ -50,7 +50,7 @@ public class JSController : IController
 
     public virtual void UpdateState(float delta)
     {
-        if (Inputs is null || IsDisposing || IsDisposed)
+        if (Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);

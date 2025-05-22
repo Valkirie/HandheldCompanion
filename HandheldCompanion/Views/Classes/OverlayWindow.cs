@@ -135,6 +135,15 @@ public class OverlayWindow : Window
         }
     }
 
+    public void SetVisibility(Visibility visibility)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            this.Visibility = visibility;
+        });
+    }
+
     public virtual void ToggleVisibility()
     {
         // UI thread

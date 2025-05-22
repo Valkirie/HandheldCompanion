@@ -1,0 +1,257 @@
+﻿<Page
+    x:Class="HandheldCompanion.Views.QuickPages.QuickKeyboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    Name="QuickKeyboard"
+    Margin="15,0,0,6"
+    d:DataContext="{d:DesignInstance Type=viewmodels:QuickKeyboardPageViewModel}"
+    d:Height="450"
+    d:Width="940"
+    KeepAlive="True"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Thickness x:Key="KeyMargin">2</Thickness>
+
+        <!--  1 storyboard: shrink immediately, then grow back  -->
+        <Storyboard x:Key="KeyTapAnimation">
+            <!--  shrink  -->
+            <DoubleAnimation
+                Storyboard.TargetProperty="RenderTransform.ScaleX"
+                To="0.9"
+                Duration="0:0:0.05" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="RenderTransform.ScaleY"
+                To="0.9"
+                Duration="0:0:0.05" />
+
+            <!--  grow back  -->
+            <DoubleAnimation
+                BeginTime="0:0:0.05"
+                Storyboard.TargetProperty="RenderTransform.ScaleX"
+                To="1.0"
+                Duration="0:0:0.1" />
+            <DoubleAnimation
+                BeginTime="0:0:0.05"
+                Storyboard.TargetProperty="RenderTransform.ScaleY"
+                To="1.0"
+                Duration="0:0:0.1" />
+        </Storyboard>
+
+        <!--  implicit style for Button  -->
+        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+            <Setter Property="Margin" Value="{StaticResource KeyMargin}" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+
+            <!--  center it for scaling  -->
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter>
+                <Setter.Property>RenderTransform</Setter.Property>
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+
+            <!--  wire up a single Click handler  -->
+            <EventSetter Event="Click" Handler="Key_Tap" />
+        </Style>
+
+        <!--  same style for ToggleButton  -->
+        <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
+            <Setter Property="Margin" Value="{StaticResource KeyMargin}" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter>
+                <Setter.Property>RenderTransform</Setter.Property>
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="Click" Handler="Key_Tap" />
+        </Style>
+    </Page.Resources>
+
+    <Grid Height="300" VerticalAlignment="Bottom">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="25*" />
+        </Grid.RowDefinitions>
+
+        <!--  Row 0: ?? keys  -->
+        <Grid x:Name="Row0Panel" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Esc" />
+            <Button Grid.Column="1" Content="Tab" />
+            <Button Grid.Column="2" Content="F1" />
+            <Button Grid.Column="3" Content="F2" />
+            <Button Grid.Column="4" Content="F3" />
+            <Button Grid.Column="5" Content="F4" />
+            <Button Grid.Column="6">
+                <ui:FontIcon Glyph="&#xe76b;" />
+            </Button>
+            <Button Grid.Column="7">
+                <ui:FontIcon Glyph="&#xe76c;" />
+            </Button>
+            <Button Grid.Column="8" Content="Del" />
+        </Grid>
+
+        <!--  Row 1: 10 keys  -->
+        <Grid x:Name="Row1Panel" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" />
+            <Button Grid.Column="1" />
+            <Button Grid.Column="2" />
+            <Button Grid.Column="3" />
+            <Button Grid.Column="4" />
+            <Button Grid.Column="5" />
+            <Button Grid.Column="6" />
+            <Button Grid.Column="7" />
+            <Button Grid.Column="8" />
+            <Button Grid.Column="9" />
+        </Grid>
+
+        <!--  Row 2: 10 keys  -->
+        <Grid x:Name="Row2Panel" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" />
+            <Button Grid.Column="1" />
+            <Button Grid.Column="2" />
+            <Button Grid.Column="3" />
+            <Button Grid.Column="4" />
+            <Button Grid.Column="5" />
+            <Button Grid.Column="6" />
+            <Button Grid.Column="7" />
+            <Button Grid.Column="8" />
+            <Button Grid.Column="9" />
+        </Grid>
+
+        <!--  Row 3: Shift + 7 letters + Backspace  -->
+        <Grid x:Name="Row3Panel" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.5*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Shift + LayoutSwitch stacked in one cell  -->
+            <Grid Grid.Column="0">
+                <ToggleButton
+                    x:Name="ShiftToggle"
+                    Command="{Binding ShiftToggleClicked}"
+                    IsChecked="{Binding ShiftToggleChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Tag="Shift">
+                    <Grid>
+                        <ui:FontIcon Glyph="&#xe752;" />
+
+                        <ui:FontIcon Glyph="&#xE889;" Visibility="{Binding ShiftToggleLocked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </ToggleButton>
+
+                <Button
+                    x:Name="LayoutSwitch"
+                    d:Visibility="Collapsed"
+                    Click="LayoutSwitch_Click">
+                    <ui:FontIcon Glyph="&#xe761;" />
+                </Button>
+            </Grid>
+
+            <!--  7 letter keys  -->
+            <Button Grid.Column="1" />
+            <Button Grid.Column="2" />
+            <Button Grid.Column="3" />
+            <Button Grid.Column="4" />
+            <Button Grid.Column="5" />
+            <Button Grid.Column="6" />
+            <Button Grid.Column="7" />
+
+            <!--  Backspace  -->
+            <Button x:Name="Backspace" Grid.Column="8">
+                <ui:FontIcon Glyph="&#xe750;" />
+            </Button>
+        </Grid>
+
+        <!--  Row 4: Switch, comma, space, period, return  -->
+        <Grid x:Name="Row4Panel" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                x:Name="SwitchTo123"
+                Grid.Column="0"
+                Click="SwitchTo123_Click"
+                Content="&amp;123" />
+
+            <Button Grid.Column="1" />
+
+            <Button
+                x:Name="SpaceBar"
+                Grid.Column="2"
+                Tag=" " />
+
+            <Button Grid.Column="3" />
+            <Button Grid.Column="4" />
+
+            <Button x:Name="Return" Grid.Column="5">
+                <ui:FontIcon Glyph="&#xe751;" />
+            </Button>
+        </Grid>
+    </Grid>
+</Page>
