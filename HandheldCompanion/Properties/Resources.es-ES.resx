@@ -1082,10 +1082,10 @@
     <value>Vibración del mando cuando esta conectado</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>Diseño de escritorio</value>
+    <value>Controller mode</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>Cambiar el diseño del controlador de escritorio</value>
+    <value>Change controller mode: Auto, Gamepad or Desktop</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>Mostrar Centro de acción</value>
@@ -2533,9 +2533,6 @@
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
     <value>The emulated controller to be used when this profile is active</value>
   </data>
-  <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value />
-  </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
     <value>Automatically manage your controllers for greater compatibility</value>
   </data>
@@ -2815,8 +2812,8 @@
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Trigger Margin</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value />
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
     <value />
@@ -2854,25 +2851,154 @@
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value />
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
     <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM1" xml:space="preserve">
-    <value>AYA</value>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM2" xml:space="preserve">
-    <value>≈</value>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM3" xml:space="preserve">
-    <value>RC</value>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM4" xml:space="preserve">
-    <value>LC</value>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM5" xml:space="preserve">
-    <value>RC1</value>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value />
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM6" xml:space="preserve">
-    <value>LC1</value>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_MainWindowPage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
 </root>

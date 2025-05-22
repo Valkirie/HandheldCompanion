@@ -1024,7 +1024,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>We couldn't locate the update file.</value>
   </data>
   <data name="SettingsPage_UpdateWarning" xml:space="preserve">
-    <value>Oups. There was an issue.</value>
+    <value>Oops. There was an issue.</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>
@@ -1096,10 +1096,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Vibrate physical controller when connected</value>
   </data>
   <data name="Hotkey_LayoutMode" xml:space="preserve">
-    <value>Desktop layout</value>
+    <value>Controller mode</value>
   </data>
   <data name="Hotkey_LayoutModeDesc" xml:space="preserve">
-    <value>Toggle Desktop controller layout</value>
+    <value>Change controller mode: Auto, Gamepad or Desktop</value>
   </data>
   <data name="Hotkey_ControlCenter" xml:space="preserve">
     <value>Display Action center</value>
@@ -2850,8 +2850,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>Device settings</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>Oops, it appears your device is not supported yet. The software might not run as expected.</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double tap</value>
@@ -3034,7 +3034,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Export layout</value>
   </data>
   <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
-    <value>Agressive</value>
+    <value>Aggressive</value>
   </data>
   <data name="PerformancePage_CPUBoost_Disabled" xml:space="preserve">
     <value>Disabled</value>
@@ -3357,25 +3357,217 @@ Thank you for using HC and helping us make it better.</value>
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value>Suspend and resume the application when the system enters or exits standby state</value>
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>Unsupported device</value>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value>On-screen display options</value>
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM1" xml:space="preserve">
-    <value>AYA</value>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM2" xml:space="preserve">
-    <value>≈</value>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value>Rumble on execution</value>
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM3" xml:space="preserve">
-    <value>RC</value>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value>Indicates whether the controller should vibrate when a hotkey is executed</value>
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM4" xml:space="preserve">
-    <value>LC</value>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value>Hotkeys Settings</value>
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM5" xml:space="preserve">
-    <value>RC1</value>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value>CPU parking mode</value>
   </data>
-  <data name="Enum_AYANEO3_ButtonFlags_OEM6" xml:space="preserve">
-    <value>LC1</value>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value>Set current CPU parking mode</value>
+  </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value>The application process priority</value>
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value>Above normal</value>
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value>Quicktools backdrop</value>
+  </data>
+  <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value>Change the profile library settings</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value>Show in library</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value>Enable to show the profile listed in the library</value>
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value>Library settings</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
+    <value>Download images for this profile. For best results, match the (sub) profile name with the name of the application of IGDB or SteamGridDB</value>
+  </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value>Download Game Metadata?</value>
+  </data>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
+    <value>This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwriteSecondary" xml:space="preserve">
+    <value>Create as subprofile</value>
+  </data>
+  <data name="HotkeysPage_CreateNew" xml:space="preserve">
+    <value>Create new hotkey</value>
+  </data>
+  <data name="Hotkey_CommandType" xml:space="preserve">
+    <value>Command type</value>
+  </data>
+  <data name="Hotkey_CommandTypeDesc" xml:space="preserve">
+    <value>Define the type of command your hotkey will execute</value>
+  </data>
+  <data name="Hotkey_DefaultName" xml:space="preserve">
+    <value>Empty hotkey</value>
+  </data>
+  <data name="Hotkey_DefaultDesc" xml:space="preserve">
+    <value>Please pick a command type</value>
+  </data>
+  <data name="Hotkey_CommandName" xml:space="preserve">
+    <value>Command name</value>
+  </data>
+  <data name="Hotkey_CommandNameDesc" xml:space="preserve">
+    <value>Define the hotkey custom name</value>
+  </data>
+  <data name="Hotkey_FunctionToRun" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="Hotkey_FunctionToRunDesc" xml:space="preserve">
+    <value>Define the function to trigger</value>
+  </data>
+  <data name="Hotkey_QuickToolsPage" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Hotkey_QuickToolsPageDesc" xml:space="preserve">
+    <value>Define the page to navigate when opening Quick Tools</value>
+  </data>
+  <data name="Hotkey_Delete" xml:space="preserve">
+    <value>Delete hotkey</value>
+  </data>
+  <data name="Hotkey_Output" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="Hotkey_OutputDesc" xml:space="preserve">
+    <value>Define the output key strokes</value>
+  </data>
+  <data name="Hotkey_OutputDefineTip" xml:space="preserve">
+    <value>Press to define hotkey output</value>
+  </data>
+  <data name="Hotkey_ExecutableTarget" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetDesc" xml:space="preserve">
+    <value>Define the target executable</value>
+  </data>
+  <data name="Hotkey_ExecutableArguments" xml:space="preserve">
+    <value>Arguments</value>
+  </data>
+  <data name="Hotkey_ExecutableArgumentsDesc" xml:space="preserve">
+    <value>Modify the behavior of an executable during execution</value>
+  </data>
+  <data name="LayoutPage_ExecuteActionsNumFormat" xml:space="preserve">
+    <value>{0} executes {1} action(s)</value>
+  </data>
+  <data name="Hotkey_WindowStyle" xml:space="preserve">
+    <value>Window style</value>
+  </data>
+  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
+    <value>Specifies how a new window should appear when the process starts</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
+    <value>Minimized</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
+    <value>Maximized</value>
+  </data>
+  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
+    <value>Run as administrator</value>
+  </data>
+  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
+    <value>Start with administrator elevation</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
+    <value>Press to select an executable</value>
+  </data>
+  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
+    <value>Define the page to navigate when opening the main window</value>
+  </data>
+  <data name="Hotkey_MainWindowPage" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
+    <value>Define the sub profile cycling direction</value>
+  </data>
+  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
+    <value>Define legacy virtual keyboard position</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
+    <value>Power &amp; battery</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
+    <value>Multitasking</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
+    <value>Open navigation</value>
+  </data>
+  <data name="Hotkey_Current" xml:space="preserve">
+    <value>Current</value>
   </data>
 </root>
