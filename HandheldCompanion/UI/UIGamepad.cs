@@ -153,22 +153,27 @@ namespace HandheldCompanion.Managers
 
             // check focus based on our scenarios
             bool gamepadFocused = false;
-            switch(focusSource)
-            {
-                case FocusSource.Visibility:
-                    gamepadFocused = gamepadWindow.IsHitTestVisible;
 
-                    // only send gamepad inputs to quicktools if it's on main screen
-                    // this is important for dual screen devices
-                    if (gamepadWindow is OverlayQuickTools)
-                        gamepadFocused &= gamepadWindow.IsPrimary;
-                    break;
-                case FocusSource.Activate:
-                    gamepadFocused = gamepadWindow.IsActive;
-                    break;
-                case FocusSource.Focus:
-                    gamepadFocused = gamepadWindow.IsFocused;
-                    break;
+            WindowState windowState = gamepadWindow.WindowState;
+            if (windowState != WindowState.Minimized)
+            {
+                switch (focusSource)
+                {
+                    case FocusSource.Visibility:
+                        gamepadFocused = gamepadWindow.IsHitTestVisible && gamepadWindow.IsVisible;
+
+                        // only send gamepad inputs to quicktools if it's on main screen
+                        // this is important for dual screen devices
+                        if (gamepadWindow is OverlayQuickTools)
+                            gamepadFocused &= gamepadWindow.IsPrimary;
+                        break;
+                    case FocusSource.Activate:
+                        gamepadFocused = gamepadWindow.IsActive;
+                        break;
+                    case FocusSource.Focus:
+                        gamepadFocused = gamepadWindow.IsFocused;
+                        break;
+                }
             }
 
             // set focus
