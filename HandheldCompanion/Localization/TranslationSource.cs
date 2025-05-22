@@ -16,7 +16,8 @@ public class TranslationSource : INotifyPropertyChanged
         new CultureInfo("es-ES"),
         new CultureInfo("zh-Hans"),
         new CultureInfo("zh-Hant"),
-        new CultureInfo("ru-RU")];
+        new CultureInfo("ru-RU"),
+        new CultureInfo("ko-KR")];
 
     private static readonly TranslationSource instance = new TranslationSource();
 
