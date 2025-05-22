@@ -75,6 +75,13 @@ namespace HandheldCompanion.Managers
             return _focused.Any(w => w.Value);
         }
 
+        private enum FocusSource
+        {
+            Visibility,
+            Activate,
+            Focus
+        }
+
         public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
         {
             // set current window
@@ -86,15 +93,15 @@ namespace HandheldCompanion.Managers
 
             if (gamepadWindow is OverlayQuickTools quickTools)
             {
-                quickTools.GotGamepadWindowFocus += (sender) => WindowGotFocus(sender, new RoutedEventArgs());
-                quickTools.LostGamepadWindowFocus += (sender) => WindowLostFocus(sender, new RoutedEventArgs());
+                quickTools.GotGamepadWindowFocus += (sender) => WindowGotFocus(null, null, FocusSource.Visibility);
+                quickTools.LostGamepadWindowFocus += (sender) => WindowLostFocus(null, null, FocusSource.Visibility);
             }
             else if (gamepadWindow is MainWindow mainWindow)
             {
-                mainWindow.GotFocus += WindowGotFocus;
-                mainWindow.LostFocus += WindowLostFocus;
-                mainWindow.Activated += (sender, e) => WindowGotFocus(sender, new RoutedEventArgs());
-                mainWindow.Deactivated += (sender, e) => WindowLostFocus(sender, new RoutedEventArgs());
+                mainWindow.GotFocus += (sender, e) => WindowGotFocus(sender, e, FocusSource.Focus);
+                mainWindow.LostFocus += (sender, e) => WindowLostFocus(sender, e, FocusSource.Focus);
+                mainWindow.Activated += (sender, e) => WindowGotFocus(sender, null, FocusSource.Activate);
+                mainWindow.Deactivated += (sender, e) => WindowLostFocus(sender, null, FocusSource.Activate);
             }
 
             gamepadFrame = contentFrame;
@@ -138,14 +145,39 @@ namespace HandheldCompanion.Managers
             Focus(control);
         }
 
-        private void WindowGotFocus(object sender, RoutedEventArgs e)
+        private void WindowGotFocus(object sender, RoutedEventArgs e, FocusSource focusSource)
         {
             // already has focus
             if (_focused.TryGetValue(windowName, out bool isFocused) && isFocused)
                 return;
 
-            // set focus (if window is on primary screen)
-            _focused[windowName] = gamepadWindow.IsPrimary;
+            // check focus based on our scenarios
+            bool gamepadFocused = false;
+
+            WindowState windowState = gamepadWindow.WindowState;
+            if (windowState != WindowState.Minimized)
+            {
+                switch (focusSource)
+                {
+                    case FocusSource.Visibility:
+                        gamepadFocused = gamepadWindow.IsHitTestVisible && gamepadWindow.IsVisible;
+
+                        // only send gamepad inputs to quicktools if it's on main screen
+                        // this is important for dual screen devices
+                        if (gamepadWindow is OverlayQuickTools)
+                            gamepadFocused &= gamepadWindow.IsPrimary;
+                        break;
+                    case FocusSource.Activate:
+                        gamepadFocused = gamepadWindow.IsActive;
+                        break;
+                    case FocusSource.Focus:
+                        gamepadFocused = gamepadWindow.IsFocused;
+                        break;
+                }
+            }
+
+            // set focus
+            _focused[windowName] = gamepadFocused;
 
             // raise event
             if (_focused[windowName])
@@ -172,7 +204,7 @@ namespace HandheldCompanion.Managers
                 ContentRendered(null, null);
         }
 
-        private void WindowLostFocus(object sender, RoutedEventArgs e)
+        private void WindowLostFocus(object sender, RoutedEventArgs e, FocusSource focusSource)
         {
             // doesn't have focus
             if (_focused.TryGetValue(windowName, out bool isFocused) && !isFocused)
