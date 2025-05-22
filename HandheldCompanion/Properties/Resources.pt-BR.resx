@@ -3339,23 +3339,8 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value />
   </data>
-  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
-    <value>Orientação da tela</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
-    <value>Alguns recursos dependem do conhecimento da orientação da tela para funcionar corretamente. Se isto não foi detectado apropriadamente, defina a orientação da sua tela correspondente ao seu controle, então clique Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
-    <value>Detectar</value>
-  </data>
-  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
-    <value>Não definida</value>
-  </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Torne este o layout padrão</value>
-  </data>
   <data name="Enum_AYANEO3_ButtonFlags_OEM1" xml:space="preserve">
-    <value>Aya</value>
+    <value>AYA</value>
   </data>
   <data name="Enum_AYANEO3_ButtonFlags_OEM2" xml:space="preserve">
     <value>≈</value>
@@ -3371,5 +3356,20 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="Enum_AYANEO3_ButtonFlags_OEM6" xml:space="preserve">
     <value>LC1</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+    <value>Orientação da tela</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+    <value>Alguns recursos dependem do conhecimento da orientação da tela para funcionar corretamente. Se isto não foi detectado apropriadamente, defina a orientação da sua tela correspondente ao seu controle, então clique Detectar</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+    <value>Detectar</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+    <value>Não definida</value>
+  </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Torne este o layout padrão</value>
   </data>
 </root>

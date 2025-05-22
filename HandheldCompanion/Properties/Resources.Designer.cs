@@ -1510,7 +1510,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aya.
+        ///   Looks up a localized string similar to AYA.
         /// </summary>
         public static string Enum_AYANEO3_ButtonFlags_OEM1 {
             get {

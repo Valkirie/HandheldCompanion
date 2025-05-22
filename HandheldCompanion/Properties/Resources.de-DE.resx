@@ -2860,7 +2860,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value />
   </data>
   <data name="Enum_AYANEO3_ButtonFlags_OEM1" xml:space="preserve">
-    <value>Aya</value>
+    <value>AYA</value>
   </data>
   <data name="Enum_AYANEO3_ButtonFlags_OEM2" xml:space="preserve">
     <value>≈</value>
