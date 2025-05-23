@@ -78,7 +78,6 @@
                 <ui:ToggleSwitch
                     Name="WifiToggle"
                     IsEnabled="False"
-                    Style="{DynamicResource InvertedToggleSwitchStyle}"
                     Toggled="WIFIToggle_Toggled" />
             </ui:SettingsCard>
 
@@ -89,7 +88,6 @@
                 <ui:ToggleSwitch
                     Name="BluetoothToggle"
                     IsEnabled="False"
-                    Style="{DynamicResource InvertedToggleSwitchStyle}"
                     Toggled="BluetoothToggle_Toggled" />
             </ui:SettingsCard>
 
@@ -100,7 +98,6 @@
                 <ui:ToggleSwitch
                     Name="NightLightToggle"
                     IsEnabled="False"
-                    Style="{DynamicResource InvertedToggleSwitchStyle}"
                     Toggled="NightLightToggle_Toggled" />
             </ui:SettingsCard>
 
@@ -114,10 +111,7 @@
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
                     </ui:SettingsExpander.HeaderIcon>
-                    <ui:ToggleSwitch
-                        Name="Toggle_AYANEOFlipScreen"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="Toggle_AYANEOFlipScreen_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_AYANEOFlipScreen" Toggled="Toggle_AYANEOFlipScreen_Toggled" />
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard ContentAlignment="Left">
                             <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -156,10 +150,7 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ReadingList}" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch
-                        Name="Toggle_FanOverride"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="Toggle_FanOverride_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_FanOverride" Toggled="Toggle_FanOverride_Toggled" />
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
@@ -173,10 +164,7 @@
                 <ui:SettingsCard.HeaderIcon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LEDLight}" />
                 </ui:SettingsCard.HeaderIcon>
-                <ui:ToggleSwitch
-                    Name="UseDynamicLightingToggle"
-                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                    Toggled="UseDynamicLightingToggle_Toggled" />
+                <ui:ToggleSwitch Name="UseDynamicLightingToggle" Toggled="UseDynamicLightingToggle_Toggled" />
             </ui:SettingsCard>
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
