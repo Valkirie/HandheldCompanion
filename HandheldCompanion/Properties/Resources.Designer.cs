@@ -1503,6 +1503,60 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≈.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC1.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC1.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM6 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AYA.
+        /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM1 {
             get {
                 return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM1", resourceCulture);

@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -453,6 +454,9 @@ public abstract class IDevice
                             break;
                         case "FLIP DS":
                             device = new AYANEOFlipDS();
+                            break;
+                        case "AYANEO 3":
+                            device = new AYANEO3();
                             break;
                     }
                 }
@@ -1012,6 +1016,7 @@ public abstract class IDevice
         return false;
     }
 
+   
     public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int[] deviceIds, int minFeatures = 1)
     {
         HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, deviceIds).ToArray();
@@ -1019,7 +1024,7 @@ public abstract class IDevice
             if (device.IsConnected && device.Capabilities.FeatureReportByteLength >= minFeatures)
                 yield return device;
     }
-
+    
     public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
     {
         return GetHidDevices(vendorId, new int[] { deviceId }, minFeatures);
