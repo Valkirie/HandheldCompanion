@@ -858,11 +858,13 @@ public static class ControllerManager
     }
 
     // private static bool HostRadioDisabled = false;
+
+    private static HashSet<byte> UserIndexes = new HashSet<byte>();
+    private static List<IController> DrunkControllers = new List<IController>();
+    private static bool XInputDrunk => DrunkControllers.Any();
+
     private static void watchdogThreadLoop(object? obj)
     {
-        HashSet<byte> UserIndexes = [];
-        bool XInputDrunk = false;
-
         // monitoring unexpected slot changes
         while (watchdogThreadRunning)
         {
@@ -871,7 +873,7 @@ public static class ControllerManager
 
             // clear array
             UserIndexes.Clear();
-            XInputDrunk = false;
+            DrunkControllers.Clear();
 
             foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
             {
@@ -883,19 +885,24 @@ public static class ControllerManager
 
                 // two controllers can't use the same slot
                 if (!UserIndexes.Add(UserIndex))
-                    XInputDrunk = true;
+                    DrunkControllers.Add(xInputController);
 
                 xInputController.AttachController(UserIndex);
             }
 
-            if (XInputDrunk)
+            foreach(IController controller in DrunkControllers)
             {
-                XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
-                vController?.AttachController(byte.MaxValue);
-
-                VirtualManager.Suspend(false);
-                Thread.Sleep(1000);
-                VirtualManager.Resume(false);
+                switch(controller.IsVirtual())
+                {
+                    case true:
+                        VirtualManager.Suspend(false);
+                        Thread.Sleep(1000);
+                        VirtualManager.Resume(false);
+                        break;
+                    case false:
+                        controller.CyclePort();
+                        break;
+                }
             }
 
             // user is emulating an Xbox360Controller
