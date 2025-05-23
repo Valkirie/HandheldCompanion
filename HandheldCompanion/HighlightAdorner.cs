@@ -45,11 +45,15 @@ namespace HandheldCompanion
             {
                 _rectangle.Width = toggleSwitch.DesiredSize.Width + 12;
             }
-            else if(_element is Slider slider)
+            else if (_element is Slider slider)
             {
                 _rectangle.Width += 12;
             }
-
+            else if (_element is CheckBox checkBox)
+            {
+                _rectangle.Width = checkBox.DesiredSize.Width + 12;
+            }
+            
             this.AddVisualChild(_rectangle);
 
             // prevent adorner from catching click
@@ -108,7 +112,15 @@ namespace HandheldCompanion
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _rectangle.Arrange(new Rect(new Point(0, 0), AdornedElement.RenderSize));
+            Size size = AdornedElement.RenderSize;
+
+            // hack
+            if (AdornedElement is CheckBox checkBox)
+            {
+                size = checkBox.DesiredSize;
+            }
+
+            _rectangle.Arrange(new Rect(new Point(0, 0), size));
             return finalSize;
         }
 
