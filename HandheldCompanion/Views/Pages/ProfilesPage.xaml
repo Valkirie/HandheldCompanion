@@ -565,7 +565,6 @@
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
                                         Name="cB_Whitelist"
-                                        HorizontalAlignment="Stretch"
                                         Checked="cB_Whitelist_Checked"
                                         Content="{l:Static resx:Resources.ProfilesPage_Whitelist}"
                                         Unchecked="cB_Whitelist_Checked" />
@@ -573,7 +572,6 @@
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
                                         Name="cB_Pinned"
-                                        HorizontalAlignment="Stretch"
                                         Checked="cB_Pinned_Checked"
                                         Content="{l:Static resx:Resources.ProfilesPage_Pinned}"
                                         Unchecked="cB_Pinned_Checked" />
@@ -581,7 +579,6 @@
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
                                         Name="cB_Suspend"
-                                        HorizontalAlignment="Stretch"
                                         Checked="cB_Suspend_Checked"
                                         Content="{l:Static resx:Resources.ProfilesPage_SuspendOnSleep}"
                                         Unchecked="cB_Suspend_Checked" />
@@ -589,8 +586,6 @@
                                 <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_Wrapper}">
                                     <ComboBox
                                         Name="cB_Wrapper"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
                                         SelectedIndex="0"
                                         SelectionChanged="cB_Wrapper_SelectionChanged">
                                         <ComboBoxItem Name="cB_Wrapper_Disabled" Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
@@ -628,12 +623,7 @@
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_ShowInLibraryDesc}" Header="{l:Static resx:Resources.ProfilesPage_ShowInLibrary}">
-                                    <ui:ToggleSwitch
-                                        Name="Toggle_ShowInLibrary"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                        Toggled="ShowInLibrary_Toggled" />
+                                    <ui:ToggleSwitch Name="Toggle_ShowInLibrary" Toggled="ShowInLibrary_Toggled" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -1351,7 +1341,6 @@
 
                                         <CheckBox
                                             Name="cB_InvertHorizontal"
-                                            HorizontalAlignment="Stretch"
                                             Checked="cB_InvertHorizontal_Checked"
                                             Content="{l:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}"
                                             Unchecked="cB_InvertHorizontal_Checked" />
@@ -1364,7 +1353,6 @@
 
                                         <CheckBox
                                             Name="cB_InvertVertical"
-                                            HorizontalAlignment="Stretch"
                                             Checked="cB_InvertVertical_Checked"
                                             Content="{l:Static resx:Resources.ProfilesPage_InvertVerticalAxis}"
                                             Unchecked="cB_InvertVertical_Checked" />
@@ -1453,126 +1441,52 @@
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility}" />
 
                         <!--  Fullscreen optimizations  -->
-                        <Border
-                            Padding="15,12,12,12"
-                            Background="{DynamicResource ExpanderHeaderBackground}"
-                            CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_Compatibility_Fullscreen}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xe740;" />
+                            </ui:SettingsCard.HeaderIcon>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="8*" MinWidth="200" />
-                                    <ColumnDefinition Width="2*" MinWidth="120" />
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        HorizontalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xe740;" />
-
-                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility_Fullscreen}" />
-                                    </ikw:SimpleStackPanel>
-                                </DockPanel>
-
-                                <ui:ToggleSwitch
-                                    Name="UseFullscreenOptimizations"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                    Toggled="UseFullscreenOptimizations_Toggled" />
-                            </Grid>
-                        </Border>
+                            <ui:ToggleSwitch Name="UseFullscreenOptimizations" Toggled="UseFullscreenOptimizations_Toggled" />
+                        </ui:SettingsCard>
 
                         <!--  High DPI awareness  -->
-                        <Border
-                            Padding="15,12,12,12"
-                            Background="{DynamicResource ExpanderHeaderBackground}"
-                            CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_Compatibility_HighDPI}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xe799;" />
+                            </ui:SettingsCard.HeaderIcon>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="8*" MinWidth="200" />
-                                    <ColumnDefinition Width="2*" MinWidth="120" />
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        HorizontalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xe799;" />
-
-                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility_HighDPI}" />
-                                    </ikw:SimpleStackPanel>
-                                </DockPanel>
-
-                                <ui:ToggleSwitch
-                                    Name="UseHighDPIAwareness"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                    Toggled="UseHighDPIAwareness_Toggled" />
-                            </Grid>
-                        </Border>
+                            <ui:ToggleSwitch Name="UseHighDPIAwareness" Toggled="UseHighDPIAwareness_Toggled" />
+                        </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
 
                     <!--  Controller settings  -->
                     <ikw:SimpleStackPanel Spacing="6">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
 
-                        <Border
-                            Padding="15,12,12,12"
-                            Background="{DynamicResource ExpanderHeaderBackground}"
-                            CornerRadius="{DynamicResource ControlCornerRadius}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                        <!--  Controller type  -->
+                        <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}" Header="{l:Static resx:Resources.ProfilesPage_EmulatedController}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xE7FC;" />
+                            </ui:SettingsCard.HeaderIcon>
 
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Glyph="&#xE7FC;" />
-                                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_EmulatedController}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}"
-                                            TextWrapping="Wrap" />
-                                    </ikw:SimpleStackPanel>
-                                </DockPanel>
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <ComboBox
-                                        x:Name="cB_EmulatedController"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        SelectedIndex="0"
-                                        SelectionChanged="cB_EmulatedController_Changed">
-                                        <ComboBoxItem
-                                            Name="cB_EmulatedController_disabled"
-                                            Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
-                                            Tag="-1" />
-                                        <ComboBoxItem
-                                            Name="cB_EmulatedController_Xbox"
-                                            Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
-                                            Tag="0" />
-                                        <ComboBoxItem
-                                            Name="cB_EmulatedController_DS4"
-                                            Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
-                                            Tag="1" />
-                                    </ComboBox>
-                                </DockPanel>
-                            </Grid>
-                        </Border>
+                            <ComboBox
+                                x:Name="cB_EmulatedController"
+                                SelectedIndex="0"
+                                SelectionChanged="cB_EmulatedController_Changed">
+                                <ComboBoxItem
+                                    Name="cB_EmulatedController_disabled"
+                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
+                                    Tag="-1" />
+                                <ComboBoxItem
+                                    Name="cB_EmulatedController_Xbox"
+                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
+                                    Tag="0" />
+                                <ComboBoxItem
+                                    Name="cB_EmulatedController_DS4"
+                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
+                                    Tag="1" />
+                            </ComboBox>
+                        </ui:SettingsCard>
 
                         <ui:SettingsCard
                             Click="ControllerSettingsButton_Click"
