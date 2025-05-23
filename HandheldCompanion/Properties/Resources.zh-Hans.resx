@@ -1475,11 +1475,8 @@
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>设置CPU超频模式</value>
   </data>
-  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>显示器分辨率与刷新率</value>
-  </data>
-  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
-    <value>调整显示器的分辨率与刷新率</value>
+  <data name="QuickDevicePage_DisplayResolutionDesc" xml:space="preserve">
+    <value>调整主显示器的分辨率</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>风扇转速</value>
@@ -2450,11 +2447,11 @@
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
     <value>应用</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
-    <value>Refresh rate</value>
+  <data name="QuickDevicePage_DisplayFrequency" xml:space="preserve">
+    <value>刷新率</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
-    <value>Adjust main refresh rate</value>
+  <data name="QuickDevicePage_DisplayFrequencyDesc" xml:space="preserve">
+    <value>调整主显示器的刷新率</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
     <value>风扇设置</value>
@@ -2603,6 +2600,9 @@
   <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>为同一游戏添加不同的配置</value>
   </data>
+  <data name="QuickProfilesPage_SubProfilesDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="Hotkey_CycleSubProfile" xml:space="preserve">
     <value>循环切换子配置</value>
   </data>
@@ -2610,10 +2610,10 @@
     <value>为当前游戏循环切换子配置</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
-    <value>Sets the fan to max speed</value>
+    <value>将风扇转速设为最大</value>
   </data>
   <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
-    <value>Fan max speed override</value>
+    <value>风扇最大转速</value>
   </data>
   <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
     <value>整倍缩放不可用</value>
@@ -2693,8 +2693,8 @@
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>功耗设置</value>
   </data>
-  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
-    <value>Resolution is currently overridden by profile</value>
+  <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
+    <value>当前配置已覆盖屏幕分辨率</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
     <value>靠左</value>
@@ -3352,5 +3352,26 @@
   </data>
   <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
     <value>右手柄</value>
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value>设备设置</value>
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value>蓝牙</value>
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value>夜间模式</value>
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>显示器分辨率</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value>动态光效</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value>在我的设备上使用动态光效</value>
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
+    <value>使用较暖的颜色帮助屏蔽蓝光</value>
   </data>
 </root>

@@ -8771,11 +8771,110 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bluetooth.
+        /// </summary>
+        public static string QuickDevicePage_Bluetooth {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_Bluetooth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings, display profile.
         /// </summary>
         public static string QuickDevicePage_Desc {
             get {
                 return ResourceManager.GetString("QuickDevicePage_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device settings.
+        /// </summary>
+        public static string QuickDevicePage_DeviceSettings {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DeviceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh rate.
+        /// </summary>
+        public static string QuickDevicePage_DisplayFrequency {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust main refresh rate.
+        /// </summary>
+        public static string QuickDevicePage_DisplayFrequencyDesc {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayFrequencyDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display resolution.
+        /// </summary>
+        public static string QuickDevicePage_DisplayResolution {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayResolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust main display resolution.
+        /// </summary>
+        public static string QuickDevicePage_DisplayResolutionDesc {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayResolutionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dynamic lighting settings.
+        /// </summary>
+        public static string QuickDevicePage_DynamicLighting {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DynamicLighting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use dynamic lighting on my device.
+        /// </summary>
+        public static string QuickDevicePage_DynamicLightingToggle {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DynamicLightingToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Night light.
+        /// </summary>
+        public static string QuickDevicePage_NightLight {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_NightLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use warmer colors to help block blue light.
+        /// </summary>
+        public static string QuickDevicePage_NightLightDesc {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_NightLightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolution is currently overridden by profile.
+        /// </summary>
+        public static string QuickDevicePage_ResolutionOverrideWarning {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_ResolutionOverrideWarning", resourceCulture);
             }
         }
         
@@ -9109,51 +9208,6 @@ namespace HandheldCompanion.Properties {
         public static string QuickSettingsPage_Desc {
             get {
                 return ResourceManager.GetString("QuickSettingsPage_Desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Refresh rate.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayFrequency {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayFrequency", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Adjust main refresh rate.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayFrequencyDesc {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayFrequencyDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display resolution.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayResolution {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayResolution", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Adjust main display resolution.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayResolutionDesc {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayResolutionDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Resolution is currently overridden by profile.
-        /// </summary>
-        public static string QuickSettingsPage_ResolutionOverrideWarning {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_ResolutionOverrideWarning", resourceCulture);
             }
         }
         

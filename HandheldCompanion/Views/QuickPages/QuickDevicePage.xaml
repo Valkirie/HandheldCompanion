@@ -20,90 +20,27 @@
     <ikw:SimpleStackPanel Spacing="24">
 
         <!--  Device settings  -->
-        <ikw:SimpleStackPanel Spacing="6">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Device settings" />
-
-            <ikw:SimpleStackPanel Name="DisplayStack" Spacing="6">
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="100" />
-                            <ColumnDefinition Width="5*" MinWidth="100" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE799;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_DisplayResolution}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.QuickSettingsPage_DisplayResolutionDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="ComboBoxResolution"
-                            Grid.Column="1"
-                            Margin="6,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            IsReadOnly="True"
-                            SelectionChanged="ComboBoxResolution_SelectionChanged" />
-                    </Grid>
-                </Border>
-
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="100" />
-                            <ColumnDefinition Width="5*" MinWidth="100" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="Segoe UI Symbol"
-                                Glyph="&#xE2CB;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_DisplayFrequency}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.QuickSettingsPage_DisplayFrequencyDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="ComboBoxFrequency"
-                            Grid.Column="1"
-                            Margin="6,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            IsReadOnly="True"
-                            SelectionChanged="ComboBoxFrequency_SelectionChanged" />
-                    </Grid>
-                </Border>
+        <ikw:SimpleStackPanel Spacing="4">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DeviceSettings}" />
+            <ikw:SimpleStackPanel Name="DisplayStack" Spacing="4">
+                <ui:SettingsCard Description="{l:Static resx:Resources.QuickDevicePage_DisplayResolutionDesc}" Header="{l:Static resx:Resources.QuickDevicePage_DisplayResolution}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.AspectRatio}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        Name="ComboBoxResolution"
+                        IsReadOnly="True"
+                        SelectionChanged="ComboBoxResolution_SelectionChanged" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Description="{l:Static resx:Resources.QuickDevicePage_DisplayFrequencyDesc}" Header="{l:Static resx:Resources.QuickDevicePage_DisplayFrequency}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.DeviceLaptopNoPic}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        Name="ComboBoxFrequency"
+                        IsReadOnly="True"
+                        SelectionChanged="ComboBoxFrequency_SelectionChanged" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <Border
@@ -129,268 +66,106 @@
                     <TextBlock
                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="{l:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
+                        Text="{l:Static resx:Resources.QuickDevicePage_ResolutionOverrideWarning}"
                         TextWrapping="Wrap" />
                 </ikw:SimpleStackPanel>
             </Border>
 
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsCard Header="Wi-Fi">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Wifi}" />
+                </ui:SettingsCard.HeaderIcon>
+                <ui:ToggleSwitch
+                    Name="WifiToggle"
+                    IsEnabled="False"
+                    Toggled="WIFIToggle_Toggled" />
+            </ui:SettingsCard>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
+            <ui:SettingsCard Header="{l:Static resx:Resources.QuickDevicePage_Bluetooth}">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bluetooth}" />
+                </ui:SettingsCard.HeaderIcon>
+                <ui:ToggleSwitch
+                    Name="BluetoothToggle"
+                    IsEnabled="False"
+                    Toggled="BluetoothToggle_Toggled" />
+            </ui:SettingsCard>
 
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE701;" />
-
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Wifi" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:ToggleSwitch
-                        Name="WifiToggle"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        IsEnabled="False"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="WIFIToggle_Toggled" />
-                </Grid>
-            </Border>
-
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE702;" />
-
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Bluetooth" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:ToggleSwitch
-                        Name="BluetoothToggle"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        IsEnabled="False"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="BluetoothToggle_Toggled" />
-                </Grid>
-            </Border>
-
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xf08c;" />
-
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Night light" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:ToggleSwitch
-                        Name="NightLightToggle"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        IsEnabled="False"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="NightLightToggle_Toggled" />
-                </Grid>
-            </Border>
+            <ui:SettingsCard Description="{l:Static resx:Resources.QuickDevicePage_NightLightDesc}" Header="{l:Static resx:Resources.QuickDevicePage_NightLight}">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.BlueLight}" />
+                </ui:SettingsCard.HeaderIcon>
+                <ui:ToggleSwitch
+                    Name="NightLightToggle"
+                    IsEnabled="False"
+                    Toggled="NightLightToggle_Toggled" />
+            </ui:SettingsCard>
 
             <!--  AYANEO Flip DS  -->
             <ikw:SimpleStackPanel
                 Name="AYANEOFlipDSPanel"
                 d:Visibility="Visible"
-                Spacing="6"
                 Visibility="Collapsed">
 
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <ikw:SimpleStackPanel Spacing="6">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="100" />
-                            </Grid.ColumnDefinitions>
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE8A7;" />
-
-                                <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Enable second display" />
-                                </ikw:SimpleStackPanel>
+                <ui:SettingsExpander Header="Enable second display">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
+                    </ui:SettingsExpander.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_AYANEOFlipScreen" Toggled="Toggle_AYANEOFlipScreen_Toggled" />
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard ContentAlignment="Left">
+                            <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Label
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Value, Source={x:Reference Slider_AYANEOFlipScreenBrightness}, Mode=OneWay}"
+                                    ContentStringFormat="{}{0:N0} %" />
+                                <Slider
+                                    Name="Slider_AYANEOFlipScreenBrightness"
+                                    Margin="8,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    AutoToolTipPrecision="0"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="10"
+                                    Maximum="100"
+                                    Minimum="10"
+                                    SmallChange="1"
+                                    TickFrequency="10"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ValueChanged="Slider_AYANEOFlipScreenBrightness_ValueChanged" />
                             </DockPanel>
-
-                            <ui:ToggleSwitch
-                                Name="Toggle_AYANEOFlipScreen"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="Toggle_AYANEOFlipScreen_Toggled" />
-                        </Grid>
-
-                        <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                        <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBox
-                                Height="32"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                IsReadOnly="True"
-                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Slider_AYANEOFlipScreenBrightness, Mode=OneWay}" />
-                            <Slider
-                                Name="Slider_AYANEOFlipScreenBrightness"
-                                Margin="8,0,0,0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                AutoToolTipPrecision="0"
-                                IsMoveToPointEnabled="True"
-                                IsSnapToTickEnabled="True"
-                                LargeChange="10"
-                                Maximum="100"
-                                Minimum="10"
-                                SmallChange="1"
-                                Style="{DynamicResource SliderStyle1}"
-                                TickFrequency="10"
-                                TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                ValueChanged="Slider_AYANEOFlipScreenBrightness_ValueChanged" />
-                        </DockPanel>
-                    </ikw:SimpleStackPanel>
-                </Border>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
             <!--  Device or Capabilities specific  -->
-            <ikw:SimpleStackPanel Spacing="6">
-
-                <Border
+            <ikw:SimpleStackPanel Spacing="4">
+                <ui:SettingsCard
                     Name="FanOverridePanel"
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="0.2*" MinWidth="80" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE7BC;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_FullFanSpeedText}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_FanOverride"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_FanOverride_Toggled" />
-                    </Grid>
-                </Border>
+                    Description="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
+                    Header="{l:Static resx:Resources.DevicePage_FullFanSpeedText}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ReadingList}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_FanOverride" Toggled="Toggle_FanOverride_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
 
         <!--  Dynamic lighting settings  -->
-        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Dynamic lighting settings" />
+        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="4">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DynamicLighting}" />
 
             <!--  Use Dynamic lighting  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE781;" />
-
-                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use dynamic lighting on my device" />
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:ToggleSwitch
-                        Name="UseDynamicLightingToggle"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="UseDynamicLightingToggle_Toggled" />
-                </Grid>
-            </Border>
+            <ui:SettingsCard Header="{l:Static resx:Resources.QuickDevicePage_DynamicLightingToggle}">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LEDLight}" />
+                </ui:SettingsCard.HeaderIcon>
+                <ui:ToggleSwitch Name="UseDynamicLightingToggle" Toggled="UseDynamicLightingToggle_Toggled" />
+            </ui:SettingsCard>
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
 </Page>

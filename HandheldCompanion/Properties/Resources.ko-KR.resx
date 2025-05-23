@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -222,9 +222,6 @@
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>진동의 세기</value>
-  </data>
-  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>컨트롤러의 진동의 세기를 변경</value>
   </data>
   <data name="Hotkey_decreaseTDP" xml:space="preserve">
     <value>열 설계 전력(TDP) 감소</value>
@@ -556,12 +553,6 @@
   <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
     <value>수직축의 모션 감도를 변경합니다.</value>
   </data>
-  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
-    <value>스틱 감도</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
-    <value>회전 속도를 변경합니다.</value>
-  </data>
   <data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
     <value>추가 설정</value>
   </data>
@@ -774,7 +765,7 @@
     <value>유니버설 모션 컨트롤 설정</value>
   </data>
   <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
-    <value>디바이스의 움직임을 컨트롤러 입력으로 변환합니다<div class=""></div></value>
+    <value />
   </data>
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>프로파일 업데이트</value>
@@ -1484,10 +1475,7 @@
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>현재 CPU 부스트 모드를 설정합니다.</value>
   </data>
-  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>디스플레이 해상도 및 주사율</value>
-  </data>
-  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayResolutionDesc" xml:space="preserve">
     <value>주 디스플레이 해상도 및 주사율을 조정합니다.</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
@@ -2450,10 +2438,10 @@
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
     <value>응용 프로그램</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequency" xml:space="preserve">
     <value>새로 고침 빈도</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequencyDesc" xml:space="preserve">
     <value>주요 새로 고침 빈도를 조정합니다</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
@@ -2687,7 +2675,7 @@
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>전원 설정</value>
   </data>
-  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+  <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>해상도가 현재 프로필에 의해 재정의되었습니다</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
@@ -2816,8 +2804,8 @@
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>트리거 마진</value>
   </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>지원되지 않는 장치</value>
   </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>프리셋 효과</value>
@@ -3056,7 +3044,37 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value>시스템이 대기 상태에 들어가거나 나올 때 애플리케이션을 일시 중지하고 재개합니다.</value>
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>지원되지 않는 장치</value>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>컨트롤러의 진동의 세기를 변경</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
+    <value>스틱 감도</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
+    <value>회전 속도를 변경합니다.</value>
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>디스플레이 해상도 및 주사율</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
+    <value />
   </data>
 </root>
