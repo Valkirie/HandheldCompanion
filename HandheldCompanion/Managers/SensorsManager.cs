@@ -326,7 +326,7 @@ namespace HandheldCompanion.Managers
                 dialog.UpdateContent($"Calibrating {gamepadMotion.deviceInstanceId} stationary sensor noise and drift correction...");
 
                 gamepadMotion.ResetContinuousCalibration();
-                gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness);
+                gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness | CalibrationMode.SensorFusion);
 
                 // wait until device is steady
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(5));
