@@ -99,14 +99,11 @@
                     Glyph="&#xE706;" />
 
                 <ikw:SimpleStackPanel
-                    Margin="12,0,0,0"
+                    Margin="12,0,12,0"
                     VerticalAlignment="Center"
                     ScrollViewer.PanningMode="HorizontalOnly">
                     <Slider
                         x:Name="SliderBrightness"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        AutoToolTipPrecision="0"
                         IsEnabled="False"
                         IsMoveToPointEnabled="True"
                         IsSnapToTickEnabled="True"
@@ -114,7 +111,6 @@
                         Maximum="100"
                         Minimum="0"
                         SmallChange="1"
-                        Style="{DynamicResource SliderStyle1}"
                         TickFrequency="1"
                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         ValueChanged="SliderBrightness_ValueChanged" />
@@ -130,21 +126,17 @@
                     Glyph="&#xE767;" />
 
                 <ikw:SimpleStackPanel
-                    Margin="12,0,0,0"
+                    Margin="12,0,12,0"
                     VerticalAlignment="Center"
                     ScrollViewer.PanningMode="HorizontalOnly">
                     <Slider
                         x:Name="SliderVolume"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        AutoToolTipPrecision="0"
                         IsMoveToPointEnabled="True"
                         IsSnapToTickEnabled="True"
                         LargeChange="10"
                         Maximum="100"
                         Minimum="0"
                         SmallChange="1"
-                        Style="{DynamicResource SliderStyle1}"
                         TickFrequency="1"
                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         ValueChanged="SliderVolume_ValueChanged" />

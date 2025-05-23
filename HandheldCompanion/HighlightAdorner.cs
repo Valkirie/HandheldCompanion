@@ -47,7 +47,7 @@ namespace HandheldCompanion
             }
             else if(_element is Slider slider)
             {
-                _rectangle.Width = slider.DesiredSize.Width + 6;
+                _rectangle.Width += 12;
             }
 
             this.AddVisualChild(_rectangle);
