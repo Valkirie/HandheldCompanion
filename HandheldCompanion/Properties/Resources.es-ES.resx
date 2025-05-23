@@ -1483,10 +1483,7 @@
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>Establecer modo de refuerzo de CPU actual</value>
   </data>
-  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>Resolución de pantalla y frecuencia de actualización</value>
-  </data>
-  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayResolutionDesc" xml:space="preserve">
     <value>Ajustar la resolución de la pantalla principal y la frecuencia de actualización</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
@@ -2449,10 +2446,10 @@
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
     <value>Applications</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequency" xml:space="preserve">
     <value>Refresh rate</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequencyDesc" xml:space="preserve">
     <value>Adjust main refresh rate</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
@@ -2683,7 +2680,7 @@
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>configuración de energía</value>
   </data>
-  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+  <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>Resolution is currently overridden by profile</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
@@ -3032,6 +3029,27 @@
     <value />
   </data>
   <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>Resolución de pantalla y frecuencia de actualización</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
     <value />
   </data>
 </root>

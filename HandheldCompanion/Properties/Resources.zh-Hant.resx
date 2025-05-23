@@ -1477,10 +1477,7 @@
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>設置CPU超頻模式</value>
   </data>
-  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>顯示器解析度</value>
-  </data>
-  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayResolutionDesc" xml:space="preserve">
     <value>調整顯示器的解析度</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
@@ -2452,10 +2449,10 @@
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
     <value>應用</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequency" xml:space="preserve">
     <value>螢幕刷新率</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequencyDesc" xml:space="preserve">
     <value>調整主要螢幕刷新率</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
@@ -2698,7 +2695,7 @@
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>功耗設置</value>
   </data>
-  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+  <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>解析度被當前設定檔覆寫</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
@@ -3492,6 +3489,27 @@
     <value />
   </data>
   <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>顯示器解析度</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
     <value />
   </data>
 </root>

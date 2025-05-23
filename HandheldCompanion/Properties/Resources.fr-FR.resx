@@ -1479,10 +1479,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>Set current CPU boost mode</value>
   </data>
-  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>Display resolution and refresh rate</value>
-  </data>
-  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayResolutionDesc" xml:space="preserve">
     <value>Adjust main display resolution and refresh rate</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
@@ -2447,10 +2444,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
     <value>Applications</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequency" xml:space="preserve">
     <value>Refresh rate</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequencyDesc" xml:space="preserve">
     <value>Adjust main refresh rate</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
@@ -2681,7 +2678,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>Power settings</value>
   </data>
-  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+  <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>Resolution is currently overridden by profile</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
@@ -3034,6 +3031,27 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value />
   </data>
   <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>Display resolution and refresh rate</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
     <value />
   </data>
 </root>

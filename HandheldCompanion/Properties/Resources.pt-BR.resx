@@ -1497,10 +1497,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>Definir o modo de impulso de CPU</value>
   </data>
-  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
-    <value>Resolução de tela e taxa de atualização</value>
-  </data>
-  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayResolutionDesc" xml:space="preserve">
     <value>Ajustar a resolução da tela principal e taxa de atualização</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
@@ -2472,10 +2469,10 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="QuickApplicationsPage_Title" xml:space="preserve">
     <value>Applications</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequency" xml:space="preserve">
     <value>Taxa de atualização</value>
   </data>
-  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+  <data name="QuickDevicePage_DisplayFrequencyDesc" xml:space="preserve">
     <value>Ajustar a taxa de atualização principal</value>
   </data>
   <data name="ProfilesPage_FanSettings" xml:space="preserve">
@@ -2718,7 +2715,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>Configurações de energia</value>
   </data>
-  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+  <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>A resolução é atualmente definida por um perfil</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
@@ -3514,6 +3511,27 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
     <value />
   </data>
   <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>Resolução de tela e taxa de atualização</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
     <value />
   </data>
 </root>
