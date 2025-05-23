@@ -209,9 +209,6 @@
 
                         <ui:ToggleSwitch
                             Name="Toggle_ControllerManagement"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_ControllerManagement_Toggled" />
                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
@@ -277,9 +274,6 @@
 
                     <ui:ToggleSwitch
                         Name="Toggle_Vibrate"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
                         Toggled="Toggle_Vibrate_Toggled" />
                 </ui:SettingsCard>
 
@@ -291,9 +285,6 @@
 
                     <ui:ToggleSwitch
                         Name="Toggle_Cloaked"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
                         Toggled="Toggle_Cloaked_Toggled" />
                 </ui:SettingsCard>
 
@@ -305,9 +296,6 @@
 
                     <ui:ToggleSwitch
                         Name="Toggle_Uncloak"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
                         Toggled="Toggle_Uncloak_Toggled" />
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
