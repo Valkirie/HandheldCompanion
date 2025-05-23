@@ -43,8 +43,11 @@ namespace HandheldCompanion
             // workaround
             if (_element is ToggleSwitch toggleSwitch)
             {
-                this.Margin = new Thickness(toggleSwitch.DesiredSize.Height, 0, 0, 0);
-                _rectangle.Width = toggleSwitch.DesiredSize.Width;
+                _rectangle.Width = toggleSwitch.DesiredSize.Width + 12;
+            }
+            else if(_element is Slider slider)
+            {
+                _rectangle.Width = slider.DesiredSize.Width + 6;
             }
 
             this.AddVisualChild(_rectangle);
@@ -76,17 +79,22 @@ namespace HandheldCompanion
             {
                 radius = border.CornerRadius.TopLeft;
             }
-            // If it's a WinUI/Fluent ToggleSwitch, use its CornerRadius
-            else if (_element is ToggleSwitch ts)
+            else if (_element is Slider)
             {
-                radius = ts.CornerRadius.TopLeft;
+                radius = 8;
+            }
+            else if (_element is ToggleSwitch)
+            {
+                radius = 8;
             }
             // If it's some other Control with a CornerRadius property in its template...
             else if (_element is Control ctrl)
             {
                 // try to find the named border in its template
-                var templateBorder = ctrl.Template?.FindName("Border", ctrl) as Border
-                                    ?? ctrl.Template?.FindName("ContainerBorder", ctrl) as Border;
+                Border? templateBorder = ctrl.Template?.FindName("Border", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("ContainerBorder", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("FocusBorder", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("LayoutRoot", ctrl) as Border;
                 if (templateBorder != null)
                     radius = templateBorder.CornerRadius.TopLeft;
             }
