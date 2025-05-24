@@ -759,16 +759,18 @@ public abstract class IDevice
 
     public void PullSensors()
     {
-        Gyrometer? gyrometer = Gyrometer.GetDefault();
-        Accelerometer? accelerometer = Accelerometer.GetDefault();
+        Gyrometer gyrometer = Gyrometer.GetDefault();
+        Accelerometer accelerometer = Accelerometer.GetDefault();
 
-        if (gyrometer is not null || accelerometer is not null)
+        if (gyrometer != null || accelerometer != null)
         {
-            // check sensor
-            string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
-            USBDeviceInfo sensor = GetUSBDevice(DeviceId);
-            if (sensor is not null)
-                InternalSensorName = sensor.Name;
+            // pick the non-null sensor's DeviceId
+            string rawId = (gyrometer != null) ? gyrometer.DeviceId : accelerometer.DeviceId;
+            string deviceId = CommonUtils.Between(rawId, @"\\?\", @"#{") ? .Replace("#", @"\") ?? rawId;
+
+            USBDeviceInfo sensorInfo = GetUSBDevice(deviceId);
+            if (sensorInfo != null)
+                InternalSensorName = sensorInfo.Name;
 
             Capabilities |= DeviceCapabilities.InternalSensor;
         }
