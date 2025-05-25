@@ -40,7 +40,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                return windowPositions == WindowPositions.Maximize;
+                return true; // return windowPositions == WindowPositions.Maximize;
             }
         }
 
