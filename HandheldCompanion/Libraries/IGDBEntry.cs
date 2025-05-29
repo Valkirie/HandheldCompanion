@@ -10,7 +10,6 @@ namespace HandheldCompanion.Libraries
     public class IGDBEntry : LibraryEntry
     {
         public string Storyline;
-        public Category Category;
 
         public Cover Cover;
         public Artwork Artwork;
