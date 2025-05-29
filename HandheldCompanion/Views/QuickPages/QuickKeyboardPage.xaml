@@ -81,7 +81,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Height="300" VerticalAlignment="Bottom">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
@@ -89,6 +89,21 @@
             <RowDefinition Height="25*" />
             <RowDefinition Height="25*" />
         </Grid.RowDefinitions>
+
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+                <Setter Property="Height" Value="300" />
+
+                <Style.Triggers>
+                    <!--  when on FlipDS, stretch instead  -->
+                    <DataTrigger Binding="{Binding IsFlipDS}" Value="True">
+                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                        <Setter Property="Height" Value="Auto" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
 
         <!--  Row 0: ?? keys  -->
         <Grid x:Name="Row0Panel" Grid.Row="0">
