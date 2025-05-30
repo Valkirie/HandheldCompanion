@@ -20,17 +20,20 @@ namespace HandheldCompanion.Managers
 
         private static ToastNotification CurrentToastNotification;
 
-        public static bool IsEnabled { get; set; }
+        public static bool IsEnabled => ManagerFactory.settingsManager.GetBoolean("ToastEnable");
         private static bool IsInitialized { get; set; }
 
         static ToastManager() { }
 
-        public static void SendToast(string title, string content = "", string img = "icon", bool isHero = false)
+        public static bool SendToast(string title, string content = "", string img = "icon", bool isHero = false)
         {
-            if (!IsEnabled) return;
+            if (!IsEnabled)
+                return false;
 
             ToastQueue.Enqueue((title, content, img, isHero));
             _ = ProcessToastQueue();
+
+            return true;
         }
 
         private static async Task ProcessToastQueue()
@@ -115,34 +118,8 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            // raise events
-            switch (ManagerFactory.settingsManager.Status)
-            {
-                default:
-                case ManagerStatus.Initializing:
-                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                    break;
-                case ManagerStatus.Initialized:
-                    QuerySettings();
-                    break;
-            }
-
             IsInitialized = true;
             LogManager.LogInformation("{0} has started", nameof(ToastManager));
-        }
-
-        private static void SettingsManager_Initialized()
-        {
-            QuerySettings();
-        }
-
-        private static void QuerySettings()
-        {
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-            // raise events
-            SettingsManager_SettingValueChanged("ToastEnable", ManagerFactory.settingsManager.GetString("ToastEnable"), false);
         }
 
         public static void Stop()
@@ -150,24 +127,11 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-
             ToastQueue.Clear();
 
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", nameof(ToastManager));
-        }
-
-        private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-        {
-            switch (name)
-            {
-                case "ToastEnable":
-                    IsEnabled = Convert.ToBoolean(value);
-                    break;
-            }
         }
     }
 }

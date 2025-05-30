@@ -28,6 +28,9 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 case SettingsName:
                     Update();
+
+                    LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
+                    ToastManager.SendToast($"Controller mode set to {LayoutMode}");
                     break;
             }
         }

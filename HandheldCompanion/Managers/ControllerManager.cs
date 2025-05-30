@@ -498,7 +498,7 @@ public static class ControllerManager
                 settings.playerNumber = joyShockId;
                 JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
 
-                if (controller != null)
+                if (controller is not null)
                 {
                     ((JSController)controller).AttachDetails(details);
                     ((JSController)controller).AttachJoySettings(settings);
@@ -636,7 +636,9 @@ public static class ControllerManager
 
             LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
-            ToastManager.SendToast(controller.ToString(), "detected");
+
+            if (!IsPowerCycling)
+                ToastManager.SendToast(controller.ToString(), "detected");
 
             PickTargetController();
             PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -790,7 +792,9 @@ public static class ControllerManager
 
             LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
-            ToastManager.SendToast(controller.ToString(), "detected");
+
+            if (!IsPowerCycling)
+                ToastManager.SendToast(controller.ToString(), "detected");
 
             PickTargetController();
             PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);

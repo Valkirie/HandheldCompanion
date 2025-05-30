@@ -779,8 +779,8 @@ public partial class MainWindow : GamepadWindow
 
                     if (!NotifyInTaskbar)
                     {
-                        ToastManager.SendToast(Title, "is running in the background");
-                        NotifyInTaskbar = true;
+                        if (ToastManager.SendToast(Title, "is running in the background"))
+                            NotifyInTaskbar = true;
                     }
                 }
                 break;

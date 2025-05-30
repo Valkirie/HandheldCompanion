@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ToastEnable" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="RunAtStartup" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
