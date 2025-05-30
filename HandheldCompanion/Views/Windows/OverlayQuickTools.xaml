@@ -175,6 +175,11 @@
                     PanningMode="VerticalOnly">
                     <ui:Frame Name="ContentFrame" />
                 </common:TouchScrollViewer>
+                <Separator
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Bottom"
+                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                    Opacity="0.2" />
             </Grid>
         </ui:NavigationView>
     </Grid>
