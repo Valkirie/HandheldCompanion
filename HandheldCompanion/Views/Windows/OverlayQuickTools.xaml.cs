@@ -258,27 +258,45 @@ public partial class OverlayQuickTools : GamepadWindow
 
             switch (QuickToolsLocation)
             {
-                case 0: // Left
-                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                case 0: // TopLeft
+                    this.SetWindowPosition(WindowPositions.TopLeft, targetScreen);
                     break;
 
-                case 1: // Right
-                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                case 1: // TopRight
+                    this.SetWindowPosition(WindowPositions.TopRight, targetScreen);
                     break;
 
                 case 2: // Maximized
                     this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
                     break;
+
+                case 3: // BottomLeft
+                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                    break;
+
+                case 4: // BottomRight
+                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                    break;
             }
 
             switch (QuickToolsLocation)
             {
-                case 0: // Left
+                case 0: // TopLeft
+                    Top += _Margin;
+                    Left += _Margin;
+                    break;
+
+                case 1: // BottomRight
+                    Top += _Margin;
+                    Left -= _Margin;
+                    break;
+
+                case 3: // BottomLeft
                     Top -= _Margin;
                     Left += _Margin;
                     break;
 
-                case 1: // Right
+                case 4: // BottomRight
                     Top -= _Margin;
                     Left -= _Margin;
                     break;

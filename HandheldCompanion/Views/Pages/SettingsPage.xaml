@@ -539,9 +539,11 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationLeft}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationRight}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopLeft}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopRight}" />
                             <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationMaximized}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomLeft}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomRight}" />
                         </ComboBox>
                     </Grid>
                 </Border>

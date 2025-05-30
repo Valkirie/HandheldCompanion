@@ -2698,10 +2698,10 @@
   <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>解析度被當前設定檔覆寫</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
     <value>靠左</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
     <value>靠右</value>
   </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">

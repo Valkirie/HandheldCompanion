@@ -2678,10 +2678,10 @@
   <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>해상도가 현재 프로필에 의해 재정의되었습니다</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
     <value>왼쪽</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
     <value>오른쪽</value>
   </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">

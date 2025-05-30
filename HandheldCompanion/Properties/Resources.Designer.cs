@@ -9950,15 +9950,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Left.
-        /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationLeft {
-            get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationLeft", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Maximized.
         /// </summary>
         public static string SettingsPage_QuickToolsWindowLocationMaximized {
@@ -9968,20 +9959,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Right.
+        ///   Looks up a localized string similar to Top left.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationRight {
+        public static string SettingsPage_QuickToolsWindowLocationTopLeft {
             get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationRight", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopLeft", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Top left.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationTopLeft {
+        public static string SettingsPage_QuickToolsWindowLocationTopLeft1 {
             get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopLeft", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopLeft1", resourceCulture);
             }
         }
         
