@@ -632,7 +632,11 @@
                 </Border>
 
                 <!--  Virtual keyboard  -->
-                <ui:SettingsCard Description="Display virtual keyboard" Header="Virtual keyboard">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Description="Display virtual keyboard"
+                    Header="Virtual keyboard"
+                    Visibility="Collapsed">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE765;" />
                     </ui:SettingsCard.HeaderIcon>
@@ -641,7 +645,11 @@
                 </ui:SettingsCard>
 
                 <!--  Virtual keyboard  -->
-                <ui:SettingsCard Description="Display virtual trackpad" Header="Virtual trackpad (not implemented)">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Description="Display virtual trackpad"
+                    Header="Virtual trackpad (not implemented)"
+                    Visibility="Collapsed">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xEFA5;" />
                     </ui:SettingsCard.HeaderIcon>

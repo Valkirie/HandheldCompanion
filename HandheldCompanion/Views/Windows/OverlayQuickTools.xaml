@@ -12,12 +12,13 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="QuickTools"
-    Width="540"
-    MinWidth="540"
+    Width="450"
+    MinWidth="450"
     MaxWidth="960"
     MaxHeight="960"
     Margin="0"
     d:DataContext="{d:DesignInstance Type=viewmodels:OverlayQuickToolsViewModel}"
+    d:Height="450"
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.ApplyNoise="True"
@@ -39,7 +40,7 @@
     </Window.Resources>
 
     <Grid>
-        <DockPanel Margin="12,2,0,0" VerticalAlignment="Top">
+        <DockPanel Margin="12,6,0,0" VerticalAlignment="Top">
             <ui:FontIcon
                 Name="BatteryIndicatorIcon"
                 VerticalAlignment="Center"
@@ -63,7 +64,7 @@
 
         <ui:NavigationView
             Name="navView"
-            Margin="0,31,0,0"
+            Margin="0,36,0,0"
             BackRequested="navView_BackRequested"
             IsBackButtonVisible="Collapsed"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack, Mode=OneWay}"
@@ -174,10 +175,35 @@
             </ui:NavigationView.MenuItems>
 
             <Grid>
-                <ui:ContentDialog Name="ContentDialog" />
+                <ikw:SimpleStackPanel
+                    Height="32"
+                    Margin="0,12,19,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    Spacing="6">
+
+                    <Button
+                        Name="QuicKeyboard"
+                        VerticalAlignment="Stretch"
+                        Click="QuicKeyboard_Click"
+                        Tag="Navigation">
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;" />
+                    </Button>
+                    <Button
+                        Name="QuickTrackpad"
+                        VerticalAlignment="Stretch"
+                        Click="QuickTrackpad_Click"
+                        IsEnabled="False"
+                        Tag="Navigation">
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
+                    </Button>
+                </ikw:SimpleStackPanel>
+
+                <ui:ContentDialog Name="ContentDialog" d:Visibility="Collapsed" />
                 <common:TouchScrollViewer
                     x:Name="scrollViewer"
-                    Margin="0,12,0,12"
+                    Margin="0,32,0,12"
                     PanningMode="VerticalOnly">
                     <ui:Frame Name="ContentFrame" />
                 </common:TouchScrollViewer>

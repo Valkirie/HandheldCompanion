@@ -535,11 +535,6 @@ public partial class OverlayQuickTools : GamepadWindow
         applicationsPage.Close();
     }
 
-    private void Key_Clicked(object sender, RoutedEventArgs e)
-    {
-        NavView_Navigate("QuickKeyboardPage");
-    }
-
     #region navView
 
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -640,4 +635,14 @@ public partial class OverlayQuickTools : GamepadWindow
     }
 
     #endregion
+
+    private void QuicKeyboard_Click(object sender, RoutedEventArgs e)
+    {
+        NavView_Navigate("QuickKeyboardPage");
+    }
+
+    private void QuickTrackpad_Click(object sender, RoutedEventArgs e)
+    {
+        NavView_Navigate("QuickTrackpadPage");
+    }
 }
