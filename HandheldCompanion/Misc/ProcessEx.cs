@@ -555,7 +555,7 @@ public class ProcessEx : IDisposable, ICloneable
                 {
                     if (key != null)
                     {
-                        List<string> values = ["~"]; ;
+                        List<string> values = ["~"];
                         string valueStr = (string)key.GetValue(Path);
 
                         if (!string.IsNullOrEmpty(valueStr))

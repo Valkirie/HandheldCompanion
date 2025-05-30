@@ -104,7 +104,7 @@ namespace HandheldCompanion.Misc
                 return false;
 
             nint parent = IntPtr.Zero;
-            for (; ; )
+            for (;;)
             {
                 parent = FindWindowEx(IntPtr.Zero, parent, WindowParentClass1709);
                 if (parent == IntPtr.Zero)

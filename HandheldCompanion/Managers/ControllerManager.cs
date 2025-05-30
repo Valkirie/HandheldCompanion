@@ -9,7 +9,6 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
-using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -894,9 +893,9 @@ public static class ControllerManager
                 xInputController.AttachController(UserIndex);
             }
 
-            foreach(IController controller in DrunkControllers)
+            foreach (IController controller in DrunkControllers)
             {
-                switch(controller.IsVirtual())
+                switch (controller.IsVirtual())
                 {
                     case true:
                         VirtualManager.Suspend(false);

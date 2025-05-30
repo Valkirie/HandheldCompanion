@@ -588,7 +588,7 @@ namespace HandheldCompanion.Managers
                             }
                             else
                             {
-                                switch(focusedElement.Tag)
+                                switch (focusedElement.Tag)
                                 {
                                     case "Navigation":
                                         // set state
@@ -671,7 +671,7 @@ namespace HandheldCompanion.Managers
 
                                 // execute command
                                 settingsCard.Command?.Execute(settingsCard.CommandParameter);
-                                
+
                                 switch (focusedElement.Tag)
                                 {
                                     case "Navigation":

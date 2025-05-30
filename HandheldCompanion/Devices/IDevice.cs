@@ -766,7 +766,7 @@ public abstract class IDevice
         {
             // pick the non-null sensor's DeviceId
             string rawId = (gyrometer != null) ? gyrometer.DeviceId : accelerometer.DeviceId;
-            string deviceId = CommonUtils.Between(rawId, @"\\?\", @"#{") ? .Replace("#", @"\") ?? rawId;
+            string deviceId = CommonUtils.Between(rawId, @"\\?\", @"#{")?.Replace("#", @"\") ?? rawId;
 
             USBDeviceInfo sensorInfo = GetUSBDevice(deviceId);
             if (sensorInfo != null)

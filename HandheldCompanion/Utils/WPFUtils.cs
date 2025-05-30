@@ -293,7 +293,7 @@ public static class WPFUtils
                         // skip if read only
                         if (textBox.IsReadOnly)
                             break;
-                        
+
                         goto case "Slider";
                     }
 

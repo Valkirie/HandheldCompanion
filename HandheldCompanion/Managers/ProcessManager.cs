@@ -1,6 +1,5 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -111,7 +110,7 @@ public class ProcessManager : IManager
 
     private async void GamepadFocusManager_GotFocus(string Name)
     {
-        switch(Name)
+        switch (Name)
         {
             case "QuickTools":
                 {

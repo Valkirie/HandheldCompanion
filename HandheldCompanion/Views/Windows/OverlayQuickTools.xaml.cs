@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -148,7 +147,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
         WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
-        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);;
+        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);
     }
 
     public void LoadPages_MVVM()

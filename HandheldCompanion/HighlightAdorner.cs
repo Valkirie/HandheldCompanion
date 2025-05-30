@@ -53,7 +53,7 @@ namespace HandheldCompanion
             {
                 _rectangle.Width = checkBox.DesiredSize.Width + 12;
             }
-            
+
             this.AddVisualChild(_rectangle);
 
             // prevent adorner from catching click

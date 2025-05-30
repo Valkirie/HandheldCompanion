@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -89,7 +88,7 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
-												  
+
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -162,8 +161,8 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice.Initialize(FirstStart);
 
         // initialize device settings
-		ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-		
+        ManagerFactory.settingsManager.SetProperty("FirstStart", false);
+
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
@@ -238,8 +237,8 @@ public partial class MainWindow : GamepadWindow
                 break;
             case WM_QUERYENDSESSION:
                 break;
-									
-					  
+
+
         }
 
         return base.WndProc(hwnd, msg, wParam, lParam, ref handled);

@@ -650,7 +650,7 @@ public class ClawA1M : IDevice
             // improve detection maybe using if device.ReadFeatureData() ?
             if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
-            
+
             hidDevices[INPUT_HID_ID] = device;
 
             return true;

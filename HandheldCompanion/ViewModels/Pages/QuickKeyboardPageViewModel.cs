@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Views.QuickPages;
 using System;
-using System.Windows;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
