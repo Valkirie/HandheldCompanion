@@ -91,6 +91,8 @@
             VerticalAlignment="Bottom"
             Spacing="12">
 
+            <ui:NavigationViewItemSeparator Margin="-15,0,-6,0" />
+
             <DockPanel>
                 <ui:FontIcon
                     Height="40"
