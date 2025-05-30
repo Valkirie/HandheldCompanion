@@ -9,3 +9,4 @@ install/
 HandheldCompanion/SentryConfig.cs
 HandheldCompanion/SentryConfig.cs.bak
 cache/motherboard.json
+HandheldCompanion/SecretKeys.cs

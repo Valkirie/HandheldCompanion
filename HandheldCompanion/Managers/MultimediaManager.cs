@@ -562,6 +562,9 @@ public class MultimediaManager : IManager
         if (!VolumeSupport)
             return;
 
+        // clamp to [0,100]
+        volume = Math.Clamp(volume, 0.0d, 100.0d);
+
         multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar = (float)(volume / 100.0d);
     }
 
@@ -582,6 +585,9 @@ public class MultimediaManager : IManager
     {
         if (!BrightnessSupport)
             return;
+
+        // clamp to [0,100]
+        brightness = Math.Clamp(brightness, 0.0d, 100.0d);
 
         try
         {
