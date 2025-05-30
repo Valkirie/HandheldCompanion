@@ -33,8 +33,8 @@ namespace HandheldCompanion.ViewModels
 
         private List<Type> _functionTypes;
 
-        private ObservableCollection<ComboBoxItemViewModel> _functionItems = [];
-        public ListCollectionView FunctionCollectionView { get; set; }
+        private static ObservableCollection<ComboBoxItemViewModel> _functionItems = [];
+        public static ListCollectionView FunctionCollectionView { get; set; }
 
         private Hotkey _Hotkey;
         public Hotkey Hotkey
@@ -477,14 +477,8 @@ namespace HandheldCompanion.ViewModels
         public ICommand EraseButtonCommand { get; private set; }
         public ICommand EraseOutputButtonCommand { get; private set; }
 
-        public HotkeyViewModel(Hotkey hotkey)
+        static HotkeyViewModel()
         {
-            Hotkey = hotkey;
-
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, new object());
-
-            _functionTypes = FunctionCommands.Functions.Where(item => item is Type type && type.IsAssignableTo(typeof(FunctionCommands))).Cast<Type>().ToList();
             UIHelper.TryInvoke(() =>
             {
                 FunctionCollectionView = new ListCollectionView(_functionItems);
@@ -506,21 +500,28 @@ namespace HandheldCompanion.ViewModels
                         }
                         else
                         {
-                            var instance = Activator.CreateInstance(function);
-                            ICommands command = (ICommands)instance!;
-                            IDisposable? disposable = instance as IDisposable;
+                            using (ICommands command = Activator.CreateInstance(function) as ICommands)
+                            {
+                                bool canUnpin = command.CanUnpin;
+                                bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
+                                bool isEnabled = canUnpin && isSupported;
 
-                            bool canUnpin = command.CanUnpin;
-                            bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
-                            bool isEnabled = canUnpin && isSupported;
-
-                            _functionItems.Add(new ComboBoxItemViewModel(command.Name, isEnabled, currentCategory));
-
-                            disposable?.Dispose();
+                                _functionItems.Add(new ComboBoxItemViewModel(command.Name, isEnabled, currentCategory));
+                            }
                         }
                     }
                 }
             });
+        }
+
+        public HotkeyViewModel(Hotkey hotkey)
+        {
+            Hotkey = hotkey;
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, new object());
+
+            _functionTypes = FunctionCommands.Functions.Where(item => item is Type type && type.IsAssignableTo(typeof(FunctionCommands))).Cast<Type>().ToList();
 
             DefineButtonCommand = new DelegateCommand(async () =>
             {
