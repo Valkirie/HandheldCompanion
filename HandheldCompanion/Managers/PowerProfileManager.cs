@@ -351,7 +351,7 @@ namespace HandheldCompanion.Managers
         public void SerializeProfile(PowerProfile profile)
         {
             // update profile version to current build
-            profile.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
+            profile.Version = MainWindow.CurrentVersion;
 
             var jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
             {

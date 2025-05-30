@@ -5,6 +5,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.QuickPages;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -91,6 +92,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
+        DataContext = new OverlayQuickToolsViewModel();
         InitializeComponent();
 
         CurrentWindow = this;

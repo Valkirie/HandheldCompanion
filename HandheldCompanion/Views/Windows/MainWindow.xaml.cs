@@ -71,7 +71,7 @@ public partial class MainWindow : GamepadWindow
     public static string CurrentExe, CurrentPath;
 
     private static MainWindow CurrentWindow;
-    public static FileVersionInfo fileVersionInfo;
+    private static FileVersionInfo fileVersionInfo;
 
     public static string CurrentPageName = string.Empty;
 
@@ -89,6 +89,8 @@ public partial class MainWindow : GamepadWindow
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
 
+    public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+    public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -107,9 +109,8 @@ public partial class MainWindow : GamepadWindow
         CurrentWindow = this;
 
         // get last version
-        Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
         bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
-        bool NewUpdate = LastVersion != Version.Parse(fileVersionInfo.FileVersion);
+        bool NewUpdate = LastVersion != CurrentVersion;
 #if !DEBUG
         if (NewUpdate) SplashScreen.Show();
 #endif
@@ -158,7 +159,7 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
-        CurrentDevice.Initialize(FirstStart);
+        CurrentDevice.Initialize(FirstStart, NewUpdate);
 
         // initialize device settings
         ManagerFactory.settingsManager.SetProperty("FirstStart", false);

@@ -347,7 +347,7 @@ public class HotkeysManager : IManager
         string hotkeyPath = Path.Combine(ManagerPath, $"{hotkey.ButtonFlags}.json");
 
         // update profile version to current build
-        hotkey.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
+        hotkey.Version = MainWindow.CurrentVersion;
 
         string jsonString = JsonConvert.SerializeObject(hotkey, Formatting.Indented, new JsonSerializerSettings
         {

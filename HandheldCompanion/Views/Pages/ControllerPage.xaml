@@ -206,9 +206,7 @@
                             <ui:FontIcon Glyph="&#xedab;" />
                         </ui:SettingsCard.HeaderIcon>
 
-                        <ui:ToggleSwitch
-                            Name="Toggle_ControllerManagement"
-                            Toggled="Toggle_ControllerManagement_Toggled" />
+                        <ui:ToggleSwitch Name="Toggle_ControllerManagement" Toggled="Toggle_ControllerManagement_Toggled" />
                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
             </Grid>
@@ -270,9 +268,7 @@
                         <ui:FontIcon Glyph="&#xe95f;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ui:ToggleSwitch
-                        Name="Toggle_Vibrate"
-                        Toggled="Toggle_Vibrate_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_Vibrate" Toggled="Toggle_Vibrate_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Clock on connect  -->
@@ -281,9 +277,7 @@
                         <ui:FontIcon Glyph="&#xED1A;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ui:ToggleSwitch
-                        Name="Toggle_Cloaked"
-                        Toggled="Toggle_Cloaked_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_Cloaked" Toggled="Toggle_Cloaked_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Uncloak on close  -->
@@ -292,9 +286,7 @@
                         <ui:FontIcon Glyph="&#xE7B3;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ui:ToggleSwitch
-                        Name="Toggle_Uncloak"
-                        Toggled="Toggle_Uncloak_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_Uncloak" Toggled="Toggle_Uncloak_Toggled" />
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 

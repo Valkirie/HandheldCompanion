@@ -10,12 +10,14 @@
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="QuickTools"
     Width="540"
     MinWidth="540"
     MaxWidth="960"
     MaxHeight="960"
     Margin="0"
+    d:DataContext="{d:DesignInstance Type=viewmodels:OverlayQuickToolsViewModel}"
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.ApplyNoise="True"
@@ -151,7 +153,10 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-                <ui:NavigationViewItem Name="navKeyboard" Tag="QuickKeyboardPage">
+                <ui:NavigationViewItem
+                    Name="navKeyboard"
+                    Tag="QuickKeyboardPage"
+                    Visibility="{Binding QuickKeyboardVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:NavigationViewItem.Content>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;" />
                     </ui:NavigationViewItem.Content>
@@ -160,7 +165,8 @@
                 <ui:NavigationViewItem
                     Name="navTrackpad"
                     IsEnabled="False"
-                    Tag="QuickTrackpadPage">
+                    Tag="QuickTrackpadPage"
+                    Visibility="{Binding QuickTrackpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:NavigationViewItem.Content>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
                     </ui:NavigationViewItem.Content>

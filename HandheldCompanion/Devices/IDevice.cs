@@ -290,7 +290,7 @@ public abstract class IDevice
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
     }
 
-    public virtual void Initialize(bool FirstStart)
+    public virtual void Initialize(bool FirstStart, bool NewUpdate)
     { }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
