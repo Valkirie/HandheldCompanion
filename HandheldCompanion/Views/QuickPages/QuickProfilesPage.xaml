@@ -164,7 +164,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="46" />
-                                    <ColumnDefinition Width="102" />
+                                    <ColumnDefinition Width="104" />
                                 </Grid.ColumnDefinitions>
 
                                 <ComboBox
@@ -226,7 +226,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="46" />
-                                    <ColumnDefinition Width="102" />
+                                    <ColumnDefinition Width="104" />
                                 </Grid.ColumnDefinitions>
 
                                 <ComboBox
