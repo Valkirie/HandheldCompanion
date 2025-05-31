@@ -24,9 +24,8 @@ public class ProcessEx : IDisposable, ICloneable
     {
         Allowed = 0,
         Restricted = 1,
-        Ignored = 2,
-        HandheldCompanion = 3,
-        Desktop = 4
+        HandheldCompanion = 2,
+        Desktop = 3
     }
 
     private static readonly string[] launcherExecutables = new[]
@@ -283,9 +282,9 @@ public class ProcessEx : IDisposable, ICloneable
 
         switch (Filter)
         {
-            case ProcessFilter.Desktop:
-            case ProcessFilter.HandheldCompanion:
-            case ProcessFilter.Restricted:
+            case ProcessFilter.Allowed:
+                break;
+            default:
                 return false;
         }
 

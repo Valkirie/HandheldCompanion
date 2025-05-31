@@ -379,6 +379,13 @@ public class ProcessManager : IManager
             // get filter
             ProcessFilter filter = GetFilter(process.Executable, process.Path);
 
+            switch(filter)
+            {
+                case ProcessFilter.Restricted:
+                case ProcessFilter.HandheldCompanion:
+                    return;
+            }
+
             // update current process
             currentProcess = process;
             currentProcess.Refresh(true);
@@ -535,8 +542,6 @@ public class ProcessManager : IManager
 
             case "rw.exe": // Used to change TDP
             case "kx.exe": // Used to change TDP
-            // case "devenv.exe": // Visual Studio
-            // case "msedge.exe": // Edge has energy awareness
             case "webviewhost.exe":
             case "taskmgr.exe":
             case "procmon.exe":
@@ -555,17 +560,13 @@ public class ProcessManager : IManager
             case "wudfrd.exe":
 
             // Other
-            case "bdagent.exe": // Bitdefender Agent
-            case "monotificationux.exe":
-            case "shellexperiencehost.exe":
-                return ProcessFilter.Restricted;
-
-            // Desktop
             case "applicationframehost.exe":
             case "ashotplugctrl.exe":
             case "asmultidisplaycontrol.exe":
             case "asusosd.exe":
-            case "explorer.exe":
+            case "bdagent.exe": // Bitdefender Agent
+            case "monotificationux.exe":
+            case "shellexperiencehost.exe":
             case "gamebuzz.exe":
             case "gameinputsvc.exe":
             case "gamepadcustomizeosd":
@@ -582,6 +583,10 @@ public class ProcessManager : IManager
             case "searchhost.exe":
             case "startmenuexperiencehost.exe":
             case "textinputhost.exe":
+                return ProcessFilter.Restricted;
+
+            // Desktop
+            case "explorer.exe":
                 return ProcessFilter.Desktop;
 
             default:

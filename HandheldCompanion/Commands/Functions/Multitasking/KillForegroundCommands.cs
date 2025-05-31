@@ -29,11 +29,7 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
 
                 switch (filter)
                 {
-                    case ProcessFilter.Restricted:
-                    case ProcessFilter.HandheldCompanion:
-                        break;
-
-                    default:
+                    case ProcessFilter.Allowed:
                         processEx?.Kill();
                         break;
                 }
