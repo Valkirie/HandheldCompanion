@@ -3086,4 +3086,16 @@
   <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="SettingsPage_VirtualTrackpad" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualTrackpadDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

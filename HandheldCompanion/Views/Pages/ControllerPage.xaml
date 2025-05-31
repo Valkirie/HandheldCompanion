@@ -29,7 +29,8 @@
             VerticalAlignment="Center"
             Opacity="0.4"
             Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-            Stretch="None">
+            Stretch="None"
+            Visibility="Collapsed">
             <Image.OpacityMask>
                 <RadialGradientBrush Center="0.6,0.4" GradientOrigin="0.6,0.4" RadiusX="1" RadiusY="1.2">
                     <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />

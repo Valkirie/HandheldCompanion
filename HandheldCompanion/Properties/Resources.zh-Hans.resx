@@ -1524,10 +1524,10 @@
     <value>设置窗口位置</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
-    <value>左上</value>
+    <value>靠左</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
-    <value>右上</value>
+    <value>靠右</value>
   </data>
   <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
     <value>RTSS服务</value>
@@ -2696,12 +2696,6 @@
   <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>当前配置已覆盖屏幕分辨率</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
-    <value>靠左</value>
-  </data>
-  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
-    <value>靠右</value>
-  </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>悬浮窗</value>
   </data>
@@ -3373,5 +3367,17 @@
   </data>
   <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
     <value>使用较暖的颜色帮助屏蔽蓝光</value>
+  </data>
+  <data name="SettingsPage_VirtualTrackpad" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualTrackpadDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
+    <value />
   </data>
 </root>

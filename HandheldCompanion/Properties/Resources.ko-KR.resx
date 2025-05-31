@@ -1524,10 +1524,10 @@
     <value>빠른 도구 창 위치를 정의합니다.</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
-    <value>왼쪽 상단</value>
+    <value>왼쪽</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
-    <value>오른쪽 상단</value>
+    <value>오른쪽</value>
   </data>
   <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
     <value>RivaTuner Statistics Server</value>
@@ -2678,12 +2678,6 @@
   <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>해상도가 현재 프로필에 의해 재정의되었습니다</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
-    <value>왼쪽</value>
-  </data>
-  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
-    <value>오른쪽</value>
-  </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>화면 오버레이 전환</value>
   </data>
@@ -3044,18 +3038,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
     <value>시스템이 대기 상태에 들어가거나 나올 때 애플리케이션을 일시 중지하고 재개합니다.</value>
   </data>
-  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>컨트롤러의 진동의 세기를 변경</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
-    <value>스틱 감도</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
-    <value>회전 속도를 변경합니다.</value>
-  </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
-  </data>
   <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
     <value />
   </data>
@@ -3075,6 +3057,30 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
     <value />
   </data>
   <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>컨트롤러의 진동의 세기를 변경</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
+    <value>스틱 감도</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
+    <value>회전 속도를 변경합니다.</value>
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
+  </data>
+  <data name="SettingsPage_VirtualTrackpad" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualTrackpadDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
     <value />
   </data>
 </root>

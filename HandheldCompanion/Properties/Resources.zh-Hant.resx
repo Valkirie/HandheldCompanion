@@ -1526,10 +1526,10 @@
     <value>設置窗口位置</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
-    <value>左上</value>
+    <value>靠左</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
-    <value>右上</value>
+    <value>靠右</value>
   </data>
   <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
     <value>RTSS服務</value>
@@ -2698,12 +2698,6 @@
   <data name="QuickDevicePage_ResolutionOverrideWarning" xml:space="preserve">
     <value>解析度被當前設定檔覆寫</value>
   </data>
-  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
-    <value>靠左</value>
-  </data>
-  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
-    <value>靠右</value>
-  </data>
   <data name="Hotkey_OnScreenDisplayToggle" xml:space="preserve">
     <value>覆蓋窗</value>
   </data>
@@ -3510,6 +3504,18 @@
     <value />
   </data>
   <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualTrackpad" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualTrackpadDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
     <value />
   </data>
 </root>

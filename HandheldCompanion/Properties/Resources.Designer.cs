@@ -9968,15 +9968,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Top left.
-        /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationTopLeft1 {
-            get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopLeft1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Top right.
         /// </summary>
         public static string SettingsPage_QuickToolsWindowLocationTopRight {
@@ -10387,6 +10378,42 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_UpToDate {
             get {
                 return ResourceManager.GetString("SettingsPage_UpToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual keyboard.
+        /// </summary>
+        public static string SettingsPage_VirtualKeyboard {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualKeyboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display virtual keyboard shorcut.
+        /// </summary>
+        public static string SettingsPage_VirtualKeyboardDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualKeyboardDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual trackpad (not implemented).
+        /// </summary>
+        public static string SettingsPage_VirtualTrackpad {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualTrackpad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display virtual trackpad shortcut.
+        /// </summary>
+        public static string SettingsPage_VirtualTrackpadDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualTrackpadDesc", resourceCulture);
             }
         }
         
