@@ -320,7 +320,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (_tapTemplate == null) return;
             if (!(sender is FrameworkElement el)) return;
 
-            // clone so back-to-back presses don’t stomp on each other
+            // clone so back-to-back presses don't stomp on each other
             var sb = _tapTemplate.Clone();
             foreach (Timeline tl in sb.Children)
                 Storyboard.SetTarget(tl, el);
