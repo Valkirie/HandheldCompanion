@@ -10,7 +10,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickKeyboard"
-    Margin="15,0,0,6"
+    Margin="15,0,0,0"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuickKeyboardPageViewModel}"
     d:Height="450"
     d:Width="940"

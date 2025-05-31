@@ -11,7 +11,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickProfiles"
     Title="{l:Static resx:Resources.QuickProfilesPage_Title}"
-    Margin="15,0,0,6"
+    Margin="15,0,0,0"
     d:Background="Black"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuickProfilesPageViewModel}"
     d:DesignHeight="2000"
@@ -20,7 +20,6 @@
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel Spacing="24">
-
         <!--  Header  -->
         <ikw:SimpleStackPanel Spacing="6">
             <Border CornerRadius="{DynamicResource ControlCornerRadius}">

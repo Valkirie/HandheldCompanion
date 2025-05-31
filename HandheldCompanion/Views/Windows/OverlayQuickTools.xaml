@@ -185,6 +185,8 @@
 
                     <Button
                         Name="QuicKeyboard"
+                        Width="42"
+                        Height="32"
                         VerticalAlignment="Stretch"
                         Click="QuicKeyboard_Click"
                         Tag="Navigation">
@@ -192,11 +194,21 @@
                     </Button>
                     <Button
                         Name="QuickTrackpad"
+                        Width="42"
+                        Height="32"
                         VerticalAlignment="Stretch"
                         Click="QuickTrackpad_Click"
                         IsEnabled="False"
                         Tag="Navigation">
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
+                    </Button>
+                    <Button
+                        Name="QuickGoBack"
+                        Width="42"
+                        Height="32"
+                        Click="QuickGoBack_Click"
+                        Tag="GoBack">
+                        <ui:FontIcon FontSize="10" Glyph="&#xe72b;" />
                     </Button>
                 </ikw:SimpleStackPanel>
 

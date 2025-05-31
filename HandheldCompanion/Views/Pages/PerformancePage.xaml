@@ -269,7 +269,8 @@
                     Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
                     Header="{l:Static resx:Resources.ProfilesPage_EPP}"
                     IsEnabled="False"
-                    IsExpanded="{Binding ElementName=EPPOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                    IsExpanded="{Binding ElementName=EPPOverrideToggle, Path=IsOn, Mode=TwoWay}"
+                    Visibility="Collapsed">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe9e9;" />
                     </ui:SettingsExpander.HeaderIcon>

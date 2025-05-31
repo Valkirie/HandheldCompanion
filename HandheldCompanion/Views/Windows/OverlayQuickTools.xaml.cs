@@ -645,4 +645,9 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         NavView_Navigate("QuickTrackpadPage");
     }
+
+    private void QuickGoBack_Click(object sender, RoutedEventArgs e)
+    {
+        TryGoBack();
+    }
 }

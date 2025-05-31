@@ -12,7 +12,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickHome"
     Title="{l:Static resx:Resources.QuickHomePage_Title}"
-    Margin="15,0,0,6"
+    Margin="15,0,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuickHomePageViewModel}"
     d:DesignHeight="1200"
