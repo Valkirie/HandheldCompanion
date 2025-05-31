@@ -68,7 +68,7 @@ namespace HandheldCompanion.ViewModels
             // Cancel any pending close
             _closeCts?.Cancel();
 
-            // Remember this as the “active” one
+            // Remember this as the "active" one
             _currentNotification = notification.Guid;
             _closeCts = new CancellationTokenSource();
 
