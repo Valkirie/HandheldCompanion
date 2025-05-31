@@ -501,8 +501,12 @@ public class LayoutManager : IManager
                 bool value = buttonState.Value;
 
                 // skip, if not mapped
+                // we might have to keep fake buttons
                 if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
+                {
+                    outputState.ButtonState[button] = value;
                     continue;
+                }
 
                 foreach (IActions action in actions)
                 {
