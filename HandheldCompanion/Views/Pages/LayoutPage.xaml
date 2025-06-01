@@ -143,7 +143,7 @@
                                             <ikw:SimpleStackPanel
                                                 HorizontalAlignment="Right"
                                                 Orientation="Horizontal"
-                                                Spacing="6">
+                                                Spacing="3">
                                                 <TextBlock
                                                     FontStyle="Italic"
                                                     Style="{StaticResource BaseTextBlockStyle}"
@@ -170,7 +170,7 @@
                         </ComboBox.ItemContainerStyle>
                     </ComboBox>
 
-                    <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                    <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3">
                         <Grid>
                             <CheckBox
                                 Name="CheckBoxDeviceLayouts"
@@ -182,7 +182,7 @@
                             <ikw:SimpleStackPanel
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal"
-                                Spacing="6">
+                                Spacing="3">
 
                                 <!--  Apply template  -->
                                 <Button
@@ -200,10 +200,10 @@
                                             AreOpenCloseAnimationsEnabled="True"
                                             Opening="Flyout_Opening"
                                             Placement="Left">
-                                            <ikw:SimpleStackPanel Width="400" Spacing="24">
+                                            <ikw:SimpleStackPanel Width="400" Spacing="8">
                                                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.LayoutPage_ExportLayout}" />
 
-                                                <ikw:SimpleStackPanel Spacing="6">
+                                                <ikw:SimpleStackPanel Spacing="3">
                                                     <TextBox
                                                         Name="LayoutTitle"
                                                         HorizontalAlignment="Stretch"

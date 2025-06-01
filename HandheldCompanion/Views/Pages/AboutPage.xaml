@@ -19,7 +19,7 @@
     mc:Ignorable="d">
 
     <Grid Margin="20">
-        <ikw:SimpleStackPanel Spacing="6">
+        <ikw:SimpleStackPanel Spacing="3">
 
             <ui:InfoBar
                 Name="WarningNoPhysical"

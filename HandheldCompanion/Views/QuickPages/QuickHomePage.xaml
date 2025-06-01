@@ -26,64 +26,65 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <ikw:SimpleStackPanel VerticalAlignment="Top" Spacing="6">
+        <ikw:SimpleStackPanel Spacing="8">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickSettingsPage_Title}" />
+            <ikw:SimpleStackPanel VerticalAlignment="Top" Spacing="3">
+                <!--  Shortcuts  -->
+                <ItemsControl
+                    dd:DragDrop.DefaultDragAdornerOpacity="1"
+                    dd:DragDrop.DragAdornerTranslation="-50,15"
+                    dd:DragDrop.DropHandler="{Binding}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    dd:DragDrop.UseDefaultDragAdorner="True"
+                    ItemsSource="{Binding HotkeysList}">
 
-            <!--  Shortcuts  -->
-            <ItemsControl
-                dd:DragDrop.DefaultDragAdornerOpacity="1"
-                dd:DragDrop.DragAdornerTranslation="-50,15"
-                dd:DragDrop.DropHandler="{Binding}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
-                dd:DragDrop.UseDefaultDragAdorner="True"
-                ItemsSource="{Binding HotkeysList}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="4" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPinned}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
 
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsPinned}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ToggleButton
+                                Height="70"
+                                Margin="3"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Command="{Binding ExecuteCommand}"
+                                IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                ScrollViewer.PanningMode="HorizontalOnly">
+                                <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+                                    <ui:FontIcon
+                                        Width="24"
+                                        Height="24"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{Binding FontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Glyph="{Binding LiveGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ToggleButton
-                            Height="70"
-                            Margin="3"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"
-                            Command="{Binding ExecuteCommand}"
-                            IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            ScrollViewer.PanningMode="HorizontalOnly">
-                            <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
-                                <ui:FontIcon
-                                    Width="24"
-                                    Height="24"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{Binding FontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Glyph="{Binding LiveGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <TextBlock
-                                    FontSize="12"
-                                    Text="{Binding LiveName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextAlignment="Center"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
-                        </ToggleButton>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                    <TextBlock
+                                        FontSize="12"
+                                        Text="{Binding LiveName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
 
         <ikw:SimpleStackPanel

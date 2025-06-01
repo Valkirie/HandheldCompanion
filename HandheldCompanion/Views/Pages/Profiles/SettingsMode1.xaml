@@ -20,7 +20,7 @@
         <ikw:SimpleStackPanel Spacing="12">
 
             <!--  Joystick steering preview  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_JoystickSteeringPreview}" />
 
                 <!--  Steering Visuals  -->
@@ -117,7 +117,7 @@
                 </Border>
             </ikw:SimpleStackPanel>
 
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode1_JoystickSteeringOptions}" />
 
                 <!--  Steering angle  -->

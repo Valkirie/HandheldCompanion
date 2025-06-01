@@ -28,14 +28,14 @@
             PrimaryButtonText="Snap">
 
             <ikw:SimpleStackPanel Spacing="10">
-                <ikw:SimpleStackPanel Spacing="6">
+                <ikw:SimpleStackPanel Spacing="3">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Snap layouts" />
 
                     <ikw:SimpleStackPanel
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
-                        Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        Spacing="3">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                             <RadioButton
                                 Width="48"
                                 Height="70"
@@ -71,8 +71,8 @@
                     <ikw:SimpleStackPanel
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
-                        Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                        Spacing="3">
+                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3">
                             <RadioButton
                                 Width="100"
                                 Height="38"
@@ -93,8 +93,8 @@
                                 Style="{StaticResource {x:Type ToggleButton}}" />
                         </ikw:SimpleStackPanel>
 
-                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="6">
-                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                 <RadioButton
                                     Width="48"
                                     Height="38"
@@ -114,7 +114,7 @@
                                     GroupName="groupFoo"
                                     Style="{StaticResource {x:Type ToggleButton}}" />
                             </ikw:SimpleStackPanel>
-                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                 <RadioButton
                                     Width="48"
                                     Height="38"
@@ -138,7 +138,7 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
-                <ikw:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="6">
+                <ikw:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="3">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Options" />
 
                     <Grid HorizontalAlignment="Stretch">
@@ -164,9 +164,11 @@
             </ikw:SimpleStackPanel>
         </ui:ContentDialog>
 
-        <ikw:SimpleStackPanel Spacing="24">
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quick start" />
+        <ikw:SimpleStackPanel Spacing="8">
+
+            <!--  Quick start  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quick start" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <ItemsControl
                     ItemsSource="{Binding Profiles}"
@@ -225,8 +227,9 @@
                 </ItemsControl>
             </ikw:SimpleStackPanel>
 
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Processes" />
+            <!--  Processes  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Processes" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
 
@@ -248,7 +251,7 @@
                                 Background="{DynamicResource ExpanderHeaderBackground}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                                <ikw:SimpleStackPanel Spacing="6">
+                                <ikw:SimpleStackPanel Spacing="3">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="24" />
@@ -279,7 +282,7 @@
                                             Margin="6,0,12,0"
                                             HorizontalAlignment="Right"
                                             Orientation="Horizontal"
-                                            Spacing="6">
+                                            Spacing="3">
 
                                             <ToggleButton
                                                 Height="32"
@@ -344,7 +347,7 @@
                                                             Grid.Column="1"
                                                             HorizontalAlignment="Right"
                                                             Orientation="Horizontal"
-                                                            Spacing="6">
+                                                            Spacing="3">
 
                                                             <Button
                                                                 Height="32"

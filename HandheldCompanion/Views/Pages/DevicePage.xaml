@@ -23,10 +23,10 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
             <!--  Power options  -->
-            <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="4">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PowerOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PowerOptions}" />
+            <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="3">
                 <ui:SettingsCard
                     HorizontalContentAlignment="Stretch"
                     Description="{l:Static resx:Resources.DevicePage_TDPControlMethodDesc}"
@@ -84,8 +84,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Security options  -->
-            <ikw:SimpleStackPanel Name="SecurityOptionsStack" Spacing="4">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_SecurityOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_SecurityOptions}" />
+            <ikw:SimpleStackPanel Name="SecurityOptionsStack" Spacing="3">
 
                 <!--  Core isolation  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_CoreIsolationDesc}" Header="{l:Static resx:Resources.DevicePage_CoreIsolation}">
@@ -97,8 +97,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Platform options  -->
-            <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="4">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PlatformOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_PlatformOptions}" />
+            <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="3">
 
                 <!--  OEM Frontend  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_ManufacturerApplicationDesc}" Header="{l:Static resx:Resources.DevicePage_ManufacturerApplication}">
@@ -124,7 +124,7 @@
             <ikw:SimpleStackPanel
                 Name="BatteryChargeStack"
                 d:Visibility="Visible"
-                Spacing="4"
+                Spacing="3"
                 Visibility="{Binding BatteryBypassVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryOptions}" />
@@ -136,9 +136,7 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xebb2;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch
-                        Name="Toggle_BatteryChargeLimit"
-                        Toggled="Toggle_BatteryChargeLimit_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_BatteryChargeLimit" Toggled="Toggle_BatteryChargeLimit_Toggled" />
                 </ui:SettingsCard>
 
                 <ui:SettingsCard
@@ -205,7 +203,7 @@
             <ikw:SimpleStackPanel
                 Name="DynamicLightingPanel"
                 d:Visibility="Visible"
-                Spacing="4"
+                Spacing="3"
                 Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DynamicLightTitle}" />
 
@@ -214,15 +212,13 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE781;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch
-                        Name="UseDynamicLightingToggle"
-                        Toggled="UseDynamicLightingToggle_Toggled" />
+                    <ui:ToggleSwitch Name="UseDynamicLightingToggle" Toggled="UseDynamicLightingToggle_Toggled" />
                 </ui:SettingsCard>
 
                 <ikw:SimpleStackPanel
                     Name="LEDPanel"
                     IsEnabled="{Binding ElementName=UseDynamicLightingToggle, Path=IsOn}"
-                    Spacing="4">
+                    Spacing="3">
                     <!--  Static LED Brightness  -->
                     <ui:SettingsCard
                         Name="LEDBrightness"
@@ -378,9 +374,7 @@
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
-                                <ui:ToggleSwitch
-                                    Name="MatchAccentColor"
-                                    Toggled="MatchAccentColor_Toggled" />
+                                <ui:ToggleSwitch Name="MatchAccentColor" Toggled="MatchAccentColor_Toggled" />
                             </ui:SettingsCard>
                             <!--  Main color picker  -->
                             <ui:SettingsCard
@@ -401,9 +395,7 @@
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_UseSecondColor}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
-                                <ui:ToggleSwitch
-                                    Name="Toggle_UseSecondColor"
-                                    Toggled="Toggle_UseSecondColor_Toggled" />
+                                <ui:ToggleSwitch Name="Toggle_UseSecondColor" Toggled="Toggle_UseSecondColor_Toggled" />
                             </ui:SettingsCard>
                             <!--  Second color  -->
                             <ui:SettingsCard
@@ -425,9 +417,7 @@
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_AmbilightVerticalBlackBarDetectionDesc}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=6}">
-                                <ui:ToggleSwitch
-                                    Name="Toggle_AmbilightVerticalBlackBarDetection"
-                                    Toggled="Toggle_AmbilightVerticalBlackBarDetection_Toggled" />
+                                <ui:ToggleSwitch Name="Toggle_AmbilightVerticalBlackBarDetection" Toggled="Toggle_AmbilightVerticalBlackBarDetection_Toggled" />
                             </ui:SettingsCard>
                             <!--  OEM Presets  -->
                             <ui:SettingsCard
@@ -463,9 +453,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Sensor options  -->
-            <ikw:SimpleStackPanel Name="SensorOptionsStack" Spacing="4">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_SensorOptions}" />
+            <ikw:SimpleStackPanel Name="SensorOptionsStack" Spacing="3">
                 <!--  Sensor Selection  -->
                 <ui:SettingsCard
                     Name="SensorSelectionCard"
@@ -520,8 +509,8 @@
                         Name="Grid_SensorPlacementVisualisation"
                         HorizontalAlignment="Right"
                         IsEnabled="False"
-                        Spacing="6">
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        Spacing="3">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                             <Button
                                 Width="50"
                                 Height="50"
@@ -538,7 +527,7 @@
                                 Tag="99"
                                 Visibility="Hidden" />
                         </ikw:SimpleStackPanel>
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                             <Button
                                 Width="50"
                                 Height="50"
@@ -555,7 +544,7 @@
                                 Click="SensorPlacement_Click"
                                 Tag="2" />
                         </ikw:SimpleStackPanel>
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                             <Button
                                 Width="50"
                                 Height="50"
@@ -591,20 +580,22 @@
             </ikw:SimpleStackPanel>
 
             <!--  Device settings  -->
+            <TextBlock
+                Style="{StaticResource BaseTextBlockStyle}"
+                Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
+                Visibility="{Binding ElementName=DeviceSettingsPanel, Path=Visibility}" />
             <ikw:SimpleStackPanel
                 Name="DeviceSettingsPanel"
-                Grid.Row="1"
                 d:Visibility="Visible"
-                Spacing="4"
+                Spacing="3"
                 Visibility="Collapsed">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_DeviceSettings}" />
 
                 <!--  MSI Claw 8  -->
                 <ikw:SimpleStackPanel
                     Name="MSIClawPanel"
                     d:Background="Red"
                     d:Visibility="Visible"
-                    Spacing="4"
+                    Spacing="3"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard Description="Select the desired controller mode" Header="Controller mode">
@@ -642,7 +633,7 @@
                     Name="LegionGoPanel"
                     d:Background="Blue"
                     d:Visibility="Visible"
-                    Spacing="4"
+                    Spacing="3"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard
@@ -652,9 +643,7 @@
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xe772;" />
                         </ui:SettingsCard.HeaderIcon>
-                        <ui:ToggleSwitch
-                            Name="Toggle_TouchpadPassthrough"
-                            Toggled="Toggle_TouchpadPassthrough_Toggled" />
+                        <ui:ToggleSwitch Name="Toggle_TouchpadPassthrough" Toggled="Toggle_TouchpadPassthrough_Toggled" />
                     </ui:SettingsCard>
 
                     <ui:SettingsCard

@@ -39,10 +39,10 @@
             </Image.OpacityMask>
         </Image>
 
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
 
             <!--  Hints  -->
-            <ikw:SimpleStackPanel Name="Hints" Spacing="6">
+            <ikw:SimpleStackPanel Name="Hints" Spacing="3">
 
                 <ui:InfoBar
                     Name="HintsHIDManagedByProfile"
@@ -70,23 +70,23 @@
             </ikw:SimpleStackPanel>
 
             <!--  Virtual devices  -->
+            <DockPanel>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{l:Static resx:Resources.ControllerPage_VirtualDevices}" />
+                <TextBlock
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Text="{l:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
+            </DockPanel>
             <ikw:SimpleStackPanel
                 Name="VirtualDevices"
                 d:Visibility="Visible"
-                Spacing="6"
+                Spacing="3"
                 Visibility="Collapsed">
-                <ikw:SimpleStackPanel Spacing="6">
-                    <DockPanel>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            Text="{l:Static resx:Resources.ControllerPage_VirtualDevices}" />
-                        <TextBlock
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Text="{l:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
-                    </DockPanel>
+                <ikw:SimpleStackPanel Spacing="3">
 
                     <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding VirtualControllers}">
                         <ItemsControl.ItemsPanel>
@@ -99,24 +99,23 @@
             </ikw:SimpleStackPanel>
 
             <!--  Input devices  -->
+            <DockPanel Visibility="{Binding ElementName=PhysicalDevices, Path=Visibility}">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{l:Static resx:Resources.ControllerPage_PhysicalDevices}" />
+                <TextBlock
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Text="{l:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
+            </DockPanel>
             <ikw:SimpleStackPanel
                 Name="PhysicalDevices"
                 d:Visibility="Visible"
-                Spacing="6"
+                Spacing="3"
                 Visibility="Collapsed">
-                <ikw:SimpleStackPanel Spacing="6">
-                    <DockPanel>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            Text="{l:Static resx:Resources.ControllerPage_PhysicalDevices}" />
-                        <TextBlock
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Text="{l:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
-                    </DockPanel>
-
+                <ikw:SimpleStackPanel Spacing="3">
                     <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding PhysicalControllers}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -136,6 +135,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Controller settings  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
             <Grid>
                 <ui:ContentDialog
                     Name="ControllerManagement"
@@ -145,9 +145,7 @@
                     Content="{l:Static resx:Resources.ControllerPage_ControllerManagement_Content}"
                     IsShadowEnabled="False" />
 
-                <ikw:SimpleStackPanel Name="ControllerSettings" Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
-
+                <ikw:SimpleStackPanel Name="ControllerSettings" Spacing="3">
                     <!--  Controller status  -->
                     <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VirtualStatusDesc}" Header="{l:Static resx:Resources.ControllerPage_VirtualStatus}">
                         <ui:SettingsCard.HeaderIcon>
@@ -213,9 +211,11 @@
             </Grid>
 
             <!--  Physical controller settings  -->
-            <ikw:SimpleStackPanel Name="SteamDeckPanel" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Steam Deck settings" />
-
+            <TextBlock
+                Style="{StaticResource BaseTextBlockStyle}"
+                Text="Steam Deck settings"
+                Visibility="{Binding ElementName=SteamDeckPanel, Path=Visibility}" />
+            <ikw:SimpleStackPanel Name="SteamDeckPanel" Spacing="3">
                 <!--  Mute virtual controller (Steam Deck)  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_SteamControllerModeDesc}" Header="{l:Static resx:Resources.ControllerPage_SteamControllerMode}">
                     <ui:SettingsCard.HeaderIcon>
@@ -260,8 +260,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Physical controller settings  -->
-            <ikw:SimpleStackPanel Name="DeviceSpecificPanel" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_PhysicalDeviceSettings}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_PhysicalDeviceSettings}" />
+            <ikw:SimpleStackPanel Name="DeviceSpecificPanel" Spacing="3">
 
                 <!--  Vibrate on connect  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VibrateDeviceDesc}" Header="{l:Static resx:Resources.ControllerPage_VibrateDevice}">
@@ -292,8 +292,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Non-game controller layouts  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_NonGameControllerLayouts}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_NonGameControllerLayouts}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <ui:SettingsCard
                     Click="Button_Layout_Click"

@@ -18,7 +18,7 @@
 
     <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRACKPAD BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftButtonsMappings}" />
@@ -28,7 +28,7 @@
             <ItemsControl ItemTemplate="{StaticResource AxisStackTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
         </ikw:SimpleStackPanel>
 
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT TRACKPAD BUTTONS  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightButtonsMappings}" />

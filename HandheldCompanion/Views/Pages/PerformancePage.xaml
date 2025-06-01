@@ -20,10 +20,10 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
 
             <!--  Power profile picker  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <Border
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
@@ -127,7 +127,7 @@
                 CloseButtonText="{l:Static resx:Resources.PerformangePage_Preset_Cancel}"
                 PrimaryButtonCommand="{Binding ConfirmModifyCommand}"
                 PrimaryButtonText="{l:Static resx:Resources.PerformangePage_Preset_Rename}">
-                <ikw:SimpleStackPanel Spacing="6">
+                <ikw:SimpleStackPanel Spacing="3">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.PerformangePage_Preset_Name}" />
                     <TextBox
                         HorizontalAlignment="Stretch"
@@ -145,11 +145,8 @@
             </ui:ContentDialog>
 
             <!--  Power settings  -->
-            <ikw:SimpleStackPanel
-                Margin="0,-20,0,0"
-                IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerSettings}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_PowerSettings}" />
+            <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
 
                 <!--  Maximum CPU Count (already updated)  -->
                 <ui:SettingsExpander
@@ -452,8 +449,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Fan settings  -->
-            <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
+            <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
 
                 <!--  Fan mode  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.PerformancePage_FanMode_Desc}" Header="{l:Static resx:Resources.PerformancePage_FanMode_Title}">

@@ -18,7 +18,7 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
 
             <!--  Update manager  -->
             <Grid>
@@ -53,7 +53,7 @@
                 <ikw:SimpleStackPanel
                     Grid.Column="1"
                     Orientation="Vertical"
-                    Spacing="6">
+                    Spacing="3">
                     <TextBlock
                         Name="LabelUpdate"
                         FontSize="20"
@@ -89,12 +89,11 @@
                 Visibility="Collapsed" />
 
             <!--  Update(s)  -->
-            <ikw:SimpleStackPanel Name="CurrentUpdates" Spacing="6" />
+            <ikw:SimpleStackPanel Name="CurrentUpdates" Spacing="3" />
 
             <!--  General options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_GeneralOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_GeneralOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Auto-start application  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AutoStartAppDesc}" Header="{l:Static resx:Resources.SettingsPage_AutoStartApp}">
                     <ui:SettingsCard.HeaderIcon>
@@ -200,9 +199,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Quicktools position  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}" Header="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}">
                     <ui:SettingsCard.HeaderIcon>
@@ -282,9 +280,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Notification options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NotificationOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NotificationOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Toast notification  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_ToastNotificationDesc}" Header="{l:Static resx:Resources.SettingsPage_ToastNotification}">
                     <ui:SettingsCard.HeaderIcon>
@@ -295,9 +292,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Third-party applications  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  RTSS  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}" Header="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}">
                     <ui:SettingsCard.HeaderIcon>
@@ -308,7 +304,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Experimental options  -->
-            <ikw:SimpleStackPanel Spacing="6" Visibility="Collapsed">
+            <ikw:SimpleStackPanel Spacing="3" Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Experimental}" />
             </ikw:SimpleStackPanel>
 

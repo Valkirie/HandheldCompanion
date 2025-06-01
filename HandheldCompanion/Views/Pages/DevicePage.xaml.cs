@@ -73,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // Show DeviceSettingsPanel if either child panel is visible.
-            DeviceSettingsPanel.Visibility =
+            DeviceSettingsPanel.Visibility = 
                 (LegionGoPanel.Visibility == Visibility.Visible || MSIClawPanel.Visibility == Visibility.Visible)
                 ? Visibility.Visible
                 : Visibility.Hidden;

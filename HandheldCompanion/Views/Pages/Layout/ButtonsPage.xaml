@@ -19,31 +19,31 @@
     <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
         <!--  A,B,X,Y  -->
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsABXYEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsABXYEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_ABXY}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ABXYStacks}" />
         </ikw:SimpleStackPanel>
 
         <!--  BUMPERS  -->
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsBUMPERSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsBUMPERSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Bumpers}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BUMPERSStacks}" />
         </ikw:SimpleStackPanel>
 
         <!--  BACK GRIPS  -->
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsBACKGRIPSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsBACKGRIPSEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Back_Grips}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding BACKGRIPSStacks}" />
         </ikw:SimpleStackPanel>
 
         <!--  MENU  -->
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsMENUEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsMENUEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_Menu}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding MENUStacks}" />
         </ikw:SimpleStackPanel>
 
         <!--  OEM  -->
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsOEMEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsOEMEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ButtonsPage_OEM}" />
             <ItemsControl ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding OEMStacks}" />
         </ikw:SimpleStackPanel>

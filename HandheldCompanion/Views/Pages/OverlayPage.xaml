@@ -11,7 +11,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Overlay"
     Title="{l:Static resx:Resources.OverlayPage_Overlay}"
-    d:Background="Black"
+    d:Background="White"
     d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
@@ -19,11 +19,11 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
 
             <!--  OSD options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OnScreenDisplayOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OnScreenDisplayOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <!--  On-screen display update rate  -->
                 <Border
@@ -131,7 +131,7 @@
                 </Border>
 
                 <!--  Custom Settings  -->
-                <ikw:SimpleStackPanel Name="StackCustomSettings" Spacing="6">
+                <ikw:SimpleStackPanel Name="StackCustomSettings" Spacing="3">
 
                     <Border
                         Padding="15,12,12,12"
@@ -395,8 +395,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Controller options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_ControllerOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_ControllerOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <!--  Controller model  -->
                 <Border
@@ -482,8 +482,8 @@
                             <ikw:SimpleStackPanel
                                 Name="OverlayControllerAlignment"
                                 HorizontalAlignment="Right"
-                                Spacing="6">
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                Spacing="3">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -500,7 +500,7 @@
                                         Click="ControllerAlignment_Click"
                                         Tag="2" />
                                 </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -517,7 +517,7 @@
                                         Click="ControllerAlignment_Click"
                                         Tag="5" />
                                 </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -976,8 +976,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Trackpads options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <!--  Controller Alignment  -->
                 <Border
@@ -1012,7 +1012,7 @@
                             <ikw:SimpleStackPanel
                                 Name="OverlayTrackpadsAlignment"
                                 HorizontalAlignment="Right"
-                                Spacing="6">
+                                Spacing="3">
                                 <Button
                                     Width="50"
                                     Height="50"

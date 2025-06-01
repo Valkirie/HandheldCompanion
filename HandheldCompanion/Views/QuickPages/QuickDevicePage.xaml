@@ -17,12 +17,12 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="24">
+    <ikw:SimpleStackPanel Spacing="8">
 
         <!--  Device settings  -->
-        <ikw:SimpleStackPanel Spacing="4">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DeviceSettings}" />
-            <ikw:SimpleStackPanel Name="DisplayStack" Spacing="4">
+        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DeviceSettings}" />
+        <ikw:SimpleStackPanel Spacing="3">
+            <ikw:SimpleStackPanel Name="DisplayStack" Spacing="3">
                 <ui:SettingsCard Description="{l:Static resx:Resources.QuickDevicePage_DisplayResolutionDesc}" Header="{l:Static resx:Resources.QuickDevicePage_DisplayResolution}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.AspectRatio}" />
@@ -142,7 +142,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Device or Capabilities specific  -->
-            <ikw:SimpleStackPanel Spacing="4">
+            <ikw:SimpleStackPanel Spacing="3">
                 <ui:SettingsCard
                     Name="FanOverridePanel"
                     Description="{l:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
@@ -156,9 +156,8 @@
         </ikw:SimpleStackPanel>
 
         <!--  Dynamic lighting settings  -->
-        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="4">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DynamicLighting}" />
-
+        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DynamicLighting}" />
+        <ikw:SimpleStackPanel Name="DynamicLightingPanel" Spacing="3">
             <!--  Use Dynamic lighting  -->
             <ui:SettingsCard Header="{l:Static resx:Resources.QuickDevicePage_DynamicLightingToggle}">
                 <ui:SettingsCard.HeaderIcon>

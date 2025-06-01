@@ -64,7 +64,7 @@
                         Width="500"
                         IsEnabled="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
                         Spacing="12">
-                        <ikw:SimpleStackPanel Spacing="6">
+                        <ikw:SimpleStackPanel Spacing="3">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="9*" />
@@ -115,7 +115,7 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
 
-                            <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />
 
                                 <Grid>
@@ -200,7 +200,7 @@
                 PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick"
                 PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
                 <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
-                    <ikw:SimpleStackPanel Spacing="6">
+                    <ikw:SimpleStackPanel Spacing="3">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileRenamingDialogue_Name}" />
                         <TextBox Name="tB_ProfileName" HorizontalAlignment="Stretch" />
                     </ikw:SimpleStackPanel>
@@ -214,7 +214,7 @@
                 PrimaryButtonClick="SubProfileRenameDialog_PrimaryButtonClick"
                 PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
                 <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
-                    <ikw:SimpleStackPanel Spacing="6">
+                    <ikw:SimpleStackPanel Spacing="3">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_SubProfileRenamingDialogue_Name}" />
                         <TextBox
                             Name="tb_SubProfileName"
@@ -225,8 +225,8 @@
             </ui:ContentDialog>
 
             <Border>
-                <ikw:SimpleStackPanel Name="StackPanel_Profiles" Spacing="24">
-                    <ikw:SimpleStackPanel Spacing="6">
+                <ikw:SimpleStackPanel Name="StackPanel_Profiles" Spacing="8">
+                    <ikw:SimpleStackPanel Spacing="3">
 
                         <!--  Profile picker  -->
                         <Border
@@ -316,17 +316,16 @@
                             Visibility="Collapsed" />
                     </ikw:SimpleStackPanel>
 
-                    <ikw:SimpleStackPanel Name="ProfileDetails" Spacing="6">
-                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileDetails}" />
-
-                        <!--  Profile details  -->
+                    <!--  Profile details  -->
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileDetails}" />
+                    <ikw:SimpleStackPanel Name="ProfileDetails" Spacing="3">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="150" />
                                 <ColumnDefinition Width="8*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <ikw:SimpleStackPanel Spacing="6">
+                            <ikw:SimpleStackPanel Spacing="3">
                                 <Border
                                     Height="225"
                                     Padding="15,12,12,12"
@@ -371,7 +370,7 @@
                                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                                <ikw:SimpleStackPanel Spacing="6">
+                                <ikw:SimpleStackPanel Spacing="3">
                                     <!--  Path  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -548,9 +547,8 @@
                     </ikw:SimpleStackPanel>
 
                     <!--  Profile settings  -->
-                    <ikw:SimpleStackPanel Spacing="6">
-                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileSettings}" />
-
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileSettings}" />
+                    <ikw:SimpleStackPanel Spacing="3">
                         <!--  Global settings  -->
                         <ui:SettingsExpander
                             Name="GlobalSettings"
@@ -658,7 +656,7 @@
                                     <ikw:SimpleStackPanel
                                         Name="StackProfileGPUScaling"
                                         IsEnabled="False"
-                                        Spacing="6">
+                                        Spacing="3">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="5*" />
@@ -729,7 +727,7 @@
                                         d:Background="Red"
                                         d:Visibility="Visible"
                                         IsEnabled="False"
-                                        Spacing="6"
+                                        Spacing="3"
                                         Visibility="Collapsed">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -805,7 +803,7 @@
                                         d:Background="Red"
                                         d:Visibility="Visible"
                                         IsEnabled="False"
-                                        Spacing="6"
+                                        Spacing="3"
                                         Visibility="Collapsed">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -844,7 +842,7 @@
                                     <ikw:SimpleStackPanel
                                         Name="StackProfileIS"
                                         IsEnabled="False"
-                                        Spacing="6">
+                                        Spacing="3">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="5*" />
@@ -936,7 +934,7 @@
                                     <ikw:SimpleStackPanel
                                         Name="StackProfileRIS"
                                         IsEnabled="False"
-                                        Spacing="6">
+                                        Spacing="3">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="5*" />
@@ -1007,7 +1005,7 @@
                                     <ikw:SimpleStackPanel
                                         Name="StackProfileFramerate"
                                         IsEnabled="False"
-                                        Spacing="6">
+                                        Spacing="3">
 
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -1313,19 +1311,19 @@
                                                 HorizontalContentAlignment="Left"
                                                 SelectionChanged="cB_GyroSteering_SelectionChanged">
                                                 <ComboBoxItem>
-                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                                         <ui:FontIcon Glyph="&#xE8B4;" />
                                                         <Label Content="{l:Static resx:Resources.ProfilesPage_Yaw}" />
                                                     </ikw:SimpleStackPanel>
                                                 </ComboBoxItem>
                                                 <ComboBoxItem>
-                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                                         <ui:FontIcon Glyph="&#xE8B4;" />
                                                         <Label Content="{l:Static resx:Resources.ProfilesPage_Roll}" />
                                                     </ikw:SimpleStackPanel>
                                                 </ComboBoxItem>
                                                 <ComboBoxItem>
-                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                                         <ui:FontIcon Glyph="&#xE8B4;" />
                                                         <Label Content="{l:Static resx:Resources.ProfilesPage_RollYawAuto}" />
                                                     </ikw:SimpleStackPanel>
@@ -1378,9 +1376,8 @@
                     </ikw:SimpleStackPanel>
 
                     <!--  Window settings  -->
-                    <ikw:SimpleStackPanel Spacing="6">
-                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
-
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
+                    <ikw:SimpleStackPanel Spacing="3">
                         <ui:SettingsCard Description="Pauses the active game or foreground application whenever the QuickTools sidebar is displayed." Header="Suspend on overlay">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe769;" />
@@ -1405,7 +1402,7 @@
                                         <ikw:SimpleStackPanel
                                             HorizontalAlignment="Right"
                                             Orientation="Horizontal"
-                                            Spacing="6">
+                                            Spacing="3">
 
                                             <ComboBox SelectedIndex="{Binding TargetDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ComboBoxItem>Current</ComboBoxItem>
@@ -1437,9 +1434,8 @@
                     </ikw:SimpleStackPanel>
 
                     <!--  Compatibility settings  -->
-                    <ikw:SimpleStackPanel Spacing="6">
-                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility}" />
-
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_Compatibility}" />
+                    <ikw:SimpleStackPanel Spacing="3">
                         <!--  Fullscreen optimizations  -->
                         <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_Compatibility_Fullscreen}">
                             <ui:SettingsCard.HeaderIcon>
@@ -1460,9 +1456,8 @@
                     </ikw:SimpleStackPanel>
 
                     <!--  Controller settings  -->
-                    <ikw:SimpleStackPanel Spacing="6">
-                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
-
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
+                    <ikw:SimpleStackPanel Spacing="3">
                         <!--  Controller type  -->
                         <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}" Header="{l:Static resx:Resources.ProfilesPage_EmulatedController}">
                             <ui:SettingsCard.HeaderIcon>

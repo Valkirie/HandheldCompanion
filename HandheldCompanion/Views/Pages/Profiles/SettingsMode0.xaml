@@ -20,7 +20,7 @@
         <ikw:SimpleStackPanel Spacing="12">
 
             <!--  World space options  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CameraOptions}" />
 
                 <!--  Sensivity X  -->
@@ -269,7 +269,7 @@
                                                         </Style>
                                                     </ToggleButton.Resources>
 
-                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                                         <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
                                                             <ui:ItemsRepeater.Style>
                                                                 <Style TargetType="ui:ItemsRepeater">
@@ -359,7 +359,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Custom response curve  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CustomResponseCurve}" />
 
                 <Border

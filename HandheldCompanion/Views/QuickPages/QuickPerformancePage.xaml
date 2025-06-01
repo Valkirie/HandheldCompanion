@@ -19,8 +19,8 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="24">
-        <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+    <ikw:SimpleStackPanel Spacing="8">
+        <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
 
             <!--  Maximum CPU Count  -->

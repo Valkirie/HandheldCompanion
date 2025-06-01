@@ -274,7 +274,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Orientation="Horizontal"
-                        Spacing="6">
+                        Spacing="3">
 
                         <!--  More options  -->
                         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="2">

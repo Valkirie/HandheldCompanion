@@ -154,6 +154,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
+                <!--
                 <ui:NavigationViewItem
                     Name="navKeyboard"
                     Tag="QuickKeyboardPage"
@@ -172,50 +173,42 @@
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
                     </ui:NavigationViewItem.Content>
                 </ui:NavigationViewItem>
+                -->
             </ui:NavigationView.MenuItems>
 
             <Grid>
-                <ikw:SimpleStackPanel
-                    Height="32"
-                    Margin="0,12,19,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Spacing="6">
+                <ui:CommandBar x:Name="Control1" DefaultLabelPosition="Collapsed">
+                    <ui:CommandBar.PrimaryCommands>
+                        <ui:AppBarButton Click="QuicKeyboard_Click">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
 
-                    <Button
-                        Name="QuicKeyboard"
-                        Width="42"
-                        Height="32"
-                        VerticalAlignment="Stretch"
-                        Click="QuicKeyboard_Click"
-                        Tag="Navigation">
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;" />
-                    </Button>
-                    <Button
-                        Name="QuickTrackpad"
-                        Width="42"
-                        Height="32"
-                        VerticalAlignment="Stretch"
-                        Click="QuickTrackpad_Click"
-                        IsEnabled="False"
-                        Tag="Navigation">
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
-                    </Button>
-                    <Button
-                        Name="QuickGoBack"
-                        Width="42"
-                        Height="32"
-                        Click="QuickGoBack_Click"
-                        Tag="GoBack">
-                        <ui:FontIcon FontSize="10" Glyph="&#xe72b;" />
-                    </Button>
-                </ikw:SimpleStackPanel>
+                        <ui:AppBarSeparator />
+
+                        <!--
+                        <ui:AppBarButton Click="QuickTrackpad_Click">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Touchpad}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+
+                        <ui:AppBarSeparator />
+                        -->
+
+                        <ui:AppBarButton Click="QuickGoBack_Click">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon FontSize="10" Icon="{x:Static ui:SegoeFluentIcons.Back}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                    </ui:CommandBar.PrimaryCommands>
+                </ui:CommandBar>
 
                 <ui:ContentDialog Name="ContentDialog" d:Visibility="Collapsed" />
                 <common:TouchScrollViewer
                     x:Name="scrollViewer"
-                    Margin="0,32,0,12"
+                    Margin="0,48,0,4"
                     PanningMode="VerticalOnly">
                     <ui:Frame Name="ContentFrame" />
                 </common:TouchScrollViewer>
