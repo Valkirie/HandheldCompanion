@@ -379,7 +379,7 @@ public class ProcessManager : IManager
             // get filter
             ProcessFilter filter = GetFilter(process.Executable, process.Path);
 
-            switch(filter)
+            switch (filter)
             {
                 case ProcessFilter.Restricted:
                 case ProcessFilter.HandheldCompanion:

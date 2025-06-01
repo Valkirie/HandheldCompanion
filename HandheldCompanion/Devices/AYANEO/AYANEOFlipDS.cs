@@ -44,7 +44,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
         if (NewUpdate)
         {
             string currentVersion = MainWindow.CurrentVersion.ToString();
-            switch(currentVersion)
+            switch (currentVersion)
             {
                 case "0.24.0.13":
                     ManagerFactory.settingsManager.SetProperty("QuickKeyboardVisibility", "True");

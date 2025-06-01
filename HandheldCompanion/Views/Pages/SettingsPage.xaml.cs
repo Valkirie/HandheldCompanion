@@ -195,7 +195,7 @@ public partial class SettingsPage : Page
                     }
                     break;
                 case "ProcessPriority":
-                        cB_Priority.SelectedIndex = Convert.ToInt32(value);
+                    cB_Priority.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "QuickKeyboardVisibility":
                     VirtualKeyboardToggle.IsOn = Convert.ToBoolean(value);
