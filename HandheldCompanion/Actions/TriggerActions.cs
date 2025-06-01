@@ -25,7 +25,7 @@ namespace HandheldCompanion.Actions
             this.Axis = axis;
         }
 
-        public void Execute(AxisFlags axis, short value, ShiftSlot shiftSlot)
+        public void Execute(AxisFlags axis, byte value, ShiftSlot shiftSlot)
         {
             // update value
             this.Value = value;
@@ -34,19 +34,34 @@ namespace HandheldCompanion.Actions
             base.Execute(axis, shiftSlot);
 
             // skip if zero
-            if ((short)this.Value == 0)
+            if ((byte)this.Value == 0)
                 return;
 
             // Apply inner and outer deadzone adjustments
-            value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
-            value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
+            value = (byte)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
+            value = (byte)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
 
             this.Value = value;
         }
 
-        public short GetValue()
+        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)
         {
-            return (short)this.Value;
+            // call parent, check shiftSlot
+            base.Execute(button, value, shiftSlot);
+
+            // skip if value is false
+            if (this.Value is bool bValue && !bValue)
+                return;
+
+            this.Value = (byte)motionThreshold;
+        }
+
+        public byte GetValue()
+        {
+            if (this.Value is byte sValue)
+                return sValue;
+
+            return 0;
         }
     }
 }

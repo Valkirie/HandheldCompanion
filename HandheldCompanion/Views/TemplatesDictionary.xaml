@@ -531,7 +531,7 @@
                                 <ComboBoxItem Content="Joystick" IsEnabled="False" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="False" />
+                                <ComboBoxItem Content="Trigger" IsEnabled="True" />
                                 <ComboBoxItem Content="Shift" IsEnabled="True" />
                                 <ComboBoxItem Content="Inherit" IsEnabled="True" />
                             </ComboBox>
@@ -568,7 +568,7 @@
                     <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
 
                         <!--  Button 2 Button, Long press  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3}">
 
                             <Grid Height="40">
                                 <Grid.ColumnDefinitions>
@@ -652,8 +652,55 @@
                                 BorderThickness="0,1,0,0" />
                         </ikw:SimpleStackPanel>
 
+                        <!--  Button 2 Trigger  -->
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Trigger threshold" />
+
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding TriggerOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}}" />
+
+                                    <Slider
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="255"
+                                        Minimum="10"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        TickFrequency="5"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        Value="{Binding TriggerOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+                        </ikw:SimpleStackPanel>
+
                         <!--  Button 2 Button/Keyboard/Mouse  -->
-                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|6}">
+                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
                             <ikw:SimpleStackPanel Spacing="3">
                                 <!--  Repeat  -->
                                 <ikw:SimpleStackPanel IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">

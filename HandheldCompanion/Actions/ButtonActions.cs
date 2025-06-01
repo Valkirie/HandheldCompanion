@@ -75,7 +75,10 @@ namespace HandheldCompanion.Actions
 
         public bool GetValue()
         {
-            return (bool)this.Value;
+            if (this.Value is bool bValue)
+                return bValue;
+
+            return false;
         }
     }
 }

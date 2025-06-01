@@ -538,6 +538,19 @@ public class LayoutManager : IManager
                                 mAction.Execute(button, value, shiftSlot);
                             }
                             break;
+
+                        case ActionType.Trigger:
+                            {
+                                TriggerActions tAction = action as TriggerActions;
+                                tAction.Execute(button, value, shiftSlot);
+
+                                // read output axis
+                                AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
+                                AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+
+                                outputState.AxisState[OutAxisY] = (byte)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), byte.MinValue, byte.MaxValue);
+                            }
+                            break;
                     }
 
                     switch (action.actionState)
@@ -654,13 +667,13 @@ public class LayoutManager : IManager
                         case ActionType.Trigger:
                             {
                                 TriggerActions tAction = action as TriggerActions;
-                                tAction.Execute(InAxisY, (short)InLayout.vector.Y, shiftSlot);
+                                tAction.Execute(InAxisY, (byte)InLayout.vector.Y, shiftSlot);
 
                                 // read output axis
                                 AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
                                 AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                                outputState.AxisState[OutAxisY] = (short)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), short.MinValue, short.MaxValue);
+                                outputState.AxisState[OutAxisY] = (byte)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), byte.MinValue, byte.MaxValue);
                             }
                             break;
 
