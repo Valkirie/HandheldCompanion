@@ -1353,9 +1353,11 @@ public partial class ProfilesPage : Page
                             selectedProfile.RSREnabled = isEnabled;
                             if (isEnabled)
                             {
+                                selectedProfile.GPUScaling = true;
                                 selectedProfile.RISEnabled = false;
                                 selectedProfile.IntegerScalingEnabled = false;
 
+                                GPUScalingToggle.IsOn = true;
                                 RISToggle.IsOn = false;
                                 IntegerScalingToggle.IsOn = false;
 
