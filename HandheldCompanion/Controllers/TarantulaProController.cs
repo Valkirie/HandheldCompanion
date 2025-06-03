@@ -6,7 +6,7 @@ using System;
 
 namespace HandheldCompanion.Controllers
 {
-    public class TatantulaProController : XInputController
+    public class TarantulaProController : XInputController
     {
         private controller_hidapi.net.TarantulaProController? Controller;
         private byte[] Data = new byte[64];
@@ -46,16 +46,16 @@ namespace HandheldCompanion.Controllers
         }
 
         [Flags]
-        private enum ButtonLayout
+        public enum ButtonLayout
         {
             Xbox = 64,
             Nintendo = 128,
         }
 
-        public TatantulaProController() : base()
+        public TarantulaProController() : base()
         { }
 
-        public TatantulaProController(PnPDetails details) : base(details)
+        public TarantulaProController(PnPDetails details) : base(details)
         {
             // Capabilities
             Capabilities |= ControllerCapabilities.MotionSensor;
@@ -98,10 +98,23 @@ namespace HandheldCompanion.Controllers
             if (WasPlugged) Open();
         }
 
-        private ButtonLayout GetLayout()
+        public ButtonLayout GetLayout()
         {
             ButtonLayout layout = (ButtonLayout)Data[EXTRABUTTON2_IDX];
             return layout.HasFlag(ButtonLayout.Xbox) ? ButtonLayout.Xbox : ButtonLayout.Nintendo;
+        }
+
+        public void SwitchLayout()
+        {
+            switch(GetLayout())
+            {
+                case ButtonLayout.Xbox:
+                    Controller?.SetNintendoMode();
+                    break;
+                case ButtonLayout.Nintendo:
+                    Controller?.SetXboxMode();
+                    break;
+            }
         }
 
         /*
@@ -142,7 +155,7 @@ namespace HandheldCompanion.Controllers
                 }
                 catch (Exception ex)
                 {
-                    LogManager.LogError("Couldn't initialize {0}. Exception: {1}", typeof(TarantulaProController), ex.Message);
+                    LogManager.LogError("Couldn't initialize {0}. Exception: {1}", typeof(controller_hidapi.net.TarantulaProController), ex.Message);
                     return;
                 }
             }

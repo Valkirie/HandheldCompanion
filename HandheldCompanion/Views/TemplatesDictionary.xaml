@@ -402,14 +402,14 @@
                         </ikw:SimpleStackPanel>
                     </DockPanel>
 
-                    <DockPanel
+                    <ikw:SimpleStackPanel
                         Grid.Column="1"
                         HorizontalAlignment="Right"
+                        Spacing="6"
                         Visibility="{Binding IsVirtual, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
 
                         <!--  Connect/Disconnect  -->
                         <Button
-                            Width="100"
                             Command="{Binding ConnectCommand}"
                             FontSize="14"
                             IsEnabled="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}">
@@ -426,11 +426,7 @@
                         </Button>
 
                         <!--  Hide/Unhide  -->
-                        <Button
-                            Width="100"
-                            Margin="6,0,0,0"
-                            Command="{Binding HideCommand}"
-                            FontSize="14">
+                        <Button Command="{Binding HideCommand}" FontSize="14">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
                                     <Setter Property="Content" Value="{l:Static resx:Resources.Controller_Hide}" />
@@ -445,14 +441,19 @@
 
                         <!--  Calibrate  -->
                         <Button
-                            Width="100"
-                            Margin="6,0,0,0"
                             Command="{Binding CalibrateCommand}"
                             Content="{l:Static resx:Resources.Controller_Calibrate}"
                             FontSize="14"
                             Style="{DynamicResource AccentButtonStyle}"
                             Visibility="{Binding CanCalibrate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </DockPanel>
+
+                        <!--  Switch layout (WIP)  -->
+                        <Button
+                            Command="{Binding SwitchLayoutCommand}"
+                            Content="Switch Layout"
+                            FontSize="14"
+                            Visibility="{Binding HasLayout, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </ikw:SimpleStackPanel>
                 </Grid>
 
                 <TextBlock

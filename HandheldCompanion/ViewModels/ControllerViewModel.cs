@@ -23,6 +23,7 @@ namespace HandheldCompanion.ViewModels
         public string Name => HasController ? _controller.ToString() : "N/A";
         public int UserIndex => HasController ? _controller.GetUserIndex() : 0;
         public bool CanCalibrate => HasController && _controller.HasMotionSensor();
+        public bool HasLayout => HasController && _controller is TarantulaProController;
         public string Enumerator => HasController ? _controller.GetEnumerator() : "USB";
         public bool IsBusy => HasController && _controller.IsBusy;
         public bool IsVirtual => HasController && _controller.IsVirtual();
@@ -35,6 +36,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand ConnectCommand { get; private set; }
         public ICommand HideCommand { get; private set; }
         public ICommand CalibrateCommand { get; private set; }
+        public ICommand SwitchLayoutCommand { get; private set; }
 
         public ControllerViewModel() { }
 
@@ -69,6 +71,12 @@ namespace HandheldCompanion.ViewModels
             CalibrateCommand = new DelegateCommand(async () =>
             {
                 Controller.Calibrate();
+            });
+
+            SwitchLayoutCommand = new DelegateCommand(async () =>
+            {
+                if (Controller is TarantulaProController tarantulaProController)
+                    tarantulaProController.SwitchLayout();
             });
         }
 

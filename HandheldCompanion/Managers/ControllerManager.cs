@@ -636,7 +636,8 @@ public static class ControllerManager
             LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
 
-            if (!IsPowerCycling)
+            // let's not flood the toaster
+            if (!IsPowerCycling && !controller.IsVirtual())
                 ToastManager.SendToast(controller.ToString(), "detected");
 
             PickTargetController();
@@ -756,7 +757,7 @@ public static class ControllerManager
                                 // Tarantula Pro
                                 default:
                                 case "0x1050":
-                                    try { controller = new TatantulaProController(details); } catch { }
+                                    try { controller = new TarantulaProController(details); } catch { }
                                     break;
                             }
                         }
@@ -792,7 +793,8 @@ public static class ControllerManager
             LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
 
-            if (!IsPowerCycling)
+            // let's not flood the toaster
+            if (!IsPowerCycling && !controller.IsVirtual())
                 ToastManager.SendToast(controller.ToString(), "detected");
 
             PickTargetController();
