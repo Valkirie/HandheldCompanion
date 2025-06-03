@@ -333,7 +333,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <ToggleButton
                                                 Width="247"
-                                                Height="32"
+                                                Height="31"
                                                 Command="{Binding DefineOutputCommand}"
                                                 IsChecked="{Binding IsListeningOutput, Mode=OneWay}">
                                                 <TextBlock

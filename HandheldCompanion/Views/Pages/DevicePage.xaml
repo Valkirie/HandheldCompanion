@@ -384,7 +384,7 @@
                                 <colorpicker:PortableColorPicker
                                     Name="MainColorPicker"
                                     Width="32"
-                                    Height="32"
+                                    Height="31"
                                     ColorChanged="MainColorPicker_ColorChanged"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{StaticResource DefaultColorPickerStyle}" />
@@ -407,7 +407,7 @@
                                 <colorpicker:PortableColorPicker
                                     Name="SecondColorPicker"
                                     Width="32"
-                                    Height="32"
+                                    Height="31"
                                     ColorChanged="SecondColorPicker_ColorChanged"
                                     ScrollViewer.PanningMode="HorizontalOnly"
                                     Style="{StaticResource DefaultColorPickerStyle}" />

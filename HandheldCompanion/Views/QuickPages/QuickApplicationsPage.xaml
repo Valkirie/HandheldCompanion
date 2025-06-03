@@ -199,7 +199,7 @@
                                     Spacing="3">
                                     <Image
                                         Width="32"
-                                        Height="32"
+                                        Height="31"
                                         Source="{Binding Icon, UpdateSourceTrigger=PropertyChanged}">
                                         <Image.Style>
                                             <Style TargetType="Image">
@@ -285,7 +285,7 @@
                                             Spacing="3">
 
                                             <ToggleButton
-                                                Height="32"
+                                                Height="31"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -308,7 +308,7 @@
                                             </ToggleButton>
 
                                             <Button
-                                                Height="32"
+                                                Height="31"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 Command="{Binding KillProcessCommand}"
@@ -350,7 +350,7 @@
                                                             Spacing="3">
 
                                                             <Button
-                                                                Height="32"
+                                                                Height="31"
                                                                 HorizontalAlignment="Stretch"
                                                                 VerticalAlignment="Stretch"
                                                                 Command="{Binding BringProcessCommand}"
@@ -359,7 +359,7 @@
                                                                 ToolTip="Snap application window" />
 
                                                             <Button
-                                                                Height="32"
+                                                                Height="31"
                                                                 HorizontalAlignment="Stretch"
                                                                 VerticalAlignment="Stretch"
                                                                 Command="{Binding SwapScreenCommand}"

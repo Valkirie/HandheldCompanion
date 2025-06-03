@@ -402,19 +402,22 @@
                         </ikw:SimpleStackPanel>
                     </DockPanel>
 
-                    <DockPanel
+                    <ikw:SimpleStackPanel
                         Grid.Column="1"
                         HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="6"
+                        Height="31"
                         Visibility="{Binding IsVirtual, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
 
                         <!--  Connect/Disconnect  -->
                         <Button
-                            Width="100"
                             Command="{Binding ConnectCommand}"
                             FontSize="14"
+                            VerticalAlignment="Stretch"
                             IsEnabled="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}">
                             <Button.Style>
-                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                                     <Setter Property="Content" Value="{l:Static resx:Resources.Controller_Connect}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -426,13 +429,12 @@
                         </Button>
 
                         <!--  Hide/Unhide  -->
-                        <Button
-                            Width="100"
-                            Margin="6,0,0,0"
-                            Command="{Binding HideCommand}"
-                            FontSize="14">
+                        <Button 
+                           VerticalAlignment="Stretch"
+                           Command="{Binding HideCommand}"
+                           FontSize="14">
                             <Button.Style>
-                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                                     <Setter Property="Content" Value="{l:Static resx:Resources.Controller_Hide}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsHidden, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -445,14 +447,25 @@
 
                         <!--  Calibrate  -->
                         <Button
-                            Width="100"
-                            Margin="6,0,0,0"
                             Command="{Binding CalibrateCommand}"
                             Content="{l:Static resx:Resources.Controller_Calibrate}"
                             FontSize="14"
-                            Style="{DynamicResource AccentButtonStyle}"
+                            VerticalAlignment="Stretch"
+                            Style="{DynamicResource DefaultButtonStyle}"
                             Visibility="{Binding CanCalibrate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </DockPanel>
+
+                        <!--  Switch layout (WIP)  -->
+                        <Button
+                            Command="{Binding SwitchLayoutCommand}"
+                            VerticalAlignment="Stretch"
+                            Style="{DynamicResource DefaultButtonStyle}"
+                            Visibility="{Binding HasLayout, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <ui:FontIcon
+                                FontFamily="PromptFont"
+                                Glyph="{Binding LayoutGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Button>
+                    </ikw:SimpleStackPanel>
                 </Grid>
 
                 <TextBlock
@@ -587,7 +600,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -671,7 +684,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -745,7 +758,7 @@
                                                 Margin="12,0,0,0"
                                                 ScrollViewer.PanningMode="HorizontalOnly">
                                                 <TextBox
-                                                    Height="32"
+                                                    Height="31"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Center"
                                                     HorizontalContentAlignment="Center"
@@ -1772,7 +1785,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1900,7 +1913,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1946,7 +1959,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1992,7 +2005,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2036,7 +2049,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2081,7 +2094,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2153,7 +2166,7 @@
                                         Margin="12,0,0,0"
                                         ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBox
-                                            Height="32"
+                                            Height="31"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Center"
@@ -2201,7 +2214,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2437,7 +2450,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2484,7 +2497,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2530,7 +2543,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2576,7 +2589,7 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"

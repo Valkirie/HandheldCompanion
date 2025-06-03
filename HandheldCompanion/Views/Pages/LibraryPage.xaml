@@ -44,7 +44,7 @@
                             <ComboBoxItem Content="Recently played" />
                         </ComboBox>
                         <Button
-                            Height="32"
+                            Height="31"
                             VerticalAlignment="Bottom"
                             Command="{Binding ToggleSortCommand}">
                             <Button.Style>
