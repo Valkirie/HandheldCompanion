@@ -139,7 +139,7 @@
 
                         <StackPanel VerticalAlignment="Center">
                             <ui:FontIcon
-                                Height="32"
+                                Height="31"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xeb3c;" />
                             <DockPanel>
@@ -155,7 +155,7 @@
 
                         <StackPanel VerticalAlignment="Center">
                             <ui:FontIcon
-                                Height="32"
+                                Height="31"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xecad;" />
                             <DockPanel>
@@ -217,7 +217,7 @@
 
                         <StackPanel VerticalAlignment="Center" Visibility="{Binding HasGPUPower, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ui:FontIcon
-                                Height="32"
+                                Height="31"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xeb3c;" />
                             <DockPanel>
@@ -233,7 +233,7 @@
 
                         <StackPanel VerticalAlignment="Center" Visibility="{Binding HasGPUTemperature, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ui:FontIcon
-                                Height="32"
+                                Height="31"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="&#xecad;" />
                             <DockPanel>
