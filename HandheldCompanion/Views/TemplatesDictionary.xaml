@@ -405,6 +405,7 @@
                     <ikw:SimpleStackPanel
                         Grid.Column="1"
                         HorizontalAlignment="Right"
+                        Orientation="Horizontal"
                         Spacing="6"
                         Visibility="{Binding IsVirtual, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
 
