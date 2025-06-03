@@ -1,4 +1,3 @@
-using controller_hidapi.net;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
@@ -8,6 +7,11 @@ namespace HandheldCompanion.Controllers
 {
     public class TarantulaProController : XInputController
     {
+        #region events
+        public event OnLayoutChangedEventHandler OnLayoutChanged;
+        public delegate void OnLayoutChangedEventHandler(ButtonLayout buttonLayout);
+        #endregion
+
         private controller_hidapi.net.TarantulaProController? Controller;
         private byte[] Data = new byte[64];
 
@@ -48,6 +52,7 @@ namespace HandheldCompanion.Controllers
         [Flags]
         public enum ButtonLayout
         {
+            None = 0,
             Xbox = 64,
             Nintendo = 128,
         }
@@ -100,13 +105,12 @@ namespace HandheldCompanion.Controllers
 
         public ButtonLayout GetLayout()
         {
-            ButtonLayout layout = (ButtonLayout)Data[EXTRABUTTON2_IDX];
-            return layout.HasFlag(ButtonLayout.Xbox) ? ButtonLayout.Xbox : ButtonLayout.Nintendo;
+            return CurrentLayout;
         }
 
         public void SwitchLayout()
         {
-            switch(GetLayout())
+            switch(CurrentLayout)
             {
                 case ButtonLayout.Xbox:
                     Controller?.SetNintendoMode();
@@ -116,28 +120,6 @@ namespace HandheldCompanion.Controllers
                     break;
             }
         }
-
-        /*
-        public override void Hide(bool powerCycle = true)
-        {
-            lock (hidLock)
-            {
-                Close();
-                base.Hide(powerCycle);
-                Open();
-            }
-        }
-
-        public override void Unhide(bool powerCycle = true)
-        {
-            lock (hidLock)
-            {
-                Close();
-                base.Unhide(powerCycle);
-                Open();
-            }
-        }
-        */
 
         private void Open()
         {
@@ -209,6 +191,9 @@ namespace HandheldCompanion.Controllers
             Controller?.SetLightColor(R, G, B);
         }
 
+        private ButtonLayout CurrentLayout => (ButtonLayout)Data[EXTRABUTTON2_IDX];
+        private ButtonLayout prevLayout = ButtonLayout.None;
+
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
@@ -216,6 +201,16 @@ namespace HandheldCompanion.Controllers
                 return;
 
             base.UpdateInputs(ticks, delta, false);
+
+            // update layout
+            if (CurrentLayout != prevLayout)
+            {
+                // raise event
+                OnLayoutChanged?.Invoke(CurrentLayout);
+
+                // update value
+                prevLayout = CurrentLayout;
+            }
 
             // TODO: Move me to controller-hidapi
             Button0Enum extraButtons0 = (Button0Enum)Data[EXTRABUTTON0_IDX];

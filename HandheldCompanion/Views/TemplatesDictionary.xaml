@@ -450,9 +450,15 @@
                         <!--  Switch layout (WIP)  -->
                         <Button
                             Command="{Binding SwitchLayoutCommand}"
-                            Content="Switch Layout"
+                            FontFamily="PromptFont"
                             FontSize="14"
-                            Visibility="{Binding HasLayout, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{Binding HasLayout, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <ui:FontIcon
+                                FontFamily="PromptFont"
+                                FontSize="24"
+                                Glyph="{Binding LayoutGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Button>
                     </ikw:SimpleStackPanel>
                 </Grid>
 

@@ -33,6 +33,23 @@ namespace HandheldCompanion.ViewModels
         public bool IsWireless => HasController && _controller.IsWireless();
         public bool IsDongle => HasController && _controller.IsDongle();
 
+        private string _LayoutGlyph = "\ue001"; // Default icon for layout
+        public string LayoutGlyph
+        {
+            get
+            {
+                return _LayoutGlyph;
+            }
+            set
+            {
+                if (_LayoutGlyph != value)
+                {
+                    _LayoutGlyph = value;
+                    OnPropertyChanged(nameof(LayoutGlyph));
+                }
+            }
+        }
+
         public ICommand ConnectCommand { get; private set; }
         public ICommand HideCommand { get; private set; }
         public ICommand CalibrateCommand { get; private set; }
@@ -50,6 +67,9 @@ namespace HandheldCompanion.ViewModels
             Controller.UserIndexChanged += Controller_UserIndexChanged;
             Controller.StateChanged += Controller_StateChanged;
             Controller.VisibilityChanged += Controller_VisibilityChanged;
+
+            if (Controller is TarantulaProController proController)
+                proController.OnLayoutChanged += ProController_OnLayoutChanged;
 
             ConnectCommand = new DelegateCommand(async () =>
             {
@@ -80,6 +100,11 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
+        private void ProController_OnLayoutChanged(TarantulaProController.ButtonLayout buttonLayout)
+        {
+            LayoutGlyph = buttonLayout == TarantulaProController.ButtonLayout.Xbox ? "\ue001" : "\ue002";
+        }
+
         private void Controller_StateChanged()
         {
             OnPropertyChanged(nameof(IsBusy));
@@ -106,6 +131,10 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsBusy));
             OnPropertyChanged(nameof(UserIndex));
             OnPropertyChanged(nameof(CanCalibrate));
+
+            // controller specific properties
+            OnPropertyChanged(nameof(HasLayout));
+            OnPropertyChanged(nameof(LayoutGlyph));
         }
 
         public override void Dispose()
@@ -116,6 +145,9 @@ namespace HandheldCompanion.ViewModels
                 _controller.UserIndexChanged -= Controller_UserIndexChanged;
                 _controller.StateChanged -= Controller_StateChanged;
                 _controller.VisibilityChanged -= Controller_VisibilityChanged;
+
+                if (_controller is TarantulaProController proController)
+                    proController.OnLayoutChanged -= ProController_OnLayoutChanged;
             }
 
             // clear controller
@@ -125,6 +157,7 @@ namespace HandheldCompanion.ViewModels
             ConnectCommand = null;
             HideCommand = null;
             CalibrateCommand = null;
+            SwitchLayoutCommand = null;
 
             base.Dispose();
         }
