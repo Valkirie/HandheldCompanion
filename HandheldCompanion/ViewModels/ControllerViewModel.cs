@@ -59,9 +59,7 @@ namespace HandheldCompanion.ViewModels
 
         public ControllerViewModel(IController controller)
         {
-            controller.UserIndexChanged -= Controller_UserIndexChanged;
-            controller.StateChanged -= Controller_StateChanged;
-            controller.VisibilityChanged -= Controller_VisibilityChanged;
+            DisposeController();
 
             Controller = controller;
             Controller.UserIndexChanged += Controller_UserIndexChanged;
@@ -137,7 +135,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(LayoutGlyph));
         }
 
-        public override void Dispose()
+        private void DisposeController()
         {
             // clear previous events
             if (_controller is not null)
@@ -152,6 +150,11 @@ namespace HandheldCompanion.ViewModels
 
             // clear controller
             _controller = null;
+        }
+
+        public override void Dispose()
+        {
+            DisposeController();
 
             // dispose commands
             ConnectCommand = null;
