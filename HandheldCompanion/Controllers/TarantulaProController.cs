@@ -110,7 +110,7 @@ namespace HandheldCompanion.Controllers
 
         public void SwitchLayout()
         {
-            switch(CurrentLayout)
+            switch (CurrentLayout)
             {
                 case ButtonLayout.Xbox:
                     Controller?.SetNintendoMode();

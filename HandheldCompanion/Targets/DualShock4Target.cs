@@ -15,7 +15,7 @@ namespace HandheldCompanion.Targets
     internal class DualShock4Target : ViGEmTarget
     {
         private DS4_REPORT_EX outDS4Report;
-        private IDualShock4Controller dualShockController;
+        private IDualShock4Controller? dualShockController;
 
         public DualShock4Target() : base()
         {
@@ -160,7 +160,7 @@ namespace HandheldCompanion.Targets
 
             try
             {
-                dualShockController.SubmitRawReport(rawOutReportEx);
+                dualShockController?.SubmitRawReport(rawOutReportEx);
             }
             catch (VigemBusNotFoundException ex)
             {
