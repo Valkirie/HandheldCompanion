@@ -174,8 +174,7 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
-            dualShockController?.Disconnect();
-            dualShockController?.Dispose();
+            try { dualShockController?.Disconnect(); } catch { }
             dualShockController = null;
 
             base.Dispose();

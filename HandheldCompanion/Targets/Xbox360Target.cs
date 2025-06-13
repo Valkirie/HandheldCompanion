@@ -83,7 +83,7 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
-            xboxController?.Disconnect();
+            try { xboxController?.Disconnect(); } catch { }
             xboxController = null;
 
             base.Dispose();
