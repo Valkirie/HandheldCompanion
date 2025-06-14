@@ -18,7 +18,9 @@ public enum RyzenFamily
     FAM_MENDOCINO,
     FAM_PHOENIX,
     FAM_HAWKPOINT,
+    FAM_KRACKANPOINT,
     FAM_STRIXPOINT,
+    FAM_STRIXHALO,
     FAM_END
 }
 

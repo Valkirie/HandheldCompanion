@@ -99,7 +99,7 @@ public static class PerformanceManager
 
     private static bool IsInitialized;
     public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
+    public delegate void InitializedEventHandler(bool CanChangeTDP, bool CanChangeGPU);
 
     static PerformanceManager()
     {
@@ -127,13 +127,6 @@ public static class PerformanceManager
 
         // initialize processor
         processor = Processor.GetCurrent();
-        if (processor is not null)
-        {
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.Initialize();
-        }
-        else
-            ProcessorStatusChanged?.Invoke(false, false);
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -159,7 +152,7 @@ public static class PerformanceManager
         }
 
         IsInitialized = true;
-        Initialized?.Invoke();
+        Initialized?.Invoke(processor?.CanChangeTDP ?? false, processor?.CanChangeGPU ?? false);
 
         LogManager.LogInformation("{0} has started", "PerformanceManager");
     }
@@ -200,10 +193,7 @@ public static class PerformanceManager
 
         // halt processor
         if (processor is not null && processor.IsInitialized)
-        {
-            processor.StatusChanged -= Processor_StatusChanged;
             processor.Stop();
-        }
 
         // halt watchdogs
         autotdpWatchdog.Stop();
@@ -1126,36 +1116,19 @@ public static class PerformanceManager
     #region events
 
     public static event LimitChangedHandler PowerLimitChanged;
-
     public delegate void LimitChangedHandler(PowerType type, int limit);
 
     public static event ValueChangedHandler PowerValueChanged;
-
     public delegate void ValueChangedHandler(PowerType type, float value);
 
-    public static event StatusChangedHandler ProcessorStatusChanged;
-
-    public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
-
     public static event PowerModeChangedEventHandler PowerModeChanged;
-
     public delegate void PowerModeChangedEventHandler(int idx);
 
     public static event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
-
     public delegate void PerfBoostModeChangedEventHandler(uint value);
 
     public static event EPPChangedEventHandler EPPChanged;
-
     public delegate void EPPChangedEventHandler(uint EPP);
-
-    #endregion
-
-    #region events
-    private static void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
-    {
-        ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-    }
 
     #endregion
 }

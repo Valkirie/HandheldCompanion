@@ -61,15 +61,8 @@ public class Processor
         return processor;
     }
 
-    public virtual void Initialize()
-    {
-        StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-        Initialized?.Invoke(this);
-    }
-
     public virtual void Stop()
-    {
-    }
+    { }
 
     public virtual void SetTDPLimit(PowerType type, double limit, bool immediate = false, int result = 0)
     {
@@ -88,16 +81,4 @@ public class Processor
 
         LogManager.LogDebug("User requested GPU clock: {0}, error code: {1}", clock, result);
     }
-
-    #region events
-
-    public event StatusChangedHandler StatusChanged;
-
-    public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
-
-    public event InitializedEventHandler Initialized;
-
-    public delegate void InitializedEventHandler(Processor processor);
-
-    #endregion
 }

@@ -514,7 +514,7 @@ namespace HandheldCompanion.ViewModels
 
             // manage events
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
-            PerformanceManager.ProcessorStatusChanged += PerformanceManager_ProcessorStatusChanged;
+            PerformanceManager.Initialized += PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
 
             // raise events
@@ -790,7 +790,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
             ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
-            PerformanceManager.ProcessorStatusChanged -= PerformanceManager_ProcessorStatusChanged;
+            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
@@ -829,7 +829,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(AutoTDPMaximum));
         }
 
-        private void PerformanceManager_ProcessorStatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+        private void PerformanceManager_Initialized(bool CanChangeTDP, bool CanChangeGPU)
         {
             OnPropertyChanged(nameof(SupportsTDP));
             OnPropertyChanged(nameof(SupportsGPUFreq));
