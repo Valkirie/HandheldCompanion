@@ -192,7 +192,7 @@
     <PackageReference Include="iNKORE.UI.WPF.Emojis" Version="0.3.6.4" />
     <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.0" />
     <PackageReference Include="Interop.IWshRuntimeLibrary" Version="1.0.1" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre416" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre419" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.1" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
