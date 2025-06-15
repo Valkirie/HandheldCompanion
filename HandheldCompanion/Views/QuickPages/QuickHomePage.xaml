@@ -12,7 +12,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickHome"
     Title="{l:Static resx:Resources.QuickHomePage_Title}"
-    Margin="15,0,0,0"
+    Margin="12,0,12,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuickHomePageViewModel}"
     d:DesignHeight="1200"
@@ -64,8 +64,7 @@
                                 HorizontalContentAlignment="Stretch"
                                 Command="{Binding ExecuteCommand}"
                                 IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                               >
+                                IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                 <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
                                     <ui:FontIcon
                                         Width="24"
@@ -101,10 +100,7 @@
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Glyph="&#xE706;" />
 
-                <ikw:SimpleStackPanel
-                    Margin="12,0,12,0"
-                    VerticalAlignment="Center"
-                   >
+                <ikw:SimpleStackPanel Margin="12,0,12,0" VerticalAlignment="Center">
                     <Slider
                         x:Name="SliderBrightness"
                         IsEnabled="False"
@@ -128,10 +124,7 @@
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Glyph="&#xE767;" />
 
-                <ikw:SimpleStackPanel
-                    Margin="12,0,12,0"
-                    VerticalAlignment="Center"
-                   >
+                <ikw:SimpleStackPanel Margin="12,0,12,0" VerticalAlignment="Center">
                     <Slider
                         x:Name="SliderVolume"
                         IsMoveToPointEnabled="True"
