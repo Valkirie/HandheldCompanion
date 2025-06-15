@@ -60,7 +60,7 @@ namespace HandheldCompanion
             IsHitTestVisible = false;
 
             // prevent adorner from catching drag & drop
-            ScrollViewer.SetPanningMode(this, PanningMode.HorizontalOnly);
+            // ScrollViewer.SetPanningMode(this, PanningMode.HorizontalOnly);
 
             // Re-apply size & corner radius whenever the adorned element changes
             _element.SizeChanged += AdornedElement_SizeChanged;

@@ -761,7 +761,7 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             d:Visibility="Visible"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
+                                           
                                             Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                             <TextBox
@@ -966,7 +966,7 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             d:Visibility="Visible"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
+                                           
                                             Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                             <TextBox
@@ -1206,7 +1206,7 @@
                                             <DockPanel
                                                 Grid.Column="1"
                                                 Margin="12,0,0,0"
-                                                ScrollViewer.PanningMode="HorizontalOnly">
+                                               >
                                                 <TextBox
                                                     Height="31"
                                                     HorizontalAlignment="Right"
@@ -1255,7 +1255,7 @@
                                             <DockPanel
                                                 Grid.Column="1"
                                                 Margin="12,0,0,0"
-                                                ScrollViewer.PanningMode="HorizontalOnly">
+                                               >
                                                 <TextBox
                                                     Height="31"
                                                     HorizontalAlignment="Right"

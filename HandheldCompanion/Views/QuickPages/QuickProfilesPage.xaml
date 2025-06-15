@@ -495,7 +495,7 @@
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
 
-                                        <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                        <DockPanel>
                                             <TextBox
                                                 Height="31"
                                                 HorizontalAlignment="Right"
@@ -540,7 +540,7 @@
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
 
-                                        <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                        <DockPanel>
                                             <TextBox
                                                 Height="31"
                                                 HorizontalAlignment="Right"
@@ -590,7 +590,7 @@
                                         <ikw:SimpleStackPanel Spacing="3">
                                             <StackPanel>
                                                 <TextBlock Text="Horizontal sensitivity" />
-                                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                                <DockPanel>
                                                     <TextBox
                                                         Height="31"
                                                         HorizontalAlignment="Right"
@@ -620,7 +620,7 @@
 
                                             <StackPanel>
                                                 <TextBlock Text="Vertical sensitivity" />
-                                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                                <DockPanel>
                                                     <TextBox
                                                         Height="31"
                                                         HorizontalAlignment="Right"
@@ -812,7 +812,7 @@
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
                                         d:Visibility="Visible"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                       
                                         Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                         <TextBox
@@ -1045,7 +1045,7 @@
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
                                         d:Visibility="Visible"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                       
                                         Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                         <TextBox

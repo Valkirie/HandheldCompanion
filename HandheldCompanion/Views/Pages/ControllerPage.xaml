@@ -176,7 +176,7 @@
                             <ui:FontIcon Glyph="&#xE877;" />
                         </ui:SettingsCard.HeaderIcon>
 
-                        <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel>
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderStrength}, Mode=OneWay}"
@@ -234,7 +234,7 @@
                         <ui:FontIcon Glyph="&#xE877;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                    <DockPanel>
                         <Label
                             VerticalAlignment="Center"
                             Content="{Binding Value, StringFormat={}{0:N0}ms, Source={x:Reference SliderInterval}, Mode=OneWay}"

@@ -95,6 +95,7 @@ namespace HandheldCompanion.UI
 
             switch (uIElement.GetType().Name)
             {
+                case "ScrollViewer":
                 case "TouchScrollViewer":
                     return;
                 case "ComboBoxItem":

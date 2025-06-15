@@ -206,12 +206,12 @@
                 </ui:CommandBar>
 
                 <ui:ContentDialog Name="ContentDialog" d:Visibility="Collapsed" />
-                <common:TouchScrollViewer
+                <ui:ScrollViewerEx
                     x:Name="scrollViewer"
                     Margin="0,48,0,4"
-                    PanningMode="VerticalOnly">
+                    PanningMode="VerticalFirst">
                     <ui:Frame Name="ContentFrame" />
-                </common:TouchScrollViewer>
+                </ui:ScrollViewerEx>
                 <Separator
                     Margin="0,0,0,0"
                     VerticalAlignment="Bottom"
