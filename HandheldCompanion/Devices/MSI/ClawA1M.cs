@@ -331,7 +331,6 @@ public class ClawA1M : IDevice
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -352,6 +351,9 @@ public class ClawA1M : IDevice
 
     private void QueryPowerProfile()
     {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
     }
 

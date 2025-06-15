@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -85,5 +86,55 @@ public class MinisforumV3 : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
         });
+    }
+
+    public override bool Open()
+    {
+        var success = base.Open();
+        if (!success)
+            return false;
+
+        // raise events
+        switch (ManagerFactory.powerProfileManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
+        }
+
+        return true;
+    }
+
+    public override void Close()
+    {
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+
+        base.Close();
+    }
+
+    private void QueryPowerProfile()
+    {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    private void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        if (profile.IsDeviceDefault())
+            setThermalMode(profile.OEMPowerMode);
+        else
+            setThermalMode((int)MinisForumMode.Performance);
     }
 }
