@@ -55,7 +55,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -115,7 +115,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -181,7 +181,7 @@
                                 <DockPanel
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                   >
                                     <TextBox
                                         Height="31"
                                         HorizontalAlignment="Right"
@@ -372,7 +372,7 @@
                             HorizontalAlignment="Center"
                             Background="{DynamicResource ExpanderHeaderBackground}"
                             Orientation="Horizontal"
-                            ScrollViewer.PanningMode="HorizontalOnly"
+                           
                             Spacing="12">
                             <Label VerticalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
                                 <Label.LayoutTransform>

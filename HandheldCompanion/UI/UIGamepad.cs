@@ -460,6 +460,7 @@ namespace HandheldCompanion.Managers
                 {
                     case "MainWindow":
                     case "OverlayQuickTools":
+                    case "ScrollViewer":
                     case "TouchScrollViewer":
                         {
                             // a new page opened

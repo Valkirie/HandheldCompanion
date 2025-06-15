@@ -114,7 +114,7 @@
                     <ui:ToggleSwitch Name="Toggle_AYANEOFlipScreen" Toggled="Toggle_AYANEOFlipScreen_Toggled" />
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard ContentAlignment="Left">
-                            <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <DockPanel Visibility="{Binding Toggle_AYANEOFlipScreen, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Label
                                     VerticalAlignment="Center"
                                     Content="{Binding Value, Source={x:Reference Slider_AYANEOFlipScreenBrightness}, Mode=OneWay}"

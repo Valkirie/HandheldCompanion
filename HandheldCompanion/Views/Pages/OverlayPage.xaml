@@ -57,7 +57,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -571,7 +571,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -629,7 +629,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -688,7 +688,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
@@ -767,7 +767,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -915,7 +915,7 @@
                                 <DockPanel
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                   >
                                     <TextBox
                                         Height="31"
                                         HorizontalAlignment="Right"
@@ -1065,7 +1065,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -1123,7 +1123,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"

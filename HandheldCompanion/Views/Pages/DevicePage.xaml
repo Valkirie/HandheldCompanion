@@ -147,7 +147,7 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE713;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                    <DockPanel>
                         <Label
                             VerticalAlignment="Center"
                             Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}"
@@ -230,7 +230,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}"
@@ -327,7 +327,7 @@
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDSpeed}, Mode=OneWay}"
@@ -356,7 +356,7 @@
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}"
                                 Visibility="Collapsed">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <ComboBox
                                         Name="LEDDirection"
                                         Grid.Column="1"
@@ -386,7 +386,7 @@
                                     Width="32"
                                     Height="31"
                                     ColorChanged="MainColorPicker_ColorChanged"
-                                    ScrollViewer.PanningMode="HorizontalOnly"
+                                   
                                     Style="{StaticResource DefaultColorPickerStyle}" />
                             </ui:SettingsCard>
                             <!--  Use second color  -->
@@ -409,7 +409,7 @@
                                     Width="32"
                                     Height="31"
                                     ColorChanged="SecondColorPicker_ColorChanged"
-                                    ScrollViewer.PanningMode="HorizontalOnly"
+                                   
                                     Style="{StaticResource DefaultColorPickerStyle}" />
                             </ui:SettingsCard>
                             <!--  Vertical blackbar detection  -->
@@ -675,7 +675,7 @@
                         <ui:SettingsExpander.Items>
                             <!--  Left Joycon Sleep Time  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderLeftAutoSleepTime}, Mode=OneWay}"
@@ -697,7 +697,7 @@
                             </ui:SettingsCard>
                             <!--  Left Joystick deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}"
@@ -719,7 +719,7 @@
                             </ui:SettingsCard>
                             <!--  Left Trigger deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}"
@@ -742,7 +742,7 @@
                             </ui:SettingsCard>
                             <!--  Left Trigger margin  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}"
@@ -776,7 +776,7 @@
                         <ui:SettingsExpander.Items>
                             <!--  Right Joycon Sleep Time  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderRightAutoSleepTime}, Mode=OneWay}"
@@ -798,7 +798,7 @@
                             </ui:SettingsCard>
                             <!--  Right Joystick deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}"
@@ -820,7 +820,7 @@
                             </ui:SettingsCard>
                             <!--  Right Trigger deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}"
@@ -843,7 +843,7 @@
                             </ui:SettingsCard>
                             <!--  Right Trigger margin  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel>
                                     <Label
                                         VerticalAlignment="Center"
                                         Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}"

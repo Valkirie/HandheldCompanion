@@ -36,7 +36,7 @@
 
                 <ui:SettingsExpander.Items>
                     <ui:SettingsCard Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}" ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding CPUCoreCount, StringFormat={}{0:N0} cores, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
@@ -72,7 +72,7 @@
 
                 <ui:SettingsExpander.Items>
                     <ui:SettingsCard Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}" ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding TDPOverrideValue, StringFormat={}{0:N0} W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
@@ -111,7 +111,7 @@
 
                 <ui:SettingsExpander.Items>
                     <ui:SettingsCard Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}" ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding AutoTDPRequestedFPS, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
@@ -151,7 +151,7 @@
 
                 <ui:SettingsExpander.Items>
                     <ui:SettingsCard Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <StackPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}" ScrollViewer.PanningMode="HorizontalOnly">
+                        <StackPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Slider
                                 Margin="0,0,104,0"
                                 HorizontalAlignment="Stretch"
@@ -207,7 +207,7 @@
 
                 <ui:SettingsExpander.Items>
                     <ui:SettingsCard Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}" ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding CPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
@@ -245,7 +245,7 @@
 
                 <ui:SettingsExpander.Items>
                     <ui:SettingsCard IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}" ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding GPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"

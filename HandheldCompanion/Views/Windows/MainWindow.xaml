@@ -250,16 +250,16 @@
                     </ui:InfoBar>
 
                     <ui:ContentDialog Name="ContentDialog" />
-                    <common:TouchScrollViewer
+                    <ui:ScrollViewerEx
                         x:Name="scrollViewer"
                         VerticalAlignment="Stretch"
-                        PanningMode="VerticalOnly">
+                        PanningMode="VerticalFirst">
                         <ui:Frame
                             Name="ContentFrame"
                             Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                             MaxWidth="2000"
                             HorizontalAlignment="Left" />
-                    </common:TouchScrollViewer>
+                    </ui:ScrollViewerEx>
                 </Grid>
 
                 <!--  GAMEPAD AREA  -->
