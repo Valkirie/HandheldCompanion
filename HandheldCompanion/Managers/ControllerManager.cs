@@ -929,7 +929,7 @@ public static class ControllerManager
                                 break;
                         }
 
-                        if (pController is null || (pController.IsBusy && !XInputDrunk))
+                        if (pController is null)
                             continue;
 
                         // store physical controller Ids to trick the system
