@@ -1,7 +1,9 @@
 ﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Commands;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -12,8 +14,12 @@ namespace HandheldCompanion.ViewModels
 {
     public class QuickApplicationsPageViewModel : BaseViewModel
     {
-        public ObservableCollection<ProcessExViewModel> Processes { get; set; } = [];
-        public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
+        public ObservableCollection<ProcessExViewModel> Processes { get; set; } = new();
+        public ObservableCollection<ProfileViewModel> Profiles { get; set; } = new();
+        public ObservableCollection<ProfileViewModel> PagedProfiles { get; } = new();
+
+        private const int PageSize = 6;
+        public int TotalPages => (int)Math.Ceiling((double)Profiles.Count / PageSize);
 
         public ICommand RadioButtonCheckedCommand { get; }
 
@@ -58,6 +64,35 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private int _selectedPageIndex;
+        public int SelectedPageIndex
+        {
+            get => _selectedPageIndex;
+            set
+            {
+                if (_selectedPageIndex != value && value >= 0 && value < TotalPages)
+                {
+                    _selectedPageIndex = value;
+                    OnPropertyChanged(nameof(SelectedPageIndex));
+                    RefreshPage();
+                }
+            }
+        }
+
+        private void RefreshPage()
+        {
+            PagedProfiles.Clear();
+
+            // order all profiles by LastUsed (newest first)
+            var items = Profiles
+                .OrderByDescending(p => p.LastUsed)
+                .Skip(SelectedPageIndex * PageSize)
+                .Take(PageSize);
+
+            foreach (var vm in items)
+                PagedProfiles.Add(vm);
+        }
+
         public bool IsReady => ManagerFactory.processManager.IsReady;
 
         public QuickApplicationsPageViewModel()
@@ -65,6 +100,16 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Processes, new object());
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+            Profiles.CollectionChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(TotalPages));
+
+                // clamp page index if we deleted the last page
+                if (SelectedPageIndex >= TotalPages)
+                    SelectedPageIndex = TotalPages - 1;
+
+                RefreshPage();
+            };
 
             RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
 
@@ -87,6 +132,9 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+
+            // first‐time fill
+            RefreshPage();
         }
 
         private void QueryForeground()
@@ -110,6 +158,10 @@ namespace HandheldCompanion.ViewModels
             {
                 Profiles.SafeRemove(foundProfile);
                 foundProfile.Dispose();
+
+                // re-compute pages
+                OnPropertyChanged(nameof(TotalPages));
+                UIHelper.TryInvoke(RefreshPage);
             }
         }
 
@@ -132,6 +184,10 @@ namespace HandheldCompanion.ViewModels
                 else
                     ProfileManager_Deleted(profile);
             }
+
+            // re-compute pages
+            OnPropertyChanged(nameof(TotalPages));
+            UIHelper.TryInvoke(RefreshPage);
         }
 
         private void OnRadioButtonChecked(object parameter)
