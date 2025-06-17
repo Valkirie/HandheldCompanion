@@ -27,7 +27,7 @@ namespace HandheldCompanion.Devices.ASUS
                 if (!device.IsOpen)
                     device.OpenDevice();
                 device.WriteFeatureData(payload);
-                device.CloseDevice();
+                try { device.CloseDevice(); } catch { }
             }
         }
 

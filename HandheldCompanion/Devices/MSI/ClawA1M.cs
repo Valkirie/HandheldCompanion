@@ -305,9 +305,9 @@ public class ClawA1M : IDevice
         // make sure M1/M2 are recognized as buttons
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Write(CLAW_SET_M1);
+            device.Write(CLAW_SET_M1, 0, 64);
             Thread.Sleep(300);
-            device.Write(CLAW_SET_M2);
+            device.Write(CLAW_SET_M2, 0, 64);
             Thread.Sleep(300);
             SyncToROM();
             Thread.Sleep(300);
@@ -586,7 +586,7 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SetMotionStatus, (byte)(enabled ? 1 : 0) };
-            if (device.Write(msg))
+            if (device.Write(msg, 0, 64))
             {
                 LogManager.LogInformation("Successfully SetMotionStatus to {0}", enabled);
                 return true;
@@ -606,7 +606,7 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)gamepadMode, (byte)MKeysFunction.Macro };
-            if (device.Write(msg))
+            if (device.Write(msg, 0, 64))
             {
                 LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
                 return true;
@@ -626,7 +626,7 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SyncToROM };
-            if (device.Write(msg))
+            if (device.Write(msg, 0, 64))
             {
                 LogManager.LogInformation("Successfully synced to ROM");
                 return true;
@@ -666,7 +666,7 @@ public class ClawA1M : IDevice
         Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(SetRgbCmd(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B));
+            return device.Write(SetRgbCmd(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B), 0, 64);
 
         return false;
     }
@@ -676,7 +676,7 @@ public class ClawA1M : IDevice
         int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(SetRgbCmd(LEDBrightness, MainColor.R, MainColor.G, MainColor.B));
+            return device.Write(SetRgbCmd(LEDBrightness, MainColor.R, MainColor.G, MainColor.B), 0, 64);
 
         return false;
     }
@@ -721,8 +721,7 @@ public class ClawA1M : IDevice
             device.Removed -= Device_Removed;
 
             device.MonitorDeviceEvents = false;
-            device.CloseDevice();
-            device.Dispose();
+            try { device.Dispose(); } catch { }
         }
     }
 
