@@ -23,10 +23,9 @@ public class DClawController : DInputController
     public byte FeedbackLargeMotor;
     public byte FeedbackSmallMotor;
 
-    // TODO: why not use TimerManager.Tick?
     private Thread rumbleThread;
     private bool rumbleThreadRunning;
-    private int rumbleThreadInterval = 10;
+    private int rumbleThreadInterval = 50;
 
     public DClawController() : base()
     { }
@@ -82,22 +81,22 @@ public class DClawController : DInputController
         TimerManager.Tick -= UpdateInputs;
         base.Unplug();
     }
+    
+    private const byte HW_MIN = 140;           // Claw 1 "strongest" rumble
+    private const byte HW_MAX = 255;           // Claw 1 "weakest" rumble
+    private const int RANGE = HW_MAX - HW_MIN;
 
     private async void RumbleThreadLoop(object? obj)
     {
         while (rumbleThreadRunning)
         {
-            const byte HW_MIN = 140;           // hardware’s “strongest” code
-            const byte HW_MAX = 255;           // hardware’s “weakest” code
-            const int RANGE = HW_MAX - HW_MIN; // = 115
-
-            byte MapAmplitude(byte v)
+            byte MapAmplitude(byte feedback)
             {
-                 if (v == 0) return 0;
+                if (feedback == 0) return 0;
 
-                // invert & linearly stretch [1..255] → [HW_MAX..HW_MIN]
-                // (255-scaled)/255 goes from 1→0, multiply by RANGE, then add HW_MIN
-                return (byte)(HW_MIN + ((HW_MAX - v) * RANGE + 127) / 255);
+                // invert & linearly stretch [1..255] -> [HW_MAX..HW_MIN]
+                // (255-scaled)/255 goes from 1->0, multiply by RANGE, then add HW_MIN
+                return (byte)(HW_MIN + ((HW_MAX - feedback) * RANGE + 127) / 255);
             }
 
             byte largeVal = MapAmplitude(FeedbackLargeMotor);
