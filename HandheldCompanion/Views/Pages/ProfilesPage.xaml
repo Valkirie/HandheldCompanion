@@ -761,7 +761,6 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             d:Visibility="Visible"
-                                           
                                             Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                             <TextBox
@@ -966,7 +965,6 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             d:Visibility="Visible"
-                                           
                                             Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                             <TextBox
@@ -1203,10 +1201,7 @@
                                                     TextWrapping="Wrap" />
                                             </StackPanel>
 
-                                            <DockPanel
-                                                Grid.Column="1"
-                                                Margin="12,0,0,0"
-                                               >
+                                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                                 <TextBox
                                                     Height="31"
                                                     HorizontalAlignment="Right"
@@ -1252,10 +1247,7 @@
                                                     TextWrapping="Wrap" />
                                             </StackPanel>
 
-                                            <DockPanel
-                                                Grid.Column="1"
-                                                Margin="12,0,0,0"
-                                               >
+                                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                                 <TextBox
                                                     Height="31"
                                                     HorizontalAlignment="Right"
