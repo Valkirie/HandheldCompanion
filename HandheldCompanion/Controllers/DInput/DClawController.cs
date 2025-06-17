@@ -3,6 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using SharpDX.DirectInput;
+using System.Threading;
 
 namespace HandheldCompanion.Controllers;
 
@@ -18,6 +19,13 @@ public class DClawController : DInputController
             return false;
         }
     }
+
+    public byte FeedbackLargeMotor;
+    public byte FeedbackSmallMotor;
+
+    private Thread rumbleThread;
+    private bool rumbleThreadRunning;
+    private int rumbleThreadInterval = 50;
 
     public DClawController() : base()
     { }
@@ -37,14 +45,67 @@ public class DClawController : DInputController
 
     public override void Plug()
     {
+        // exclusive to ClawA1M
+        if (IDevice.GetCurrent().GetType() == typeof(ClawA1M))
+        {
+            // manage rumble thread
+            rumbleThreadRunning = true;
+            rumbleThread = new Thread(RumbleThreadLoop)
+            {
+                IsBackground = true,
+                Priority = ThreadPriority.Highest
+            };
+            rumbleThread.Start();
+        }
+
         TimerManager.Tick += UpdateInputs;
         base.Plug();
     }
 
     public override void Unplug()
     {
+        // exclusive to ClawA1M
+        if (IDevice.GetCurrent().GetType() == typeof(ClawA1M))
+        {
+            // kill rumble thread
+            if (rumbleThread is not null)
+            {
+                rumbleThreadRunning = false;
+                // Ensure the thread has finished execution
+                if (rumbleThread.IsAlive)
+                    rumbleThread.Join(3000);
+                rumbleThread = null;
+            }
+        }
+
         TimerManager.Tick -= UpdateInputs;
         base.Unplug();
+    }
+    
+    private const byte HW_MIN = 140;           // Claw 1 "strongest" rumble
+    private const byte HW_MAX = 255;           // Claw 1 "weakest" rumble
+    private const int RANGE = HW_MAX - HW_MIN;
+
+    private async void RumbleThreadLoop(object? obj)
+    {
+        while (rumbleThreadRunning)
+        {
+            byte MapAmplitude(byte feedback)
+            {
+                if (feedback == 0) return 0;
+
+                // invert & linearly stretch [1..255] -> [HW_MAX..HW_MIN]
+                // (255-scaled)/255 goes from 1->0, multiply by RANGE, then add HW_MIN
+                return (byte)(HW_MIN + ((HW_MAX - feedback) * RANGE + 127) / 255);
+            }
+
+            byte largeVal = MapAmplitude(FeedbackLargeMotor);
+            byte smallVal = MapAmplitude(FeedbackSmallMotor);
+
+            WriteVibration(largeVal, smallVal);
+
+            Thread.Sleep(rumbleThreadInterval);
+        }
     }
 
     public override void UpdateInputs(long ticks, float delta)
@@ -111,18 +172,32 @@ public class DClawController : DInputController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
+
+        if (IDevice.GetCurrent().GetType() == typeof(ClawA1M))
+        {
+            this.FeedbackLargeMotor = LargeMotor;
+            this.FeedbackSmallMotor = SmallMotor;
+        }
+        else
+        {
+            WriteVibration(LargeMotor, SmallMotor);
+        }
+    }
+
+    private void WriteVibration(byte LargeMotor, byte SmallMotor)
+    {
         if (!IsConnected())
             return;
 
         joystickHid?.Write(new byte[]
         {
-            05, 01, 00, 00,
-            (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength),
-            00,
-            00,
-            00,
-            00,
-            00
+                05, 01, 00, 00,
+                (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength),
+                00,
+                00,
+                00,
+                00,
+                00
         });
     }
 
