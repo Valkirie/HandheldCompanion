@@ -721,8 +721,7 @@ public class ClawA1M : IDevice
             device.Removed -= Device_Removed;
 
             device.MonitorDeviceEvents = false;
-            device.CloseDevice();
-            device.Dispose();
+            try { device.Dispose(); } catch { }
         }
     }
 

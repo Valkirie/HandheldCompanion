@@ -231,8 +231,7 @@ public class ROGAlly : IDevice
             device.Removed -= Device_Removed;
 
             device.MonitorDeviceEvents = false;
-            device.CloseDevice();
-            device.Dispose();
+            try { device.Dispose(); } catch { }            
         }
 
         // stop further reads
