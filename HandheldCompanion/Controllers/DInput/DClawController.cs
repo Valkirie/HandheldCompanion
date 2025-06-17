@@ -93,6 +93,8 @@ public class DClawController : DInputController
 
             byte MapAmplitude(byte v)
             {
+                 if (v == 0) return 0;
+
                 // invert & linearly stretch [1..255] → [HW_MAX..HW_MIN]
                 // (255-scaled)/255 goes from 1→0, multiply by RANGE, then add HW_MIN
                 return (byte)(HW_MIN + ((HW_MAX - v) * RANGE + 127) / 255);
