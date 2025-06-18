@@ -114,16 +114,16 @@ public class ProcessManager : IManager
         {
             case "QuickTools":
                 {
-                    Profile currentProfile = ManagerFactory.profileManager.GetProfileFromPath(currentProcess.Path, false);
-                    if (!currentProfile.SuspendOnQT || currentProfile.Default)
-                        return;
-
                     // we already have a suspended process
                     if (processHandle != IntPtr.Zero)
                         return;
 
                     if (currentProcess is not null)
                     {
+                        Profile currentProfile = ManagerFactory.profileManager.GetProfileFromPath(currentProcess.Path, false);
+                        if (!currentProfile.SuspendOnQT || currentProfile.Default)
+                            return;
+
                         bool success = SuspendProcess(currentProcess.Handle, currentProcess.ProcessId);
                         if (success)
                         {
