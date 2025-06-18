@@ -230,6 +230,7 @@ namespace hidapi
         public void Close()
         {
             HidApiNative.hid_close(_deviceHandle);
+            _deviceHandle = IntPtr.Zero;
         }
 
         public void Dispose()
