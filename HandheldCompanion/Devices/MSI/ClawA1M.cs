@@ -144,7 +144,7 @@ public class ClawA1M : IDevice
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
-    protected GamepadMode gamepadMode = GamepadMode.Offline;
+    protected GamepadMode gamepadMode = GamepadMode.MSI;
 
     protected string Scope { get; set; } = "root\\WMI";
     protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
@@ -160,8 +160,8 @@ public class ClawA1M : IDevice
 
     protected bool isNew_EC => WmiMajorVersion > 1;
 
-    private bool _IsOpen = false;
-    public override bool IsOpen => _IsOpen;
+    private bool ClawOpen = false;
+    public override bool IsOpen => DeviceOpen && ClawOpen;
 
     private static readonly DeviceVersion[] deviceVersions =
     {
@@ -283,7 +283,7 @@ public class ClawA1M : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 
@@ -326,12 +326,12 @@ public class ClawA1M : IDevice
             Thread.Sleep(300);
             SyncToROM();
             Thread.Sleep(300);
-            SwitchMode(GamepadMode.MSI);
+            SwitchMode(gamepadMode);
             Thread.Sleep(2000);
         }
 
         // set flag
-        _IsOpen = true;
+        ClawOpen = true;
 
         // prepare WMI
         GetWMI();
@@ -342,6 +342,13 @@ public class ClawA1M : IDevice
 
         // start WMI event monitor
         StartWatching();
+
+        return true;
+    }
+
+    public override void OpenEvents()
+    {
+        base.OpenEvents();
 
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
@@ -360,8 +367,6 @@ public class ClawA1M : IDevice
         }
 
         Device_Inserted();
-
-        return true;
     }
 
     private void QueryPowerProfile()
@@ -495,7 +500,7 @@ public class ClawA1M : IDevice
         hidDevices.Clear();
 
         // set flag
-        _IsOpen = false;
+        ClawOpen = false;
 
         // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;

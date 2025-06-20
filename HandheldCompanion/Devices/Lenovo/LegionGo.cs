@@ -300,11 +300,9 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = [new MouseActions { MouseType = MouseActionsType.ScrollDown }];
     }
 
-    public override bool Open()
+    public override void OpenEvents()
     {
-        var success = base.Open();
-        if (!success)
-            return false;
+        base.OpenEvents();
 
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
@@ -321,8 +319,6 @@ public class LegionGo : IDevice
                 QueryPowerProfile();
                 break;
         }
-
-        return true;
     }
 
     private object controllerLock = new();

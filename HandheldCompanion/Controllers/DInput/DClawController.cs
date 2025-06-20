@@ -148,9 +148,12 @@ public class DClawController : DInputController
         catch (SharpDX.SharpDXException ex)
         {
             if (ex.ResultCode == ResultCode.NotAcquired)
-                if (IsPlugged) Plug();
-                else if (ex.ResultCode == ResultCode.InputLost)
-                    AttachDetails(Details);
+            {
+                if (IsPlugged)
+                    Plug();
+            }
+            else if (ex.ResultCode == ResultCode.InputLost)
+                AttachDetails(Details);
         }
 
         base.UpdateInputs(ticks, delta);

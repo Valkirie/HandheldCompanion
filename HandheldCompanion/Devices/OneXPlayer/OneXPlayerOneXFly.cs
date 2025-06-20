@@ -19,6 +19,7 @@ public class OneXPlayerOneXFly : IDevice
         // device specific settings
         ProductIllustration = "device_onexplayer_onexfly";
         ProductModel = "ONEXPLAYEROneXFly";
+        UseOpenLib = true;
 
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
@@ -119,7 +120,7 @@ public class OneXPlayerOneXFly : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 

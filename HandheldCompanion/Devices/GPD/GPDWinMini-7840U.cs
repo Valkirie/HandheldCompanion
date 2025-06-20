@@ -14,6 +14,7 @@ public class GPDWinMini_7840U : IDevice
         cTDP = new double[] { 5, 18 };
         GfxClock = new double[] { 200, 2700 };
         CpuClock = 5100;
+        UseOpenLib = true;
 
         // device specific settings
         ProductIllustration = "device_gpd_winmini";

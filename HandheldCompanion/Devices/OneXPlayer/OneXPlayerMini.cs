@@ -13,6 +13,7 @@ public class OneXPlayerMini : IDevice
         // device specific settings
         ProductIllustration = "device_onexplayer_mini";
         ProductModel = "ONEXPLAYERMini";
+        UseOpenLib = true;
 
         GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
@@ -78,7 +79,7 @@ public class OneXPlayerMini : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 

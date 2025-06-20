@@ -196,17 +196,22 @@ public class ROGAlly : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
+
+        return true;
+    }
+
+    public override void OpenEvents()
+    {
+        base.OpenEvents();
 
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
         Device_Inserted();
-
-        return true;
     }
 
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
