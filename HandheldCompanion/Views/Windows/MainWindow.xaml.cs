@@ -564,7 +564,11 @@ public partial class MainWindow : GamepadWindow
                             await Task.Delay(250).ConfigureAwait(false);
 
                         // open current device (threaded to avoid device to hang)
-                        CurrentDevice.Open();
+                        if (CurrentDevice.Open())
+                        {
+                            // manage events
+                            CurrentDevice.OpenEvents();
+                        }
                     }).Start();
                 }
                 break;

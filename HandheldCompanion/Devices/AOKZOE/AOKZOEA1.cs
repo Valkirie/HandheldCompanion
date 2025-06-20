@@ -32,6 +32,7 @@ public class AOKZOEA1 : IDevice
         // device specific settings
         ProductIllustration = "device_aokzoe_a1";
         ProductModel = "AOKZOEA1";
+        UseOpenLib = true;
 
         // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u 
         nTDP = new double[] { 15, 15, 20 };
@@ -121,7 +122,7 @@ public class AOKZOEA1 : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 

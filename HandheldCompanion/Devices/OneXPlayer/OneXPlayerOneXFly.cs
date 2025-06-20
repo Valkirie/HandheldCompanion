@@ -119,7 +119,7 @@ public class OneXPlayerOneXFly : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 

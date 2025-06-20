@@ -13,6 +13,7 @@ public class GPDWin4 : IDevice
     {
         // device specific settings
         ProductIllustration = "device_gpd4";
+        UseOpenLib = true;
 
         // https://www.amd.com/fr/products/apu/amd-ryzen-7-6800u
         nTDP = new double[] { 15, 15, 28 };
@@ -106,7 +107,7 @@ public class GPDWin4 : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 

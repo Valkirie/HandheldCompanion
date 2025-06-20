@@ -160,8 +160,8 @@ public class ClawA1M : IDevice
 
     protected bool isNew_EC => WmiMajorVersion > 1;
 
-    private bool _IsOpen = false;
-    public override bool IsOpen => _IsOpen;
+    private bool ClawOpen = false;
+    public override bool IsOpen => DeviceOpen && ClawOpen;
 
     private static readonly DeviceVersion[] deviceVersions =
     {
@@ -283,7 +283,7 @@ public class ClawA1M : IDevice
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 
@@ -331,7 +331,7 @@ public class ClawA1M : IDevice
         }
 
         // set flag
-        _IsOpen = true;
+        ClawOpen = true;
 
         // prepare WMI
         GetWMI();
@@ -342,6 +342,15 @@ public class ClawA1M : IDevice
 
         // start WMI event monitor
         StartWatching();
+
+        Device_Inserted();
+
+        return true;
+    }
+
+    public override void OpenEvents()
+    {
+        base.OpenEvents();
 
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
@@ -358,10 +367,6 @@ public class ClawA1M : IDevice
                 QueryPowerProfile();
                 break;
         }
-
-        Device_Inserted();
-
-        return true;
     }
 
     private void QueryPowerProfile()
@@ -495,7 +500,7 @@ public class ClawA1M : IDevice
         hidDevices.Clear();
 
         // set flag
-        _IsOpen = false;
+        ClawOpen = false;
 
         // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;

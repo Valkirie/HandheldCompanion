@@ -55,7 +55,7 @@ public class OneXPlayerMiniPro : OneXPlayerMini
 
     public override bool Open()
     {
-        var success = base.Open();
+        bool success = base.Open();
         if (!success)
             return false;
 

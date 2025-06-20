@@ -12,6 +12,7 @@ namespace HandheldCompanion.Devices
             // device specific settings
             this.ProductIllustration = "device_onexplayer_2";
             this.ProductModel = "ONEXPLAYER 2 6800U";
+            this.UseOpenLib = true;
 
             // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u
             this.nTDP = new double[] { 15, 15, 20 };
@@ -70,7 +71,7 @@ namespace HandheldCompanion.Devices
 
         public override bool Open()
         {
-            var success = base.Open();
+            bool success = base.Open();
             if (!success)
                 return false;
 

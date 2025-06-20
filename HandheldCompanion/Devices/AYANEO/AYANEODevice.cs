@@ -14,6 +14,8 @@ namespace HandheldCompanion.Devices.AYANEO
 
         public AYANEODevice()
         {
+            // device specific settings
+            UseOpenLib = true;
         }
 
         public override string GetGlyph(ButtonFlags button)
