@@ -47,6 +47,8 @@ namespace HandheldCompanion.Managers
         public bool IsBusy => Status.HasFlag(ManagerStatus.Busy);
         public bool IsReady => Status.HasFlag(ManagerStatus.Initialized);
 
+        public bool SuspendWithOS = false;
+
         public virtual void PrepareStart()
         {
             // update status

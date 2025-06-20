@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Shared;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 
 namespace HandheldCompanion.Managers
@@ -48,21 +49,21 @@ namespace HandheldCompanion.Managers
             hotkeysManager = new();
             profileManager = new();
             powerProfileManager = new();
-            processManager = new();
-            gpuManager = new();
+            processManager = new() { SuspendWithOS = true };
+            gpuManager = new() { SuspendWithOS = true };
             notificationManager = new();
             libraryManager = new();
         }
 
         public static void Resume()
         {
-            foreach (IManager manager in Managers)
+            foreach (IManager manager in Managers.Where(m => m.SuspendWithOS))
                 manager.Resume();
         }
 
         public static void Suspend()
         {
-            foreach (IManager manager in Managers)
+            foreach (IManager manager in Managers.Where(m => m.SuspendWithOS))
                 manager.Suspend();
         }
     }
