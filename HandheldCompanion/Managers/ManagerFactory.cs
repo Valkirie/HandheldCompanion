@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Shared;
-using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -57,13 +56,13 @@ namespace HandheldCompanion.Managers
 
         public static void Resume()
         {
-            foreach (IManager manager in ManagerFactory.Managers)
+            foreach (IManager manager in Managers)
                 manager.Resume();
         }
 
         public static void Suspend()
         {
-            foreach (IManager manager in ManagerFactory.Managers)
+            foreach (IManager manager in Managers)
                 manager.Suspend();
         }
     }
