@@ -539,9 +539,10 @@ public partial class MainWindow : GamepadWindow
                         InputsManager.Start();
                         TimerManager.Start();
                         SensorsManager.Resume(true);
-                        ManagerFactory.gpuManager.Resume();
-                        ManagerFactory.processManager.Resume();
                         PerformanceManager.Resume(true);
+
+                        foreach (IManager manager in ManagerFactory.Managers)
+                            manager.Resume();
 
                         // resume platform(s)
                         PlatformManager.LibreHardwareMonitor.Start();
