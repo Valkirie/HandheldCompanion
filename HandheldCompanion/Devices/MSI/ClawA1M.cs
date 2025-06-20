@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Extensions;
+﻿using HandheldCompanion.Devices.MSI;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -152,9 +153,6 @@ public class ClawA1M : IDevice
     protected const int PID_DINPUT = 0x1902;
     protected const int PID_TESTING = 0x1903;
 
-    protected byte[] CLAW_SET_M1 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x00, 0x7A, 0x05, 0x01, 0x00, 0x00, 0x11, 0x00];
-    protected byte[] CLAW_SET_M2 = [0x0F, 0x00, 0x00, 0x3C, 0x21, 0x01, 0x01, 0x1F, 0x05, 0x01, 0x00, 0x00, 0x12, 0x00];
-
     protected string MsIDCVarData = "DD96BAAF-145E-4F56-B1CF-193256298E99";
 
     protected int WmiMajorVersion;
@@ -164,6 +162,16 @@ public class ClawA1M : IDevice
 
     private bool _IsOpen = false;
     public override bool IsOpen => _IsOpen;
+
+    private static readonly DeviceVersion[] deviceVersions =
+    {
+        new DeviceVersion() { Firmware = 0x163, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
+        new DeviceVersion() { Firmware = 0x166, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+    };
+
+    protected int Firmware;
+    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault(version => version.IsSupported(Firmware));
+    public override bool IsSupported => SupportedDevice is not null && SupportedDevice?.Firmware != 0;
 
     public ClawA1M()
     {
@@ -305,9 +313,9 @@ public class ClawA1M : IDevice
         // make sure M1/M2 are recognized as buttons
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Write(CLAW_SET_M1, 0, 64);
+            device.Write(GetM12(true), 0, 64);
             Thread.Sleep(300);
-            device.Write(CLAW_SET_M2, 0, 64);
+            device.Write(GetM12(false), 0, 64);
             Thread.Sleep(300);
             SyncToROM();
             Thread.Sleep(300);
@@ -655,6 +663,9 @@ public class ClawA1M : IDevice
 
             hidDevices[INPUT_HID_ID] = device;
 
+            // update firmware
+            Firmware = device.Attributes.Version;
+
             return true;
         }
 
@@ -666,7 +677,7 @@ public class ClawA1M : IDevice
         Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(SetRgbCmd(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B), 0, 64);
+            return device.Write(GetRGB(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B), 0, 64);
 
         return false;
     }
@@ -676,13 +687,16 @@ public class ClawA1M : IDevice
         int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(SetRgbCmd(LEDBrightness, MainColor.R, MainColor.G, MainColor.B), 0, 64);
+            return device.Write(GetRGB(LEDBrightness, MainColor.R, MainColor.G, MainColor.B), 0, 64);
 
         return false;
     }
 
-    private byte[] SetRgbCmd(double brightness, byte red, byte green, byte blue)
+    private byte[] GetRGB(double brightness, byte red, byte green, byte blue)
     {
+        byte add1 = SupportedDevice.HasValue ? SupportedDevice.Value.RGB[0] : (byte)0x01;
+        byte add2 = SupportedDevice.HasValue ? SupportedDevice.Value.RGB[0] : (byte)0xFA;
+
         List<byte> data = new List<byte>
         {
             // Preamble
@@ -692,7 +706,7 @@ public class ClawA1M : IDevice
             0x21, 0x01,
 
             // Start at
-            0x01, 0xFA,
+            add1, add2,
 
             // Write 31 bytes
             0x20,
@@ -711,6 +725,32 @@ public class ClawA1M : IDevice
         }
 
         return data.ToArray();
+    }
+
+    private byte[] GetM12(bool useM1)
+    {
+        // grab the right array (or null if no device)
+        byte[]? data = useM1
+            ? SupportedDevice?.M1
+            : SupportedDevice?.M2;
+
+        // choose your two fallback bytes
+        byte defaultAdd1 = useM1 ? (byte)0x00 : (byte)0x01;
+        byte defaultAdd2 = useM1 ? (byte)0x7A : (byte)0x1F;
+
+        // pick actual values
+        byte add1 = data != null ? data[0] : defaultAdd1;
+        byte add2 = data != null ? data[0] : defaultAdd2;
+
+        return new byte[]
+        {
+        0x0F, 0x00, 0x00, 0x3C,
+        0x21, 0x01,
+        add1, add2,
+        0x05, 0x01,
+        0x00, 0x00,
+        0x11, 0x00
+        };
     }
 
     private void Device_Removed()
