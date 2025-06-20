@@ -124,7 +124,7 @@ Name: "{userdesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Task
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -WindowStyle Hidden -File ""{tmp}\Certificate.ps1"""; Description: "Deploying signature"
+Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -WindowStyle Hidden -File ""{tmp}\Certificate.ps1"""; Description: "Deploying signature"; Flags: runhidden
 Filename: "{app}\HandheldCompanion.exe"; Flags: postinstall nowait shellexec skipifsilent; Description: "Starting Handheld Companion"
   
 [InstallDelete]

@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Shared;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -52,6 +53,18 @@ namespace HandheldCompanion.Managers
             gpuManager = new();
             notificationManager = new();
             libraryManager = new();
+        }
+
+        public static void Resume()
+        {
+            foreach (IManager manager in ManagerFactory.Managers)
+                manager.Resume();
+        }
+
+        public static void Suspend()
+        {
+            foreach (IManager manager in ManagerFactory.Managers)
+                manager.Suspend();
         }
     }
 }

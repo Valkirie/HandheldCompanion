@@ -541,8 +541,7 @@ public partial class MainWindow : GamepadWindow
                         SensorsManager.Resume(true);
                         PerformanceManager.Resume(true);
 
-                        foreach (IManager manager in ManagerFactory.Managers)
-                            manager.Resume();
+                        ManagerFactory.Resume();
 
                         // resume platform(s)
                         PlatformManager.LibreHardwareMonitor.Start();
@@ -589,8 +588,8 @@ public partial class MainWindow : GamepadWindow
                         overlayquickTools.SetVisibility(Visibility.Collapsed);
 
                         // suspend manager(s)
-                        ManagerFactory.gpuManager.Stop();
-                        ManagerFactory.processManager.Suspend();
+                        ManagerFactory.Suspend();
+
                         VirtualManager.Suspend(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();
