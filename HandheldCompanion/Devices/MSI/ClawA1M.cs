@@ -165,8 +165,13 @@ public class ClawA1M : IDevice
 
     private static readonly DeviceVersion[] deviceVersions =
     {
+        // Claw 1
         new DeviceVersion() { Firmware = 0x163, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
         new DeviceVersion() { Firmware = 0x166, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+
+        // Claw 8
+        new DeviceVersion() { Firmware = 0x211, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
+        new DeviceVersion() { Firmware = 0x217, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
     };
 
     protected int Firmware;
@@ -281,6 +286,8 @@ public class ClawA1M : IDevice
         var success = base.Open();
         if (!success)
             return false;
+
+        LogManager.LogInformation("Device Firmware: {0}", Firmware.ToString("X4"));
 
         SetShiftMode(ShiftModeCalcType.Deactive);
 
