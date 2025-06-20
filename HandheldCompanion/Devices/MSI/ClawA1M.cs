@@ -144,7 +144,7 @@ public class ClawA1M : IDevice
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
-    protected GamepadMode gamepadMode = GamepadMode.Offline;
+    protected GamepadMode gamepadMode = GamepadMode.MSI;
 
     protected string Scope { get; set; } = "root\\WMI";
     protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
@@ -326,7 +326,7 @@ public class ClawA1M : IDevice
             Thread.Sleep(300);
             SyncToROM();
             Thread.Sleep(300);
-            SwitchMode(GamepadMode.MSI);
+            SwitchMode(gamepadMode);
             Thread.Sleep(2000);
         }
 
@@ -342,8 +342,6 @@ public class ClawA1M : IDevice
 
         // start WMI event monitor
         StartWatching();
-
-        Device_Inserted();
 
         return true;
     }
@@ -367,6 +365,8 @@ public class ClawA1M : IDevice
                 QueryPowerProfile();
                 break;
         }
+
+        Device_Inserted();
     }
 
     private void QueryPowerProfile()

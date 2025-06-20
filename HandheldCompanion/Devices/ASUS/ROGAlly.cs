@@ -200,8 +200,6 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        Device_Inserted();
-
         return true;
     }
 
@@ -212,6 +210,8 @@ public class ROGAlly : IDevice
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+
+        Device_Inserted();
     }
 
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
