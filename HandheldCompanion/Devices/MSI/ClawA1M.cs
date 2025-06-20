@@ -694,8 +694,12 @@ public class ClawA1M : IDevice
 
     private byte[] GetRGB(double brightness, byte red, byte green, byte blue)
     {
-        byte add1 = SupportedDevice.HasValue ? SupportedDevice.Value.RGB[0] : (byte)0x01;
-        byte add2 = SupportedDevice.HasValue ? SupportedDevice.Value.RGB[0] : (byte)0xFA;
+        // grab the right array (or null if no device)
+        byte[]? RGBdata = SupportedDevice?.RGB;
+
+        // pick actual values
+        byte add1 = RGBdata != null ? RGBdata[0] : (byte)0x01;
+        byte add2 = RGBdata != null ? RGBdata[1] : (byte)0xFA;
 
         List<byte> data = new List<byte>
         {
@@ -740,7 +744,7 @@ public class ClawA1M : IDevice
 
         // pick actual values
         byte add1 = data != null ? data[0] : defaultAdd1;
-        byte add2 = data != null ? data[0] : defaultAdd2;
+        byte add2 = data != null ? data[1] : defaultAdd2;
 
         return new byte[]
         {
