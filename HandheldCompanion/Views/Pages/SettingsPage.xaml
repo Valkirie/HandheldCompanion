@@ -84,6 +84,7 @@
             <!--  Changelog  -->
             <TextBox
                 Name="CurrentChangelog"
+                MaxHeight="300"
                 IsReadOnly="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 Visibility="Collapsed" />
