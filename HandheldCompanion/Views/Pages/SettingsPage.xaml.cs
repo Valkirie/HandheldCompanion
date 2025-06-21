@@ -367,7 +367,7 @@ public partial class SettingsPage : Page
     {
         new Thread(() =>
         {
-            UpdateManager.StartProcess();
+            UpdateManager.StartProcess(false);
         }).Start();
     }
 

@@ -73,7 +73,7 @@ namespace HandheldCompanion.Managers
 
         private static void AutoTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            _ = StartProcess();
+            _ = StartProcess(true);
         }
 
         public static void Start()
@@ -164,20 +164,28 @@ namespace HandheldCompanion.Managers
             ManagerFactory.settingsManager.SetProperty("UpdateLastChecked", lastCheck);
         }
 
-        public static async Task StartProcess()
+        public static async Task StartProcess(bool background)
         {
-            updateStatus = UpdateStatus.Checking;
-            Updated?.Invoke(updateStatus, null, null);
+            if (!background)
+            {
+                updateStatus = UpdateStatus.Checking;
+                Updated?.Invoke(updateStatus, null, null);
+            }
 
             try
             {
                 var resp = await httpClient.GetAsync($"{updateUrl}/releases/latest");
                 resp.EnsureSuccessStatusCode();
                 var contents = await resp.Content.ReadAsStringAsync();
+
+                // parse result
                 ParseLatest(contents);
             }
             catch (Exception)
             {
+                if (background)
+                    return;
+
                 // UI thread
                 UIHelper.TryInvoke(() =>
                 {
