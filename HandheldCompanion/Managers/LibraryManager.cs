@@ -141,7 +141,6 @@ namespace HandheldCompanion.Managers
                                     {
                                         Description = game.Summary,
                                         Storyline = game.Storyline,
-                                        Category = game.Category.Value,
                                         Cover = game.Cover.Value,
                                     };
 

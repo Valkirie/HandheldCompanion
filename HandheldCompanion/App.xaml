@@ -58,7 +58,6 @@
                 <ui:XamlControlsResources />
 
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/NavigationView.xaml" />
-                <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/Slider.xaml" />
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/ToggleSwitch.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/ColorPicker;component/Styles/DefaultColorPickerStyle.xaml" />
 

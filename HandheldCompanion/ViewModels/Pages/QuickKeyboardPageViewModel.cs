@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Views.QuickPages;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Views.QuickPages;
 using System;
 using System.Windows.Input;
 
@@ -28,6 +29,9 @@ namespace HandheldCompanion.ViewModels
                 SetProperty(ref shiftToggleLocked, value, null, nameof(ShiftToggleLocked));
             }
         }
+
+        public IDevice CurrentDevice { get; } = IDevice.GetCurrent();
+        public bool IsFlipDS => CurrentDevice is AYANEOFlipDS;
 
         public ICommand ShiftToggleClicked { get; private set; }
         private DateTime lastShiftToggleClick = DateTime.MinValue;

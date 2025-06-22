@@ -20,7 +20,7 @@
         <ikw:SimpleStackPanel Spacing="12">
 
             <!--  World space options  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CameraOptions}" />
 
                 <!--  Sensivity X  -->
@@ -55,9 +55,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -74,7 +74,6 @@
                                 Maximum="3.0"
                                 Minimum="0.1"
                                 SmallChange="0.1"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -116,9 +115,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -135,7 +134,6 @@
                                 Maximum="3.0"
                                 Minimum="0.1"
                                 SmallChange="0.1"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -183,9 +181,9 @@
                                 <DockPanel
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                   >
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -202,7 +200,6 @@
                                         LargeChange="0.5"
                                         Maximum="3.0"
                                         Minimum="0.1"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="0.1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -272,7 +269,7 @@
                                                         </Style>
                                                     </ToggleButton.Resources>
 
-                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                                         <ui:ItemsRepeater ItemsSource="{Binding ButtonGlyphs}">
                                                             <ui:ItemsRepeater.Style>
                                                                 <Style TargetType="ui:ItemsRepeater">
@@ -362,7 +359,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Custom response curve  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CustomResponseCurve}" />
 
                 <Border
@@ -375,7 +372,7 @@
                             HorizontalAlignment="Center"
                             Background="{DynamicResource ExpanderHeaderBackground}"
                             Orientation="Horizontal"
-                            ScrollViewer.PanningMode="HorizontalOnly"
+                           
                             Spacing="12">
                             <Label VerticalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
                                 <Label.LayoutTransform>

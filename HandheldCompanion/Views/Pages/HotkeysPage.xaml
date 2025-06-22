@@ -23,12 +23,11 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-
-        <ikw:SimpleStackPanel Name="HotkeysPanel" Spacing="12">
+        <ikw:SimpleStackPanel Name="HotkeysPanel" Spacing="8">
 
             <!--  Settings  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_HotkeysSettings}" />
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Rumble on execution  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.HotkeysPage_RumbleOnExecutionDesc}" Header="{l:Static resx:Resources.HotkeysPage_RumbleOnExecution}">
                     <ui:SettingsCard.HeaderIcon>
@@ -41,7 +40,7 @@
 
             <!--  Hotkeys  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.HotkeysPage_Hotkeys}" />
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <ui:SettingsCard
                     Command="{Binding CreateHotkeyCommand}"
                     Header="{l:Static resx:Resources.HotkeysPage_CreateNew}"
@@ -97,7 +96,7 @@
                                             </Style>
                                         </ToggleButton.Resources>
 
-                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                             <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
                                                 <ItemsControl.Style>
                                                     <Style TargetType="ItemsControl">
@@ -334,7 +333,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <ToggleButton
                                                 Width="247"
-                                                Height="32"
+                                                Height="31"
                                                 Command="{Binding DefineOutputCommand}"
                                                 IsChecked="{Binding IsListeningOutput, Mode=OneWay}">
                                                 <TextBlock

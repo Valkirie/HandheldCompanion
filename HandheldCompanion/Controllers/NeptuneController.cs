@@ -131,20 +131,11 @@ public class NeptuneController : SteamController
         Inputs.ButtonState[ButtonFlags.R5] = input.State.ButtonState[NeptuneControllerButton.BtnR5];
 
         // Left Stick
-        Inputs.ButtonState[ButtonFlags.LeftStickUp] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
+        Inputs.ButtonState[ButtonFlags.LeftStickTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
         Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
 
         Inputs.AxisState[AxisFlags.LeftStickX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
         Inputs.AxisState[AxisFlags.LeftStickY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
-
-        Inputs.ButtonState[ButtonFlags.LeftStickLeft] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftStickRight] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftStickDown] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftStickUp] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone;
 
         // TODO: Implement Inner/Outer Ring button mappings for sticks
         // https://github.com/Havner/HandheldCompanion/commit/e1124ceb6c59051201756d5e95b2eb39a3bb24f6
@@ -159,15 +150,6 @@ public class NeptuneController : SteamController
 
         Inputs.AxisState[AxisFlags.RightStickX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
         Inputs.AxisState[AxisFlags.RightStickY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
-
-        Inputs.ButtonState[ButtonFlags.RightStickLeft] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightStickRight] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightStickDown] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightStickUp] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.RightThumbDeadZone;
 
         // TODO: Implement Inner/Outer Ring button mappings for sticks
         // https://github.com/Havner/HandheldCompanion/commit/e1124ceb6c59051201756d5e95b2eb39a3bb24f6

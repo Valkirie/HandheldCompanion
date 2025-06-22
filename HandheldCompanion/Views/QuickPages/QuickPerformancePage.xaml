@@ -11,7 +11,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickPerformance"
     Title="{Binding PresetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-    Margin="15,0,0,0"
+    Margin="12,0,12,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:PerformancePageViewModel}"
     d:DesignHeight="1500"
@@ -19,280 +19,142 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Margin="0,6,0,6">
-
-        <Button
-            Width="40"
-            Height="32"
-            HorizontalAlignment="Right"
-            Tag="GoBack">
-            <ui:FontIcon FontSize="10" Glyph="&#xe72b;" />
-        </Button>
-
-        <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+    <ikw:SimpleStackPanel Spacing="8">
+        <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
 
             <!--  Maximum CPU Count  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsExpander
+                Description="Controls CPU unparked core count limit"
+                Header="Maximum CPU Count"
+                IsExpanded="{Binding ElementName=CPUCountToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
+                </ui:SettingsExpander.HeaderIcon>
 
-                <ikw:SimpleStackPanel Name="StackProfileCPUCore" Spacing="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="100" />
-                        </Grid.ColumnDefinitions>
+                <ui:ToggleSwitch Name="CPUCountToggle" IsOn="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe964;" />
-
-                            <StackPanel
-                                Margin="12,0,0,0"
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                            <Label
                                 VerticalAlignment="Center"
-                                Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Maximum CPU Count" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Controls CPU unparked core count limit"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                Content="{Binding CPUCoreCount, StringFormat={}{0:N0} cores, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Slider
+                                Margin="8,0,104,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding CPUCoreMaximum}"
+                                Minimum="2"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding CPUCoreCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    <DockPanel
-                        d:Visibility="Visible"
-                        ScrollViewer.PanningMode="HorizontalOnly"
-                        Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBox
-                            Height="32"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            IsReadOnly="True"
-                            Text="{Binding CPUCoreCount, StringFormat={}{0:N0} Cores, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                        <Slider
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            Maximum="{Binding CPUCoreMaximum}"
-                            Minimum="2"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            Value="{Binding CPUCoreCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </DockPanel>
-                </ikw:SimpleStackPanel>
-            </Border>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
 
             <!--  Thermal Power (TDP) Limit  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsExpander
+                Description="{l:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
+                Header="{l:Static resx:Resources.ProfilesPage_TDPOverride}"
+                IsEnabled="{Binding SupportsTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                IsExpanded="{Binding ElementName=TDPOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xeb3c;" />
+                </ui:SettingsExpander.HeaderIcon>
 
-                <ikw:SimpleStackPanel IsEnabled="{Binding SupportsTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="100" />
-                        </Grid.ColumnDefinitions>
+                <ui:ToggleSwitch Name="TDPOverrideToggle" IsOn="{Binding TDPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xeb3c;" />
-
-                            <StackPanel
-                                Margin="12,0,0,0"
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                            <Label
                                 VerticalAlignment="Center"
-                                Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_TDPOverride}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                Content="{Binding TDPOverrideValue, StringFormat={}{0:N0} W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Slider
+                                Margin="8,0,104,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="5"
+                                Maximum="{Binding ConfigurableTDPOverrideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Minimum="{Binding ConfigurableTDPOverrideDown, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SmallChange="1"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TDPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding TDPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    <DockPanel
-                        d:Visibility="Visible"
-                        ScrollViewer.PanningMode="HorizontalOnly"
-                        Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBox
-                            Height="32"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            IsReadOnly="True"
-                            Text="{Binding TDPOverrideValue, StringFormat={}{0:N0} W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                        <Slider
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="5"
-                            Maximum="{Binding ConfigurableTDPOverrideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Minimum="{Binding ConfigurableTDPOverrideDown, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SmallChange="1"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            Value="{Binding TDPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </DockPanel>
-                </ikw:SimpleStackPanel>
-            </Border>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
 
             <!--  Auto TDP  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsExpander
+                Description="{l:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
+                Header="{l:Static resx:Resources.ProfilesPage_AutoTDP}"
+                IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                IsExpanded="{Binding ElementName=AutoTDPOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xea86;" />
+                </ui:SettingsExpander.HeaderIcon>
 
-                <ikw:SimpleStackPanel IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="100" />
-                        </Grid.ColumnDefinitions>
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xea86;" />
+                <ui:ToggleSwitch Name="AutoTDPOverrideToggle" IsOn="{Binding AutoTDPEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <StackPanel
-                                Margin="12,0,0,0"
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                            <Label
                                 VerticalAlignment="Center"
-                                Orientation="Vertical">
-                                <TextBlock Text="{l:Static resx:Resources.ProfilesPage_AutoTDP}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                Content="{Binding AutoTDPRequestedFPS, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Slider
+                                Margin="8,0,104,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="{Binding AutoTDPMaximum, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Minimum="20"
+                                SmallChange="1"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding AutoTDPRequestedFPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding AutoTDPEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBox
-                            Height="32"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            IsReadOnly="True"
-                            Text="{Binding AutoTDPRequestedFPS, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                        <Slider
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="10"
-                            Maximum="{Binding AutoTDPMaximum, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Minimum="20"
-                            SmallChange="1"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            Value="{Binding AutoTDPRequestedFPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </DockPanel>
-                </ikw:SimpleStackPanel>
-            </Border>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
 
             <!--  Processor energy performance preference policy  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
+            <ui:SettingsExpander
+                Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
+                Header="{l:Static resx:Resources.ProfilesPage_EPP}"
+                IsEnabled="False"
+                IsExpanded="{Binding ElementName=EPPOverrideToggle, Path=IsOn, Mode=TwoWay}"
                 Visibility="Collapsed">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe9e9;" />
+                </ui:SettingsExpander.HeaderIcon>
 
-                <ikw:SimpleStackPanel Spacing="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="100" />
-                        </Grid.ColumnDefinitions>
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe9e9;" />
+                <ui:ToggleSwitch Name="EPPOverrideToggle" IsOn="{Binding EPPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <StackPanel
-                                Margin="12,0,0,0"
-                                VerticalAlignment="Center"
-                                Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_EPP}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding EPPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ikw:SimpleStackPanel
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Center"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Slider
-                                Margin="6,0,0,0"
+                                Margin="0,0,104,0"
+                                HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 AutoToolTipPrecision="0"
                                 IsMoveToPointEnabled="True"
@@ -301,350 +163,164 @@
                                 Maximum="100"
                                 Minimum="0"
                                 SmallChange="1"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="10"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding EPPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <Grid Name="EPPGrid">
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
+                            <Grid Margin="0,0,104,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="8*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label
+                                    Grid.Column="0"
                                     HorizontalAlignment="Left"
-                                    Text="{l:Static resx:Resources.ProfilesPage_CPU}" />
-                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Content="{l:Static resx:Resources.ProfilesPage_CPU}"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                                <Label
                                     Grid.Column="2"
-                                    Margin="0,0,12,0"
                                     HorizontalAlignment="Right"
-                                    Text="{l:Static resx:Resources.ProfilesPage_GPU}" />
+                                    VerticalAlignment="Center"
+                                    Content="{l:Static resx:Resources.ProfilesPage_GPU}"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                             </Grid>
-                        </ikw:SimpleStackPanel>
-                    </DockPanel>
-                </ikw:SimpleStackPanel>
-            </Border>
+                        </StackPanel>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
 
             <!--  Manual CPU Clock Control  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsExpander
+                Description="{l:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
+                Header="{l:Static resx:Resources.QuickPerformancePage_CPUControl}"
+                IsExpanded="{Binding ElementName=CPUOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xecc6;" />
+                </ui:SettingsExpander.HeaderIcon>
 
-                <ikw:SimpleStackPanel Spacing="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="100" />
-                        </Grid.ColumnDefinitions>
+                <ui:ToggleSwitch Name="CPUOverrideToggle" IsOn="{Binding CPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xecc6;" />
-
-                            <StackPanel
-                                Margin="12,0,0,0"
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                            <Label
                                 VerticalAlignment="Center"
-                                Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_CPUControl}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                Content="{Binding CPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Slider
+                                Margin="8,0,104,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="500"
+                                Maximum="{Binding CPUFreqMaximum}"
+                                Minimum="{Binding CPUFreqMinimum}"
+                                SmallChange="100"
+                                TickFrequency="100"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding CPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding CPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBox
-                            Height="32"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            IsReadOnly="True"
-                            Text="{Binding CPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                        <Slider
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="500"
-                            Maximum="{Binding CPUFreqMaximum}"
-                            Minimum="{Binding CPUFreqMinimum}"
-                            SmallChange="100"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="100"
-                            TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            Value="{Binding CPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </DockPanel>
-                </ikw:SimpleStackPanel>
-            </Border>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
 
             <!--  Manual GPU Clock Control  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsExpander
+                Description="{l:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                Header="{l:Static resx:Resources.QuickPerformancePage_GPUControl}"
+                IsExpanded="{Binding ElementName=GPUOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xecc6;" />
+                </ui:SettingsExpander.HeaderIcon>
 
-                <ikw:SimpleStackPanel IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="100" />
-                        </Grid.ColumnDefinitions>
+                <ui:ToggleSwitch Name="GPUOverrideToggle" IsOn="{Binding GPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xecc6;" />
-
-                            <StackPanel
-                                Margin="12,0,0,0"
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                            <Label
                                 VerticalAlignment="Center"
-                                Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_GPUControl}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                Content="{Binding GPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Slider
+                                Margin="8,0,104,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="500"
+                                Maximum="{Binding GPUFreqMaximum}"
+                                Minimum="{Binding GPUFreqMinimum}"
+                                SmallChange="100"
+                                TickFrequency="100"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding GPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsOn="{Binding GPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                    </Grid>
-
-                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBox
-                            Height="32"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            IsReadOnly="True"
-                            Text="{Binding GPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                        <Slider
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="500"
-                            Maximum="{Binding GPUFreqMaximum}"
-                            Minimum="{Binding GPUFreqMinimum}"
-                            SmallChange="100"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="100"
-                            TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            Value="{Binding GPUOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </DockPanel>
-                </ikw:SimpleStackPanel>
-            </Border>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
 
             <!--  CPU Boost  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*" MinWidth="200" />
-                        <ColumnDefinition Width="4*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
+            <ui:SettingsCard Description="{l:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}" Header="{l:Static resx:Resources.QuickPerformancePage_CPUBoostMode}">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xec4a;" />
+                </ui:SettingsCard.HeaderIcon>
 
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xec4a;" />
-
-                        <StackPanel
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Orientation="Vertical">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_CPUBoostMode}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{l:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
-                    </DockPanel>
-
-                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                        <ComboBox
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding CPUBoostLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Disabled" />
-                            <ComboBoxItem Content="Enabled" />
-                            <ComboBoxItem Content="Agressive" />
-                            <ComboBoxItem Content="Efficient enabled" />
-                            <ComboBoxItem Content="Efficient aggressive" />
-                        </ComboBox>
-                    </DockPanel>
-                </Grid>
-            </Border>
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    SelectedIndex="{Binding CPUBoostLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBoxItem Content="Disabled" />
+                    <ComboBoxItem Content="Enabled" />
+                    <ComboBoxItem Content="Aggressive" />
+                    <ComboBoxItem Content="Efficient enabled" />
+                    <ComboBoxItem Content="Efficient aggressive" />
+                </ComboBox>
+            </ui:SettingsCard>
 
             <!--  Power mode  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsCard Description="{l:Static resx:Resources.QuickPerformancePage_PowerModeDesc}" Header="{l:Static resx:Resources.QuickPerformancePage_PowerMode}">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xec0a;" />
+                </ui:SettingsCard.HeaderIcon>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*" MinWidth="200" />
-                        <ColumnDefinition Width="4*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xec0a;" />
-
-                        <StackPanel
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Orientation="Vertical">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.QuickPerformancePage_PowerMode}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{l:Static resx:Resources.QuickPerformancePage_PowerModeDesc}"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
-                    </DockPanel>
-
-                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                        <ComboBox
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding OSPowerMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Name="PowerModeEfficiency" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}" />
-                            <ComboBoxItem Name="PowerModeBalanced" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}" />
-                            <ComboBoxItem Name="PowerModePerformance" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModePerformance}" />
-                        </ComboBox>
-                    </DockPanel>
-                </Grid>
-            </Border>
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    SelectedIndex="{Binding OSPowerMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBoxItem Name="PowerModeEfficiency" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}" />
+                    <ComboBoxItem Name="PowerModeBalanced" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}" />
+                    <ComboBoxItem Name="PowerModePerformance" Content="{l:Static resx:Resources.QuickPerformancePage_PowerModePerformance}" />
+                </ComboBox>
+            </ui:SettingsCard>
 
             <!--  CPU Parking Mode  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SettingsCard Description="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}" Header="{l:Static resx:Resources.PerformancePage_CPUParkingMode}">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
+                </ui:SettingsCard.HeaderIcon>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*" MinWidth="200" />
-                        <ColumnDefinition Width="4*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xe964;" />
-
-                        <StackPanel
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Orientation="Vertical">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="CPU parking mode" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Set current CPU parking mode"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
-                    </DockPanel>
-
-                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                        <ComboBox
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding CPUParkingMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Name="ParkingModeAllCoresAuto" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresAuto}" />
-                            <ComboBoxItem Name="ParkingModeAllCoresPrefPCore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresPrefPCore}" />
-                            <ComboBoxItem Name="ParkingModeAllCoresPrefECore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresPrefECore}" />
-                            <ComboBoxItem Name="ParkingModeOnlyPCore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeOnlyPCore}" />
-                            <ComboBoxItem Name="ParkingModeOnlyECore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeOnlyECore}" />
-                        </ComboBox>
-                    </DockPanel>
-                </Grid>
-            </Border>
-
-            <!--  Fan mode  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*" MinWidth="200" />
-                        <ColumnDefinition Width="4*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xecad;" />
-
-                        <StackPanel
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Orientation="Vertical">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Fan mode" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Change the power profile fan mode"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
-                    </DockPanel>
-
-                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                        <ComboBox
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding FanMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Hardware" />
-                            <ComboBoxItem Content="Software" IsEnabled="{Binding SupportsSoftwareFanMode}" />
-                        </ComboBox>
-                    </DockPanel>
-                </Grid>
-            </Border>
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    SelectedIndex="{Binding CPUParkingMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBoxItem Name="ParkingModeAllCoresAuto" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresAuto}" />
+                    <ComboBoxItem Name="ParkingModeAllCoresPrefPCore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresPrefPCore}" />
+                    <ComboBoxItem Name="ParkingModeAllCoresPrefECore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeAllCoresPrefECore}" />
+                    <ComboBoxItem Name="ParkingModeOnlyPCore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeOnlyPCore}" />
+                    <ComboBoxItem Name="ParkingModeOnlyECore" Content="{l:Static resx:Resources.PerformancePage_ParkingModeOnlyECore}" />
+                </ComboBox>
+            </ui:SettingsCard>
 
             <Border Padding="0,12,0,12">
                 <Grid>

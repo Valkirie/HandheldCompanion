@@ -402,19 +402,22 @@
                         </ikw:SimpleStackPanel>
                     </DockPanel>
 
-                    <DockPanel
+                    <ikw:SimpleStackPanel
                         Grid.Column="1"
+                        Height="31"
                         HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="6"
                         Visibility="{Binding IsVirtual, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
 
                         <!--  Connect/Disconnect  -->
                         <Button
-                            Width="100"
+                            VerticalAlignment="Stretch"
                             Command="{Binding ConnectCommand}"
                             FontSize="14"
                             IsEnabled="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}">
                             <Button.Style>
-                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                                     <Setter Property="Content" Value="{l:Static resx:Resources.Controller_Connect}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -427,12 +430,11 @@
 
                         <!--  Hide/Unhide  -->
                         <Button
-                            Width="100"
-                            Margin="6,0,0,0"
+                            VerticalAlignment="Stretch"
                             Command="{Binding HideCommand}"
                             FontSize="14">
                             <Button.Style>
-                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                                     <Setter Property="Content" Value="{l:Static resx:Resources.Controller_Hide}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsHidden, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -445,14 +447,23 @@
 
                         <!--  Calibrate  -->
                         <Button
-                            Width="100"
-                            Margin="6,0,0,0"
+                            VerticalAlignment="Stretch"
                             Command="{Binding CalibrateCommand}"
                             Content="{l:Static resx:Resources.Controller_Calibrate}"
                             FontSize="14"
-                            Style="{DynamicResource AccentButtonStyle}"
+                            Style="{DynamicResource DefaultButtonStyle}"
                             Visibility="{Binding CanCalibrate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </DockPanel>
+
+                        <!--  Switch layout (WIP)  -->
+                        <Button
+                            VerticalAlignment="Stretch"
+                            Command="{Binding SwitchLayoutCommand}"
+                            Style="{DynamicResource DefaultButtonStyle}"
+                            Visibility="{Binding HasLayout, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <ui:FontIcon FontFamily="PromptFont" Glyph="{Binding LayoutGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Button>
+                    </ikw:SimpleStackPanel>
                 </Grid>
 
                 <TextBlock
@@ -531,7 +542,7 @@
                                 <ComboBoxItem Content="Joystick" IsEnabled="False" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="False" />
+                                <ComboBoxItem Content="Trigger" IsEnabled="True" />
                                 <ComboBoxItem Content="Shift" IsEnabled="True" />
                                 <ComboBoxItem Content="Inherit" IsEnabled="True" />
                             </ComboBox>
@@ -565,10 +576,10 @@
                 </Expander.Header>
 
                 <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
 
                         <!--  Button 2 Button, Long press  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3}">
 
                             <Grid Height="40">
                                 <Grid.ColumnDefinitions>
@@ -582,12 +593,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Press duration (ms)" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -600,8 +608,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="2000"
                                         Minimum="100"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="10"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         Value="{Binding LongPressDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -616,7 +622,7 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Button 2 Keyboard/Mouse, modifiers  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
 
                             <Grid Height="40">
                                 <Grid.ColumnDefinitions>
@@ -653,11 +659,54 @@
                                 BorderThickness="0,1,0,0" />
                         </ikw:SimpleStackPanel>
 
+                        <!--  Button 2 Trigger  -->
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+
+                            <Grid Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Trigger threshold" />
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding TriggerOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}}" />
+
+                                    <Slider
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="255"
+                                        Minimum="10"
+                                        TickFrequency="5"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                        Value="{Binding TriggerOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+                        </ikw:SimpleStackPanel>
+
                         <!--  Button 2 Button/Keyboard/Mouse  -->
-                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|6}">
-                            <ikw:SimpleStackPanel Spacing="6">
+                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                            <ikw:SimpleStackPanel Spacing="3">
                                 <!--  Repeat  -->
-                                <ikw:SimpleStackPanel IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="6">
+                                <ikw:SimpleStackPanel IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="2*" MinWidth="200" />
@@ -677,7 +726,7 @@
                                     </Grid>
 
                                     <!--  Repeat rate (hidden)  -->
-                                    <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                         <!--  Separator  -->
                                         <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
@@ -694,12 +743,9 @@
                                                 Style="{StaticResource BodyTextBlockStyle}"
                                                 Text="Repeat rate" />
 
-                                            <DockPanel
-                                                Grid.Column="1"
-                                                Margin="12,0,0,0"
-                                                ScrollViewer.PanningMode="HorizontalOnly">
+                                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                                 <TextBox
-                                                    Height="32"
+                                                    Height="31"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Center"
                                                     HorizontalContentAlignment="Center"
@@ -713,8 +759,6 @@
                                                     IsSnapToTickEnabled="True"
                                                     Maximum="100"
                                                     Minimum="10"
-                                                    ScrollViewer.PanningMode="HorizontalOnly"
-                                                    Style="{DynamicResource SliderStyle1}"
                                                     TickFrequency="5"
                                                     ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                     Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -829,7 +873,7 @@
                         </Grid>
 
                         <!--  Input Type and Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
                             <!--  Separator  -->
                             <Separator
                                 Margin="-46,0,-16,0"
@@ -1024,11 +1068,11 @@
                 </Grid>
             </Expander.Header>
             <Expander.Content>
-                <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
                     <!--  Shared  -->
                     <Grid>
-                        <ikw:SimpleStackPanel Spacing="6">
-                            <ikw:SimpleStackPanel Spacing="6">
+                        <ikw:SimpleStackPanel Spacing="3">
+                            <ikw:SimpleStackPanel Spacing="3">
 
                                 <!--  Gyro input  -->
                                 <Grid>
@@ -1062,7 +1106,7 @@
                                                 <ikw:SimpleStackPanel
                                                     VerticalAlignment="Center"
                                                     Orientation="Horizontal"
-                                                    Spacing="6">
+                                                    Spacing="3">
                                                     <ui:FontIcon Glyph="{Binding Glyph}" Visibility="{Binding HasGlyph, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                     <TextBlock Text="{Binding Description}" />
                                                 </ikw:SimpleStackPanel>
@@ -1101,7 +1145,7 @@
                                         Margin="12,0,0,0"
                                         HorizontalAlignment="Stretch"
                                         Orientation="Vertical"
-                                        Spacing="6">
+                                        Spacing="3">
                                         <ComboBox
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Left"
@@ -1150,7 +1194,7 @@
                                                                 </Style>
                                                             </ToggleButton.Resources>
 
-                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                                                 <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
                                                                     <ItemsControl.Style>
                                                                         <Style TargetType="ItemsControl">
@@ -1245,8 +1289,8 @@
 
                     <!--  Axis 2 Axis  -->
                     <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-                        <ikw:SimpleStackPanel Spacing="6">
-                            <ikw:SimpleStackPanel Spacing="6">
+                        <ikw:SimpleStackPanel Spacing="3">
+                            <ikw:SimpleStackPanel Spacing="3">
 
                                 <!--  Separator  -->
                                 <Separator
@@ -1270,10 +1314,7 @@
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                         <TextBlock
                                             Width="35"
                                             VerticalAlignment="Center"
@@ -1287,7 +1328,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="2.0"
                                             Minimum="1.0"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="0.1"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1336,7 +1376,7 @@
 
                                 <!--  Inner deadzone  -->
                                 <Grid>
-                                    <ikw:SimpleStackPanel Spacing="6">
+                                    <ikw:SimpleStackPanel Spacing="3">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -1355,8 +1395,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="25"
                                             Minimum="0"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1372,7 +1410,7 @@
 
                                 <!--  Outer deadzone  -->
                                 <Grid>
-                                    <ikw:SimpleStackPanel Spacing="6">
+                                    <ikw:SimpleStackPanel Spacing="3">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -1391,8 +1429,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="25"
                                             Minimum="0"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1408,7 +1444,7 @@
 
                                 <!--  Anti deadzone  -->
                                 <Grid>
-                                    <ikw:SimpleStackPanel Spacing="6">
+                                    <ikw:SimpleStackPanel Spacing="3">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -1427,8 +1463,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="25"
                                             Minimum="0"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1448,11 +1482,11 @@
 
                     <!--  GyroAxis 2 Mouse  -->
                     <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
-                        <ikw:SimpleStackPanel Spacing="6">
-                            <ikw:SimpleStackPanel Spacing="6">
+                        <ikw:SimpleStackPanel Spacing="3">
+                            <ikw:SimpleStackPanel Spacing="3">
                                 <!--  Pointer Speed  -->
                                 <Grid>
-                                    <ikw:SimpleStackPanel Spacing="6">
+                                    <ikw:SimpleStackPanel Spacing="3">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -1471,8 +1505,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="100"
                                             Minimum="5"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1487,7 +1519,7 @@
 
                                 <!--  Acceleration  -->
                                 <Grid>
-                                    <ikw:SimpleStackPanel Spacing="6">
+                                    <ikw:SimpleStackPanel Spacing="3">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -1507,8 +1539,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="2.00"
                                             Minimum="1.00"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="0.05"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1523,7 +1553,7 @@
 
                                 <!--  Deadzone  -->
                                 <Grid>
-                                    <ikw:SimpleStackPanel Spacing="6">
+                                    <ikw:SimpleStackPanel Spacing="3">
                                         <Grid>
                                             <TextBlock
                                                 HorizontalAlignment="Left"
@@ -1542,8 +1572,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="100"
                                             Minimum="0"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1678,10 +1706,10 @@
                 </Expander.Header>
 
                 <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
 
                         <!--  Axis 2 Button|Keyboard|Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                             <!--  Axis Direction  -->
                             <!--  TODO: Translate me  -->
                             <Grid>
@@ -1729,12 +1757,9 @@
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Axis threshold" />
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1761,7 +1786,7 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Axis 2 Axis  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
 
                             <!--  Output shape  -->
                             <!--  TODO: Translate me  -->
@@ -1857,12 +1882,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Inner deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1876,8 +1898,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="25"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1904,12 +1924,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Outer deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1923,8 +1940,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="25"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1951,12 +1966,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Anti deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -1970,8 +1982,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="25"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1981,7 +1991,7 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Axis 2 Mouse Axis  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
 
                             <!--  Sensitivity  -->
                             <Grid Height="40">
@@ -1996,12 +2006,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Sensitivity" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2015,8 +2022,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="5"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -2042,12 +2047,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Acceleration" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2062,8 +2064,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="2.00"
                                         Minimum="1.00"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="0.05"
                                         ToolTip="{Binding Value, StringFormat={}{0:N2} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -2097,7 +2097,7 @@
                             </Grid>
 
                             <!--  Filtering (hidden)  -->
-                            <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2MouseFiltering, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2MouseFiltering, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                 <!--  Separator  -->
                                 <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
@@ -2115,12 +2115,9 @@
                                         Style="{StaticResource BodyTextBlockStyle}"
                                         Text="Filtering cutoff (less is more filter)" />
 
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                         <TextBox
-                                            Height="32"
+                                            Height="31"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Center"
@@ -2135,8 +2132,6 @@
                                             IsSnapToTickEnabled="True"
                                             Maximum="0.1"
                                             Minimum="0.01"
-                                            ScrollViewer.PanningMode="HorizontalOnly"
-                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="0.005"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             Value="{Binding Axis2MouseFilterCutoff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -2164,12 +2159,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2183,8 +2175,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -2193,7 +2183,7 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Input Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
                             <!--  Separator  -->
                             <Separator
                                 Margin="-46,0,-16,0"
@@ -2384,10 +2374,10 @@
                 </Expander.Header>
 
                 <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
+                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
 
                         <!--  Trigger 2 Button|Keyboard|Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
 
                             <!--  Trigger Threshold  -->
                             <!--  TODO: Translate me  -->
@@ -2401,12 +2391,9 @@
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Trigger threshold" />
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2433,7 +2420,7 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Trigger 2 Trigger  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
 
                             <!--  Inner deadzone  -->
                             <Grid Height="40">
@@ -2448,12 +2435,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Inner deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2467,8 +2451,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="25"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -2495,12 +2477,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Outer deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2514,8 +2493,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="25"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -2542,12 +2519,9 @@
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Anti deadzone" />
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -2561,8 +2535,6 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="25"
                                         Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -2572,7 +2544,7 @@
                         </ikw:SimpleStackPanel>
 
                         <!--  Input Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
                             <!--  Separator  -->
                             <Separator
                                 Margin="-46,0,-16,0"

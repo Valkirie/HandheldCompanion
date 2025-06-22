@@ -325,80 +325,31 @@ namespace HandheldCompanion.Managers
             {
                 dialog.UpdateContent($"Calibrating {gamepadMotion.deviceInstanceId} stationary sensor noise and drift correction...");
 
-                // reset motion values
-                gamepadMotion.ResetMotion();
+                gamepadMotion.ResetContinuousCalibration();
+                gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness | CalibrationMode.SensorFusion);
 
                 // wait until device is steady
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-                while (DateTime.Now < timeout && !gamepadMotion.GetAutoCalibrationIsSteady())
-                    await Task.Delay(100); // Captures synchronization context
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(5));
+                float confidence = 0.0f;
 
-                // device is either too shaky or stalled
-                bool IsSteady = gamepadMotion.GetAutoCalibrationIsSteady();
-                if (!IsSteady)
-                {
-                    gamepadMotion.GetCalibratedGyro(out float x, out float y, out float z);
-
-                    // display message
-                    if (x == 0 && y == 0 && z == 0)
-                    {
-                        dialog.UpdateContent($"Calibration failed: device is silent.");
-
-                        // wait a bit
-                        await Task.Delay(2000); // Captures synchronization context
-
-                        break;
-                    }
-                    else
-                        dialog.UpdateContent($"Calibration device is unsteady, calibration may be incorrect.");
-                }
-
-                // start continuous calibration
-                gamepadMotion.StartContinuousCalibration();
-
-                // give gamepad motion 3 seconds to get values
-                timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
                 while (DateTime.Now < timeout)
-                    await Task.Delay(100); // Captures synchronization context
+                {
+                    confidence = gamepadMotion.GetAutoCalibrationConfidence();
+                    if (confidence == 1.0f)
+                        break;
 
-                // halt continuous calibration
-                gamepadMotion.PauseContinuousCalibration();
-
-                // get continuous calibration confidence
-                float confidence = gamepadMotion.GetAutoCalibrationConfidence();
+                    await Task.Delay(10);
+                }
 
                 // get/set calibration offsets
                 gamepadMotion.GetCalibrationOffset(out float xOffset, out float yOffset, out float zOffset);
                 gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
 
-                /*
-                dialog.UpdateTitle("Please take back the controller in hands and get ready to shake it.");
-
-                for (int i = 4; i > 0; i--)
-                {
-                    dialog.UpdateContent($"Threshold calibration will start in {i} seconds.");
-                    await Task.Delay(1000);
-                }
-
-                dialog.UpdateContent("Shake the device in all direction...");
-
-                // reset motion values
-                gamepadMotion.ResetThresholdCalibration();
-                gamepadMotion.StartThresholdCalibration();
-
-                // wait until device is steady
-                timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-                while (DateTime.Now < timeout)
-                    await Task.Delay(100);
-
-                gamepadMotion.PauseThresholdCalibration();
-
-                // get calibration offsets
-                gamepadMotion.SetCalibrationThreshold(gamepadMotion.maxGyro, gamepadMotion.maxAccel);
-                */
-
                 // store calibration offsets
                 IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
+
+                // restore calibration mode
+                gamepadMotion.SetCalibrationMode(CalibrationMode.Manual);
 
                 // display message
                 dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");

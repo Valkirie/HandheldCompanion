@@ -11,7 +11,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Overlay"
     Title="{l:Static resx:Resources.OverlayPage_Overlay}"
-    d:Background="Black"
+    d:Background="White"
     d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
@@ -19,11 +19,11 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
 
             <!--  OSD options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OnScreenDisplayOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_OnScreenDisplayOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <!--  On-screen display update rate  -->
                 <Border
@@ -57,9 +57,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -75,7 +75,6 @@
                                 Maximum="1000"
                                 Minimum="100"
                                 SmallChange="100"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="100"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -132,7 +131,7 @@
                 </Border>
 
                 <!--  Custom Settings  -->
-                <ikw:SimpleStackPanel Name="StackCustomSettings" Spacing="6">
+                <ikw:SimpleStackPanel Name="StackCustomSettings" Spacing="3">
 
                     <Border
                         Padding="15,12,12,12"
@@ -396,8 +395,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Controller options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_ControllerOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_ControllerOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <!--  Controller model  -->
                 <Border
@@ -483,8 +482,8 @@
                             <ikw:SimpleStackPanel
                                 Name="OverlayControllerAlignment"
                                 HorizontalAlignment="Right"
-                                Spacing="6">
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                Spacing="3">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -501,7 +500,7 @@
                                         Click="ControllerAlignment_Click"
                                         Tag="2" />
                                 </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -518,7 +517,7 @@
                                         Click="ControllerAlignment_Click"
                                         Tag="5" />
                                 </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
                                     <Button
                                         Width="50"
                                         Height="50"
@@ -572,9 +571,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -590,7 +589,6 @@
                                 Maximum="800"
                                 Minimum="200"
                                 SmallChange="50"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="50"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -631,9 +629,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -650,7 +648,6 @@
                                 Maximum="1"
                                 Minimum="0.1"
                                 SmallChange="0.1"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -691,7 +688,7 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
@@ -770,9 +767,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -789,7 +786,6 @@
                                 Maximum="90"
                                 Minimum="-90"
                                 SmallChange="5"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="5"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -919,9 +915,9 @@
                                 <DockPanel
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                   >
                                     <TextBox
-                                        Height="32"
+                                        Height="31"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Center"
@@ -937,7 +933,6 @@
                                         Maximum="60"
                                         Minimum="10"
                                         SmallChange="5"
-                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         TickPlacement="BottomRight"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -981,8 +976,8 @@
             </ikw:SimpleStackPanel>
 
             <!--  Trackpads options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
 
                 <!--  Controller Alignment  -->
                 <Border
@@ -1017,7 +1012,7 @@
                             <ikw:SimpleStackPanel
                                 Name="OverlayTrackpadsAlignment"
                                 HorizontalAlignment="Right"
-                                Spacing="6">
+                                Spacing="3">
                                 <Button
                                     Width="50"
                                     Height="50"
@@ -1070,9 +1065,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -1088,7 +1083,6 @@
                                 Maximum="800"
                                 Minimum="100"
                                 SmallChange="50"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="50"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1129,9 +1123,9 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                           >
                             <TextBox
-                                Height="32"
+                                Height="31"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
@@ -1148,7 +1142,6 @@
                                 Maximum="0.25"
                                 Minimum="0.01"
                                 SmallChange="0.01"
-                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.01"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N2, RelativeSource={RelativeSource Self}, Mode=OneWay}"

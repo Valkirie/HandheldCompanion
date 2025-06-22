@@ -18,7 +18,7 @@ namespace HandheldCompanion.ViewModels
 
         protected bool SetProperty<T>(ref T storage, T value, Action onChanged = null, [CallerMemberName] string propertyName = null)
         {
-            // If the value hasn’t changed, do nothing
+            // If the value hasn't changed, do nothing
             if (EqualityComparer<T>.Default.Equals(storage, value))
                 return false;
 

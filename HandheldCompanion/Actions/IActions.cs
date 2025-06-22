@@ -310,12 +310,9 @@ namespace HandheldCompanion.Actions
 
                 case PressType.Double:
                     {
-                        if (value)
-                        {
-                            // increase press count
-                            if ((bool)prevValue != value)
-                                pressCount++;
-                        }
+                        // increase press count
+                        if (prevValue is bool pbValue && pbValue != value && value)
+                            pressCount++;
 
                         switch (pressCount)
                         {
@@ -398,7 +395,7 @@ namespace HandheldCompanion.Actions
 
             if (Toggle)
             {
-                if ((bool)prevValue != value && value)
+                if (prevValue is bool pbValue && pbValue != value && value)
                     IsToggled = !IsToggled;
             }
             else

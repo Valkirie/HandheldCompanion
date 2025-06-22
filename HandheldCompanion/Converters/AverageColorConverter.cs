@@ -9,7 +9,7 @@ namespace HandheldCompanion.Converters
     public class AverageColorConverter : IValueConverter
     {
         // Note: This is a simplified example.
-        // In a real-world scenario, you’d need to handle errors,
+        // In a real-world scenario, you'd need to handle errors,
         // image formats, and potentially optimize for performance.
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

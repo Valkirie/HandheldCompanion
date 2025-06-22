@@ -104,6 +104,13 @@ public class Steam : IPlatform
         if (!File.Exists(SettingsPath))
             return;
 
+        // tear down the old watcher
+        if (SteamActiveUserFileWatcher != null)
+        {
+            SteamActiveUserFileWatcher.Changed -= FileWatcher_Changed;
+            SteamActiveUserFileWatcher.Dispose();
+        }
+
         // update file watcher
         SteamActiveUserFileWatcher = new()
         {
@@ -112,16 +119,23 @@ public class Steam : IPlatform
             EnableRaisingEvents = true,
             IncludeSubdirectories = true,
         };
-
         SteamActiveUserFileWatcher.Changed += FileWatcher_Changed;
+
         ActiveFileWatch_Changed();
     }
 
     private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
     {
-        // Restart the debounce timer whenever a change is detected
-        debounceTimer?.Stop();
-        debounceTimer?.Start();
+        if (debounceTimer is null)
+            return;
+
+        try
+        {
+            // Restart the debounce timer whenever a change is detected
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
+        catch { }
     }
 
     private void DebounceTimer_Elapsed(object? sender, ElapsedEventArgs e)

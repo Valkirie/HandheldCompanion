@@ -122,7 +122,7 @@ public class ProfileManager : IManager
 
     private void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 
@@ -864,7 +864,7 @@ public class ProfileManager : IManager
         pendingCreation.Add(profilePath);
 
         // update profile version to current build
-        profile.Version = new Version(MainWindow.fileVersionInfo.FileVersion);
+        profile.Version = MainWindow.CurrentVersion;
 
         string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
         {

@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Localization;
+using HandheldCompanion.Localization;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;

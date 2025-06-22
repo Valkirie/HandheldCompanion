@@ -72,6 +72,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool HasOverBoost => CurrentDevice is ClawA1M clawA1M && clawA1M.HasOverBoost();
+
         public bool ClawOverBoost
         {
             get
@@ -86,6 +88,40 @@ namespace HandheldCompanion.ViewModels
                         clawA1M.SetOverBoost(value);
 
                     OnPropertyChanged(nameof(ClawOverBoost));
+                }
+            }
+        }
+
+        public double leftTriggerDeadzoneValue = 100;
+        public double LeftTriggerDeadzoneValue
+        {
+            get
+            {
+                return leftTriggerDeadzoneValue;
+            }
+            set
+            {
+                if (value != leftTriggerDeadzoneValue)
+                {
+                    leftTriggerDeadzoneValue = value;
+                    OnPropertyChanged(nameof(LeftTriggerDeadzoneValue));
+                }
+            }
+        }
+
+        public double rightTriggerDeadzoneValue = 100;
+        public double RightTriggerDeadzoneValue
+        {
+            get
+            {
+                return rightTriggerDeadzoneValue;
+            }
+            set
+            {
+                if (value != rightTriggerDeadzoneValue)
+                {
+                    rightTriggerDeadzoneValue = value;
+                    OnPropertyChanged(nameof(RightTriggerDeadzoneValue));
                 }
             }
         }

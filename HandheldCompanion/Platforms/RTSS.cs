@@ -134,7 +134,7 @@ public class RTSS : IPlatform
 
     private void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 
@@ -196,10 +196,9 @@ public class RTSS : IPlatform
 
         switch (filter)
         {
-            case ProcessFilter.HandheldCompanion:
-            case ProcessFilter.Desktop:
-            case ProcessFilter.Ignored:
-            case ProcessFilter.Restricted:
+            case ProcessFilter.Allowed:
+                break;
+            default:
                 return;
         }
 

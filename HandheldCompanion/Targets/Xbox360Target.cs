@@ -12,7 +12,7 @@ namespace HandheldCompanion.Targets
 {
     internal partial class Xbox360Target : ViGEmTarget
     {
-        private IXbox360Controller xboxController;
+        private IXbox360Controller? xboxController;
         public Xbox360Target(ushort vendorId, ushort productId) : base()
         {
             // initialize controller
@@ -62,6 +62,9 @@ namespace HandheldCompanion.Targets
 
             try
             {
+                if (xboxController is null)
+                    return;
+
                 xboxController.SetAxisValue(Xbox360Axis.LeftThumbX, Inputs.AxisState[AxisFlags.LeftStickX]);
                 xboxController.SetAxisValue(Xbox360Axis.LeftThumbY, Inputs.AxisState[AxisFlags.LeftStickY]);
                 xboxController.SetAxisValue(Xbox360Axis.RightThumbX, Inputs.AxisState[AxisFlags.RightStickX]);
@@ -83,7 +86,7 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
-            xboxController?.Disconnect();
+            try { xboxController?.Disconnect(); } catch { }
             xboxController = null;
 
             base.Dispose();

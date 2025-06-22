@@ -64,18 +64,15 @@ public partial class Layout : ICloneable, IDisposable
             { ButtonFlags.LeftPadClickDown, ButtonFlags.DPadDown },
             { ButtonFlags.LeftPadClickLeft, ButtonFlags.DPadLeft },
             { ButtonFlags.LeftPadClickRight, ButtonFlags.DPadRight },
-            { ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadTouch },
-            { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadClick },
-            { ButtonFlags.RightPadTouch, ButtonFlags.RightPadTouch },
-            { ButtonFlags.RightPadClick, ButtonFlags.RightPadClick }
+            { ButtonFlags.RightPadClick, ButtonFlags.RightStickClick },
         };
 
         foreach (KeyValuePair<ButtonFlags, ButtonFlags> mapping in specialButtonMappings)
             ButtonLayout[mapping.Key] = new List<IActions> { new ButtonActions { Button = mapping.Value } };
 
         // Add specific axis mappings
-        AxisLayout[AxisLayoutFlags.LeftPad] = new List<IActions> { new AxisActions { Axis = AxisLayoutFlags.LeftPad } };
-        AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions> { new AxisActions { Axis = AxisLayoutFlags.RightPad } };
+        // AxisLayout[AxisLayoutFlags.LeftPad] = new List<IActions> { new AxisActions { Axis = AxisLayoutFlags.LeftStick } };
+        AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions> { new AxisActions { Axis = AxisLayoutFlags.RightStick } };
     }
 
     public object Clone()

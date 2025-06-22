@@ -18,7 +18,7 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ikw:SimpleStackPanel Spacing="24">
+        <ikw:SimpleStackPanel Spacing="8">
 
             <!--  Update manager  -->
             <Grid>
@@ -30,7 +30,6 @@
 
                 <Grid Grid.Column="0">
                     <ui:FontIcon
-                        HorizontalAlignment="Center"
                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                         FontSize="80"
                         Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"
@@ -53,10 +52,8 @@
 
                 <ikw:SimpleStackPanel
                     Grid.Column="1"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
                     Orientation="Vertical"
-                    Spacing="6">
+                    Spacing="3">
                     <TextBlock
                         Name="LabelUpdate"
                         FontSize="20"
@@ -92,672 +89,222 @@
                 Visibility="Collapsed" />
 
             <!--  Update(s)  -->
-            <ikw:SimpleStackPanel Name="CurrentUpdates" Spacing="6" />
+            <ikw:SimpleStackPanel Name="CurrentUpdates" Spacing="3" />
 
             <!--  General options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_GeneralOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_GeneralOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Auto-start application  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xED35;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AutoStartApp}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_AutoStartAppDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_AutoStart"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_AutoStart_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AutoStartAppDesc}" Header="{l:Static resx:Resources.SettingsPage_AutoStartApp}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_AutoStart" Toggled="Toggle_AutoStart_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Open application in background  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xEE40;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_OpenAppBackground}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_Background"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_Background_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}" Header="{l:Static resx:Resources.SettingsPage_OpenAppBackground}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_Background" Toggled="Toggle_Background_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Close minimizes  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE921;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_CloseMinimizes}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_CloseMinimizesDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_CloseMinimizes"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_CloseMinimizes_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_CloseMinimizesDesc}" Header="{l:Static resx:Resources.SettingsPage_CloseMinimizes}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Toggled="Toggle_CloseMinimizes_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Enable desktop profile on start  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xEA6C;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_EnableDesktopLayoutOnStart}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_EnableDesktopLayoutOnStartDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_DesktopLayoutOnStart"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_DesktopLayoutOnStart_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_EnableDesktopLayoutOnStartDesc}" Header="{l:Static resx:Resources.SettingsPage_EnableDesktopLayoutOnStart}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA6C;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_DesktopLayoutOnStart" Toggled="Toggle_DesktopLayoutOnStart_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Application theme  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE790;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AppTheme}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_AppThemeDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_Theme"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_Theme_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDefault}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeLight}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDark}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AppThemeDesc}" Header="{l:Static resx:Resources.SettingsPage_AppTheme}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_Theme" SelectionChanged="cB_Theme_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDefault}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeLight}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDark}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
                 <!--  Application backdrop  -->
-                <Border
-                    Padding="15,12,12,12"
+                <ui:SettingsCard
                     d:Visibility="Visible"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE790;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Backdrop}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_BackdropDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_Backdrop"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_Backdrop_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                    Description="{l:Static resx:Resources.SettingsPage_BackdropDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_Backdrop}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_Backdrop" SelectionChanged="cB_Backdrop_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
                 <!--  Application language  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xF2B7;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_AppLanguage}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_AppLanguageDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_Language"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_Language_SelectionChanged">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Converter={StaticResource CultureToDisplayNameConverter}}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AppLanguageDesc}" Header="{l:Static resx:Resources.SettingsPage_AppLanguage}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF2B7;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_Language" SelectionChanged="cB_Language_SelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource CultureToDisplayNameConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
 
                 <!--  UI sounds  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xe7f5;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_UISounds}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_UISoundsDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_UISounds"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_UISounds_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_UISoundsDesc}" Header="{l:Static resx:Resources.SettingsPage_UISounds}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe7f5;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_UISounds" Toggled="Toggle_UISounds_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Telemetry  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xEC05;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Telemetry}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_TelemetryDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_Telemetry"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_Telemetry_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_TelemetryDesc}" Header="{l:Static resx:Resources.SettingsPage_Telemetry}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC05;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_Telemetry" Toggled="Toggle_Telemetry_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Process Priority  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE8D0;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Priority}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_PriorityDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_Priority"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_Priority_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_Normal}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_AboveNormal}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_PriorityDesc}" Header="{l:Static resx:Resources.SettingsPage_Priority}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8D0;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_Priority" SelectionChanged="cB_Priority_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_Normal}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_AboveNormal}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
             </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Quicktools position  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}" Header="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8A7;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_QuicktoolsPosition" SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopLeft}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopRight}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationMaximized}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomLeft}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomRight}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE8A7;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_QuicktoolsPosition"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationLeft}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationRight}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationMaximized}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
-
-                <!--  Application backdrop  -->
-                <Border
-                    Padding="15,12,12,12"
+                <!--  Quicktools device path  -->
+                <ui:SettingsCard
                     d:Visibility="Visible"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    Description="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePathDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePath}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_QuickToolsDevicePath" SelectionChanged="cB_QuickToolsDevicePath_SelectionChanged" />
+                </ui:SettingsCard>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE790;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePath}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePathDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_QuickToolsDevicePath"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_QuickToolsDevicePath_SelectionChanged" />
-                    </Grid>
-                </Border>
-
-                <!--  Application backdrop  -->
-                <Border
-                    Padding="15,12,12,12"
+                <!--  Quicktools backdrop  -->
+                <ui:SettingsCard
                     d:Visibility="Visible"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    Description="{l:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
+                    Header="{l:Static resx:Resources.SettingsPage_QuickToolsBackdropHeader}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_QuickToolsBackdrop" SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
+                <!--  Virtual keyboard  -->
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Description="{l:Static resx:Resources.SettingsPage_VirtualKeyboardDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_VirtualKeyboard}"
+                    Visibility="Collapsed">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE765;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="VirtualKeyboardToggle" Toggled="VirtualKeyboardToggle_Toggled" />
+                </ui:SettingsCard>
 
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE790;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_QuickToolsBackdropHeader}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_QuickToolsBackdrop"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
-                        </ComboBox>
-                    </Grid>
-                </Border>
+                <!--  Virtual trackpad  -->
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Description="{l:Static resx:Resources.SettingsPage_VirtualTrackpadDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_VirtualTrackpad}"
+                    Visibility="Collapsed">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xEFA5;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="VirtualTrackpadToggle" Toggled="VirtualTrackpadToggle_Toggled" />
+                </ui:SettingsCard>
 
                 <!--  Quicktools autohide  -->
-                <!--  Disabled until we figure out a way to make it work without having to actually click on the window  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}"
                     Visibility="Collapsed">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED1A;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_QuicktoolsAutoHide" Toggled="Toggle_QuicktoolsAutoHide_Toggled" />
+                </ui:SettingsCard>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xED1A;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_QuicktoolsAutoHide"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_QuicktoolsAutoHide_Toggled" />
-                    </Grid>
-                </Border>
             </ikw:SimpleStackPanel>
 
             <!--  Notification options  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NotificationOptions}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_NotificationOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  Toast notification  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE7E7;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ToastNotification}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_ToastNotificationDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_Notification"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_Notification_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_ToastNotificationDesc}" Header="{l:Static resx:Resources.SettingsPage_ToastNotification}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_Notification" Toggled="Toggle_Notification_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Third-party applications  -->
-            <ikw:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
-
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
+            <ikw:SimpleStackPanel Spacing="3">
                 <!--  RTSS  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="200" />
-                            <ColumnDefinition Width="2*" MinWidth="120" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xEA6C;" />
-
-                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}"
-                                    TextWrapping="Wrap" />
-                            </ikw:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_RTSS"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_RTSS_Toggled" />
-                    </Grid>
-                </Border>
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}" Header="{l:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA6C;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_RTSS" Toggled="Toggle_RTSS_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Experimental options  -->
-            <ikw:SimpleStackPanel Spacing="6" Visibility="Collapsed">
+            <ikw:SimpleStackPanel Spacing="3" Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_Experimental}" />
             </ikw:SimpleStackPanel>
 

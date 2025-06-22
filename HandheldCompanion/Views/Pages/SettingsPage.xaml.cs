@@ -195,9 +195,13 @@ public partial class SettingsPage : Page
                     }
                     break;
                 case "ProcessPriority":
-                    {
-                        cB_Priority.SelectedIndex = Convert.ToInt32(value);
-                    }
+                    cB_Priority.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "QuickKeyboardVisibility":
+                    VirtualKeyboardToggle.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "QuickTrackpadVisibility":
+                    VirtualTrackpadToggle.IsOn = Convert.ToBoolean(value);
                     break;
             }
         });
@@ -547,5 +551,21 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("ProcessPriority", cB_Priority.SelectedIndex);
+    }
+
+    private void VirtualKeyboardToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("QuickKeyboardVisibility", VirtualKeyboardToggle.IsOn);
+    }
+
+    private void VirtualTrackpadToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", VirtualTrackpadToggle.IsOn);
     }
 }

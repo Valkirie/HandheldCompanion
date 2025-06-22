@@ -19,14 +19,13 @@
     mc:Ignorable="d">
 
     <Grid Margin="20">
-        <ikw:SimpleStackPanel Spacing="6">
+        <ikw:SimpleStackPanel Spacing="3">
 
             <ui:InfoBar
                 Name="WarningNoPhysical"
                 Title="{l:Static resx:Resources.AboutPage_UnsupportedDevice}"
                 IsClosable="False"
                 IsOpen="True"
-                Message="{l:Static resx:Resources.AboutPage_UnsupportedDeviceDesc}"
                 Severity="Warning"
                 Visibility="{Binding IsUnsupportedDevice, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
@@ -176,7 +175,7 @@
                                     Margin="0,0,0,5"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Nefarius, CasperH2O, B-Core, Frank东, Toomy, Havner, CoryManson, MSeys, ShadowFlare, trippyone, MiguelLedesmaC, Cheng77777, thororen1234, fighterguard, micdah, Geckon01, Bagboii, MeikoMenmaHonma, cerahmed, indiesaudi, Radther, Staubgeborener, twjmy, m33ts4k0z, howanghk, Creaous, xerootg, quangmach, MrCivsteR, 0SkillAllLuck, DevL0rd, romracer, JT, Moyogii, Sanheiii" />
+                                    Text="Nefarius, CasperH2O, B-Core, Frank东, Toomy, Havner, CoryManson, MSeys, ShadowFlare, trippyone, MiguelLedesmaC, Cheng77777, thororen1234, fighterguard, micdah, Geckon01, Bagboii, MeikoMenmaHonma, cerahmed, indiesaudi, Radther, Staubgeborener, twjmy, m33ts4k0z, howanghk, Creaous, xerootg, quangmach, MrCivsteR, 0SkillAllLuck, DevL0rd, romracer, JT, Moyogii, Sanheiii, Hijae" />
 
                                 <!--  Description  -->
                                 <TextBlock

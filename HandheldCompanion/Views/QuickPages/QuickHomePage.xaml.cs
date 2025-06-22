@@ -105,7 +105,7 @@ public partial class QuickHomePage : Page
         {
             try
             {
-                int value = Convert.ToInt32(volume);
+                double value = Convert.ToDouble(volume);
 
                 // UI thread
                 UIHelper.TryInvoke(() =>
@@ -130,11 +130,18 @@ public partial class QuickHomePage : Page
             return;
 
         // prevent update loop
-        if (brightnessLock.IsEntered())
-            return;
-
-        lock (brightnessLock)
-            ManagerFactory.multimediaManager.SetBrightness(SliderBrightness.Value);
+        if (brightnessLock.TryEnter())
+        {
+            try
+            {
+                ManagerFactory.multimediaManager.SetBrightness(SliderBrightness.Value);
+            }
+            catch { }
+            finally
+            {
+                brightnessLock.Exit();
+            }
+        }
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -143,14 +150,21 @@ public partial class QuickHomePage : Page
             return;
 
         // prevent update loop
-        if (volumeLock.IsEntered())
-            return;
-
-        lock (volumeLock)
-            ManagerFactory.multimediaManager.SetVolume(SliderVolume.Value);
+        if (volumeLock.TryEnter())
+        {
+            try
+            {
+                ManagerFactory.multimediaManager.SetVolume(SliderVolume.Value);
+            }
+            catch { }
+            finally
+            {
+                volumeLock.Exit();
+            }
+        }
     }
 
-    private void UpdateVolumeIcon(float volume)
+    private void UpdateVolumeIcon(double volume)
     {
         string glyph;
 

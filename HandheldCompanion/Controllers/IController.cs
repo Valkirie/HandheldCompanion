@@ -5,7 +5,8 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using Nefarius.Utilities.Bluetooth;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -166,6 +167,16 @@ namespace HandheldCompanion.Controllers
         {
             if (IsBusy)
                 return;
+
+            Inputs.ButtonState[ButtonFlags.LeftStickLeft] = Inputs.AxisState[AxisFlags.LeftStickX] < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickRight] = Inputs.AxisState[AxisFlags.LeftStickX] > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickDown] = Inputs.AxisState[AxisFlags.LeftStickY] < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickUp] = Inputs.AxisState[AxisFlags.LeftStickY] > Gamepad.LeftThumbDeadZone;
+
+            Inputs.ButtonState[ButtonFlags.RightStickLeft] = Inputs.AxisState[AxisFlags.RightStickX] < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickRight] = Inputs.AxisState[AxisFlags.RightStickX] > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickDown] = Inputs.AxisState[AxisFlags.RightStickY] < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickUp] = Inputs.AxisState[AxisFlags.RightStickY] > Gamepad.RightThumbDeadZone;
 
             InputsUpdated?.Invoke(Inputs, gamepadMotions, delta, gamepadIndex);
         }
@@ -462,6 +473,11 @@ namespace HandheldCompanion.Controllers
                 case "BTHENUM":
                 case "BTHLEDEVICE":
                     {
+                        if (Details.Uninstall(false))
+                            Task.Delay(3000).Wait();
+                        success = Devcon.Refresh();
+
+                        /*
                         if (HostRadio.IsEnabled && HostRadio.IsAvailable)
                         {
                             try
@@ -476,6 +492,7 @@ namespace HandheldCompanion.Controllers
                             }
                             catch { }
                         }
+                        */
                     }
                     break;
                 case "USB":

@@ -90,22 +90,12 @@ public class JSController : IController
             Inputs.AxisState[AxisFlags.R2] = (short)InputUtils.MapRange(sTATE.rTrigger, 0.0f, 1.0f, byte.MinValue, byte.MaxValue);
 
             // Left Stick
-            Inputs.ButtonState[ButtonFlags.LeftStickLeft] = sTATE.stickLX < -LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickRight] = sTATE.stickLX > LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickDown] = sTATE.stickLY < -LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickUp] = sTATE.stickLY > LeftThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.LeftStickClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskLClick);
-
             Inputs.AxisState[AxisFlags.LeftStickX] = (short)InputUtils.MapRange(sTATE.stickLX, -1.0f, 1.0f, short.MinValue, short.MaxValue);
             Inputs.AxisState[AxisFlags.LeftStickY] = (short)InputUtils.MapRange(sTATE.stickLY, -1.0f, 1.0f, short.MinValue, short.MaxValue);
 
             // Right Stick
-            Inputs.ButtonState[ButtonFlags.RightStickLeft] = sTATE.stickRX < -LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightStickRight] = sTATE.stickRX > LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightStickDown] = sTATE.stickRY < -LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightStickUp] = sTATE.stickRY > LeftThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.RightStickClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskRClick);
-
             Inputs.AxisState[AxisFlags.RightStickX] = (short)InputUtils.MapRange(sTATE.stickRX, -1.0f, 1.0f, short.MinValue, short.MaxValue);
             Inputs.AxisState[AxisFlags.RightStickY] = (short)InputUtils.MapRange(sTATE.stickRY, -1.0f, 1.0f, short.MinValue, short.MaxValue);
 

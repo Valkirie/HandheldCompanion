@@ -43,8 +43,15 @@ namespace HandheldCompanion
             // workaround
             if (_element is ToggleSwitch toggleSwitch)
             {
-                this.Margin = new Thickness(toggleSwitch.DesiredSize.Height, 0, 0, 0);
-                _rectangle.Width = toggleSwitch.DesiredSize.Width;
+                _rectangle.Width = toggleSwitch.DesiredSize.Width + 12;
+            }
+            else if (_element is Slider slider)
+            {
+                _rectangle.Width += 12;
+            }
+            else if (_element is CheckBox checkBox)
+            {
+                _rectangle.Width = checkBox.DesiredSize.Width + 12;
             }
 
             this.AddVisualChild(_rectangle);
@@ -53,7 +60,7 @@ namespace HandheldCompanion
             IsHitTestVisible = false;
 
             // prevent adorner from catching drag & drop
-            ScrollViewer.SetPanningMode(this, PanningMode.HorizontalOnly);
+            // ScrollViewer.SetPanningMode(this, PanningMode.HorizontalOnly);
 
             // Re-apply size & corner radius whenever the adorned element changes
             _element.SizeChanged += AdornedElement_SizeChanged;
@@ -76,17 +83,22 @@ namespace HandheldCompanion
             {
                 radius = border.CornerRadius.TopLeft;
             }
-            // If it's a WinUI/Fluent ToggleSwitch, use its CornerRadius
-            else if (_element is ToggleSwitch ts)
+            else if (_element is Slider)
             {
-                radius = ts.CornerRadius.TopLeft;
+                radius = 8;
+            }
+            else if (_element is ToggleSwitch)
+            {
+                radius = 8;
             }
             // If it's some other Control with a CornerRadius property in its template...
             else if (_element is Control ctrl)
             {
                 // try to find the named border in its template
-                var templateBorder = ctrl.Template?.FindName("Border", ctrl) as Border
-                                    ?? ctrl.Template?.FindName("ContainerBorder", ctrl) as Border;
+                Border? templateBorder = ctrl.Template?.FindName("Border", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("ContainerBorder", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("FocusBorder", ctrl) as Border
+                                    ?? ctrl.Template?.FindName("LayoutRoot", ctrl) as Border;
                 if (templateBorder != null)
                     radius = templateBorder.CornerRadius.TopLeft;
             }
@@ -100,7 +112,15 @@ namespace HandheldCompanion
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _rectangle.Arrange(new Rect(new Point(0, 0), AdornedElement.RenderSize));
+            Size size = AdornedElement.RenderSize;
+
+            // hack
+            if (AdornedElement is CheckBox checkBox)
+            {
+                size = checkBox.DesiredSize;
+            }
+
+            _rectangle.Arrange(new Rect(new Point(0, 0), size));
             return finalSize;
         }
 

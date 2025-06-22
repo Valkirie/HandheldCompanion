@@ -18,13 +18,13 @@
 
     <ikw:SimpleStackPanel Spacing="12" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsLeftTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  LEFT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Left}" />
             <ItemsControl ItemTemplate="{StaticResource TriggerStackTemplate}" ItemsSource="{Binding LeftTriggerAxisMappings}" />
         </ikw:SimpleStackPanel>
 
-        <ikw:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding IsRightTriggerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--  RIGHT TRIGGER  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.TriggersPage_Trigger_Right}" />
             <ItemsControl ItemTemplate="{StaticResource TriggerStackTemplate}" ItemsSource="{Binding RightTriggerAxisMappings}" />

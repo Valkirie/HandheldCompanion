@@ -23,6 +23,7 @@ namespace HandheldCompanion.ViewModels
         public string Name => HasController ? _controller.ToString() : "N/A";
         public int UserIndex => HasController ? _controller.GetUserIndex() : 0;
         public bool CanCalibrate => HasController && _controller.HasMotionSensor();
+        public bool HasLayout => HasController && _controller is TarantulaProController;
         public string Enumerator => HasController ? _controller.GetEnumerator() : "USB";
         public bool IsBusy => HasController && _controller.IsBusy;
         public bool IsVirtual => HasController && _controller.IsVirtual();
@@ -32,22 +33,41 @@ namespace HandheldCompanion.ViewModels
         public bool IsWireless => HasController && _controller.IsWireless();
         public bool IsDongle => HasController && _controller.IsDongle();
 
+        private string _LayoutGlyph = "\ue001"; // Default icon for layout
+        public string LayoutGlyph
+        {
+            get
+            {
+                return _LayoutGlyph;
+            }
+            set
+            {
+                if (_LayoutGlyph != value)
+                {
+                    _LayoutGlyph = value;
+                    OnPropertyChanged(nameof(LayoutGlyph));
+                }
+            }
+        }
+
         public ICommand ConnectCommand { get; private set; }
         public ICommand HideCommand { get; private set; }
         public ICommand CalibrateCommand { get; private set; }
+        public ICommand SwitchLayoutCommand { get; private set; }
 
         public ControllerViewModel() { }
 
         public ControllerViewModel(IController controller)
         {
-            controller.UserIndexChanged -= Controller_UserIndexChanged;
-            controller.StateChanged -= Controller_StateChanged;
-            controller.VisibilityChanged -= Controller_VisibilityChanged;
+            DisposeController();
 
             Controller = controller;
             Controller.UserIndexChanged += Controller_UserIndexChanged;
             Controller.StateChanged += Controller_StateChanged;
             Controller.VisibilityChanged += Controller_VisibilityChanged;
+
+            if (Controller is TarantulaProController proController)
+                proController.OnLayoutChanged += ProController_OnLayoutChanged;
 
             ConnectCommand = new DelegateCommand(async () =>
             {
@@ -70,6 +90,17 @@ namespace HandheldCompanion.ViewModels
             {
                 Controller.Calibrate();
             });
+
+            SwitchLayoutCommand = new DelegateCommand(async () =>
+            {
+                if (Controller is TarantulaProController tarantulaProController)
+                    tarantulaProController.SwitchLayout();
+            });
+        }
+
+        private void ProController_OnLayoutChanged(TarantulaProController.ButtonLayout buttonLayout)
+        {
+            LayoutGlyph = buttonLayout == TarantulaProController.ButtonLayout.Xbox ? "\ue001" : "\ue002";
         }
 
         private void Controller_StateChanged()
@@ -98,9 +129,13 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsBusy));
             OnPropertyChanged(nameof(UserIndex));
             OnPropertyChanged(nameof(CanCalibrate));
+
+            // controller specific properties
+            OnPropertyChanged(nameof(HasLayout));
+            OnPropertyChanged(nameof(LayoutGlyph));
         }
 
-        public override void Dispose()
+        private void DisposeController()
         {
             // clear previous events
             if (_controller is not null)
@@ -108,15 +143,24 @@ namespace HandheldCompanion.ViewModels
                 _controller.UserIndexChanged -= Controller_UserIndexChanged;
                 _controller.StateChanged -= Controller_StateChanged;
                 _controller.VisibilityChanged -= Controller_VisibilityChanged;
+
+                if (_controller is TarantulaProController proController)
+                    proController.OnLayoutChanged -= ProController_OnLayoutChanged;
             }
 
             // clear controller
             _controller = null;
+        }
+
+        public override void Dispose()
+        {
+            DisposeController();
 
             // dispose commands
             ConnectCommand = null;
             HideCommand = null;
             CalibrateCommand = null;
+            SwitchLayoutCommand = null;
 
             base.Dispose();
         }

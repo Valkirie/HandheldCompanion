@@ -337,8 +337,8 @@ public class LayoutManager : IManager
             }
             else
             {
-                ProcessEx processEx = ProcessManager.GetForegroundProcess();
-                SetActiveLayout((processEx == null || processEx.IsGame()) ? profileLayout : desktopLayout);
+                ProcessEx processEx = ProcessManager.GetCurrent();
+                SetActiveLayout((processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout);
             }
         }
     }
@@ -501,8 +501,12 @@ public class LayoutManager : IManager
                 bool value = buttonState.Value;
 
                 // skip, if not mapped
+                // we might have to keep fake buttons
                 if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
+                {
+                    outputState.ButtonState[button] = value;
                     continue;
+                }
 
                 foreach (IActions action in actions)
                 {
@@ -532,6 +536,19 @@ public class LayoutManager : IManager
                             {
                                 MouseActions mAction = action as MouseActions;
                                 mAction.Execute(button, value, shiftSlot);
+                            }
+                            break;
+
+                        case ActionType.Trigger:
+                            {
+                                TriggerActions tAction = action as TriggerActions;
+                                tAction.Execute(button, value, shiftSlot);
+
+                                // read output axis
+                                AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
+                                AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+
+                                outputState.AxisState[OutAxisY] = (byte)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), byte.MinValue, byte.MaxValue);
                             }
                             break;
                     }
@@ -650,13 +667,13 @@ public class LayoutManager : IManager
                         case ActionType.Trigger:
                             {
                                 TriggerActions tAction = action as TriggerActions;
-                                tAction.Execute(InAxisY, (short)InLayout.vector.Y, shiftSlot);
+                                tAction.Execute(InAxisY, (byte)InLayout.vector.Y, shiftSlot);
 
                                 // read output axis
                                 AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
                                 AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                                outputState.AxisState[OutAxisY] = (short)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), short.MinValue, short.MaxValue);
+                                outputState.AxisState[OutAxisY] = (byte)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), byte.MinValue, byte.MaxValue);
                             }
                             break;
 

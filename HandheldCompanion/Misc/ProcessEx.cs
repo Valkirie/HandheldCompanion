@@ -17,16 +17,15 @@ using System.Windows.Media;
 
 namespace HandheldCompanion.Misc;
 
-public class ProcessEx : IDisposable
+public class ProcessEx : IDisposable, ICloneable
 {
     #region filters
     public enum ProcessFilter
     {
         Allowed = 0,
         Restricted = 1,
-        Ignored = 2,
-        HandheldCompanion = 3,
-        Desktop = 4
+        HandheldCompanion = 2,
+        Desktop = 3
     }
 
     private static readonly string[] launcherExecutables = new[]
@@ -283,7 +282,9 @@ public class ProcessEx : IDisposable
 
         switch (Filter)
         {
-            case ProcessFilter.Desktop:
+            case ProcessFilter.Allowed:
+                break;
+            default:
                 return false;
         }
 
@@ -553,7 +554,7 @@ public class ProcessEx : IDisposable
                 {
                     if (key != null)
                     {
-                        List<string> values = ["~"]; ;
+                        List<string> values = ["~"];
                         string valueStr = (string)key.GetValue(Path);
 
                         if (!string.IsNullOrEmpty(valueStr))
@@ -646,5 +647,10 @@ public class ProcessEx : IDisposable
         }
 
         _disposed = true;
+    }
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
     }
 }

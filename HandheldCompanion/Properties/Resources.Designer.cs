@@ -918,9 +918,9 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Change controller vibration strength.
         /// </summary>
-        public static string ControllerPage_VibrationStrengthExpl {
+        public static string ControllerPage_VibrationStrengthDesc {
             get {
-                return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_VibrationStrengthDesc", resourceCulture);
             }
         }
         
@@ -1065,6 +1065,24 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_BatteryOptions {
             get {
                 return ResourceManager.GetString("DevicePage_BatteryOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Core isolation.
+        /// </summary>
+        public static string DevicePage_CoreIsolation {
+            get {
+                return ResourceManager.GetString("DevicePage_CoreIsolation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security features available on your device that use virtualization-based security. May prevent TDP manipulations..
+        /// </summary>
+        public static string DevicePage_CoreIsolationDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_CoreIsolationDesc", resourceCulture);
             }
         }
         
@@ -1366,6 +1384,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Left controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_LeftController {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_LeftController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_RightController {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_RightController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manufacturer application.
+        /// </summary>
+        public static string DevicePage_ManufacturerApplication {
+            get {
+                return ResourceManager.GetString("DevicePage_ManufacturerApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable manufacturer-installed applications on your gaming device..
+        /// </summary>
+        public static string DevicePage_ManufacturerApplicationDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_ManufacturerApplicationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Platform options.
+        /// </summary>
+        public static string DevicePage_PlatformOptions {
+            get {
+                return ResourceManager.GetString("DevicePage_PlatformOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power options.
         /// </summary>
         public static string DevicePage_PowerOptions {
@@ -1375,11 +1438,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Security options.
+        /// </summary>
+        public static string DevicePage_SecurityOptions {
+            get {
+                return ResourceManager.GetString("DevicePage_SecurityOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calibrate.
         /// </summary>
         public static string DevicePage_SensorCalibration_Button {
             get {
                 return ResourceManager.GetString("DevicePage_SensorCalibration_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thermal Design Power (TDP) Control method.
+        /// </summary>
+        public static string DevicePage_TDPControlMethod {
+            get {
+                return ResourceManager.GetString("DevicePage_TDPControlMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the preferred method to manage the device&apos;s TDP.
+        /// </summary>
+        public static string DevicePage_TDPControlMethodDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_TDPControlMethodDesc", resourceCulture);
             }
         }
         
@@ -5606,6 +5696,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close navigation.
+        /// </summary>
+        public static string MainWindow_CloseNavigation {
+            get {
+                return ResourceManager.GetString("MainWindow_CloseNavigation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MainWindow_Exit {
@@ -7959,6 +8058,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        public static string ProfilesPage_Play {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power limit target.
         /// </summary>
         public static string ProfilesPage_PowerLimitTarget {
@@ -8663,11 +8771,110 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bluetooth.
+        /// </summary>
+        public static string QuickDevicePage_Bluetooth {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_Bluetooth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings, display profile.
         /// </summary>
         public static string QuickDevicePage_Desc {
             get {
                 return ResourceManager.GetString("QuickDevicePage_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device settings.
+        /// </summary>
+        public static string QuickDevicePage_DeviceSettings {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DeviceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh rate.
+        /// </summary>
+        public static string QuickDevicePage_DisplayFrequency {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust main refresh rate.
+        /// </summary>
+        public static string QuickDevicePage_DisplayFrequencyDesc {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayFrequencyDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display resolution.
+        /// </summary>
+        public static string QuickDevicePage_DisplayResolution {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayResolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust main display resolution.
+        /// </summary>
+        public static string QuickDevicePage_DisplayResolutionDesc {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayResolutionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dynamic lighting settings.
+        /// </summary>
+        public static string QuickDevicePage_DynamicLighting {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DynamicLighting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use dynamic lighting on my device.
+        /// </summary>
+        public static string QuickDevicePage_DynamicLightingToggle {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DynamicLightingToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Night light.
+        /// </summary>
+        public static string QuickDevicePage_NightLight {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_NightLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use warmer colors to help block blue light.
+        /// </summary>
+        public static string QuickDevicePage_NightLightDesc {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_NightLightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolution is currently overridden by profile.
+        /// </summary>
+        public static string QuickDevicePage_ResolutionOverrideWarning {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_ResolutionOverrideWarning", resourceCulture);
             }
         }
         
@@ -9001,51 +9208,6 @@ namespace HandheldCompanion.Properties {
         public static string QuickSettingsPage_Desc {
             get {
                 return ResourceManager.GetString("QuickSettingsPage_Desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Refresh rate.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayFrequency {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayFrequency", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Adjust main refresh rate.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayFrequencyDesc {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayFrequencyDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Display resolution.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayResolution {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayResolution", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Adjust main display resolution.
-        /// </summary>
-        public static string QuickSettingsPage_DisplayResolutionDesc {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_DisplayResolutionDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Resolution is currently overridden by profile.
-        /// </summary>
-        public static string QuickSettingsPage_ResolutionOverrideWarning {
-            get {
-                return ResourceManager.GetString("QuickSettingsPage_ResolutionOverrideWarning", resourceCulture);
             }
         }
         
@@ -9788,29 +9950,11 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Left.
-        /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationLeft {
-            get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationLeft", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Maximized.
         /// </summary>
         public static string SettingsPage_QuickToolsWindowLocationMaximized {
             get {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationMaximized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right.
-        /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationRight {
-            get {
-                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationRight", resourceCulture);
             }
         }
         
@@ -10238,6 +10382,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Virtual keyboard.
+        /// </summary>
+        public static string SettingsPage_VirtualKeyboard {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualKeyboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display virtual keyboard shorcut.
+        /// </summary>
+        public static string SettingsPage_VirtualKeyboardDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualKeyboardDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual trackpad (not implemented).
+        /// </summary>
+        public static string SettingsPage_VirtualTrackpad {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualTrackpad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display virtual trackpad shortcut.
+        /// </summary>
+        public static string SettingsPage_VirtualTrackpadDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualTrackpadDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller is now cloaked and inputs forwarded to virtual controller.
         /// </summary>
         public static string ToastNewControllerEx {
@@ -10357,7 +10537,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please wait a moment while we power cycle your Bluetooth radio. Other Bluetooth devices may no longer respond..
+        ///   Looks up a localized string similar to Please switch your controller off and on by pressing and holding the power button to finalize pairing..
         /// </summary>
         public static string XInputController_Warning_BTH {
             get {

@@ -9,7 +9,6 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
-using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -380,7 +379,7 @@ public static class ControllerManager
 
     private static void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 
@@ -498,7 +497,7 @@ public static class ControllerManager
                 settings.playerNumber = joyShockId;
                 JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
 
-                if (controller != null)
+                if (controller is not null)
                 {
                     ((JSController)controller).AttachDetails(details);
                     ((JSController)controller).AttachJoySettings(settings);
@@ -570,9 +569,8 @@ public static class ControllerManager
                                         // MI == 1-4 are 4 controllers
                                         // TODO: The dongle registers 4 controller devices, regardless how many are
                                         // actually connected. There is no easy way to check for connection without
-                                        // actually talking to each controller. Handle only the first for now.
-                                        if (details.GetMI() == 1)
-                                            try { controller = new GordonController(details); } catch { }
+                                        // actually talking to each controller.
+                                        try { controller = new GordonController(details); } catch { }
                                         break;
 
                                     // STEAM DECK
@@ -637,7 +635,10 @@ public static class ControllerManager
 
             LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
-            ToastManager.SendToast(controller.ToString(), "detected");
+
+            // let's not flood the toaster
+            if (!IsPowerCycling && !controller.IsVirtual())
+                ToastManager.SendToast(controller.ToString(), "detected");
 
             PickTargetController();
             PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -756,7 +757,7 @@ public static class ControllerManager
                                 // Tarantula Pro
                                 default:
                                 case "0x1050":
-                                    try { controller = new TatantulaProController(details); } catch { }
+                                    try { controller = new TarantulaProController(details); } catch { }
                                     break;
                             }
                         }
@@ -791,7 +792,10 @@ public static class ControllerManager
 
             LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
             ControllerPlugged?.Invoke(controller, IsPowerCycling);
-            ToastManager.SendToast(controller.ToString(), "detected");
+
+            // let's not flood the toaster
+            if (!IsPowerCycling && !controller.IsVirtual())
+                ToastManager.SendToast(controller.ToString(), "detected");
 
             PickTargetController();
             PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -858,12 +862,14 @@ public static class ControllerManager
         }
     }
 
-    private static bool HostRadioDisabled = false;
+    // private static bool HostRadioDisabled = false;
+
+    private static HashSet<byte> UserIndexes = new HashSet<byte>();
+    private static List<IController> DrunkControllers = new List<IController>();
+    private static bool XInputDrunk => DrunkControllers.Any();
+
     private static void watchdogThreadLoop(object? obj)
     {
-        HashSet<byte> UserIndexes = [];
-        bool XInputDrunk = false;
-
         // monitoring unexpected slot changes
         while (watchdogThreadRunning)
         {
@@ -872,7 +878,7 @@ public static class ControllerManager
 
             // clear array
             UserIndexes.Clear();
-            XInputDrunk = false;
+            DrunkControllers.Clear();
 
             foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.isPlaceholder))
             {
@@ -884,19 +890,24 @@ public static class ControllerManager
 
                 // two controllers can't use the same slot
                 if (!UserIndexes.Add(UserIndex))
-                    XInputDrunk = true;
+                    DrunkControllers.Add(xInputController);
 
                 xInputController.AttachController(UserIndex);
             }
 
-            if (XInputDrunk)
+            foreach (IController controller in DrunkControllers)
             {
-                XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
-                vController?.AttachController(byte.MaxValue);
-
-                VirtualManager.Suspend(false);
-                Thread.Sleep(1000);
-                VirtualManager.Resume(false);
+                switch (controller.IsVirtual())
+                {
+                    case true:
+                        VirtualManager.Suspend(false);
+                        Thread.Sleep(1000);
+                        VirtualManager.Resume(false);
+                        break;
+                    case false:
+                        controller.CyclePort();
+                        break;
+                }
             }
 
             // user is emulating an Xbox360Controller
@@ -918,7 +929,7 @@ public static class ControllerManager
                                 break;
                         }
 
-                        if (pController is null || (pController.IsBusy && !XInputDrunk))
+                        if (pController is null)
                             continue;
 
                         // store physical controller Ids to trick the system
@@ -932,6 +943,23 @@ public static class ControllerManager
                             // suspend physical controller
                             SuspendController(pController.GetContainerInstanceId());
 
+                            bool HasBusyWireless = false;
+                            bool HasCyclingController = false;
+
+                            // do we have a pending wireless controller ?
+                            XInputController? wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
+                            if (wirelessController is not null)
+                            {
+                                // update busy flag
+                                HasBusyWireless = true;
+
+                                // is the controller power cycling ?
+                                PowerCyclers.TryGetValue(wirelessController.GetContainerInstanceId(), out HasCyclingController);
+                                if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
+                                    return;
+                            }
+
+                            /*
                             // suspend bluetooth controller, if any
                             if (pController.IsBluetooth())
                             {
@@ -944,6 +972,7 @@ public static class ControllerManager
                                     }
                                 }
                             }
+                            */
 
                             // disconnect main virtual controller and wait until it's gone
                             VirtualManager.SetControllerMode(HIDmode.NoController);
@@ -980,7 +1009,7 @@ public static class ControllerManager
 
                             UpdateStatus(ControllerManagerStatus.Failed);
                             ControllerManagementAttempts = 0;
-                            HostRadioDisabled = false;
+                            // HostRadioDisabled = false;
 
                             ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                         }
@@ -993,7 +1022,7 @@ public static class ControllerManager
                         // give us one extra loop to make sure we're good
                         UpdateStatus(ControllerManagerStatus.Succeeded);
                         ControllerManagementAttempts = 0;
-                        HostRadioDisabled = false;
+                        // HostRadioDisabled = false;
                     }
                     else
                     {
@@ -1008,7 +1037,7 @@ public static class ControllerManager
 
                     UpdateStatus(ControllerManagerStatus.Failed);
                     ControllerManagementAttempts = 0;
-                    HostRadioDisabled = false;
+                    // HostRadioDisabled = false;
 
                     ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                 }
@@ -1099,18 +1128,20 @@ public static class ControllerManager
     {
         lock (targetLock)
         {
-            // unplug previous controller
-            if (targetController is not null)
-            {
-                targetController.InputsUpdated -= UpdateInputs;
-                targetController.SetLightColor(0, 0, 0);
-                targetController.Unplug();
-                targetController = null;
-
-                // update HIDInstancePath
-                ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
-            }
+            ClearTargetControllerInternal();
         }
+    }
+
+    private static void ClearTargetControllerInternal()
+    {
+        if (targetController is null)
+            return;
+
+        targetController.InputsUpdated -= UpdateInputs;
+        targetController.SetLightColor(0, 0, 0);
+        targetController.Unplug();
+        targetController = null;
+        ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
     }
 
     public static void PickTargetController()
@@ -1132,7 +1163,7 @@ public static class ControllerManager
                 return;
 
             // clear current target
-            ClearTargetController();
+            ClearTargetControllerInternal();
 
             // update target controller
             targetController = controller;
@@ -1297,6 +1328,7 @@ public static class ControllerManager
         foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
             ResumeController(baseContainerDeviceInstanceId);
 
+        /*
         if (HostRadioDisabled)
         {
             using (HostRadio hostRadio = new())
@@ -1305,6 +1337,7 @@ public static class ControllerManager
                 HostRadioDisabled = false;
             }
         }
+        */
     }
 
     public static IController? GetTarget()

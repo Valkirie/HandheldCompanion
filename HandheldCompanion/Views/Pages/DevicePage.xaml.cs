@@ -43,7 +43,7 @@ namespace HandheldCompanion.Views.Pages
             // Adjust UI element availability based on device capabilities
             DynamicLightingPanel.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting) ? Visibility.Visible : Visibility.Collapsed;
             LEDBrightness.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
-            StackSecondColor.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+            SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
             if (device is LegionGo)
             {
@@ -471,9 +471,9 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LEDUseSecondColor", Toggle_UseSecondColor.IsOn);
         }
 
-        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        private void Expander_Expanded(object sender, EventArgs e)
         {
-            ((Expander)sender).BringIntoView();
+            ((SettingsExpander)sender).BringIntoView();
         }
 
         private void SliderLEDSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -723,5 +723,6 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #endregion
+
     }
 }

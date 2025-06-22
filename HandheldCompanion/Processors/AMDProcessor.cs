@@ -20,11 +20,14 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_RENOIR:
                 case RyzenFamily.FAM_LUCIENNE:
                 case RyzenFamily.FAM_CEZANNE:
+                case RyzenFamily.FAM_VANGOGH:
                 case RyzenFamily.FAM_REMBRANDT:
                 case RyzenFamily.FAM_MENDOCINO:
                 case RyzenFamily.FAM_PHOENIX:
                 case RyzenFamily.FAM_HAWKPOINT:
-                    // case RyzenFamily.FAM_STRIXPOINT:
+                case RyzenFamily.FAM_KRACKANPOINT: /* Added to debug on KRK, STX, & STXH */
+                case RyzenFamily.FAM_STRIXPOINT:
+                case RyzenFamily.FAM_STRIXHALO:
                     CanChangeGPU = true;
                     break;
             }
@@ -46,7 +49,9 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_MENDOCINO:
                 case RyzenFamily.FAM_PHOENIX:
                 case RyzenFamily.FAM_HAWKPOINT:
+                case RyzenFamily.FAM_KRACKANPOINT:
                 case RyzenFamily.FAM_STRIXPOINT:
+                case RyzenFamily.FAM_STRIXHALO:
                     CanChangeTDP = true;
                     break;
             }

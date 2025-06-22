@@ -21,7 +21,7 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
             try
             {
                 // get current foreground process
-                ProcessEx processEx = ProcessManager.GetForegroundProcess();
+                ProcessEx processEx = ProcessManager.GetCurrent();
                 if (processEx is null)
                     return;
 
@@ -29,11 +29,7 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
 
                 switch (filter)
                 {
-                    case ProcessFilter.Restricted:
-                    case ProcessFilter.HandheldCompanion:
-                        break;
-
-                    default:
+                    case ProcessFilter.Allowed:
                         processEx?.Kill();
                         break;
                 }

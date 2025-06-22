@@ -77,7 +77,7 @@ namespace HandheldCompanion.Controllers
             UserIndex = (byte)details.GetMI();
 
             // (re)plug controller if needed
-            if (WasPlugged) Open();
+            Open();
         }
 
         public override string ToString()
@@ -87,6 +87,8 @@ namespace HandheldCompanion.Controllers
                 return baseName;
             return "Steam Controller Gordon";
         }
+
+        public override bool IsReady => this.input is not null;
 
         public override bool IsConnected()
         {
@@ -133,14 +135,8 @@ namespace HandheldCompanion.Controllers
 
             // Left Stick
             Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[GordonControllerButton.BtnLStickPress];
-
             Inputs.AxisState[AxisFlags.LeftStickX] = input.State.AxesState[GordonControllerAxis.LeftStickX];
             Inputs.AxisState[AxisFlags.LeftStickY] = input.State.AxesState[GordonControllerAxis.LeftStickY];
-
-            Inputs.ButtonState[ButtonFlags.LeftStickLeft] = Inputs.AxisState[AxisFlags.LeftStickX] < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickRight] = Inputs.AxisState[AxisFlags.LeftStickX] > Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickDown] = Inputs.AxisState[AxisFlags.LeftStickY] < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftStickUp] = Inputs.AxisState[AxisFlags.LeftStickY] > Gamepad.LeftThumbDeadZone;
 
             // TODO: Implement Inner/Outer Ring button mappings for sticks
             // https://github.com/Havner/HandheldCompanion/commit/e1124ceb6c59051201756d5e95b2eb39a3bb24f6
@@ -153,16 +149,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.LeftPadTouch] = input.State.ButtonState[GordonControllerButton.BtnLPadTouch];
             Inputs.ButtonState[ButtonFlags.LeftPadClick] = input.State.ButtonState[GordonControllerButton.BtnLPadPress];
 
-            if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
-            {
-                Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[GordonControllerAxis.LeftPadX];
-                Inputs.AxisState[AxisFlags.LeftPadY] = input.State.AxesState[GordonControllerAxis.LeftPadY];
-            }
-            else
-            {
-                Inputs.AxisState[AxisFlags.LeftPadX] = 0;
-                Inputs.AxisState[AxisFlags.LeftPadY] = 0;
-            }
+            Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[GordonControllerAxis.LeftPadX];
+            Inputs.AxisState[AxisFlags.LeftPadY] = input.State.AxesState[GordonControllerAxis.LeftPadY];
 
             if (Inputs.ButtonState[ButtonFlags.LeftPadClick])
             {
@@ -184,16 +172,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = input.State.ButtonState[GordonControllerButton.BtnRPadTouch];
             Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[GordonControllerButton.BtnRPadPress];
 
-            if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[GordonControllerAxis.RightPadX];
-                Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[GordonControllerAxis.RightPadY];
-            }
-            else
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = 0;
-                Inputs.AxisState[AxisFlags.RightPadY] = 0;
-            }
+            Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[GordonControllerAxis.RightPadX];
+            Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[GordonControllerAxis.RightPadY];
 
             if (Inputs.ButtonState[ButtonFlags.RightPadClick])
             {
@@ -240,12 +220,12 @@ namespace HandheldCompanion.Controllers
                 {
                     Controller.OnControllerInputReceived += HandleControllerInput;
 
+                    // open controller
+                    Controller.Open();
+
                     Controller.SetLizardMode(false);
                     Controller.SetGyroscope(true);
                     Controller.SetIdleTimeout(300);  // ~5 min
-
-                    // open controller
-                    Controller.Open();
                 }
             }
             catch (Exception ex)

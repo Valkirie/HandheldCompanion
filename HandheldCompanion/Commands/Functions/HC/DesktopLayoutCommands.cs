@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using System;
+using System.Timers;
 
 namespace HandheldCompanion.Commands.Functions.HC
 {
@@ -7,6 +8,10 @@ namespace HandheldCompanion.Commands.Functions.HC
     public class DesktopLayoutCommands : FunctionCommands
     {
         private const string SettingsName = "LayoutMode";
+        private readonly Timer ExecuteTimer;
+
+        private bool StoredKeyDown;
+        private bool StoredKeyUp;
 
         public DesktopLayoutCommands()
         {
@@ -16,6 +21,9 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.OnKeyUp = true;
             base.CanCustom = false;
             base.CanUnpin = false;
+
+            ExecuteTimer = new(250) { AutoReset = false };
+            ExecuteTimer.Elapsed += ExecuteTimer_Elapsed;
 
             Update();
 
@@ -28,6 +36,9 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 case SettingsName:
                     Update();
+
+                    LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
+                    ToastManager.SendToast($"Controller mode set to {LayoutMode}");
                     break;
             }
         }
@@ -54,19 +65,52 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.Update();
         }
 
-        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
+        private void ExecuteTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             // Get the current value of LayoutMode
-            int LayoutMode = ManagerFactory.settingsManager.GetInt(SettingsName);
+            int value = ManagerFactory.settingsManager.GetInt(SettingsName);
+            LayoutModes layoutMode = (LayoutModes)value;
 
             // Increment or reset the value based on its current state
-            LayoutMode = (LayoutMode == (int)LayoutModes.Auto) ? (int)LayoutModes.Gamepad : LayoutMode + 1;
+            switch (layoutMode)
+            {
+                case LayoutModes.Gamepad:
+                    layoutMode = LayoutModes.Desktop;
+                    break;
+                default:
+                case LayoutModes.Desktop:
+                    layoutMode = LayoutModes.Gamepad;
+                    break;
+            }
 
             // Update settings
-            ManagerFactory.settingsManager.SetProperty(SettingsName, LayoutMode);
+            ManagerFactory.settingsManager.SetProperty(SettingsName, (int)layoutMode);
 
             Update();
-            base.Execute(IsKeyDown, IsKeyUp, false);
+            base.Execute(StoredKeyDown, StoredKeyUp, false);
+        }
+
+        public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
+        {
+            if (ExecuteTimer.Enabled)
+            {
+                // Timer is already running, it's likely a double press
+                ExecuteTimer.Stop();
+
+                // Update settings
+                ManagerFactory.settingsManager.SetProperty(SettingsName, (int)LayoutModes.Auto);
+
+                Update();
+                base.Execute(IsKeyDown, IsKeyUp, false);
+            }
+            else
+            {
+                // Start the timer and store the key states
+                ExecuteTimer.Start();
+
+                StoredKeyDown = IsKeyDown;
+                StoredKeyUp = IsKeyUp;
+            }
         }
 
         public override bool IsToggled
@@ -103,6 +147,10 @@ namespace HandheldCompanion.Commands.Functions.HC
         public override void Dispose()
         {
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+            ExecuteTimer.Stop();
+            ExecuteTimer.Dispose();
+
             base.Dispose();
         }
     }

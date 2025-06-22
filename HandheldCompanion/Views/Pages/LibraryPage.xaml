@@ -21,7 +21,7 @@
 
     <Grid Margin="20">
         <ikw:SimpleStackPanel Spacing="12">
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <ui:SettingsExpander
                     d:IsExpanded="True"
                     Description="Manage library metadata"
@@ -34,7 +34,7 @@
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal"
-                        Spacing="6">
+                        Spacing="3">
                         <ComboBox
                             Width="180"
                             VerticalAlignment="Bottom"
@@ -44,7 +44,7 @@
                             <ComboBoxItem Content="Recently played" />
                         </ComboBox>
                         <Button
-                            Height="32"
+                            Height="31"
                             VerticalAlignment="Bottom"
                             Command="{Binding ToggleSortCommand}">
                             <Button.Style>
@@ -78,7 +78,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Library  -->
-            <ikw:SimpleStackPanel Spacing="6">
+            <ikw:SimpleStackPanel Spacing="3">
                 <ui:ItemsRepeater
                     Name="ProfilesRepeater"
                     ItemTemplate="{StaticResource LibraryTemplate}"

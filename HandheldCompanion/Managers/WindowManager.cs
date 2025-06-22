@@ -15,7 +15,7 @@ namespace HandheldCompanion.Managers
             if (input == null)
                 return null;
 
-            // If there’s any '|' at all, split on '|', keep first and last
+            // If there's any '|' at all, split on '|', keep first and last
             if (input.Contains("|"))
             {
                 var parts = input.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);

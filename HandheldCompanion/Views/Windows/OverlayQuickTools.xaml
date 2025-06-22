@@ -10,12 +10,15 @@
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="QuickTools"
-    Width="540"
-    MinWidth="540"
+    Width="450"
+    MinWidth="450"
     MaxWidth="960"
     MaxHeight="960"
     Margin="0"
+    d:DataContext="{d:DesignInstance Type=viewmodels:OverlayQuickToolsViewModel}"
+    d:Height="450"
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.ApplyNoise="True"
@@ -37,7 +40,7 @@
     </Window.Resources>
 
     <Grid>
-        <DockPanel Margin="12,2,0,0" VerticalAlignment="Top">
+        <DockPanel Margin="12,6,0,0" VerticalAlignment="Top">
             <ui:FontIcon
                 Name="BatteryIndicatorIcon"
                 VerticalAlignment="Center"
@@ -61,7 +64,7 @@
 
         <ui:NavigationView
             Name="navView"
-            Margin="0,31,0,0"
+            Margin="0,36,0,0"
             BackRequested="navView_BackRequested"
             IsBackButtonVisible="Collapsed"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack, Mode=OneWay}"
@@ -151,7 +154,11 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-                <ui:NavigationViewItem Name="navKeyboard" Tag="QuickKeyboardPage">
+                <!--
+                <ui:NavigationViewItem
+                    Name="navKeyboard"
+                    Tag="QuickKeyboardPage"
+                    Visibility="{Binding QuickKeyboardVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:NavigationViewItem.Content>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;" />
                     </ui:NavigationViewItem.Content>
@@ -160,21 +167,56 @@
                 <ui:NavigationViewItem
                     Name="navTrackpad"
                     IsEnabled="False"
-                    Tag="QuickTrackpadPage">
+                    Tag="QuickTrackpadPage"
+                    Visibility="{Binding QuickTrackpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:NavigationViewItem.Content>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
                     </ui:NavigationViewItem.Content>
                 </ui:NavigationViewItem>
+                -->
             </ui:NavigationView.MenuItems>
 
             <Grid>
-                <ui:ContentDialog Name="ContentDialog" />
-                <common:TouchScrollViewer
+                <ui:CommandBar x:Name="Control1" DefaultLabelPosition="Collapsed">
+                    <ui:CommandBar.PrimaryCommands>
+                        <ui:AppBarButton Click="QuicKeyboard_Click">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+
+                        <ui:AppBarSeparator />
+
+                        <!--
+                        <ui:AppBarButton Click="QuickTrackpad_Click">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Touchpad}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+
+                        <ui:AppBarSeparator />
+                        -->
+
+                        <ui:AppBarButton Click="QuickGoBack_Click">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon FontSize="10" Icon="{x:Static ui:SegoeFluentIcons.Back}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                    </ui:CommandBar.PrimaryCommands>
+                </ui:CommandBar>
+
+                <ui:ContentDialog Name="ContentDialog" d:Visibility="Collapsed" />
+                <ui:ScrollViewerEx
                     x:Name="scrollViewer"
-                    Margin="0,12,0,12"
-                    PanningMode="VerticalOnly">
+                    Margin="0,48,0,4"
+                    PanningMode="VerticalFirst">
                     <ui:Frame Name="ContentFrame" />
-                </common:TouchScrollViewer>
+                </ui:ScrollViewerEx>
+                <Separator
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Bottom"
+                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                    Opacity="0.2" />
             </Grid>
         </ui:NavigationView>
     </Grid>

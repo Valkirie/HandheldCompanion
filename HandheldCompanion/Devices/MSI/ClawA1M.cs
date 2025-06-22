@@ -331,7 +331,6 @@ public class ClawA1M : IDevice
         // manage events
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -352,6 +351,9 @@ public class ClawA1M : IDevice
 
     private void QueryPowerProfile()
     {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
     }
 
@@ -540,18 +542,31 @@ public class ClawA1M : IDevice
         }
     }
 
+    public bool HasOverBoost()
+    {
+        int uefiVariableEx = 0;
+        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
+        if (uefiVariableEx != 0)
+            return box[1] != 0;
+        return false;
+    }
+
     public bool GetOverBoost()
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        return box[6] != 0;
+        if (uefiVariableEx != 0)
+            return box[6] != 0;
+        return false;
     }
 
     public bool GetOverBoostSup()
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        return box[7] != 0;
+        if (uefiVariableEx != 0)
+            return box[7] != 0;
+        return false;
     }
 
     protected void GetWMI()
@@ -637,7 +652,7 @@ public class ClawA1M : IDevice
             // improve detection maybe using if device.ReadFeatureData() ?
             if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
                 continue;
-            
+
             hidDevices[INPUT_HID_ID] = device;
 
             return true;

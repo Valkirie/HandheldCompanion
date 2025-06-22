@@ -159,7 +159,7 @@ public partial class QuickProfilesPage : Page
 
     private void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetForegroundProcess();
+        ProcessEx processEx = ProcessManager.GetCurrent();
         if (processEx is null)
             return;
 
@@ -1077,9 +1077,11 @@ public partial class QuickProfilesPage : Page
                             selectedProfile.RSREnabled = isEnabled;
                             if (isEnabled)
                             {
+                                selectedProfile.GPUScaling = true;
                                 selectedProfile.RISEnabled = false;
                                 selectedProfile.IntegerScalingEnabled = false;
 
+                                GPUScalingToggle.IsOn = true;
                                 RISToggle.IsOn = false;
                                 IntegerScalingToggle.IsOn = false;
 

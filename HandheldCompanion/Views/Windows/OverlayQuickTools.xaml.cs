@@ -5,6 +5,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.QuickPages;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -13,7 +14,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -92,6 +92,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
+        DataContext = new OverlayQuickToolsViewModel();
         InitializeComponent();
 
         CurrentWindow = this;
@@ -148,7 +149,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
         WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
-        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);;
+        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);
     }
 
     public void LoadPages_MVVM()
@@ -258,27 +259,45 @@ public partial class OverlayQuickTools : GamepadWindow
 
             switch (QuickToolsLocation)
             {
-                case 0: // Left
-                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                case 0: // TopLeft
+                    this.SetWindowPosition(WindowPositions.TopLeft, targetScreen);
                     break;
 
-                case 1: // Right
-                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                case 1: // TopRight
+                    this.SetWindowPosition(WindowPositions.TopRight, targetScreen);
                     break;
 
                 case 2: // Maximized
                     this.SetWindowPosition(WindowPositions.Maximize, targetScreen);
                     break;
+
+                case 3: // BottomLeft
+                    this.SetWindowPosition(WindowPositions.BottomLeft, targetScreen);
+                    break;
+
+                case 4: // BottomRight
+                    this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
+                    break;
             }
 
             switch (QuickToolsLocation)
             {
-                case 0: // Left
+                case 0: // TopLeft
+                    Top += _Margin;
+                    Left += _Margin;
+                    break;
+
+                case 1: // BottomRight
+                    Top += _Margin;
+                    Left -= _Margin;
+                    break;
+
+                case 3: // BottomLeft
                     Top -= _Margin;
                     Left += _Margin;
                     break;
 
-                case 1: // Right
+                case 4: // BottomRight
                     Top -= _Margin;
                     Left -= _Margin;
                     break;
@@ -516,11 +535,6 @@ public partial class OverlayQuickTools : GamepadWindow
         applicationsPage.Close();
     }
 
-    private void Key_Clicked(object sender, RoutedEventArgs e)
-    {
-        NavView_Navigate("QuickKeyboardPage");
-    }
-
     #region navView
 
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -621,4 +635,19 @@ public partial class OverlayQuickTools : GamepadWindow
     }
 
     #endregion
+
+    private void QuicKeyboard_Click(object sender, RoutedEventArgs e)
+    {
+        NavView_Navigate("QuickKeyboardPage");
+    }
+
+    private void QuickTrackpad_Click(object sender, RoutedEventArgs e)
+    {
+        NavView_Navigate("QuickTrackpadPage");
+    }
+
+    private void QuickGoBack_Click(object sender, RoutedEventArgs e)
+    {
+        TryGoBack();
+    }
 }

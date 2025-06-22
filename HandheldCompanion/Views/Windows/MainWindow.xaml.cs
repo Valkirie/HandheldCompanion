@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -72,7 +71,7 @@ public partial class MainWindow : GamepadWindow
     public static string CurrentExe, CurrentPath;
 
     private static MainWindow CurrentWindow;
-    public static FileVersionInfo fileVersionInfo;
+    private static FileVersionInfo fileVersionInfo;
 
     public static string CurrentPageName = string.Empty;
 
@@ -89,7 +88,9 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
-												  
+
+    public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+    public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -108,9 +109,8 @@ public partial class MainWindow : GamepadWindow
         CurrentWindow = this;
 
         // get last version
-        Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
         bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
-        bool NewUpdate = LastVersion != Version.Parse(fileVersionInfo.FileVersion);
+        bool NewUpdate = LastVersion != CurrentVersion;
 #if !DEBUG
         if (NewUpdate) SplashScreen.Show();
 #endif
@@ -159,11 +159,11 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
-        CurrentDevice.Initialize(FirstStart);
+        CurrentDevice.Initialize(FirstStart, NewUpdate);
 
         // initialize device settings
-		ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-		
+        ManagerFactory.settingsManager.SetProperty("FirstStart", false);
+
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
@@ -238,8 +238,8 @@ public partial class MainWindow : GamepadWindow
                 break;
             case WM_QUERYENDSESSION:
                 break;
-									
-					  
+
+
         }
 
         return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
@@ -779,8 +779,8 @@ public partial class MainWindow : GamepadWindow
 
                     if (!NotifyInTaskbar)
                     {
-                        ToastManager.SendToast(Title, "is running in the background");
-                        NotifyInTaskbar = true;
+                        if (ToastManager.SendToast(Title, "is running in the background"))
+                            NotifyInTaskbar = true;
                     }
                 }
                 break;
@@ -842,13 +842,13 @@ public partial class MainWindow : GamepadWindow
     private void navView_PaneOpened(NavigationView sender, object args)
     {
         // todo: localize me
-        PaneText.Text = "Close navigation";
+        PaneText.Text = Properties.Resources.MainWindow_CloseNavigation;
     }
 
     private void navView_PaneClosed(NavigationView sender, object args)
     {
         // todo: localize me
-        PaneText.Text = "Open navigation";
+        PaneText.Text = Properties.Resources.MainWindow_OpenNavigation;
     }
 
     private void On_Navigated(object sender, NavigationEventArgs e)
