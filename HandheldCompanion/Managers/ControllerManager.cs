@@ -12,6 +12,7 @@ using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using SDL3;
 using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
@@ -21,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Shell;
+using Windows.Gaming.Input;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
@@ -60,6 +62,8 @@ public static class ControllerManager
     private static Timer scenarioTimer = new(100) { AutoReset = false };
     private static Timer pickTimer = new(500) { AutoReset = false };
 
+    private static Timer SDLWatchdog = new(16) { AutoReset = true };
+
     public static bool IsInitialized;
 
     public enum ControllerManagerStatus
@@ -74,6 +78,15 @@ public static class ControllerManager
     {
         if (IsInitialized)
             return;
+
+        // 1) Initialize SDL with VIDEO + GAMECONTROLLER
+        if (!SDL.Init(SDL.InitFlags.Video | SDL.InitFlags.Gamepad))
+        {
+            LogManager.LogError($"SDL_Init Error: {SDL.GetError()}");
+        }
+
+        // Enable controller hot-plug events (on by default, but call explicitly if you like)
+        SDL.SetGamepadEventsEnabled(true);
 
         // manage events
         ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
@@ -131,6 +144,9 @@ public static class ControllerManager
         pickTimer.Elapsed += PickTimer_Elapsed;
         pickTimer.Start();
 
+        SDLWatchdog.Elapsed += SDLWatchdog_Elapsed;
+        SDLWatchdog.Start();
+
         // enable HidHide
         HidHide.SetCloaking(true);
 
@@ -145,10 +161,81 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has started", "ControllerManager");
     }
 
+    private static void SDLWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        if (SDL.PollEvent(out SDL.Event eve))
+        {
+            switch (eve.Type)
+            {
+                case (int)SDL.EventType.Quit:
+                    break;
+
+                case (int)SDL.EventType.GamepadAdded:
+                    LogManager.LogDebug($"Gamepad added: {eve.GDevice.Which}");
+                    SDLDeviceArrived(eve.GDevice.Which);
+                    break;
+
+                case (int)SDL.EventType.GamepadRemoved:
+                    LogManager.LogDebug($"Gamepad removed: {eve.GDevice.Which}");
+                    SDLDeviceRemoved(eve.GDevice.Which);
+                    break;
+            }
+        }
+    }
+
+    private static Dictionary<uint, nint> SDLControllers = new();
+    private static async void SDLDeviceArrived(uint deviceIndex)
+    {
+        if (!SDL.IsGamepad(deviceIndex))
+        {
+            LogManager.LogError("Controller at index: {0} is not a recognized game controller.", deviceIndex);
+            return;
+        }
+
+        nint ctrl = SDL.OpenGamepad(deviceIndex);
+        if (ctrl == IntPtr.Zero)
+        {
+            LogManager.LogError($"Failed to open controller {deviceIndex}: {SDL.GetError()}");
+        }
+        else
+        {
+            SDLControllers[deviceIndex] = ctrl;
+
+            uint instanceID = SDL.GetGamepadID(ctrl);
+            string? name = SDL.GetGamepadName(ctrl);
+            string? path = SDL.GetGamepadPathForID(instanceID);
+
+            LogManager.LogInformation("Opened controller {0} path {1}", name ?? "Unknown", path ?? "Unknown");
+        }
+    }
+
+    private static async void SDLDeviceRemoved(uint deviceIndex)
+    {
+        if (SDLControllers.TryGetValue(deviceIndex, out var ctrl))
+        {
+            uint instanceID = SDL.GetGamepadID(ctrl);
+            string? name = SDL.GetGamepadName(ctrl);
+            string? path = SDL.GetGamepadPathForID(instanceID);
+
+            SDL.CloseGamepad(ctrl);
+            SDLControllers.Remove(deviceIndex);
+
+            LogManager.LogInformation("Closed controller {0} path {1}", name ?? "Unknown", path ?? "Unknown");
+        }
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
+
+        SDLWatchdog.Stop();
+
+        // Cleanup SDL3 controllers
+        foreach (nint ctrl in SDLControllers.Values)
+            SDL.CloseGamepad(ctrl);
+
+        SDL.Quit();
 
         // Flushing possible JoyShocks...
         SafeJslDisconnectAndDisposeAll();
@@ -861,8 +948,6 @@ public static class ControllerManager
             CleanupDeviceLock(details.baseContainerDeviceInstanceId);
         }
     }
-
-    // private static bool HostRadioDisabled = false;
 
     private static HashSet<byte> UserIndexes = new HashSet<byte>();
     private static List<IController> DrunkControllers = new List<IController>();
