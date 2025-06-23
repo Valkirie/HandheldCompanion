@@ -50,6 +50,9 @@ namespace HandheldCompanion.Inputs
                     vector.X = aX;
                     vector.Y = aY;
                     vector.Z = aZ;
+
+                    // write it back
+                    Accelerometer[state] = vector;
                 }
             }
         }
@@ -63,6 +66,9 @@ namespace HandheldCompanion.Inputs
                     vector.X = gX;
                     vector.Y = gY;
                     vector.Z = gZ;
+
+                    // write it back
+                    Gyroscope[state] = vector;
                 }
             }
         }

@@ -13,6 +13,7 @@ using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SDL3;
+using SharpDX.Direct3D9;
 using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
@@ -87,13 +88,10 @@ public static class ControllerManager
 
         // Enable controller hot-plug events (on by default, but call explicitly if you like)
         SDL.SetGamepadEventsEnabled(true);
+        SDL.SetHint(SDL.Hints.JoystickHIDAPI, "1");
+        SDL.SetHint(SDL.Hints.JoystickHIDAPIXbox, "1");
 
         // manage events
-        ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
-        ManagerFactory.deviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
-        ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
-        ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
-        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
@@ -204,6 +202,38 @@ public static class ControllerManager
             uint instanceID = SDL.GetGamepadID(ctrl);
             string? name = SDL.GetGamepadName(ctrl);
             string? path = SDL.GetGamepadPathForID(instanceID);
+            int index = SDL.GetGamepadPlayerIndex(ctrl);
+
+            SDL.GamepadType type = SDL.GetGamepadType(ctrl);
+            SDL.GamepadType realType = SDL.GetRealGamepadType(ctrl);
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                PnPDetails? details = ManagerFactory.deviceManager.GetDeviceByInterfaceId(path);
+                if (details is null && path.Contains("XInput#"))
+                {
+                    DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                    while (DateTime.Now < timeout && details is null)
+                    {
+                        try { details = ManagerFactory.deviceManager.PnPDevices.Values.FirstOrDefault(device => device.XInputUserIndex == index); } catch { }
+                        await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                    }
+                }
+
+                SDLController controller = new(ctrl, deviceIndex, details);
+
+                while (!controller.IsReady && controller.IsConnected())
+                    await Task.Delay(250).ConfigureAwait(false);
+
+                controller.IsBusy = false;
+                Controllers[details.baseContainerDeviceInstanceId] = controller;
+
+                LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
+                ControllerPlugged?.Invoke(controller, false);
+
+                PickTargetController();
+                PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+            }
 
             LogManager.LogInformation("Opened controller {0} path {1}", name ?? "Unknown", path ?? "Unknown");
         }
@@ -450,6 +480,12 @@ public static class ControllerManager
 
     private static void QueryDevices()
     {
+        // manage events
+        ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
+        ManagerFactory.deviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
+        ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
+        ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
+
         foreach (PnPDetails? device in ManagerFactory.deviceManager.PnPDevices.Values)
         {
             if (device.isXInput)
@@ -466,12 +502,15 @@ public static class ControllerManager
 
     private static void QueryForeground()
     {
-        ProcessEx processEx = ProcessManager.GetCurrent();
-        if (processEx is null)
-            return;
+        // manage events
+        ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
-        ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
-        ProcessManager_ForegroundChanged(processEx, null, filter);
+        ProcessEx processEx = ProcessManager.GetCurrent();
+        if (processEx is not null)
+        {
+            ProcessFilter filter = ProcessManager.GetFilter(processEx.Executable, processEx.Path);
+            ProcessManager_ForegroundChanged(processEx, null, filter);
+        }
     }
 
     public static void Resume(bool OS)
@@ -533,6 +572,9 @@ public static class ControllerManager
 
     private static async void HidDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
+        // TODO: REMOVE ME !
+        return;
+
         if (!details.isGaming) return;
 
         var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
@@ -740,6 +782,9 @@ public static class ControllerManager
 
     private static async void HidDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
+        // TODO: REMOVE ME !
+        return;
+
         var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
         await deviceLock.WaitAsync();
 
@@ -796,6 +841,9 @@ public static class ControllerManager
 
     private static async void XUsbDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
+        // TODO: REMOVE ME !
+        return;
+
         var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
         await deviceLock.WaitAsync();
 
@@ -897,6 +945,9 @@ public static class ControllerManager
 
     private static async void XUsbDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
+        // TODO: REMOVE ME !
+        return;
+
         var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
         await deviceLock.WaitAsync();
 
