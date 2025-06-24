@@ -1,9 +1,14 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
+
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Localization;
+
 using Newtonsoft.Json;
+
 using SharpDX.XInput;
+
 using System;
 using System.Collections.Generic;
 
@@ -13,27 +18,17 @@ namespace HandheldCompanion.Misc
     public partial class LayoutTemplate : IComparable
     {
         public static readonly LayoutTemplate DesktopLayout =
-            new("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true);
+            new("Desktop", "HandheldCompanion", true);
 
-        public static readonly LayoutTemplate DefaultLayout = new("Gamepad (XBOX)",
-            "This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc.",
-            "HandheldCompanion", true);
+        public static readonly LayoutTemplate DefaultLayout = new("Default", "HandheldCompanion", true);
 
-        public static readonly LayoutTemplate NintendoLayout = new("Gamepad (Nintendo)",
-            "This template is for games that already have built-in gamepad support. Intended for games that are designed with a Nintendo gamepad in mind.",
-            "HandheldCompanion", true);
+        public static readonly LayoutTemplate NintendoLayout = new("Nintendo", "HandheldCompanion", true);
 
-        public static readonly LayoutTemplate KeyboardLayout = new("Keyboard (WASD) and Mouse",
-            "This template works great for the games that were designed with a keyboard and mouse in mind, without gamepad support. The controller will drive the game's keyboard based events with buttons, but will make assumptions about which buttons move you around (WASD for movement, space for jump, etc.). The right pad will emulate the movement of a mouse.",
-            "HandheldCompanion", true);
+        public static readonly LayoutTemplate KeyboardLayout = new("Keyboard", "HandheldCompanion", true);
 
-        public static readonly LayoutTemplate GamepadMouseLayout = new("Gamepad with Mouse Trackpad",
-            "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.",
-            "HandheldCompanion", true, typeof(NeptuneController));
+        public static readonly LayoutTemplate GamepadMouseLayout = new("GamepadMouse", "HandheldCompanion", true, typeof(NeptuneController));
 
-        public static readonly LayoutTemplate GamepadJoystickLayout = new("Gamepad with Joystick Trackpad",
-            "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.",
-            "HandheldCompanion", true, typeof(NeptuneController));
+        public static readonly LayoutTemplate GamepadJoystickLayout = new("GamepadJoystick", "HandheldCompanion", true, typeof(NeptuneController));
 
         public LayoutTemplate()
         {
@@ -57,11 +52,15 @@ namespace HandheldCompanion.Misc
 
             Layout = new Layout();
             Layout.FillDefault();
+        }
 
-            switch (Name)
+        private LayoutTemplate(string templateName, string author, bool isInternal, Type deviceType = null) : 
+            this(TranslationSource.Instance[$"LayoutTemplate_{templateName}"], TranslationSource.Instance[$"LayoutTemplate_{templateName}Desc"], author, isInternal, deviceType)
+        {
+            switch (templateName)
             {
                 default:
-                case "Gamepad (XBOX)":
+                case "Default":
                     break;
 
                 case "Desktop":
@@ -120,7 +119,7 @@ namespace HandheldCompanion.Misc
                     }
                     break;
 
-                case "Gamepad (Nintendo)":
+                case "Nintendo":
                     {
                         Layout.ButtonLayout[ButtonFlags.B1] = [new ButtonActions { Button = ButtonFlags.B2 }];
                         Layout.ButtonLayout[ButtonFlags.B2] = [new ButtonActions { Button = ButtonFlags.B1 }];
@@ -129,7 +128,7 @@ namespace HandheldCompanion.Misc
                     }
                     break;
 
-                case "Keyboard (WASD) and Mouse":
+                case "Keyboard":
                     {
                         Layout.AxisLayout = new()
                         {
@@ -219,13 +218,13 @@ namespace HandheldCompanion.Misc
                     }
                     break;
 
-                case "Gamepad with Mouse Trackpad":
+                case "GamepadMouse":
                     {
                         Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.Move } };
                     }
                     break;
 
-                case "Gamepad with Joystick Trackpad":
+                case "GamepadJoystick":
                     {
                         Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { new AxisActions { Axis = AxisLayoutFlags.RightStick } };
                     }
