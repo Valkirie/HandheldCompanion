@@ -657,7 +657,7 @@
             </ikw:SimpleStackPanel>
 
             <!--  Graphics settings  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Graphics settings" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_GraphicsSettings}" />
             <ikw:SimpleStackPanel Spacing="3">
 
                 <Expander

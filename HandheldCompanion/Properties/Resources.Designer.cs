@@ -9050,6 +9050,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Processes 的本地化字符串。
+        /// </summary>
+        public static string QuickApplicationsPage_Processes {
+            get {
+                return ResourceManager.GetString("QuickApplicationsPage_Processes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Quick start 的本地化字符串。
+        /// </summary>
+        public static string QuickApplicationsPage_QuickStart {
+            get {
+                return ResourceManager.GetString("QuickApplicationsPage_QuickStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Resume application 的本地化字符串。
+        /// </summary>
+        public static string QuickApplicationsPage_ResumeApplication {
+            get {
+                return ResourceManager.GetString("QuickApplicationsPage_ResumeApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Suspend application 的本地化字符串。
+        /// </summary>
+        public static string QuickApplicationsPage_SuspendApplication {
+            get {
+                return ResourceManager.GetString("QuickApplicationsPage_SuspendApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Applications 的本地化字符串。
         /// </summary>
         public static string QuickApplicationsPage_Title {

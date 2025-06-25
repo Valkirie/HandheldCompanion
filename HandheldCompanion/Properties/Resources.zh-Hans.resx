@@ -2460,10 +2460,10 @@
     <value>更改风扇设置</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
-    <value>Create a new power preset</value>
+    <value>创建新的电源预设</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
-    <value>Create power preset</value>
+    <value>创建电源预设</value>
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Delete power preset</value>
@@ -2600,8 +2600,8 @@
   <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>为同一游戏添加不同的配置</value>
   </data>
-  <data name="QuickProfilesPage_SubProfilesDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>选择以应用子配置</value>
   </data>
   <data name="Hotkey_CycleSubProfile" xml:space="preserve">
     <value>循环切换子配置</value>
@@ -3487,5 +3487,17 @@
   </data>
   <data name="LayoutPage_InputType" xml:space="preserve">
     <value>输入方式</value>
+  </data>
+  <data name="QuickApplicationsPage_QuickStart" xml:space="preserve">
+    <value>快速启动</value>
+  </data>
+  <data name="QuickApplicationsPage_Processes" xml:space="preserve">
+    <value>进程</value>
+  </data>
+  <data name="QuickApplicationsPage_SuspendApplication" xml:space="preserve">
+    <value>暂停程序</value>
+  </data>
+  <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
+    <value>继续程序</value>
   </data>
 </root>
