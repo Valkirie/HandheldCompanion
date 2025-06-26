@@ -30,28 +30,29 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Devices
 
-- ASUS ROG Ally
+- ASUS ROG Ally, ROG Ally X
+- ASUS ROG Z13
 - Lenovo Legion Go
-- MSI Claw A1M
+- MSI Claw A1M, MSI Claw A2VM
 - AOKZOE A1 and A1 Pro
 - AOKZOE A2
-- Steam Deck (LCD, OLED)
-- AYA Neo and its different versions
-- AYA Neo Next and its different versions
-- AYA Neo Air and it's different versions
+- Steam Deck (all models)
+- AYA Neo (all models)
+- AYA Neo Next (all models)
+- AYA Neo Air (all models)
 - AYA Neo 2, Geek, 2S Geek 1S
 - AYA Neo KUN
 - AYA Neo Flip DS and Flip KB
 - AYA Neo Slide
-- ONEXPLAYER X1 (Intel)
+- ONEXPLAYER X1, X1 Pro, X1 Mini
 - ONEXPLAYER OneXFly
 - ONEXPLAYER 2 and 2 Pro
-- ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
-- GPD WIN Max 2 (INTEL, AMD)
+- ONEXPLAYER MINI (all models)
+- GPD WIN Max 2 (all models)
 - GPD Win 2
 - GPD Win 3
-- GPD Win 4 (8640U and 8840U)
-- GPD Win Mini (7640U and 7840U)
+- GPD Win 4 (all models)
+- GPD Win Mini (all models)
 - Ayn Loki (all models)
 
 ## Supported Sensors
@@ -77,9 +78,10 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 [Droix Discord](https://go.droix.co.uk/discord)
 
 ## Visuals
-![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/c6aec83c-cf8e-43bf-a577-1b05aedc55aa)
-![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/dba3ab8a-4b73-4e61-a278-7fe37c66b85d)
-![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/0bacdd65-3d6d-4dd2-a70d-a6871b1f51a9)
+![image](https://github.com/user-attachments/assets/ef23d781-2c50-4037-9f33-b865af585a75)
+![image](https://github.com/user-attachments/assets/27a1c75e-7694-4de1-b2cf-f317739cf1f4)
+![image](https://github.com/user-attachments/assets/a65d2e44-9360-422f-9196-4b171db768cc)
+![image](https://github.com/user-attachments/assets/8a2ed386-395c-404f-b5c8-2f5f7c616efe)
 
 ## Overlay
 The software has multiple built-in performance metric overlay options. 
@@ -90,11 +92,10 @@ The software has multiple built-in performance metric overlay options.
 
 On the fly adjustment of TDP (global and profile), brightness, screen resolution and frequency, hotkeys and motion control profile settings. Summonable with a user defined button combination (including certaind supported devices mapped special keys). Window can be aligned how the user sees fit (left, right, floating).
 
-![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/889a1a1c-4775-4261-a173-c275eb4071ad)
-Quicktools power control with Into the Breach.
-
-![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/ec35272e-4c9e-4386-9b0f-3b4e3aa0cf6d)
-Quicktools profile settings with Borderlands Pre-Sequel.
+![image](https://github.com/user-attachments/assets/60037201-8067-4bc3-a838-6cbb2b18d736)
+![image](https://github.com/user-attachments/assets/404b9830-c319-4e03-a161-a20f73da457b)
+![image](https://github.com/user-attachments/assets/6fa9f026-1f06-4b9e-9a6e-c3a194c43dd4)
+![image](https://github.com/user-attachments/assets/08039ccc-a34e-4b13-90e4-dc5082702d55)
 
 ### Virtual touchpad
 
@@ -111,17 +112,18 @@ PS Remote Play, The Last of Us Part 2
 ### 3D Controller
 
 Display a 3D virtual controller, showcasing the motion of the device and all button interaction, individual button presses, joystick and trigger positions. The following 3D models are availible.
-  - OEM controller (Ayaneo Pro, Ayaneo Next, OneXPlayer Mini)
   - Emulated controller (DualShock 4, Xbox 360)
   - Xbox One controller
-  - ZDO+ controller
   - Fisher-Price controller
   - Machenike HG510 
   - 8BitDo Lite 2
   - Nintendo 64
-  - Dual Sense
+  - PlayStation DualSense
+  - PlayStation DualShock 4
+  - Steam Deck
 
-![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
+![image](https://github.com/user-attachments/assets/41f95b94-6a67-429c-a486-7ff785505a3b)
+![image](https://github.com/user-attachments/assets/b1a5f5c3-6648-488c-9b7d-fb7213e79347)
 
 ## Contribute
 ### Bugs & Features
@@ -141,10 +143,7 @@ Installers are [available as an all-in-one setup](../../releases/latest).
 Run the `install.exe` as administrator and you'll be set!
 
 ## Credits & Libraries
-- ViGEmBus: [Nefarius](https://github.com/ViGEm/ViGEmBus)
-- ViGEmClient : [Nefarius](https://github.com/ViGEm/ViGEmClient)
-- SharpDX : [https://github.com/sharpdx/SharpDX](https://github.com/sharpdx/SharpDX)
-- Godot Engine Illustration : [Juan Linietsky, Fernando Miguel Calabró](https://github.com/godotengine/tps-demo)
+Handheld Companion (HC) is the result of countless hours of work by enthusiasts and the community, who have provided feedback and shared access to their devices. HC reliers on the drivers and libraries of [Nefarius](https://github.com/ViGEm/ViGEmBus), [https://github.com/sharpdx/SharpDX](SharpDX), [https://github.com/libsdl-org/SDL](SDL) but also the reverse engineering efforts of Handheld Daemon, GHelper, SteamDeckTools. Finally, HC was made possible thanks to the support from a few OEM partners like AYANEO, ASUS and MSI who've been providing samples to support the development.
 
 ## Licensing
 
