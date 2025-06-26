@@ -392,9 +392,9 @@ public class DeviceManager : IManager
         {
             devicePath = path,
             SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString()),
-
             deviceInstanceId = device.InstanceId,
-            baseContainerDeviceInstanceId = device.InstanceId
+            baseContainerDeviceInstanceId = device.InstanceId,
+            isVirtual = device.IsVirtual(),
         };
     }
 

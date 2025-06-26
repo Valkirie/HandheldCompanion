@@ -9,5 +9,7 @@ namespace HandheldCompanion.Controllers.Dummies
 {
     public class DummyDualShock4Controller : DualShock4Controller
     {
+        public override bool IsVirtual() => true;
+        public override bool IsDummy() => true;
     }
 }

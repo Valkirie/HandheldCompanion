@@ -54,8 +54,8 @@ public class XInputController : IController
     {
         Unplug();
 
-        // don't dispose our placeholders
-        if (isPlaceholder)
+        // don't dispose dummy controllers
+        if (IsDummy())
             return;
 
         Controller = null;

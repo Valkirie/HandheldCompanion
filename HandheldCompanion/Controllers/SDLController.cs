@@ -1,15 +1,13 @@
-﻿using HandheldCompanion.Helpers;
+﻿using HandheldCompanion.Controllers.SDL;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using SDL3;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Windows.Gaming.Input;
+using System.Windows.Media;
 using static SDL3.SDL;
-using ThreadPriority = System.Threading.ThreadPriority;
+using Color = System.Windows.Media.Color;
 
 namespace HandheldCompanion.Controllers
 {
@@ -19,11 +17,19 @@ namespace HandheldCompanion.Controllers
         public uint deviceIndex = 0;
         public uint deviceProperties => GetGamepadProperties(this.gamepad);
 
-        public override bool IsConnected() => GamepadConnected(gamepad);
+        public override bool IsConnected() => GamepadConnected(this.gamepad);
+        public override byte UserIndex => (byte)GetGamepadPlayerIndex(this.gamepad);
 
         private bool HasGyro => GamepadHasSensor(this.gamepad, SensorType.Gyro);
         private bool HasAccel => GamepadHasSensor(this.gamepad, SensorType.Accel);
         private bool HasMotion => HasGyro || HasAccel;
+
+        private bool HasButton(GamepadButton button) => GamepadHasButton(this.gamepad, button);
+        private bool HasAxis(GamepadAxis axis) => GamepadHasAxis(this.gamepad, axis);
+
+        private bool HasTouchpad => GetTouchpads() != 0;
+        private int GetTouchpads() => GetNumGamepadTouchpads(this.gamepad);
+        private int GetTouchpadFingers(int touchpad) => GetNumGamepadTouchpadFingers(this.gamepad, touchpad);
 
         private bool HasMonoLed => GetBooleanProperty(deviceProperties, Props.GamepadCapMonoLedBoolean, false);
         private bool HasRGBLed => GetBooleanProperty(deviceProperties, Props.GamepadCapRGBLedBoolean, false);
@@ -31,7 +37,7 @@ namespace HandheldCompanion.Controllers
         private bool HasRumble => GetBooleanProperty(deviceProperties, Props.GamepadCapRumbleBoolean, false);
         private bool HasTriggerRumble => GetBooleanProperty(deviceProperties, Props.GamepadCapTriggerRumbleBoolean, false);
 
-        public override bool IsWireless() => GetGamepadConnectionState(gamepad) == JoystickConnectionState.Wireless;
+        public override bool IsWireless() => GetGamepadConnectionState(this.gamepad) == JoystickConnectionState.Wireless;
 
         private ulong lastCounter = GetPerformanceCounter();
         private readonly float freq = GetPerformanceFrequency();
@@ -46,7 +52,6 @@ namespace HandheldCompanion.Controllers
 
             this.gamepad = gamepad;
             this.deviceIndex = deviceIndex;
-            this.UserIndex = (byte)GetGamepadPlayerIndex(gamepad);
 
             // prepare sensor
             SetGamepadSensorEnabled(gamepad, SensorType.Gyro, HasGyro);
@@ -57,11 +62,80 @@ namespace HandheldCompanion.Controllers
             Capabilities |= HasRumble ? ControllerCapabilities.Rumble : ControllerCapabilities.None;
 
             AttachDetails(details);
+
+            // UI
+            GamepadType type = GetGamepadType(gamepad);
+            switch (type)
+            {
+                case GamepadType.Xbox360:
+                case GamepadType.XboxOne:
+                    ColoredButtons.Add(ButtonFlags.B1, Color.FromArgb(255, 81, 191, 61));
+                    ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 217, 65, 38));
+                    ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 26, 159, 255));
+                    ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 255, 200, 44));
+                    break;
+
+                case GamepadType.PS3:
+                case GamepadType.PS4:
+                case GamepadType.PS5:
+                    ColoredButtons.Add(ButtonFlags.B1, Color.FromArgb(255, 116, 139, 255));
+                    ColoredButtons.Add(ButtonFlags.B2, Color.FromArgb(255, 255, 73, 75));
+                    ColoredButtons.Add(ButtonFlags.B3, Color.FromArgb(255, 244, 149, 193));
+                    ColoredButtons.Add(ButtonFlags.B4, Color.FromArgb(255, 73, 191, 115));
+                    break;
+
+                default:
+                case GamepadType.Unknown:
+                case GamepadType.Standard:
+                case GamepadType.GameCube:
+                case GamepadType.NintendoSwitchPro:
+                    break;
+            }
         }
 
         public override void AttachDetails(PnPDetails details)
         {
             base.AttachDetails(details);
+        }
+
+        protected override void InitializeInputOutput()
+        {
+            // Additional controller specific source buttons
+            if (HasTouchpad)
+            {
+                int touchpads = GetTouchpads();
+                if (touchpads >= 1)
+                {
+                    SourceButtons.Add(ButtonFlags.LeftPadClick);
+                    SourceButtons.Add(ButtonFlags.LeftPadTouch);
+                    SourceAxis.Add(AxisLayoutFlags.LeftPad);
+
+                    if (IsVirtual())
+                    {
+                        TargetButtons.Add(ButtonFlags.LeftPadClick);
+                        TargetButtons.Add(ButtonFlags.LeftPadTouch);
+                        TargetAxis.Add(AxisLayoutFlags.LeftPad);
+                    }
+                }
+                if (touchpads >= 2)
+                {
+                    SourceButtons.Add(ButtonFlags.RightPadClick);
+                    SourceButtons.Add(ButtonFlags.RightPadTouch);
+                    SourceAxis.Add(AxisLayoutFlags.RightPad);
+
+                    if (IsVirtual())
+                    {
+                        TargetButtons.Add(ButtonFlags.RightPadClick);
+                        TargetButtons.Add(ButtonFlags.RightPadTouch);
+                        TargetAxis.Add(AxisLayoutFlags.RightPad);
+                    }
+                }
+            }
+
+            if (HasGyro)
+            {
+                SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+            }
         }
 
         ~SDLController()
@@ -269,6 +343,16 @@ namespace HandheldCompanion.Controllers
                 (ushort)InputUtils.MapRange((float)(LargeMotor * VibrationStrength), byte.MinValue, byte.MaxValue, ushort.MinValue, ushort.MaxValue),
                 (ushort)InputUtils.MapRange((float)(SmallMotor * VibrationStrength), byte.MinValue, byte.MaxValue, ushort.MinValue, ushort.MaxValue),
                 1000);
+        }
+
+        public override void SetLightColor(byte R, byte G, byte B)
+        {
+            if (!HasRGBLed)
+                return;
+
+            SetGamepadLED(gamepad, R, G, B);
+
+            base.SetLightColor(R, G, B);
         }
     }
 }

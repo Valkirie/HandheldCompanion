@@ -2,7 +2,7 @@
 
 namespace HandheldCompanion.Controllers
 {
-    public class XClawController : SDLController
+    public class XClawController : XInputController
     {
         public override bool IsReady
         {
@@ -18,7 +18,7 @@ namespace HandheldCompanion.Controllers
         public XClawController()
         { }
 
-        public XClawController(nint gamepad, uint deviceIndex, PnPDetails details) : base(gamepad, deviceIndex, details)
+        public XClawController(PnPDetails details) : base(details)
         { }
     }
 }

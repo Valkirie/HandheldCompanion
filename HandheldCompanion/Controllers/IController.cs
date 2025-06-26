@@ -96,8 +96,6 @@ namespace HandheldCompanion.Controllers
 
         public virtual bool IsReady => true;
 
-        public bool isPlaceholder;
-
         private bool _IsBusy;
         public bool IsBusy
         {
@@ -117,7 +115,7 @@ namespace HandheldCompanion.Controllers
         }
 
         private byte _UserIndex = 255;
-        protected byte UserIndex
+        public virtual byte UserIndex
         {
             get
             {
@@ -137,7 +135,6 @@ namespace HandheldCompanion.Controllers
         public IController()
         {
             gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
-            InitializeInputOutput();
         }
 
         ~IController()
@@ -161,6 +158,7 @@ namespace HandheldCompanion.Controllers
 
             // manage gamepad motion
             gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
+            InitializeInputOutput();
         }
 
         public virtual void UpdateInputs(long ticks, float delta)
@@ -226,6 +224,11 @@ namespace HandheldCompanion.Controllers
         {
             if (Details is not null)
                 return Details.isGaming;
+            return false;
+        }
+
+        public virtual bool IsDummy()
+        {
             return false;
         }
 
@@ -403,8 +406,6 @@ namespace HandheldCompanion.Controllers
         public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
         public virtual void Plug()
         {
-            if (isPlaceholder)
-                return;
 
             SetVibrationStrength(ManagerFactory.settingsManager.GetUInt("VibrationStrength"));
 
@@ -412,10 +413,7 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void Unplug()
-        {
-            if (isPlaceholder)
-                return;
-        }
+        { }
 
         public bool IsHidden()
         {
@@ -426,9 +424,6 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Hide(bool powerCycle = true)
         {
-            if (isPlaceholder)
-                return;
-
             HideHID();
 
             if (powerCycle)
@@ -440,9 +435,6 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Unhide(bool powerCycle = true)
         {
-            if (isPlaceholder)
-                return;
-
             UnhideHID();
 
             if (powerCycle)
