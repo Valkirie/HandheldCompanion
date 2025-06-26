@@ -26,7 +26,6 @@ public class XInputController : IController
         if (details is null)
             throw new Exception("XInputController PnPDetails is null");
 
-        AttachController(details.XInputUserIndex);
         AttachDetails(details);
 
         // UI
@@ -37,6 +36,13 @@ public class XInputController : IController
 
         // Capabilities
         Capabilities |= ControllerCapabilities.Rumble;
+    }
+
+    public override void AttachDetails(PnPDetails details)
+    {
+        AttachController(details.XInputUserIndex);
+
+        base.AttachDetails(details);
     }
 
     ~XInputController()

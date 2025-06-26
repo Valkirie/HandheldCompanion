@@ -5,6 +5,7 @@ using HandheldCompanion.Utils;
 using SDL3;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Windows.Gaming.Input;
 using static SDL3.SDL;
@@ -14,35 +15,46 @@ namespace HandheldCompanion.Controllers
 {
     public class SDLController : IController
     {
-        private nint gamepad = IntPtr.Zero;
-        private uint deviceIndex = 0;
+        public nint gamepad = IntPtr.Zero;
+        public uint deviceIndex = 0;
+        public uint deviceProperties => GetGamepadProperties(this.gamepad);
 
         public override bool IsConnected() => GamepadConnected(gamepad);
 
-        private Thread pumpThread;
-        private bool pumpThreadRunning;
+        private bool HasGyro => GamepadHasSensor(this.gamepad, SensorType.Gyro);
+        private bool HasAccel => GamepadHasSensor(this.gamepad, SensorType.Accel);
+        private bool HasMotion => HasGyro || HasAccel;
+
+        private bool HasMonoLed => GetBooleanProperty(deviceProperties, Props.GamepadCapMonoLedBoolean, false);
+        private bool HasRGBLed => GetBooleanProperty(deviceProperties, Props.GamepadCapRGBLedBoolean, false);
+        private bool HasPlayerLed => GetBooleanProperty(deviceProperties, Props.GamepadCapPlayerLedBoolean, false);
+        private bool HasRumble => GetBooleanProperty(deviceProperties, Props.GamepadCapRumbleBoolean, false);
+        private bool HasTriggerRumble => GetBooleanProperty(deviceProperties, Props.GamepadCapTriggerRumbleBoolean, false);
+
+        public override bool IsWireless() => GetGamepadConnectionState(gamepad) == JoystickConnectionState.Wireless;
+
+        private ulong lastCounter = GetPerformanceCounter();
+        private readonly float freq = GetPerformanceFrequency();
 
         public SDLController()
         { }
 
-        public SDLController(nint ctrl, uint deviceIndex, PnPDetails details)
+        public SDLController(nint gamepad, uint deviceIndex, PnPDetails details)
         {
             if (details is null)
                 throw new Exception("SDLController PnPDetails is null");
 
-            this.gamepad = ctrl;
+            this.gamepad = gamepad;
             this.deviceIndex = deviceIndex;
-            this.UserIndex = (byte)GetGamepadPlayerIndex(ctrl);
+            this.UserIndex = (byte)GetGamepadPlayerIndex(gamepad);
 
-            if (GamepadHasSensor(gamepad, SensorType.Gyro))
-                SetGamepadSensorEnabled(ctrl, SensorType.Gyro, true);
-
-            if (GamepadHasSensor(gamepad, SensorType.Accel))
-                SetGamepadSensorEnabled(ctrl, SensorType.Accel, true);
+            // prepare sensor
+            SetGamepadSensorEnabled(gamepad, SensorType.Gyro, HasGyro);
+            SetGamepadSensorEnabled(gamepad, SensorType.Accel, HasAccel);
 
             // Capabilities
-            Capabilities |= GamepadHasSensor(gamepad, SensorType.Gyro) || GamepadHasSensor(gamepad, SensorType.Accel) ? ControllerCapabilities.MotionSensor : ControllerCapabilities.None;
-            Capabilities |= ControllerCapabilities.Rumble;
+            Capabilities |= HasMotion ? ControllerCapabilities.MotionSensor : ControllerCapabilities.None;
+            Capabilities |= HasRumble ? ControllerCapabilities.Rumble : ControllerCapabilities.None;
 
             AttachDetails(details);
         }
@@ -78,204 +90,165 @@ namespace HandheldCompanion.Controllers
             if (!IsConnected())
                 return;
 
-            // manage pump thread
-            pumpThreadRunning = true;
-            pumpThread = new Thread(pumpThreadLoop)
-            {
-                IsBackground = true,
-                Priority = ThreadPriority.Highest
-            };
-            pumpThread.Start();
-
             base.Plug();
         }
 
-        private ulong lastCounter = GetPerformanceCounter();
-        private readonly float freq = GetPerformanceFrequency();
-
-        private void pumpThreadLoop(object? obj)
+        private static readonly Dictionary<GamepadButton, ButtonFlags> _buttonMap = new()
         {
-            while (pumpThreadRunning)
+            [GamepadButton.North] = ButtonFlags.B4,
+            [GamepadButton.South] = ButtonFlags.B1,
+            [GamepadButton.West] = ButtonFlags.B3,
+            [GamepadButton.East] = ButtonFlags.B2,
+            [GamepadButton.DPadUp] = ButtonFlags.DPadUp,
+            [GamepadButton.DPadDown] = ButtonFlags.DPadDown,
+            [GamepadButton.DPadLeft] = ButtonFlags.DPadLeft,
+            [GamepadButton.DPadRight] = ButtonFlags.DPadRight,
+            [GamepadButton.Start] = ButtonFlags.Start,
+            [GamepadButton.Back] = ButtonFlags.Back,
+            [GamepadButton.LeftShoulder] = ButtonFlags.L1,
+            [GamepadButton.RightShoulder] = ButtonFlags.R1,
+            [GamepadButton.Guide] = ButtonFlags.Special,
+            [GamepadButton.LeftStick] = ButtonFlags.LeftStickClick,
+            [GamepadButton.RightStick] = ButtonFlags.RightStickClick,
+        };
+
+        public void PumpEvent(Event e)
+        {
+            switch ((EventType)e.Type)
             {
-                if (WaitEventTimeout(out Event e, TimerManager.GetPeriod()))
-                {
-                    if (e.GDevice.Which != deviceIndex)
-                        continue;
+                case EventType.Quit:
+                    // implement me
+                    break;
 
-                    switch ((EventType)e.Type)
+                case EventType.GamepadAxisMotion:
                     {
-                        case EventType.Quit:
-                            pumpThreadRunning = false;
-                            break;
+                        switch ((GamepadAxis)e.GAxis.Axis)
+                        {
+                            // Left joystick
+                            case GamepadAxis.LeftX:
+                                Inputs.AxisState[AxisFlags.LeftStickX] = e.GAxis.Value;
+                                break;
+                            case GamepadAxis.LeftY:
+                                Inputs.AxisState[AxisFlags.LeftStickY] = (short)InputUtils.MapRange(
+                                    e.GAxis.Value,
+                                    short.MinValue,
+                                    short.MaxValue,
+                                    short.MaxValue,
+                                    short.MinValue);
+                                break;
 
-                        case EventType.GamepadAxisMotion:
-                            {
-                                switch ((GamepadAxis)e.GAxis.Axis)
+                            // Right joystick
+                            case GamepadAxis.RightX:
+                                Inputs.AxisState[AxisFlags.RightStickX] = e.GAxis.Value;
+                                break;
+                            case GamepadAxis.RightY:
+                                Inputs.AxisState[AxisFlags.RightStickY] = (short)InputUtils.MapRange(
+                                    e.GAxis.Value,
+                                    short.MinValue,
+                                    short.MaxValue,
+                                    short.MaxValue,
+                                    short.MinValue);
+                                break;
+
+                            // Triggers
+                            case GamepadAxis.LeftTrigger:
+                                Inputs.AxisState[AxisFlags.L2] = (byte)InputUtils.MapRange(
+                                    e.GAxis.Value,
+                                    ushort.MinValue,
+                                    short.MaxValue,
+                                    byte.MinValue,
+                                    byte.MaxValue);
+                                break;
+                            case GamepadAxis.RightTrigger:
+                                Inputs.AxisState[AxisFlags.R2] = (byte)InputUtils.MapRange(
+                                    e.GAxis.Value,
+                                    ushort.MinValue,
+                                    short.MaxValue,
+                                    byte.MinValue,
+                                    byte.MaxValue);
+                                break;
+                        }
+                    }
+                    break;
+
+                case EventType.GamepadSensorUpdate:
+                    {
+                        switch ((SensorType)e.GSensor.Sensor)
+                        {
+                            case SensorType.Accel:
+                                unsafe
                                 {
-                                    // Left joystick
-                                    case GamepadAxis.LeftX:
-                                        Inputs.AxisState[AxisFlags.LeftStickX] = e.GAxis.Value;
-                                        break;
-                                    case GamepadAxis.LeftY:
-                                        Inputs.AxisState[AxisFlags.LeftStickY] = (short)InputUtils.MapRange(
-                                            e.GAxis.Value,
-                                            short.MinValue,
-                                            short.MaxValue,
-                                            short.MaxValue,
-                                            short.MinValue);
-                                        break;
-
-                                    // Right joystick
-                                    case GamepadAxis.RightX:
-                                        Inputs.AxisState[AxisFlags.RightStickX] = e.GAxis.Value;
-                                        break;
-                                    case GamepadAxis.RightY:
-                                        Inputs.AxisState[AxisFlags.RightStickY] = (short)InputUtils.MapRange(
-                                            e.GAxis.Value,
-                                            short.MinValue,
-                                            short.MaxValue,
-                                            short.MaxValue,
-                                            short.MinValue);
-                                        break;
-
-                                    // Triggers
-                                    case GamepadAxis.LeftTrigger:
-                                        Inputs.AxisState[AxisFlags.L2] = (byte)InputUtils.MapRange(
-                                            e.GAxis.Value,
-                                            ushort.MinValue,
-                                            short.MaxValue,
-                                            byte.MinValue,
-                                            byte.MaxValue);
-                                        break;
-                                    case GamepadAxis.RightTrigger:
-                                        Inputs.AxisState[AxisFlags.R2] = (byte)InputUtils.MapRange(
-                                            e.GAxis.Value,
-                                            ushort.MinValue,
-                                            short.MaxValue,
-                                            byte.MinValue,
-                                            byte.MaxValue);
-                                        break;
+                                    float x = e.GSensor.Data[0] / 40.0f * 4.0f;
+                                    float y = e.GSensor.Data[1] / 40.0f * 4.0f;
+                                    float z = e.GSensor.Data[2] / 40.0f * 4.0f;
+                                    Inputs.GyroState.SetAccelerometer(x, y, z);
                                 }
-                            }
-                            break;
+                                break;
 
-                        case EventType.GamepadSensorUpdate:
-                            {
-                                switch((SensorType)e.GSensor.Sensor)
+                            case SensorType.Gyro:
+                                unsafe
                                 {
-                                    case SensorType.Accel:
-                                        unsafe
-                                        {
-                                            float x = e.GSensor.Data[0] / 40.0f * 4.0f;
-                                            float y = e.GSensor.Data[1] / 40.0f * 4.0f;
-                                            float z = e.GSensor.Data[2] / 40.0f * 4.0f;
-                                            Inputs.GyroState.SetAccelerometer(x, y, z);
-                                        }
-                                        break;
-
-                                    case SensorType.Gyro:
-                                        unsafe
-                                        {
-                                            float x = e.GSensor.Data[0] / 40.0f * 2000.0f;
-                                            float y = e.GSensor.Data[1] / 40.0f * 2000.0f;
-                                            float z = e.GSensor.Data[2] / 40.0f * 2000.0f;
-                                            Inputs.GyroState.SetGyroscope(x, y, z);
-                                        }
-                                        break;
+                                    float x = e.GSensor.Data[0] / 40.0f * 2000.0f;
+                                    float y = e.GSensor.Data[1] / 40.0f * 2000.0f;
+                                    float z = e.GSensor.Data[2] / 40.0f * 2000.0f;
+                                    Inputs.GyroState.SetGyroscope(x, y, z);
                                 }
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    break;
 
-                            case EventType.GamepadButtonDown:
-                            {
-                                switch((GamepadButton)e.GButton.Button)
-                                {
-                                    case GamepadButton.North:
-                                        Inputs.ButtonState[ButtonFlags.B4] = true;
-                                        break;
-                                    case GamepadButton.South:
-                                        Inputs.ButtonState[ButtonFlags.B1] = true;
-                                        break;
-                                    case GamepadButton.West:
-                                        Inputs.ButtonState[ButtonFlags.B3] = true;
-                                        break;
-                                    case GamepadButton.East:
-                                        Inputs.ButtonState[ButtonFlags.B2] = true;
-                                        break;
-                                }
-                            }
-                            break;
+                case EventType.GamepadButtonDown:
+                case EventType.GamepadButtonUp:
+                    {
+                        bool isDown = (EventType)e.Type == EventType.GamepadButtonDown;
+                        GamepadButton gpBtn = (GamepadButton)e.GButton.Button;
 
-                        case EventType.GamepadButtonUp:
-                            {
-                                switch ((GamepadButton)e.GButton.Button)
-                                {
-                                    case GamepadButton.North:
-                                        Inputs.ButtonState[ButtonFlags.B4] = false;
-                                        break;
-                                    case GamepadButton.South:
-                                        Inputs.ButtonState[ButtonFlags.B1] = false;
-                                        break;
-                                    case GamepadButton.West:
-                                        Inputs.ButtonState[ButtonFlags.B3] = false;
-                                        break;
-                                    case GamepadButton.East:
-                                        Inputs.ButtonState[ButtonFlags.B2] = false;
-                                        break;
-                                }
-                            }
-                            break;
-
-                        case EventType.GamepadUpdateComplete:
-                            break;
-
-                        case EventType.JoystickAxisMotion:
-                        case EventType.JoystickUpdateComplete:
-                        case EventType.JoystickButtonDown:
-                        case EventType.JoystickButtonUp:
-                        case EventType.JoystickHatMotion:
-                            break;
-
-                        case EventType.GamepadTouchpadDown:
-                            break;
-
-                        case EventType.GamepadTouchpadUp:
-                            break;
-
-                        case EventType.GamepadTouchpadMotion:
-                            break;
-
-                        default:
-                            break;
+                        if (_buttonMap.TryGetValue(gpBtn, out var flag))
+                            Inputs.ButtonState[flag] = isDown;
+                        break;
                     }
 
-                    /*
-                    Inputs.ButtonState[ButtonFlags.B1] = A;
-                    Inputs.ButtonState[ButtonFlags.B2] = B;
-                    Inputs.ButtonState[ButtonFlags.B3] = X;
-                    Inputs.ButtonState[ButtonFlags.B4] = Y;
-                    */
+                case EventType.GamepadUpdateComplete:
+                    // implement me
+                    break;
 
-                    ulong now = GetPerformanceCounter();
-                    ulong tickDelta = now - lastCounter;
-                    lastCounter = now;
+                case EventType.GamepadTouchpadDown:
+                    // implement me
+                    break;
 
-                    float deltaMillis = (float)tickDelta / freq;
+                case EventType.GamepadTouchpadUp:
+                    // implement me
+                    break;
 
-                    // process motion
-                    if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
-                        gamepadMotion.ProcessMotion(
-                            Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].X,
-                            Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].Y,
-                            Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].Z,
-                            Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].X,
-                            Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].Y,
-                            Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].Z,
-                            deltaMillis);
+                case EventType.GamepadTouchpadMotion:
+                    // implement me
+                    break;
 
-                    base.UpdateInputs(TimerManager.GetTimestamp(), deltaMillis);
-                }
+                default:
+                    break;
             }
+
+            // compute delta (ms)
+            ulong now = GetPerformanceCounter();
+            ulong tickDelta = now - lastCounter;
+            float deltaMillis = (float)tickDelta / freq;
+
+            // process motion
+            if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
+                gamepadMotion.ProcessMotion(
+                    Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].X,
+                    Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].Y,
+                    Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].Z,
+                    Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].X,
+                    Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].Y,
+                    Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].Z,
+                    deltaMillis);
+
+            // update previous counter
+            lastCounter = now;
+
+            base.UpdateInputs(TimerManager.GetTimestamp(), deltaMillis);
         }
 
         public override void Unplug()
@@ -283,21 +256,14 @@ namespace HandheldCompanion.Controllers
             if (!IsConnected())
                 return;
 
-            // kill pump thread
-            if (pumpThread is not null)
-            {
-                pumpThreadRunning = false;
-                // Ensure the thread has finished execution
-                if (pumpThread.IsAlive)
-                    pumpThread.Join(3000);
-                pumpThread = null;
-            }
-
             base.Unplug();
         }
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
+            if (!HasRumble)
+                return;
+
             RumbleGamepad(
                 gamepad,
                 (ushort)InputUtils.MapRange((float)(LargeMotor * VibrationStrength), byte.MinValue, byte.MaxValue, ushort.MinValue, ushort.MaxValue),
