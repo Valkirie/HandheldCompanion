@@ -233,6 +233,10 @@ namespace HandheldCompanion.Managers
             {
                 newGPU = new IntelGPU(adapterInformation);
             }
+            else
+            {
+                newGPU = new UnknownGPU(adapterInformation);
+            }
 
             if (newGPU is null)
             {
