@@ -53,8 +53,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly DummyXbox360Controller? defaultXInput = new();
-    private static readonly DummyDualShock4Controller? defaultDS4 = new();
+    private static readonly DummyXbox360Controller? dummyXbox360 = new();
+    private static readonly DummyDualShock4Controller? dummyDualShock4 = new();
 
     public static bool HasTargetController => GetTarget() != null;
 
@@ -1516,21 +1516,21 @@ public static class ControllerManager
             default:
             case HIDmode.NoController:
             case HIDmode.Xbox360Controller:
-                return defaultXInput;
+                return dummyXbox360;
 
             case HIDmode.DualShock4Controller:
-                return defaultDS4;
+                return dummyDualShock4;
         }
     }
 
     public static IController GetDefaultXBOX()
     {
-        return defaultXInput;
+        return dummyXbox360;
     }
 
     public static IController GetDefaultDualShock4()
     {
-        return defaultDS4;
+        return dummyDualShock4;
     }
 
     #region events

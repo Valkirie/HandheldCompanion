@@ -539,7 +539,7 @@
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
                                 <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="False" />
+                                <ComboBoxItem Content="Axis" IsEnabled="False" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="True" />
@@ -1032,7 +1032,7 @@
                             SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="Disabled" IsEnabled="True" />
                             <ComboBoxItem Content="Button" IsEnabled="False" />
-                            <ComboBoxItem Content="Joystick" IsEnabled="True" />
+                            <ComboBoxItem Content="Axis" IsEnabled="True" />
                             <ComboBoxItem Content="Keyboard" IsEnabled="False" />
                             <ComboBoxItem Content="Mouse" IsEnabled="True" />
                             <ComboBoxItem Content="Trigger" IsEnabled="False" />
@@ -1669,7 +1669,7 @@
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
                                 <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="True" />
+                                <ComboBoxItem Content="Axis" IsEnabled="True" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="False" />
@@ -2337,7 +2337,7 @@
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
                                 <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="False" />
+                                <ComboBoxItem Content="Axis" IsEnabled="False" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="True" />

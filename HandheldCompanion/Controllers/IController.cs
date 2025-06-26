@@ -135,6 +135,7 @@ namespace HandheldCompanion.Controllers
         public IController()
         {
             gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
+            InitializeInputOutput();
         }
 
         ~IController()

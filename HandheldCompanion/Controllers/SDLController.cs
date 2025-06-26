@@ -28,8 +28,8 @@ namespace HandheldCompanion.Controllers
         private bool HasAxis(GamepadAxis axis) => GamepadHasAxis(this.gamepad, axis);
 
         private bool HasTouchpad => GetTouchpads() != 0;
-        private int GetTouchpads() => GetNumGamepadTouchpads(this.gamepad);
-        private int GetTouchpadFingers(int touchpad) => GetNumGamepadTouchpadFingers(this.gamepad, touchpad);
+        protected virtual int GetTouchpads() => GetNumGamepadTouchpads(this.gamepad);
+        protected virtual int GetTouchpadFingers(int touchpad) => GetNumGamepadTouchpadFingers(this.gamepad, touchpad);
 
         private bool HasMonoLed => GetBooleanProperty(deviceProperties, Props.GamepadCapMonoLedBoolean, false);
         private bool HasRGBLed => GetBooleanProperty(deviceProperties, Props.GamepadCapRGBLedBoolean, false);
