@@ -236,12 +236,7 @@ namespace HandheldCompanion.Managers
             else
             {
                 newGPU = new UnknownGPU(adapterInformation);
-            }
-
-            if (newGPU is null)
-            {
                 LogManager.LogError("Unsupported DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
-                return;
             }
 
             if (!newGPU.IsInitialized)
