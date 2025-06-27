@@ -412,7 +412,7 @@ public static class ControllerManager
                 PickTargetController();
                 PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
             }
-            catch
+            finally
             {
                 deviceLock.Release();
                 CleanupDeviceLock(path);
@@ -431,9 +431,7 @@ public static class ControllerManager
 
             try
             {
-                uint instanceID = SDL.GetGamepadID(controller.gamepad);
-                string? name = SDL.GetGamepadName(controller.gamepad);
-
+                // close controller
                 SDL.CloseGamepad(controller.gamepad);
 
                 PowerCyclers.TryGetValue(path, out bool IsPowerCycling);
@@ -442,11 +440,28 @@ public static class ControllerManager
                 LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
                 ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
-                // clear dictionnaries
-                Controllers.TryRemove(path, out _);
-                SDLControllers.TryRemove(deviceIndex, out _);
+                if (!IsPowerCycling)
+                {
+                    controller.Gone();
+
+                    if (controller.IsPhysical())
+                        controller.Unhide(false);
+
+                    if (WasTarget)
+                    {
+                        ClearTargetController();
+                        PickTargetController();
+                    }
+                    else
+                    {
+                        controller.Dispose();
+                    }
+
+                    Controllers.TryRemove(path, out _);
+                    SDLControllers.TryRemove(deviceIndex, out _);
+                }
             }
-            catch
+            finally
             {
                 deviceLock.Release();
                 CleanupDeviceLock(path);
