@@ -218,10 +218,7 @@ public static class ControllerManager
             string? path = SDL.GetGamepadPath(gamepad);
 
             if (string.IsNullOrEmpty(path))
-            {
-                LogManager.LogError($"Controller {deviceIndex} has no path");
                 return;
-            }
 
             // prepare PnPDetails
             PnPDetails? details = null;
@@ -1191,7 +1188,7 @@ public static class ControllerManager
                 }
                 else if (targetController.IsWireless() || targetController.IsExternal())
                 {
-                    // do nothing
+                    deviceInstanceId = targetController.GetContainerInstanceId();
                 }
             }
             else if (internalController is not null)
