@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using Capabilities = HandheldCompanion.Managers.Hid.Capabilities;
@@ -493,6 +494,59 @@ public class DeviceManager : IManager
         InstanceId = InstanceId.Replace(@"\\?\", "");
         InstanceId = InstanceId.Replace(@"\{}", "");
         return InstanceId;
+    }
+
+    public static string SymLinkToInstanceId(string SymLink)
+    {
+        if (TryExtractInterfaceGuid(SymLink, out Guid InterfaceGuid))
+            return SymLinkToInstanceId(SymLink, InterfaceGuid.ToString());
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// Tries to pull the interface‐GUID out of a Windows device path.
+    /// </summary>
+    /// <param name="devicePath">
+    /// The full path, e.g.  
+    /// \\?\hid#vid_045e&pid_02ff&ig_00#9&…&0000#{ec87f1e3-c13b-4100-b5f7-8b84d54260cb}
+    /// </param>
+    /// <param name="interfaceGuid">
+    /// On success, contains the extracted Guid; otherwise Guid.Empty.
+    /// </param>
+    /// <returns>True if a GUID was found; false otherwise.</returns>
+    public static bool TryExtractInterfaceGuid(string devicePath, out Guid interfaceGuid)
+    {
+        interfaceGuid = Guid.Empty;
+
+        if (string.IsNullOrEmpty(devicePath))
+            return false;
+
+        // Match a brace-enclosed GUID anywhere in the string
+        const string pattern = @"\{(?<g>[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12})\}";
+        var m = Regex.Match(devicePath, pattern);
+        if (m.Success)
+        {
+            interfaceGuid = new Guid(m.Groups["g"].Value);
+            return true;
+        }
+
+        interfaceGuid = Guid.Empty;
+        return false;
+    }
+
+    /// <summary>
+    /// Removes the trailing interface‐GUID (e.g. "{ec87f1e3-c13b-4100-b5f7-8b84d54260cb}") from a device path.
+    /// </summary>
+    public static string RemoveInterfaceGuid(string devicePath)
+    {
+        if (devicePath == null)
+            throw new ArgumentNullException(nameof(devicePath));
+
+        // Matches a brace‐enclosed GUID at the end of the string
+        const string pattern = @"\{[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}\}$";
+
+        // Simply drop it
+        return Regex.Replace(devicePath, pattern, string.Empty);
     }
 
     private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)

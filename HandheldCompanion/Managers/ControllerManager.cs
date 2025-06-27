@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -216,9 +217,27 @@ public static class ControllerManager
         {
             string? name = SDL.GetGamepadName(gamepad);
             string? path = SDL.GetGamepadPath(gamepad);
+            uint UserIndex = (uint)SDL.GetGamepadPlayerIndex(gamepad);
+
+            if (path.Contains("XInput"))
+            {
+                uint size = 520;                 // max chars in buffer (incl. terminating \0)
+                StringBuilder sb = new StringBuilder((int)size);
+
+                uint hr = XInputController.XInputGetDevicePath(UserIndex, sb, ref size);
+                if (hr == 0) // ERROR_SUCCESS
+                    path = sb.ToString();
+            }
 
             if (string.IsNullOrEmpty(path))
+            {
+                LogManager.LogError($"Failed to retrieve path for controller {deviceIndex}");
                 return;
+            }
+
+            // get cleared path
+            if (DeviceManager.TryExtractInterfaceGuid(path, out Guid interfaceGuid))
+                path = DeviceManager.SymLinkToInstanceId(path, interfaceGuid.ToString());
 
             // prepare PnPDetails
             PnPDetails? details = null;
@@ -227,8 +246,26 @@ public static class ControllerManager
             DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(6));
             while (DateTime.Now < timeout && details is null)
             {
-                details = ManagerFactory.deviceManager.PnPDevices.Values.FirstOrDefault(device => device.devicePath.Equals(path, StringComparison.InvariantCultureIgnoreCase));
-                await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                foreach (PnPDetails pnPDetails in ManagerFactory.deviceManager.PnPDevices.Values)
+                {
+                    // devicePath
+                    string devicePath = DeviceManager.SymLinkToInstanceId(pnPDetails.devicePath);
+                    if (path.Equals(devicePath))
+                    {
+                        details = pnPDetails;
+                        break;
+                    }
+
+                    // container devicePath
+                    string basePath = DeviceManager.SymLinkToInstanceId(pnPDetails.baseContainerDevicePath);
+                    if (path.Equals(basePath))
+                    {
+                        details = pnPDetails;
+                        break;
+                    }
+                }
+
+                await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context                                   
             }
 
             if (details is null)
