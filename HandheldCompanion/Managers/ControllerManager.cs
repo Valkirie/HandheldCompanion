@@ -230,7 +230,7 @@ public static class ControllerManager
             DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(6));
             while (DateTime.Now < timeout && details is null)
             {
-                details = ManagerFactory.deviceManager.GetDeviceByInterfaceId(path);
+                details = ManagerFactory.deviceManager.PnPDevices.Values.FirstOrDefault(device => device.devicePath.Equals(path, StringComparison.InvariantCultureIgnoreCase));
                 await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
             }
 
