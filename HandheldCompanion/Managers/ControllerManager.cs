@@ -214,58 +214,20 @@ public static class ControllerManager
         {
             string? name = SDL.GetGamepadName(gamepad);
             string? path = SDL.GetGamepadPath(gamepad);
-            uint UserIndex = (uint)SDL.GetGamepadPlayerIndex(gamepad);
+            uint userIndex = (uint)SDL.GetGamepadPlayerIndex(gamepad);
 
             if (string.IsNullOrEmpty(path))
                 return;
 
             if (path.Contains("XInput"))
-            {
-                uint size = 520;                 // max chars in buffer (incl. terminating \0)
-                StringBuilder sb = new StringBuilder((int)size);
-
-                uint hr = XInputController.XInputGetDevicePath(UserIndex, sb, ref size);
-                if (hr == 0) // ERROR_SUCCESS
-                {
-                    string newPath = sb.ToString();
-                    if (!string.IsNullOrEmpty(newPath))
-                        path = newPath;
-                }
-            }
+                path = DeviceManager.GetPathFromUserIndex(userIndex);
 
             // get cleared path
             if (DeviceManager.TryExtractInterfaceGuid(path, out Guid interfaceGuid))
                 path = DeviceManager.SymLinkToInstanceId(path, interfaceGuid.ToString());
 
             // prepare PnPDetails
-            PnPDetails? details = null;
-
-            // try to retrieve PnPDetails
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(6));
-            while (DateTime.Now < timeout && details is null)
-            {
-                foreach (PnPDetails pnPDetails in ManagerFactory.deviceManager.PnPDevices.Values)
-                {
-                    // devicePath
-                    string devicePath = DeviceManager.SymLinkToInstanceId(pnPDetails.devicePath);
-                    if (path.Equals(devicePath))
-                    {
-                        details = pnPDetails;
-                        break;
-                    }
-
-                    // container devicePath
-                    string basePath = DeviceManager.SymLinkToInstanceId(pnPDetails.baseContainerDevicePath);
-                    if (path.Equals(basePath))
-                    {
-                        details = pnPDetails;
-                        break;
-                    }
-                }
-
-                await Task.Delay(250).ConfigureAwait(false); // Avoid blocking the synchronization context                                   
-            }
-
+            PnPDetails? details = DeviceManager.GetDeviceFromInstanceId(path);
             if (details is null)
             {
                 LogManager.LogError($"Failed to retrieve PnPDetails for controller {deviceIndex}");
@@ -395,12 +357,10 @@ public static class ControllerManager
                                         controller = new SDLController(gamepad, deviceIndex, details);
                                         break;
 
-                                        /*
                                     case SDL.GamepadType.Xbox360:
                                     case SDL.GamepadType.XboxOne:
                                         controller = new Xbox360Controller(gamepad, deviceIndex, details);
                                         break;
-                                        */
 
                                     case SDL.GamepadType.PS3:
                                     case SDL.GamepadType.PS4:
@@ -989,9 +949,31 @@ public static class ControllerManager
             UserIndexes.Clear();
             DrunkControllers.Clear();
 
+            for (uint idx = 0; idx < 4; idx++)
+            {
+                string path = DeviceManager.GetPathFromUserIndex(idx);
+                path = DeviceManager.SymLinkToInstanceId(path);
+
+                if (string.IsNullOrEmpty(path))
+                    continue;
+
+                PnPDetails pnp = DeviceManager.GetDeviceFromInstanceId(path);
+                foreach (IController controller in Controllers.Values)
+                {
+                    if (controller.Details == pnp)
+                    {
+                        controller.UserIndex = (byte)(idx);
+                        if (controller is XInputController xInput)
+                            xInput.AttachController((byte)(idx));
+                        break;
+                    }
+                }
+            }
+
+            /*
             foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
             {
-                byte UserIndex = ManagerFactory.deviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
+                byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
 
                 // controller is not ready yet
                 if (UserIndex == byte.MaxValue)
@@ -1003,6 +985,7 @@ public static class ControllerManager
 
                 xInputController.AttachController(UserIndex);
             }
+            */
 
             foreach (IController controller in DrunkControllers)
             {
@@ -1031,8 +1014,11 @@ public static class ControllerManager
                         // wait until physical controller is here and ready
                         XInputController? pController = null;
 
-                        for (int idx = 0; idx < 4; idx++)
+                        for (int idx = 0; idx <= 4; idx++)
                         {
+                            if (idx == 4)
+                                idx = byte.MaxValue;
+
                             pController = GetControllerFromSlot<XInputController>((UserIndex)idx, true);
                             if (pController is not null)
                                 break;
@@ -1132,12 +1118,6 @@ public static class ControllerManager
                 {
                     // resume all physical controllers
                     ResumeControllers();
-
-                    UpdateStatus(ControllerManagerStatus.Failed);
-                    ControllerManagementAttempts = 0;
-                    // HostRadioDisabled = false;
-
-                    ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
                 }
                 else if (HasVirtualController<XInputController>())
                 {
