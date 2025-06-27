@@ -1181,17 +1181,22 @@ public static class ControllerManager
 
             string deviceInstanceId = string.Empty;
 
-            if (latestExternalController != null)
+            // if we have an external controller plugged-in
+            if (latestExternalController is not null)
             {
-                // Only replace the current controller if it's not a wireless (can be internal) or external controller
-                if (targetController != null && (targetController.IsWireless() || targetController.IsExternal()))
-                    deviceInstanceId = targetController.GetContainerInstanceId();
-                else
+                if (targetController is null || targetController.IsDummy())
+                {
+                    // if no previous controller or dummy, pick external
                     deviceInstanceId = latestExternalController.GetContainerInstanceId();
+                }
+                else if (targetController.IsWireless() || targetController.IsExternal())
+                {
+                    // do nothing
+                }
             }
-            // Fallback: if no external/wireless controller is available, use an internal controller (if present)
-            else if (internalController != null)
+            else if (internalController is not null)
             {
+                // Fallback: if no external/wireless controller is available, use an internal controller (if present)
                 deviceInstanceId = internalController.GetContainerInstanceId();
             }
 
