@@ -19,9 +19,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +30,6 @@ using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
 using Timer = System.Timers.Timer;
 
@@ -219,6 +216,9 @@ public static class ControllerManager
             string? path = SDL.GetGamepadPath(gamepad);
             uint UserIndex = (uint)SDL.GetGamepadPlayerIndex(gamepad);
 
+            if (string.IsNullOrEmpty(path))
+                return;
+
             if (path.Contains("XInput"))
             {
                 uint size = 520;                 // max chars in buffer (incl. terminating \0)
@@ -226,13 +226,11 @@ public static class ControllerManager
 
                 uint hr = XInputController.XInputGetDevicePath(UserIndex, sb, ref size);
                 if (hr == 0) // ERROR_SUCCESS
-                    path = sb.ToString();
-            }
-
-            if (string.IsNullOrEmpty(path))
-            {
-                LogManager.LogError($"Failed to retrieve path for controller {deviceIndex}");
-                return;
+                {
+                    string newPath = sb.ToString();
+                    if (!string.IsNullOrEmpty(newPath))
+                        path = newPath;
+                }
             }
 
             // get cleared path
@@ -997,7 +995,7 @@ public static class ControllerManager
 
                 // controller is not ready yet
                 if (UserIndex == byte.MaxValue)
-                    continue;
+                    UserIndex = (byte)XInputController.TryGetUserIndex(xInputController.Details);
 
                 // two controllers can't use the same slot
                 if (!UserIndexes.Add(UserIndex))
@@ -1044,8 +1042,8 @@ public static class ControllerManager
                             continue;
 
                         // store physical controller Ids to trick the system
-                        VirtualManager.VendorId = pController.GetVendorID();
-                        VirtualManager.ProductId = pController.GetProductID();
+                        ushort VendorId = pController.GetVendorID();
+                        ushort ProductId = pController.GetProductID();
 
                         if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
                         {
@@ -1070,29 +1068,18 @@ public static class ControllerManager
                                     return;
                             }
 
-                            /*
-                            // suspend bluetooth controller, if any
-                            if (pController.IsBluetooth())
-                            {
-                                if (HostRadio.IsEnabled)
-                                {
-                                    using (HostRadio hostRadio = new())
-                                    {
-                                        hostRadio.DisableRadio();
-                                        HostRadioDisabled = true;
-                                    }
-                                }
-                            }
-                            */
-
                             // disconnect main virtual controller and wait until it's gone
                             VirtualManager.SetControllerMode(HIDmode.NoController);
                             DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                             while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() != 0)
                                 Thread.Sleep(100);
 
-                            // wait until all virtual controllers are created
+                            // create virtual controllers
+                            VirtualManager.VendorId = VendorId;
+                            VirtualManager.ProductId = ProductId;
                             int usedSlots = VirtualManager.CreateTemporaryControllers();
+
+                            // wait until all virtual controllers are created
                             timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                             while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() < usedSlots)
                                 Thread.Sleep(100);

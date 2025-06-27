@@ -49,7 +49,7 @@ public class DeviceManager : IManager
 
     const ulong IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
 
-    static byte[] XINPUT_LED_TO_PORT_MAP = new byte[16]
+    private byte[] XINPUT_LED_TO_PORT_MAP = new byte[16]
     {
         255,    // All off
         255,    // All blinking, then previous setting

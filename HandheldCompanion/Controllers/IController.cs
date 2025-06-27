@@ -78,7 +78,7 @@ namespace HandheldCompanion.Controllers
         protected SortedDictionary<AxisLayoutFlags, Color> ColoredAxis = [];
         protected SortedDictionary<ButtonFlags, Color> ColoredButtons = [];
 
-        protected PnPDetails? Details;
+        public PnPDetails? Details;
 
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
