@@ -949,7 +949,8 @@ public static class ControllerManager
             UserIndexes.Clear();
             DrunkControllers.Clear();
 
-            for (uint idx = 0; idx < 4; idx++)
+            /*
+            for (byte idx = 0; idx < 4; idx++)
             {
                 string path = DeviceManager.GetPathFromUserIndex(idx);
                 path = DeviceManager.SymLinkToInstanceId(path);
@@ -962,15 +963,20 @@ public static class ControllerManager
                 {
                     if (controller.Details == pnp)
                     {
-                        controller.UserIndex = (byte)(idx);
+                        controller.UserIndex = idx;
+
+                        // two controllers can't use the same slot
+                        if (!UserIndexes.Add(idx))
+                            DrunkControllers.Add(controller);
+
                         if (controller is XInputController xInput)
                             xInput.AttachController((byte)(idx));
                         break;
                     }
                 }
             }
+            */
 
-            /*
             foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
             {
                 byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
@@ -985,7 +991,6 @@ public static class ControllerManager
 
                 xInputController.AttachController(UserIndex);
             }
-            */
 
             foreach (IController controller in DrunkControllers)
             {
