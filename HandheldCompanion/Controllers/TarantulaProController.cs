@@ -15,8 +15,6 @@ namespace HandheldCompanion.Controllers
         private controller_hidapi.net.TarantulaProController? Controller;
         private byte[] Data = new byte[64];
 
-        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
-        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
         private const byte EXTRABUTTON0_IDX = 11;
         private const byte EXTRABUTTON1_IDX = 12;
         private const byte EXTRABUTTON2_IDX = 13;
@@ -238,12 +236,13 @@ namespace HandheldCompanion.Controllers
             gZ = (short)(Data[22] << 8 | Data[23]) * -(2000.0f / short.MaxValue);
             gY = (short)(Data[24] << 8 | Data[25]) * (2000.0f / short.MaxValue);
 
+            // store motion
+            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+
             // compute motion from controller
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
-
-            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
-            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
 
             base.UpdateInputs(ticks, delta);
         }

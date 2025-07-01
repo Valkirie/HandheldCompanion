@@ -30,6 +30,7 @@ using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
 using Timer = System.Timers.Timer;
 
@@ -104,6 +105,7 @@ public static class ControllerManager
         pumpThread.Start();
 
         // manage events
+        TimerManager.Tick += Tick;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
@@ -166,6 +168,50 @@ public static class ControllerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void Tick(long ticks, float delta)
+    {
+        ControllerState controllerState = targetController?.Inputs ?? new();
+        Dictionary<byte, GamepadMotion> gamepadMotions = targetController?.gamepadMotions ?? new();
+        byte gamepadIndex = targetController?.gamepadIndex ?? 0;
+
+        // raise event
+        InputsUpdated?.Invoke(controllerState);
+
+        // get main motion
+        GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
+
+        switch (sensorSelection)
+        {
+            case SensorFamily.Windows:
+            case SensorFamily.SerialUSBIMU:
+                gamepadMotion = IDevice.GetCurrent().GamepadMotion;
+                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
+                break;
+        }
+
+        // compute motion
+        if (gamepadMotion is not null)
+        {
+            MotionManager.UpdateReport(controllerState, gamepadMotion);
+            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta);
+        }
+
+        // compute layout
+        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
+        InputsUpdated2?.Invoke(controllerState);
+
+        // controller is muted
+        if (ControllerMuted)
+        {
+            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
+            controllerState = mutedState;
+        }
+
+        DS4Touch.UpdateInputs(controllerState);
+        DSUServer.UpdateInputs(controllerState, gamepadMotions);
+        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
     }
 
     private static void pumpThreadLoop(object? obj)
@@ -761,6 +807,7 @@ public static class ControllerManager
         Suspend(true);
 
         // manage events
+        TimerManager.Tick -= Tick;
         ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
         ManagerFactory.deviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
         ManagerFactory.deviceManager.HidDeviceArrived -= HidDeviceArrived;
@@ -1349,7 +1396,6 @@ public static class ControllerManager
         if (targetController is null)
             return;
 
-        targetController.InputsUpdated -= UpdateInputs;
         targetController.SetLightColor(0, 0, 0);
         targetController.Unplug();
         targetController = null;
@@ -1379,7 +1425,6 @@ public static class ControllerManager
 
             // update target controller
             targetController = controller;
-            targetController.InputsUpdated += UpdateInputs;
             targetController.Plug();
 
             Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.AccentDark1);
@@ -1606,45 +1651,6 @@ public static class ControllerManager
     }
 
     private static ControllerState mutedState = new ControllerState();
-    private static void UpdateInputs(ControllerState controllerState, Dictionary<byte, GamepadMotion> gamepadMotions, float deltaTimeSeconds, byte gamepadIndex)
-    {
-        // raise event
-        InputsUpdated?.Invoke(controllerState);
-
-        // get main motion
-        GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
-
-        switch (sensorSelection)
-        {
-            case SensorFamily.Windows:
-            case SensorFamily.SerialUSBIMU:
-                gamepadMotion = IDevice.GetCurrent().GamepadMotion;
-                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref deltaTimeSeconds);
-                break;
-        }
-
-        // compute motion
-        if (gamepadMotion is not null)
-        {
-            MotionManager.UpdateReport(controllerState, gamepadMotion);
-            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, deltaTimeSeconds);
-        }
-
-        // compute layout
-        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
-        InputsUpdated2?.Invoke(controllerState);
-
-        // controller is muted
-        if (ControllerMuted)
-        {
-            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
-            controllerState = mutedState;
-        }
-
-        DS4Touch.UpdateInputs(controllerState);
-        DSUServer.UpdateInputs(controllerState, gamepadMotions);
-        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
-    }
 
     public static IController GetDefault(bool profilePage = false)
     {

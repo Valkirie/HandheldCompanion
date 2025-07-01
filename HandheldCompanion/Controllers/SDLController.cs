@@ -252,20 +252,18 @@ namespace HandheldCompanion.Controllers
                             case SensorType.Accel:
                                 unsafe
                                 {
-                                    float x = e.GSensor.Data[0] / 40.0f * 4.0f;
-                                    float y = e.GSensor.Data[1] / 40.0f * 4.0f;
-                                    float z = e.GSensor.Data[2] / 40.0f * 4.0f;
-                                    Inputs.GyroState.SetAccelerometer(x, y, z);
+                                    aX = e.GSensor.Data[0] / 40.0f * 4.0f;
+                                    aY = e.GSensor.Data[1] / 40.0f * 4.0f;
+                                    aZ = e.GSensor.Data[2] / 40.0f * 4.0f;
                                 }
                                 break;
 
                             case SensorType.Gyro:
                                 unsafe
                                 {
-                                    float x = e.GSensor.Data[0] / 40.0f * 2000.0f;
-                                    float y = e.GSensor.Data[1] / 40.0f * 2000.0f;
-                                    float z = e.GSensor.Data[2] / 40.0f * 2000.0f;
-                                    Inputs.GyroState.SetGyroscope(x, y, z);
+                                    gX = e.GSensor.Data[0] / 40.0f * 2000.0f;
+                                    gY = e.GSensor.Data[1] / 40.0f * 2000.0f;
+                                    gZ = e.GSensor.Data[2] / 40.0f * 2000.0f;
                                 }
                                 break;
                         }
@@ -308,16 +306,13 @@ namespace HandheldCompanion.Controllers
             ulong tickDelta = now - lastCounter;
             float deltaMillis = (float)tickDelta / freq;
 
+            // store motion
+            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+
             // process motion
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
-                gamepadMotion.ProcessMotion(
-                    Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].X,
-                    Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].Y,
-                    Inputs.GyroState.Gyroscope[GyroState.SensorState.GamepadMotion].Z,
-                    Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].X,
-                    Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].Y,
-                    Inputs.GyroState.Accelerometer[GyroState.SensorState.GamepadMotion].Z,
-                    deltaMillis);
+                gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, deltaMillis);
 
             // update previous counter
             lastCounter = now;

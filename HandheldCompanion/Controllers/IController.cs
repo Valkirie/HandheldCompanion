@@ -26,9 +26,6 @@ namespace HandheldCompanion.Controllers
 
         public event VisibilityChangedEventHandler VisibilityChanged;
         public delegate void VisibilityChangedEventHandler(bool status);
-
-        public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
         #endregion
 
         // Buttons and axes we should be able to map to.
@@ -83,8 +80,11 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
 
-        protected byte gamepadIndex = 0;
-        protected Dictionary<byte, GamepadMotion> gamepadMotions = new();
+        // motion variables
+        public byte gamepadIndex = 0;
+        public Dictionary<byte, GamepadMotion> gamepadMotions = new();
+        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
+        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
 
         protected double VibrationStrength = 1.0d;
         private Task rumbleTask;
@@ -176,8 +176,6 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.RightStickRight] = Inputs.AxisState[AxisFlags.RightStickX] > Gamepad.RightThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.RightStickDown] = Inputs.AxisState[AxisFlags.RightStickY] < -Gamepad.RightThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.RightStickUp] = Inputs.AxisState[AxisFlags.RightStickY] > Gamepad.RightThumbDeadZone;
-
-            InputsUpdated?.Invoke(Inputs, gamepadMotions, delta, gamepadIndex);
         }
 
         public bool HasMotionSensor()
@@ -407,7 +405,6 @@ namespace HandheldCompanion.Controllers
         public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
         public virtual void Plug()
         {
-
             SetVibrationStrength(ManagerFactory.settingsManager.GetUInt("VibrationStrength"));
 
             InjectedButtons.Clear();
@@ -469,23 +466,6 @@ namespace HandheldCompanion.Controllers
                         if (Details.Uninstall(false))
                             Task.Delay(3000).Wait();
                         success = Devcon.Refresh();
-
-                        /*
-                        if (HostRadio.IsEnabled && HostRadio.IsAvailable)
-                        {
-                            try
-                            {
-                                using (HostRadio hostRadio = new())
-                                {
-                                    hostRadio.DisableRadio();
-                                    Task.Delay(3000).Wait();
-                                    hostRadio.EnableRadio();
-                                    success = true;
-                                }
-                            }
-                            catch { }
-                        }
-                        */
                     }
                     break;
                 case "USB":
@@ -505,8 +485,7 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void SetLightColor(byte R, byte G, byte B)
-        {
-        }
+        { }
 
         protected void HideHID()
         {
@@ -802,7 +781,6 @@ namespace HandheldCompanion.Controllers
                 UserIndexChanged = null;
                 StateChanged = null;
                 VisibilityChanged = null;
-                InputsUpdated = null;
 
                 // Dispose rumble task properly
                 if (rumbleTask is { Status: TaskStatus.Running })
