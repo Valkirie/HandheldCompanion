@@ -130,6 +130,8 @@
                 <ui:SettingsCard Header="Scan for hardware changes">
                     <Button Command="{Binding ScanHardwareCommand}" Style="{DynamicResource AccentButtonStyle}">Scan</Button>
                 </ui:SettingsCard>
+
+                <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding ScanHardwareVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </ikw:SimpleStackPanel>
 
             <!--  Controller settings  -->

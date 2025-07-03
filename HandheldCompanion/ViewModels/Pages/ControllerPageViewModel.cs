@@ -1,13 +1,12 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
-using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -56,6 +55,20 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
         public ICommand ScanHardwareCommand { get; private set; }
 
+        private Visibility _ScanHardwareVisibility = Visibility.Collapsed;
+        public Visibility ScanHardwareVisibility
+        {
+            get => _ScanHardwareVisibility;
+            set
+            {
+                if (value != _ScanHardwareVisibility)
+                {
+                    _ScanHardwareVisibility = value;
+                    OnPropertyChanged(nameof(ScanHardwareVisibility));
+                }
+            }
+        }
+
         public ControllerPageViewModel(ControllerPage controllerPage)
         {
             this.controllerPage = controllerPage;
@@ -88,8 +101,11 @@ namespace HandheldCompanion.ViewModels
 
             ScanHardwareCommand = new DelegateCommand(async () =>
             {
+                // set flag
+                ScanHardwareVisibility = Visibility.Visible;
+
                 // get all physical controllers
-                foreach(IController controller in ControllerManager.GetPhysicalControllers<IController>())
+                foreach (IController controller in ControllerManager.GetPhysicalControllers<IController>())
                 {
                     // force unplug
                     string devicePath = controller.GetInstanceId();
@@ -99,6 +115,9 @@ namespace HandheldCompanion.ViewModels
 
                 // force (re)scan
                 ControllerManager.QueryDevices();
+
+                // set flag
+                ScanHardwareVisibility = Visibility.Collapsed;
             });
         }
 
