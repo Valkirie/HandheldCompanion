@@ -195,7 +195,12 @@ public class LegionGo : IDevice
 
         // used to monitor OEM specific inputs
         vendorId = 0x17EF;
-        productIds = [0x6182];
+        productIds = [
+            0x6182, // xinput
+            0x6183, // dinput
+            0x6184, // dual_dinput
+            0x6185, //fps
+        ];
 
         // fix for threshold overflow
         GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);

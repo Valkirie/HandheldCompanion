@@ -136,79 +136,69 @@
 
             <!--  Controller settings  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
-            <Grid>
-                <ui:ContentDialog
-                    Name="ControllerManagement"
-                    Title="{l:Static resx:Resources.ControllerPage_ControllerManagement}"
-                    Panel.ZIndex="999"
-                    d:Panel.ZIndex="0"
-                    Content="{l:Static resx:Resources.ControllerPage_ControllerManagement_Content}"
-                    IsShadowEnabled="False" />
+            <ikw:SimpleStackPanel Name="ControllerSettings" Spacing="3">
+                <!--  Controller status  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VirtualStatusDesc}" Header="{l:Static resx:Resources.ControllerPage_VirtualStatus}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xECF0;" />
+                    </ui:SettingsCard.HeaderIcon>
 
-                <ikw:SimpleStackPanel Name="ControllerSettings" Spacing="3">
-                    <!--  Controller status  -->
-                    <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VirtualStatusDesc}" Header="{l:Static resx:Resources.ControllerPage_VirtualStatus}">
-                        <ui:SettingsCard.HeaderIcon>
-                            <ui:FontIcon Glyph="&#xECF0;" />
-                        </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_ServiceSwitch" SelectionChanged="cB_ServiceSwitch_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Disconnected}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Connected}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
-                        <ComboBox Name="cB_ServiceSwitch" SelectionChanged="cB_ServiceSwitch_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Disconnected}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Connected}" />
-                        </ComboBox>
-                    </ui:SettingsCard>
+                <!--  Controller type  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VirtualTypeDesc}" Header="{l:Static resx:Resources.ControllerPage_VirtualType}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE7FC;" />
+                    </ui:SettingsCard.HeaderIcon>
 
-                    <!--  Controller type  -->
-                    <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VirtualTypeDesc}" Header="{l:Static resx:Resources.ControllerPage_VirtualType}">
-                        <ui:SettingsCard.HeaderIcon>
-                            <ui:FontIcon Glyph="&#xE7FC;" />
-                        </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_HidMode" SelectionChanged="cB_HidMode_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
+                    </ComboBox>
+                </ui:SettingsCard>
 
-                        <ComboBox Name="cB_HidMode" SelectionChanged="cB_HidMode_SelectionChanged">
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
-                            <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
-                        </ComboBox>
-                    </ui:SettingsCard>
+                <!--  Vibration Strength  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VibrationStrengthDesc}" Header="{l:Static resx:Resources.ControllerPage_VibrationStrength}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE877;" />
+                    </ui:SettingsCard.HeaderIcon>
 
-                    <!--  Vibration Strength  -->
-                    <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VibrationStrengthDesc}" Header="{l:Static resx:Resources.ControllerPage_VibrationStrength}">
-                        <ui:SettingsCard.HeaderIcon>
-                            <ui:FontIcon Glyph="&#xE877;" />
-                        </ui:SettingsCard.HeaderIcon>
+                    <DockPanel>
+                        <Label
+                            VerticalAlignment="Center"
+                            Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderStrength}, Mode=OneWay}"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        <Slider
+                            x:Name="SliderStrength"
+                            Width="200"
+                            Margin="6,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="10"
+                            Maximum="100"
+                            Minimum="0"
+                            SmallChange="5"
+                            TickFrequency="5"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            ValueChanged="SliderStrength_ValueChanged"
+                            Value="100" />
+                    </DockPanel>
+                </ui:SettingsCard>
 
-                        <DockPanel>
-                            <Label
-                                VerticalAlignment="Center"
-                                Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderStrength}, Mode=OneWay}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                            <Slider
-                                x:Name="SliderStrength"
-                                Width="200"
-                                Margin="6,0,0,0"
-                                IsMoveToPointEnabled="True"
-                                IsSnapToTickEnabled="True"
-                                LargeChange="10"
-                                Maximum="100"
-                                Minimum="0"
-                                SmallChange="5"
-                                TickFrequency="5"
-                                TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                ValueChanged="SliderStrength_ValueChanged"
-                                Value="100" />
-                        </DockPanel>
-                    </ui:SettingsCard>
+                <!--  Controller management  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_ControllerManagementDesc}" Header="{l:Static resx:Resources.ControllerPage_ControllerManagement}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xedab;" />
+                    </ui:SettingsCard.HeaderIcon>
 
-                    <!--  Controller management  -->
-                    <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_ControllerManagementDesc}" Header="{l:Static resx:Resources.ControllerPage_ControllerManagement}">
-                        <ui:SettingsCard.HeaderIcon>
-                            <ui:FontIcon Glyph="&#xedab;" />
-                        </ui:SettingsCard.HeaderIcon>
-
-                        <ui:ToggleSwitch Name="Toggle_ControllerManagement" Toggled="Toggle_ControllerManagement_Toggled" />
-                    </ui:SettingsCard>
-                </ikw:SimpleStackPanel>
-            </Grid>
+                    <ui:ToggleSwitch Name="Toggle_ControllerManagement" Toggled="Toggle_ControllerManagement_Toggled" />
+                </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
 
             <!--  Physical controller settings  -->
             <TextBlock

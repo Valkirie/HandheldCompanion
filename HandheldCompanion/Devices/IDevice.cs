@@ -538,6 +538,9 @@ public abstract class IDevice
                                     break;
                             }
                             break;
+                        case "G1617-02":
+                            device = new GPDWinMini_HX370();
+                            break;
                         case "G1618-03":
                             device = new GPDWin3();
                             break;
@@ -710,22 +713,18 @@ public abstract class IDevice
 
             case "LENOVO":
                 {
-                    switch (ProductName)
+                    switch (SystemModel)
                     {
-                        case "LNVNB161216":
+                        case "83E1":
                             device = new LegionGo();
                             break;
-
-                        // Weird...
-                        case "INVALID":
-                            {
-                                switch (SystemModel)
-                                {
-                                    case "83E1":
-                                        device = new LegionGo();
-                                        break;
-                                }
-                            }
+                        case "83L3": // Legion Go S Z2 Go
+                            device = new LegionGoSZ2();
+                            break;
+                        case "83N6": // Legion Go S Z1E
+                        case "83Q2":
+                        case "83Q3":
+                            device = new LegionGoSZ1();
                             break;
                     }
                 }
