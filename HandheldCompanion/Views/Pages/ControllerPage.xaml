@@ -13,6 +13,7 @@
     Name="Controller"
     Title="{l:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:ControllerPageViewModel}"
     d:DesignHeight="1800"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
@@ -40,35 +41,6 @@
         </Image>
 
         <ikw:SimpleStackPanel Spacing="8">
-
-            <!--  Hints  -->
-            <ikw:SimpleStackPanel Name="Hints" Spacing="3">
-
-                <ui:InfoBar
-                    Name="HintsHIDManagedByProfile"
-                    Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
-                    Severity="Error" />
-
-                <ui:InfoBar
-                    Name="HintsNotMuted"
-                    Title="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
-                    Severity="Error" />
-
-                <ui:InfoBar
-                    Name="WarningNoVirtual"
-                    Title="{l:Static resx:Resources.ControllerPage_NoVirtualControllerWarning}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="{l:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
-                    Severity="Error" />
-            </ikw:SimpleStackPanel>
-
             <!--  Virtual devices  -->
             <DockPanel>
                 <TextBlock
@@ -81,25 +53,41 @@
                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                     Text="{l:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
             </DockPanel>
-            <ikw:SimpleStackPanel
-                Name="VirtualDevices"
-                d:Visibility="Visible"
-                Spacing="3"
-                Visibility="Collapsed">
-                <ikw:SimpleStackPanel Spacing="3">
+            <ikw:SimpleStackPanel Spacing="3">
+                <!--  TODO: Add WarningNoVirtual ?  -->
 
-                    <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding VirtualControllers}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </ikw:SimpleStackPanel>
+                <ui:InfoBar
+                    Name="HintsHIDManagedByProfile"
+                    Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
+                    Severity="Error" />
+
+                <ui:InfoBar
+                    Name="WarningNoVirtual"
+                    Title="{l:Static resx:Resources.ControllerPage_NoVirtualControllerWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
+                    Severity="Error" />
+
+                <ItemsControl
+                    Name="VirtualDevices"
+                    d:Visibility="Visible"
+                    ItemTemplate="{StaticResource ControllerTemplate}"
+                    ItemsSource="{Binding VirtualControllers}"
+                    Visibility="Collapsed">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </ikw:SimpleStackPanel>
 
             <!--  Input devices  -->
-            <DockPanel Visibility="{Binding ElementName=PhysicalDevices, Path=Visibility}">
+            <DockPanel>
                 <TextBlock
                     VerticalAlignment="Center"
                     Style="{StaticResource BaseTextBlockStyle}"
@@ -110,28 +98,38 @@
                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                     Text="{l:Static resx:Resources.ControllerPage_PhysicalDevicesDesc}" />
             </DockPanel>
-            <ikw:SimpleStackPanel
-                Name="PhysicalDevices"
-                d:Visibility="Visible"
-                Spacing="3"
-                Visibility="Collapsed">
-                <ikw:SimpleStackPanel Spacing="3">
-                    <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding PhysicalControllers}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </ikw:SimpleStackPanel>
-
+            <ikw:SimpleStackPanel Spacing="3">
                 <ui:InfoBar
                     Name="WarningNoPhysical"
                     Title="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedWarning}"
                     IsClosable="False"
                     IsOpen="True"
-                    Message="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedDesc}"
                     Severity="Error" />
+
+                <ui:InfoBar
+                    Name="HintsNotMuted"
+                    Title="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
+                    Severity="Error" />
+
+                <ItemsControl
+                    Name="PhysicalDevices"
+                    d:Visibility="Visible"
+                    ItemTemplate="{StaticResource ControllerTemplate}"
+                    ItemsSource="{Binding PhysicalControllers}"
+                    Visibility="Collapsed">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <ui:SettingsCard Header="Scan for hardware changes">
+                    <Button Command="{Binding ScanHardwareCommand}" Style="{DynamicResource AccentButtonStyle}">Scan</Button>
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Controller settings  -->

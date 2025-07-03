@@ -1,12 +1,15 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
@@ -51,6 +54,7 @@ namespace HandheldCompanion.ViewModels
 
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
+        public ICommand ScanHardwareCommand { get; private set; }
 
         public ControllerPageViewModel(ControllerPage controllerPage)
         {
@@ -81,6 +85,21 @@ namespace HandheldCompanion.ViewModels
             // send events
             if (ControllerManager.HasTargetController)
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
+
+            ScanHardwareCommand = new DelegateCommand(async () =>
+            {
+                // get all physical controllers
+                foreach(IController controller in ControllerManager.GetPhysicalControllers<IController>())
+                {
+                    // force unplug
+                    string devicePath = controller.GetInstanceId();
+                    if (ManagerFactory.deviceManager.FindDevice(devicePath) is not null)
+                        ControllerManager.Unplug(controller);
+                }
+
+                // force (re)scan
+                ControllerManager.QueryDevices();
+            });
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)

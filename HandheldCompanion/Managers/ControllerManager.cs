@@ -361,7 +361,7 @@ public static class ControllerManager
         QueryDevices();
     }
 
-    private static void QueryDevices()
+    public static void QueryDevices()
     {
         foreach (PnPDetails? device in ManagerFactory.deviceManager.PnPDevices.Values)
         {
@@ -859,6 +859,46 @@ public static class ControllerManager
         {
             deviceLock.Release();
             CleanupDeviceLock(details.baseContainerDeviceInstanceId);
+        }
+    }
+
+    public static async void Unplug(IController controller)
+    {
+        string baseContainerDeviceInstanceId = controller.GetContainerInstanceId();
+
+        var deviceLock = await GetDeviceLock(baseContainerDeviceInstanceId);
+        await deviceLock.WaitAsync();
+
+        try
+        {
+            bool WasTarget = IsTargetController(controller.GetInstanceId());
+
+            LogManager.LogInformation("XInput controller {0} force unplugged", controller.ToString());
+            ControllerUnplugged?.Invoke(controller, false, WasTarget);
+
+            controller.Gone();
+
+            if (controller.IsPhysical())
+                controller.Unhide(false);
+
+            if (WasTarget)
+            {
+                ClearTargetController();
+                PickTargetController();
+            }
+            else
+            {
+                controller.Dispose();
+            }
+
+            PowerCyclers.TryRemove(controller.GetInstanceId(), out _);
+            Controllers.TryRemove(baseContainerDeviceInstanceId, out _);
+        }
+        catch { }
+        finally
+        {
+            deviceLock.Release();
+            CleanupDeviceLock(baseContainerDeviceInstanceId);
         }
     }
 

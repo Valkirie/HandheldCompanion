@@ -175,10 +175,6 @@ public partial class ControllerPage : Page
             // hint: Has physical controller not hidden, and virtual controller
             bool hasDualInput = isPlugged && !isHidden && hasVirtual;
             HintsNotMuted.Visibility = hasDualInput ? Visibility.Visible : Visibility.Collapsed;
-
-            Hints.Visibility = (HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
-                                HintsNotMuted.Visibility == Visibility.Visible ||
-                                WarningNoVirtual.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 

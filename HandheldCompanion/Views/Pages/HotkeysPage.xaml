@@ -16,6 +16,7 @@
     Name="Hotkeys"
     Title="{l:Static resx:Resources.HotkeysPage_Hotkeys}"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:HotkeyPageViewModel}"
     d:DesignHeight="1500"
     d:DesignWidth="1000"
     KeepAlive="True"
