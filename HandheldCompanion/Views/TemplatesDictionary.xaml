@@ -537,14 +537,14 @@
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="False" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="True" />
-                                <ComboBoxItem Content="Shift" IsEnabled="True" />
-                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox
@@ -716,7 +716,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Hold to repeat" />
+                                            Text="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" />
 
                                         <ui:ToggleSwitch
                                             Grid.Column="1"
@@ -781,7 +781,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Interruptable" />
+                                        Text="{x:Static resx:Resources.LayoutPage_Interruptable}" />
 
                                     <ui:ToggleSwitch
                                         Grid.Column="1"
@@ -805,7 +805,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Press to toggle" />
+                                        Text="{x:Static resx:Resources.LayoutPage_PressToToggle}" />
 
                                     <ui:ToggleSwitch
                                         Grid.Column="1"
@@ -830,7 +830,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Haptic feedback" />
+                                        Text="{x:Static resx:Resources.LayoutPage_HapticFeedback}" />
 
                                     <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                                         <ComboBox
@@ -889,7 +889,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Input shift" />
+                                    Text="{x:Static resx:Resources.LayoutPage_InputShift}" />
 
                                 <ComboBox
                                     Grid.Column="1"
@@ -922,7 +922,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Input type" />
+                                    Text="{x:Static resx:Resources.LayoutPage_InputType}" />
 
                                 <ComboBox
                                     Grid.Column="1"

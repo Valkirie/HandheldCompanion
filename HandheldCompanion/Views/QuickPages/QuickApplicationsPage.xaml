@@ -167,7 +167,7 @@
         <ikw:SimpleStackPanel Spacing="8">
 
             <!--  Quick start  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quick start" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickApplicationsPage_QuickStart}" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <!--  main grid of 6 items  -->
@@ -244,7 +244,7 @@
             </Grid>
 
             <!--  Processes  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Processes" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickApplicationsPage_Processes}" />
             <ikw:SimpleStackPanel Spacing="3">
 
                 <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding IsReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
@@ -311,11 +311,11 @@
                                                     <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsSuspended}" Value="True">
-                                                                <Setter Property="ToolTip" Value="Resume application" />
+                                                                <Setter Property="ToolTip" Value="{l:Static resx:Resources.QuickApplicationsPage_ResumeApplication}" />
                                                                 <Setter Property="Content" Value="&#xe768;" />
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding IsSuspended}" Value="False">
-                                                                <Setter Property="ToolTip" Value="Suspend application" />
+                                                                <Setter Property="ToolTip" Value="{l:Static resx:Resources.QuickApplicationsPage_SuspendApplication}" />
                                                                 <Setter Property="Content" Value="&#xe769;" />
                                                             </DataTrigger>
                                                         </Style.Triggers>

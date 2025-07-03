@@ -271,7 +271,7 @@
         </Grid>
 
         <!--  Overlay  -->
-        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Overlay" />
+        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.OverlayPage_Overlay}" />
         <ikw:SimpleStackPanel Spacing="3">
             <!--  Overlay display level  -->
             <Border
