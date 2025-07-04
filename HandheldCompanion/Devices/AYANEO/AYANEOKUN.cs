@@ -19,7 +19,8 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
 
         // device specific capacities
         this.Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
-
+        
+        // old EC
         this.OEMChords.Add(new KeyboardChord("T",
             [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],
             [KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey],
@@ -31,6 +32,12 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
             false, ButtonFlags.OEM6
         ));
 
+        // new EC
+        this.OEMChords.Add(new KeyboardChord("Custom Key Big", [KeyCode.F23], [KeyCode.F23], false, ButtonFlags.OEM1));
+        this.OEMChords.Add(new KeyboardChord("Custom Key Small", [KeyCode.F24], [KeyCode.F24], false, ButtonFlags.OEM2));
+        this.OEMChords.Add(new KeyboardChord("Custom Key Top Left", [KeyCode.F21], [KeyCode.F21], false, ButtonFlags.OEM3));
+        this.OEMChords.Add(new KeyboardChord("Custom Key Top Right", [KeyCode.F22], [KeyCode.F22], false, ButtonFlags.OEM4));
+        this.OEMChords.Add(new KeyboardChord("T", [KeyCode.F18], [KeyCode.F18], false, ButtonFlags.OEM5));
     }
 
     protected override byte[] MapColorValues(int zone, Color color)
