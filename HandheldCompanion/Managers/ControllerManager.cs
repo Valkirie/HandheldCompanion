@@ -172,6 +172,9 @@ public static class ControllerManager
 
     private static void Tick(long ticks, float delta)
     {
+        if (!HasTargetController)
+            return;
+
         ControllerState controllerState = targetController?.Inputs ?? new();
         Dictionary<byte, GamepadMotion> gamepadMotions = targetController?.gamepadMotions ?? new();
         byte gamepadIndex = targetController?.gamepadIndex ?? 0;
@@ -473,25 +476,6 @@ public static class ControllerManager
                         {
                             switch (ProductId)
                             {
-                                // WIRED STEAM CONTROLLER
-                                case 0x1102:
-                                    // MI == 0 is virtual keyboards
-                                    // MI == 1 is virtual mouse
-                                    // MI == 2 is controller proper
-                                    // No idea what's in case of more than one controller connected
-                                    if (details.GetMI() == 2)
-                                        try { controller = new GordonController(details); } catch { }
-                                    break;
-                                // WIRELESS STEAM CONTROLLER
-                                case 0x1142:
-                                    // MI == 0 is virtual keyboards
-                                    // MI == 1-4 are 4 controllers
-                                    // TODO: The dongle registers 4 controller devices, regardless how many are
-                                    // actually connected. There is no easy way to check for connection without
-                                    // actually talking to each controller.
-                                    try { controller = new GordonController(details); } catch { }
-                                    break;
-
                                 // STEAM DECK
                                 case 0x1205:
                                     try { controller = new NeptuneController(details); } catch { }
@@ -1148,7 +1132,7 @@ public static class ControllerManager
             }
             */
 
-            foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
+        foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
             {
                 byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
 
@@ -1290,11 +1274,6 @@ public static class ControllerManager
                         ResumeControllers();
                     }
                 }
-                else if (ControllerManagementAttempts != 0)
-                {
-                    // resume all physical controllers
-                    ResumeControllers();
-                }
                 else if (HasVirtualController<XInputController>())
                 {
                     // physical controller: none
@@ -1311,6 +1290,21 @@ public static class ControllerManager
                         while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
                             Thread.Sleep(100);
                     }
+                    else if (managerStatus != ControllerManagerStatus.Succeeded)
+                    {
+                        // resume all physical controllers
+                        ResumeControllers();
+
+                        // give us one extra loop to make sure we're good
+                        UpdateStatus(ControllerManagerStatus.Succeeded);
+                        ControllerManagementAttempts = 0;
+                        // HostRadioDisabled = false;
+                    }
+                }
+                else if (ControllerManagementAttempts != 0)
+                {
+                    // resume all physical controllers
+                    ResumeControllers();
                 }
             }
         }
@@ -1485,7 +1479,7 @@ public static class ControllerManager
             while (DateTime.Now < timeout && pnPDevice is null)
             {
                 try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
-                Task.Delay(100).Wait();
+                Task.Delay(1000).Wait();
             }
 
             if (pnPDevice is null)
@@ -1539,7 +1533,7 @@ public static class ControllerManager
             while (DateTime.Now < timeout && pnPDevice is null)
             {
                 try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
-                Task.Delay(100).Wait();
+                Task.Delay(1000).Wait();
             }
 
             if (pnPDevice is null)

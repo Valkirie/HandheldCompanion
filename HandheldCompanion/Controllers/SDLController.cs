@@ -104,8 +104,12 @@ namespace HandheldCompanion.Controllers
             if (HasTouchpad)
             {
                 int touchpads = GetTouchpads();
+                int touchpadFingers = 0;
+
                 if (touchpads >= 1)
                 {
+                    touchpadFingers = GetTouchpadFingers(0);
+
                     SourceButtons.Add(ButtonFlags.LeftPadClick);
                     SourceButtons.Add(ButtonFlags.LeftPadTouch);
                     SourceAxis.Add(AxisLayoutFlags.LeftPad);
@@ -117,7 +121,8 @@ namespace HandheldCompanion.Controllers
                         TargetAxis.Add(AxisLayoutFlags.LeftPad);
                     }
                 }
-                if (touchpads >= 2)
+
+                if (touchpads >= 2 || touchpadFingers >= 2)
                 {
                     SourceButtons.Add(ButtonFlags.RightPadClick);
                     SourceButtons.Add(ButtonFlags.RightPadTouch);
@@ -167,6 +172,7 @@ namespace HandheldCompanion.Controllers
             base.Plug();
         }
 
+        private bool touchpad = false;
         private static readonly Dictionary<GamepadButton, ButtonFlags> _buttonMap = new()
         {
             [GamepadButton.North] = ButtonFlags.B4,
@@ -278,6 +284,17 @@ namespace HandheldCompanion.Controllers
 
                         if (_buttonMap.TryGetValue(gpBtn, out var flag))
                             Inputs.ButtonState[flag] = isDown;
+
+                        // edge-case(s)
+                        switch(gpBtn)
+                        {
+                            // lifting one finger while the pad is still clicked will unclick it..
+                            // todo: store me in a bool so we can compute all vars at once later in the code
+                            case GamepadButton.Touchpad:
+                                touchpad = isDown;
+                                break;
+                        }
+
                         break;
                     }
 
@@ -286,19 +303,66 @@ namespace HandheldCompanion.Controllers
                     break;
 
                 case EventType.GamepadTouchpadDown:
-                    // implement me
-                    break;
-
                 case EventType.GamepadTouchpadUp:
-                    // implement me
-                    break;
-
                 case EventType.GamepadTouchpadMotion:
-                    // implement me
+                    {
+                        switch(e.GTouchpad.Touchpad)
+                        {
+                            case 0:
+                                {
+                                    switch(e.GTouchpad.Finger)
+                                    {
+                                        case 0:
+                                            Inputs.ButtonState[ButtonFlags.LeftPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
+                                            Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(e.GTouchpad.X, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                                            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(e.GTouchpad.Y, 1.0f, 0.0f, short.MinValue, short.MaxValue);
+                                            break;
+                                        case 1:
+                                            Inputs.ButtonState[ButtonFlags.RightPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
+                                            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(e.GTouchpad.X, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                                            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(e.GTouchpad.Y, 1.0f, 0.0f, short.MinValue, short.MaxValue);
+                                            break;
+                                    }
+                                }
+                                break;
+
+                            case 1:
+                                {
+                                    switch (e.GTouchpad.Finger)
+                                    {
+                                        case 1:
+                                        case 0:
+                                            Inputs.ButtonState[ButtonFlags.RightPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
+                                            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(e.GTouchpad.X, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                                            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(e.GTouchpad.Y, 1.0f, 0.0f, short.MinValue, short.MaxValue);
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
+                    }
                     break;
 
                 default:
                     break;
+            }
+
+            // touch management
+            Inputs.ButtonState[ButtonFlags.LeftPadClick] = touchpad && Inputs.ButtonState[ButtonFlags.LeftPadTouch];
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = touchpad && Inputs.ButtonState[ButtonFlags.RightPadTouch];
+
+            // we need to reset the axis
+            // todo: make layout manager more resilient so this is not needed
+            if (!Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+            {
+                Inputs.AxisState[AxisFlags.LeftPadX] = 0;
+                Inputs.AxisState[AxisFlags.LeftPadY] = 0;
+            }
+
+            if (!Inputs.ButtonState[ButtonFlags.RightPadTouch])
+            {
+                Inputs.AxisState[AxisFlags.RightPadX] = 0;
+                Inputs.AxisState[AxisFlags.RightPadY] = 0;
             }
 
             // compute delta (ms)

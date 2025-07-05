@@ -350,7 +350,7 @@ public partial class OverlayModel : OverlayWindow
             -accelX,
             accelY,
             -accelZ,
-            gamepadMotion.deltaTime
+            deltaSeconds
             );
 
         // System.Numerics to Media.3D, library really requires System.Numerics
