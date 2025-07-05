@@ -84,6 +84,8 @@ public static class ControllerManager
 
         // disable XInput from SDL
         SDL.SetHint(SDL.Hints.XInputEnabled, "0");
+        SDL.SetHint(SDL.Hints.JoystickHIDAPISteam, "0");
+        SDL.SetHint(SDL.Hints.JoystickHIDAPISteamdeck, "0");
 
         // load SDL game controller database
         // https://github.com/mdqinc/SDL_GameControllerDB
@@ -476,6 +478,25 @@ public static class ControllerManager
                         {
                             switch (ProductId)
                             {
+                                // WIRED STEAM CONTROLLER
+                                case 0x1102:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1 is virtual mouse
+                                    // MI == 2 is controller proper
+                                    // No idea what's in case of more than one controller connected
+                                    if (details.GetMI() == 2)
+                                        try { controller = new GordonController(details); } catch { }
+                                    break;
+                                // WIRELESS STEAM CONTROLLER
+                                case 0x1142:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1-4 are 4 controllers
+                                    // TODO: The dongle registers 4 controller devices, regardless how many are
+                                    // actually connected. There is no easy way to check for connection without
+                                    // actually talking to each controller.
+                                    try { controller = new GordonController(details); } catch { }
+                                    break;
+
                                 // STEAM DECK
                                 case 0x1205:
                                     try { controller = new NeptuneController(details); } catch { }
