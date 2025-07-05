@@ -450,6 +450,12 @@ public static class ControllerManager
             // DInput
             if (controller is not null)
             {
+                // skip XInput controller
+                if (controller is XInputController) return;
+
+                // skip SDL HID controller
+                if (controller is SDLController) return;
+
                 controller.AttachDetails(details);
 
                 // hide or unhide "new" InstanceID (HID)
@@ -594,7 +600,11 @@ public static class ControllerManager
 
             if (controller == null) return;
 
+            // skip XInput controller
             if (controller is XInputController) return;
+
+            // skip SDL HID controller
+            if (controller is SDLController) return;
 
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
@@ -1032,6 +1042,11 @@ public static class ControllerManager
             else if (device.isGaming)
                 HidDeviceArrived(device, DeviceInterfaceIds.HidDevice);
         }
+
+        // Reopen all SDL gamepads
+        uint[] gamepads = SDL.GetGamepads(out int count);
+        foreach (uint gamepad in gamepads)
+            SDL_GamepadAdded(gamepad);
     }
 
     private static void ProcessManager_Initialized()
