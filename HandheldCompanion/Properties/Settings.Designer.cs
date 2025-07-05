@@ -1316,5 +1316,17 @@ namespace HandheldCompanion.Properties {
                 this["QuickTrackpadVisibility"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MuteConsole {
+            get {
+                return ((bool)(this["MuteConsole"]));
+            }
+            set {
+                this["MuteConsole"] = value;
+            }
+        }
     }
 }

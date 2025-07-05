@@ -6,7 +6,9 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
@@ -51,6 +53,21 @@ namespace HandheldCompanion.ViewModels
 
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
+        public ICommand ScanHardwareCommand { get; private set; }
+
+        private Visibility _ScanHardwareVisibility = Visibility.Collapsed;
+        public Visibility ScanHardwareVisibility
+        {
+            get => _ScanHardwareVisibility;
+            set
+            {
+                if (value != _ScanHardwareVisibility)
+                {
+                    _ScanHardwareVisibility = value;
+                    OnPropertyChanged(nameof(ScanHardwareVisibility));
+                }
+            }
+        }
 
         public ControllerPageViewModel(ControllerPage controllerPage)
         {
@@ -81,6 +98,27 @@ namespace HandheldCompanion.ViewModels
             // send events
             if (ControllerManager.HasTargetController)
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
+
+            ScanHardwareCommand = new DelegateCommand(async () =>
+            {
+                // set flag
+                ScanHardwareVisibility = Visibility.Visible;
+
+                // get all physical controllers
+                foreach (IController controller in ControllerManager.GetPhysicalControllers<IController>())
+                {
+                    // force unplug
+                    string devicePath = controller.GetInstanceId();
+                    if (ManagerFactory.deviceManager.FindDevice(devicePath) is not null)
+                        ControllerManager.Unplug(controller);
+                }
+
+                // force (re)scan
+                ControllerManager.QueryDevices();
+
+                // set flag
+                ScanHardwareVisibility = Visibility.Collapsed;
+            });
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)

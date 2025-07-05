@@ -114,62 +114,15 @@ public partial class ControllerPage : Page
             switch (status)
             {
                 case ControllerManagerStatus.Busy:
-                    {
-                        ControllerSettings.IsEnabled = false;
-
-                        switch (attempts)
-                        {
-                            case 0:
-                                // set dialog settings
-                                ControllerManagement.DefaultButton = ContentDialogButton.Primary;
-                                ControllerManagement.CloseButtonText = string.Empty;
-                                ControllerManagement.PrimaryButtonText = string.Empty;
-                                break;
-                        }
-
-                        // update content
-                        ControllerManagement.Content = CreateFormattedContent(
-                            string.Format(Properties.Resources.ControllerPage_ControllerManagement_Attempt, attempts + 1),
-                            GetResourceString("ControllerPage_ControllerManagement_Attempt", attempts));
-
-                        await ControllerManagement.ShowAsync(ContentDialogPlacement.InPlace);
-                    }
+                    ControllerSettings.IsEnabled = false;
                     break;
 
                 case ControllerManagerStatus.Succeeded:
-                    {
-                        ControllerSettings.IsEnabled = true;
-
-                        ControllerManagement.Content = Properties.Resources.ControllerPage_ControllerManagement_Success;
-                        await Task.Delay(2000); // Captures synchronization context
-                        ControllerManagement.Hide();
-                    }
+                    ControllerSettings.IsEnabled = true;
                     break;
 
                 case ControllerManagerStatus.Failed:
-                    {
-                        ControllerSettings.IsEnabled = true;
-
-                        // set dialog settings
-                        ControllerManagement.DefaultButton = ContentDialogButton.Close;
-                        ControllerManagement.CloseButtonText = Properties.Resources.ControllerPage_Close;
-                        ControllerManagement.PrimaryButtonText = Properties.Resources.ControllerPage_TryAgain;
-
-                        ControllerManagement.Content = Properties.Resources.ControllerPage_ControllerManagement_Failed;
-
-                        Task<ContentDialogResult> dialogTask = ControllerManagement.ShowAsync(ContentDialogPlacement.InPlace);
-
-                        await dialogTask; // sync call
-
-                        switch (dialogTask.Result)
-                        {
-                            case ContentDialogResult.None:
-                                Toggle_ControllerManagement.IsOn = true;
-                                break;
-                        }
-
-                        ControllerManagement.Hide();
-                    }
+                    ControllerSettings.IsEnabled = true;
                     break;
             }
 
@@ -222,10 +175,6 @@ public partial class ControllerPage : Page
             // hint: Has physical controller not hidden, and virtual controller
             bool hasDualInput = isPlugged && !isHidden && hasVirtual;
             HintsNotMuted.Visibility = hasDualInput ? Visibility.Visible : Visibility.Collapsed;
-
-            Hints.Visibility = (HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
-                                HintsNotMuted.Visibility == Visibility.Visible ||
-                                WarningNoVirtual.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 

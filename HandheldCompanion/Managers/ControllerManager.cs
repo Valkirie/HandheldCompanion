@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Controllers.SDL;
 using HandheldCompanion.Devices;
@@ -1017,7 +1017,7 @@ public static class ControllerManager
         QueryDevices();
     }
 
-    private static void QueryDevices()
+    public static void QueryDevices()
     {
         // manage events
         ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
@@ -1106,6 +1106,46 @@ public static class ControllerManager
         {
             DeviceLocks.TryRemove(deviceId, out _);
             semaphore.Dispose();
+        }
+    }
+	
+	public static async void Unplug(IController controller)
+    {
+        string baseContainerDeviceInstanceId = controller.GetContainerInstanceId();
+
+        var deviceLock = await GetDeviceLock(baseContainerDeviceInstanceId);
+        await deviceLock.WaitAsync();
+
+        try
+        {
+            bool WasTarget = IsTargetController(controller.GetInstanceId());
+
+            LogManager.LogInformation("XInput controller {0} force unplugged", controller.ToString());
+            ControllerUnplugged?.Invoke(controller, false, WasTarget);
+
+            controller.Gone();
+
+            if (controller.IsPhysical())
+                controller.Unhide(false);
+
+            if (WasTarget)
+            {
+                ClearTargetController();
+                PickTargetController();
+            }
+            else
+            {
+                controller.Dispose();
+            }
+
+            PowerCyclers.TryRemove(controller.GetInstanceId(), out _);
+            Controllers.TryRemove(baseContainerDeviceInstanceId, out _);
+        }
+        catch { }
+        finally
+        {
+            deviceLock.Release();
+            CleanupDeviceLock(baseContainerDeviceInstanceId);
         }
     }
 

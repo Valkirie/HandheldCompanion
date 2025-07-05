@@ -185,7 +185,7 @@ public class DeviceManager : IManager
             { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = pair.Key });
     }
 
-    private PnPDetails FindDevice(string InstanceId)
+    public PnPDetails FindDevice(string InstanceId)
     {
         if (InstanceId.StartsWith(@"USB\"))
             return FindDeviceFromUSB(InstanceId);
