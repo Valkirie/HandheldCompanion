@@ -7671,6 +7671,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Endurance Gaming.
+        /// </summary>
+        public static string ProfilesPage_EnduranceGaming {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EnduranceGaming", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Endurance Gaming Mode extends your gaming sessions by balancing frame rate and power consumption.
+        /// </summary>
+        public static string ProfilesPage_EnduranceGamingDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EnduranceGamingDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Energy performance preference (EPP).
         /// </summary>
         public static string ProfilesPage_EPP {

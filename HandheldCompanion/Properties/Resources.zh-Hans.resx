@@ -2708,6 +2708,12 @@
   <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
     <value>分辨率较低时，使用GPU放大以适应屏幕</value>
   </data>
+	<data name="ProfilesPage_EnduranceGaming" xml:space="preserve">
+    <value>Endurance Gaming</value>
+  </data>
+	<data name="ProfilesPage_EnduranceGamingDesc" xml:space="preserve">
+    <value>Endurance Gaming Mode extends your gaming sessions by balancing frame rate and power consumption</value>
+  </data>
   <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
     <value>图像锐化</value>
   </data>
