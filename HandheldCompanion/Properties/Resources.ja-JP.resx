@@ -3098,4 +3098,112 @@
   <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="LayoutPage_Profile" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_LaytouDesktop" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_Desktop" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_DesktopDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_Default" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_DefaultDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_Nintendo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_NintendoDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_Keyboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_KeyboardDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_GamepadMouse" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_GamepadMouseDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_GamepadJoystick" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutTemplate_GamepadJoystickDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_WindowsSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_SuspendOnOverlay" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_SuspendOnOverlayDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_WindowsSettingsDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Disabled" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Button" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Joystick" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Keyboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Mouse" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Trigger" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Shift" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_ActionType_Inherit" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_HoldToRepeat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_Interruptable" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressToToggle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_HapticFeedback" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_InputShift" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_InputType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickApplicationsPage_QuickStart" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickApplicationsPage_Processes" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickApplicationsPage_SuspendApplication" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
+    <value />
+  </data>
 </root>

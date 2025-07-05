@@ -320,16 +320,16 @@ namespace HandheldCompanion.Controllers
                         break;
                 }
 
-                // compute motion from controller
-                if (gamepadMotions.TryGetValue(idx, out GamepadMotion gamepadMotion))
-                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
-
                 // store motion from user selected gyro (left, right)
                 if (idx == gamepadIndex)
                 {
                     Inputs.GyroState.SetGyroscope(gX, gY, gZ);
                     Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
                 }
+
+                // compute motion from controller
+                if (gamepadMotions.TryGetValue(idx, out GamepadMotion gamepadMotion))
+                    gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
             }
 
             base.UpdateInputs(ticks, delta);

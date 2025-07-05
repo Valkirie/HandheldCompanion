@@ -1368,9 +1368,9 @@
                     </ikw:SimpleStackPanel>
 
                     <!--  Window settings  -->
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_WindowsSettings}" />
                     <ikw:SimpleStackPanel Spacing="3">
-                        <ui:SettingsCard Description="Pauses the active game or foreground application whenever the QuickTools sidebar is displayed." Header="Suspend on overlay">
+                        <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_SuspendOnOverlayDesc}" Header="{l:Static resx:Resources.ProfilesPage_SuspendOnOverlay}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe769;" />
                             </ui:SettingsCard.HeaderIcon>
@@ -1379,8 +1379,8 @@
                         </ui:SettingsCard>
 
                         <ui:SettingsExpander
-                            Description="Manage windows associated with profile"
-                            Header="Windows settings"
+                            Description="{l:Static resx:Resources.ProfilesPage_WindowsSettingsDesc}"
+                            Header="{l:Static resx:Resources.ProfilesPage_WindowsSettings}"
                             IsEnabled="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             IsExpanded="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             ItemsSource="{Binding ProfileWindows}">
