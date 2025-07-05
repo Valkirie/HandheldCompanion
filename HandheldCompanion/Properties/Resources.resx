@@ -2730,6 +2730,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
     <value>GPU will scale up lower resolutions to fit the display</value>
   </data>
+	<data name="ProfilesPage_EnduranceGaming" xml:space="preserve">
+    <value>Endurance Gaming</value>
+  </data>
+	<data name="ProfilesPage_EnduranceGamingDesc" xml:space="preserve">
+    <value>Endurance Gaming Mode extends your gaming sessions by balancing frame rate and power consumption</value>
+  </data>
   <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
     <value>Image Sharpening</value>
   </data>

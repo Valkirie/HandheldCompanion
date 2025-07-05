@@ -46,6 +46,38 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => IGCLBackend.GetGPUScaling(deviceIdx, 0), false);
         }
 
+        public override bool HasEnduranceGamingSupport()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => IGCLBackend.HasEnduranceGamingSupport(deviceIdx, 0), false);
+        }
+
+        public override bool GetEnduranceGaming()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => IGCLBackend.GetEnduranceGaming(deviceIdx, 0), false);
+        }
+
+        public override bool SetEnduranceGamingPreset(int enduranceGamingPreset)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => IGCLBackend.SetEnduranceGamingPreset(deviceIdx, 0, enduranceGamingPreset), false);
+        }
+
+        public override int getEnduranceGamingPreset()
+        {
+            if (!IsInitialized)
+                return 0;
+
+            return Execute(() => IGCLBackend.getEnduranceGamingPreset(deviceIdx, 0), 0);
+        }
+
         public override bool GetImageSharpening()
         {
             if (!IsInitialized)

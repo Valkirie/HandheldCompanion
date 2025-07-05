@@ -182,6 +182,47 @@ namespace HandheldCompanion.IGCL
             public ctl_scaling_type_flag_t SupportedScaling;   // [out] Supported scaling types. Refer ::ctl_scaling_type_flag_t
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_property_info_enum_t
+        {
+            long SupportedTypes;                        ///< [out] Supported possible values represented as a bitmask
+            int DefaultType;                           ///< [out] Default type
+        }
+
+        enum ctl_3d_endurance_gaming_control_t
+        {
+            CTL_3D_ENDURANCE_GAMING_CONTROL_TURN_OFF = 0,   // Endurance Gaming disable
+            CTL_3D_ENDURANCE_GAMING_CONTROL_TURN_ON = 1,    // Endurance Gaming enable
+            CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO = 2,       // Endurance Gaming auto
+            CTL_3D_ENDURANCE_GAMING_CONTROL_MAX
+
+        };
+
+        enum ctl_3d_endurance_gaming_mode_t
+        {
+            CTL_3D_ENDURANCE_GAMING_MODE_BETTER_PERFORMANCE = 0,// Endurance Gaming better performance mode
+            CTL_3D_ENDURANCE_GAMING_MODE_BALANCED = 1,      // Endurance Gaming balanced mode
+            CTL_3D_ENDURANCE_GAMING_MODE_MAXIMUM_BATTERY = 2,   // Endurance Gaming maximum battery mode
+            CTL_3D_ENDURANCE_GAMING_MODE_MAX
+
+        };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_endurance_gaming_caps_t
+        {
+            ctl_property_info_enum_t EGControlCaps;         ///< [out] Endurance Gaming control capability
+            ctl_property_info_enum_t EGModeCaps;            ///< [out] Endurance Gaming mode capability
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct ctl_endurance_gaming_t
+        {
+            ctl_3d_endurance_gaming_control_t EGControl;    ///< [in,out] Endurance Gaming control - Off/On/Auto
+            ctl_3d_endurance_gaming_mode_t EGMode;          ///< [in,out] Endurance Gaming mode - Better Performance/Balanced/Maximum
+                                                            ///< Battery
+
+        }
+
         // Define the delegate type for the done function pointer
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void doneDelegate(IntPtr thisobj);
@@ -349,6 +390,11 @@ namespace HandheldCompanion.IGCL
         private delegate ctl_result_t SetSharpnessSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ctl_sharpness_settings_t SetSharpness);
         private delegate ctl_result_t GetTelemetryDataDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_telemetry_data TelemetryData);
 
+        private delegate ctl_result_t GetEnduranceGamingCapsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_endurance_gaming_caps_t EnduranceGamingCaps);
+        private delegate ctl_result_t GetEnduranceGamingDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_endurance_gaming_t EnduranceGamingSettings);
+        private delegate ctl_result_t SetEnduranceGamingDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ctl_endurance_gaming_t EnduranceGamingSettings);
+
+
         // Define the function pointers
         private static InitializeIgclDelegate? InitializeIgcl;
         private static CloseIgclDelegate? CloseIgcl;
@@ -364,6 +410,11 @@ namespace HandheldCompanion.IGCL
         private static GetSharpnessSettingsDelegate? GetSharpnessSettings;
         private static SetSharpnessSettingsDelegate? SetSharpnessSettings;
         private static GetTelemetryDataDelegate? GetTelemetryData;
+
+        private static GetEnduranceGamingCapsDelegate? GetEnduranceGamingCaps;
+        private static SetEnduranceGamingDelegate? SetEnduranceGamingSettings;
+        private static GetEnduranceGamingDelegate? GetEnduranceGamingSettings;
+
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         private static IntPtr pDll = IntPtr.Zero;
@@ -410,7 +461,9 @@ namespace HandheldCompanion.IGCL
                         GetSharpnessSettings = (GetSharpnessSettingsDelegate)GetDelegate("GetSharpnessSettings", typeof(GetSharpnessSettingsDelegate));
                         SetSharpnessSettings = (SetSharpnessSettingsDelegate)GetDelegate("SetSharpnessSettings", typeof(SetSharpnessSettingsDelegate));
                         GetTelemetryData = (GetTelemetryDataDelegate)GetDelegate("GetTelemetryData", typeof(GetTelemetryDataDelegate));
-
+                        GetEnduranceGamingCaps = (GetEnduranceGamingCapsDelegate)GetDelegate("GetEnduranceGamingCaps", typeof(GetEnduranceGamingCapsDelegate));
+                        GetEnduranceGamingSettings = (GetEnduranceGamingDelegate)GetDelegate("GetEnduranceGamingSettings", typeof(GetEnduranceGamingDelegate));
+                        SetEnduranceGamingSettings = (SetEnduranceGamingDelegate)GetDelegate("SetEnduranceGamingSettings", typeof(SetEnduranceGamingDelegate));
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
                     }
                     catch
@@ -431,6 +484,10 @@ namespace HandheldCompanion.IGCL
                         GetSharpnessSettings = null;
                         SetSharpnessSettings = null;
                         GetTelemetryData = null;
+                        GetEnduranceGamingCaps = null;
+                        GetEnduranceGamingSettings = null;
+                        SetEnduranceGamingSettings = null;
+
                     }
                 }
             }
@@ -583,6 +640,27 @@ namespace HandheldCompanion.IGCL
                 return false;
 
             return ScalingSettings.Enable == enabled;
+        }
+
+        internal static bool HasEnduranceGamingSupport(nint deviceIdx, uint displayIdx)
+        {
+            // BN: To be implemented
+            return false;
+        }
+        internal static bool GetEnduranceGaming(nint deviceIdx, uint displayIdx)
+        {
+            // BN: To be implemented
+            return false;
+        }
+        internal static bool SetEnduranceGamingPreset(nint deviceIdx, uint displayIdx, int enduranceGamingPreset = 0)
+        {
+            // BN: To be implemented
+            return false;
+        }
+        internal static int getEnduranceGamingPreset(nint deviceIdx, uint displayIdx)
+        {
+            // BN: To be implemented
+            return 0;
         }
 
         internal static bool SetImageSharpening(nint deviceIdx, uint displayIdx, bool enable)

@@ -22,6 +22,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public event GPUScalingChangedEvent GPUScalingChanged;
         public delegate void GPUScalingChangedEvent(bool Supported, bool Enabled, int Mode);
 
+        public event GPUEnduranceGamingChangedEvent GPUEnduranceGamingChanged;
+        public delegate void GPUEnduranceGamingChangedEvent(bool Supported, bool Enabled, int enduranceGamingPreset);
+
         // true: GPU is busy, false: GPU is free
         public event StatusChangedEvent StatusChanged;
         public delegate void StatusChangedEvent(bool status);
@@ -42,6 +45,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevGPUScalingSupport = false;
         protected bool prevGPUScaling = false;
         protected int prevScalingMode = -1;
+
+        protected bool prevGPUEnduranceGamingSupport = false;
+        protected bool prevEnduranceGaming = false;
+        protected int prevEnduranceGamingPreset = -1;
 
         protected bool prevIntegerScalingSupport = false;
         protected bool prevIntegerScaling = false;
@@ -91,6 +98,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             RadeonImageSharpening,
             IntegerScaling,
             AFMF,
+            EnduranceGaming
         }
 
         /// <summary>
@@ -246,6 +254,15 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             prevScalingMode = mode;
         }
 
+        protected virtual void OnEnduranceGamingPresetChanged(bool supported, bool enabled, int enduranceGamingPreset)
+        {
+            GPUEnduranceGamingChanged?.Invoke(supported, enabled, enduranceGamingPreset);
+
+            prevGPUEnduranceGamingSupport = supported;
+            prevEnduranceGaming = enabled;
+            prevEnduranceGamingPreset = enduranceGamingPreset;
+        }
+
         public virtual bool SetImageSharpening(bool enabled)
         {
             return false;
@@ -281,6 +298,27 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return false;
         }
 
+        public virtual bool SetEnduranceGamingPreset(int enduranceGamingPreset)
+        {
+            return false;
+        }
+
+        public virtual int getEnduranceGamingPreset()
+        {
+            return 0;
+        }
+
+        public virtual bool HasEnduranceGamingSupport()
+        {
+            return false;
+        }
+
+        public virtual bool GetEnduranceGaming()
+        {
+            return false;
+        }
+
+
         public virtual bool GetImageSharpening()
         {
             return false;
@@ -302,6 +340,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         }
 
         public virtual int GetScalingMode()
+        {
+            return 0;
+        }
+
+        public virtual int GetEnduranceGamingPreset()
         {
             return 0;
         }
@@ -424,6 +467,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 IntegerScalingChanged = null;
                 ImageSharpeningChanged = null;
                 GPUScalingChanged = null;
+                GPUEnduranceGamingChanged = null;
                 StatusChanged = null;
             }
 

@@ -143,6 +143,8 @@ public partial class Profile : ICloneable, IComparable
     public bool RISEnabled { get; set; }
     public int RISSharpness { get; set; } = 80; // default AMD value
     public bool AFMFEnabled { get; set; }
+    public bool EnduranceGaming { get; set; }
+    public int EnduranceGamingPreset { get; set; } = 0;  // default Intel Value
 
     // AppCompatFlags
     public bool FullScreenOptimization { get; set; } = true;

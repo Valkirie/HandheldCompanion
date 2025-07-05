@@ -219,7 +219,8 @@ public partial class QuickProfilesPage : Page
     private bool HasIntegerScalingSupport = false;
     private bool HasGPUScalingSupport = false;
     private bool IsGPUScalingEnabled = false;
-
+    private bool HasEnduranceGamingSupport = false;
+    private bool IsEnduranceGamingEnabled = false;
     private void GPUManager_Hooked(GPU GPU)
     {
         HasRSRSupport = false;
@@ -242,6 +243,8 @@ public partial class QuickProfilesPage : Page
         HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
         HasGPUScalingSupport = GPU.HasGPUScalingSupport();
         IsGPUScalingEnabled = GPU.GetGPUScaling();
+        HasEnduranceGamingSupport = GPU.HasEnduranceGamingSupport();
+        IsEnduranceGamingEnabled = GPU.GetEnduranceGaming();
 
         // UI thread (async)
         UIHelper.TryInvoke(() =>
@@ -250,6 +253,7 @@ public partial class QuickProfilesPage : Page
             StackProfileRSR.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
             StackProfileAFMF.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
             IntegerScalingTypeGrid.Visibility = GPU is IntelGPU ? Visibility.Visible : Visibility.Collapsed;
+            StackProfileEnduranceGaming.Visibility = GPU is IntelGPU ? Visibility.Visible : Visibility.Collapsed;
         });
 
         UpdateGraphicsSettingsUI();
@@ -284,6 +288,7 @@ public partial class QuickProfilesPage : Page
             StackProfileRSR.Visibility = Visibility.Collapsed;
             StackProfileAFMF.Visibility = Visibility.Collapsed;
             IntegerScalingTypeGrid.Visibility = Visibility.Collapsed;
+            StackProfileEnduranceGaming.Visibility = Visibility.Collapsed;
 
             StackProfileRSR.IsEnabled = false;
             StackProfileAFMF.IsEnabled = false;
@@ -302,6 +307,7 @@ public partial class QuickProfilesPage : Page
             StackProfileRSR.IsEnabled = HasRSRSupport;
             StackProfileAFMF.IsEnabled = HasAFMFSupport;
             StackProfileGPUScaling.IsEnabled = HasGPUScalingSupport;
+            StackProfileEnduranceGaming.IsEnabled = HasEnduranceGamingSupport;
             StackProfileIS.IsEnabled = HasIntegerScalingSupport;
             StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
             GPUScalingComboBox.IsEnabled = HasScalingModeSupport;
@@ -331,6 +337,15 @@ public partial class QuickProfilesPage : Page
         if (Supported != HasGPUScalingSupport)
         {
             HasGPUScalingSupport = Supported;
+            UpdateGraphicsSettingsUI();
+        }
+    }
+
+    private void OnEnduranceGamingChanged(bool Supported, bool Enabled, int Mode)
+    {
+        if (Supported != HasEnduranceGamingSupport)
+        {
+            HasEnduranceGamingSupport = Supported;
             UpdateGraphicsSettingsUI();
         }
     }
@@ -961,6 +976,37 @@ public partial class QuickProfilesPage : Page
         UpdateProfile();
     }
 
+    private void EnduranceGaming_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
+            return;
+
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.EnduranceGaming, EnduranceGamingToggle.IsOn);
+        UpdateProfile();
+    }
+
+    private void EnduranceGamingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (EnduranceGamingComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
+            return;
+
+        int selectedIndex = EnduranceGamingComboBox.SelectedIndex;
+        if (selectedProfile.EnduranceGaming)
+        {
+            selectedProfile.EnduranceGamingPreset = EnduranceGamingComboBox.SelectedIndex;
+        }
+
+        UpdateProfile();
+    }
+
     private void IntegerScalingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (IntegerScalingComboBox.SelectedIndex == -1 || selectedProfile is null)
@@ -1125,6 +1171,17 @@ public partial class QuickProfilesPage : Page
                     case UpdateGraphicsSettingsSource.AFMF:
                         {
                             selectedProfile.AFMFEnabled = isEnabled;
+                        }
+                        break;
+
+                    // Intel Endurance Gaming
+                    case UpdateGraphicsSettingsSource.EnduranceGaming:
+                        {
+                            selectedProfile.EnduranceGaming = isEnabled;
+                            if (isEnabled)
+                            {
+                                selectedProfile.EnduranceGamingPreset = 0;
+                            }
                         }
                         break;
                 }

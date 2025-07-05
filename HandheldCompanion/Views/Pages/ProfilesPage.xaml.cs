@@ -108,6 +108,8 @@ public partial class ProfilesPage : Page
     private bool HasIntegerScalingSupport = false;
     private bool HasGPUScalingSupport = false;
     private bool IsGPUScalingEnabled = false;
+    private bool HasEnduranceGamingSupport = false;
+    private bool IsEnduranceGamingEnabled = false;
 
     private void GPUManager_Hooked(GPU GPU)
     {
@@ -125,14 +127,19 @@ public partial class ProfilesPage : Page
 
         GPU.IntegerScalingChanged += OnIntegerScalingChanged;
         GPU.GPUScalingChanged += OnGPUScalingChanged;
+        GPU.GPUEnduranceGamingChanged += OnEnduranceGamingChanged;
 
         HasScalingModeSupport = GPU.HasScalingModeSupport();
         HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
         HasGPUScalingSupport = GPU.HasGPUScalingSupport();
         IsGPUScalingEnabled = GPU.GetGPUScaling();
 
-        // UI thread (async)
-        UIHelper.TryInvoke(() =>
+        HasEnduranceGamingSupport = GPU.HasEnduranceGamingSupport();
+        IsEnduranceGamingEnabled = GPU.GetEnduranceGaming();
+    
+
+    // UI thread (async)
+    UIHelper.TryInvoke(() =>
         {
             // GPU-specific settings
             StackProfileRSR.Visibility = GPUManager.GetCurrent() is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
@@ -159,6 +166,7 @@ public partial class ProfilesPage : Page
             // GPU-specific settings
             StackProfileRSR.Visibility = Visibility.Collapsed;
             StackProfileAFMF.Visibility = Visibility.Collapsed;
+            StackProfileEnduranceGaming.Visibility = Visibility.Collapsed;
 
             StackProfileRSR.IsEnabled = false;
             StackProfileAFMF.IsEnabled = false;
@@ -166,6 +174,8 @@ public partial class ProfilesPage : Page
             StackProfileIS.IsEnabled = false;
             StackProfileRIS.IsEnabled = false;
             GPUScalingComboBox.IsEnabled = false;
+            StackProfileEnduranceGaming.IsEnabled = false;
+            EnduranceGamingComboBox.IsEnabled = false;
         });
     }
 
@@ -180,6 +190,8 @@ public partial class ProfilesPage : Page
             StackProfileIS.IsEnabled = HasIntegerScalingSupport;
             StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
             GPUScalingComboBox.IsEnabled = HasScalingModeSupport;
+            StackProfileEnduranceGaming.IsEnabled = false;
+            EnduranceGamingComboBox.IsEnabled = false;
         });
     }
 
@@ -206,6 +218,14 @@ public partial class ProfilesPage : Page
         if (Supported != HasGPUScalingSupport)
         {
             HasGPUScalingSupport = Supported;
+            UpdateGraphicsSettingsUI();
+        }
+    }
+    private void OnEnduranceGamingChanged(bool Supported, bool Enabled, int enduranceGamingPreset)
+    {
+        if (Supported != HasEnduranceGamingSupport)
+        {
+            HasEnduranceGamingSupport = Supported;
             UpdateGraphicsSettingsUI();
         }
     }
@@ -1188,6 +1208,38 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
+    private void EnduranceGamingg_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
+            return;
+
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.EnduranceGaming, EnduranceGamingToggle.IsOn);
+        UpdateProfile();
+    }
+
+    
+
+    private void EnduranceGamingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (EnduranceGamingComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered() || graphicLock.IsEntered())
+            return;
+
+        int selectedIndex = EnduranceGamingComboBox.SelectedIndex;
+        if (selectedProfile.EnduranceGaming)
+        {
+            selectedProfile.EnduranceGamingPreset = EnduranceGamingComboBox.SelectedIndex;
+        }
+
+        UpdateProfile();
+    }
     private void cB_EmulatedController_Changed(object sender, SelectionChangedEventArgs e)
     {
         if (selectedProfile is null)
