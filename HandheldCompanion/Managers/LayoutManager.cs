@@ -463,7 +463,7 @@ public class LayoutManager : IManager
             outputState.AxisState.State = new();
 
             // dispose previous state to prevent memory leak
-            outputState.GyroState?.Dispose();
+            // outputState.GyroState?.Dispose();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
 
             // we need to check for shifter(s) first

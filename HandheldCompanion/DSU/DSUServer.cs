@@ -435,6 +435,7 @@ public static class DSUServer
         }
         catch (Exception /*ex*/) { }
 
+        // get server Id
         var randomBuf = new byte[4];
         new Random().NextBytes(randomBuf);
         serverId = BitConverter.ToUInt32(randomBuf, 0);
@@ -479,9 +480,9 @@ public static class DSUServer
     private static ControllerState Inputs = new();
     private static Dictionary<byte, GamepadMotion> GamepadMotions = new();
 
-    public static void UpdateInputs(ControllerState inputs, Dictionary<byte, GamepadMotion> gamepadMotions)
+    public static void UpdateInputs(ControllerState controllerState, Dictionary<byte, GamepadMotion> gamepadMotions)
     {
-        Inputs = inputs;
+        Inputs = controllerState;
         GamepadMotions = gamepadMotions;
     }
 

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using Capabilities = HandheldCompanion.Managers.Hid.Capabilities;
@@ -48,7 +49,7 @@ public class DeviceManager : IManager
 
     const ulong IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
 
-    static byte[] XINPUT_LED_TO_PORT_MAP = new byte[16]
+    private static byte[] XINPUT_LED_TO_PORT_MAP = new byte[16]
     {
         255,    // All off
         255,    // All blinking, then previous setting
@@ -392,9 +393,9 @@ public class DeviceManager : IManager
         {
             devicePath = path,
             SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString()),
-
             deviceInstanceId = device.InstanceId,
-            baseContainerDeviceInstanceId = device.InstanceId
+            baseContainerDeviceInstanceId = device.InstanceId,
+            isVirtual = device.IsVirtual(),
         };
     }
 
@@ -495,6 +496,59 @@ public class DeviceManager : IManager
         return InstanceId;
     }
 
+    public static string SymLinkToInstanceId(string SymLink)
+    {
+        if (TryExtractInterfaceGuid(SymLink, out Guid InterfaceGuid))
+            return SymLinkToInstanceId(SymLink, InterfaceGuid.ToString());
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// Tries to pull the interface‐GUID out of a Windows device path.
+    /// </summary>
+    /// <param name="devicePath">
+    /// The full path, e.g.  
+    /// \\?\hid#vid_045e&pid_02ff&ig_00#9&…&0000#{ec87f1e3-c13b-4100-b5f7-8b84d54260cb}
+    /// </param>
+    /// <param name="interfaceGuid">
+    /// On success, contains the extracted Guid; otherwise Guid.Empty.
+    /// </param>
+    /// <returns>True if a GUID was found; false otherwise.</returns>
+    public static bool TryExtractInterfaceGuid(string devicePath, out Guid interfaceGuid)
+    {
+        interfaceGuid = Guid.Empty;
+
+        if (string.IsNullOrEmpty(devicePath))
+            return false;
+
+        // Match a brace-enclosed GUID anywhere in the string
+        const string pattern = @"\{(?<g>[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12})\}";
+        var m = Regex.Match(devicePath, pattern);
+        if (m.Success)
+        {
+            interfaceGuid = new Guid(m.Groups["g"].Value);
+            return true;
+        }
+
+        interfaceGuid = Guid.Empty;
+        return false;
+    }
+
+    /// <summary>
+    /// Removes the trailing interface‐GUID (e.g. "{ec87f1e3-c13b-4100-b5f7-8b84d54260cb}") from a device path.
+    /// </summary>
+    public static string RemoveInterfaceGuid(string devicePath)
+    {
+        if (devicePath == null)
+            throw new ArgumentNullException(nameof(devicePath));
+
+        // Matches a brace‐enclosed GUID at the end of the string
+        const string pattern = @"\{[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}\}$";
+
+        // Simply drop it
+        return Regex.Replace(devicePath, pattern, string.Empty);
+    }
+
     private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         try
@@ -549,10 +603,10 @@ public class DeviceManager : IManager
                 {
                     deviceEx.isXInput = true;
                     deviceEx.baseContainerDevicePath = obj.SymLink;
-                    deviceEx.XInputDeviceIdx = GetDeviceIndex(obj.SymLink);
+                    deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
 
                     if (deviceEx.EnumeratorName.Equals("USB"))
-                        deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink, false);
+                        deviceEx.XInputUserIndex = GetXInputIndexAsync(deviceEx.baseContainerDevicePath, false);
 
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
                         deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
@@ -667,12 +721,59 @@ public class DeviceManager : IManager
             if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
                 UsbDeviceArrived?.Invoke(null, obj.InterfaceGuid);
         }
-        catch
-        {
-        }
+        catch { }
     }
 
-    public byte GetXInputIndexAsync(string SymLink, bool UIthread)
+    public static PnPDetails GetDeviceFromInstanceId(string instanceId)
+    {
+        PnPDetails? details = null;
+
+        // try to retrieve PnPDetails
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(6));
+        while (DateTime.Now < timeout && details is null)
+        {
+            foreach (PnPDetails pnPDetails in ManagerFactory.deviceManager.PnPDevices.Values)
+            {
+                // devicePath
+                string devicePath = SymLinkToInstanceId(pnPDetails.devicePath);
+                if (instanceId.Equals(devicePath))
+                {
+                    details = pnPDetails;
+                    break;
+                }
+
+                // container devicePath
+                string basePath = SymLinkToInstanceId(pnPDetails.baseContainerDevicePath);
+                if (instanceId.Equals(basePath))
+                {
+                    details = pnPDetails;
+                    break;
+                }
+            }
+
+            Task.Delay(250).Wait();
+        }
+
+        return details;
+    }
+
+    public static string GetPathFromUserIndex(uint userIndex)
+    {
+        uint size = 520;                 // max chars in buffer (incl. terminating \0)
+        StringBuilder sb = new StringBuilder((int)size);
+
+        uint hr = XInputController.XInputGetDevicePath(userIndex, sb, ref size);
+        if (hr == 0) // ERROR_SUCCESS
+        {
+            string newPath = sb.ToString();
+            if (!string.IsNullOrEmpty(newPath))
+                return newPath;
+        }
+
+        return string.Empty;
+    }
+
+    public static byte GetXInputIndexAsync(string SymLink, bool UIthread)
     {
         byte ledState = 0;
 

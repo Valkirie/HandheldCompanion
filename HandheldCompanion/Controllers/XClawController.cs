@@ -19,8 +19,6 @@ namespace HandheldCompanion.Controllers
         { }
 
         public XClawController(PnPDetails details) : base(details)
-        {
-            AttachDetails(details);
-        }
+        { }
     }
 }
