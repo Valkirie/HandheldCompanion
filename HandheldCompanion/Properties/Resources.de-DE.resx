@@ -2805,7 +2805,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
     <value />
   </data>
-	<data name="PerformancePage_FanMode_Desc" xml:space="preserve">
+  <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
     <value>Lüftermodus des Leistungsprofils ändern</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
@@ -2863,7 +2863,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value />
   </data>
   <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
-    <value>Intel's GPU Auto TDP based on desired FPS target</value>
+    <value>GPU Auto TDP based on desired FPS target</value>
   </data>
   <data name="SettingsPage_Priority" xml:space="preserve">
     <value />
@@ -3175,18 +3175,18 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value />
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
-    <value>Selected target FPS preset</value>
+    <value>Preset</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
     <value>Performance - 60 FPS</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
-    <value>Balanced - 45 FPS</value>
+    <value>Balanced - 40 FPS</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
     <value>Efficiency - 30 FPS</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
-    <value>Battery Endurance Presets</value>
+    <value>Endurance Gaming presets</value>
   </data>
 </root>

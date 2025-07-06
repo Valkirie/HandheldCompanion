@@ -163,7 +163,7 @@
                     <ui:ToggleSwitch Name="EnduranceGamingToggle" IsOn="{Binding EnduranceGamingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Description="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPresetDesc}" Header="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPreset}">
+                        <ui:SettingsCard Header="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPreset}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xec0a;" />
                             </ui:SettingsCard.HeaderIcon>
