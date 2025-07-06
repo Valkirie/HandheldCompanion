@@ -6,6 +6,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -112,6 +113,8 @@ namespace HandheldCompanion.ViewModels
                     if (ManagerFactory.deviceManager.FindDevice(devicePath) is not null)
                         ControllerManager.Unplug(controller);
                 }
+
+                await Task.Delay(2000).ConfigureAwait(false);
 
                 // force (re)scan
                 ControllerManager.QueryDevices();

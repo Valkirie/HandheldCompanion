@@ -86,6 +86,7 @@
 
                 <ComboBox
                     Name="cb_SubProfiles"
+                    MaxWidth="170"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     SelectionChanged="cb_SubProfiles_SelectionChanged" />
