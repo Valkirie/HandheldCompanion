@@ -3039,7 +3039,7 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
     <value>시스템이 대기 상태에 들어가거나 나올 때 애플리케이션을 일시 중지하고 재개합니다.</value>
   </data>
   <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
-    <value>Intel's GPU Auto TDP based on desired FPS target</value>
+    <value>GPU Auto TDP based on desired FPS target</value>
   </data>
   <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
     <value />
@@ -3078,16 +3078,19 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
     <value>Intel Endurance Gaming</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
-    <value>Selected target FPS preset</value>
+    <value>Preset</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
     <value>Performance - 60 FPS</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
-    <value>Balanced - 45 FPS</value>
+    <value>Balanced - 40 FPS</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
     <value>Efficiency - 30 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
+    <value>Endurance Gaming presets</value>
   </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>컨트롤러의 진동의 세기를 변경</value>
@@ -3100,8 +3103,5 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
     <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
-  </data>
-  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
-    <value>Battery Endurance Presets</value>
   </data>
 </root>

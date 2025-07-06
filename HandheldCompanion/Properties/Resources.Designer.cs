@@ -8987,7 +8987,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Balanced - 45 FPS.
+        ///   Looks up a localized string similar to Balanced - 40 FPS.
         /// </summary>
         public static string QuickPerformancePage_EnduranceGamingBalancedPreset {
             get {
@@ -9014,7 +9014,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Battery Endurance Presets.
+        ///   Looks up a localized string similar to Endurance Gaming presets.
         /// </summary>
         public static string QuickPerformancePage_EnduranceGamingPreset {
             get {
@@ -9023,7 +9023,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Selected target FPS preset.
+        ///   Looks up a localized string similar to Preset.
         /// </summary>
         public static string QuickPerformancePage_EnduranceGamingPresetDesc {
             get {
