@@ -94,6 +94,7 @@ namespace HandheldCompanion.ViewModels
         public double CPUCoreMaximum => MotherboardInfo.NumberOfCores;
 
         public bool SupportsSoftwareFanMode => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
+        public bool SupportsIntelEnduranceGaming => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.IntelEnduranceGaming);
 
         public bool SupportsAutoTDP
         {
@@ -379,6 +380,45 @@ namespace HandheldCompanion.ViewModels
                 {
                     SelectedPreset.FanProfile.fanMode = (FanMode)value;
                     OnPropertyChanged(nameof(FanMode));
+                }
+            }
+        }
+
+        public bool EnduranceGamingEnabled
+        {
+            get => (bool)(SelectedPreset.IntelEnduranceGamingProfile.control == EnduranceGamingControl.Auto);
+            set
+            {
+                if (value != EnduranceGamingEnabled)
+                {
+                    if (value)
+                    {
+                        SelectedPreset.IntelEnduranceGamingProfile.control = EnduranceGamingControl.Auto;
+                    }
+                    else
+                    {
+                        SelectedPreset.IntelEnduranceGamingProfile.control = EnduranceGamingControl.Off;
+                    }
+
+                    IDevice.GetCurrent().setEnduranceGamingModePreset((int)SelectedPreset.IntelEnduranceGamingProfile.control, (int)SelectedPreset.IntelEnduranceGamingProfile.mode);
+
+                    OnPropertyChanged(nameof(EnduranceGamingEnabled));
+                }
+            }
+        }
+
+        public int IntelEnduranceGamingPreset
+        {
+            get => (int)SelectedPreset.IntelEnduranceGamingProfile.mode;
+            set
+            {
+                if (value != IntelEnduranceGamingPreset)
+                {
+                    SelectedPreset.IntelEnduranceGamingProfile.mode = (EnduranceGamingMode)value;
+
+                    IDevice.GetCurrent().setEnduranceGamingModePreset((int)SelectedPreset.IntelEnduranceGamingProfile.control, (int)SelectedPreset.IntelEnduranceGamingProfile.mode);
+
+                    OnPropertyChanged(nameof(IntelEnduranceGamingPreset));
                 }
             }
         }

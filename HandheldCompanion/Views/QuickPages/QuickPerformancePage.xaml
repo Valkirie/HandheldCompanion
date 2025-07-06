@@ -23,6 +23,36 @@
         <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
 
+            <!--  Intel Endurance Gaming  -->
+            <ui:SettingsExpander
+                Description="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Desc}"
+                Header="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Title}"
+                IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                IsExpanded="{Binding ElementName=EnduranceGamingToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander.HeaderIcon>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
+                </ui:SettingsExpander.HeaderIcon>
+
+                <ui:ToggleSwitch Name="EnduranceGamingToggle" IsOn="{Binding EnduranceGamingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Description="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPresetDesc}" Header="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPreset}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xec0a;" />
+                        </ui:SettingsCard.HeaderIcon>
+
+                        <ComboBox
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                SelectedIndex="{Binding IntelEnduranceGamingPreset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Name="EnduranceGamingPerformance" Content="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPerformancePreset}" />
+                            <ComboBoxItem Name="EnduranceGamingBalanced" Content="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingBalancedPreset}" />
+                            <ComboBoxItem Name="EnduranceGamingEfficiency" Content="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingEfficiencyPreset}" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
+            
             <!--  Maximum CPU Count  -->
             <ui:SettingsExpander
                 Description="Controls CPU unparked core count limit"

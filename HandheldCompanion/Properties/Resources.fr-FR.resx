@@ -2862,8 +2862,8 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
     <value />
   </data>
-  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
-    <value />
+  <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
+    <value>Intel's GPU Auto TDP based on desired FPS target</value>
   </data>
   <data name="SettingsPage_Priority" xml:space="preserve">
     <value />
@@ -3059,5 +3059,23 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
     <value />
+  </data>
+  <data name="PerformancePage_EnduranceGaming_Title" xml:space="preserve">
+    <value>Intel Endurance Gaming</value>
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
+    <value>Extends your gaming sessions by balancing frame rate and power consumption</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
+    <value>Performance - 60 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
+    <value>Balanced - 45 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
+    <value>Efficiency - 30 FPS</value>
   </data>
 </root>
