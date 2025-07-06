@@ -7,7 +7,6 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HidLibrary;
 using iNKORE.UI.WPF.Modern.Controls;
-using LibreHardwareMonitor.Hardware;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -418,10 +416,6 @@ public class ClawA1M : IDevice
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
 
-        LogManager.LogInformation("Intel Endurance Gaming Enabled: {0}", profile.IntelEnduranceGamingEnabled);
-        LogManager.LogInformation("Intel Endurance Gaming Preset: {0}", profile.IntelEnduranceGamingPreset);
-
-        // Stop automatically setting the Endurance Gaming profile, since user might be surprised by fps chaning automatically for the power profile.
         setEnduranceGamingModePreset(profile.IntelEnduranceGamingEnabled, profile.IntelEnduranceGamingPreset);
 
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
