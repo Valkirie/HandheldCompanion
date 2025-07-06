@@ -365,6 +365,8 @@ public static class PerformanceManager
                 IDevice.GetCurrent().SetFanControl(true);
                 break;
         }
+
+        IDevice.GetCurrent().setEnduranceGamingModePreset((int)profile.IntelEnduranceGamingProfile.control, (int)profile.IntelEnduranceGamingProfile.mode);
     }
 
     private static void PowerProfileManager_Discarded(PowerProfile profile)
@@ -415,6 +417,9 @@ public static class PerformanceManager
 
         // restore default Fan mode
         IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
+
+        // restore Intel Endurance Gaming profile to defaults which is off
+        IDevice.GetCurrent().setEnduranceGamingModePreset(0, 0);
     }
 
     private static void RestoreTDP(bool immediate)

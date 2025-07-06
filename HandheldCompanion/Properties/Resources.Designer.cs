@@ -6969,7 +6969,25 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   查找类似 Change the power profile fan mode 的本地化字符串。
+        ///   Looks up a localized string similar to Intel&apos;s GPU Auto TDP based on desired FPS target.
+        /// </summary>
+        public static string PerformancePage_EnduranceGaming_Desc {
+            get {
+                return ResourceManager.GetString("PerformancePage_EnduranceGaming_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intel Endurance Gaming.
+        /// </summary>
+        public static string PerformancePage_EnduranceGaming_Title {
+            get {
+                return ResourceManager.GetString("PerformancePage_EnduranceGaming_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the power profile fan mode.
         /// </summary>
         public static string PerformancePage_FanMode_Desc {
             get {
@@ -9293,7 +9311,43 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   查找类似 Fan override 的本地化字符串。
+        ///   Looks up a localized string similar to Balanced - 45 FPS.
+        /// </summary>
+        public static string QuickPerformancePage_EnduranceGamingBalancedPreset {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_EnduranceGamingBalancedPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Efficiency - 30 FPS.
+        /// </summary>
+        public static string QuickPerformancePage_EnduranceGamingEfficiencyPreset {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_EnduranceGamingEfficiencyPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performance - 60 FPS.
+        /// </summary>
+        public static string QuickPerformancePage_EnduranceGamingPerformancePreset {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_EnduranceGamingPerformancePreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extends your gaming sessions by balancing frame rate and power consumption.
+        /// </summary>
+        public static string QuickPerformancePage_EnduranceGamingPresetDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_EnduranceGamingPresetDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fan override.
         /// </summary>
         public static string QuickPerformancePage_FanOverride {
             get {
