@@ -237,7 +237,8 @@ public class ClawA1M : IDevice
             Guid = BetterBatteryGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d },
-            IntelEnduranceGamingProfile = new IntelEnduranceGamingProfile(Misc.EnduranceGamingControl.Auto, Misc.EnduranceGamingMode.MaximumBattery) // 30fps
+            IntelEnduranceGamingEnabled = true,
+            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.MaximumBattery // 30fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterPerformance, Properties.Resources.PowerProfileMSIClawBetterPerformanceDesc)
@@ -248,7 +249,8 @@ public class ClawA1M : IDevice
             Guid = BetterPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d },
-            IntelEnduranceGamingProfile = new IntelEnduranceGamingProfile(Misc.EnduranceGamingControl.Auto, Misc.EnduranceGamingMode.Performance) // 60fps
+            IntelEnduranceGamingEnabled = true,
+            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // 30fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBestPerformance, Properties.Resources.PowerProfileMSIClawBestPerformanceDesc)
@@ -259,7 +261,8 @@ public class ClawA1M : IDevice
             Guid = BestPerformanceGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
-            IntelEnduranceGamingProfile = new IntelEnduranceGamingProfile(Misc.EnduranceGamingControl.Off, Misc.EnduranceGamingMode.Performance) // Auto TDP is Off, fps depends on the game can be up to 120
+            IntelEnduranceGamingEnabled = false,
+            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // Auto TDP is Off, fps depends on the game can be up to 120
         });
 
         OEMChords.Add(new KeyboardChord("CLAW",
@@ -390,9 +393,15 @@ public class ClawA1M : IDevice
         QueryPowerProfile();
     }
 
-    public override void setEnduranceGamingModePreset(int controlMode = 0, int enduranceGamingPreset = 0)
+    public override void setEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
     {
-        setEGControlMode((EnduranceGamingControl)controlMode, (EnduranceGamingMode)enduranceGamingPreset);
+        if (isEnabled)
+        {
+            setEGControlMode(EnduranceGamingControl.Auto, (EnduranceGamingMode)enduranceGamingPreset);
+        } else
+        {
+            setEGControlMode(EnduranceGamingControl.Off, (EnduranceGamingMode)enduranceGamingPreset);
+        }
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -431,8 +440,12 @@ public class ClawA1M : IDevice
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
 
+        LogManager.LogInformation("Intel Endurance Gaming Enabled: {0}", profile.IntelEnduranceGamingEnabled);
+        LogManager.LogInformation("Intel Endurance Gaming Preset: {0}", profile.IntelEnduranceGamingPreset);
+
         // Stop automatically setting the Endurance Gaming profile, since user might be surprised by fps chaning automatically for the power profile.
-        setEnduranceGamingModePreset((int)profile.IntelEnduranceGamingProfile.control, (int)profile.IntelEnduranceGamingProfile.mode);
+        setEnduranceGamingModePreset(profile.IntelEnduranceGamingEnabled, profile.IntelEnduranceGamingPreset);
+
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 

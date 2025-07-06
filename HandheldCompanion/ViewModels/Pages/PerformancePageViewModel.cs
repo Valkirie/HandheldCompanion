@@ -386,21 +386,12 @@ namespace HandheldCompanion.ViewModels
 
         public bool EnduranceGamingEnabled
         {
-            get => (bool)(SelectedPreset.IntelEnduranceGamingProfile.control == EnduranceGamingControl.Auto);
+            get => SelectedPreset.IntelEnduranceGamingEnabled;
             set
             {
                 if (value != EnduranceGamingEnabled)
                 {
-                    if (value)
-                    {
-                        SelectedPreset.IntelEnduranceGamingProfile.control = EnduranceGamingControl.Auto;
-                    }
-                    else
-                    {
-                        SelectedPreset.IntelEnduranceGamingProfile.control = EnduranceGamingControl.Off;
-                    }
-
-                    IDevice.GetCurrent().setEnduranceGamingModePreset((int)SelectedPreset.IntelEnduranceGamingProfile.control, (int)SelectedPreset.IntelEnduranceGamingProfile.mode);
+                    IDevice.GetCurrent().setEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
 
                     OnPropertyChanged(nameof(EnduranceGamingEnabled));
                 }
@@ -409,14 +400,14 @@ namespace HandheldCompanion.ViewModels
 
         public int IntelEnduranceGamingPreset
         {
-            get => (int)SelectedPreset.IntelEnduranceGamingProfile.mode;
+            get => SelectedPreset.IntelEnduranceGamingPreset;
             set
             {
                 if (value != IntelEnduranceGamingPreset)
                 {
-                    SelectedPreset.IntelEnduranceGamingProfile.mode = (EnduranceGamingMode)value;
+                    SelectedPreset.IntelEnduranceGamingPreset = value;
 
-                    IDevice.GetCurrent().setEnduranceGamingModePreset((int)SelectedPreset.IntelEnduranceGamingProfile.control, (int)SelectedPreset.IntelEnduranceGamingProfile.mode);
+                    IDevice.GetCurrent().setEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
 
                     OnPropertyChanged(nameof(IntelEnduranceGamingPreset));
                 }
