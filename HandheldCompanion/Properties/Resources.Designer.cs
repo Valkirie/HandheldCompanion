@@ -9338,7 +9338,16 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extends your gaming sessions by balancing frame rate and power consumption.
+        ///   Looks up a localized string similar to Battery Endurance Presets.
+        /// </summary>
+        public static string QuickPerformancePage_EnduranceGamingPreset {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_EnduranceGamingPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected target FPS preset.
         /// </summary>
         public static string QuickPerformancePage_EnduranceGamingPresetDesc {
             get {

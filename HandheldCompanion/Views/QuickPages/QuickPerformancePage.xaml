@@ -27,6 +27,7 @@
             <ui:SettingsExpander
                 Description="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Desc}"
                 Header="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Title}"
+                Visibility="{Binding SupportsIntelEnduranceGaming, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 IsExpanded="{Binding ElementName=EnduranceGamingToggle, Path=IsOn, Mode=TwoWay}">
                 <ui:SettingsExpander.HeaderIcon>
