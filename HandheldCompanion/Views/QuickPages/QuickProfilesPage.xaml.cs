@@ -628,8 +628,6 @@ public partial class QuickProfilesPage : Page
 
         // update real profile
         realProfile = ManagerFactory.profileManager.GetProfileFromPath(realProfile.Path, true);
-        if (realProfile is null)
-            return;
 
         if (realProfile.Default)
         {
