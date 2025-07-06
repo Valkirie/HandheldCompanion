@@ -3067,7 +3067,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value />
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
-    <value>Extends your gaming sessions by balancing frame rate and power consumption</value>
+    <value>Selected target FPS preset</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
     <value>Performance - 60 FPS</value>
@@ -3077,5 +3077,8 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
     <value>Efficiency - 30 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
+    <value>Battery Endurance Presets</value>
   </data>
 </root>
