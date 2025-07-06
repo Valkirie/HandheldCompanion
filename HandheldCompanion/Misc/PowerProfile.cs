@@ -45,7 +45,8 @@ namespace HandheldCompanion.Misc
 
         public FanProfile FanProfile { get; set; } = new();
 
-        public IntelEnduranceGamingProfile IntelEnduranceGamingProfile { get; set; } = new();
+        public bool IntelEnduranceGamingEnabled { get; set; } = false;
+        public int IntelEnduranceGamingPreset { get; set; } = 0;
 
         public int OEMPowerMode { get; set; } = 0xFF;
         public Guid OSPowerMode { get; set; } = Managers.OSPowerMode.BetterPerformance;
