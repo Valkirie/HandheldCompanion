@@ -391,7 +391,9 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != EnduranceGamingEnabled)
                 {
-                    IDevice.GetCurrent().setEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
+                    SelectedPreset.IntelEnduranceGamingEnabled = value;
+
+                    IDevice.GetCurrent().SetEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
 
                     OnPropertyChanged(nameof(EnduranceGamingEnabled));
                 }
@@ -407,7 +409,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     SelectedPreset.IntelEnduranceGamingPreset = value;
 
-                    IDevice.GetCurrent().setEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
+                    IDevice.GetCurrent().SetEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
 
                     OnPropertyChanged(nameof(IntelEnduranceGamingPreset));
                 }
