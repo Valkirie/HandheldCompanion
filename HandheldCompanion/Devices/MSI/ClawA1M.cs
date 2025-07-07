@@ -233,7 +233,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d },
             IntelEnduranceGamingEnabled = true,
-            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // 30fps
+            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // 60fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBestPerformance, Properties.Resources.PowerProfileMSIClawBestPerformanceDesc)
@@ -245,7 +245,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
             IntelEnduranceGamingEnabled = false,
-            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // Auto TDP is Off, fps depends on the game can be up to 120
+            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
         });
 
         OEMChords.Add(new KeyboardChord("CLAW",
@@ -369,7 +369,7 @@ public class ClawA1M : IDevice
         QueryPowerProfile();
     }
 
-    public override void setEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
+    public override void SetEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
     {
         if (isEnabled)
         {
@@ -416,7 +416,7 @@ public class ClawA1M : IDevice
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
 
-        setEnduranceGamingModePreset(profile.IntelEnduranceGamingEnabled, profile.IntelEnduranceGamingPreset);
+        SetEnduranceGamingModePreset(profile.IntelEnduranceGamingEnabled, profile.IntelEnduranceGamingPreset);
 
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }

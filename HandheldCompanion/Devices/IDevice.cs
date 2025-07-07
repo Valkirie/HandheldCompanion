@@ -1075,6 +1075,6 @@ public abstract class IDevice
         return defaultGlyph;
     }
 
-    public virtual void setEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
+    public virtual void SetEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
     { }
 }
