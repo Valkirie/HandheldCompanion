@@ -20,7 +20,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -30,7 +29,6 @@ using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
 using Timer = System.Timers.Timer;
 
@@ -1141,8 +1139,8 @@ public static class ControllerManager
             semaphore.Dispose();
         }
     }
-	
-	public static async void Unplug(IController controller)
+
+    public static async void Unplug(IController controller)
     {
         string baseContainerDeviceInstanceId = controller.GetContainerInstanceId();
 
@@ -1226,7 +1224,7 @@ public static class ControllerManager
             }
             */
 
-        foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
+            foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
             {
                 byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
 

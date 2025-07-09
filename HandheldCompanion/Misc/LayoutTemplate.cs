@@ -54,7 +54,7 @@ namespace HandheldCompanion.Misc
             Layout.FillDefault();
         }
 
-        private LayoutTemplate(string templateName, string author, bool isInternal, Type deviceType = null) : 
+        private LayoutTemplate(string templateName, string author, bool isInternal, Type deviceType = null) :
             this(TranslationSource.Instance[$"LayoutTemplate_{templateName}"], TranslationSource.Instance[$"LayoutTemplate_{templateName}Desc"], author, isInternal, deviceType)
         {
             switch (templateName)

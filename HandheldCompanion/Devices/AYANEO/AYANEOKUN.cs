@@ -19,7 +19,7 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
 
         // device specific capacities
         this.Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
-        
+
         // old EC
         this.OEMChords.Add(new KeyboardChord("T",
             [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],

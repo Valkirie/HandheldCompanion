@@ -236,7 +236,7 @@ public class ROGAlly : IDevice
             device.Removed -= Device_Removed;
 
             device.MonitorDeviceEvents = false;
-            try { device.Dispose(); } catch { }            
+            try { device.Dispose(); } catch { }
         }
 
         // stop further reads
@@ -566,7 +566,7 @@ public class ROGAlly : IDevice
         {
             if (!device.IsConnected)
                 return;
-            
+
             device.WriteFeatureData(modeGame, 64);
             device.WriteFeatureData(dPadUpDownDefault, 64);
             device.WriteFeatureData(dPadLeftRightDefault, 64);

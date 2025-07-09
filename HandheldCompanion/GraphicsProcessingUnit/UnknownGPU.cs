@@ -1,9 +1,4 @@
-﻿using HandheldCompanion.Shared;
-
-using SharpDX.Direct3D9;
-
-using System;
-using System.Collections.Generic;
+﻿using SharpDX.Direct3D9;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {

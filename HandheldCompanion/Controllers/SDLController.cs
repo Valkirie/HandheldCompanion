@@ -1,12 +1,9 @@
-﻿using HandheldCompanion.Controllers.SDL;
-using HandheldCompanion.Helpers;
+﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
-using System.Windows.Media;
 using static SDL3.SDL;
 using Color = System.Windows.Media.Color;
 
@@ -299,7 +296,7 @@ namespace HandheldCompanion.Controllers
                             Inputs.ButtonState[flag] = isDown;
 
                         // edge-case(s)
-                        switch(gpBtn)
+                        switch (gpBtn)
                         {
                             // lifting one finger while the pad is still clicked will unclick it..
                             // todo: store me in a bool so we can compute all vars at once later in the code
@@ -319,11 +316,11 @@ namespace HandheldCompanion.Controllers
                 case EventType.GamepadTouchpadUp:
                 case EventType.GamepadTouchpadMotion:
                     {
-                        switch(e.GTouchpad.Touchpad)
+                        switch (e.GTouchpad.Touchpad)
                         {
                             case 0:
                                 {
-                                    switch(e.GTouchpad.Finger)
+                                    switch (e.GTouchpad.Finger)
                                     {
                                         case 0:
                                             Inputs.ButtonState[ButtonFlags.LeftPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
