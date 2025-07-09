@@ -14,7 +14,7 @@ public static class TimerManager
     public delegate void TickEventHandler(long ticks, float delta);
 
     private const int MasterInterval = 10; // 100Hz
-    private static readonly PrecisionTimer MasterTimer;
+    private static PrecisionTimer MasterTimer;
     public static Stopwatch Stopwatch;
 
     private static float PreviousTotalMilliseconds;
@@ -23,9 +23,6 @@ public static class TimerManager
 
     static TimerManager()
     {
-        MasterTimer = new PrecisionTimer();
-        MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
-
         Stopwatch = new Stopwatch();
     }
 
@@ -34,7 +31,11 @@ public static class TimerManager
         if (IsInitialized)
             return;
 
+        // (re)create timer
+        MasterTimer = new PrecisionTimer();
+        MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
         MasterTimer.Start();
+
         Stopwatch.Start();
 
         IsInitialized = true;
@@ -51,6 +52,7 @@ public static class TimerManager
         IsInitialized = false;
 
         MasterTimer.Stop();
+        MasterTimer.Dispose();
         Stopwatch.Stop();
 
         LogManager.LogInformation("{0} has stopped", "TimerManager");
