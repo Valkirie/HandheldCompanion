@@ -11,6 +11,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Hotkeys"
@@ -22,6 +23,12 @@
     KeepAlive="True"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <!--  Converters to split the list  -->
+        <converters:EvenIndexFilterConverter x:Key="EvenIndexFilter" />
+        <converters:OddIndexFilterConverter x:Key="OddIndexFilter" />
+    </Page.Resources>
 
     <Grid Name="MainGrid" Margin="20">
         <ikw:SimpleStackPanel Name="HotkeysPanel" Spacing="8">
@@ -52,365 +59,40 @@
                     </ui:SettingsCard.HeaderIcon>
                 </ui:SettingsCard>
 
-                <ItemsControl ItemsSource="{Binding HotkeysList}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*" />
+                        <ColumnDefinition Width="5*" />
+                    </Grid.ColumnDefinitions>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ui:SettingsExpander
-                                Name="HotkeyDefinition"
-                                HorizontalAlignment="Stretch"
-                                Description="{Binding Description, Mode=OneWay}"
-                                Header="{Binding Name, Mode=OneWay}">
+                    <ItemsControl
+                        Grid.Column="0"
+                        ItemTemplate="{StaticResource HotkeyTemplate}"
+                        ItemsSource="{Binding HotkeysList, Converter={StaticResource EvenIndexFilter}, UpdateSourceTrigger=PropertyChanged}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <ToggleButton
-                                        Width="300"
-                                        Height="40"
-                                        VerticalAlignment="Stretch"
-                                        Command="{Binding DefineButtonCommand}"
-                                        IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
-                                        <ToggleButton.Resources>
-                                            <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsExecuted}" Value="True">
-                                                        <DataTrigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation
-                                                                        AutoReverse="True"
-                                                                        RepeatBehavior="1x"
-                                                                        Storyboard.TargetProperty="Opacity"
-                                                                        From="1.0"
-                                                                        To="0.0"
-                                                                        Duration="0:0:0.125" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.EnterActions>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ToggleButton.Resources>
-
-                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
-                                            <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
-                                                <ItemsControl.Style>
-                                                    <Style TargetType="ItemsControl">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ButtonGlyphs.Count}">
-                                                                <Setter Property="Visibility" Value="Visible" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ItemsControl.Style>
-
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <ui:FontIcon
-                                                            FontFamily="PromptFont"
-                                                            FontSize="24"
-                                                            Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                                            <ui:FontIcon.Style>
-                                                                <Style TargetType="ui:FontIcon">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Null}">
-                                                                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                    <Setter Property="Foreground" Value="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                                </Style>
-                                                            </ui:FontIcon.Style>
-                                                        </ui:FontIcon>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-
-                                            <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding KeyboardChord}" Value="">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding KeyboardChord}">
-                                                                <Setter Property="Visibility" Value="Visible" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="{Binding InputsChordType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </ikw:SimpleStackPanel>
-                                    </ToggleButton>
-
-                                    <Button
-                                        Margin="6,0,0,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Stretch"
-                                        Command="{Binding EraseButtonCommand}">
-                                        <ui:FontIcon
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            Glyph="&#xe75c;" />
-                                    </Button>
-
-                                    <ToggleButton
-                                        Margin="6,0,0,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Stretch"
-                                        Command="{Binding PinButtonCommand}"
-                                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ui:FontIcon
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}">
-                                            <ui:FontIcon.Style>
-                                                <Style TargetType="{x:Type ui:FontIcon}">
-                                                    <Setter Property="Glyph" Value="&#xe718;" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsPinned}" Value="True">
-                                                            <Setter Property="Glyph" Value="&#xe77a;" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ui:FontIcon.Style>
-                                        </ui:FontIcon>
-                                    </ToggleButton>
-                                </StackPanel>
-
-                                <ui:SettingsExpander.HeaderIcon>
-                                    <ui:FontIcon
-                                        Width="16"
-                                        FontFamily="{Binding FontFamily, Mode=OneWay}"
-                                        Glyph="{Binding Glyph, Mode=OneWay}" />
-                                </ui:SettingsExpander.HeaderIcon>
-
-                                <ui:SettingsExpander.Items>
-                                    <!--  ICommand selector  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_CommandTypeDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_CommandType}"
-                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBox SelectedIndex="{Binding CommandTypeIndex, Mode=TwoWay}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_None}" ToolTip="{l:Static resx:Resources.Hotkey_NoneDesc}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Function}" ToolTip="{l:Static resx:Resources.Hotkey_FunctionDesc}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Keystrokes}" ToolTip="{l:Static resx:Resources.Hotkey_KeystrokesDesc}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Executable}" ToolTip="{l:Static resx:Resources.Hotkey_ExecutableDesc}" />
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <!--  Custom name (only if CanCustom)  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_CommandNameDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_CommandName}"
-                                        Visibility="{Binding CanCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <TextBox Width="290" Text="{Binding CustomName, Mode=TwoWay}" />
-                                    </ui:SettingsCard>
-
-                                    <!--  Function pick (only if CommandTypeIndex == 1)  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_FunctionToRunDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_FunctionToRun}"
-                                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
-                                        <ComboBox
-                                            Width="290"
-                                            ItemsSource="{Binding FunctionCollectionView}"
-                                            SelectedIndex="{Binding FunctionIndex, Mode=TwoWay}">
-                                            <ComboBox.Resources>
-                                                <converters:SeparatorConverter x:Key="SeparatorConverter" />
-                                            </ComboBox.Resources>
-                                            <ComboBox.GroupStyle>
-                                                <GroupStyle>
-                                                    <GroupStyle.HeaderTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </DataTemplate>
-                                                    </GroupStyle.HeaderTemplate>
-                                                </GroupStyle>
-                                            </ComboBox.GroupStyle>
-                                            <ComboBox.ItemContainerStyle>
-                                                <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
-                                                    <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
-                                                </Style>
-                                            </ComboBox.ItemContainerStyle>
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <ContentPresenter>
-                                                        <ContentPresenter.Content>
-                                                            <MultiBinding Converter="{StaticResource SeparatorConverter}">
-                                                                <Binding Path="Text" />
-                                                                <Binding Path="IsEnabled" />
-                                                            </MultiBinding>
-                                                        </ContentPresenter.Content>
-                                                    </ContentPresenter>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <!--  QuickToolsCommands  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_QuickToolsPageDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_QuickToolsPage}"
-                                        Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:QuickToolsCommands}}">
-                                        <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.QuickHomePage_Title}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.QuickDevicePage_Title}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.QuickProfilesPage_Title}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.QuickApplicationsPage_Title}" />
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <!--  MainWindowCommands  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_MainWindowPageDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_MainWindowPage}"
-                                        Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:MainWindowCommands}}">
-                                        <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navController}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navLibrary}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navDevice}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navPerformance}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navProfiles}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navOverlay}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navHotkeys}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navAbout}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navNotifications}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_Settings}" />
-                                            <!--  …other pages…  -->
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <!--  OnScreenKeyboardLegacyCommands  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_KeyboardLegacyPosition}"
-                                        Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdWIN:OnScreenKeyboardLegacyCommands}}">
-                                        <ComboBox SelectedIndex="{Binding OnScreenKeyboardLegacyPosition, Mode=TwoWay}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionBottom}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionMaximize}" />
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <!--  CycleSubProfileCommands  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_CycleSubProfileDirectionDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_CycleSubProfileDirection}"
-                                        Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:CycleSubProfileCommands}}">
-                                        <ComboBox SelectedIndex="{Binding CyclingDirection, Mode=TwoWay}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfilePrev}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfileNext}" />
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <!--  Keystrokes (CommandTypeIndex == 2)  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_OutputDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_Output}"
-                                        Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <ToggleButton
-                                                Width="247"
-                                                Height="31"
-                                                Command="{Binding DefineOutputCommand}"
-                                                IsChecked="{Binding IsListeningOutput, Mode=OneWay}">
-                                                <TextBlock
-                                                    VerticalAlignment="Center"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="{Binding KeyboardOutputChord}" />
-                                            </ToggleButton>
-
-                                            <Button
-                                                Margin="3,0,0,0"
-                                                VerticalAlignment="Stretch"
-                                                Command="{Binding EraseOutputButtonCommand}">
-                                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" />
-                                            </Button>
-                                        </StackPanel>
-                                    </ui:SettingsCard>
-
-                                    <!--  Executable (CommandTypeIndex == 3)  -->
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_ExecutableTargetDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_ExecutableTarget}"
-                                        Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
-                                        <TextBox
-                                            Width="290"
-                                            ui:ControlHelper.PlaceholderText="{l:Static resx:Resources.Hotkey_ExecutableTargetPlaceholder}"
-                                            IsReadOnly="True"
-                                            Text="{Binding ExecutablePath, Mode=OneWay}">
-                                            <i:Interaction.Triggers>
-                                                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                                    <i:InvokeCommandAction Command="{Binding TextBoxClickCommand}" />
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>
-                                        </TextBox>
-                                    </ui:SettingsCard>
-
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_ExecutableArgumentsDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_ExecutableArguments}"
-                                        Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
-                                        <TextBox Width="290" Text="{Binding ExecutableArguments, Mode=TwoWay}" />
-                                    </ui:SettingsCard>
-
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_WindowStyleDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_WindowStyle}"
-                                        Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
-                                        <ComboBox SelectedIndex="{Binding ExecutableWindowStyle, Mode=TwoWay}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Normal}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Hidden}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Minimized}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Maximized}" />
-                                        </ComboBox>
-                                    </ui:SettingsCard>
-
-                                    <ui:SettingsCard
-                                        Description="{l:Static resx:Resources.Hotkey_RunAsAdministratorDesc}"
-                                        Header="{l:Static resx:Resources.Hotkey_RunAsAdministrator}"
-                                        Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
-                                        <ui:ToggleSwitch HorizontalAlignment="Right" IsOn="{Binding ExecutableRunAs, Mode=TwoWay}" />
-                                    </ui:SettingsCard>
-
-                                    <!--  finally: Delete hotkey  -->
-                                    <ui:SettingsCard>
-                                        <Button
-                                            HorizontalAlignment="Stretch"
-                                            Command="{Binding DeleteHotkeyCommand}"
-                                            Content="{l:Static resx:Resources.Hotkey_Delete}"
-                                            IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{StaticResource AccentButtonStyle}" />
-                                    </ui:SettingsCard>
-
-                                </ui:SettingsExpander.Items>
-                            </ui:SettingsExpander>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    <!--  Right column: indices 1,3,5,...  -->
+                    <ItemsControl
+                        Grid.Column="1"
+                        Margin="3,0,0,0"
+                        ItemTemplate="{StaticResource HotkeyTemplate}"
+                        ItemsSource="{Binding HotkeysList, Converter={StaticResource OddIndexFilter}, UpdateSourceTrigger=PropertyChanged}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Grid>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>
