@@ -311,7 +311,7 @@ namespace HandheldCompanion.Controllers
             return new();
         }
 
-        public void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
+        public virtual void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
         {
             if (State.IsEmpty())
                 return;
@@ -323,7 +323,7 @@ namespace HandheldCompanion.Controllers
                 IsKeyDown, IsKeyUp, ToString());
         }
 
-        public void InjectButton(ButtonFlags button, bool IsKeyDown, bool IsKeyUp)
+        public virtual void InjectButton(ButtonFlags button, bool IsKeyDown, bool IsKeyUp)
         {
             if (button == ButtonFlags.None)
                 return;

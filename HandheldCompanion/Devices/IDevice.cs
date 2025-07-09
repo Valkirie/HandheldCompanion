@@ -168,7 +168,7 @@ public abstract class IDevice
     public short ResumeDelay = 2000;
 
     // key press delay to use for certain scenarios
-    public short KeyPressDelay = 20;
+    public short KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
 
     // LibreHardwareMonitor
     public bool CpuMonitor = true;
@@ -796,10 +796,10 @@ public abstract class IDevice
         switch (controllerMode)
         {
             case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
+                KeyPressDelay = (short)(TimerManager.GetPeriod() * 18);
                 break;
             default:
-                KeyPressDelay = 20;
+                KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
                 break;
         }
     }

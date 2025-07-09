@@ -2,6 +2,7 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
@@ -170,6 +171,18 @@ namespace HandheldCompanion.Controllers
                 return;
 
             base.Plug();
+        }
+
+        public override void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
+        {
+            base.InjectState(State, IsKeyDown, IsKeyUp);
+            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
+        }
+
+        public override void InjectButton(ButtonFlags button, bool IsKeyDown, bool IsKeyUp)
+        {
+            base.InjectButton(button, IsKeyDown, IsKeyUp);
+            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
         }
 
         private bool touchpad = false;
