@@ -288,7 +288,7 @@ public class ClawA1M : IDevice
         if (!success)
             return false;
 
-        LogManager.LogInformation("Device Firmware: {0}", Firmware.ToString("X4"));
+        LogManager.LogInformation("Device Firmware: {0:X4}, {1}", Firmware, IsSupported ? "Supported" : "Unsupported");
 
         SetShiftMode(ShiftModeCalcType.Deactive);
 
