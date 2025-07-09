@@ -300,6 +300,12 @@ public static class ControllerManager
 
                 if (controller != null)
                 {
+                    // skip XInput controller
+                    if (controller is XInputController) return;
+
+                    // skip DInput controller
+                    if (controller is DInputController) return;
+
                     // controller is known
                     // set power cycling
                     IsPowerCycling = true;
@@ -651,6 +657,12 @@ public static class ControllerManager
 
             if (controller != null)
             {
+                // skip DInput controller
+                if (controller is DInputController) return;
+
+                // skip SDL HID controller
+                if (controller is SDLController) return;
+
                 ((XInputController)controller).AttachDetails(details);
 
                 if (controller.GetInstanceId() != details.deviceInstanceId)
@@ -759,6 +771,12 @@ public static class ControllerManager
             }
 
             if (controller == null) return;
+
+            // skip DInput controller
+            if (controller is DInputController) return;
+
+            // skip SDL HID controller
+            if (controller is SDLController) return;
 
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
             bool WasTarget = IsTargetController(controller.GetInstanceId());
