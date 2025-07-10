@@ -168,15 +168,17 @@ public class ClawA1M : IDevice
         // Claw 1
         new DeviceVersion() { Firmware = 0x163, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
         new DeviceVersion() { Firmware = 0x166, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+        new DeviceVersion() { Firmware = 0x167, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
 
         // Claw 8
         new DeviceVersion() { Firmware = 0x211, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
         new DeviceVersion() { Firmware = 0x217, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+        new DeviceVersion() { Firmware = 0x219, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
     };
 
     protected int Firmware;
-    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault(version => version.IsSupported(Firmware));
-    public override bool IsSupported => SupportedDevice is not null && SupportedDevice?.Firmware != 0;
+    public DeviceVersion? FirmwareDevice => deviceVersions.MinBy(version => Math.Abs(version.Firmware - Firmware));
+    public override bool IsSupported => FirmwareDevice?.Firmware == Firmware;
 
     public ClawA1M()
     {
@@ -287,7 +289,7 @@ public class ClawA1M : IDevice
         if (!success)
             return false;
 
-        LogManager.LogInformation("Device Firmware: {0}", Firmware.ToString("X4"));
+        LogManager.LogInformation("Device Firmware: {0:X4}, {1}", Firmware, IsSupported ? "Supported" : "Unsupported");
 
         SetShiftMode(ShiftModeCalcType.Deactive);
 
@@ -707,7 +709,7 @@ public class ClawA1M : IDevice
     private byte[] GetRGB(double brightness, byte red, byte green, byte blue)
     {
         // grab the right array (or null if no device)
-        byte[]? RGBdata = SupportedDevice?.RGB;
+        byte[]? RGBdata = FirmwareDevice?.RGB;
 
         // pick actual values
         byte add1 = RGBdata != null ? RGBdata[0] : (byte)0x01;
@@ -747,8 +749,8 @@ public class ClawA1M : IDevice
     {
         // grab the right array (or null if no device)
         byte[]? data = useM1
-            ? SupportedDevice?.M1
-            : SupportedDevice?.M2;
+            ? FirmwareDevice?.M1
+            : FirmwareDevice?.M2;
 
         // choose your two fallback bytes
         byte defaultAdd1 = useM1 ? (byte)0x00 : (byte)0x01;

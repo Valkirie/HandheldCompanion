@@ -1371,7 +1371,7 @@ public static class ControllerManager
                     // physical controller: none
                     // virtual controller: not slot 1
                     XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
-                    if (vController is null)
+                    if (vController is null && (ControllerManagementAttempts < ControllerManagementMaxAttempts))
                     {
                         VirtualManager.Suspend(false);
                         Thread.Sleep(1000);
@@ -1381,6 +1381,8 @@ public static class ControllerManager
                         DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
                         while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
                             Thread.Sleep(100);
+
+                        ControllerManagementAttempts++;
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
