@@ -549,54 +549,24 @@ public class DeviceManager : IManager
         return Regex.Replace(devicePath, pattern, string.Empty);
     }
 
-    private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
-    {
-        try
-        {
-            Task.Run(async () =>
-            {
-                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-                PnPDetails deviceEx = null;
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
-                while (DateTime.Now < timeout && deviceEx is null)
-                {
-                    try { deviceEx = FindDevice(InstanceId); } catch { }
-                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
-                }
-
-                if (deviceEx is null)
-                    return;
-
-                if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
-                {
-                    LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
-
-                    // raise event
-                    XUsbDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
-                }
-            });
-        }
-        catch
-        {
-        }
-    }
+    private readonly ConcurrentDictionary<string, Task> arrivalInProgress = new();
 
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
-        try
+        Task arrivalTask = Task.Run(async () =>
         {
-            Task.Run(async () =>
+            string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+            arrivalInProgress[instanceId] = Task.CompletedTask; // placeholder for now
+
+            try
             {
-                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
                 PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.AddSeconds(8);
 
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    try { deviceEx = FindDevice(InstanceId); } catch { }
-                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                    try { deviceEx = FindDevice(instanceId); } catch { }
+                    await Task.Delay(100).ConfigureAwait(false);
                 }
 
                 if (deviceEx is not null && deviceEx.isGaming)
@@ -611,87 +581,129 @@ public class DeviceManager : IManager
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
                         deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
 
-                    // set InterfaceGuid
                     deviceEx.InterfaceGuid = obj.InterfaceGuid;
 
-                    LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
-                        deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+                    LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}",
+                        deviceEx.Name,
+                        deviceEx.GetVendorID(),
+                        deviceEx.GetProductID(),
+                        deviceEx.deviceInstanceId,
+                        deviceEx.isVirtual ? "virtual" : "physical",
+                        deviceEx.XInputUserIndex);
 
-                    // raise event
                     XUsbDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
                 }
-            });
-        }
-        catch
-        {
-        }
-    }
-
-    private void HidDevice_DeviceRemoved(DeviceEventArgs obj)
-    {
-        try
-        {
-            Task.Run(async () =>
+            }
+            finally
             {
-                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+                arrivalInProgress.TryRemove(instanceId, out _);
+            }
+        });
 
-                PnPDetails deviceEx = null;
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
-                while (DateTime.Now < timeout && deviceEx is null)
-                {
-                    try { deviceEx = FindDevice(InstanceId); } catch { }
-                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
-                }
-
-                // skip if XInput
-                if (deviceEx is null || deviceEx.isXInput)
-                    return;
-
-                if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
-                {
-                    LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
-
-                    // raise event
-                    HidDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
-                }
-            });
-        }
-        catch
-        {
-        }
+        arrivalInProgress[obj.SymLink] = arrivalTask;
     }
 
+    private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
+    {
+        Task.Run(async () =>
+        {
+            string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+
+            // wait if arrival is still processing
+            if (arrivalInProgress.TryGetValue(instanceId, out Task? pendingTask))
+            {
+                try { await pendingTask; } catch { }
+            }
+
+            PnPDetails deviceEx = null;
+            DateTime timeout = DateTime.Now.AddSeconds(8);
+            while (DateTime.Now < timeout && deviceEx is null)
+            {
+                try { deviceEx = FindDevice(instanceId); } catch { }
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+            if (deviceEx is null)
+                return;
+
+            if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+            {
+                LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name,
+                    deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+
+                XUsbDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
+            }
+        });
+    }
+
+    private readonly ConcurrentDictionary<string, Task> hidArrivalInProgress = new();
     private void HidDevice_DeviceArrived(DeviceEventArgs obj)
     {
-        try
+        Task arrivalTask = Task.Run(async () =>
         {
-            Task.Run(async () =>
-            {
-                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-                PnPDetails deviceEx = null;
+            string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+            hidArrivalInProgress[instanceId] = Task.CompletedTask; // temporary placeholder
 
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+            try
+            {
+                PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.AddSeconds(8);
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     try { deviceEx = GetDetails(obj.SymLink); } catch { }
-                    await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                    await Task.Delay(100).ConfigureAwait(false);
                 }
 
-                // skip if XInput
+                // skip if XInput (handled by XUsb logic)
                 if (deviceEx is null || deviceEx.isXInput)
                     return;
 
-                // set InterfaceGuid
                 deviceEx.InterfaceGuid = obj.InterfaceGuid;
 
                 LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
                     deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
 
-                // raise event
                 HidDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
-            });
-        }
-        catch { }
+            }
+            finally
+            {
+                hidArrivalInProgress.TryRemove(instanceId, out _);
+            }
+        });
+
+        hidArrivalInProgress[obj.SymLink] = arrivalTask;
+    }
+
+    private void HidDevice_DeviceRemoved(DeviceEventArgs obj)
+    {
+        Task.Run(async () =>
+        {
+            string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+
+            // wait if arrival is still processing
+            if (hidArrivalInProgress.TryGetValue(instanceId, out Task? pendingTask))
+            {
+                try { await pendingTask; } catch { }
+            }
+
+            PnPDetails deviceEx = null;
+            DateTime timeout = DateTime.Now.AddSeconds(8);
+            while (DateTime.Now < timeout && deviceEx is null)
+            {
+                try { deviceEx = FindDevice(instanceId); } catch { }
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+            // skip if XInput (handled separately)
+            if (deviceEx is null || deviceEx.isXInput)
+                return;
+
+            if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+            {
+                LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
+                HidDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
+            }
+        });
     }
 
     private void UsbDevice_DeviceRemoved(DeviceEventArgs obj)
