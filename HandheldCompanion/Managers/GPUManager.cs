@@ -174,14 +174,27 @@ namespace HandheldCompanion.Managers
             GPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
             GPU.IntegerScalingChanged += CurrentGPU_IntegerScalingChanged;
 
-            if (GPU is AMDGPU)
+            if (GPU is AMDGPU amdGPU)
             {
-                ((AMDGPU)GPU).RSRStateChanged += CurrentGPU_RSRStateChanged;
-                ((AMDGPU)GPU).AFMFStateChanged += CurrentGPU_AFMFStateChanged;
+                amdGPU.RSRStateChanged += CurrentGPU_RSRStateChanged;
+                amdGPU.AFMFStateChanged += CurrentGPU_AFMFStateChanged;
             }
-            else if (GPU is IntelGPU)
+            else if (GPU is IntelGPU intelGPU)
             {
                 // do something
+                bool autoSupported;
+                bool onSupported;
+                bool offSupported;
+                bool hasEndurance = intelGPU.HasEnduranceGaming(out autoSupported, out onSupported, out offSupported);
+
+                if (hasEndurance)
+                {
+                    IGCLBackend.ctl_endurance_gaming_t testGet = intelGPU.GetEnduranceGaming();
+                    bool testSet = intelGPU.SetEnduranceGaming(
+                        IGCLBackend.ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO,
+                        IGCLBackend.ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_BATTERY);
+                    testGet = intelGPU.GetEnduranceGaming();
+                }
             }
 
             if (GPU.IsInitialized)
