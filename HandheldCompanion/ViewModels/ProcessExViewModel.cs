@@ -156,7 +156,7 @@ namespace HandheldCompanion.ViewModels
             lock (_processWindowsSyncLock)
             {
                 windowsSnapshot = ProcessWindows.ToArray();
-                ProcessWindows.Clear();    // direct Clear, not SafeClear
+                ProcessWindows.SafeClear();    // direct Clear, not SafeClear
             }
 
             // Dispose each window from the snapshot (outside the lock)
