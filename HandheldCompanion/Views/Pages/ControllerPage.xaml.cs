@@ -113,14 +113,17 @@ public partial class ControllerPage : Page
             {
                 case ControllerManagerStatus.Busy:
                     ControllerSettings.IsEnabled = false;
+                    ScanHardwareCard.IsEnabled = false;
                     break;
 
                 case ControllerManagerStatus.Succeeded:
                     ControllerSettings.IsEnabled = true;
+                    ScanHardwareCard.IsEnabled = true;
                     break;
 
                 case ControllerManagerStatus.Failed:
                     ControllerSettings.IsEnabled = true;
+                    ScanHardwareCard.IsEnabled = true;
                     break;
             }
 

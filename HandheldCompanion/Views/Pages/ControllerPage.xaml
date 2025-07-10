@@ -127,7 +127,7 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
-                <ui:SettingsCard Header="Scan for hardware changes">
+                <ui:SettingsCard Name="ScanHardwareCard" Header="Scan for hardware changes">
                     <Button Command="{Binding ScanHardwareCommand}" Style="{DynamicResource AccentButtonStyle}">Scan</Button>
                 </ui:SettingsCard>
 

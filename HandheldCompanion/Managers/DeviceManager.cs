@@ -576,7 +576,7 @@ public class DeviceManager : IManager
                     deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
 
                     if (deviceEx.EnumeratorName.Equals("USB"))
-                        deviceEx.XInputUserIndex = GetXInputIndexAsync(deviceEx.baseContainerDevicePath, false);
+                        deviceEx.XInputUserIndex = await GetXInputIndexAsync(deviceEx.baseContainerDevicePath, false);
 
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
                         deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
@@ -785,32 +785,34 @@ public class DeviceManager : IManager
         return string.Empty;
     }
 
-    public static byte GetXInputIndexAsync(string SymLink, bool UIthread)
+    public static async Task<byte> GetXInputIndexAsync(string symLink, bool UIthread)
     {
+        const int maxAttempts = 4;
         byte ledState = 0;
 
-        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-        while (DateTime.Now < timeout && (ledState < 2 || ledState > 9))
+        for (int i = 0; i < maxAttempts; i++)
         {
-            using (SafeFileHandle handle = CreateFileW(SymLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0))
+            using (SafeFileHandle handle = CreateFileW(symLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero))
             {
                 if (handle.IsInvalid)
                     return byte.MaxValue;
 
-                byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
-                byte[] ledStateData = new byte[3];
-                uint len = 0;
+                byte[] request = new byte[] { 0x01, 0x01, 0x00 };
+                byte[] response = new byte[3];
+                uint returned = 0;
 
-                if (!DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, gamepadStateRequest0101, gamepadStateRequest0101.Length, ledStateData, ledStateData.Length, ref len, 0))
-                    return byte.MaxValue;
-
-                ledState = ledStateData[2];
+                if (DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, request, request.Length, response, response.Length, ref returned, IntPtr.Zero))
+                {
+                    ledState = response[2];
+                    if (ledState >= 2 && ledState <= 9)
+                        return XINPUT_LED_TO_PORT_MAP[ledState];
+                }
             }
 
-            Task.Delay(1000).Wait();
+            await Task.Delay(1000).ConfigureAwait(false);
         }
 
-        return XINPUT_LED_TO_PORT_MAP[ledState];
+        return byte.MaxValue;
     }
 
     public ConcurrentDictionary<Guid, AdapterInformation> displayAdapters = [];

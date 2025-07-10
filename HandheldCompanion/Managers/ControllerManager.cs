@@ -1180,92 +1180,68 @@ public static class ControllerManager
         }
     }
 
-    private static HashSet<byte> UserIndexes = new HashSet<byte>();
-    private static List<IController> DrunkControllers = new List<IController>();
-    private static bool XInputDrunk => DrunkControllers.Any();
+    private static HashSet<byte> UserIndexes = new();
+    private static List<XInputController> InvalidSlotAssignments = new();
+    private static bool HasInvalidController => InvalidSlotAssignments.Any();
 
-    private static void watchdogThreadLoop(object? obj)
+    private static async void watchdogThreadLoop(object? obj)
     {
-        // monitoring unexpected slot changes
+        HashSet<byte> previousSlots = new();
+
         while (watchdogThreadRunning)
         {
-            // slight delay
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
 
-            // clear array
-            UserIndexes.Clear();
-            DrunkControllers.Clear();
+            HashSet<byte> currentSlots = new();
+            InvalidSlotAssignments.Clear();
 
-            /*
-            for (byte idx = 0; idx < 4; idx++)
-            {
-                string path = DeviceManager.GetPathFromUserIndex(idx);
-                path = DeviceManager.SymLinkToInstanceId(path);
-
-                if (string.IsNullOrEmpty(path))
-                    continue;
-
-                PnPDetails pnp = DeviceManager.GetDeviceFromInstanceId(path);
-                foreach (IController controller in Controllers.Values)
+            // Track UserIndexes assignment
+            IEnumerable<Task> tasks = GetControllers<XInputController>()
+                .Where(controller => !controller.IsDummy())
+                .Select(async controller =>
                 {
-                    if (controller.Details == pnp)
+                    byte index = await DeviceManager.GetXInputIndexAsync(controller.GetContainerPath(), true);
+                    if (index == byte.MaxValue)
+                        index = (byte)XInputController.TryGetUserIndex(controller.Details);
+
+                    lock (UserIndexes)
                     {
-                        controller.UserIndex = idx;
-
-                        // two controllers can't use the same slot
-                        if (!UserIndexes.Add(idx))
-                            DrunkControllers.Add(controller);
-
-                        if (controller is XInputController xInput)
-                            xInput.AttachController((byte)(idx));
-                        break;
+                        if (!currentSlots.Add(index))
+                            InvalidSlotAssignments.Add(controller);
                     }
-                }
-            }
-            */
 
-            foreach (XInputController xInputController in Controllers.Values.Where(controller => controller.IsXInput() && !controller.IsDummy()))
+                    controller.AttachController(index);
+                });
+
+            await Task.WhenAll(tasks);
+
+            // Compare against previous to skip unnecessary work
+            if (previousSlots.SetEquals(currentSlots))
+                continue;
+
+            previousSlots = currentSlots;
+
+            bool hasInvalidVirtual = InvalidSlotAssignments.Any(c => c.IsVirtual());
+            if (hasInvalidVirtual)
             {
-                byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.GetContainerPath(), true);
-
-                // controller is not ready yet
-                if (UserIndex == byte.MaxValue)
-                    UserIndex = (byte)XInputController.TryGetUserIndex(xInputController.Details);
-
-                // two controllers can't use the same slot
-                if (!UserIndexes.Add(UserIndex))
-                    DrunkControllers.Add(xInputController);
-
-                xInputController.AttachController(UserIndex);
+                VirtualManager.Suspend(false);
+                await Task.Delay(1000);
+                VirtualManager.Resume(false);
             }
 
-            foreach (IController controller in DrunkControllers)
-            {
-                switch (controller.IsVirtual())
-                {
-                    case true:
-                        VirtualManager.Suspend(false);
-                        Thread.Sleep(1000);
-                        VirtualManager.Resume(false);
-                        break;
-                    case false:
-                        controller.CyclePort();
-                        break;
-                }
-            }
+            foreach (IController controller in InvalidSlotAssignments)
+                if (!controller.IsVirtual())
+                    controller.CyclePort();
 
-            // user is emulating an Xbox360Controller
+            // Ensure virtual controller occupies slot 1
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
                 if (HasPhysicalController<XInputController>())
                 {
-                    // check if first controller is virtual
-                    XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                    var vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
                     if (vController is null)
                     {
-                        // wait until physical controller is here and ready
                         XInputController? pController = null;
-
                         for (int idx = 0; idx <= 4; idx++)
                         {
                             if (idx == 4)
@@ -1279,129 +1255,112 @@ public static class ControllerManager
                         if (pController is null)
                             continue;
 
-                        // store physical controller Ids to trick the system
-                        ushort VendorId = pController.GetVendorID();
-                        ushort ProductId = pController.GetProductID();
+                        ushort vendorId = pController.GetVendorID();
+                        ushort productId = pController.GetProductID();
 
-                        if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
+                        if (!ShouldAttemptControllerManagement())
+                            continue;
+
+                        SuspendController(pController.GetContainerInstanceId());
+
+                        bool hasBusyWireless = false;
+                        bool hasCyclingController = false;
+
+                        var wireless = GetPhysicalControllers<XInputController>().FirstOrDefault(c => c.IsBluetooth() && c.IsBusy);
+                        if (wireless is not null)
                         {
-                            UpdateStatus(ControllerManagerStatus.Busy);
-
-                            // suspend physical controller
-                            SuspendController(pController.GetContainerInstanceId());
-
-                            bool HasBusyWireless = false;
-                            bool HasCyclingController = false;
-
-                            // do we have a pending wireless controller ?
-                            XInputController? wirelessController = GetPhysicalControllers<XInputController>().FirstOrDefault(controller => controller.IsBluetooth() && controller.IsBusy);
-                            if (wirelessController is not null)
-                            {
-                                // update busy flag
-                                HasBusyWireless = true;
-
-                                // is the controller power cycling ?
-                                PowerCyclers.TryGetValue(wirelessController.GetContainerInstanceId(), out HasCyclingController);
-                                if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
-                                    return;
-                            }
-
-                            // disconnect main virtual controller and wait until it's gone
-                            VirtualManager.SetControllerMode(HIDmode.NoController);
-                            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() != 0)
-                                Thread.Sleep(100);
-
-                            // create virtual controllers
-                            VirtualManager.VendorId = VendorId;
-                            VirtualManager.ProductId = ProductId;
-                            int usedSlots = VirtualManager.CreateTemporaryControllers();
-
-                            // wait until all virtual controllers are created
-                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() < usedSlots)
-                                Thread.Sleep(100);
-
-                            // wait until all virtual controllers are gone
-                            VirtualManager.DisposeTemporaryControllers();
-                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() > usedSlots)
-                                Thread.Sleep(100);
-
-                            // resume virtual controller and wait until it's back
-                            VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
-                            timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                            while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
-                                Thread.Sleep(100);
-
-                            // increment attempt counter
-                            ControllerManagementAttempts++;
+                            hasBusyWireless = true;
+                            PowerCyclers.TryGetValue(wireless.GetContainerInstanceId(), out hasCyclingController);
+                            if (hasBusyWireless && !hasCyclingController && ControllerManagementAttempts != 0)
+                                return;
                         }
-                        else
-                        {
-                            // disable controller management if it has failed too many times
-                            // resume all physical controllers
-                            ResumeControllers();
 
-                            UpdateStatus(ControllerManagerStatus.Failed);
-                            ControllerManagementAttempts = 0;
-                            // HostRadioDisabled = false;
+                        // Remove current virtual controller
+                        VirtualManager.SetControllerMode(HIDmode.NoController);
+                        DateTime timeout = DateTime.Now.AddSeconds(4);
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
+                            await Task.Delay(100);
 
-                            ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
-                        }
+                        // Create temporary virtual controllers
+                        VirtualManager.VendorId = vendorId;
+                        VirtualManager.ProductId = productId;
+                        int usedSlots = VirtualManager.CreateTemporaryControllers();
+
+                        // Wait for virtual controllers to appear
+                        timeout = DateTime.Now.AddSeconds(4);
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(vendorId, productId).Count() < usedSlots)
+                            await Task.Delay(100);
+
+                        // Dispose temporary
+                        VirtualManager.DisposeTemporaryControllers();
+                        timeout = DateTime.Now.AddSeconds(4);
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(vendorId, productId).Count() > usedSlots)
+                            await Task.Delay(100);
+
+                        // Resume main virtual controller
+                        VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
+                        timeout = DateTime.Now.AddSeconds(4);
+                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>(vendorId, productId).Any())
+                            await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
-                        // resume all physical controllers
-                        ResumeControllers();
-
-                        // give us one extra loop to make sure we're good
-                        UpdateStatus(ControllerManagerStatus.Succeeded);
-                        ControllerManagementAttempts = 0;
-                        // HostRadioDisabled = false;
+                        MarkControllerManagementSuccess();
                     }
                     else
                     {
-                        // resume all physical controllers
                         ResumeControllers();
                     }
                 }
                 else if (HasVirtualController<XInputController>())
                 {
-                    // physical controller: none
-                    // virtual controller: not slot 1
-                    XInputController? vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
-                    if (vController is null && (ControllerManagementAttempts < ControllerManagementMaxAttempts))
+                    var vController = GetControllerFromSlot<XInputController>(UserIndex.One, false);
+                    if (vController is null && ShouldAttemptControllerManagement())
                     {
                         VirtualManager.Suspend(false);
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000);
                         VirtualManager.Resume(false);
 
-                        // resume virtual controller and wait until it's back
-                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Count() == 0)
-                            Thread.Sleep(100);
-
-                        ControllerManagementAttempts++;
+                        DateTime timeout = DateTime.Now.AddSeconds(4);
+                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
+                            await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
-                        // resume all physical controllers
-                        ResumeControllers();
-
-                        // give us one extra loop to make sure we're good
-                        UpdateStatus(ControllerManagerStatus.Succeeded);
-                        ControllerManagementAttempts = 0;
-                        // HostRadioDisabled = false;
+                        MarkControllerManagementSuccess();
                     }
                 }
                 else if (ControllerManagementAttempts != 0)
                 {
-                    // resume all physical controllers
                     ResumeControllers();
                 }
             }
         }
+    }
+
+    private static bool ShouldAttemptControllerManagement()
+    {
+        if (ControllerManagementAttempts < ControllerManagementMaxAttempts)
+        {
+            ControllerManagementAttempts++;
+            UpdateStatus(ControllerManagerStatus.Busy);
+            return true;
+        }
+
+        // Max attempts reached: disable controller management
+        ResumeControllers();
+        UpdateStatus(ControllerManagerStatus.Failed);
+        ControllerManagementAttempts = 0;
+
+        ManagerFactory.settingsManager.SetProperty("ControllerManagement", false);
+        return false;
+    }
+
+    private static void MarkControllerManagementSuccess()
+    {
+        ResumeControllers();
+        UpdateStatus(ControllerManagerStatus.Succeeded);
+        ControllerManagementAttempts = 0;
     }
 
     private static Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might be come irresponsive for a few seconds.") { IsInternal = true };
