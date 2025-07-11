@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -94,7 +95,7 @@ namespace HandheldCompanion.ViewModels
         public double CPUCoreMaximum => MotherboardInfo.NumberOfCores;
 
         public bool SupportsSoftwareFanMode => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
-        public bool SupportsIntelEnduranceGaming => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.IntelEnduranceGaming);
+        public bool SupportsIntelEnduranceGaming => GPUManager.GetCurrent() is IntelGPU intelGPU && intelGPU.HasEnduranceGaming(out _, out _, out _);
 
         public bool SupportsAutoTDP
         {
@@ -392,9 +393,6 @@ namespace HandheldCompanion.ViewModels
                 if (value != EnduranceGamingEnabled)
                 {
                     SelectedPreset.IntelEnduranceGamingEnabled = value;
-
-                    IDevice.GetCurrent().SetEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
-
                     OnPropertyChanged(nameof(EnduranceGamingEnabled));
                 }
             }
@@ -408,9 +406,6 @@ namespace HandheldCompanion.ViewModels
                 if (value != IntelEnduranceGamingPreset)
                 {
                     SelectedPreset.IntelEnduranceGamingPreset = value;
-
-                    IDevice.GetCurrent().SetEnduranceGamingModePreset(SelectedPreset.IntelEnduranceGamingEnabled, SelectedPreset.IntelEnduranceGamingPreset);
-
                     OnPropertyChanged(nameof(IntelEnduranceGamingPreset));
                 }
             }

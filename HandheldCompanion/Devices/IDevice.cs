@@ -38,7 +38,6 @@ public enum DeviceCapabilities : ushort
     FanOverride = 512,
     OEMCPU = 1024,
     OEMGPU = 2048,
-    IntelEnduranceGaming = 4096,
 }
 
 public enum TDPMethod
@@ -1121,7 +1120,4 @@ public abstract class IDevice
 
         return defaultGlyph;
     }
-
-    public virtual void SetEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
-    { }
 }

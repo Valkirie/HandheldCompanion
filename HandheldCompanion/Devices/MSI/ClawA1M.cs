@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
 using WindowsInput.Events;
+using static HandheldCompanion.IGCL.IGCLBackend;
 
 namespace HandheldCompanion.Devices;
 
@@ -115,29 +116,6 @@ public class ClawA1M : IDevice
 
     [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int getEGmode();
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int setEGmode(int setMode);
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
-
-    public enum EnduranceGamingControl
-    {
-        Off = 0,    // Endurance Gaming disable
-        On = 1,     // Endurance Gaming enable
-        Auto = 2,   // Endurance Gaming auto
-    }
-
-    public enum EnduranceGamingMode
-    {
-        Performance = 0,        // Endurance Gaming better performance mode
-        Balanced = 1,           // Endurance Gaming balanced mode
-        MaximumBattery = 2,     // Endurance Gaming maximum battery mode
-    }
     #endregion
 
     private ManagementEventWatcher? specialKeyWatcher;
@@ -219,7 +197,6 @@ public class ClawA1M : IDevice
         Capabilities |= DeviceCapabilities.OEMCPU;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
-        Capabilities |= DeviceCapabilities.IntelEnduranceGaming;
 
         // battery bypass settings
         BatteryBypassMin = 60;
@@ -236,7 +213,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d },
             IntelEnduranceGamingEnabled = true,
-            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.MaximumBattery // 30fps
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_MAX // 30fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterPerformance, Properties.Resources.PowerProfileMSIClawBetterPerformanceDesc)
@@ -248,7 +225,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d },
             IntelEnduranceGamingEnabled = true,
-            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // 60fps
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE // 60fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBestPerformance, Properties.Resources.PowerProfileMSIClawBestPerformanceDesc)
@@ -260,7 +237,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
             IntelEnduranceGamingEnabled = false,
-            IntelEnduranceGamingPreset = (int)EnduranceGamingMode.Performance // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
         });
 
         OEMChords.Add(new KeyboardChord("CLAW",
@@ -391,17 +368,6 @@ public class ClawA1M : IDevice
         QueryPowerProfile();
     }
 
-    public override void SetEnduranceGamingModePreset(bool isEnabled = false, int enduranceGamingPreset = 0)
-    {
-        if (isEnabled)
-        {
-            setEGControlMode(EnduranceGamingControl.Auto, (EnduranceGamingMode)enduranceGamingPreset);
-        } else
-        {
-            setEGControlMode(EnduranceGamingControl.Off, (EnduranceGamingMode)enduranceGamingPreset);
-        }
-    }
-
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (profile.FanProfile.fanMode != FanMode.Hardware)
@@ -420,7 +386,7 @@ public class ClawA1M : IDevice
         }
 
         // MSI Center, API_UserScenario
-        bool IsDcMode = System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
+        bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
         if (profile.Guid == BetterBatteryGuid)
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.ECO);
@@ -437,8 +403,6 @@ public class ClawA1M : IDevice
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
-
-        SetEnduranceGamingModePreset(profile.IntelEnduranceGamingEnabled, profile.IntelEnduranceGamingPreset);
 
         SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
