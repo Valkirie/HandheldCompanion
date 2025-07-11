@@ -1186,8 +1186,6 @@ public static class ControllerManager
 
     private static async void watchdogThreadLoop(object? obj)
     {
-        HashSet<byte> previousSlots = new();
-
         while (watchdogThreadRunning)
         {
             await Task.Delay(1000);
@@ -1214,12 +1212,6 @@ public static class ControllerManager
                 });
 
             await Task.WhenAll(tasks);
-
-            // Compare against previous to skip unnecessary work
-            if (previousSlots.SetEquals(currentSlots))
-                continue;
-
-            previousSlots = currentSlots;
 
             bool hasInvalidVirtual = InvalidSlotAssignments.Any(c => c.IsVirtual());
             if (hasInvalidVirtual)
