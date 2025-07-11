@@ -360,18 +360,18 @@ namespace HandheldCompanion.IGCL
 
         public enum ctl_3d_endurance_gaming_control_t : uint
         {
-            CTL_3D_ENDURANCE_GAMING_CONTROL_OFF = 0,          // Off
-            CTL_3D_ENDURANCE_GAMING_CONTROL_ON = 1,          // On
-            CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO = 2,          // Auto
-            CTL_3D_ENDURANCE_GAMING_CONTROL_MAX = 3
+            OFF = 0,          // Off
+            ON = 1,          // On
+            AUTO = 2,          // Auto
+            MAX = 3
         }
 
         public enum ctl_3d_endurance_gaming_mode_t : uint
         {
-            CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE = 0,       // Performance (60 FPS)
-            CTL_3D_ENDURANCE_GAMING_MODE_BALANCED = 1,       // Balanced    (40 FPS)
-            CTL_3D_ENDURANCE_GAMING_MODE_BATTERY = 2,       // Battery     (30 FPS)
-            CTL_3D_ENDURANCE_GAMING_MODE_MAX = 3
+            PERFORMANCE = 0,       // Performance (60 FPS)
+            BALANCED = 1,       // Balanced    (40 FPS)
+            BATTERY = 2,       // Battery     (30 FPS)
+            MAX = 3
         }
 
         [DllImport("kernel32")]

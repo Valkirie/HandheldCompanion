@@ -772,6 +772,7 @@ namespace HandheldCompanion.ViewModels
         {
             // manage events
             ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked += GpuManager_Unhooked;
 
             GPU gpu = GPUManager.GetCurrent();
             if (gpu is not null)
@@ -784,6 +785,39 @@ namespace HandheldCompanion.ViewModels
         }
 
         private void GPUManager_Hooked(GPU GPU)
+        {
+            if (GPU is AMDGPU amdGPU)
+            {
+                // do something
+            }
+            else if (GPU is IntelGPU intelGPU)
+            {
+                intelGPU.EnduranceGamingState += IntelGPU_EnduranceGamingState;
+            }
+
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void GpuManager_Unhooked(GPU GPU)
+        {
+            if (GPU is AMDGPU amdGPU)
+            {
+                // do something
+            }
+            else if (GPU is IntelGPU intelGPU)
+            {
+                intelGPU.EnduranceGamingState -= IntelGPU_EnduranceGamingState;
+            }
+
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void IntelGPU_EnduranceGamingState(bool Supported, IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t Control, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t Mode)
+        {
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void UpdateGraphicsSettingsUI()
         {
             OnPropertyChanged(nameof(SupportsIntelEnduranceGaming));
         }
@@ -859,6 +893,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
             ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked -= GpuManager_Unhooked;
             ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
 
             if (IsMainPage)
