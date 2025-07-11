@@ -232,7 +232,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             }
         }
 
-
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
         {
             IntegerScalingChanged?.Invoke(supported, enabled);

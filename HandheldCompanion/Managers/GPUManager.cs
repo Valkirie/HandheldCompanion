@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.ADLX;
-using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
@@ -217,9 +216,7 @@ namespace HandheldCompanion.Managers
 
             if (currentGPU is IntelGPU intelGPU)
             {
-                intelGPU.SetEnduranceGaming(
-                    profile.IntelEnduranceGamingEnabled ? ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO : ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_OFF,
-                    (ctl_3d_endurance_gaming_mode_t)profile.IntelEnduranceGamingPreset);
+                intelGPU.SetEnduranceGaming(profile.IntelEnduranceGamingEnabled ? ctl_3d_endurance_gaming_control_t.AUTO : ctl_3d_endurance_gaming_control_t.OFF, (ctl_3d_endurance_gaming_mode_t)profile.IntelEnduranceGamingPreset);
             }
         }
 
@@ -234,7 +231,7 @@ namespace HandheldCompanion.Managers
 
             if (currentGPU is IntelGPU intelGPU)
             {
-                intelGPU.SetEnduranceGaming(ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_OFF, ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE);
+                intelGPU.SetEnduranceGaming(ctl_3d_endurance_gaming_control_t.OFF, ctl_3d_endurance_gaming_mode_t.PERFORMANCE);
             }
         }
 
@@ -277,7 +274,7 @@ namespace HandheldCompanion.Managers
             }
             else if (GPU is IntelGPU intelGPU)
             {
-                // do something
+                intelGPU.EnduranceGamingState += IntelGPU_EnduranceGamingState;
             }
 
             if (GPU.IsInitialized)
@@ -300,14 +297,14 @@ namespace HandheldCompanion.Managers
             GPU.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
             GPU.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
 
-            if (GPU is AMDGPU)
+            if (GPU is AMDGPU amdGPU)
             {
-                ((AMDGPU)GPU).RSRStateChanged -= CurrentGPU_RSRStateChanged;
-                ((AMDGPU)GPU).AFMFStateChanged -= CurrentGPU_AFMFStateChanged;
+                amdGPU.RSRStateChanged -= CurrentGPU_RSRStateChanged;
+                amdGPU.AFMFStateChanged -= CurrentGPU_AFMFStateChanged;
             }
-            else if (GPU is IntelGPU)
+            else if (GPU is IntelGPU intelGPU)
             {
-                // do something
+                intelGPU.EnduranceGamingState -= IntelGPU_EnduranceGamingState;
             }
 
             GPU.Stop();
@@ -410,7 +407,7 @@ namespace HandheldCompanion.Managers
             if (!IsReady)
                 return;
 
-            // todo: use ProfileMager events
+            // todo: use ProfileManager events
             Profile profile = ManagerFactory.profileManager.GetCurrent();
             AMDGPU amdGPU = (AMDGPU)currentGPU;
 
@@ -425,7 +422,7 @@ namespace HandheldCompanion.Managers
             if (!IsReady)
                 return;
 
-            // todo: use ProfileMager events
+            // todo: use ProfileManager events
             Profile profile = ManagerFactory.profileManager.GetCurrent();
             AMDGPU amdGPU = (AMDGPU)currentGPU;
 
@@ -438,7 +435,7 @@ namespace HandheldCompanion.Managers
             if (!IsReady)
                 return;
 
-            // todo: use ProfileMager events
+            // todo: use ProfileManager events
             Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             if (Enabled != profile.IntegerScalingEnabled)
@@ -450,7 +447,7 @@ namespace HandheldCompanion.Managers
             if (!IsReady)
                 return;
 
-            // todo: use ProfileMager events
+            // todo: use ProfileManager events
             Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             if (Enabled != profile.GPUScaling)
@@ -459,12 +456,26 @@ namespace HandheldCompanion.Managers
                 currentGPU.SetScalingMode(profile.ScalingMode);
         }
 
+        private void IntelGPU_EnduranceGamingState(bool Supported, ctl_3d_endurance_gaming_control_t Control, ctl_3d_endurance_gaming_mode_t Mode)
+        {
+            if (!IsReady)
+                return;
+
+            // todo: use PowerProfileManager events
+            PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetCurrent();
+            IntelGPU intelGPU = (IntelGPU)currentGPU;
+
+            bool IntelEnduranceGamingEnabled = Control == ctl_3d_endurance_gaming_control_t.ON || Control == ctl_3d_endurance_gaming_control_t.AUTO;
+            if (IntelEnduranceGamingEnabled != powerProfile.IntelEnduranceGamingEnabled)
+                intelGPU.SetEnduranceGaming(powerProfile.IntelEnduranceGamingEnabled ? ctl_3d_endurance_gaming_control_t.AUTO : ctl_3d_endurance_gaming_control_t.OFF, (ctl_3d_endurance_gaming_mode_t)powerProfile.IntelEnduranceGamingPreset);
+        }
+
         private void CurrentGPU_ImageSharpeningChanged(bool Enabled, int Sharpness)
         {
             if (!IsReady)
                 return;
 
-            // todo: use ProfileMager events
+            // todo: use ProfileManager events
             Profile profile = ManagerFactory.profileManager.GetCurrent();
 
             if (Enabled != profile.RISEnabled)

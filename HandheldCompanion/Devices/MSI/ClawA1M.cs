@@ -213,7 +213,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d },
             IntelEnduranceGamingEnabled = true,
-            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_MAX // 30fps
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.MAX // 30fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterPerformance, Properties.Resources.PowerProfileMSIClawBetterPerformanceDesc)
@@ -225,7 +225,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d },
             IntelEnduranceGamingEnabled = true,
-            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE // 60fps
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE // 60fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBestPerformance, Properties.Resources.PowerProfileMSIClawBestPerformanceDesc)
@@ -237,7 +237,7 @@ public class ClawA1M : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
             IntelEnduranceGamingEnabled = false,
-            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
         });
 
         OEMChords.Add(new KeyboardChord("CLAW",

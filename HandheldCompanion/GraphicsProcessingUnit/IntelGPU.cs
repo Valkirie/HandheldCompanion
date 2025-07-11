@@ -11,7 +11,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
     public class IntelGPU : GPU
     {
         #region events
+        public event EnduranceGamingStateEventHandler EnduranceGamingState;
+        public delegate void EnduranceGamingStateEventHandler(bool Supported, ctl_3d_endurance_gaming_control_t Control, ctl_3d_endurance_gaming_mode_t Mode);
         #endregion
+
+        private bool prevEnduranceGamingSupport;
+        private ctl_3d_endurance_gaming_control_t prevEGControl = new();
+        private ctl_3d_endurance_gaming_mode_t prevEGMode = new();
 
         protected ctl_telemetry_data TelemetryData = new();
 
@@ -132,9 +138,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             ctl_3d_endurance_gaming_control_t supportedControls = (ctl_3d_endurance_gaming_control_t)caps.EGControlCaps.SupportedTypes;
             ctl_3d_endurance_gaming_mode_t supportedModes = (ctl_3d_endurance_gaming_mode_t)caps.EGModeCaps.SupportedTypes;
 
-            offSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_OFF);
-            onSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_ON);
-            autoSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO);
+            offSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.OFF);
+            onSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.ON);
+            autoSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.AUTO);
 
             return autoSupported || onSupported;
         }
@@ -229,11 +235,60 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // pull telemetry once
             TelemetryData = IGCLBackend.GetTelemetry(deviceIdx);
 
+            UpdateTimer = new Timer(UpdateInterval)
+            {
+                AutoReset = true
+            };
+            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+
             TelemetryTimer = new Timer(TelemetryInterval)
             {
                 AutoReset = true
             };
             TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
+        }
+
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            if (halting)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                try
+                {
+                    ctl_endurance_gaming_t EnduranceGaming = new();
+                    ctl_endurance_gaming_caps_t EnduranceGamingCaps = new();
+
+                    bool EnduranceGamingOff = false;
+                    bool EnduranceGamingOn = false;
+                    bool EnduranceGamingAuto = false;
+
+                    try
+                    {
+                        bool EnduranceGamingSupport = HasEnduranceGaming(out EnduranceGamingOff, out EnduranceGamingOn, out EnduranceGamingAuto);
+                        if (EnduranceGamingSupport)
+                        {
+                            EnduranceGaming = GetEnduranceGaming();
+                            EnduranceGamingCaps = GetEnduranceGamingCapacities();
+                        }
+
+                        // raise event
+                        if (EnduranceGamingSupport != prevEnduranceGamingSupport || EnduranceGaming.EGControl != prevEGControl || EnduranceGaming.EGMode != prevEGMode)
+                            EnduranceGamingState?.Invoke(EnduranceGamingSupport, EnduranceGaming.EGControl, EnduranceGaming.EGMode);
+
+                        prevEnduranceGamingSupport = EnduranceGamingSupport;
+                        prevEGControl = EnduranceGaming.EGControl;
+                        prevEGMode = EnduranceGaming.EGMode;
+                    }
+                    catch { }
+                }
+                catch { }
+                finally
+                {
+                    Monitor.Exit(updateLock);
+                }
+            }
         }
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
