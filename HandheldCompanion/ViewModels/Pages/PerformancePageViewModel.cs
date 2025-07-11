@@ -541,7 +541,6 @@ namespace HandheldCompanion.ViewModels
             #region General Setup
 
             // manage events
-            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
 
@@ -576,6 +575,17 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case ManagerStatus.Initialized:
                     QueryMedia();
+                    break;
+            }
+
+            switch (ManagerFactory.gpuManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
                     break;
             }
 
@@ -758,6 +768,26 @@ namespace HandheldCompanion.ViewModels
             #endregion
         }
 
+        private void QueryGPU()
+        {
+            // manage events
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+
+            GPU gpu = GPUManager.GetCurrent();
+            if (gpu is not null)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
+        }
+
+        private void GPUManager_Hooked(GPU GPU)
+        {
+            OnPropertyChanged(nameof(SupportsIntelEnduranceGaming));
+        }
+
         private void SettingsManager_Initialized()
         {
             QuerySettings();
@@ -780,6 +810,7 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryPowerProfile()
         {
+            // manage events
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
@@ -805,6 +836,9 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryMedia()
         {
+            // manage events
+            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+
             MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
         }
 
@@ -816,14 +850,16 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
             ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
-            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
-
+            ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+            ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
 
             if (IsMainPage)
             {
