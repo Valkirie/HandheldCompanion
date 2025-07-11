@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.ADLX;
+using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
@@ -11,6 +12,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using static HandheldCompanion.IGCL.IGCLBackend;
 
 namespace HandheldCompanion.Managers
 {
@@ -71,9 +73,6 @@ namespace HandheldCompanion.Managers
             currentGPU?.Start();
 
             // manage events
-            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
-            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.deviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
             ManagerFactory.deviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
@@ -87,6 +86,16 @@ namespace HandheldCompanion.Managers
                     break;
                 case ManagerStatus.Initialized:
                     QueryProfile();
+                    break;
+            }
+            switch (ManagerFactory.powerProfileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPowerProfile();
                     break;
             }
 
@@ -116,6 +125,9 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
+            ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+            ManagerFactory.powerProfileManager.Discarded -= PowerProfileManager_Discarded;
+            ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
             ManagerFactory.deviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
             ManagerFactory.deviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
             ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
@@ -143,12 +155,59 @@ namespace HandheldCompanion.Managers
 
         private void QueryProfile()
         {
+            // manage events
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
         private void ProfileManager_Initialized()
         {
             QueryProfile();
+        }
+
+        private void QueryPowerProfile()
+        {
+            // manage events
+            ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+            ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
+
+            PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+        }
+
+        private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+        {
+            if (!IsReady || currentGPU is null)
+                return;
+
+            if (currentGPU is IntelGPU intelGPU)
+            {
+                intelGPU.SetEnduranceGaming(
+                    profile.IntelEnduranceGamingEnabled ? ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO : ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_OFF,
+                    (ctl_3d_endurance_gaming_mode_t)profile.IntelEnduranceGamingPreset);
+            }
+        }
+
+        private void PowerProfileManager_Discarded(PowerProfile profile, bool swapped)
+        {
+            if (!IsReady || currentGPU is null)
+                return;
+
+            // don't bother discarding settings, new one will be enforce shortly
+            if (swapped)
+                return;
+
+            if (currentGPU is IntelGPU intelGPU)
+            {
+                intelGPU.SetEnduranceGaming(ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_OFF, ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_PERFORMANCE);
+            }
+        }
+
+        private void PowerProfileManager_Initialized()
+        {
+            QueryPowerProfile();
         }
 
         private void DeviceManager_Initialized()
