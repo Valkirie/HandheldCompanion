@@ -466,9 +466,6 @@
 
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard Header="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPreset}">
-                            <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xec0a;" />
-                            </ui:SettingsCard.HeaderIcon>
 
                             <ComboBox
                                 HorizontalAlignment="Stretch"
