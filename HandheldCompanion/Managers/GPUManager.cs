@@ -241,19 +241,6 @@ namespace HandheldCompanion.Managers
             else if (GPU is IntelGPU intelGPU)
             {
                 // do something
-                bool autoSupported;
-                bool onSupported;
-                bool offSupported;
-                bool hasEndurance = intelGPU.HasEnduranceGaming(out autoSupported, out onSupported, out offSupported);
-
-                if (hasEndurance)
-                {
-                    IGCLBackend.ctl_endurance_gaming_t testGet = intelGPU.GetEnduranceGaming();
-                    bool testSet = intelGPU.SetEnduranceGaming(
-                        IGCLBackend.ctl_3d_endurance_gaming_control_t.CTL_3D_ENDURANCE_GAMING_CONTROL_AUTO,
-                        IGCLBackend.ctl_3d_endurance_gaming_mode_t.CTL_3D_ENDURANCE_GAMING_MODE_BATTERY);
-                    testGet = intelGPU.GetEnduranceGaming();
-                }
             }
 
             if (GPU.IsInitialized)
