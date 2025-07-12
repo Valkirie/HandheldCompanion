@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.IGCL;
 using SharpDX.Direct3D9;
 using System;
+using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
@@ -222,6 +223,24 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override float GetTemperature()
         {
             return (float)TelemetryData.GpuCurrentTemperatureValue;
+        }
+
+        static IntelGPU()
+        {
+            // Intel® Graphics Software Service
+            serviceName = "IntelGraphicsSoftwareService";
+            serviceController = new ServiceController(serviceName);
+        }
+
+        public static bool HasServiceStatus(ServiceControllerStatus status)
+        {
+            try
+            {
+                return serviceController?.Status == status;
+            }
+            catch { }
+
+            return false;
         }
 
         public IntelGPU(AdapterInformation adapterInformation) : base(adapterInformation)

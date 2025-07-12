@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
+using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -60,6 +61,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected static HashSet<string> ProcessTargets = new HashSet<string>();
         private static readonly object processTargetsLock = new object();
+
+        public static string serviceName = string.Empty;
+        protected static ServiceController serviceController;
 
         public bool IsBusy
         {
