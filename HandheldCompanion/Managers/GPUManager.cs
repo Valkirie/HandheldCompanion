@@ -10,6 +10,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceProcess;
 using System.Threading;
 using static HandheldCompanion.IGCL.IGCLBackend;
 
@@ -45,13 +46,21 @@ namespace HandheldCompanion.Managers
 
             if (!IsLoaded_IGCL && GPU.HasIntelGPU())
             {
+                // wait until Intel GPU service is ready
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(7));
+                while (DateTime.Now < timeout && !IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
+                    Thread.Sleep(1000);
+
+                if (!IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
+                    LogManager.LogError("{0} is not ready. Some GPU related features might not work as expected", IntelGPU.serviceName);
+
                 // try to initialized IGCL
                 IsLoaded_IGCL = IGCLBackend.Initialize();
 
                 if (IsLoaded_IGCL)
-                    LogManager.LogInformation("IGCL was successfully initialized", "GPUManager");
+                    LogManager.LogInformation("{0} was successfully initialized", "IGCL");
                 else
-                    LogManager.LogError("Failed to initialize IGCL", "GPUManager");
+                    LogManager.LogError("Failed to initialize {0}", "IGCL");
             }
 
             if (!IsLoaded_ADLX && GPU.HasAMDGPU())
@@ -60,9 +69,9 @@ namespace HandheldCompanion.Managers
                 IsLoaded_ADLX = ADLXBackend.SafeIntializeAdlx();
 
                 if (IsLoaded_ADLX)
-                    LogManager.LogInformation("ADLX {0} was successfully initialized", ADLXBackend.GetVersion(), "GPUManager");
+                    LogManager.LogInformation("{0} {1} was successfully initialized", "ADLX", ADLXBackend.GetVersion());
                 else
-                    LogManager.LogError("Failed to initialize ADLX", "GPUManager");
+                    LogManager.LogError("Failed to initialize {0}", "ADLX");
             }
 
             AMDSettingsWatcher.Start();
