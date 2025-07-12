@@ -667,7 +667,7 @@ public class LayoutManager : IManager
                         case ActionType.Trigger:
                             {
                                 TriggerActions tAction = action as TriggerActions;
-                                tAction.Execute(InAxisY, (byte)InLayout.vector.Y, shiftSlot);
+                                tAction.Execute(InAxisY, InLayout.vector.Y, shiftSlot);
 
                                 // read output axis
                                 AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];

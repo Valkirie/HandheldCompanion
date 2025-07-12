@@ -17,7 +17,7 @@ namespace HandheldCompanion.Actions
         public TriggerActions()
         {
             this.actionType = ActionType.Trigger;
-            this.Value = (short)0;
+            this.Value = byte.MinValue;
         }
 
         public TriggerActions(AxisLayoutFlags axis) : this()
@@ -25,23 +25,23 @@ namespace HandheldCompanion.Actions
             this.Axis = axis;
         }
 
-        public void Execute(AxisFlags axis, byte value, ShiftSlot shiftSlot)
+        public void Execute(AxisFlags axis, float value, ShiftSlot shiftSlot)
         {
             // update value
-            this.Value = value;
+            this.Value = (byte)Math.Clamp(value, byte.MinValue, byte.MaxValue);
 
             // call parent, check shiftSlot
             base.Execute(axis, shiftSlot);
 
             // skip if zero
-            if ((byte)this.Value == 0)
+            if (this.Value is byte bValue && bValue == 0)
                 return;
 
             // Apply inner and outer deadzone adjustments
-            value = (byte)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
-            value = (byte)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
+            value = InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
+            value = InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
 
-            this.Value = value;
+            this.Value = (byte)value;
         }
 
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)
