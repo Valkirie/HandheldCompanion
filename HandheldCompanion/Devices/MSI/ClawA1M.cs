@@ -301,7 +301,7 @@ public class ClawA1M : IDevice
             if (box[1] == (byte)0)
             {
                 InitOverBoost(true);
-                SpinWait.SpinUntil(() => false, 600);
+                Thread.Sleep(600);
             }
 
             /*
@@ -524,24 +524,24 @@ public class ClawA1M : IDevice
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
 
         // set value
         box[1] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
     }
 
     public async void SetOverBoost(bool enabled)
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
 
         // set value
         box[6] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
 
         Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
         {
