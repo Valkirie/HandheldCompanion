@@ -71,11 +71,6 @@ namespace HandheldCompanion.Managers
             currentGPU?.Start();
 
             // manage events
-            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
-            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
-            ManagerFactory.deviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
-            ManagerFactory.deviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
 
             // raise events
@@ -101,6 +96,17 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+
             base.Start();
         }
 
@@ -120,6 +126,8 @@ namespace HandheldCompanion.Managers
             ManagerFactory.deviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
             ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
             ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
@@ -141,8 +149,35 @@ namespace HandheldCompanion.Managers
             base.Stop();
         }
 
+        private void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch(name)
+            {
+                case "GPUManagerMonitor":
+                    bool enabled = Convert.ToBoolean(value);
+                    if (enabled) currentGPU?.StartMonitor(); else currentGPU?.StopMonitor();
+                        break;
+            }
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
         private void QueryProfile()
         {
+            // manage events
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
@@ -158,6 +193,10 @@ namespace HandheldCompanion.Managers
 
         private void QueryDevices()
         {
+            // manage events
+            ManagerFactory.deviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
+            ManagerFactory.deviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
+
             // use ConcurrentDictionary's thread-safe operations to avoid collection errors
             foreach (KeyValuePair<Guid, AdapterInformation> kvp in ManagerFactory.deviceManager.displayAdapters)
                 DeviceManager_DisplayAdapterArrived(kvp.Value);

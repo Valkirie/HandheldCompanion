@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Shared;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected const int UpdateInterval = 5000;
         protected Timer UpdateTimer;
+        protected bool GPUManagerMonitor => ManagerFactory.settingsManager.GetBoolean("GPUManagerMonitor");
 
         protected const int TelemetryInterval = 1000;
         protected Timer TelemetryTimer;
@@ -163,8 +165,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // release halting flag
             halting = false;
 
-            if (UpdateTimer != null && !UpdateTimer.Enabled)
-                UpdateTimer.Start();
+            if (UpdateTimer != null && !UpdateTimer.Enabled && GPUManagerMonitor)
+                StartMonitor();
 
             if (TelemetryTimer != null && !TelemetryTimer.Enabled)
                 TelemetryTimer.Start();
@@ -176,13 +178,23 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             halting = true;
 
             if (UpdateTimer != null && UpdateTimer.Enabled)
-                UpdateTimer.Stop();
+                StopMonitor();
 
             if (TelemetryTimer != null && TelemetryTimer.Enabled)
                 TelemetryTimer.Stop();
 
             if (BusyTimer != null && BusyTimer.Enabled)
                 BusyTimer.Stop();
+        }
+
+        public virtual void StartMonitor()
+        {
+            UpdateTimer.Start();
+        }
+
+        public virtual void StopMonitor()
+        {
+            UpdateTimer.Stop();
         }
 
         /// <summary>

@@ -1328,5 +1328,17 @@ namespace HandheldCompanion.Properties {
                 this["MuteConsole"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GPUManagerMonitor {
+            get {
+                return ((bool)(this["GPUManagerMonitor"]));
+            }
+            set {
+                this["GPUManagerMonitor"] = value;
+            }
+        }
     }
 }
