@@ -3199,11 +3199,13 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
     <value>Balanced - 45 FPS</value>
+  </data>
   <data name="QuickApplicationsPage_SuspendApplication" xml:space="preserve">
     <value />
   </data>
   <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
     <value>Efficiency - 30 FPS</value>
+  </data>
   <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
     <value />
   </data>
