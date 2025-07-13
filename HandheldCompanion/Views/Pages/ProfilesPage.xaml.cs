@@ -69,6 +69,7 @@ public partial class ProfilesPage : Page
         ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
         PlatformManager.RTSS.Updated += RTSS_Updated;
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
 
         UpdateTimer = new Timer(UpdateInterval) { AutoReset = false };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
@@ -78,6 +79,14 @@ public partial class ProfilesPage : Page
 
         // force call
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            SelectedPowerProfileName.Text = profile.Name;
+        });
     }
 
     private void MultimediaManager_Initialized()
@@ -271,6 +280,7 @@ public partial class ProfilesPage : Page
         ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
 
         UpdateTimer.Elapsed -= (sender, e) => SubmitProfile();
 
@@ -492,11 +502,9 @@ public partial class ProfilesPage : Page
             {
                 case false:
                     selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
-                    SelectedPowerProfileName.Text = powerProfile.Name;
                     break;
                 case true:
                     selectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
-                    SelectedPowerProfilePluggedName.Text = powerProfile.Name;
                     break;
             }
         });
@@ -637,8 +645,16 @@ public partial class ProfilesPage : Page
                     PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
                     PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
 
-                    SelectedPowerProfileName.Text = powerProfileDC?.Name;
-                    SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;
+                    switch (System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus)
+                    {
+                        case System.Windows.Forms.PowerLineStatus.Unknown:
+                        case System.Windows.Forms.PowerLineStatus.Offline:
+                            SelectedPowerProfileName.Text = powerProfileDC?.Name;
+                            break;
+                        case System.Windows.Forms.PowerLineStatus.Online:
+                            SelectedPowerProfileName.Text = powerProfileAC?.Name;
+                            break;
+                    }
 
                     ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 

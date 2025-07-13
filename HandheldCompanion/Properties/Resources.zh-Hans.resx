@@ -3068,9 +3068,6 @@
   <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
     <value>悬浮窗</value>
   </data>
-  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
-    <value>电源预设（插入电源）</value>
-  </data>
   <data name="ProfilesPage_PowerSettingsPlugged" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>

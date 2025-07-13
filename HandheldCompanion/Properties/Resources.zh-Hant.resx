@@ -3244,9 +3244,6 @@
   <data name="ProfilesPage_AFMFDesc" xml:space="preserve">
     <value>Enhance performance by utilizing frame generation technology to increase FPS beyond the in-game limit, resulting in a smoother experience</value>
   </data>
-  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
-    <value>Power preset (Plugged)</value>
-  </data>
   <data name="ProfilesPage_PowerSettingsPlugged" xml:space="preserve">
     <value>UNUSED</value>
   </data>

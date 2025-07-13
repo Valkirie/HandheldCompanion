@@ -692,7 +692,7 @@
     <value>Modos de energia</value>
   </data>
   <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
-    <value>Alterar o modo de energia selecionado</value>
+    <value>Optimize your device based on power use and performance</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Detalhes do perfil</value>
@@ -3257,9 +3257,6 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="ProfilesPage_AFMFDesc" xml:space="preserve">
     <value>Melhorar desempenho utilizando a tecnologia de geração de frames para aumentar o FPS além do limite no jogo, resultado numa experiência mais suave</value>
-  </data>
-  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
-    <value>Modos de energia (Conectado)</value>
   </data>
   <data name="ProfilesPage_PowerSettingsPlugged" xml:space="preserve">
     <value>NÃO USADO</value>

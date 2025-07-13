@@ -1039,7 +1039,7 @@
                             Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_PowerPreset}">
                             <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xf5f7;" />
+                                <ui:FontIcon Glyph="&#xec4a;" />
                             </ui:SettingsExpander.HeaderIcon>
 
                             <TextBlock
@@ -1049,111 +1049,56 @@
                                 Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
 
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard>
-                                    <!--  Bit hacky, improve me  -->
-                                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="46" />
-                                            <ColumnDefinition Width="102" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ComboBox
-                                            Name="PowerProfileOnBattery"
-                                            HorizontalAlignment="Stretch"
-                                            DisplayMemberPath="Text"
-                                            ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                            ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedValuePath="Text">
-                                            <ComboBox.GroupStyle>
-                                                <GroupStyle>
-                                                    <GroupStyle.HeaderTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock
-                                                                Margin="4,0,0,0"
-                                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </DataTemplate>
-                                                    </GroupStyle.HeaderTemplate>
-                                                </GroupStyle>
-                                            </ComboBox.GroupStyle>
-                                        </ComboBox>
-
-                                        <Button
-                                            Name="PowerProfileOnBatteryMore"
-                                            Grid.Column="1"
-                                            Width="40"
-                                            Height="31"
-                                            Margin="6,0,0,0"
-                                            Click="PowerProfileOnBatteryMore_Click"
-                                            Style="{DynamicResource AccentButtonStyle}"
-                                            Tag="Navigation">
-                                            <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
-                                        </Button>
-                                    </Grid>
+                                <ui:SettingsCard
+                                    Click="PowerProfileOnBatteryMore_Click"
+                                    Header="On battery"
+                                    IsClickEnabled="True">
+                                    <ComboBox
+                                        Name="PowerProfileOnBattery"
+                                        DisplayMemberPath="Text"
+                                        ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                        ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Text">
+                                        <ComboBox.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            Margin="4,0,0,0"
+                                                            Style="{StaticResource BaseTextBlockStyle}"
+                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataTemplate>
+                                                </GroupStyle.HeaderTemplate>
+                                            </GroupStyle>
+                                        </ComboBox.GroupStyle>
+                                    </ComboBox>
                                 </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
 
-                        <ui:SettingsExpander
-                            d:IsExpanded="True"
-                            Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_PowerPresetPlugged}">
-
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xf602;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <TextBlock
-                                Name="SelectedPowerProfilePluggedName"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard>
-                                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="46" />
-                                            <ColumnDefinition Width="102" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ComboBox
-                                            Name="PowerProfilePlugged"
-                                            HorizontalAlignment="Stretch"
-                                            DisplayMemberPath="Text"
-                                            ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                            ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedValuePath="Text">
-                                            <ComboBox.GroupStyle>
-                                                <GroupStyle>
-                                                    <GroupStyle.HeaderTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock
-                                                                Margin="4,0,0,0"
-                                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </DataTemplate>
-                                                    </GroupStyle.HeaderTemplate>
-                                                </GroupStyle>
-                                            </ComboBox.GroupStyle>
-                                        </ComboBox>
-
-                                        <Button
-                                            Name="PowerProfilePluggedMore"
-                                            Grid.Column="1"
-                                            Width="40"
-                                            Height="31"
-                                            HorizontalAlignment="Right"
-                                            Click="PowerProfilePluggedMore_Click"
-                                            Style="{DynamicResource AccentButtonStyle}"
-                                            Tag="Navigation">
-                                            <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
-                                        </Button>
-                                    </Grid>
+                                <ui:SettingsCard
+                                    Click="PowerProfilePluggedMore_Click"
+                                    Header="Plugged in"
+                                    IsClickEnabled="True">
+                                    <ComboBox
+                                        Name="PowerProfilePlugged"
+                                        DisplayMemberPath="Text"
+                                        ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                        ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Text">
+                                        <ComboBox.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            Margin="4,0,0,0"
+                                                            Style="{StaticResource BaseTextBlockStyle}"
+                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataTemplate>
+                                                </GroupStyle.HeaderTemplate>
+                                            </GroupStyle>
+                                        </ComboBox.GroupStyle>
+                                    </ComboBox>
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
