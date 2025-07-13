@@ -104,7 +104,7 @@
                     Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
                     Header="{l:Static resx:Resources.ProfilesPage_PowerPreset}">
                     <ui:SettingsExpander.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xf5f7;" />
+                        <ui:FontIcon Glyph="&#xec4a;" />
                     </ui:SettingsExpander.HeaderIcon>
 
                     <TextBlock
@@ -114,18 +114,10 @@
                         Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard>
-                            <!--  Bit hacky, improve me  -->
-                            <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="46" />
-                                    <ColumnDefinition Width="104" />
-                                </Grid.ColumnDefinitions>
-
+                        <ui:SettingsCard Header="On battery">
+                            <StackPanel Orientation="Horizontal">
                                 <ComboBox
                                     Name="PowerProfileOnBattery"
-                                    HorizontalAlignment="Stretch"
                                     DisplayMemberPath="Text"
                                     ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                     ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -147,47 +139,20 @@
 
                                 <Button
                                     Name="PowerProfileOnBatteryMore"
-                                    Grid.Column="1"
-                                    Width="40"
-                                    Height="31"
-                                    Margin="6,0,0,0"
+                                    Margin="3,0,0,0"
+                                    VerticalAlignment="Stretch"
                                     Click="PowerProfileOnBatteryMore_Click"
                                     Style="{DynamicResource AccentButtonStyle}"
                                     Tag="Navigation">
                                     <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
                                 </Button>
-                            </Grid>
+                            </StackPanel>
                         </ui:SettingsCard>
-                    </ui:SettingsExpander.Items>
-                </ui:SettingsExpander>
 
-                <ui:SettingsExpander
-                    d:IsExpanded="True"
-                    Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
-                    Header="{l:Static resx:Resources.ProfilesPage_PowerPresetPlugged}">
-
-                    <ui:SettingsExpander.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xf602;" />
-                    </ui:SettingsExpander.HeaderIcon>
-
-                    <TextBlock
-                        Name="SelectedPowerProfilePluggedName"
-                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                        Style="{StaticResource BodyTextBlockStyle}"
-                        Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
-
-                    <ui:SettingsExpander.Items>
-                        <ui:SettingsCard>
-                            <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="46" />
-                                    <ColumnDefinition Width="104" />
-                                </Grid.ColumnDefinitions>
-
+                        <ui:SettingsCard Header="Plugged in">
+                            <StackPanel Orientation="Horizontal">
                                 <ComboBox
                                     Name="PowerProfilePlugged"
-                                    HorizontalAlignment="Stretch"
                                     DisplayMemberPath="Text"
                                     ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                     ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -209,16 +174,15 @@
 
                                 <Button
                                     Name="PowerProfilePluggedMore"
-                                    Grid.Column="1"
-                                    Width="40"
-                                    Height="31"
+                                    Margin="3,0,0,0"
                                     HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
                                     Click="PowerProfilePluggedMore_Click"
                                     Style="{DynamicResource AccentButtonStyle}"
                                     Tag="Navigation">
                                     <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
                                 </Button>
-                            </Grid>
+                            </StackPanel>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>
