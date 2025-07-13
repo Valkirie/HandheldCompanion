@@ -399,12 +399,22 @@ public partial class QuickProfilesPage : Page
 
     private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
+        // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
+        DependencyObject? src = e.Source as DependencyObject;
+        if (src is not SettingsCard)
+            return;
+
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
 
     private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
     {
+        // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
+        DependencyObject? src = e.Source as DependencyObject;
+        if (src is not SettingsCard)
+            return;
+
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
         OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
