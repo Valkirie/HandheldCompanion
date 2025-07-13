@@ -114,75 +114,56 @@
                         Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Header="On battery">
-                            <StackPanel Orientation="Horizontal">
-                                <ComboBox
-                                    Name="PowerProfileOnBattery"
-                                    DisplayMemberPath="Text"
-                                    ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                    ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedValuePath="Text">
-                                    <ComboBox.GroupStyle>
-                                        <GroupStyle>
-                                            <GroupStyle.HeaderTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Margin="4,0,0,0"
-                                                        Style="{StaticResource BaseTextBlockStyle}"
-                                                        Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataTemplate>
-                                            </GroupStyle.HeaderTemplate>
-                                        </GroupStyle>
-                                    </ComboBox.GroupStyle>
-                                </ComboBox>
-
-                                <Button
-                                    Name="PowerProfileOnBatteryMore"
-                                    Margin="3,0,0,0"
-                                    VerticalAlignment="Stretch"
-                                    Click="PowerProfileOnBatteryMore_Click"
-                                    Style="{DynamicResource AccentButtonStyle}"
-                                    Tag="Navigation">
-                                    <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
-                                </Button>
-                            </StackPanel>
+                        <ui:SettingsCard
+                            Click="PowerProfileOnBatteryMore_Click"
+                            Header="On battery"
+                            IsClickEnabled="True">
+                            <ComboBox
+                                Name="PowerProfileOnBattery"
+                                DisplayMemberPath="Text"
+                                ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValuePath="Text">
+                                <ComboBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="4,0,0,0"
+                                                    Style="{StaticResource BaseTextBlockStyle}"
+                                                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ComboBox.GroupStyle>
+                            </ComboBox>
                         </ui:SettingsCard>
 
-                        <ui:SettingsCard Header="Plugged in">
-                            <StackPanel Orientation="Horizontal">
-                                <ComboBox
-                                    Name="PowerProfilePlugged"
-                                    DisplayMemberPath="Text"
-                                    ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                    ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedValuePath="Text">
-                                    <ComboBox.GroupStyle>
-                                        <GroupStyle>
-                                            <GroupStyle.HeaderTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Margin="4,0,0,0"
-                                                        Style="{StaticResource BaseTextBlockStyle}"
-                                                        Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataTemplate>
-                                            </GroupStyle.HeaderTemplate>
-                                        </GroupStyle>
-                                    </ComboBox.GroupStyle>
-                                </ComboBox>
-
-                                <Button
-                                    Name="PowerProfilePluggedMore"
-                                    Margin="3,0,0,0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Stretch"
-                                    Click="PowerProfilePluggedMore_Click"
-                                    Style="{DynamicResource AccentButtonStyle}"
-                                    Tag="Navigation">
-                                    <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
-                                </Button>
-                            </StackPanel>
+                        <ui:SettingsCard
+                            Click="PowerProfilePluggedMore_Click"
+                            Header="Plugged in"
+                            IsClickEnabled="True">
+                            <ComboBox
+                                Name="PowerProfilePlugged"
+                                DisplayMemberPath="Text"
+                                ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValuePath="Text">
+                                <ComboBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="4,0,0,0"
+                                                    Style="{StaticResource BaseTextBlockStyle}"
+                                                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ComboBox.GroupStyle>
+                            </ComboBox>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>
