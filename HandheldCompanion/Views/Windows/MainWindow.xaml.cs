@@ -250,17 +250,29 @@ public partial class MainWindow : GamepadWindow
         // UI thread
         UIHelper.TryInvoke(() =>
         {
-            var color1 = Controller.GetGlyphColor(ButtonFlags.B1);
+            // update glyph(s)
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
-            GamepadUISelectIcon.Foreground = color1.HasValue ? new SolidColorBrush(color1.Value) : null;
-
-            var color2 = Controller.GetGlyphColor(ButtonFlags.B2);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
-            GamepadUIBackIcon.Foreground = color2.HasValue ? new SolidColorBrush(color2.Value) : null;
-
-            var color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
-            GamepadUIToggleIcon.Foreground = color4.HasValue ? new SolidColorBrush(color4.Value) : null;
+
+            // update color(s)
+            Color? color1 = Controller.GetGlyphColor(ButtonFlags.B1);
+            if (color1.HasValue)
+                GamepadUISelectIcon.Foreground = new SolidColorBrush(color1.Value);
+            else
+                GamepadUISelectIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
+            Color? color2 = Controller.GetGlyphColor(ButtonFlags.B2);
+            if (color2.HasValue)
+                GamepadUIBackIcon.Foreground = new SolidColorBrush(color2.Value);
+            else
+                GamepadUIBackIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
+            Color? color4 = Controller.GetGlyphColor(ButtonFlags.B4);
+            if (color4.HasValue)
+                GamepadUIToggleIcon.Foreground = new SolidColorBrush(color4.Value);
+            else
+                GamepadUIBackIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
         });
     }
 
