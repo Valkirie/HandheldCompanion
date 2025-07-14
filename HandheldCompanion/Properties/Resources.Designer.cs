@@ -1699,236 +1699,137 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Left-finger swipe.
+        ///   Looks up a localized string similar to M1.
         /// </summary>
-        public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad {
+        public static string Enum_DClawController_OEM3 {
             get {
-                return ResourceManager.GetString("Enum_DS4Controller_AxisLayoutFlags_LeftPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DClawController_OEM3", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Right-finger swipe.
+        ///   Looks up a localized string similar to M2.
         /// </summary>
-        public static string Enum_DS4Controller_AxisLayoutFlags_RightPad {
+        public static string Enum_DClawController_OEM4 {
             get {
-                return ResourceManager.GetString("Enum_DS4Controller_AxisLayoutFlags_RightPad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cross.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B1 {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Circle.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B2 {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Square.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B3 {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Triangle.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B4 {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_B4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Share.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_Back {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_Back", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Left-finger click.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_LeftPadClick {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_LeftPadClick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Left-finger touch.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_LeftPadTouch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right-finger click.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_RightPadClick {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_RightPadClick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right-finger touch.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_RightPadTouch {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_RightPadTouch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sony.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_Special {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_Special", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Options.
-        /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_Start {
-            get {
-                return ResourceManager.GetString("Enum_DS4Controller_ButtonFlags_Start", resourceCulture);
+                return ResourceManager.GetString("Enum_DClawController_OEM4", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Left-finger swipe.
         /// </summary>
-        public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad {
+        public static string Enum_DualShock4Controller_AxisLayoutFlags_LeftPad {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_AxisLayoutFlags_LeftPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_AxisLayoutFlags_LeftPad", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Right-finger swipe.
         /// </summary>
-        public static string Enum_DualSenseController_AxisLayoutFlags_RightPad {
+        public static string Enum_DualShock4Controller_AxisLayoutFlags_RightPad {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_AxisLayoutFlags_RightPad", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_AxisLayoutFlags_RightPad", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Cross.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B1 {
+        public static string Enum_DualShock4Controller_ButtonFlags_B1 {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B1", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_B1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Circle.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B2 {
+        public static string Enum_DualShock4Controller_ButtonFlags_B2 {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B2", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_B2", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Square.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B3 {
+        public static string Enum_DualShock4Controller_ButtonFlags_B3 {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B3", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_B3", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Triangle.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B4 {
+        public static string Enum_DualShock4Controller_ButtonFlags_B4 {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_B4", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_B4", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Share.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_Back {
+        public static string Enum_DualShock4Controller_ButtonFlags_Back {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_Back", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_Back", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Left-finger click.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_LeftPadClick {
+        public static string Enum_DualShock4Controller_ButtonFlags_LeftPadClick {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_LeftPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_LeftPadClick", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Left-finger touch.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch {
+        public static string Enum_DualShock4Controller_ButtonFlags_LeftPadTouch {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_LeftPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_LeftPadTouch", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Right-finger click.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_RightPadClick {
+        public static string Enum_DualShock4Controller_ButtonFlags_RightPadClick {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_RightPadClick", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_RightPadClick", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Right-finger touch.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_RightPadTouch {
+        public static string Enum_DualShock4Controller_ButtonFlags_RightPadTouch {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_RightPadTouch", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_RightPadTouch", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sony.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_Special {
+        public static string Enum_DualShock4Controller_ButtonFlags_Special {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_Special", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_Special", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_Start {
+        public static string Enum_DualShock4Controller_ButtonFlags_Start {
             get {
-                return ResourceManager.GetString("Enum_DualSenseController_ButtonFlags_Start", resourceCulture);
+                return ResourceManager.GetString("Enum_DualShock4Controller_ButtonFlags_Start", resourceCulture);
             }
         }
         
@@ -3148,6 +3049,114 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ZL.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_AxisLayoutFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_AxisLayoutFlags_L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZR.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_AxisLayoutFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_AxisLayoutFlags_R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minus.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_L1 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_R1 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_R1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Capture.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_Special2 {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_Special2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plus.
+        /// </summary>
+        public static string Enum_NintendoSwitchProController_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum_NintendoSwitchProController_ButtonFlags_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Left joystick.
         /// </summary>
         public static string Enum_Output_LeftStick {
@@ -3162,114 +3171,6 @@ namespace HandheldCompanion.Properties {
         public static string Enum_Output_RightStick {
             get {
                 return ResourceManager.GetString("Enum_Output_RightStick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ZL.
-        /// </summary>
-        public static string Enum_ProController_AxisLayoutFlags_L2 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_AxisLayoutFlags_L2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ZR.
-        /// </summary>
-        public static string Enum_ProController_AxisLayoutFlags_R2 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_AxisLayoutFlags_R2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to B.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_B1 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_B2 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Y.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_B3 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to X.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_B4 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_B4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Minus.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_Back {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Back", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to L.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_L1 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_L1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to R.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_R1 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_R1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Home.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_Special {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Special", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Capture.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_Special2 {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Special2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Plus.
-        /// </summary>
-        public static string Enum_ProController_ButtonFlags_Start {
-            get {
-                return ResourceManager.GetString("Enum_ProController_ButtonFlags_Start", resourceCulture);
             }
         }
         

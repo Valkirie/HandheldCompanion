@@ -1623,27 +1623,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B1" xml:space="preserve">
-    <value>Cruz</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B2" xml:space="preserve">
-    <value>Círculo</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B3" xml:space="preserve">
-    <value>Quadrado</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B4" xml:space="preserve">
-    <value>Triângulo</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_Back" xml:space="preserve">
-    <value>Share</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_Special" xml:space="preserve">
-    <value>Sony</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_Start" xml:space="preserve">
-    <value>Options</value>
-  </data>
   <data name="Enum_HIDmode_DualShock4Controller" xml:space="preserve">
     <value>Controle DualShock 4 emulado</value>
   </data>
@@ -1982,99 +1961,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="Enum_ProfileErrorCode_IsRunning" xml:space="preserve">
     <value>Opa. Este perfil parece estar em execução algumas opções necessitam que o executável esteja encerrado.</value>
-  </data>
-  <data name="Enum_ProController_AxisLayoutFlags_L2" xml:space="preserve">
-    <value>ZL</value>
-  </data>
-  <data name="Enum_ProController_AxisLayoutFlags_R2" xml:space="preserve">
-    <value>ZR</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B1" xml:space="preserve">
-    <value>B</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B2" xml:space="preserve">
-    <value>A</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B3" xml:space="preserve">
-    <value>Y</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B4" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Back" xml:space="preserve">
-    <value>Menos</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_L1" xml:space="preserve">
-    <value>L</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_R1" xml:space="preserve">
-    <value>R</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Special" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Special2" xml:space="preserve">
-    <value>Captura</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Start" xml:space="preserve">
-    <value>Mais</value>
-  </data>
-  <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Deslize simples</value>
-  </data>
-  <data name="Enum_DS4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Deslize Multi-touch</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Clique Simples</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Toque simples</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Clique Multi-touch</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Toque Multi-touch</value>
-  </data>
-  <data name="Enum_DualSenseController_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Deslize simples</value>
-  </data>
-  <data name="Enum_DualSenseController_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Deslize Multi-touch</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B1" xml:space="preserve">
-    <value>Cruz</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B2" xml:space="preserve">
-    <value>Círculo</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B3" xml:space="preserve">
-    <value>Quadrado</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B4" xml:space="preserve">
-    <value>Triângulo</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_Back" xml:space="preserve">
-    <value>Share</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Clique simples</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Toque simples</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Click multi-touch</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Toque multi-touch</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_Special" xml:space="preserve">
-    <value>Sony</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_Start" xml:space="preserve">
-    <value>Options</value>
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
     <value>Tem certeza que deseja aplicar este modelo? Todas as configurações do layout serão sobreescritas.</value>
@@ -3665,5 +3551,86 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
     <value>Endurance Gaming presets</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>Cruz</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>Círculo</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>Quadrado</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>Triângulo</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum_DualShock4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
+    <value>Deslize simples</value>
+  </data>
+  <data name="Enum_DualShock4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
+    <value>Deslize Multi-touch</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
+    <value>Clique Simples</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
+    <value>Toque simples</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
+    <value>Clique Multi-touch</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
+    <value>Toque Multi-touch</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B1" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B2" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B3" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B4" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Back" xml:space="preserve">
+    <value>Menos</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_L1" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_R1" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special2" xml:space="preserve">
+    <value>Captura</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Start" xml:space="preserve">
+    <value>Mais</value>
+  </data>
+  <data name="Enum_DClawController_OEM3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_DClawController_OEM4" xml:space="preserve">
+    <value />
   </data>
 </root>
