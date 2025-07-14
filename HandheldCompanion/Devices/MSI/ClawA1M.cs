@@ -323,7 +323,7 @@ public class ClawA1M : IDevice
         GetWMI();
 
         // unlock TDP
-        set_long_limit(30);
+        set_long_limit(35);
         set_short_limit(35);
 
         // start WMI event monitor

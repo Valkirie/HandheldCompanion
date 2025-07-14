@@ -67,6 +67,7 @@ public partial class QuickProfilesPage : Page
         ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
         PlatformManager.RTSS.Updated += RTSS_Updated;
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
 
         // raise events
         switch (ManagerFactory.processManager.Status)
@@ -155,6 +156,14 @@ public partial class QuickProfilesPage : Page
 
         // store hotkey to manager
         ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            SelectedPowerProfileName.Text = profile.Name;
+        });
     }
 
     private void QueryForeground()
@@ -390,12 +399,22 @@ public partial class QuickProfilesPage : Page
 
     private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
+        // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
+        DependencyObject? src = e.Source as DependencyObject;
+        if (src is not SettingsCard)
+            return;
+
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
 
     private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
     {
+        // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
+        DependencyObject? src = e.Source as DependencyObject;
+        if (src is not SettingsCard)
+            return;
+
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
         OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
@@ -416,11 +435,9 @@ public partial class QuickProfilesPage : Page
             {
                 case false:
                     selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
-                    SelectedPowerProfileName.Text = powerProfile.Name;
                     break;
                 case true:
                     selectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
-                    SelectedPowerProfilePluggedName.Text = powerProfile.Name;
                     break;
             }
         });
@@ -476,9 +493,6 @@ public partial class QuickProfilesPage : Page
                     // power profile
                     PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Offline]);
                     PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Online]);
-
-                    SelectedPowerProfileName.Text = powerProfileDC?.Name;
-                    SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;
 
                     ((QuickProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 

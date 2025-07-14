@@ -674,7 +674,7 @@
     <value>Power preset</value>
   </data>
   <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
-    <value>Change the selected power preset</value>
+    <value>Optimize your device based on power use and performance</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Détails du profil</value>
