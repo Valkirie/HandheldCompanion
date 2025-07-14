@@ -43,7 +43,7 @@ public static class EnumUtils
 
         // only display enum warnings once
         if (missingKeys.Add(key))
-            LogManager.LogWarning("No localization for enum: {0}", key);
+            LogManager.LogDebug("No localization for enum: {0}", key);
 
         return value.ToString();
     }
