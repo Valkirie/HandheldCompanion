@@ -2411,10 +2411,6 @@
     </Page>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\XInput\" />
-  </ItemGroup>
-
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if exist &quot;%25LocalAppData%25\HandheldCompanion\SecretKeys.cs&quot; (&#xA;    copy &quot;.\SecretKeys.cs&quot; &quot;.\SecretKeys.cs.bak&quot;&#xA;    copy &quot;%25LocalAppData%25\HandheldCompanion\SecretKeys.cs&quot; &quot;.\SecretKeys.cs&quot;&#xA;)" />
   </Target>
