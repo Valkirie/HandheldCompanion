@@ -3335,6 +3335,9 @@
   <data name="HotkeysPage_Hotkeys" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
+    <value>GPU Auto TDP based on desired FPS target</value>
+  </data>
   <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
     <value>工具窗口背景</value>
   </data>
@@ -3622,5 +3625,23 @@
   </data>
   <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
     <value />
+  </data>
+  <data name="PerformancePage_EnduranceGaming_Title" xml:space="preserve">
+    <value>Intel Endurance Gaming</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
+    <value>Preset</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
+    <value>Performance - 60 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
+    <value>Balanced - 40 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
+    <value>Efficiency - 30 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
+    <value>Endurance Gaming presets</value>
   </data>
 </root>

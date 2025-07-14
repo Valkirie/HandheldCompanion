@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Windows.ApplicationModel.Store;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -367,8 +368,12 @@ public static class PerformanceManager
         }
     }
 
-    private static void PowerProfileManager_Discarded(PowerProfile profile)
+    private static void PowerProfileManager_Discarded(PowerProfile profile, bool swapped)
     {
+        // don't bother discarding settings, new one will be enforce shortly
+        if (swapped)
+            return;
+
         currentProfile = null;
 
         // restore default TDP

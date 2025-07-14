@@ -230,8 +230,7 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // don't bother discarding settings, new one will be enforce shortly
-                if (!swapped)
-                    Discarded?.Invoke(powerProfile);
+                Discarded?.Invoke(powerProfile, swapped);
             }
         }
 
@@ -384,7 +383,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 // raise event
-                Discarded?.Invoke(profile);
+                Discarded?.Invoke(profile, false);
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
@@ -410,7 +409,7 @@ namespace HandheldCompanion.Managers
         public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
 
         public event DiscardedEventHandler Discarded;
-        public delegate void DiscardedEventHandler(PowerProfile profile);
+        public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
         #endregion
     }
 }

@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.IGCL;
 using SharpDX.Direct3D9;
+using System;
+using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
@@ -10,7 +12,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
     public class IntelGPU : GPU
     {
         #region events
+        public event EnduranceGamingStateEventHandler EnduranceGamingState;
+        public delegate void EnduranceGamingStateEventHandler(bool Supported, ctl_3d_endurance_gaming_control_t Control, ctl_3d_endurance_gaming_mode_t Mode);
         #endregion
+
+        private bool prevEnduranceGamingSupport;
+        private ctl_3d_endurance_gaming_control_t prevEGControl = new();
+        private ctl_3d_endurance_gaming_mode_t prevEGMode = new();
 
         protected ctl_telemetry_data TelemetryData = new();
 
@@ -110,6 +118,61 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
         }
+        
+        // helper to test whether enumValue is supported:
+        bool IsSupported<T>(uint mask, T enumValue) where T : Enum
+        {
+            int idx = Convert.ToInt32(enumValue);
+            return ((mask >> idx) & 1) != 0;
+        }
+
+        public bool HasEnduranceGaming(out bool autoSupported, out bool onSupported, out bool offSupported)
+        {
+            autoSupported = false;
+            onSupported = false;
+            offSupported = false;
+
+            if (!IsInitialized)
+                return false;
+
+            ctl_endurance_gaming_caps_t caps = GetEnduranceGamingCapacities();
+            ctl_3d_endurance_gaming_control_t supportedControls = (ctl_3d_endurance_gaming_control_t)caps.EGControlCaps.SupportedTypes;
+            ctl_3d_endurance_gaming_mode_t supportedModes = (ctl_3d_endurance_gaming_mode_t)caps.EGModeCaps.SupportedTypes;
+
+            offSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.OFF);
+            onSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.ON);
+            autoSupported = IsSupported((uint)supportedControls, ctl_3d_endurance_gaming_control_t.AUTO);
+
+            return autoSupported || onSupported;
+        }
+
+        public ctl_endurance_gaming_caps_t GetEnduranceGamingCapacities()
+        {
+            if (!IsInitialized)
+                return new();
+
+            ctl_endurance_gaming_caps_t caps = new ctl_endurance_gaming_caps_t();
+            return Execute(() => IGCLBackend.GetEnduranceGamingCapacities(deviceIdx), new());
+        }
+
+        public bool SetEnduranceGaming(ctl_3d_endurance_gaming_control_t control, ctl_3d_endurance_gaming_mode_t mode)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => IGCLBackend.SetEnduranceGaming(
+                deviceIdx,
+                control,
+                mode), false);
+        }
+
+        public ctl_endurance_gaming_t GetEnduranceGaming()
+        {
+            if (!IsInitialized)
+                return new();
+
+            return Execute(() => IGCLBackend.GetEnduranceGaming(deviceIdx), new());
+        }
 
         private ctl_telemetry_data GetTelemetry()
         {
@@ -162,6 +225,24 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return (float)TelemetryData.GpuCurrentTemperatureValue;
         }
 
+        static IntelGPU()
+        {
+            // Intel® Graphics Software Service
+            serviceName = "IntelGraphicsSoftwareService";
+            serviceController = new ServiceController(serviceName);
+        }
+
+        public static bool HasServiceStatus(ServiceControllerStatus status)
+        {
+            try
+            {
+                return serviceController?.Status == status;
+            }
+            catch { }
+
+            return false;
+        }
+
         public IntelGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
             deviceIdx = GetDeviceIdx(adapterInformation.Details.Description);
@@ -173,11 +254,60 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // pull telemetry once
             TelemetryData = IGCLBackend.GetTelemetry(deviceIdx);
 
+            UpdateTimer = new Timer(UpdateInterval)
+            {
+                AutoReset = true
+            };
+            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+
             TelemetryTimer = new Timer(TelemetryInterval)
             {
                 AutoReset = true
             };
             TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
+        }
+
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            if (halting)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                try
+                {
+                    ctl_endurance_gaming_t EnduranceGaming = new();
+                    ctl_endurance_gaming_caps_t EnduranceGamingCaps = new();
+
+                    bool EnduranceGamingOff = false;
+                    bool EnduranceGamingOn = false;
+                    bool EnduranceGamingAuto = false;
+
+                    try
+                    {
+                        bool EnduranceGamingSupport = HasEnduranceGaming(out EnduranceGamingOff, out EnduranceGamingOn, out EnduranceGamingAuto);
+                        if (EnduranceGamingSupport)
+                        {
+                            EnduranceGaming = GetEnduranceGaming();
+                            EnduranceGamingCaps = GetEnduranceGamingCapacities();
+                        }
+
+                        // raise event
+                        if (EnduranceGamingSupport != prevEnduranceGamingSupport || EnduranceGaming.EGControl != prevEGControl || EnduranceGaming.EGMode != prevEGMode)
+                            EnduranceGamingState?.Invoke(EnduranceGamingSupport, EnduranceGaming.EGControl, EnduranceGaming.EGMode);
+
+                        prevEnduranceGamingSupport = EnduranceGamingSupport;
+                        prevEGControl = EnduranceGaming.EGControl;
+                        prevEGMode = EnduranceGaming.EGMode;
+                    }
+                    catch { }
+                }
+                catch { }
+                finally
+                {
+                    Monitor.Exit(updateLock);
+                }
+            }
         }
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
