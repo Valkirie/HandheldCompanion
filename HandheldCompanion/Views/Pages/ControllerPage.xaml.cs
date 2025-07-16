@@ -91,6 +91,9 @@ public partial class ControllerPage : Page
                 case "HIDstatus":
                     cB_ServiceSwitch.SelectedIndex = Convert.ToInt32(value);
                     break;
+                case "ConnectOnPlug":
+                    Toggle_ConnectOnPlug.IsOn = Convert.ToBoolean(value);
+                    break;
             }
         });
     }
@@ -278,5 +281,13 @@ public partial class ControllerPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("SteamControllerMode", Convert.ToBoolean(cB_SCModeController.SelectedIndex));
+    }
+
+    private void Toggle_ConnectOnPlug_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("ConnectOnPlug", Toggle_ConnectOnPlug.IsOn);
     }
 }

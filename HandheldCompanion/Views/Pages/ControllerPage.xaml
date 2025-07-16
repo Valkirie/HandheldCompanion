@@ -253,10 +253,19 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_PhysicalDeviceSettings}" />
             <ikw:SimpleStackPanel Name="DeviceSpecificPanel" Spacing="3">
 
+                <!--  Connect on plug  -->
+                <ui:SettingsCard Description="Automatically connect the last plugged controller" Header="Connect when plugged">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE95F;" />
+                    </ui:SettingsCard.HeaderIcon>
+
+                    <ui:ToggleSwitch Name="Toggle_ConnectOnPlug" Toggled="Toggle_ConnectOnPlug_Toggled" />
+                </ui:SettingsCard>
+
                 <!--  Vibrate on connect  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VibrateDeviceDesc}" Header="{l:Static resx:Resources.ControllerPage_VibrateDevice}">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xe95f;" />
+                        <ui:FontIcon Glyph="&#xE877;" />
                     </ui:SettingsCard.HeaderIcon>
 
                     <ui:ToggleSwitch Name="Toggle_Vibrate" Toggled="Toggle_Vibrate_Toggled" />

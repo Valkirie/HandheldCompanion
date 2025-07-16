@@ -1340,5 +1340,17 @@ namespace HandheldCompanion.Properties {
                 this["GPUManagerMonitor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ConnectOnPlug {
+            get {
+                return ((bool)(this["ConnectOnPlug"]));
+            }
+            set {
+                this["ConnectOnPlug"] = value;
+            }
+        }
     }
 }

@@ -1379,6 +1379,7 @@ public static class ControllerManager
         StatusChanged?.Invoke(status, ControllerManagementAttempts);
     }
 
+    private static bool ConnectOnPlug => ManagerFactory.settingsManager.GetBoolean("ConnectOnPlug");
     private static void PickTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         lock (targetLock)
@@ -1397,8 +1398,8 @@ public static class ControllerManager
 
             string deviceInstanceId = string.Empty;
 
-            // if we have an external controller plugged-in
-            if (latestExternalController is not null)
+            // if we have an external controller plugged-in and user wants controller to connect when plugged
+            if (latestExternalController is not null && ConnectOnPlug)
             {
                 if (targetController is null || targetController.IsDummy())
                 {
