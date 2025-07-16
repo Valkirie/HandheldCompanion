@@ -6,6 +6,7 @@ using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace HandheldCompanion.Managers
         private object profileLock = new();
         private PowerProfile currentProfile;
 
-        public Dictionary<Guid, PowerProfile> profiles = [];
+        public ConcurrentDictionary<Guid, PowerProfile> profiles = [];
 
         public PowerProfileManager()
         {
@@ -313,7 +314,7 @@ namespace HandheldCompanion.Managers
 
         public bool Contains(PowerProfile profile)
         {
-            return profiles.ContainsValue(profile);
+            return profiles.ContainsKey(profile.Guid);
         }
 
         public PowerProfile GetProfile(Guid guid)
@@ -374,7 +375,7 @@ namespace HandheldCompanion.Managers
 
             if (profiles.ContainsKey(profile.Guid))
             {
-                profiles.Remove(profile.Guid);
+                profiles.Remove(profile.Guid, out _);
 
                 lock (profileLock)
                 {
