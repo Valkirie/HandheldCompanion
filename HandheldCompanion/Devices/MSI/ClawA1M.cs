@@ -306,12 +306,13 @@ public class ClawA1M : IDevice
         // make sure M1/M2 are recognized as buttons
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            Thread.Sleep(300);
             device.Write(GetM12(true), 0, 64);
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             device.Write(GetM12(false), 0, 64);
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             SyncToROM();
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             SwitchMode(gamepadMode);
             Thread.Sleep(2000);
         }
@@ -415,22 +416,8 @@ public class ClawA1M : IDevice
 
     private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
     {
-        // hack, force rescan
-        // controller is not properly rescanned sometime, maybe due to tight interval
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-        {
             Device_Removed();
-
-            switch (Controller.GetProductID())
-            {
-                case PID_XINPUT:
-                    ManagerFactory.deviceManager.RefreshXInput();
-                    break;
-                case PID_DINPUT:
-                    ManagerFactory.deviceManager.RefreshDInput();
-                    break;
-            }
-        }
     }
 
     protected override void QuerySettings()
@@ -756,9 +743,9 @@ public class ClawA1M : IDevice
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            device.MonitorDeviceEvents = false;
             device.Removed -= Device_Removed;
 
-            device.MonitorDeviceEvents = false;
             try { device.Dispose(); } catch { }
         }
     }
@@ -772,9 +759,8 @@ public class ClawA1M : IDevice
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed += Device_Removed;
-
             device.MonitorDeviceEvents = true;
+            device.Removed += Device_Removed;
             device.OpenDevice();
 
             SwitchMode(gamepadMode);
