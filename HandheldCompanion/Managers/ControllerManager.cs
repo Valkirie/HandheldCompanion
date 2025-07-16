@@ -175,6 +175,9 @@ public static class ControllerManager
         if (!HasTargetController)
             return;
 
+        if (targetController.IsDummy())
+            return;
+
         ControllerState controllerState = targetController?.Inputs ?? new();
         Dictionary<byte, GamepadMotion> gamepadMotions = targetController?.gamepadMotions ?? new();
         byte gamepadIndex = targetController?.gamepadIndex ?? 0;
