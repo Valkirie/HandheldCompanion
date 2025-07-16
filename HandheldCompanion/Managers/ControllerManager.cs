@@ -1398,12 +1398,17 @@ public static class ControllerManager
 
             string deviceInstanceId = string.Empty;
 
-            // if we have an external controller plugged-in and user wants controller to connect when plugged
-            if (latestExternalController is not null && ConnectOnPlug)
+            // If user has disabled auto-connect and we already have a real controller, keep it
+            if (!ConnectOnPlug && targetController is not null && !targetController.IsDummy())
+            {
+                deviceInstanceId = targetController.GetContainerInstanceId();
+            }
+            // If we have an external controller plugged-in and user wants controller to connect when plugged
+            else if (latestExternalController is not null && ConnectOnPlug)
             {
                 if (targetController is null || targetController.IsDummy())
                 {
-                    // if no previous controller or dummy, pick external
+                    // If no previous controller or dummy, pick external
                     deviceInstanceId = latestExternalController.GetContainerInstanceId();
                 }
                 else if (targetController.IsWireless() || targetController.IsExternal())
