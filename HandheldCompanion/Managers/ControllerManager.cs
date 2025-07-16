@@ -535,7 +535,9 @@ public static class ControllerManager
                         {
                             switch (ProductId)
                             {
-                                case 0x6184:
+                                case 0x6184:    // Dual DInput
+                                case 0x61EC:    // DInput
+                                case 0x61ED:    // Dual DInput (new firmware)
                                     break;
                             }
                         }
@@ -686,7 +688,16 @@ public static class ControllerManager
                     // LegionGo
                     // TODO: Distinguish between Legion Go and Legion Go S
                     case "0x17EF":
-                        try { controller = new LegionController(details); } catch { }
+                        {
+                            switch (details.GetProductID())
+                            {
+                                case "0x6182":  // old firmware
+                                case "0x61EB":  // new firmware
+                                    try { controller = new LegionController(details); } catch { }
+                                    break;
+                            }
+                            break;
+                        }
                         break;
 
                     // GameSir
