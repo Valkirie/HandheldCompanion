@@ -166,11 +166,11 @@ public class ClawA1M : IDevice
         // used to monitor OEM specific inputs
         vendorId = 0x0DB0;
         productIds = [PID_XINPUT, PID_DINPUT, PID_TESTING];
-        
-        desiredUsagePage = -96;
-        desiredUsage = 1;
-        desiredInputReportByteLength = 64;
-        desiredOutputReportByteLength = 64;
+        hidFilters = new()
+        {
+            { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) },
+            { PID_DINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0040)) },
+        };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 65 };
@@ -643,8 +643,10 @@ public class ClawA1M : IDevice
             if (!device.IsConnected)
                 continue;
 
-            // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != desiredInputReportByteLength || device.Capabilities.OutputReportByteLength != desiredOutputReportByteLength)
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
                 continue;
 
             hidDevices[INPUT_HID_ID] = device;
