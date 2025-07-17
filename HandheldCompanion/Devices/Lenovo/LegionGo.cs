@@ -354,7 +354,6 @@ public class LegionGo : IDevice
         {
             device.MonitorDeviceEvents = false;
             device.Removed -= Device_Removed;
-
             try { device.Dispose(); } catch { }
         }
 
@@ -470,16 +469,16 @@ public class LegionGo : IDevice
         };
     }
 
-    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        if (Controller is LegionController legionController)
-            Device_Removed();
-    }
-
     private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
     {
-        if (Controller is LegionController legionController)
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
             Device_Inserted(true);
+    }
+
+    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
+    {
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Removed();
     }
 
     private void QueryPowerProfile()

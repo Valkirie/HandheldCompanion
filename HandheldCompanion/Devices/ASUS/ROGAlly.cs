@@ -233,9 +233,8 @@ public class ROGAlly : IDevice
     {
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed -= Device_Removed;
-
             device.MonitorDeviceEvents = false;
+            device.Removed -= Device_Removed;
             try { device.Dispose(); } catch { }
         }
 
@@ -251,9 +250,8 @@ public class ROGAlly : IDevice
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed += Device_Removed;
-
             device.MonitorDeviceEvents = true;
+            device.Removed += Device_Removed;
             device.OpenDevice();
 
             // fire‐and‐forget the read loop
