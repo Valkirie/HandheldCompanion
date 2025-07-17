@@ -70,6 +70,17 @@ public struct ECDetails
     public short FanValueMax;
 }
 
+public struct HidFilter
+{
+    public short UsagePage;
+    public short Usage;
+    public HidFilter(short usagePage, short usage)
+    {
+        UsagePage = usagePage;
+        Usage = usage;
+    }
+}
+
 public abstract class IDevice
 {
     public delegate void KeyPressedEventHandler(ButtonFlags button);
@@ -88,12 +99,8 @@ public abstract class IDevice
 
     protected int vendorId;
     protected int[] productIds;
-    protected Dictionary<byte, HidDevice> hidDevices = [];
-
-    protected short desiredUsagePage = 0;
-    protected short desiredUsage = 0;
-    protected ushort desiredInputReportByteLength = 0;
-    protected ushort desiredOutputReportByteLength = 0;
+    protected Dictionary<int, HidDevice> hidDevices = [];
+    protected Dictionary<int, HidFilter> hidFilters = [];
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()
