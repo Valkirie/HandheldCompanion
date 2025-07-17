@@ -1,7 +1,9 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
+using SDL3;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static SDL3.SDL;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -47,6 +49,38 @@ namespace HandheldCompanion.ViewModels
                     _LayoutGlyph = value;
                     OnPropertyChanged(nameof(LayoutGlyph));
                 }
+            }
+        }
+
+        public string ControllerGlyph
+        {
+            get
+            {
+                if (Controller is XInputController xInputController)
+                {
+                    if (xInputController is TarantulaProController)
+                        return "\u243C";    // generic icon
+                    else
+                        return "\u2442";    // Xbox360 icon
+                }
+                else if (Controller is SDLController sdlController)
+                {
+                    switch (sdlController.GamepadType)
+                    {
+                        default:
+                            return "\u243C";    // generic icon
+                        case GamepadType.Xbox360:
+                        case GamepadType.XboxOne:
+                            return "\u2442";    // Xbox360 icon
+                        case GamepadType.PS3:
+                        case GamepadType.PS4:
+                            return "\u2440";    // DualShock4 icon
+                        case GamepadType.PS5:
+                            return "\u24410";    // DualSense icon
+                    }
+                }
+
+                return "\u243C";    // generic icon
             }
         }
 
