@@ -59,6 +59,14 @@ public class LegionGo : IDevice
         GpuCurrentTemperature = 0x05050000
     }
 
+    public enum RgbMode : byte
+    {
+        Solid = 1,
+        Pulse = 2,
+        Dynamic = 3,
+        Spiral = 4,
+    }
+
     #region WMI
     private bool GetFanFullSpeed()
     {
@@ -187,6 +195,60 @@ public class LegionGo : IDevice
 
     private LightionProfile lightProfileL = new();
     private LightionProfile lightProfileR = new();
+    
+    private byte ClampByte(int v) => (byte)Math.Max(0, Math.Min(255, v));
+
+    private byte[] RgbSetProfile(int idx, int profile, RgbMode mode, byte red, byte green, byte blue, double brightness = 1, double speed = 1)
+    {
+        byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness)), (byte)0, (byte)63);
+        byte r_period = Math.Clamp(ClampByte((int)(64 * (1 - speed))), (byte)0, (byte)63);
+
+        return new byte[]
+        {
+            0x05, 0x0C, 0x72, 0x01,
+            (byte)idx,
+            (byte)mode,
+            red, green, blue,
+            r_brightness,
+            r_period,
+            (byte)profile,
+            0x01
+        };
+    }
+
+    private byte[] RgbLoadProfile(int idx, int profile)
+    {
+        return new byte[] { 0x05, 0x06, 0x73, 0x02, (byte)idx, (byte)profile, 0x01 };
+    }
+
+    private byte[] RgbEnable(int idx, bool enable)
+    {
+        return new byte[] { 0x05, 0x06, 0x70, 0x02, (byte)idx, (byte)(enable ? 1 : 0), 0x01 };
+    }
+
+    private IEnumerable<byte[]> RgbMultiLoadSettings(RgbMode mode, int profile, byte red, byte green, byte blue, double brightness = 1, double speed = 1, bool init = true)
+    {
+        var cmds = new List<byte[]>();
+        // left + right
+        cmds.Add(RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness, speed));
+        cmds.Add(RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness, speed));
+
+        if (init)
+        {
+            cmds.Add(RgbLoadProfile(LeftJoyconIndex, profile));
+            cmds.Add(RgbLoadProfile(RightJoyconIndex, profile));
+            cmds.Add(RgbEnable(LeftJoyconIndex, true));
+            cmds.Add(RgbEnable(RightJoyconIndex, true));
+        }
+
+        return cmds;
+    }
+
+    private IEnumerable<byte[]> RgbMultiDisable()
+    {
+        yield return RgbEnable(LeftJoyconIndex, false);
+        yield return RgbEnable(RightJoyconIndex, false);
+    }
 
     // todo: find the right value, this is placeholder
     private const byte INPUT_HID_ID = 0x01;
@@ -373,23 +435,30 @@ public class LegionGo : IDevice
             device.MonitorDeviceEvents = true;
             device.Removed += Device_Removed;
             device.OpenDevice();
-
-            foreach (var cmd in ControllerFactoryReset())
+            
+            // reset controller to factory default
+            foreach (byte[] cmd in ControllerFactoryReset())
                 device.Write(cmd);
 
-            // enable gyros
-            foreach (byte[] cmd in EnableControllerGyro("left"))
+            // enable left gyro
+            foreach (byte[] cmd in EnableControllerGyro(LeftJoyconIndex))
                 device.Write(cmd);
-            foreach (byte[] cmd in EnableControllerGyro("right"))
+            // enable right gyro
+            foreach (byte[] cmd in EnableControllerGyro(RightJoyconIndex))
                 device.Write(cmd);
 
             // disable built-in swap
             device.Write(ControllerLegionSwap(false));
+            
+            // reset RGB
+            foreach (byte[] cmd in RgbMultiLoadSettings(RgbMode.Solid, 0x03, 255, 255, 255, 0, 1, true))
+                device.Write(cmd);
         }
 
         // initialize SapientiaUsb
         Init();
 
+        #region SapientiaUsb
         // disable QuickLightingEffect(s)
         SetQuickLightingEffect(0, 1);
         SetQuickLightingEffect(3, 1);
@@ -401,6 +470,7 @@ public class LegionGo : IDevice
         // get current light profile(s)
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
+        #endregion
     }
 
     public override bool IsReady()
@@ -425,23 +495,14 @@ public class LegionGo : IDevice
         return false;
     }
 
-    private int ControllerIndex(string side) => side.ToLower() switch
+    private IEnumerable<byte[]> EnableControllerGyro(int idx)
     {
-        "left" => LeftJoyconIndex,
-        "right" => RightJoyconIndex,
-        _ => throw new ArgumentException($"Unknown controller '{side}'")
-    };
-
-    private IEnumerable<byte[]> EnableControllerGyro(string side)
-    {
-        int idx = ControllerIndex(side);
         yield return new byte[] { 0x05, 0x06, 0x6A, 0x02, (byte)idx, 0x01, 0x01 }; // enable
         yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x02, 0x01 }; // high-quality
     }
 
-    private IEnumerable<byte[]> DisableControllerGyro(string side)
+    private IEnumerable<byte[]> DisableControllerGyro(int idx)
     {
-        int idx = ControllerIndex(side);
         yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x01, 0x01 }; // disable high-quality
     }
 
@@ -552,24 +613,43 @@ public class LegionGo : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
+        #region SapientiaUsb
         lightProfileL.brightness = brightness;
         lightProfileR.brightness = brightness;
 
         SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
         SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
+        #endregion
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            // write RGB
+            foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
+                device.Write(cmd);
+        }
 
         return true;
     }
 
     public override bool SetLedStatus(bool status)
     {
+        #region SapientiaUsb
         SetLightingEnable(0, status);
+        #endregion
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            // write RGB
+            foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, status ? lightProfileL.brightness : 0, lightProfileL.speed, false))
+                device.Write(cmd);
+        }
 
         return true;
     }
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
+        #region SapientiaUsb
         // Speed is inverted for Legion Go
         lightProfileL.speed = 100 - speed;
         lightProfileR.speed = 100 - speed;
@@ -584,7 +664,6 @@ public class LegionGo : IDevice
                 {
                     lightProfileL.effect = 2;
                     lightProfileR.effect = 2;
-                    SetLightProfileColors(MainColor, MainColor);
                 }
                 break;
             case LEDLevel.Rainbow:
@@ -603,19 +682,28 @@ public class LegionGo : IDevice
                 {
                     lightProfileL.effect = 1;
                     lightProfileR.effect = 1;
-                    SetLightProfileColors(MainColor, MainColor);
                 }
                 break;
         }
 
+        SetLightProfileColors(MainColor, MainColor);
         SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
         SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
+        #endregion
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            // write RGB
+            foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
+                device.Write(cmd);
+        }
 
         return true;
     }
 
     private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
     {
+        #region SapientiaUsb
         lightProfileL.r = MainColor.R;
         lightProfileL.g = MainColor.G;
         lightProfileL.b = MainColor.B;
@@ -623,6 +711,14 @@ public class LegionGo : IDevice
         lightProfileR.r = SecondaryColor.R;
         lightProfileR.g = SecondaryColor.G;
         lightProfileR.b = SecondaryColor.B;
+        #endregion
+
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            // write RGB
+            foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
+                device.Write(cmd);
+        }
     }
 
     public override void set_long_limit(int limit)
