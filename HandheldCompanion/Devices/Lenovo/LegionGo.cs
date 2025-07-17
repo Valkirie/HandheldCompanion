@@ -196,10 +196,14 @@ public class LegionGo : IDevice
         // used to monitor OEM specific inputs
         vendorId = 0x17EF;
         productIds = [
-            0x6182, // xinput
+            0x6182, // xinput (pre-2025 FW)
             0x6183, // dinput
             0x6184, // dual_dinput
-            0x6185, //fps
+            0x6185, // fps
+            0x61EB, // xinput (2025 FW)
+            0x61EC, // dinput
+            0x61ED, // dual_dinput
+            0x61EE, // fps
         ];
 
         // fix for threshold overflow
@@ -326,6 +330,73 @@ public class LegionGo : IDevice
         }
     }
 
+    // todo: find the right value, this is placeholder
+    private const byte INPUT_HID_ID = 0x01;
+
+    public override bool IsReady()
+    {
+        // Wait until no LegionController is currently power cycling
+        IEnumerable<LegionController> legionControllers = ControllerManager.GetPhysicalControllers<LegionController>();
+        while (legionControllers.Any(controller => ControllerManager.PowerCyclers.ContainsKey(controller.GetContainerInstanceId())))
+            Thread.Sleep(1000);
+
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
+        foreach (HidDevice device in devices)
+        {
+            if (!device.IsConnected)
+                continue;
+
+            // improve detection maybe using if device.ReadFeatureData() ?
+            if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
+                continue;
+
+            hidDevices[INPUT_HID_ID] = device;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private int ControllerIndex(string side) => side.ToLower() switch
+    {
+        "left" => LeftJoyconIndex,
+        "right" => RightJoyconIndex,
+        _ => throw new ArgumentException($"Unknown controller '{side}'")
+    };
+
+    private IEnumerable<byte[]> ControllerEnableGyro(string side)
+    {
+        int idx = ControllerIndex(side);
+        yield return new byte[] { 0x05, 0x06, 0x6A, 0x02, (byte)idx, 0x01, 0x01 }; // enable
+        yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x02, 0x01 }; // high-quality
+    }
+
+    private IEnumerable<byte[]> ControllerDisableGyro(string side)
+    {
+        int idx = ControllerIndex(side);
+        yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x01, 0x01 }; // disable high-quality
+    }
+
+    private IEnumerable<byte[]> ControllerFactoryReset()
+    {
+        // hex strings from Python, parsed into byte[]
+        yield return new byte[] { 0x04, 0x05, 0x05, 0x01, 0x01, 0x01, 0x01 };
+        yield return new byte[] { 0x04, 0x05, 0x05, 0x01, 0x01, 0x02, 0x01 };
+        yield return new byte[] { 0x04, 0x05, 0x05, 0x01, 0x01, 0x03, 0x01 };
+        yield return new byte[] { 0x04, 0x05, 0x05, 0x01, 0x01, 0x04, 0x01 };
+    }
+
+    private byte[] ControllerLegionSwap(bool enabled)
+    {
+        return new byte[]
+        {
+        0x05, 0x06, 0x69, 0x04, 0x01,
+        (byte)(enabled ? 0x02 : 0x01),
+        0x01
+        };
+    }
+
     private object controllerLock = new();
     private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
@@ -345,20 +416,26 @@ public class LegionGo : IDevice
         {
             lock (controllerLock)
             {
+                // wait a bit
+                Thread.Sleep(3000);
+
+                if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+                {
+                    foreach (var cmd in ControllerFactoryReset())
+                        device.Write(cmd);
+
+                    // enable gyros
+                    foreach (var cmd in ControllerEnableGyro("left"))
+                        device.Write(cmd);
+                    foreach (var cmd in ControllerEnableGyro("right"))
+                        device.Write(cmd);
+
+                    // disable built-in swap
+                    device.Write(ControllerLegionSwap(false));
+                }
+
                 // initialize SapientiaUsb
                 Init();
-
-                // make sure both left and right gyros are enabled
-                SetLeftGyroStatus(1);
-                SetRightGyroStatus(1);
-
-                // make sure both left and right gyros are reporting values
-                SetGyroModeStatus(2, 1, 1);
-                SetGyroModeStatus(2, 2, 2);
-
-                // make sure both left and right gyros are reporting raw values
-                SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
-                SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
 
                 // disable QuickLightingEffect(s)
                 SetQuickLightingEffect(0, 1);
@@ -427,16 +504,6 @@ public class LegionGo : IDevice
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
-    }
-
-    public override bool IsReady()
-    {
-        // Wait until no LegionController is currently power cycling
-        IEnumerable<LegionController> legionControllers = ControllerManager.GetPhysicalControllers<LegionController>();
-        while (legionControllers.Any(controller => ControllerManager.PowerCyclers.ContainsKey(controller.GetContainerInstanceId())))
-            Thread.Sleep(1000);
-
-        return true;
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
