@@ -492,6 +492,13 @@ namespace HandheldCompanion.Controllers
             if (Details is null)
                 return;
 
+            PnPDevice? baseDevice = Details.GetBasePnPDevice();
+            if (baseDevice is not null)
+            {
+                foreach (string instanceId in EnumerateDeviceAndChildren(baseDevice))
+                    HidHide.HidePath(instanceId);
+            }
+
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
             HidHide.HidePath(Details.deviceInstanceId);
         }
@@ -501,8 +508,31 @@ namespace HandheldCompanion.Controllers
             if (Details is null)
                 return;
 
+            PnPDevice? baseDevice = Details.GetBasePnPDevice();
+            if (baseDevice is not null)
+            {
+                foreach (string instanceId in EnumerateDeviceAndChildren(baseDevice))
+                    HidHide.UnhidePath(instanceId);
+            }
+
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
             HidHide.UnhidePath(Details.deviceInstanceId);
+        }
+
+        private IEnumerable<string> EnumerateDeviceAndChildren(IPnPDevice device)
+        {
+            // Yield this device
+            yield return device.InstanceId;
+
+            // Then recurse into all children
+            if (device.Children is { } children)
+            {
+                foreach (var child in children)
+                {
+                    foreach (var id in EnumerateDeviceAndChildren(child))
+                        yield return id;
+                }
+            }
         }
 
         public virtual bool RestoreDrivers()
