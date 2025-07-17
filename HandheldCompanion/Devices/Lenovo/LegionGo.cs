@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using System.Windows.Media;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -203,7 +202,7 @@ public class LegionGo : IDevice
     private byte[] RgbSetProfile(int idx, int profile, RgbMode mode, byte red, byte green, byte blue, double brightness = 1, double speed = 1)
     {
         byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness)), (byte)0, (byte)63);
-        byte r_period = Math.Clamp(ClampByte((int)(64 * (1 - speed))), (byte)0, (byte)63);
+        byte r_period = Math.Clamp(ClampByte((int)(64 * speed / 100)), (byte)0, (byte)63);
 
         return new byte[]
         {
@@ -232,8 +231,8 @@ public class LegionGo : IDevice
     {
         var cmds = new List<byte[]>();
         // left + right
-        cmds.Add(RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness, speed));
-        cmds.Add(RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness, speed));
+        cmds.Add(RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed));
+        cmds.Add(RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed));
 
         if (init)
         {
@@ -615,10 +614,10 @@ public class LegionGo : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-#if USE_SAPIENTIAUSB
         lightProfileL.brightness = brightness;
         lightProfileR.brightness = brightness;
 
+#if USE_SAPIENTIAUSB
         SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
         SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
 #endif
@@ -651,7 +650,6 @@ public class LegionGo : IDevice
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
-#if USE_SAPIENTIAUSB
         // Speed is inverted for Legion Go
         lightProfileL.speed = 100 - speed;
         lightProfileR.speed = 100 - speed;
@@ -689,6 +687,8 @@ public class LegionGo : IDevice
         }
 
         SetLightProfileColors(MainColor, MainColor);
+
+#if USE_SAPIENTIAUSB
         SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
         SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
 #endif
@@ -705,7 +705,6 @@ public class LegionGo : IDevice
 
     private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
     {
-#if USE_SAPIENTIAUSB
         lightProfileL.r = MainColor.R;
         lightProfileL.g = MainColor.G;
         lightProfileL.b = MainColor.B;
@@ -713,6 +712,8 @@ public class LegionGo : IDevice
         lightProfileR.r = SecondaryColor.R;
         lightProfileR.g = SecondaryColor.G;
         lightProfileR.b = SecondaryColor.B;
+
+#if USE_SAPIENTIAUSB
 #endif
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
