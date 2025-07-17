@@ -37,7 +37,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected const int UpdateInterval = 5000;
         protected Timer UpdateTimer;
-        protected bool GPUManagerMonitor => ManagerFactory.settingsManager.GetBoolean("GPUManagerMonitor");
+        protected bool GPUManagerMonitor => true; // ManagerFactory.settingsManager.GetBoolean("GPUManagerMonitor");
 
         protected const int TelemetryInterval = 1000;
         protected Timer TelemetryTimer;
