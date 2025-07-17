@@ -526,8 +526,6 @@ public static class ControllerManager
                                 case 0x6184:    // Dual DInput
                                 case 0x61EC:    // DInput (new firmware)
                                 case 0x61ED:    // Dual DInput (new firmware)
-                                    HidHide.HidePath(details.baseContainerDeviceInstanceId);
-                                    HidHide.HidePath(details.deviceInstanceId);
                                     break;
                             }
                         }
