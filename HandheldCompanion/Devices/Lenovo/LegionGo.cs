@@ -188,6 +188,9 @@ public class LegionGo : IDevice
     private LightionProfile lightProfileL = new();
     private LightionProfile lightProfileR = new();
 
+    // todo: find the right value, this is placeholder
+    private const byte INPUT_HID_ID = 0x01;
+
     public LegionGo()
     {
         // device specific settings
@@ -205,6 +208,18 @@ public class LegionGo : IDevice
             0x61ED, // dual_dinput
             0x61EE, // fps
         ];
+        hidFilters = new()
+        {
+            { 0x6182, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // xinput (old FW)
+            { 0x6183, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dinput (old FW)
+            { 0x6184, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dual_dinput (old FW)
+            { 0x6185, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // fps (old FW)
+
+            { 0x61EB, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // xinput (2025 FW)
+            { 0x61EC, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dinput (2025 FW)
+            { 0x61ED, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dual_dinput (2025 FW)
+            { 0x61EE, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // fps (2025 FW)
+        };
 
         // fix for threshold overflow
         GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);
@@ -328,10 +343,64 @@ public class LegionGo : IDevice
                 QueryPowerProfile();
                 break;
         }
+
+        Device_Inserted();
     }
 
-    // todo: find the right value, this is placeholder
-    private const byte INPUT_HID_ID = 0x01;
+    private void Device_Removed()
+    {
+        // close device
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.MonitorDeviceEvents = false;
+            device.Removed -= Device_Removed;
+
+            try { device.Dispose(); } catch { }
+        }
+    }
+
+    private async void Device_Inserted(bool reScan = false)
+    {
+        // if you still want to automatically re-attach:
+        if (reScan)
+            await WaitUntilReadyAndReattachAsync();
+
+        // listen for events
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.MonitorDeviceEvents = true;
+            device.Removed += Device_Removed;
+            device.OpenDevice();
+
+            foreach (var cmd in ControllerFactoryReset())
+                device.Write(cmd);
+
+            // enable gyros
+            foreach (byte[] cmd in EnableControllerGyro("left"))
+                device.Write(cmd);
+
+            foreach (byte[] cmd in EnableControllerGyro("right"))
+                device.Write(cmd);
+
+            // disable built-in swap
+            device.Write(ControllerLegionSwap(false));
+        }
+
+        // initialize SapientiaUsb
+        Init();
+
+        // disable QuickLightingEffect(s)
+        SetQuickLightingEffect(0, 1);
+        SetQuickLightingEffect(3, 1);
+        SetQuickLightingEffect(4, 1);
+        SetQuickLightingEffectEnable(0, false);
+        SetQuickLightingEffectEnable(3, false);
+        SetQuickLightingEffectEnable(4, false);
+
+        // get current light profile(s)
+        lightProfileL = GetCurrentLightProfile(3);
+        lightProfileR = GetCurrentLightProfile(4);
+    }
 
     public override bool IsReady()
     {
@@ -346,8 +415,10 @@ public class LegionGo : IDevice
             if (!device.IsConnected)
                 continue;
 
-            // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
                 continue;
 
             hidDevices[INPUT_HID_ID] = device;
@@ -365,14 +436,14 @@ public class LegionGo : IDevice
         _ => throw new ArgumentException($"Unknown controller '{side}'")
     };
 
-    private IEnumerable<byte[]> ControllerEnableGyro(string side)
+    private IEnumerable<byte[]> EnableControllerGyro(string side)
     {
         int idx = ControllerIndex(side);
         yield return new byte[] { 0x05, 0x06, 0x6A, 0x02, (byte)idx, 0x01, 0x01 }; // enable
         yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x02, 0x01 }; // high-quality
     }
 
-    private IEnumerable<byte[]> ControllerDisableGyro(string side)
+    private IEnumerable<byte[]> DisableControllerGyro(string side)
     {
         int idx = ControllerIndex(side);
         yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x01, 0x01 }; // disable high-quality
@@ -397,59 +468,21 @@ public class LegionGo : IDevice
         };
     }
 
-    private object controllerLock = new();
     private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
         if (Controller is LegionController legionController)
         {
-            lock (controllerLock)
-            {
-                // unload SapientiaUsb
-                FreeSapientiaUsb();
-            }
+            // unload SapientiaUsb
+            FreeSapientiaUsb();
+
+            Device_Removed();
         }
     }
 
     private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
     {
         if (Controller is LegionController legionController)
-        {
-            lock (controllerLock)
-            {
-                // wait a bit
-                Thread.Sleep(3000);
-
-                if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-                {
-                    foreach (var cmd in ControllerFactoryReset())
-                        device.Write(cmd);
-
-                    // enable gyros
-                    foreach (var cmd in ControllerEnableGyro("left"))
-                        device.Write(cmd);
-                    foreach (var cmd in ControllerEnableGyro("right"))
-                        device.Write(cmd);
-
-                    // disable built-in swap
-                    device.Write(ControllerLegionSwap(false));
-                }
-
-                // initialize SapientiaUsb
-                Init();
-
-                // disable QuickLightingEffect(s)
-                SetQuickLightingEffect(0, 1);
-                SetQuickLightingEffect(3, 1);
-                SetQuickLightingEffect(4, 1);
-                SetQuickLightingEffectEnable(0, false);
-                SetQuickLightingEffectEnable(3, false);
-                SetQuickLightingEffectEnable(4, false);
-
-                // get current light profile(s)
-                lightProfileL = GetCurrentLightProfile(3);
-                lightProfileR = GetCurrentLightProfile(4);
-            }
-        }
+            Device_Inserted(true);
     }
 
     private void QueryPowerProfile()
