@@ -247,7 +247,7 @@ public class ROGAlly : IDevice
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            await WaitUntilReadyAndReattachAsync();
+            await WaitUntilReady();
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {

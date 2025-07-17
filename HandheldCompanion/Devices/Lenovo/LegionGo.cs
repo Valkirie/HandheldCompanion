@@ -357,13 +357,16 @@ public class LegionGo : IDevice
 
             try { device.Dispose(); } catch { }
         }
+
+        // unload SapientiaUsb
+        FreeSapientiaUsb();
     }
 
     private async void Device_Inserted(bool reScan = false)
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            await WaitUntilReadyAndReattachAsync();
+            await WaitUntilReady();
 
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
@@ -378,7 +381,6 @@ public class LegionGo : IDevice
             // enable gyros
             foreach (byte[] cmd in EnableControllerGyro("left"))
                 device.Write(cmd);
-
             foreach (byte[] cmd in EnableControllerGyro("right"))
                 device.Write(cmd);
 
@@ -471,12 +473,7 @@ public class LegionGo : IDevice
     private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
         if (Controller is LegionController legionController)
-        {
-            // unload SapientiaUsb
-            FreeSapientiaUsb();
-
             Device_Removed();
-        }
     }
 
     private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
