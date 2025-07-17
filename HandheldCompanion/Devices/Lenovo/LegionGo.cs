@@ -19,6 +19,8 @@ namespace HandheldCompanion.Devices;
 
 public class LegionGo : IDevice
 {
+    private const bool USE_SAPIENTIAUSB = false;
+
     public enum LegionMode
     {
         Quiet = 0x01,
@@ -244,10 +246,10 @@ public class LegionGo : IDevice
         return cmds;
     }
 
-    private IEnumerable<byte[]> RgbMultiDisable()
+    private IEnumerable<byte[]> RgbMultiEnable(bool enable)
     {
-        yield return RgbEnable(LeftJoyconIndex, false);
-        yield return RgbEnable(RightJoyconIndex, false);
+        yield return RgbEnable(LeftJoyconIndex, enable);
+        yield return RgbEnable(RightJoyconIndex, enable);
     }
 
     // todo: find the right value, this is placeholder
@@ -458,7 +460,7 @@ public class LegionGo : IDevice
         // initialize SapientiaUsb
         Init();
 
-        #region SapientiaUsb
+#if USE_SAPIENTIAUSB
         // disable QuickLightingEffect(s)
         SetQuickLightingEffect(0, 1);
         SetQuickLightingEffect(3, 1);
@@ -470,7 +472,7 @@ public class LegionGo : IDevice
         // get current light profile(s)
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
-        #endregion
+#endif
     }
 
     public override bool IsReady()
@@ -613,13 +615,13 @@ public class LegionGo : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-        #region SapientiaUsb
+#if USE_SAPIENTIAUSB
         lightProfileL.brightness = brightness;
         lightProfileR.brightness = brightness;
 
         SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
         SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
-        #endregion
+#endif
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
@@ -633,14 +635,14 @@ public class LegionGo : IDevice
 
     public override bool SetLedStatus(bool status)
     {
-        #region SapientiaUsb
+#if USE_SAPIENTIAUSB
         SetLightingEnable(0, status);
-        #endregion
+#endif
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
             // write RGB
-            foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, status ? lightProfileL.brightness : 0, lightProfileL.speed, false))
+            foreach (byte[] cmd in RgbMultiEnable(status))
                 device.Write(cmd);
         }
 
@@ -649,7 +651,7 @@ public class LegionGo : IDevice
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
-        #region SapientiaUsb
+#if USE_SAPIENTIAUSB
         // Speed is inverted for Legion Go
         lightProfileL.speed = 100 - speed;
         lightProfileR.speed = 100 - speed;
@@ -689,7 +691,7 @@ public class LegionGo : IDevice
         SetLightProfileColors(MainColor, MainColor);
         SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
         SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
-        #endregion
+#endif
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
@@ -703,7 +705,7 @@ public class LegionGo : IDevice
 
     private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
     {
-        #region SapientiaUsb
+#if USE_SAPIENTIAUSB
         lightProfileL.r = MainColor.R;
         lightProfileL.g = MainColor.G;
         lightProfileL.b = MainColor.B;
@@ -711,7 +713,7 @@ public class LegionGo : IDevice
         lightProfileR.r = SecondaryColor.R;
         lightProfileR.g = SecondaryColor.G;
         lightProfileR.b = SecondaryColor.B;
-        #endregion
+#endif
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
