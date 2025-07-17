@@ -405,11 +405,6 @@ public class LegionGo : IDevice
 
     public override bool IsReady()
     {
-        // Wait until no LegionController is currently power cycling
-        IEnumerable<LegionController> legionControllers = ControllerManager.GetPhysicalControllers<LegionController>();
-        while (legionControllers.Any(controller => ControllerManager.PowerCyclers.ContainsKey(controller.GetContainerInstanceId())))
-            Thread.Sleep(1000);
-
         IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {
