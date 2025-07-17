@@ -450,10 +450,10 @@ public class LegionGo : IDevice
 
             // disable built-in swap
             device.Write(ControllerLegionSwap(false));
-            
-            // reset RGB
-            foreach (byte[] cmd in RgbMultiLoadSettings(RgbMode.Solid, 0x03, 255, 255, 255, 0, 1, true))
-                device.Write(cmd);
+
+            // load RGB profiles
+            device.Write(RgbLoadProfile(LeftJoyconIndex, 0x03));
+            device.Write(RgbLoadProfile(RightJoyconIndex, 0x03));
         }
 
         // initialize SapientiaUsb
