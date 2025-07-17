@@ -685,18 +685,24 @@ public static class ControllerManager
                         try { controller = new XInputController(details); } catch { }
                         break;
 
-                    // LegionGo
+                    // Lenovo
                     // TODO: Distinguish between Legion Go and Legion Go S
                     case "0x17EF":
                         {
                             switch (details.GetProductID())
                             {
+                                // Legion Go
                                 case "0x6182":  // old firmware
                                 case "0x61EB":  // new firmware
                                     try { controller = new LegionController(details); } catch { }
                                     break;
+
+                                // Legion Go S
+                                // todo: implement me
+                                case "0xE310":
+                                    try { controller = new XInputController(details); } catch { }
+                                    break;
                             }
-                            break;
                         }
                         break;
 
