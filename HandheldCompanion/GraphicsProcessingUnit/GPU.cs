@@ -372,6 +372,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return 0.0f;
         }
 
+        protected virtual void UpdateSettings()
+        { }
+
         public static bool HasIntelGPU()
         {
             return CheckForGPU("intel");

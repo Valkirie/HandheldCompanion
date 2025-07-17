@@ -202,7 +202,10 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Advanced options" />
             <ikw:SimpleStackPanel Spacing="3">
                 <!--  Toast notification  -->
-                <ui:SettingsCard Description="Monitor external changes to GPU settings and automatically restore preferred configuration" Header="GPU-Settings monitoring">
+                <ui:SettingsCard
+                    Description="Monitor external changes to GPU settings and automatically restore preferred configuration"
+                    Header="GPU-Settings monitoring"
+                    IsEnabled="False">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.History}" />
                     </ui:SettingsCard.HeaderIcon>

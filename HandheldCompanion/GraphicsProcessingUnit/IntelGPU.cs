@@ -267,11 +267,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
         }
 
-        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        protected override void UpdateSettings()
         {
-            if (halting)
-                return;
-
             if (Monitor.TryEnter(updateLock))
             {
                 try
@@ -308,6 +305,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     Monitor.Exit(updateLock);
                 }
             }
+        }
+
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            if (halting)
+                return;
+
+            UpdateSettings();
         }
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
