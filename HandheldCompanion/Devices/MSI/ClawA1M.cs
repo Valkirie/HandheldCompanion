@@ -761,7 +761,7 @@ public class ClawA1M : IDevice
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            await WaitUntilReadyAndReattachAsync();
+            await WaitUntilReady();
 
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))

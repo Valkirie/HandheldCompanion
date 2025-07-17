@@ -291,9 +291,6 @@ public static class ControllerManager
                 return;
             }
 
-            SemaphoreSlim deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
-            await deviceLock.WaitAsync();
-
             try
             {
                 Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
@@ -387,8 +384,6 @@ public static class ControllerManager
             }
             finally
             {
-                deviceLock.Release();
-                CleanupDeviceLock(path);
             }
         }
     }
@@ -398,9 +393,6 @@ public static class ControllerManager
         if (SDLControllers.TryGetValue(deviceIndex, out SDLController controller))
         {
             string path = controller.GetContainerInstanceId();
-
-            SemaphoreSlim deviceLock = await GetDeviceLock(path);
-            await deviceLock.WaitAsync();
 
             try
             {
@@ -436,8 +428,6 @@ public static class ControllerManager
             }
             finally
             {
-                deviceLock.Release();
-                CleanupDeviceLock(path);
             }
         }
     }
@@ -445,9 +435,6 @@ public static class ControllerManager
     private static async void HidDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
         if (!details.isGaming) return;
-
-        var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
-        await deviceLock.WaitAsync();
 
         try
         {
@@ -535,7 +522,9 @@ public static class ControllerManager
                         {
                             switch (ProductId)
                             {
-                                case 0x6184:
+                                case 0x6184:    // Dual DInput
+                                case 0x61EC:    // DInput
+                                case 0x61ED:    // Dual DInput (new firmware)
                                     break;
                             }
                         }
@@ -565,7 +554,10 @@ public static class ControllerManager
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
 
+            // controller is ready
             controller.IsBusy = false;
+
+            // store controller
             string path = controller.GetContainerInstanceId();
             Controllers[path] = controller;
 
@@ -582,16 +574,11 @@ public static class ControllerManager
         catch { }
         finally
         {
-            deviceLock.Release();
-            CleanupDeviceLock(details.baseContainerDeviceInstanceId);
         }
     }
 
     private static async void HidDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
-        var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
-        await deviceLock.WaitAsync();
-
         try
         {
             IController controller = null;
@@ -642,15 +629,11 @@ public static class ControllerManager
         catch { }
         finally
         {
-            deviceLock.Release();
-            CleanupDeviceLock(details.baseContainerDeviceInstanceId);
         }
     }
+
     private static async void XUsbDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
-        var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
-        await deviceLock.WaitAsync();
-
         try
         {
             Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
@@ -683,10 +666,25 @@ public static class ControllerManager
                         try { controller = new XInputController(details); } catch { }
                         break;
 
-                    // LegionGo
-                    // TODO: Distinguish between Legion Go and Legion Go S
+                    // Lenovo
                     case "0x17EF":
-                        try { controller = new LegionController(details); } catch { }
+                        {
+                            switch (details.GetProductID())
+                            {
+                                // Legion Go
+                                case "0x6182":  // old firmware
+                                case "0x61EB":  // new firmware
+                                    try { controller = new LegionController(details); } catch { }
+                                    break;
+
+                                // Legion Go S
+                                // todo: implement me
+                                case "0xE310":
+                                default:
+                                    try { controller = new XInputController(details); } catch { }
+                                    break;
+                            }
+                        }
                         break;
 
                     // GameSir
@@ -731,7 +729,10 @@ public static class ControllerManager
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
 
+            // controller is ready
             controller.IsBusy = false;
+
+            // store controller
             string path = details.baseContainerDeviceInstanceId;
             Controllers[path] = controller;
 
@@ -748,16 +749,11 @@ public static class ControllerManager
         catch { }
         finally
         {
-            deviceLock.Release();
-            CleanupDeviceLock(details.baseContainerDeviceInstanceId);
         }
     }
 
     private static async void XUsbDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
-        var deviceLock = await GetDeviceLock(details.baseContainerDeviceInstanceId);
-        await deviceLock.WaitAsync();
-
         try
         {
             IController controller = null;
@@ -808,8 +804,6 @@ public static class ControllerManager
         catch { }
         finally
         {
-            deviceLock.Release();
-            CleanupDeviceLock(details.baseContainerDeviceInstanceId);
         }
     }
 
@@ -1127,28 +1121,9 @@ public static class ControllerManager
         targetController?.SetVibration(LargeMotor, SmallMotor);
     }
 
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> DeviceLocks = new();
-
-    private static async Task<SemaphoreSlim> GetDeviceLock(string deviceId)
-    {
-        return DeviceLocks.GetOrAdd(deviceId, _ => new SemaphoreSlim(1, 1));
-    }
-
-    private static void CleanupDeviceLock(string deviceId)
-    {
-        if (DeviceLocks.TryGetValue(deviceId, out var semaphore) && semaphore.CurrentCount == 1)
-        {
-            DeviceLocks.TryRemove(deviceId, out _);
-            semaphore.Dispose();
-        }
-    }
-
     public static async void Unplug(IController controller)
     {
         string baseContainerDeviceInstanceId = controller.GetContainerInstanceId();
-
-        var deviceLock = await GetDeviceLock(baseContainerDeviceInstanceId);
-        await deviceLock.WaitAsync();
 
         try
         {
@@ -1178,8 +1153,6 @@ public static class ControllerManager
         catch { }
         finally
         {
-            deviceLock.Release();
-            CleanupDeviceLock(baseContainerDeviceInstanceId);
         }
     }
 
@@ -1250,8 +1223,8 @@ public static class ControllerManager
                         if (pController is null)
                             continue;
 
-                        ushort vendorId = pController.GetVendorID();
-                        ushort productId = pController.GetProductID();
+                        // ushort vendorId = pController.GetVendorID();
+                        // ushort productId = pController.GetProductID();
 
                         if (!ShouldAttemptControllerManagement())
                             continue;
@@ -1273,29 +1246,29 @@ public static class ControllerManager
                         // Remove current virtual controller
                         VirtualManager.SetControllerMode(HIDmode.NoController);
                         DateTime timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100);
 
                         // Create temporary virtual controllers
-                        VirtualManager.VendorId = vendorId;
-                        VirtualManager.ProductId = productId;
+                        // VirtualManager.VendorId = vendorId;
+                        // VirtualManager.ProductId = productId;
                         int usedSlots = VirtualManager.CreateTemporaryControllers();
 
                         // Wait for virtual controllers to appear
                         timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(vendorId, productId).Count() < usedSlots)
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() < usedSlots)
                             await Task.Delay(100);
 
                         // Dispose temporary
                         VirtualManager.DisposeTemporaryControllers();
                         timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>(vendorId, productId).Count() > usedSlots)
+                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() > usedSlots)
                             await Task.Delay(100);
 
                         // Resume main virtual controller
                         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
                         timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>(vendorId, productId).Any())
+                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)

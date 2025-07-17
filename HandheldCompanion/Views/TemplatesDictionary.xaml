@@ -549,7 +549,7 @@
                             VerticalAlignment="Center"
                             FontFamily="PromptFont"
                             FontSize="30"
-                            Glyph="&#x243C;" />
+                            Glyph="{Binding ControllerGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <ui:FontIcon Margin="6,0,0,0" VerticalAlignment="Center">
                             <ui:FontIcon.Style>

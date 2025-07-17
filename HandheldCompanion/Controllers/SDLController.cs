@@ -91,6 +91,8 @@ namespace HandheldCompanion.Controllers
             }
         }
 
+        public GamepadType GamepadType => GetGamepadType(this.gamepad);
+
         public override void AttachDetails(PnPDetails details)
         {
             base.AttachDetails(details);

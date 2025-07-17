@@ -254,9 +254,6 @@ namespace HandheldCompanion.Controllers
             Buffer.BlockCopy(Data, 1, this.Data, 0, Data.Length - 1);
         }
 
-        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
-        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
-
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected

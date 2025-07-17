@@ -797,7 +797,7 @@ public abstract class IDevice
         return true;
     }
 
-    protected async Task WaitUntilReadyAndReattachAsync()
+    protected async Task WaitUntilReady()
     {
         while (!IsReady())
             await Task.Delay(250).ConfigureAwait(false);
