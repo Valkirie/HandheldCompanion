@@ -199,14 +199,14 @@ public class LegionGo : IDevice
         // used to monitor OEM specific inputs
         vendorId = 0x17EF;
         productIds = [
-            0x6182, // xinput (pre-2025 FW)
+            0x6182, // xinput
             0x6183, // dinput
             0x6184, // dual_dinput
             0x6185, // fps
             0x61EB, // xinput (2025 FW)
-            0x61EC, // dinput
-            0x61ED, // dual_dinput
-            0x61EE, // fps
+            0x61EC, // dinput (2025 FW)
+            0x61ED, // dual_dinput (2025 FW)
+            0x61EE, // fps (2025 FW)
         ];
         hidFilters = new()
         {
