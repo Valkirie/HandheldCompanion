@@ -166,6 +166,11 @@ public class ClawA1M : IDevice
         // used to monitor OEM specific inputs
         vendorId = 0x0DB0;
         productIds = [PID_XINPUT, PID_DINPUT, PID_TESTING];
+        
+        desiredUsagePage = -96;
+        desiredUsage = 1;
+        desiredInputReportByteLength = 64;
+        desiredOutputReportByteLength = 64;
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 28, 28, 65 };
@@ -639,7 +644,7 @@ public class ClawA1M : IDevice
                 continue;
 
             // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
+            if (device.Capabilities.InputReportByteLength != desiredInputReportByteLength || device.Capabilities.OutputReportByteLength != desiredOutputReportByteLength)
                 continue;
 
             hidDevices[INPUT_HID_ID] = device;
