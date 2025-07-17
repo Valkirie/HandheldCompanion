@@ -90,6 +90,11 @@ public abstract class IDevice
     protected int[] productIds;
     protected Dictionary<byte, HidDevice> hidDevices = [];
 
+    protected short desiredUsagePage = 0;
+    protected short desiredUsage = 0;
+    protected ushort desiredInputReportByteLength = 0;
+    protected ushort desiredOutputReportByteLength = 0;
+
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()
     {
