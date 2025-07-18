@@ -2155,10 +2155,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>ScrollWheel</value>
   </data>
   <data name="Enum_XInputController_AxisLayoutFlags_LeftStick" xml:space="preserve">
-    <value>LeftStick</value>
+    <value>Left Stick</value>
   </data>
   <data name="Enum_XInputController_AxisLayoutFlags_RightStick" xml:space="preserve">
-    <value>RightStick</value>
+    <value>Right Stick</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">
     <value>Connect</value>
@@ -3159,30 +3159,6 @@ Thank you for using HC and helping us make it better.</value>
   <data name="Hotkey_GameBarDesc" xml:space="preserve">
     <value>Press this key: Windows + G</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B5" xml:space="preserve">
-    <value>C1</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B6" xml:space="preserve">
-    <value>C2</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B7" xml:space="preserve">
-    <value>C3</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B8" xml:space="preserve">
-    <value>C4</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B9" xml:space="preserve">
-    <value>T1</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B10" xml:space="preserve">
-    <value>T2</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B11" xml:space="preserve">
-    <value>T3</value>
-  </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_L5" xml:space="preserve">
-    <value>M</value>
-  </data>
   <data name="ProfilesPage_Pinned" xml:space="preserve">
     <value>Display the profile in Quick start section from the Quicktools Applications page</value>
   </data>
@@ -3722,5 +3698,29 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="Enum_DClawController_OEM4" xml:space="preserve">
     <value>M2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B6" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B7" xml:space="preserve">
+    <value>C3</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B8" xml:space="preserve">
+    <value>C4</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B9" xml:space="preserve">
+    <value>T1</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B10" xml:space="preserve">
+    <value>T2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B11" xml:space="preserve">
+    <value>T3</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_L5" xml:space="preserve">
+    <value>M</value>
   </data>
 </root>

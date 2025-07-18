@@ -3339,72 +3339,72 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to T2.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B10 {
+        public static string Enum_TarantulaProController_ButtonFlags_B10 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B10", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B10", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to T3.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B11 {
+        public static string Enum_TarantulaProController_ButtonFlags_B11 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B11", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B11", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to C1.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B5 {
+        public static string Enum_TarantulaProController_ButtonFlags_B5 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B5", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B5", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to C2.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B6 {
+        public static string Enum_TarantulaProController_ButtonFlags_B6 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B6", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B6", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to C3.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B7 {
+        public static string Enum_TarantulaProController_ButtonFlags_B7 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B7", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B7", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to C4.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B8 {
+        public static string Enum_TarantulaProController_ButtonFlags_B8 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B8", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B8", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to T1.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_B9 {
+        public static string Enum_TarantulaProController_ButtonFlags_B9 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_B9", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_B9", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to M.
         /// </summary>
-        public static string Enum_TatantulaProController_ButtonFlags_L5 {
+        public static string Enum_TarantulaProController_ButtonFlags_L5 {
             get {
-                return ResourceManager.GetString("Enum_TatantulaProController_ButtonFlags_L5", resourceCulture);
+                return ResourceManager.GetString("Enum_TarantulaProController_ButtonFlags_L5", resourceCulture);
             }
         }
         
@@ -3427,7 +3427,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LeftStick.
+        ///   Looks up a localized string similar to Left Stick.
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_LeftStick {
             get {
@@ -3454,7 +3454,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RightStick.
+        ///   Looks up a localized string similar to Right Stick.
         /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_RightStick {
             get {

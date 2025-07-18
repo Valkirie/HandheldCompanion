@@ -768,12 +768,30 @@ namespace HandheldCompanion.Controllers
 
         public string GetButtonName(ButtonFlags button)
         {
-            return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
+            return GetLocalizedName(button);
         }
 
         public string GetAxisName(AxisLayoutFlags axis)
         {
-            return EnumUtils.GetDescriptionFromEnumValue(axis, GetType().Name);
+            return GetLocalizedName(axis);
+        }
+
+        private string GetLocalizedName<T>(T value) where T : Enum
+        {
+            Type? currentType = GetType();
+            string defaultString = value.ToString();
+
+            while (currentType is not null)
+            {
+                string result = EnumUtils.GetDescriptionFromEnumValue(value, currentType.Name);
+
+                if (!string.Equals(result, defaultString, StringComparison.Ordinal))
+                    return result;
+
+                currentType = currentType.BaseType;
+            }
+
+            return defaultString;
         }
 
         public override string ToString()

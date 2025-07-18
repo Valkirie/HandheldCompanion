@@ -2849,28 +2849,28 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="Hotkey_GameBarDesc" xml:space="preserve">
     <value>다음 키를 누르세요: Windows + G</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B5" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
     <value>C1</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B6" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B6" xml:space="preserve">
     <value>C2</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B7" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B7" xml:space="preserve">
     <value>C3</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B8" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B8" xml:space="preserve">
     <value>C4</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B9" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B9" xml:space="preserve">
     <value>T1</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B10" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B10" xml:space="preserve">
     <value>T2</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_B11" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_B11" xml:space="preserve">
     <value>T3</value>
   </data>
-  <data name="Enum_TatantulaProController_ButtonFlags_L5" xml:space="preserve">
+  <data name="Enum_TarantulaProController_ButtonFlags_L5" xml:space="preserve">
     <value>M</value>
   </data>
   <data name="ProfilesPage_Pinned" xml:space="preserve">
