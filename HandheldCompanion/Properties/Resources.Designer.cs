@@ -3411,6 +3411,420 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Gyroscope.
         /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_Gyroscope {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_Gyroscope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L2.
+        /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Stick.
+        /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_LeftStick {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_LeftStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb.
+        /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R2.
+        /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Stick.
+        /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_RightStick {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_RightStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb.
+        /// </summary>
+        public static string Enum_Xbox360Controller_AxisLayoutFlags_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_AxisLayoutFlags_RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B5.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B5 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B6.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B6 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B7.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B7 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B8.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_B8 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_B8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Down.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_DPadDown {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_DPadDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Left.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_DPadLeft {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_DPadLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Right.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_DPadRight {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_DPadRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Up.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_DPadUp {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_DPadUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LB.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_L1 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L2.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L3.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_L3 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L4.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_L4 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_L4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L5.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_L5 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_L5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb Down.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_LeftThumbDown {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_LeftThumbDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb Left.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_LeftThumbLeft {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_LeftThumbLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb Right.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_LeftThumbRight {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_LeftThumbRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb Up.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_LeftThumbUp {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_LeftThumbUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OEM1.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OEM2.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OEM3.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RB.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_R1 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_R1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R2.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R3.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_R3 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_R3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R4.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_R4 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_R4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R5.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_R5 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_R5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb Down.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_RightThumbDown {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_RightThumbDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb Left.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_RightThumbLeft {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_RightThumbLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb Right.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_RightThumbRight {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_RightThumbRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb Up.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_RightThumbUp {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_RightThumbUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guide.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Special 2.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_Special2 {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_Special2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Menu.
+        /// </summary>
+        public static string Enum_Xbox360Controller_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum_Xbox360Controller_ButtonFlags_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gyroscope.
+        /// </summary>
         public static string Enum_XInputController_AxisLayoutFlags_Gyroscope {
             get {
                 return ResourceManager.GetString("Enum_XInputController_AxisLayoutFlags_Gyroscope", resourceCulture);

@@ -3633,4 +3633,142 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="Enum_DClawController_OEM4" xml:space="preserve">
     <value />
   </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_Gyroscope" xml:space="preserve">
+    <value>Giroscópico</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftStick" xml:space="preserve">
+    <value>AnalógicoEsquerdo</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftThumb" xml:space="preserve">
+    <value>Analógico Esquerdo</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightStick" xml:space="preserve">
+    <value>AnalógicoDireito</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightThumb" xml:space="preserve">
+    <value>Analógico Direito</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadDown" xml:space="preserve">
+    <value>DPad Baixo</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadLeft" xml:space="preserve">
+    <value>DPad Esquerda</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadRight" xml:space="preserve">
+    <value>DPad Direita</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadUp" xml:space="preserve">
+    <value>DPad Cima</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumb" xml:space="preserve">
+    <value>Analógico Esquerdo</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbDown" xml:space="preserve">
+    <value>Analógico Esquerdo Baixo</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbLeft" xml:space="preserve">
+    <value>Analógico Esquerdo Esquerda</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbRight" xml:space="preserve">
+    <value>Analógico Esquerdo Direita</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbUp" xml:space="preserve">
+    <value>Analógico Esquerdo Cima</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumb" xml:space="preserve">
+    <value>Analógico Direito</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbDown" xml:space="preserve">
+    <value>Analógico Direito Baixo</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbLeft" xml:space="preserve">
+    <value>Analógico Direito Esquerda</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbRight" xml:space="preserve">
+    <value>Analógico Direito Direita</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbUp" xml:space="preserve">
+    <value>Analógico Direito Cima</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>Guia</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Special2" xml:space="preserve">
+    <value>Especial 2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
 </root>
