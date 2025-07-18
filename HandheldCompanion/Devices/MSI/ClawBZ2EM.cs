@@ -6,19 +6,20 @@ using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
-public class ClawA2VM : ClawA1M
+public class ClawBZ2EM : ClawA1M
 {
-    public ClawA2VM()
+    public ClawBZ2EM()
     {
         // device specific settings
         ProductIllustration = "device_msi_claw8";
 
-        // https://www.intel.com/content/www/us/en/products/sku/240957/intel-core-ultra-7-processor-258v-12m-cache-up-to-4-80-ghz/specifications.html
-        nTDP = new double[] { 17, 17, 37 };
+        // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z2-series/z2-extreme.html
+        nTDP = new double[] { 15, 15, 35 };
         cTDP = new double[] { 8, 35 };
-        GfxClock = new double[] { 100, 1950 };
-        CpuClock = 4800;
+        GfxClock = new double[] { 100, 2900 };
+        CpuClock = 5000;
 
+        // unknown ?
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
 
         // overwrite ClawA1M default power profiles

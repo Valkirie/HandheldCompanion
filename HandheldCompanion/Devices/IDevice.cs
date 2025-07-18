@@ -752,6 +752,9 @@ public abstract class IDevice
                         case "MS-1T52": // Claw 8 AI+ A2VM
                             device = new ClawA2VM();
                             break;
+                        case "MS-1T8K": // Claw A8
+                            device = new ClawBZ2EM();
+                            break;
                     }
                 }
                 break;

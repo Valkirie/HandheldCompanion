@@ -152,6 +152,9 @@ public class ClawA1M : IDevice
         new DeviceVersion() { Firmware = 0x211, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
         new DeviceVersion() { Firmware = 0x217, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
         new DeviceVersion() { Firmware = 0x219, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+
+        // Claw A8
+        new DeviceVersion() { Firmware = 0x308, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
     };
 
     protected int Firmware;
@@ -173,7 +176,7 @@ public class ClawA1M : IDevice
         };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
-        nTDP = new double[] { 28, 28, 65 };
+        nTDP = new double[] { 20, 20, 65 };
         cTDP = new double[] { 20, 65 };
         GfxClock = new double[] { 100, 2250 };
         CpuClock = 4800;
