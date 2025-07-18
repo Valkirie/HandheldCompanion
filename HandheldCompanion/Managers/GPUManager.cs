@@ -180,12 +180,12 @@ namespace HandheldCompanion.Managers
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
-            switch(name)
+            switch (name)
             {
                 case "GPUManagerMonitor":
                     bool enabled = Convert.ToBoolean(value);
                     if (enabled) currentGPU?.StartMonitor(); else currentGPU?.StopMonitor();
-                        break;
+                    break;
             }
         }
 

@@ -196,7 +196,7 @@ public class LegionGo : IDevice
 
     private LightionProfile lightProfileL = new();
     private LightionProfile lightProfileR = new();
-    
+
     private byte ClampByte(int v) => (byte)Math.Max(0, Math.Min(255, v));
 
     private byte[] RgbSetProfile(int idx, int profile, RgbMode mode, byte red, byte green, byte blue, double brightness = 1, double speed = 1)
@@ -436,7 +436,7 @@ public class LegionGo : IDevice
             device.MonitorDeviceEvents = true;
             device.Removed += Device_Removed;
             device.OpenDevice();
-            
+
             // reset controller to factory default
             foreach (byte[] cmd in ControllerFactoryReset())
                 device.Write(cmd);

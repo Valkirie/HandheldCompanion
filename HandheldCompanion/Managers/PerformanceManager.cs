@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using Windows.ApplicationModel.Store;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;

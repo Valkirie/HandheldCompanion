@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
-using SDL3;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static SDL3.SDL;

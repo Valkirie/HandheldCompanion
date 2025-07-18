@@ -118,7 +118,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
         }
-        
+
         // helper to test whether enumValue is supported:
         bool IsSupported<T>(uint mask, T enumValue) where T : Enum
         {
