@@ -169,7 +169,7 @@ public class ClawA1M : IDevice
         hidFilters = new()
         {
             { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) },
-            { PID_DINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0040)) },
+            { PID_DINPUT, new HidFilter(unchecked((short)0xFFF0), unchecked((short)0x0040)) },
         };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
