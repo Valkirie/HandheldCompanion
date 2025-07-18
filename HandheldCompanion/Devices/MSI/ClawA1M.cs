@@ -918,19 +918,20 @@ public class ClawA1M : IDevice
 
     public override void set_long_limit(int limit)
     {
-        SetCPUPowerLimit(81, limit);
+        SetCPUPowerLimit(80, limit);
     }
 
     public override void set_short_limit(int limit)
     {
-        SetCPUPowerLimit(80, limit);
+        SetCPUPowerLimit(81, limit);
     }
 
-    private void SetCPUPowerLimit(int iDataBlockIndex, int limit)
+    protected void SetCPUPowerLimit(int iDataBlockIndex, int limit)
     {
         /*
-         * iDataBlockIndex = 80; // Short
-         * iDataBlockIndex = 81; // Long
+         * iDataBlockIndex = 80; // Long (SPL)
+         * iDataBlockIndex = 81; // Short (sPPT)
+         * iDataBlockIndex = 82; // Very short (fPPT AMD only)
          */
 
         // Build the complete 32-byte package:

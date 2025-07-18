@@ -36,4 +36,10 @@ public class ClawBZ2EM : ClawA1M
             if (profile != null) profile.TDPOverrideValues = kvp.Value;
         }
     }
+
+    public override void set_short_limit(int limit)
+    {
+        base.set_short_limit(limit); // sPPT
+        SetCPUPowerLimit(82, limit); // fPPT
+    }
 }
