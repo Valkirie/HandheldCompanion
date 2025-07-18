@@ -176,8 +176,8 @@ public class ClawA1M : IDevice
         };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
-        nTDP = new double[] { 20, 20, 65 };
-        cTDP = new double[] { 20, 65 };
+        nTDP = new double[] { 30, 30, 35 };
+        cTDP = new double[] { 20, 45 };
         GfxClock = new double[] { 100, 2250 };
         CpuClock = 4800;
 

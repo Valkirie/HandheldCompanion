@@ -15,7 +15,7 @@ public class ClawA2VM : ClawA1M
 
         // https://www.intel.com/content/www/us/en/products/sku/240957/intel-core-ultra-7-processor-258v-12m-cache-up-to-4-80-ghz/specifications.html
         nTDP = new double[] { 17, 17, 37 };
-        cTDP = new double[] { 8, 35 };
+        cTDP = new double[] { 8, 37 };
         GfxClock = new double[] { 100, 1950 };
         CpuClock = 4800;
 
@@ -26,7 +26,7 @@ public class ClawA2VM : ClawA1M
         {
             { BetterBatteryGuid,      new double[] { 8, 8, 8 } },
             { BetterPerformanceGuid,  new double[] { 17, 17, 17 } },
-            { BestPerformanceGuid,    new double[] { 35, 35, 35 } }
+            { BestPerformanceGuid,    new double[] { 30, 30, 30 } }
         };
 
         foreach (KeyValuePair<Guid, double[]> kvp in tdpOverrides)

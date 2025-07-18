@@ -143,7 +143,7 @@ public abstract class IDevice
     public double[] GfxClock = { 100, 1800 };
     public uint CpuClock = 6000;
 
-    // device nominal TDP (slow, fast)
+    // device nominal TDP (slow, slow, fast)
     public double[] nTDP = { 15, 15, 20 };
 
     // device maximum operating temperature

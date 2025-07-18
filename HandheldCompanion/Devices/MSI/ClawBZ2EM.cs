@@ -14,8 +14,8 @@ public class ClawBZ2EM : ClawA1M
         ProductIllustration = "device_msi_claw8";
 
         // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z2-series/z2-extreme.html
-        nTDP = new double[] { 15, 15, 35 };
-        cTDP = new double[] { 8, 35 };
+        nTDP = new double[] { 20, 20, 33 };
+        cTDP = new double[] { 15, 35 };
         GfxClock = new double[] { 100, 2900 };
         CpuClock = 5000;
 
@@ -25,9 +25,9 @@ public class ClawBZ2EM : ClawA1M
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>
         {
-            { BetterBatteryGuid,      new double[] { 8, 8, 8 } },
-            { BetterPerformanceGuid,  new double[] { 17, 17, 17 } },
-            { BestPerformanceGuid,    new double[] { 35, 35, 35 } }
+            { BetterBatteryGuid,      new double[] { 15, 15, 15 } },
+            { BetterPerformanceGuid,  new double[] { 20, 20, 20 } },
+            { BestPerformanceGuid,    new double[] { 28, 28, 28 } }
         };
 
         foreach (KeyValuePair<Guid, double[]> kvp in tdpOverrides)
