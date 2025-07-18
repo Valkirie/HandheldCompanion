@@ -929,8 +929,8 @@ public class ClawA1M : IDevice
     protected void SetCPUPowerLimit(int iDataBlockIndex, int limit)
     {
         /*
-         * iDataBlockIndex = 80; // Long (SPL)
-         * iDataBlockIndex = 81; // Short (sPPT)
+         * iDataBlockIndex = 80; // Long (SPL | PL1)
+         * iDataBlockIndex = 81; // Short (sPPT | PL2)
          * iDataBlockIndex = 82; // Very short (fPPT AMD only)
          */
 
