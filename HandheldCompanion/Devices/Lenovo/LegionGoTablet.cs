@@ -308,7 +308,7 @@ namespace HandheldCompanion.Devices
 
         private byte[] RgbSetProfile(int idx, byte profile, RgbMode mode, byte red, byte green, byte blue, double brightness = 1, double speed = 1)
         {
-            byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness)), (byte)0, (byte)63);
+            byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness / 100)), (byte)0, (byte)63);
             byte r_period = Math.Clamp(ClampByte((int)(64 * speed / 100)), (byte)0, (byte)63);
 
             return
@@ -339,8 +339,8 @@ namespace HandheldCompanion.Devices
             List<byte[]> cmds = new List<byte[]>
             {
                 // left + right
-                RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed),
-                RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed)
+                RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness, speed),
+                RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness, speed)
             };
 
             if (init)

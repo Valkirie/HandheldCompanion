@@ -133,8 +133,8 @@ namespace HandheldCompanion.Devices
 
         private byte[] RgbSetProfile(byte profile, byte mode, byte red, byte green, byte blue, double brightness, double speed)
         {
-            byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness)), (byte)0, (byte)63);
-            byte r_speed = Math.Clamp(ClampByte((int)(64 * speed)), (byte)0, (byte)63);
+            byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness / 100)), (byte)0, (byte)63);
+            byte r_speed = Math.Clamp(ClampByte((int)(64 * speed / 100)), (byte)0, (byte)63);
 
             return
             [
@@ -156,7 +156,7 @@ namespace HandheldCompanion.Devices
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
-                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
+                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
                 return device.Write(cmd);
             }
 #endif
@@ -206,10 +206,7 @@ namespace HandheldCompanion.Devices
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
-                lightProfile.brightness = (byte)Math.Clamp((int)(64 * 1.0), 0, 63);
-                lightProfile.speed = (byte)Math.Clamp((int)(64 * (speed / 100.0)), 0, 63);
-
-                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
+                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
                 return device.Write(cmd);
             }
 #endif
