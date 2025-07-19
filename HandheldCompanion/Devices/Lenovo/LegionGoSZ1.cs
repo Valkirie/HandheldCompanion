@@ -67,11 +67,10 @@ namespace HandheldCompanion.Devices
                 if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
                     continue;
 
-                if (device.Capabilities.InputReportByteLength != 65 || device.Capabilities.OutputReportByteLength != 65)
+                if (device.Capabilities.InputReportByteLength != 33 || device.Capabilities.OutputReportByteLength != 0)
                     continue;
 
                 hidDevices[INPUT_HID_ID] = device;
-
                 return true;
             }
 
