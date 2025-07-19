@@ -3,9 +3,9 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.Zotac
 {
-    public class Zone : IDevice
+    public class GamingZone : IDevice
     {
-        public Zone()
+        public GamingZone()
         {
             // device specific settings
             this.ProductIllustration = "device_zotac_zone";

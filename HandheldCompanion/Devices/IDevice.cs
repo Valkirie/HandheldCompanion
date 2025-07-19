@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -741,6 +742,7 @@ public abstract class IDevice
                     }
                 }
                 break;
+
             case "MICRO-STAR INTERNATIONAL CO., LTD.":
                 {
                     switch (ProductName)
@@ -754,6 +756,17 @@ public abstract class IDevice
                             break;
                         case "MS-1T8K": // Claw A8
                             device = new ClawBZ2EM();
+                            break;
+                    }
+                }
+                break;
+
+            case "ZOTAC":
+                {
+                    switch (ProductName)
+                    {
+                        case "G0A1W":
+                            device = new GamingZone();
                             break;
                     }
                 }
