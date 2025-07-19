@@ -9,6 +9,10 @@ namespace HandheldCompanion.Devices.Zotac
         {
             // device specific settings
             this.ProductIllustration = "device_zotac_zone";
+            
+            // used to monitor OEM specific inputs
+            vendorId = 0x1EE9;
+            productIds = [0x1590];
 
             // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
             // https://www.amd.com/en/products/apu/amd-ryzen-7-8840u
