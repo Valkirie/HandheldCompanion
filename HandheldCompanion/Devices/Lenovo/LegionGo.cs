@@ -1,9 +1,15 @@
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -185,6 +191,30 @@ public class LegionGo : IDevice
     // todo: find the right value, this is placeholder
     protected const byte INPUT_HID_ID = 0x01;
 
+    public LegionGo()
+    {
+        // battery bypass settings
+        BatteryBypassMin = 80;
+        BatteryBypassMax = 80;
+
+        // device specific capacities
+        Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.FanOverride;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        Capabilities |= DeviceCapabilities.OEMCPU;
+
+        // dynamic lighting capacities
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
+        DynamicLightingCapabilities |= LEDLevel.Breathing;
+        DynamicLightingCapabilities |= LEDLevel.Rainbow;
+        DynamicLightingCapabilities |= LEDLevel.Wheel;
+
+        OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1 ));
+        OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2 ));
+    }
+
     public override bool IsReady()
     {
         IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
@@ -207,14 +237,133 @@ public class LegionGo : IDevice
         return false;
     }
 
+    public override void OpenEvents()
+    {
+        base.OpenEvents();
+
+        // manage events
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+
+        // raise events
+        switch (ManagerFactory.powerProfileManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
+        }
+
+        Device_Inserted();
+    }
+
     public override void Close()
     {
+        // manage events
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
             hidDevice.Dispose();
         hidDevices.Clear();
 
+        // Reset the fan speed to default before device shutdown/restart
+        SetFanFullSpeed(false);
+
+        // unload SapientiaUsb
+        FreeSapientiaUsb();
+
         base.Close();
+    }
+
+    private void QueryPowerProfile()
+    {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    private void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
+    }
+
+    protected override void QuerySettings()
+    {
+        // raise events
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+
+        base.QuerySettings();
+    }
+
+    protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "BatteryChargeLimit":
+                SetBatteryChargeLimit(Convert.ToBoolean(value));
+                break;
+        }
+
+        base.SettingsManager_SettingValueChanged(name, value, temporary);
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        {
+            // default fanTable is ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 }
+
+            // prepare array of fan speeds
+            ushort[] fanSpeeds = profile.FanProfile.fanSpeeds.Skip(1).Take(10).Select(speed => (ushort)speed).ToArray();
+            FanTable fanTable = new(fanSpeeds);
+
+            // update fan table
+            SetFanTable(fanTable);
+        }
+
+        // get current fan mode and set it to the desired one if different
+        int currentFanMode = GetSmartFanMode();
+        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && currentFanMode != profile.OEMPowerMode)
+            SetSmartFanMode(profile.OEMPowerMode);
+    }
+
+    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+    {
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Inserted(true);
+    }
+
+    protected virtual void Device_Inserted(bool reScan = false)
+    {
+        // initialize SapientiaUsb
+        Init();
+    }
+
+    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
+    {
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Removed();
+    }
+
+    protected virtual void Device_Removed()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            device.MonitorDeviceEvents = false;
+            device.Removed -= Device_Removed;
+            try { device.Dispose(); } catch { }
+        }
+
+        // unload SapientiaUsb
+        FreeSapientiaUsb();
     }
 
     public override void set_long_limit(int limit)
