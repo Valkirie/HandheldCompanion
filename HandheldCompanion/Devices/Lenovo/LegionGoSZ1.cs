@@ -89,7 +89,7 @@ namespace HandheldCompanion.Devices
                 device.OpenDevice();
 
                 // Send controller init packet sequence
-                foreach (var cmd in ControllerFactoryReset())
+                foreach (byte[] cmd in ControllerFactoryReset())
                     device.Write(cmd);
 
                 // disable built-in swap
@@ -128,24 +128,23 @@ namespace HandheldCompanion.Devices
         }
 
         #region RGB
-        private byte[] RgbLoadProfile(int profile) => new byte[] { 0x10, 0x02, (byte)profile };
-        private byte[] RgbEnable(bool enable) => new byte[] { 0x04, 0x06, (byte)(enable ? 1 : 0) };
-        private byte[] RgbSetProfile(int profile, byte mode, byte red, byte green, byte blue, double brightness, double speed)
+        private byte[] RgbLoadProfile(int profile) => [0x10, 0x02, (byte)profile];
+        private byte[] RgbEnable(bool enable) => [0x04, 0x06, (byte)(enable ? 1 : 0)];
+
+        private byte[] RgbSetProfile(byte profile, byte mode, byte red, byte green, byte blue, double brightness, double speed)
         {
             byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness)), (byte)0, (byte)63);
             byte r_speed = Math.Clamp(ClampByte((int)(64 * speed)), (byte)0, (byte)63);
 
-            return new byte[]
-            {
+            return
+            [
                 0x10,
-                (byte)(profile + 2), // profile selector: 0x03 → profile 1, 0x04 → profile 2...
+                profile,
                 mode,
-                red,
-                green,
-                blue,
+                red, green, blue,
                 r_brightness,
                 r_speed
-            };
+            ];
         }
 
         public override bool SetLedBrightness(int brightness)
@@ -153,28 +152,26 @@ namespace HandheldCompanion.Devices
             lightProfile.brightness = brightness;
 
 #if USE_SAPIENTIAUSB
-        SetLightingEffectProfileID(3, lightProfile);
-#endif
-
+            return SetLightingEffectProfileID(3, lightProfile);
+#else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
-                byte[] cmd = RgbSetProfile(1, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
-                device.Write(cmd);
+                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
+                return device.Write(cmd);
             }
-
-            return true;
+#endif
+            return false;
         }
 
         public override bool SetLedStatus(bool status)
         {
 #if USE_SAPIENTIAUSB
-        SetLightingEnable(3, status);
-#endif
-
+            return SetLightingEnable(3, status);
+#else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-                device.Write(RgbEnable(status));
-
-            return true;
+                return device.Write(RgbEnable(status));
+#endif
+            return false;
         }
 
         public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
@@ -202,22 +199,21 @@ namespace HandheldCompanion.Devices
                     break;
             }
 
-            SetLightProfileColors(MainColor, MainColor);
+            SetLightProfileColors(MainColor, SecondaryColor);
 
 #if USE_SAPIENTIAUSB
-        SetLightingEffectProfileID(3, lightProfile);
-#endif
-
+            return SetLightingEffectProfileID(3, lightProfile);
+#else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
                 lightProfile.brightness = (byte)Math.Clamp((int)(64 * 1.0), 0, 63);
                 lightProfile.speed = (byte)Math.Clamp((int)(64 * (speed / 100.0)), 0, 63);
 
-                byte[] cmd = RgbSetProfile(1, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
-                device.Write(cmd);
+                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
+                return device.Write(cmd);
             }
-
-            return true;
+#endif
+            return false;
         }
 
         private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
@@ -225,15 +221,6 @@ namespace HandheldCompanion.Devices
             lightProfile.r = MainColor.R;
             lightProfile.g = MainColor.G;
             lightProfile.b = MainColor.B;
-
-#if USE_SAPIENTIAUSB
-#endif
-
-            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            {
-                byte[] cmd = RgbSetProfile(1, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness / 100.0, lightProfile.speed / 100.0);
-                device.Write(cmd);
-            }
         }
         #endregion
     }

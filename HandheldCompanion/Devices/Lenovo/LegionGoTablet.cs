@@ -169,17 +169,17 @@ namespace HandheldCompanion.Devices
             base.Device_Inserted(reScan);
 
 #if USE_SAPIENTIAUSB
-        // disable QuickLightingEffect(s)
-        SetQuickLightingEffect(0, 1);
-        SetQuickLightingEffect(3, 1);
-        SetQuickLightingEffect(4, 1);
-        SetQuickLightingEffectEnable(0, false);
-        SetQuickLightingEffectEnable(3, false);
-        SetQuickLightingEffectEnable(4, false);
+            // disable QuickLightingEffect(s)
+            SetQuickLightingEffect(0, 1);
+            SetQuickLightingEffect(3, 1);
+            SetQuickLightingEffect(4, 1);
+            SetQuickLightingEffectEnable(0, false);
+            SetQuickLightingEffectEnable(3, false);
+            SetQuickLightingEffectEnable(4, false);
 
-        // get current light profile(s)
-        lightProfileL = GetCurrentLightProfile(3);
-        lightProfileR = GetCurrentLightProfile(4);
+            // get current light profile(s)
+            lightProfileL = GetCurrentLightProfile(3);
+            lightProfileR = GetCurrentLightProfile(4);
 #endif
         }
 
@@ -213,33 +213,31 @@ namespace HandheldCompanion.Devices
             lightProfileR.brightness = brightness;
 
 #if USE_SAPIENTIAUSB
-        SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
-        SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
-#endif
-
+            SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
+            SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
+#else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
                 // write RGB
                 foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
                     device.Write(cmd);
             }
-
+#endif
             return true;
         }
 
         public override bool SetLedStatus(bool status)
         {
 #if USE_SAPIENTIAUSB
-        SetLightingEnable(0, status);
-#endif
-
+            SetLightingEnable(0, status);
+#else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
                 // write RGB
                 foreach (byte[] cmd in RgbMultiEnable(status))
                     device.Write(cmd);
             }
-
+#endif
             return true;
         }
 
@@ -281,20 +279,19 @@ namespace HandheldCompanion.Devices
                     break;
             }
 
-            SetLightProfileColors(MainColor, MainColor);
+            SetLightProfileColors(MainColor, SecondaryColor);
 
 #if USE_SAPIENTIAUSB
-        SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
-        SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
-#endif
-
+            SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
+            SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
+#else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
                 // write RGB
                 foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
                     device.Write(cmd);
             }
-
+#endif
             return true;
         }
 
@@ -307,52 +304,44 @@ namespace HandheldCompanion.Devices
             lightProfileR.r = SecondaryColor.R;
             lightProfileR.g = SecondaryColor.G;
             lightProfileR.b = SecondaryColor.B;
-
-#if USE_SAPIENTIAUSB
-#endif
-
-            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            {
-                // write RGB
-                foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
-                    device.Write(cmd);
-            }
         }
 
-        private byte[] RgbSetProfile(int idx, int profile, RgbMode mode, byte red, byte green, byte blue, double brightness = 1, double speed = 1)
+        private byte[] RgbSetProfile(int idx, byte profile, RgbMode mode, byte red, byte green, byte blue, double brightness = 1, double speed = 1)
         {
             byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness)), (byte)0, (byte)63);
             byte r_period = Math.Clamp(ClampByte((int)(64 * speed / 100)), (byte)0, (byte)63);
 
-            return new byte[]
-            {
-            0x05, 0x0C, 0x72, 0x01,
-            (byte)idx,
-            (byte)mode,
-            red, green, blue,
-            r_brightness,
-            r_period,
-            (byte)profile,
-            0x01
-            };
+            return
+            [
+                0x05, 0x0C, 0x72, 0x01,
+                (byte)idx,
+                (byte)mode,
+                red, green, blue,
+                r_brightness,
+                r_period,
+                profile,
+                0x01
+            ];
         }
 
         private byte[] RgbLoadProfile(int idx, int profile)
         {
-            return new byte[] { 0x05, 0x06, 0x73, 0x02, (byte)idx, (byte)profile, 0x01 };
+            return [0x05, 0x06, 0x73, 0x02, (byte)idx, (byte)profile, 0x01];
         }
 
         private byte[] RgbEnable(int idx, bool enable)
         {
-            return new byte[] { 0x05, 0x06, 0x70, 0x02, (byte)idx, (byte)(enable ? 1 : 0), 0x01 };
+            return [0x05, 0x06, 0x70, 0x02, (byte)idx, (byte)(enable ? 1 : 0), 0x01];
         }
 
-        private IEnumerable<byte[]> RgbMultiLoadSettings(RgbMode mode, int profile, byte red, byte green, byte blue, double brightness = 1, double speed = 1, bool init = true)
+        private IEnumerable<byte[]> RgbMultiLoadSettings(RgbMode mode, byte profile, byte red, byte green, byte blue, double brightness = 1, double speed = 1, bool init = true)
         {
-            var cmds = new List<byte[]>();
-            // left + right
-            cmds.Add(RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed));
-            cmds.Add(RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed));
+            List<byte[]> cmds = new List<byte[]>
+            {
+                // left + right
+                RgbSetProfile(LeftJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed),
+                RgbSetProfile(RightJoyconIndex, profile, mode, red, green, blue, brightness / 100, speed)
+            };
 
             if (init)
             {
@@ -370,6 +359,6 @@ namespace HandheldCompanion.Devices
             yield return RgbEnable(LeftJoyconIndex, enable);
             yield return RgbEnable(RightJoyconIndex, enable);
         }
-        #endregion
+#endregion
     }
 }
