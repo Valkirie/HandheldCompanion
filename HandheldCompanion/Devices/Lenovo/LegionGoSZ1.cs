@@ -16,8 +16,6 @@ namespace HandheldCompanion.Devices
 
         private LightionProfile lightProfile = new();
 
-        private byte[] ConvertHex(string hex) => Convert.FromHexString(hex);
-
         public LegionGoSZ1()
         {
             // device specific settings
@@ -102,12 +100,12 @@ namespace HandheldCompanion.Devices
             base.Device_Inserted(reScan);
 
 #if USE_SAPIENTIAUSB
-        // disable QuickLightingEffect(s)
-        SetQuickLightingEffect(3, 1);
-        SetQuickLightingEffectEnable(3, false);
+            // disable QuickLightingEffect(s)
+            SetQuickLightingEffect(3, 1);
+            SetQuickLightingEffectEnable(3, false);
 
-        // get current light profile(s)
-        lightProfile = GetCurrentLightProfile(3);
+            // get current light profile(s)
+            lightProfile = GetCurrentLightProfile(3);
 #endif
         }
 

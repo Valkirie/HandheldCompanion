@@ -187,6 +187,7 @@ public class LegionGo : IDevice
     #endregion
 
     protected byte ClampByte(int v) => (byte)Math.Max(0, Math.Min(255, v));
+    protected byte[] ConvertHex(string hex) => Convert.FromHexString(hex);
 
     // todo: find the right value, this is placeholder
     protected const byte INPUT_HID_ID = 0x01;
