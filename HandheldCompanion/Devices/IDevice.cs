@@ -728,7 +728,7 @@ public abstract class IDevice
                     switch (SystemModel)
                     {
                         case "83E1":
-                            device = new LegionGo();
+                            device = new LegionGoTablet();
                             break;
                         case "83L3": // Legion Go S Z2 Go
                             device = new LegionGoSZ2();

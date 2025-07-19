@@ -160,7 +160,7 @@ namespace HandheldCompanion.Controllers
             Open();
 
             // manage gamepad motion from right controller
-            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGo.RightJoyconIndex}");
+            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGoTablet.RightJoyconIndex}");
         }
 
         /*
