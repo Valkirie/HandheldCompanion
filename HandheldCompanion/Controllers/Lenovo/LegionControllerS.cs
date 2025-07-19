@@ -139,13 +139,13 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.R4] = (byte2 & (1 << 6)) != 0;  // extra_r1 → B6 → bit 6
 
             // Example parsing assuming positions from const.py
-            aX = BitConverter.ToInt16(data, 14) * -0.00212f;
-            aZ = BitConverter.ToInt16(data, 16) * -0.00212f;
-            aY = BitConverter.ToInt16(data, 18) * -0.00212f;
+            aX = BitConverter.ToInt16(data, 14) * -(4.0f / short.MaxValue);
+            aZ = BitConverter.ToInt16(data, 16) * -(4.0f / short.MaxValue);
+            aY = BitConverter.ToInt16(data, 18) * -(4.0f / short.MaxValue);
 
-            gX = BitConverter.ToInt16(data, 20) * -0.0005325f;
-            gZ = BitConverter.ToInt16(data, 22) * 0.0005325f;
-            gY = BitConverter.ToInt16(data, 24) * -0.0005325f;
+            gX = BitConverter.ToInt16(data, 20) * -(2000.0f / short.MaxValue);
+            gZ = BitConverter.ToInt16(data, 22) * (2000.0f / short.MaxValue);
+            gY = BitConverter.ToInt16(data, 24) * -(2000.0f / short.MaxValue);
 
             Inputs.GyroState.SetGyroscope(gX, gY, gZ);
             Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
