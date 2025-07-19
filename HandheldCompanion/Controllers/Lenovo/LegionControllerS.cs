@@ -134,9 +134,9 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.OEM2] = (byte0 & (1 << 6)) != 0; // LegionL
 
             // --- Extra Button Parsing ---
-            byte byte23 = data[23]; // (2 << 3) = byte 23
-            Inputs.ButtonState[ButtonFlags.L4] = (byte23 & (1 << 7)) != 0;  // extra_l1 → B5 → bit 7
-            Inputs.ButtonState[ButtonFlags.R4] = (byte23 & (1 << 6)) != 0;  // extra_r1 → B6 → bit 6
+            byte byte2 = data[2]; // (2 << 3) = byte 23
+            Inputs.ButtonState[ButtonFlags.L4] = (byte2 & (1 << 7)) != 0;  // extra_l1 → B5 → bit 7
+            Inputs.ButtonState[ButtonFlags.R4] = (byte2 & (1 << 6)) != 0;  // extra_r1 → B6 → bit 6
 
             // Example parsing assuming positions from const.py
             aX = BitConverter.ToInt16(data, 14) * -0.00212f;
