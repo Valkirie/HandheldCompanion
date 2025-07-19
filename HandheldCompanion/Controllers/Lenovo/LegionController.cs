@@ -55,7 +55,7 @@ namespace HandheldCompanion.Controllers.Lenovo
         private HashSet<int> READY_STATES = [25, 60];
 
         private controller_hidapi.net.LegionController Controller;
-        private byte[] Data = new byte[64];
+        private byte[] data = new byte[64];
 
         #region TouchVariables
         private bool IsPassthrough = false;
@@ -248,7 +248,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         private void Controller_OnControllerInputReceived(byte[] Data)
         {
-            Buffer.BlockCopy(Data, 1, this.Data, 0, Data.Length - 1);
+            Buffer.BlockCopy(Data, 1, this.data, 0, Data.Length - 1);
         }
 
         public override void UpdateInputs(long ticks, float delta, bool commit)
@@ -259,26 +259,26 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             base.UpdateInputs(ticks, delta, false);
 
-            FrontEnum frontButton = (FrontEnum)Data[FRONT_IDX];
+            FrontEnum frontButton = (FrontEnum)data[FRONT_IDX];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
             Inputs.ButtonState[ButtonFlags.OEM2] = frontButton.HasFlag(FrontEnum.LegionL);
 
-            BackEnum backButton = (BackEnum)Data[BACK_IDX];
+            BackEnum backButton = (BackEnum)data[BACK_IDX];
             Inputs.ButtonState[ButtonFlags.R4] = backButton.HasFlag(BackEnum.M3);
             Inputs.ButtonState[ButtonFlags.R5] = backButton.HasFlag(BackEnum.Y3);
             Inputs.ButtonState[ButtonFlags.L4] = backButton.HasFlag(BackEnum.Y1);
             Inputs.ButtonState[ButtonFlags.L5] = backButton.HasFlag(BackEnum.Y2);
             Inputs.ButtonState[ButtonFlags.B5] = backButton.HasFlag(BackEnum.M2);
-            Inputs.ButtonState[ButtonFlags.B6] = Data[20] == 128;   // Scroll click
-            Inputs.ButtonState[ButtonFlags.B7] = Data[24] == 129;   // Scroll up
-            Inputs.ButtonState[ButtonFlags.B8] = Data[24] == 255;   // Scroll down
+            Inputs.ButtonState[ButtonFlags.B6] = data[20] == 128;   // Scroll click
+            Inputs.ButtonState[ButtonFlags.B7] = data[24] == 129;   // Scroll up
+            Inputs.ButtonState[ButtonFlags.B8] = data[24] == 255;   // Scroll down
 
             // handle touchpad if passthrough is off
             if (!IsPassthrough)
             {
                 // Right Pad
-                ushort TouchpadX = (ushort)(Data[25] << 8 | Data[26]);
-                ushort TouchpadY = (ushort)(Data[27] << 8 | Data[28]);
+                ushort TouchpadX = (ushort)(data[25] << 8 | data[26]);
+                ushort TouchpadY = (ushort)(data[27] << 8 | data[28]);
                 bool touched = TouchpadX != 0 || TouchpadY != 0;
 
                 HandleTouchpadInput(touched, TouchpadX, TouchpadY);
@@ -291,25 +291,25 @@ namespace HandheldCompanion.Controllers.Lenovo
                     default:
                     case 0: // LeftJoycon
                         {
-                            aX = (short)(Data[34] << 8 | Data[35]) * -(4.0f / short.MaxValue);
-                            aZ = (short)(Data[36] << 8 | Data[37]) * -(4.0f / short.MaxValue);
-                            aY = (short)(Data[38] << 8 | Data[39]) * -(4.0f / short.MaxValue);
+                            aX = (short)(data[34] << 8 | data[35]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(data[36] << 8 | data[37]) * -(4.0f / short.MaxValue);
+                            aY = (short)(data[38] << 8 | data[39]) * -(4.0f / short.MaxValue);
 
-                            gX = (short)(Data[40] << 8 | Data[41]) * -(2000.0f / short.MaxValue);
-                            gZ = (short)(Data[42] << 8 | Data[43]) * -(2000.0f / short.MaxValue);
-                            gY = (short)(Data[44] << 8 | Data[45]) * -(2000.0f / short.MaxValue);
+                            gX = (short)(data[40] << 8 | data[41]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(data[42] << 8 | data[43]) * -(2000.0f / short.MaxValue);
+                            gY = (short)(data[44] << 8 | data[45]) * -(2000.0f / short.MaxValue);
                         }
                         break;
 
                     case 1: // RightJoycon
                         {
-                            aX = (short)(Data[49] << 8 | Data[50]) * -(4.0f / short.MaxValue);
-                            aZ = (short)(Data[47] << 8 | Data[48]) * (4.0f / short.MaxValue);
-                            aY = (short)(Data[51] << 8 | Data[52]) * -(4.0f / short.MaxValue);
+                            aX = (short)(data[49] << 8 | data[50]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(data[47] << 8 | data[48]) * (4.0f / short.MaxValue);
+                            aY = (short)(data[51] << 8 | data[52]) * -(4.0f / short.MaxValue);
 
-                            gX = (short)(Data[55] << 8 | Data[56]) * -(2000.0f / short.MaxValue);
-                            gZ = (short)(Data[53] << 8 | Data[54]) * (2000.0f / short.MaxValue);
-                            gY = (short)(Data[57] << 8 | Data[58]) * -(2000.0f / short.MaxValue);
+                            gX = (short)(data[55] << 8 | data[56]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(data[53] << 8 | data[54]) * (2000.0f / short.MaxValue);
+                            gY = (short)(data[57] << 8 | data[58]) * -(2000.0f / short.MaxValue);
                         }
                         break;
                 }

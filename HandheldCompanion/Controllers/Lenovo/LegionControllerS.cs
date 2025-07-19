@@ -8,8 +8,8 @@ namespace HandheldCompanion.Controllers.Lenovo
 {
     public class LegionControllerS : XInputController
     {
-        private byte[] data = new byte[64];
         private controller_hidapi.net.LegionController Controller;
+        private byte[] data = new byte[64];
 
         public override bool IsReady => true;
         public override string ToString() => "Legion Controller";
@@ -24,13 +24,12 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         protected override void InitializeInputOutput()
         {
-            SourceButtons.Add(ButtonFlags.OEM1); // Front right (LegionR)
-            SourceButtons.Add(ButtonFlags.OEM2); // Front left (LegionL)
-            SourceButtons.Add(ButtonFlags.R4);
-            SourceButtons.Add(ButtonFlags.L4);
-
+            // Additional controller specific source buttons
             SourceButtons.Add(ButtonFlags.RightPadClick);
             SourceButtons.Add(ButtonFlags.RightPadTouch);
+
+            SourceButtons.Add(ButtonFlags.R4);
+            SourceButtons.Add(ButtonFlags.L4);
 
             // Legion Controllers do not have the Special button
             SourceButtons.Remove(ButtonFlags.Special);
@@ -67,8 +66,6 @@ namespace HandheldCompanion.Controllers.Lenovo
                         Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
                         Controller.Open();
                     }
-
-                    UpdateSettings();
                 }
                 catch (Exception ex)
                 {
