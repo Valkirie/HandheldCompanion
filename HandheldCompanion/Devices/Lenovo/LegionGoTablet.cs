@@ -203,16 +203,6 @@ namespace HandheldCompanion.Devices
             yield return new byte[] { 0x04, 0x05, 0x05, 0x01, 0x01, 0x03, 0x01 };
             yield return new byte[] { 0x04, 0x05, 0x05, 0x01, 0x01, 0x04, 0x01 };
         }
-
-        private byte[] ControllerLegionSwap(bool enabled)
-        {
-            return new byte[]
-            {
-        0x05, 0x06, 0x69, 0x04, 0x01,
-        (byte)(enabled ? 0x02 : 0x01),
-        0x01
-            };
-        }
         #endregion
 
         #region RGB

@@ -20,10 +20,7 @@ namespace HandheldCompanion.Controllers.Lenovo
         }
 
         public LegionControllerS(PnPDetails details) : base(details)
-        {
-            // Capabilities
-            Capabilities |= ControllerCapabilities.MotionSensor;
-        }
+        { }
 
         protected override void InitializeInputOutput()
         {
@@ -51,13 +48,11 @@ namespace HandheldCompanion.Controllers.Lenovo
             if (WasPlugged) Close();
 
             // create controller
-            Controller = new(details.VendorID, details.ProductID);
+            // todo: improve detection (usagePage / usage)
+            Controller = new(details.VendorID, details.ProductID, 33);
 
             // open controller as we need to check if it's ready by polling the hiddevice
             Open();
-
-            // manage gamepad motion from right controller
-            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGoTablet.RightJoyconIndex}");
         }
 
         private void Open()

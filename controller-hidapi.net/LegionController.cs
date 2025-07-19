@@ -5,9 +5,9 @@ namespace controller_hidapi.net
 {
     public class LegionController : GenericController
     {
-        public LegionController(ushort vid, ushort pid) : base(vid, pid)
+        public LegionController(ushort vid, ushort pid, ushort inputBufferLen = 64) : base(vid, pid)
         {
-            _hidDevice = new HidDevice(_vid, _pid, 64)
+            _hidDevice = new HidDevice(_vid, _pid, inputBufferLen)
             {
                 OnInputReceived = input =>
                 {

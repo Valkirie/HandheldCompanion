@@ -378,6 +378,16 @@ public class LegionGo : IDevice
         SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, limit);
     }
 
+    protected byte[] ControllerLegionSwap(bool enabled)
+    {
+        return new byte[]
+        {
+        0x05, 0x06, 0x69, 0x04, 0x01,
+        (byte)(enabled ? 0x02 : 0x01),
+        0x01
+        };
+    }
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
