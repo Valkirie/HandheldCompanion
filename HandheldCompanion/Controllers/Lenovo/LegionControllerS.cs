@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Devices;
+﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -149,6 +149,10 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             Inputs.GyroState.SetGyroscope(gX, gY, gZ);
             Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+
+            // compute motion from controller
+            if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
+                gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
             // Touchpad parsing (2 bytes each, centered, absolute)
             ushort tpX = BitConverter.ToUInt16(data, 2);
