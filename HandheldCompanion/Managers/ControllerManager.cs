@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.Dummies;
+using HandheldCompanion.Controllers.Lenovo;
 using HandheldCompanion.Controllers.SDL;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
@@ -522,10 +523,15 @@ public static class ControllerManager
                         {
                             switch (ProductId)
                             {
+                                // Legion Go
                                 case 0x6183:    // DInput
                                 case 0x6184:    // Dual DInput
                                 case 0x61EC:    // DInput (new firmware)
                                 case 0x61ED:    // Dual DInput (new firmware)
+                                    break;
+
+                                // Legion Go S
+                                case 0xE311:
                                     break;
                             }
                         }
@@ -679,10 +685,9 @@ public static class ControllerManager
                                     break;
 
                                 // Legion Go S
-                                // todo: implement me
                                 case "0xE310":
                                 default:
-                                    try { controller = new XInputController(details); } catch { }
+                                    try { controller = new LegionControllerS(details); } catch { }
                                     break;
                             }
                         }
