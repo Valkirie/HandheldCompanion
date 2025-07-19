@@ -126,6 +126,28 @@ namespace HandheldCompanion.Devices
             DefaultLayout.ButtonLayout[ButtonFlags.B8] = [new MouseActions { MouseType = MouseActionsType.ScrollDown }];
         }
 
+        public override bool IsReady()
+        {
+            IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
+            foreach (HidDevice device in devices)
+            {
+                if (!device.IsConnected)
+                    continue;
+
+                if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                    continue;
+
+                if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
+                    continue;
+
+                hidDevices[INPUT_HID_ID] = device;
+
+                return true;
+            }
+
+            return false;
+        }
+
         public override void Close()
         {
             // restore default touchpad behavior

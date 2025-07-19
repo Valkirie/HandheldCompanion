@@ -190,6 +190,7 @@ public class LegionGo : IDevice
 
     // todo: find the right value, this is placeholder
     protected const byte INPUT_HID_ID = 0x01;
+    protected const byte RGB_HID_ID = 0x02;
 
     public LegionGo()
     {
@@ -213,28 +214,6 @@ public class LegionGo : IDevice
 
         OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1 ));
         OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2 ));
-    }
-
-    public override bool IsReady()
-    {
-        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
-        foreach (HidDevice device in devices)
-        {
-            if (!device.IsConnected)
-                continue;
-
-            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
-                continue;
-
-            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
-                continue;
-
-            hidDevices[INPUT_HID_ID] = device;
-
-            return true;
-        }
-
-        return false;
     }
 
     public override void OpenEvents()
