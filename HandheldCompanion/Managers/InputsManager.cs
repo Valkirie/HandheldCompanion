@@ -253,7 +253,24 @@ public static class InputsManager
             if (IsListening)
             {
                 if (currentChord.chordTarget != InputsChordTarget.Output)
-                    CheckForSequence(args.IsKeyDown, args.IsKeyUp);
+                {
+                    // check if key is used by OEM chords
+                    bool silenced = false;
+                    foreach (KeyboardChord? pair in IDevice.GetCurrent().OEMChords)
+                    {
+                        List<KeyCode> chord = pair.chords[args.IsKeyDown];
+                        KeyCode chordKey = chord.FirstOrDefault();
+                        if (chordKey == hookKey && pair.silenced)
+                        {
+                            silenced = true;
+                            args.SuppressKeyPress = true;
+                            break;
+                        }
+                    }
+
+                    if (!silenced)
+                        CheckForSequence(args.IsKeyDown, args.IsKeyUp);
+                }
             }
 
             foreach (KeyboardChord? chord in successkeyChords.ToList())
@@ -379,7 +396,11 @@ public static class InputsManager
                         // compare ordered enumerable
                         List<KeyCode> chord_keys = chord.GetChord(args.IsKeyDown);
                         if (chord_keys.Count == 0 || chord.silenced)
+                        {
+                            if (chord.silenced)
+                                args.SuppressKeyPress = true;
                             continue;
+                        }
 
                         bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
                         if (existsCheck)
