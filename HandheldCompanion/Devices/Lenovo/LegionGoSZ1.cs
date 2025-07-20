@@ -20,7 +20,7 @@ namespace HandheldCompanion.Devices
         {
             // device specific settings
             // todo: create image
-            ProductIllustration = "device_legion_go";
+            ProductIllustration = "device_legion_go_s";
 
             // used to monitor OEM specific inputs
             vendorId = 0x1A86;
