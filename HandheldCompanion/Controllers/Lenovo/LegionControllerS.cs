@@ -103,7 +103,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         private void Controller_OnControllerInputReceived(byte[] Data)
         {
-            Buffer.BlockCopy(Data, 1, this.data, 0, Data.Length - 1);
+            Buffer.BlockCopy(Data, 0, this.data, 0, Data.Length);
         }
 
         public override void Plug()
@@ -157,11 +157,13 @@ namespace HandheldCompanion.Controllers.Lenovo
             // Touchpad parsing (2 bytes each, centered, absolute)
             ushort tpX = BitConverter.ToUInt16(data, 2);
             ushort tpY = BitConverter.ToUInt16(data, 4);
+            bool tpTouch = (data[8] & (1 << 7)) != 0; // (tpX != 0 || tpY != 0);
+            bool tpLeft = (data[9] & (1 << 7)) != 0;
 
-            bool touched = (tpX != 0 || tpY != 0);
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = touched;
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = tpTouch;
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = tpLeft; // correct ?
 
-            if (touched)
+            if (tpTouch)
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)tpX, 0, 1000, short.MinValue, short.MaxValue);
                 Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-tpY, 0, 1000, short.MinValue, short.MaxValue);
