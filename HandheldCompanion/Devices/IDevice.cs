@@ -958,7 +958,7 @@ public abstract class IDevice
         }
     }
 
-    public virtual byte ECRamReadByte(ushort address, ECDetails details)
+    public virtual byte ECRamDirectReadByte(ushort address, ECDetails details)
     {
         if (!IsOpen)
             return 0;

@@ -1,6 +1,6 @@
-﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -22,12 +22,23 @@ namespace HandheldCompanion.Devices.Zotac
         {
             // device specific settings
             this.ProductIllustration = "device_zotac_zone";
-            
+            this.UseOpenLib = true;
+
             // used to monitor OEM specific inputs
             vendorId = 0x1EE9;
             productIds = [0x1590];
 
-            // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+            ECDetails = new ECDetails
+            {
+                AddressFanControl = 0x44A,           // EC RAM: mode (manual/auto)
+                AddressFanDuty = 0x44B,              // EC RAM: fan speed (PWM 0-255)
+                AddressStatusCommandPort = 0x4E,     // I/O port: status/command (decimal ECDetails.AddressStatusCommandPort)
+                AddressDataPort = 0x4F,              // I/O port: data (decimal ECDetails.AddressDataPort)
+                FanValueMin = 0,
+                FanValueMax = 255
+            };
+
+            // https://www.amd.com/en/products/apu/amd-ryzen-7-ECDetails.AddressStatusCommandPort40u
             // https://www.amd.com/en/products/apu/amd-ryzen-7-8840u
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 3, 28 };
@@ -65,6 +76,7 @@ namespace HandheldCompanion.Devices.Zotac
             ));
 
             // device specific capacities
+            Capabilities |= DeviceCapabilities.FanControl;
             Capabilities |= DeviceCapabilities.DynamicLighting;
             Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
@@ -439,6 +451,79 @@ namespace HandheldCompanion.Devices.Zotac
             }
 
             return false;
+        }
+
+        public override void SetFanControl(bool enable, int mode)
+        {
+            if (!IsOpen)
+                return;
+
+            ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, Convert.ToByte(enable));
+        }
+
+        public override void SetFanDuty(double percent)
+        {
+            if (!IsOpen)
+                return;
+
+            byte fanValue = (byte)InputUtils.MapRange((float)percent, 0.0f, 100.0f, byte.MinValue, byte.MaxValue);
+            ECRamDirectWrite(ECDetails.AddressFanDuty, ECDetails, fanValue);
+        }
+
+        public override float ReadFanDuty() => ECRamDirectReadByte(ECDetails.AddressFanDuty, ECDetails);
+
+        // todo: remove me (redundant)
+        public byte ECRamDirectReadByte(ushort address)
+        {
+            byte num1 = (byte)((int)address >> 8 & (int)byte.MaxValue);
+            byte num2 = (byte)((uint)address & (uint)byte.MaxValue);
+            try
+            {
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)17);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num1);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)16 /*0x10*/);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num2);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)18);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
+                byte num3 = openLibSys.ReadIoPortByte(ECDetails.AddressDataPort);
+                return num3;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        // todo: remove me (redundant)
+        public bool ECRamDirectWrite(ushort address, byte data)
+        {
+            byte num1 = (byte)((int)address >> 8 & (int)byte.MaxValue);
+            byte num2 = (byte)((uint)address & (uint)byte.MaxValue);
+            try
+            {
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)17);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num1);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)16 /*0x10*/);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num2);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)18);
+                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
+                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, data);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public override string GetGlyph(ButtonFlags button)

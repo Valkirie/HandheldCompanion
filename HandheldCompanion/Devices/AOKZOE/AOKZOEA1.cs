@@ -132,7 +132,7 @@ public class AOKZOEA1 : IDevice
         ECRamDirectWrite(0x4F1, ECDetails, 0x40);
         ECRamDirectWrite(0x4F2, ECDetails, 0x02);
 
-        return (ECRamReadByte(0x4F1, ECDetails) == 0x40 && ECRamReadByte(0x4F2, ECDetails) == 0x02);
+        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40 && ECRamDirectReadByte(0x4F2, ECDetails) == 0x02);
     }
 
     public override void Close()

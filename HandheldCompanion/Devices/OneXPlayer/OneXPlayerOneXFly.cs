@@ -129,7 +129,7 @@ public class OneXPlayerOneXFly : IDevice
 
         ECRamDirectWrite(0x4F1, ECDetails, 0x40);
 
-        return (ECRamReadByte(0x4F1, ECDetails) == 0x40);
+        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
     }
 
     public override void Close()

@@ -80,7 +80,7 @@ namespace HandheldCompanion.Devices
 
             ECRamDirectWrite(0x4EB, ECDetails, 0xEB);
 
-            return ECRamReadByte(0x4EB, ECDetails) == 0xEB;
+            return ECRamDirectReadByte(0x4EB, ECDetails) == 0xEB;
         }
 
         public override void Close()
