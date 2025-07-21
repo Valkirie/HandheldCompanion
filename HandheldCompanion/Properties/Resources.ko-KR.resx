@@ -2849,30 +2849,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="Hotkey_GameBarDesc" xml:space="preserve">
     <value>다음 키를 누르세요: Windows + G</value>
   </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
-    <value>C1</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B6" xml:space="preserve">
-    <value>C2</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B7" xml:space="preserve">
-    <value>C3</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B8" xml:space="preserve">
-    <value>C4</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B9" xml:space="preserve">
-    <value>T1</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B10" xml:space="preserve">
-    <value>T2</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B11" xml:space="preserve">
-    <value>T3</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_L5" xml:space="preserve">
-    <value>M</value>
-  </data>
   <data name="ProfilesPage_Pinned" xml:space="preserve">
     <value>빠른 도구 애플리케이션 페이지의 빠른 시작 섹션에 프로필을 표시합니다.</value>
   </data>
@@ -3083,18 +3059,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
     <value>Endurance Gaming presets</value>
   </data>
-  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>컨트롤러의 진동의 세기를 변경</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
-    <value>스틱 감도</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
-    <value>회전 속도를 변경합니다.</value>
-  </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
-  </data>
   <data name="Enum_DualShock4Controller_ButtonFlags_B1" xml:space="preserve">
     <value>가위표</value>
   </data>
@@ -3175,6 +3139,30 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="Enum_DClawController_OEM4" xml:space="preserve">
     <value />
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B6" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B7" xml:space="preserve">
+    <value>C3</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B8" xml:space="preserve">
+    <value>C4</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B9" xml:space="preserve">
+    <value>T1</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B10" xml:space="preserve">
+    <value>T2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B11" xml:space="preserve">
+    <value>T3</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_L5" xml:space="preserve">
+    <value>M</value>
   </data>
   <data name="Enum_Xbox360Controller_AxisLayoutFlags_L2" xml:space="preserve">
     <value>L2</value>
@@ -3307,5 +3295,32 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="Enum_Xbox360Controller_ButtonFlags_Start" xml:space="preserve">
     <value>메뉴</value>
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>컨트롤러의 진동의 세기를 변경</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
+    <value>스틱 감도</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
+    <value>회전 속도를 변경합니다.</value>
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM4" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM5" xml:space="preserve">
+    <value />
   </data>
 </root>

@@ -1,11 +1,14 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using WindowsInput.Events;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices.Zotac
 {
@@ -50,6 +53,28 @@ namespace HandheldCompanion.Devices.Zotac
                 [KeyCode.LWin, KeyCode.D],
                 false, ButtonFlags.OEM3
             ));
+
+            this.OEMChords.Add(new KeyboardChord("M1",
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F11],
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F11],
+                false, ButtonFlags.OEM4
+            ));
+
+            this.OEMChords.Add(new KeyboardChord("M2",
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F12],
+                [KeyCode.LControl, KeyCode.LWin, KeyCode.F12],
+                false, ButtonFlags.OEM5
+            ));
+
+            // device specific capacities
+            Capabilities |= DeviceCapabilities.DynamicLighting;
+            Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+
+            // dynamic lighting capacities
+            DynamicLightingCapabilities |= LEDLevel.SolidColor;
+            DynamicLightingCapabilities |= LEDLevel.Breathing;
+            DynamicLightingCapabilities |= LEDLevel.Rainbow;
+            DynamicLightingCapabilities |= LEDLevel.Wheel;
         }
 
         public override void OpenEvents()
@@ -128,6 +153,10 @@ namespace HandheldCompanion.Devices.Zotac
                 device.Removed += Device_Removed;
                 device.OpenDevice();
 
+                device.Write(RestoreProfileSet());
+                device.Write(RemapM1_CtrlWinF11());
+                device.Write(RemapM2_CtrlWinF12());
+
                 // fire‐and‐forget the read loop
                 IsReadingInput = true;
                 _ = ReadInputLoopAsync(device);
@@ -145,6 +174,210 @@ namespace HandheldCompanion.Devices.Zotac
             }
         }
 
+        private byte[] RestoreProfileSet()
+        {
+            byte[] data = new byte[65]; // 65 = Report ID + 64 bytes payload
+            data[0] = 0x00;    // Report ID
+
+            data[1] = 225;     // HEADER_TAG
+            data[2] = 0;       // reserved
+            data[3] = 0;       // sequence
+            data[4] = 60;      // PAYLOAD_SIZE
+
+            data[5] = 241;     // COMMAND (Restore Profile Set)
+
+            // The rest is zeroed by default
+
+            // CRC over [5]..[62] (payload bytes [4]..[61] in logical packet)
+            ushort crc = CalcZotacCRC(data, 5, 62);
+            data[63] = (byte)(crc >> 8);
+            data[64] = (byte)(crc & 0xFF);
+
+            return data;
+        }
+
+        private byte[] RemapM1()
+        {
+            // Allocate 65 bytes: 1 for Report ID, 64 for payload
+            byte[] data = new byte[65];
+            data[0] = 0x00;      // Report ID (assumed 0, common for vendor devices)
+
+            data[1] = 225;      // HEADER_TAG
+            data[2] = 0;        // unused/reserved
+            data[3] = 0;        // sequence
+            data[4] = 60;       // PAYLOAD_SIZE
+
+            data[5] = 161;      // COMMAND (SetBtnMap)
+            data[6] = 1;        // SourceKey: M1
+
+            // Target: BtnA (from your mapping: byteIndex=1, byteShift=4) = set bit 4 in byte 8
+            // Remember: our 64-byte logic moves up by 1 in 65-byte (due to ReportID)
+            data[8] = 0b00010000;
+
+            // CRC: compute over data[5]..data[62] (corresponding to logical [4]..[61])
+            ushort CRC = CalcZotacCRC(data, 5, 62);
+            data[63] = (byte)(CRC >> 8);    // CRC High byte ([62]+1)
+            data[64] = (byte)(CRC & 0xFF);  // CRC Low byte ([63]+1)
+
+            return data;
+        }
+
+        private byte[] RemapM1_CtrlWinF11()
+        {
+            byte[] data = new byte[65];
+            data[0] = 0x00;   // Report ID
+
+            data[1] = 225;    // HEADER_TAG
+            data[2] = 0;      // reserved
+            data[3] = 0;      // sequence
+            data[4] = 60;     // PAYLOAD_SIZE
+
+            data[5] = 161;    // COMMAND (SetBtnMap)
+            data[6] = 1;      // SourceKey: M1
+
+            // Modifier: LeftCtrl (1) | LeftWinCMD (8) = 9
+            data[11] = 1 | 8;
+
+            // Keyboard: F11
+            data[13] = 68;   // BtnKeyboardMapPos[122]
+
+            ushort CRC = CalcZotacCRC(data, 5, 62);
+            data[63] = (byte)(CRC >> 8);
+            data[64] = (byte)(CRC & 0xFF);
+
+            return data;
+        }
+
+        private byte[] RemapM2_CtrlWinF12()
+        {
+            byte[] data = new byte[65];
+            data[0] = 0x00;   // Report ID
+
+            data[1] = 225;
+            data[2] = 0;
+            data[3] = 0;
+            data[4] = 60;
+
+            data[5] = 161;
+            data[6] = 2;      // SourceKey: M2 (if that's your enum)
+
+            // Modifier: LeftCtrl (1) | LeftWinCMD (8) = 9
+            data[11] = 1 | 8;
+
+            // Keyboard: F12
+            data[13] = 69;   // BtnKeyboardMapPos[123]
+
+            ushort CRC = CalcZotacCRC(data, 5, 62);
+            data[63] = (byte)(CRC >> 8);
+            data[64] = (byte)(CRC & 0xFF);
+
+            return data;
+        }
+
+        private enum BrightnessID
+        {
+            Brightness_0 = 0,
+            Brightness_25 = 25, // 0x00000019
+            Brightness_50 = 50, // 0x00000032
+            Brightness_75 = 75, // 0x0000004B
+            Brightness_100 = 100, // 0x00000064
+        }
+
+        private enum LightEffect
+        {
+            Rainbow = 0,
+            Breathe = 1,
+            Stars = 2,
+            Fade = 3,
+            Dance = 4,
+            Off = 240, // 0x000000F0
+        }
+
+        private enum LightSpeed
+        {
+            Slow,
+            Normal,
+            Fast,
+        }
+
+        private enum LEDSettings
+        {
+            Speed = 1,
+            Effect = 2,
+            Brightness = 3,
+            Color = 4,
+        }
+
+        private byte[] SendLedCmd(LEDSettings setting, byte value)
+        {
+            byte[] data = new byte[65];
+            data[0] = 0x00;   // Report ID
+
+            data[1] = 225;
+            data[2] = 0;
+            data[3] = 0;
+            data[4] = 60;
+
+            data[5] = 173;
+            data[6] = (byte)setting;
+            data[7] = value;
+
+            ushort CRC = CalcZotacCRC(data, 4, 61);
+            data[63] = (byte)(CRC >> 8);
+            data[64] = (byte)(CRC & 0xFF);
+
+            return data;
+        }
+
+        private byte[] SendLedRGB(Color MainColor, Color SecondaryColor)
+        {
+            byte[] data = new byte[65];
+            data[0] = 0x00;   // Report ID
+
+            data[1] = 225;
+            data[2] = 0;
+            data[3] = 0;
+            data[4] = 60;
+
+            data[5] = 173; // COMMAND
+            data[6] = 0;   // SETTING
+            data[7] = 1;   // LedNumSet
+
+            // Set all 10 LEDs to red (0xFF0000)
+            for (int i = 0; i < 10; i++)
+            {
+                int pos = 8 + (i * 3);
+                data[pos] = MainColor.R;        // R
+                data[pos + 1] = MainColor.G;    // G
+                data[pos + 2] = MainColor.B;    // B
+            }
+
+            // CRC over [5]..[62] (i.e., [4]..[61] in 64-byte logic)
+            ushort crc = CalcZotacCRC(data, 5, 62);
+            data[63] = (byte)(crc >> 8);
+            data[64] = (byte)(crc & 0xFF);
+
+            return data;
+        }
+
+        public static ushort CalcZotacCRC(byte[] data, int start, int end)
+        {
+            ushort seed = CalcFast(0, data[start]);
+            for (ushort i = (ushort)(start + 1); i <= end; ++i)
+                seed = CalcFast(seed, data[i]);
+            return seed;
+        }
+
+        private static ushort CalcFast(ushort seed, byte c)
+        {
+            uint num1 = (uint)(((int)seed ^ (int)c) & 0xFF);
+            uint num2 = num1 & 0x0F;
+            int num3 = ((int)num2 << 4) ^ (int)num1;
+            uint num4 = (uint)((uint)num3 >> 4);
+            uint intermediate = (uint)(((num3 << 1) ^ (int)num4) << 4 ^ (int)num2);
+            return (ushort)((((intermediate << 3) ^ num4) ^ ((uint)seed >> 8)) & 0xFFFF);
+        }
+
         private async Task ReadInputLoopAsync(HidDevice device)
         {
             try
@@ -152,6 +385,7 @@ namespace HandheldCompanion.Devices.Zotac
                 while (IsReadingInput)
                 {
                     HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
+                    Console.WriteLine("ReadInputLoopAsync: {0}", string.Join(",", report.Data));
                     // do something
                 }
             }
@@ -166,6 +400,8 @@ namespace HandheldCompanion.Devices.Zotac
                 {
                     HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
                     // do something
+                    // byte[0] = 0
+                    // byte[2] = 1 right clockwise | 2 right anticlockwise | 8 left clockwise | 16 left anticlockwise
                 }
             }
             catch { }
@@ -173,16 +409,71 @@ namespace HandheldCompanion.Devices.Zotac
 
         public override bool IsReady()
         {
-            IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds);
+            IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
             foreach (HidDevice device in devices)
             {
                 if (!device.IsConnected)
                     continue;
 
-                if (device.ReadFeatureData(out byte[] data, INPUT_HID_ID))
+                // mi_03
+                if (device.Capabilities.InputReportByteLength == 65 && device.Capabilities.OutputReportByteLength == 65)
                     hidDevices[INPUT_HID_ID] = device;
-                else if (device.ReadFeatureData(out data, DIALWHEEL_HID_ID))
+                // mi_01
+                else if (device.Capabilities.InputReportByteLength == 4 && device.Capabilities.OutputReportByteLength == 0)
                     hidDevices[DIALWHEEL_HID_ID] = device;
+            }
+
+            return true;
+        }
+
+        public override bool SetLedBrightness(int brightness)
+        {
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+            {
+                if (!hidDevice.IsConnected)
+                    return false;
+
+                return hidDevice.Write(SendLedCmd(LEDSettings.Brightness, (byte)brightness));
+            }
+
+            return false;
+        }
+
+        public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed)
+        {
+            // Apply the color for the left and right LED
+            LightEffect lightEffect = LightEffect.Off;
+
+            switch (level)
+            {
+                default:
+                case LEDLevel.SolidColor:
+                    lightEffect = LightEffect.Off; // ??
+                    break;
+                case LEDLevel.Breathing:
+                    lightEffect = LightEffect.Breathe;
+                    break;
+                case LEDLevel.Rainbow:
+                    lightEffect = LightEffect.Rainbow;
+                    break;
+                case LEDLevel.Wave:
+                    lightEffect = LightEffect.Dance; // ??
+                    break;
+                case LEDLevel.Wheel:
+                    lightEffect = LightEffect.Stars; // ??
+                    break;
+            }
+
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+            {
+                if (!hidDevice.IsConnected)
+                    return false;
+
+                hidDevice.Write(SendLedCmd(LEDSettings.Effect, (byte)lightEffect));
+                hidDevice.Write(SendLedCmd(LEDSettings.Speed, (byte)LightSpeed.Normal));
+                hidDevice.Write(SendLedRGB(MainColor, SecondaryColor));
+
+                return true;
             }
 
             return false;
@@ -192,12 +483,16 @@ namespace HandheldCompanion.Devices.Zotac
         {
             switch (button)
             {
-                case ButtonFlags.OEM1:
+                case ButtonFlags.OEM1:  // ZONE
                     return "\u221D";
-                case ButtonFlags.OEM2:
+                case ButtonFlags.OEM2:  // MORE
                     return "\u221E";
-                case ButtonFlags.OEM3:
+                case ButtonFlags.OEM3:  // HOME
                     return "\u21F9";
+                case ButtonFlags.OEM4:  // M1
+                    return "\u2212";
+                case ButtonFlags.OEM5:  // M2
+                    return "\u2213";
             }
 
             return base.GetGlyph(button);

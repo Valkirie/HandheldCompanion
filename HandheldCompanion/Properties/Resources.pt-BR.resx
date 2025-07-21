@@ -3159,30 +3159,6 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="Hotkey_GameBarDesc" xml:space="preserve">
     <value>Pressione essa combinação de teclas: Windows + G</value>
   </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
-    <value>C1</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B6" xml:space="preserve">
-    <value>C2</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B7" xml:space="preserve">
-    <value>C3</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B8" xml:space="preserve">
-    <value>C4</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B9" xml:space="preserve">
-    <value>T1</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B10" xml:space="preserve">
-    <value>T2</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_B11" xml:space="preserve">
-    <value>T3</value>
-  </data>
-  <data name="Enum_TarantulaProController_ButtonFlags_L5" xml:space="preserve">
-    <value>M</value>
-  </data>
   <data name="ProfilesPage_Pinned" xml:space="preserve">
     <value>Exibir o perfil na seção de Início Rápido da página de Aplicativos das Ferramentas Rápidas</value>
   </data>
@@ -3633,6 +3609,30 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="Enum_DClawController_OEM4" xml:space="preserve">
     <value />
   </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B6" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B7" xml:space="preserve">
+    <value>C3</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B8" xml:space="preserve">
+    <value>C4</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B9" xml:space="preserve">
+    <value>T1</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B10" xml:space="preserve">
+    <value>T2</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_B11" xml:space="preserve">
+    <value>T3</value>
+  </data>
+  <data name="Enum_TarantulaProController_ButtonFlags_L5" xml:space="preserve">
+    <value>M</value>
+  </data>
   <data name="Enum_Xbox360Controller_AxisLayoutFlags_Gyroscope" xml:space="preserve">
     <value>Giroscópico</value>
   </data>
@@ -3770,5 +3770,20 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="Enum_Xbox360Controller_ButtonFlags_Start" xml:space="preserve">
     <value>Menu</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM4" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM5" xml:space="preserve">
+    <value />
   </data>
 </root>

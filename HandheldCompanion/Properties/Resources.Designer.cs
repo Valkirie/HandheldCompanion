@@ -1987,6 +1987,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zone.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M1.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M2.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated DualShock 4 controller.
         /// </summary>
         public static string Enum_HIDmode_DualShock4Controller {

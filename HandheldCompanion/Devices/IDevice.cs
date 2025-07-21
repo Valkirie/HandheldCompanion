@@ -761,6 +761,7 @@ public abstract class IDevice
                 }
                 break;
 
+            case "PC PARTNER LIMITED":
             case "ZOTAC":
                 {
                     switch (ProductName)
