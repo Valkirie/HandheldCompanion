@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using System;
@@ -453,6 +454,7 @@ namespace HandheldCompanion.Devices.Zotac
             return false;
         }
 
+        #region EC
         public override void SetFanControl(bool enable, int mode)
         {
             if (!IsOpen)
@@ -525,6 +527,69 @@ namespace HandheldCompanion.Devices.Zotac
                 return false;
             }
         }
+        #endregion
+
+        #region WMI
+        private void SetFanControlWMI(bool enabled)
+        {
+            try
+            {
+                WMI.Call("root\\WMI",
+                    $"SELECT * FROM UMAInterface",
+                    "SetEcValue",
+                    new Dictionary<string, object>
+                    {
+                        { "Index", (ushort)74 },
+                        { "Value", 1 }
+                    });
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Error in SetFanControlWMI: {0}, Enabled: {1}", ex.Message, enabled);
+            }
+        }
+
+        private void SetFanDutyWMI(double fanSpeed)
+        {
+            try
+            {
+                byte fanValue = (byte)((fanSpeed / 100.0d) * 255.0d);
+
+                WMI.Call("root\\WMI",
+                    $"SELECT * FROM UMAInterface",
+                    "SetEcValue",
+                    new Dictionary<string, object>
+                    {
+                        { "Index", (ushort)75 },
+                        { "Value", fanValue }
+                    });
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Error in SetFanDutyWMI: {0}, FanSpeed: {1}", ex.Message, fanSpeed);
+            }
+        }
+
+        private int ReadFanDutyWMI()
+        {
+            try
+            {
+                return WMI.Call<int>("root\\WMI",
+                $"SELECT * FROM UMAInterface",
+                "GetEcValue",
+                new Dictionary<string, object>
+                {
+                    { "Index", (ushort)75 }
+                },
+                props => Convert.ToInt32(props["Data"]));
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Error in ReadFanDutyWMI: {0}", ex.Message);
+                return -1;
+            }
+        }
+        #endregion
 
         public override string GetGlyph(ButtonFlags button)
         {
