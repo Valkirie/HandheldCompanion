@@ -176,7 +176,7 @@ namespace HandheldCompanion.Devices.Zotac
                 device.Removed += Device_Removed;
                 device.OpenDevice();
 
-                device.Write(RestoreProfileSet());
+                // device.Write(RestoreProfileSet());
                 device.Write(RemapM1_CtrlWinF11());
                 device.Write(RemapM2_CtrlWinF12());
 
@@ -334,7 +334,7 @@ namespace HandheldCompanion.Devices.Zotac
             data[6] = (byte)setting;
             data[7] = value;
 
-            ushort CRC = CalcZotacCRC(data, 4, 61);
+            ushort CRC = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(CRC >> 8);
             data[64] = (byte)(CRC & 0xFF);
 

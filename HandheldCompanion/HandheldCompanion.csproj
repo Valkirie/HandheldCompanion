@@ -60,9 +60,10 @@
     <None Remove="HandheldCompanion.json" />
     <None Remove="Resources\controller_0_big.png" />
     <None Remove="Resources\controller_1_big.png" />
-    <None Remove="Resources\DeviceImages\device_minisforum_v3.png" />
-    <None Remove="Resources\DeviceImages\device_msi_claw8.png" />
-    <None Remove="Resources\DeviceImages\device_rog_ally_x.png" />
+    <None Remove="Resources\device_minisforum_v3.png" />
+    <None Remove="Resources\device_msi_claw8.png" />
+    <None Remove="Resources\device_rog_ally_x.png" />
+    <None Remove="Resources\device_zotac_zone.png" />
     <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2.png" />
     <None Remove="Resources\device_aya_2021.png" />
@@ -164,6 +165,7 @@
     <Resource Include="Resources\DeviceImages\device_rog_ally.png" />
     <Resource Include="Resources\DeviceImages\device_rog_ally_x.png" />
     <Resource Include="Resources\DeviceImages\device_valve_jupiter.png" />
+    <Resource Include="Resources\DeviceImages\device_zotac_zone.png" />
     <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
     <Resource Include="Resources\MissingCover.png" />
