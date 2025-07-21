@@ -64,7 +64,10 @@ namespace HandheldCompanion.Controllers.Lenovo
                     {
                         // open controller
                         Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
-                        Controller.Open();
+                        if (Controller.Open())
+                        {
+                            // do something
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -129,14 +132,14 @@ namespace HandheldCompanion.Controllers.Lenovo
             base.UpdateInputs(ticks, delta, false);
 
             // Front buttons
-            byte byte0 = data[0]; // Front buttons
-            Inputs.ButtonState[ButtonFlags.OEM1] = (byte0 & (1 << 7)) != 0; // LegionR
-            Inputs.ButtonState[ButtonFlags.OEM2] = (byte0 & (1 << 6)) != 0; // LegionL
+            byte byte0 = data[0];
+            Inputs.ButtonState[ButtonFlags.OEM1] = (byte0 & 0x02) != 0; // LegionL
+            Inputs.ButtonState[ButtonFlags.OEM2] = (byte0 & 0x04) != 0; // LegionR
 
-            // --- Extra Button Parsing ---
-            byte byte2 = data[2]; // (2 << 3) = byte 23
-            Inputs.ButtonState[ButtonFlags.L4] = (byte2 & (1 << 7)) != 0;  // extra_l1 → B5 → bit 7
-            Inputs.ButtonState[ButtonFlags.R4] = (byte2 & (1 << 6)) != 0;  // extra_r1 → B6 → bit 6
+            // Extra Button Parsing
+            byte byte2 = data[2];
+            Inputs.ButtonState[ButtonFlags.L4] = (byte2 & 0x01) != 0;   // Y1
+            Inputs.ButtonState[ButtonFlags.R4] = (byte2 & 0x01) != 0;   // Y2
 
             // Example parsing assuming positions from const.py
             aX = BitConverter.ToInt16(data, 14) * -(4.0f / short.MaxValue);

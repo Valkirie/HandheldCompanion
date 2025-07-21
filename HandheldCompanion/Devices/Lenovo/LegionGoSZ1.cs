@@ -65,7 +65,7 @@ namespace HandheldCompanion.Devices
                 if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
                     continue;
 
-                if (device.Capabilities.InputReportByteLength != 33 || device.Capabilities.OutputReportByteLength != 0)
+                if (device.Capabilities.InputReportByteLength != 65 || device.Capabilities.OutputReportByteLength != 65)
                     continue;
 
                 hidDevices[INPUT_HID_ID] = device;
@@ -88,13 +88,13 @@ namespace HandheldCompanion.Devices
 
                 // Send controller init packet sequence
                 foreach (byte[] cmd in ControllerFactoryReset())
-                    device.Write(cmd);
+                    device.Write(WithReportID(cmd));
 
                 // disable built-in swap
-                device.Write(ControllerLegionSwap(false));
+                device.Write(WithReportID(ControllerLegionSwap(false)));
 
                 // load RGB profile
-                device.Write(RgbLoadProfile(0x03));
+                device.Write(WithReportID(RgbLoadProfile(0x03)));
             }
 
             base.Device_Inserted(reScan);
@@ -155,7 +155,7 @@ namespace HandheldCompanion.Devices
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
                 byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
-                return device.Write(cmd);
+                return device.Write(WithReportID(cmd));
             }
 #endif
             return false;
@@ -167,7 +167,7 @@ namespace HandheldCompanion.Devices
             return SetLightingEnable(3, status);
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-                return device.Write(RgbEnable(status));
+                return device.Write(WithReportIDRgbEnable(status)));
 #endif
             return false;
         }
@@ -205,7 +205,7 @@ namespace HandheldCompanion.Devices
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
                 byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
-                return device.Write(cmd);
+                return device.Write(WithReportID(cmd));
             }
 #endif
             return false;

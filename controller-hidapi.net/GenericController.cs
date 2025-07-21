@@ -28,11 +28,14 @@ namespace controller_hidapi.net
             OnControllerInputReceived?.Invoke(e.Buffer);
         }
 
-        public virtual void Open()
+        public virtual bool Open()
         {
-            if (!_hidDevice.OpenDevice())
+            bool isOpen = _hidDevice.OpenDevice();
+            if (!isOpen)
                 throw new Exception("Could not open device!");
             _hidDevice.BeginRead();
+
+            return isOpen;
         }
 
         public virtual void Close()
@@ -45,6 +48,15 @@ namespace controller_hidapi.net
         {
             if (_hidDevice.IsDeviceValid)
                 _hidDevice.EndRead();
+        }
+
+        public void HidWrite(byte[] data)
+        {
+            try
+            {
+                _hidDevice.Write(data);
+            }
+            catch { }
         }
     }
 }

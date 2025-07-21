@@ -1089,6 +1089,14 @@ public abstract class IDevice
         return GetHidDevices(vendorId, new int[] { deviceId }, minFeatures);
     }
 
+    public static byte[] WithReportID(byte[] payload, byte reportID = 0x00)
+    {
+        var buffer = new byte[1 + payload.Length];
+        buffer[0] = reportID;
+        Buffer.BlockCopy(payload, 0, buffer, 1, payload.Length);
+        return buffer;
+    }
+
     public string GetButtonName(ButtonFlags button)
     {
         return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
