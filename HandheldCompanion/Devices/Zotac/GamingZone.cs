@@ -6,6 +6,7 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -15,6 +16,10 @@ namespace HandheldCompanion.Devices.Zotac
 {
     public class GamingZone : IDevice
     {
+        [DllImport("Kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
+
         private bool IsReading = false;
 
         private const byte INPUT_HID_ID = 0x00;
@@ -94,6 +99,15 @@ namespace HandheldCompanion.Devices.Zotac
             DynamicLightingCapabilities |= LEDLevel.Breathing;
             DynamicLightingCapabilities |= LEDLevel.Rainbow;
             DynamicLightingCapabilities |= LEDLevel.Wheel;
+
+            // get physical installed RAM
+            ulong TotalMemoryInKilobytes = 0;
+            if (GetPhysicallyInstalledSystemMemory(out TotalMemoryInKilobytes))
+            {
+                physicalInstalledRamGB = (uint)(TotalMemoryInKilobytes / 1048576UL);
+                if (!defaultVRamSize.ContainsKey(physicalInstalledRamGB))
+                    physicalInstalledRamGB = defaultVRamSize.FirstOrDefault().Key;
+            }
         }
 
         public override void OpenEvents()
@@ -466,9 +480,10 @@ namespace HandheldCompanion.Devices.Zotac
         // additionSize in GB
         public void SetVRamSize(uint additionSize)
         {
-            uint num = (this.defaultVRamSize[this.physicalInstalledRamGB] + additionSize) * 4U;
-            openLibSys.WriteIoPortByte((ushort)112 /*0x70*/, (byte)122);
-            openLibSys.WriteIoPortByte((ushort)113, (byte)num);
+            uint vRAM = (physicalInstalledRamGB + additionSize) * 4U;
+
+            openLibSys.WriteIoPortByte((ushort)112, (byte)122);
+            openLibSys.WriteIoPortByte((ushort)113, (byte)vRAM);
         }
 
         public override void SetFanControl(bool enable, int mode)
@@ -550,21 +565,15 @@ namespace HandheldCompanion.Devices.Zotac
         {
             try
             {
-                uint baseVRam = defaultVRamSize.ContainsKey(physicalInstalledRamGB)
-                    ? defaultVRamSize[physicalInstalledRamGB]
-                    : defaultVRamSize.First().Value;
+                uint vRAM = (physicalInstalledRamGB + additionSize) * 4U;
 
-                // 2. Calculate EC value
-                uint ecValue = (baseVRam + additionSize) * 4U;
-
-                // 3. Call WMI (address 122 for VRAM)
                 WMI.Call("root\\WMI",
                     $"SELECT * FROM UMAInterface",
                     "SetEcValue",
                     new Dictionary<string, object>
                     {
                         { "Index", (ushort)122 },   // VRAM EC register
-                        { "Value", (byte)ecValue }
+                        { "Value", (byte)vRAM }
                     });
             }
             catch (Exception ex)
