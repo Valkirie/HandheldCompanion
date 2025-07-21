@@ -19,6 +19,14 @@ namespace HandheldCompanion.Devices.Zotac
 
         private const byte INPUT_HID_ID = 0x00;
 
+        protected uint physicalInstalledRamGB = 16; // TODO: Detect dynamically if needed
+        protected readonly Dictionary<uint, uint> defaultVRamSize = new Dictionary<uint, uint>
+        {
+            { 16U, 4U }, // 16GB RAM => 4GB base VRAM
+            { 32U, 6U },
+            { 64U, 12U }
+        };
+
         public GamingZone()
         {
             // device specific settings
@@ -455,6 +463,14 @@ namespace HandheldCompanion.Devices.Zotac
         }
 
         #region EC
+        // additionSize in GB
+        public void SetVRamSize(uint additionSize)
+        {
+            uint num = (this.defaultVRamSize[this.physicalInstalledRamGB] + additionSize) * 4U;
+            openLibSys.WriteIoPortByte((ushort)112 /*0x70*/, (byte)122);
+            openLibSys.WriteIoPortByte((ushort)113, (byte)num);
+        }
+
         public override void SetFanControl(bool enable, int mode)
         {
             if (!IsOpen)
@@ -530,6 +546,33 @@ namespace HandheldCompanion.Devices.Zotac
         #endregion
 
         #region WMI
+        private void SetVRamSizeWMI(uint additionSize)
+        {
+            try
+            {
+                uint baseVRam = defaultVRamSize.ContainsKey(physicalInstalledRamGB)
+                    ? defaultVRamSize[physicalInstalledRamGB]
+                    : defaultVRamSize.First().Value;
+
+                // 2. Calculate EC value
+                uint ecValue = (baseVRam + additionSize) * 4U;
+
+                // 3. Call WMI (address 122 for VRAM)
+                WMI.Call("root\\WMI",
+                    $"SELECT * FROM UMAInterface",
+                    "SetEcValue",
+                    new Dictionary<string, object>
+                    {
+                        { "Index", (ushort)122 },   // VRAM EC register
+                        { "Value", (byte)ecValue }
+                    });
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Error in SetVRamSizeWMI: {0}, additionSize: {1}", ex.Message, additionSize);
+            }
+        }
+
         private void SetFanControlWMI(bool enabled)
         {
             try
