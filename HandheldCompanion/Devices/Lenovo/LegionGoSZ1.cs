@@ -167,7 +167,7 @@ namespace HandheldCompanion.Devices
             return SetLightingEnable(3, status);
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-                return device.Write(WithReportIDRgbEnable(status)));
+                return device.Write(WithReportID(RgbEnable(status)));
 #endif
             return false;
         }
