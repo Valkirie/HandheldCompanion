@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Shared;
+﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Shared;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,35 @@ namespace HandheldCompanion.Controllers.Zotac
         private controller_hidapi.net.GenericController? Controller;
         private byte[] Data = new byte[64];
 
+        [Flags]
+        public enum ButtonWheel
+        {
+            None = 0,
+            RightClock = 1,
+            RightAnti = 2,
+            Unk1 = 4,
+            LeftClock = 8,
+            LeftAnti = 16,
+        }
+
         public ZoneController() : base()
         { }
 
         public ZoneController(PnPDetails details) : base(details)
         { }
+
+        public override string ToString()
+        {
+            return "Zotac Controller";
+        }
+
+        protected override void InitializeInputOutput()
+        {
+            SourceButtons.Add(ButtonFlags.B5);  // left wheel counterclockwise
+            SourceButtons.Add(ButtonFlags.B6);  // left wheel clockwise
+            SourceButtons.Add(ButtonFlags.B7);  // right wheel counterclockwise
+            SourceButtons.Add(ButtonFlags.B8);  // right wheel clockwise
+        }
 
         public override void AttachDetails(PnPDetails details)
         {
@@ -28,10 +53,31 @@ namespace HandheldCompanion.Controllers.Zotac
             if (WasPlugged) Close();
 
             // create controller
-            Controller = new(details.VendorID, details.ProductID, 64, 3);
+            // interface: 0x01
+            // length: 0x04
+            Controller = new(details.VendorID, details.ProductID, 0x04, 0x01);
 
             // (re)plug controller if needed
             if (WasPlugged) Open();
+        }
+
+        public override void UpdateInputs(long ticks, float delta, bool commit)
+        {
+            // skip if controller isn't connected
+            if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
+                return;
+
+            base.UpdateInputs(ticks, delta, false);
+
+            // byte[0] = 0
+            // byte[2] = 1 right clockwise | 2 right anticlockwise | 8 left clockwise | 16 left anticlockwise
+            ButtonWheel buttonWheel = (ButtonWheel)Data[2];
+            Inputs.ButtonState[ButtonFlags.B5] = buttonWheel.HasFlag(ButtonWheel.LeftAnti);
+            Inputs.ButtonState[ButtonFlags.B6] = buttonWheel.HasFlag(ButtonWheel.LeftClock);
+            Inputs.ButtonState[ButtonFlags.B7] = buttonWheel.HasFlag(ButtonWheel.RightAnti);
+            Inputs.ButtonState[ButtonFlags.B8] = buttonWheel.HasFlag(ButtonWheel.RightClock);
+
+            base.UpdateInputs(ticks, delta);
         }
 
         private void Open()
@@ -87,15 +133,32 @@ namespace HandheldCompanion.Controllers.Zotac
             base.Plug();
         }
 
+        public override void Unplug()
+        {
+            Close();
+            base.Unplug();
+        }
+
         private void Controller_OnControllerInputReceived(byte[] Data)
         {
             Buffer.BlockCopy(Data, 1, this.Data, 0, Data.Length - 1);
         }
 
-        public override void Unplug()
+        public override string GetGlyph(ButtonFlags button)
         {
-            Close();
-            base.Unplug();
+            switch (button)
+            {
+                case ButtonFlags.B5:
+                    return "\u21AA";
+                case ButtonFlags.B6:
+                    return "\u21A9";
+                case ButtonFlags.B7:
+                    return "\u21AC";
+                case ButtonFlags.B8:
+                    return "\u21AB";
+            }
+
+            return base.GetGlyph(button);
         }
     }
 }

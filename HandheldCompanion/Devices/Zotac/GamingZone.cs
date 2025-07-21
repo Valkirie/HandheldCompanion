@@ -14,11 +14,9 @@ namespace HandheldCompanion.Devices.Zotac
 {
     public class GamingZone : IDevice
     {
-        private bool IsReadingInput = false;
-        private bool IsReadingDialWheel = false;
+        private bool IsReading = false;
 
         private const byte INPUT_HID_ID = 0x00;
-        private const byte DIALWHEEL_HID_ID = 0x03;
 
         public GamingZone()
         {
@@ -127,17 +125,7 @@ namespace HandheldCompanion.Devices.Zotac
                 try { device.Dispose(); } catch { }
 
                 // stop further reads
-                IsReadingInput = false;
-            }
-
-            if (hidDevices.TryGetValue(DIALWHEEL_HID_ID, out device))
-            {
-                device.MonitorDeviceEvents = false;
-                device.Removed -= Device_Removed;
-                try { device.Dispose(); } catch { }
-
-                // stop further reads
-                IsReadingDialWheel = false;
+                IsReading = false;
             }
         }
 
@@ -158,19 +146,8 @@ namespace HandheldCompanion.Devices.Zotac
                 device.Write(RemapM2_CtrlWinF12());
 
                 // fire‐and‐forget the read loop
-                IsReadingInput = true;
+                IsReading = true;
                 _ = ReadInputLoopAsync(device);
-            }
-
-            if (hidDevices.TryGetValue(DIALWHEEL_HID_ID, out device))
-            {
-                device.MonitorDeviceEvents = true;
-                device.Removed += Device_Removed;
-                device.OpenDevice();
-
-                // fire‐and‐forget the read loop
-                IsReadingDialWheel = true;
-                _ = ReadDialWheelLoopAsync(device);
             }
         }
 
@@ -382,26 +359,11 @@ namespace HandheldCompanion.Devices.Zotac
         {
             try
             {
-                while (IsReadingInput)
+                while (IsReading)
                 {
                     HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
                     Console.WriteLine("ReadInputLoopAsync: {0}", string.Join(",", report.Data));
                     // do something
-                }
-            }
-            catch { }
-        }
-
-        private async Task ReadDialWheelLoopAsync(HidDevice device)
-        {
-            try
-            {
-                while (IsReadingDialWheel)
-                {
-                    HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
-                    // do something
-                    // byte[0] = 0
-                    // byte[2] = 1 right clockwise | 2 right anticlockwise | 8 left clockwise | 16 left anticlockwise
                 }
             }
             catch { }
@@ -416,14 +378,14 @@ namespace HandheldCompanion.Devices.Zotac
                     continue;
 
                 // mi_03
-                if (device.Capabilities.InputReportByteLength == 65 && device.Capabilities.OutputReportByteLength == 65)
-                    hidDevices[INPUT_HID_ID] = device;
-                // mi_01
-                else if (device.Capabilities.InputReportByteLength == 4 && device.Capabilities.OutputReportByteLength == 0)
-                    hidDevices[DIALWHEEL_HID_ID] = device;
+                if (device.Capabilities.InputReportByteLength != 65 || device.Capabilities.OutputReportByteLength != 65)
+                    continue;
+                
+                hidDevices[INPUT_HID_ID] = device;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public override bool SetLedBrightness(int brightness)

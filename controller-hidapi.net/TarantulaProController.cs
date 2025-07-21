@@ -27,22 +27,7 @@ namespace controller_hidapi.net
         private byte[] ControllerLayout = new byte[] { 0x07, 0x07, 0x09, 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
 
         public TarantulaProController(ushort vid, ushort pid) : base(vid, pid)
-        {
-            _hidDevice = new HidDevice(_vid, _pid, 64)
-            {
-                OnInputReceived = input =>
-                {
-                    OnInputReceived(input);
-                    return Task.CompletedTask;
-                }
-            };
-
-            /*
-            // LED ON
-            LEDMode[6] = 1;
-            hidDevice.Write(LEDMode);
-            */
-        }
+        { }
 
         public void SetLightColor(byte R, byte G, byte B)
         {
