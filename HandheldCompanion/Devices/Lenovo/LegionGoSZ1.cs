@@ -118,6 +118,7 @@ namespace HandheldCompanion.Devices
             yield return ConvertHex("120103081482140000000015821500000000168216000000001782170000000018821800000000198219000000001c821c000000001d821d0000000000000000");
             yield return ConvertHex("12010402238223000000002482240000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 
+            // todo: moveme to LegionGo main class and drop Sapientia
             yield return ConvertHex("040801"); // enable touchpad
             yield return ConvertHex("080300"); // disable touchpad vibration
             yield return ConvertHex("040400"); // disable hibernation
