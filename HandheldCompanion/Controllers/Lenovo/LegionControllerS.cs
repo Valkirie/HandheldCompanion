@@ -123,6 +123,22 @@ namespace HandheldCompanion.Controllers.Lenovo
             base.Unplug();
         }
 
+        [Flags]
+        private enum FrontButtons
+        {
+            None = 0,
+            LegionL = 1,
+            LegionR = 2,
+        }
+
+        [Flags]
+        private enum BackButtons
+        {
+            None = 0,
+            Y1 = 1,
+            Y2 = 2,
+        }
+
         public override void UpdateInputs(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
@@ -131,15 +147,15 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             base.UpdateInputs(ticks, delta, false);
 
-            // Front buttons
-            byte byte0 = data[0];
-            Inputs.ButtonState[ButtonFlags.OEM1] = (byte0 & 0x02) != 0; // LegionL
-            Inputs.ButtonState[ButtonFlags.OEM2] = (byte0 & 0x04) != 0; // LegionR
+            // Front buttons (byte 0)
+            FrontButtons frontButtons = (FrontButtons)data[0];
+            Inputs.ButtonState[ButtonFlags.OEM1] = frontButtons.HasFlag(FrontButtons.LegionL);
+            Inputs.ButtonState[ButtonFlags.OEM2] = frontButtons.HasFlag(FrontButtons.LegionR);
 
-            // Extra Button Parsing
-            byte byte2 = data[2];
-            Inputs.ButtonState[ButtonFlags.L4] = (byte2 & 0x01) != 0;   // Y1
-            Inputs.ButtonState[ButtonFlags.R4] = (byte2 & 0x01) != 0;   // Y2
+            // Extra Button Parsing (byte 2)
+            BackButtons backButtons = (BackButtons)data[2];
+            Inputs.ButtonState[ButtonFlags.L4] = backButtons.HasFlag(BackButtons.Y1);
+            Inputs.ButtonState[ButtonFlags.R4] = backButtons.HasFlag(BackButtons.Y2);
 
             // Example parsing assuming positions from const.py
             aX = BitConverter.ToInt16(data, 14) * -(4.0f / short.MaxValue);

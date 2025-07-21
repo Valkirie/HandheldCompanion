@@ -94,7 +94,8 @@ namespace HandheldCompanion.Devices
                 device.Write(WithReportID(ControllerLegionSwap(false)));
 
                 // load RGB profile
-                device.Write(WithReportID(RgbLoadProfile(0x03)));
+                lightProfile.profile = 0x03;
+                device.Write(WithReportID(RgbLoadProfile((byte)lightProfile.profile)));
             }
 
             base.Device_Inserted(reScan);
@@ -126,18 +127,18 @@ namespace HandheldCompanion.Devices
         }
 
         #region RGB
-        private byte[] RgbLoadProfile(int profile) => [0x10, 0x02, (byte)profile];
+        private byte[] RgbLoadProfile(byte profile) => [0x10, 0x02, profile];
         private byte[] RgbEnable(bool enable) => [0x04, 0x06, (byte)(enable ? 1 : 0)];
 
         private byte[] RgbSetProfile(byte profile, byte mode, byte red, byte green, byte blue, double brightness, double speed)
         {
-            byte r_brightness = Math.Clamp(ClampByte((int)(64 * brightness / 100)), (byte)0, (byte)63);
-            byte r_speed = Math.Clamp(ClampByte((int)(64 * speed / 100)), (byte)0, (byte)63);
+            byte r_brightness = Math.Clamp(ClampByte((int)brightness), (byte)0, (byte)100);
+            byte r_speed = Math.Clamp(ClampByte((int)speed), (byte)0, (byte)100);
 
             return
             [
                 0x10,
-                profile,
+                (byte)(profile + 0x02),
                 mode,
                 red, green, blue,
                 r_brightness,
@@ -154,7 +155,7 @@ namespace HandheldCompanion.Devices
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
-                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
+                byte[] cmd = RgbSetProfile((byte)lightProfile.profile, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
                 return device.Write(WithReportID(cmd));
             }
 #endif
@@ -177,23 +178,26 @@ namespace HandheldCompanion.Devices
             // Speed is inverted for Legion Go
             lightProfile.speed = 100 - speed;
 
-            // 1 - solid color
-            // 2 - breathing
-            // 3 - rainbow
-            // 4 - spiral rainbow
+            /*
+            Solid Color     0x00
+            Breathe         0x01
+            Chromatographic 0x02
+            Rainbow Spiral  0x03
+            */
+
             switch (level)
             {
                 case LEDLevel.Breathing:
-                    lightProfile.effect = 2;
+                    lightProfile.effect = 0x01;
                     break;
                 case LEDLevel.Rainbow:
-                    lightProfile.effect = 3;
+                    lightProfile.effect = 0x03;
                     break;
                 case LEDLevel.Wheel:
-                    lightProfile.effect = 4;
+                    lightProfile.effect = 0x02;
                     break;
                 default:
-                    lightProfile.effect = 1;
+                    lightProfile.effect = 0x00;
                     break;
             }
 
@@ -204,7 +208,7 @@ namespace HandheldCompanion.Devices
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
-                byte[] cmd = RgbSetProfile(0x03, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
+                byte[] cmd = RgbSetProfile((byte)lightProfile.profile, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
                 return device.Write(WithReportID(cmd));
             }
 #endif

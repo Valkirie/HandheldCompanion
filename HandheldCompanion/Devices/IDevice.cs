@@ -1089,11 +1089,12 @@ public abstract class IDevice
         return GetHidDevices(vendorId, new int[] { deviceId }, minFeatures);
     }
 
-    public static byte[] WithReportID(byte[] payload, byte reportID = 0x00)
+    public static byte[] WithReportID(byte[] payload, byte reportID = 0x00, int reportLen = 64)
     {
-        var buffer = new byte[1 + payload.Length];
+        var buffer = new byte[1 + reportLen];
         buffer[0] = reportID;
-        Buffer.BlockCopy(payload, 0, buffer, 1, payload.Length);
+        int len = Math.Min(payload.Length, reportLen);
+        Buffer.BlockCopy(payload, 0, buffer, 1, len);
         return buffer;
     }
 
