@@ -1,11 +1,9 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices.Zotac;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
-using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers.Zotac
 {
@@ -137,6 +135,31 @@ namespace HandheldCompanion.Controllers.Zotac
         {
             Close();
             base.Unplug();
+        }
+
+        public override bool CyclePort()
+        {
+            // set flag
+            bool success = false;
+
+            // set status
+            IsBusy = true;
+            ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
+
+            // Looks like this will reboot the controller...
+            if (IDevice.GetCurrent() is GamingZone gamingZone)
+            {
+                gamingZone.CycleController();
+            }
+
+            if (!success)
+            {
+                // (re)set status
+                IsBusy = false;
+                ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
+            }
+
+            return success;
         }
 
         private void Controller_OnControllerInputReceived(byte[] Data)

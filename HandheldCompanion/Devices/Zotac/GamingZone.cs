@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -94,7 +94,6 @@ namespace HandheldCompanion.Devices.Zotac
             Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
             // dynamic lighting capacities
-            DynamicLightingCapabilities |= LEDLevel.SolidColor;
             DynamicLightingCapabilities |= LEDLevel.Breathing;
             DynamicLightingCapabilities |= LEDLevel.Rainbow;
             DynamicLightingCapabilities |= LEDLevel.Wave;
@@ -178,6 +177,14 @@ namespace HandheldCompanion.Devices.Zotac
                 device.Write(RemapM1_CtrlWinF11());
                 device.Write(RemapM2_CtrlWinF12());
             }
+        }
+
+        public bool CycleController()
+        {
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+                return device.Write(RestoreProfileSet());
+
+            return false;
         }
 
         private byte[] RestoreProfileSet()
@@ -338,7 +345,7 @@ namespace HandheldCompanion.Devices.Zotac
             return data;
         }
 
-        private byte[] SendLedRGB(Color MainColor, Color SecondaryColor)
+        private byte[] SendLedRGB(byte LedNumSet, Color MainColor, Color SecondaryColor)
         {
             byte[] data = new byte[65];
             data[0] = 0x00;   // Report ID
@@ -348,20 +355,17 @@ namespace HandheldCompanion.Devices.Zotac
             data[3] = 0;
             data[4] = 60;
 
-            data[5] = 173; // COMMAND
-            data[6] = 0;   // SETTING
-            data[7] = 1;   // LedNumSet
+            data[5] = 173;          // COMMAND
+            data[6] = 0;            // SETTING
+            data[7] = LedNumSet;    // LedNumSet
 
             // Set all 10 LEDs to red (0xFF0000)
             for (int i = 0; i < 10; i++)
             {
                 int pos = 8 + (i * 3);
-
-                // first five LEDs to use MainColor
-                // last five LEDs to use SecondaryColor (if any)
-                data[pos] = i < 5 ? MainColor.R : SecondaryColor.R;        // R
-                data[pos + 1] = i < 5 ? MainColor.G : SecondaryColor.G;    // G
-                data[pos + 2] = i < 5 ? MainColor.B : SecondaryColor.B;    // B
+                data[pos]       = LedNumSet == 0 ? MainColor.R : SecondaryColor.R;  // R
+                data[pos + 1]   = LedNumSet == 0 ? MainColor.G : SecondaryColor.G;  // G
+                data[pos + 2]   = LedNumSet == 0 ? MainColor.B : SecondaryColor.B;  // B
             }
 
             // CRC over [5]..[62] (i.e., [4]..[61] in 64-byte logic)
@@ -409,11 +413,35 @@ namespace HandheldCompanion.Devices.Zotac
             return false;
         }
 
+        private static LightSpeed ConvertToLightSpeed(double speed)
+        {
+            if (speed <= 33)
+                return LightSpeed.Slow;
+            else if (speed > 33 && speed <= 66)
+                return LightSpeed.Normal;
+            else
+                return LightSpeed.Fast;
+        }
+
+        private static BrightnessID ConvertToBrightnessID(double brightness)
+        {
+            if (brightness == 0.0)
+                return BrightnessID.Brightness_0;
+            if (brightness == 0.25)
+                return BrightnessID.Brightness_25;
+            if (brightness == 0.5)
+                return BrightnessID.Brightness_50;
+            if (brightness == 0.75)
+                return BrightnessID.Brightness_75;
+            if (brightness == 1.0)
+                return BrightnessID.Brightness_100;
+            throw new ArgumentException($"Unknown brightness {brightness}");
+        }
+
         public override bool SetLedBrightness(int brightness)
         {
             // Map to closest valid value
-            IEnumerable<byte> allowed = Enum.GetValues(typeof(BrightnessID)).Cast<BrightnessID>().Select(x => (byte)(int)x);
-            byte value = allowed.OrderBy(x => Math.Abs(brightness - x)).First();
+            byte value = (byte)ConvertToBrightnessID(brightness);
 
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
             {
@@ -454,24 +482,48 @@ namespace HandheldCompanion.Devices.Zotac
                     break;
             }
 
-            LightSpeed lightSpeed = LightSpeed.Slow;
-            if (speed <= 33)
-                lightSpeed = LightSpeed.Slow;
-            else if (speed > 33 && speed <= 66)
-                lightSpeed = LightSpeed.Normal;
-            else
-                lightSpeed = LightSpeed.Fast;
+            byte speedValue = (byte)ConvertToLightSpeed(speed);
 
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
             {
                 if (!hidDevice.IsConnected)
                     return false;
 
-                hidDevice.Write(SendLedCmd(LEDSettings.Effect, (byte)lightEffect));
-                hidDevice.Write(SendLedRGB(MainColor, SecondaryColor));
-                hidDevice.Write(SendLedCmd(LEDSettings.Speed, (byte)lightSpeed));
+                hidDevice.Write(SendLedCmd(LEDSettings.Effect, speedValue));
+                hidDevice.Write(SendLedCmd(LEDSettings.Speed, speedValue));
+
+                // send command twice ?
+                hidDevice.Write(SendLedRGB(0, MainColor, SecondaryColor));
+                hidDevice.Write(SendLedRGB(1, MainColor, SecondaryColor));
+
+                int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
+                SetLedBrightness(LEDBrightness);
+                SaveConfigData();
 
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool SaveConfigData()
+        {
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
+            {
+                if (!hidDevice.IsConnected)
+                    return false;
+
+                byte[] data = new byte[65];
+                data[0] = 0x00;   // Report ID
+
+                data[1] = 225;
+                data[2] = 0;
+                data[3] = 0;
+                data[4] = 60;
+
+                data[5] = 251; // HIDSaveConfigDataReportCMD
+
+                return hidDevice.Write(data);
             }
 
             return false;
