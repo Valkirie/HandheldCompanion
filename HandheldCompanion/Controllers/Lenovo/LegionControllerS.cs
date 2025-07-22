@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -10,6 +11,10 @@ namespace HandheldCompanion.Controllers.Lenovo
     {
         private controller_hidapi.net.LegionController Controller;
         private byte[] data = new byte[64];
+
+        #region TouchVariables
+        private bool IsPassthrough = false;
+        #endregion
 
         public override bool IsReady => true;
         public override string ToString() => "Legion Controller";
@@ -36,6 +41,24 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+        }
+
+        protected override void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false);
+            base.QuerySettings();
+        }
+
+        protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch (name)
+            {
+                case "LegionControllerPassthrough":
+                    IsPassthrough = Convert.ToBoolean(value);
+                    break;
+            }
+
+            base.SettingsManager_SettingValueChanged(name, value, temporary);
         }
 
         public override void AttachDetails(PnPDetails details)
@@ -173,24 +196,28 @@ namespace HandheldCompanion.Controllers.Lenovo
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-            // Touchpad parsing (2 bytes each, centered, absolute)
-            ushort tpX = BitConverter.ToUInt16(data, 2);
-            ushort tpY = BitConverter.ToUInt16(data, 4);
-            bool tpTouch = (data[8] & (1 << 7)) != 0; // (tpX != 0 || tpY != 0);
-            bool tpLeft = (data[9] & (1 << 7)) != 0;
-
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = tpTouch;
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = tpLeft; // correct ?
-
-            if (tpTouch)
+            // handle touchpad if passthrough is off
+            if (!IsPassthrough)
             {
-                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)tpX, 0, 1000, short.MinValue, short.MaxValue);
-                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-tpY, 0, 1000, short.MinValue, short.MaxValue);
-            }
-            else
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = 0;
-                Inputs.AxisState[AxisFlags.RightPadY] = 0;
+                // Touchpad parsing (2 bytes each, centered, absolute)
+                ushort tpX = BitConverter.ToUInt16(data, 2);
+                ushort tpY = BitConverter.ToUInt16(data, 4);
+                bool tpTouch = (data[8] & (1 << 7)) != 0; // (tpX != 0 || tpY != 0);
+                bool tpLeft = (data[9] & (1 << 7)) != 0;
+
+                Inputs.ButtonState[ButtonFlags.RightPadTouch] = tpTouch;
+                Inputs.ButtonState[ButtonFlags.RightPadClick] = tpLeft; // correct ?
+
+                if (tpTouch)
+                {
+                    Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)tpX, 0, 1000, short.MinValue, short.MaxValue);
+                    Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-tpY, 0, 1000, short.MinValue, short.MaxValue);
+                }
+                else
+                {
+                    Inputs.AxisState[AxisFlags.RightPadX] = 0;
+                    Inputs.AxisState[AxisFlags.RightPadY] = 0;
+                }
             }
 
             base.UpdateInputs(ticks, delta);

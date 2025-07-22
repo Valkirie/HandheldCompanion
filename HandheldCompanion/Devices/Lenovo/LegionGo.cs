@@ -191,6 +191,7 @@ public class LegionGo : IDevice
 
     // todo: find the right value, this is placeholder
     protected const byte INPUT_HID_ID = 0x01;
+    protected bool IsPassthrough = false;
 
     public LegionGo()
     {
@@ -276,6 +277,9 @@ public class LegionGo : IDevice
         // Reset the fan speed to default before device shutdown/restart
         SetFanFullSpeed(false);
 
+        // restore default touchpad behavior
+        SetPassthrough(false);
+
         // unload SapientiaUsb
         FreeSapientiaUsb();
 
@@ -299,6 +303,7 @@ public class LegionGo : IDevice
     {
         // raise events
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+        SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false);
 
         base.QuerySettings();
     }
@@ -309,6 +314,9 @@ public class LegionGo : IDevice
         {
             case "BatteryChargeLimit":
                 SetBatteryChargeLimit(Convert.ToBoolean(value));
+                break;
+            case "LegionControllerPassthrough":
+                SetPassthrough(Convert.ToBoolean(value));
                 break;
         }
 
@@ -382,10 +390,15 @@ public class LegionGo : IDevice
     {
         return new byte[]
         {
-        0x05, 0x06, 0x69, 0x04, 0x01,
-        (byte)(enabled ? 0x02 : 0x01),
-        0x01
+            0x05, 0x06, 0x69, 0x04, 0x01,
+            (byte)(enabled ? 0x02 : 0x01),
+            0x01
         };
+    }
+
+    public virtual void SetPassthrough(bool enabled)
+    {
+        IsPassthrough = enabled;
     }
 
     public override string GetGlyph(ButtonFlags button)

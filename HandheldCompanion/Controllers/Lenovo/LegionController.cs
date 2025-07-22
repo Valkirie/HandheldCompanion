@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
@@ -87,8 +86,6 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             // get long press time from system settings
             SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
-
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         public override string ToString() => "Legion Controller";
@@ -117,29 +114,32 @@ namespace HandheldCompanion.Controllers.Lenovo
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
         }
 
-        protected override void UpdateSettings()
-        {
-            SetPassthrough(ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"));
-            SetGyroIndex(ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"));
-        }
-
         public override bool IsWireless() =>
             Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
             Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless;
 
         public override bool IsExternal() => false;
 
-        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        protected override void QuerySettings()
+        {
+            SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false);
+            SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false);
+            base.QuerySettings();
+        }
+
+        protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
             switch (name)
             {
-                case "LegionControllerPassthrough":
-                    SetPassthrough(Convert.ToBoolean(value));
-                    break;
                 case "LegionControllerGyroIndex":
                     SetGyroIndex(Convert.ToInt32(value));
                     break;
+                case "LegionControllerPassthrough":
+                    IsPassthrough = Convert.ToBoolean(value);
+                    break;
             }
+
+            base.SettingsManager_SettingValueChanged(name, value, temporary);
         }
 
         public override void AttachDetails(PnPDetails details)
@@ -194,8 +194,6 @@ namespace HandheldCompanion.Controllers.Lenovo
                         Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
                         Controller.Open();
                     }
-
-                    UpdateSettings();
                 }
                 catch (Exception ex)
                 {
@@ -240,7 +238,6 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         public override void Unplug()
         {
-            SetPassthrough(true);
             Close();
 
             base.Unplug();
@@ -448,12 +445,6 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
             Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
             Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
-        }
-
-        public void SetPassthrough(bool enabled)
-        {
-            SetTouchPadStatus(enabled ? 1 : 0);
-            IsPassthrough = enabled;
         }
 
         public void SetGyroIndex(int idx)

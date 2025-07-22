@@ -126,14 +126,6 @@ namespace HandheldCompanion.Devices
             DefaultLayout.ButtonLayout[ButtonFlags.B8] = [new MouseActions { MouseType = MouseActionsType.ScrollDown }];
         }
 
-        public override void Close()
-        {
-            // restore default touchpad behavior
-            SetTouchPadStatus(1);
-
-            base.Close();
-        }
-
         protected override async void Device_Inserted(bool reScan = false)
         {
             // if you still want to automatically re-attach:
@@ -195,6 +187,19 @@ namespace HandheldCompanion.Devices
             yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x01, 0x01 }; // disable high-quality
         }
 
+        public override void SetPassthrough(bool enabled)
+        {
+#if USE_SAPIENTIAUSB
+            SetTouchPadStatus(enabled ? 0 : 1);
+#else
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+            {
+                device.Write([0x05, 0x06, 0x6B, 0x02, 0x04, (enabled ? (byte)0x01 : (byte)0x00), 0x01]);
+            }
+#endif
+            base.SetPassthrough(enabled);
+        }
+
         private IEnumerable<byte[]> ControllerFactoryReset()
         {
             // hex strings from Python, parsed into byte[]
@@ -206,7 +211,6 @@ namespace HandheldCompanion.Devices
         #endregion
 
         #region RGB
-
         public override bool SetLedBrightness(int brightness)
         {
             lightProfileL.brightness = brightness;

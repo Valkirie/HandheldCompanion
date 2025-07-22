@@ -119,12 +119,24 @@ namespace HandheldCompanion.Devices
             yield return ConvertHex("12010402238223000000002482240000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 
             // todo: moveme to LegionGo main class and drop Sapientia
-            yield return ConvertHex("040801"); // enable touchpad
-            yield return ConvertHex("080300"); // disable touchpad vibration
             yield return ConvertHex("040400"); // disable hibernation
             yield return ConvertHex("040701"); // enable gyro
             yield return ConvertHex("040501"); // enable HID IMU
             yield return ConvertHex("041002"); // 500Hz polling
+        }
+
+        public override void SetPassthrough(bool enabled)
+        {
+#if USE_SAPIENTIAUSB
+            SetTouchPadStatus(enabled ? 0 : 1);
+#else
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+            {
+                device.Write(WithReportID(new byte[] { 0x04, 0x08, (enabled ? (byte)0x00 : (byte)0x01) })); // touchpad
+                device.Write(WithReportID(new byte[] { 0x08, 0x03, (enabled ? (byte)0x00 : (byte)0x01) })); // touchpad vibration
+            }
+#endif
+            base.SetPassthrough(enabled);
         }
 
         #region RGB
