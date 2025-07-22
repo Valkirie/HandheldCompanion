@@ -4354,6 +4354,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ZOTAC GAMING ONE Launcher and Services are active.
+        /// </summary>
+        public static string Hint_GamingZoneServices {
+            get {
+                return ResourceManager.GetString("Hint_GamingZoneServices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZOTAC GAMING ONE Launcher and Services are already active on your console. This may cause compatibility issues with the application..
+        /// </summary>
+        public static string Hint_GamingZoneServicesDesc {
+            get {
+                return ResourceManager.GetString("Hint_GamingZoneServicesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Legion Space Tasks and Services are active.
         /// </summary>
         public static string Hint_LegionGoServices {

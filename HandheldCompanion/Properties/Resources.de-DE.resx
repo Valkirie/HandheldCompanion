@@ -3303,4 +3303,10 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="Enum_GamingZone_ButtonFlags_OEM5" xml:space="preserve">
     <value />
   </data>
+  <data name="Hint_GamingZoneServices" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hint_GamingZoneServicesDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Watchers;
@@ -203,6 +204,8 @@ namespace HandheldCompanion.ViewModels
                 manufacturerWatcher = new LegionSpaceWatcher();
             else if (device is ROGAlly || device is ROGAllyX)
                 manufacturerWatcher = new RogAllySpaceWatcher();
+            else if (device is GamingZone)
+                manufacturerWatcher = new ZotacLauncherWatcher();
 
             if (manufacturerWatcher is not null)
             {
