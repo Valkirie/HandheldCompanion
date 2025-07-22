@@ -425,12 +425,16 @@ namespace HandheldCompanion.Devices.Zotac
 
         public override bool SetLedBrightness(int brightness)
         {
+            // Map to closest valid value
+            IEnumerable<byte> allowed = Enum.GetValues(typeof(BrightnessID)).Cast<BrightnessID>().Select(x => (byte)(int)x);
+            byte value = allowed.OrderBy(x => Math.Abs(brightness - x)).First();
+
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
             {
                 if (!hidDevice.IsConnected)
                     return false;
 
-                return hidDevice.Write(SendLedCmd(LEDSettings.Brightness, (byte)brightness));
+                return hidDevice.Write(SendLedCmd(LEDSettings.Brightness, value));
             }
 
             return false;
@@ -504,60 +508,6 @@ namespace HandheldCompanion.Devices.Zotac
         }
 
         public override float ReadFanDuty() => ECRamDirectReadByte(ECDetails.AddressFanDuty, ECDetails);
-
-        // todo: remove me (redundant)
-        public byte ECRamDirectReadByte(ushort address)
-        {
-            byte num1 = (byte)((int)address >> 8 & (int)byte.MaxValue);
-            byte num2 = (byte)((uint)address & (uint)byte.MaxValue);
-            try
-            {
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)17);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num1);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)16 /*0x10*/);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num2);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)18);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
-                byte num3 = openLibSys.ReadIoPortByte(ECDetails.AddressDataPort);
-                return num3;
-            }
-            catch (Exception ex)
-            {
-                return 0;
-            }
-        }
-
-        // todo: remove me (redundant)
-        public bool ECRamDirectWrite(ushort address, byte data)
-        {
-            byte num1 = (byte)((int)address >> 8 & (int)byte.MaxValue);
-            byte num2 = (byte)((uint)address & (uint)byte.MaxValue);
-            try
-            {
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)17);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num1);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)16 /*0x10*/);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, num2);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)46);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, (byte)18);
-                openLibSys.WriteIoPortByte(ECDetails.AddressStatusCommandPort, (byte)47);
-                openLibSys.WriteIoPortByte(ECDetails.AddressDataPort, data);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
         #endregion
 
         #region WMI
