@@ -99,6 +99,7 @@ namespace HandheldCompanion.Devices.Zotac
             DynamicLightingCapabilities |= LEDLevel.Wave;
             DynamicLightingCapabilities |= LEDLevel.Wheel;
             DynamicLightingCapabilities |= LEDLevel.Gradient;
+            DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
             // get physical installed RAM
             ulong TotalMemoryInKilobytes = 0;
