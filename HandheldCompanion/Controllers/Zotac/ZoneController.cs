@@ -149,7 +149,7 @@ namespace HandheldCompanion.Controllers.Zotac
             // Looks like this will reboot the controller...
             if (IDevice.GetCurrent() is GamingZone gamingZone)
             {
-                gamingZone.CycleController();
+                success = gamingZone.CycleController();
             }
 
             if (!success)

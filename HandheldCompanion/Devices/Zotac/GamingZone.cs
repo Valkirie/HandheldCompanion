@@ -425,17 +425,18 @@ namespace HandheldCompanion.Devices.Zotac
 
         private static BrightnessID ConvertToBrightnessID(double brightness)
         {
-            if (brightness == 0.0)
+            if (brightness == 0)
                 return BrightnessID.Brightness_0;
-            if (brightness == 0.25)
+            else if (brightness >= 25 && brightness < 50)
                 return BrightnessID.Brightness_25;
-            if (brightness == 0.5)
+            else if(brightness >= 50 && brightness < 75)
                 return BrightnessID.Brightness_50;
-            if (brightness == 0.75)
+            else if(brightness >= 75 && brightness < 100)
                 return BrightnessID.Brightness_75;
-            if (brightness == 1.0)
+            else if(brightness == 100)
                 return BrightnessID.Brightness_100;
-            throw new ArgumentException($"Unknown brightness {brightness}");
+
+            return BrightnessID.Brightness_0;
         }
 
         public override bool SetLedBrightness(int brightness)

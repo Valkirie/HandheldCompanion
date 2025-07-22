@@ -19,14 +19,14 @@ public class DeviceUtils
     [Flags]
     public enum LEDLevel
     {
-        SolidColor = 0,
-        Breathing = 1,
-        Rainbow = 2,
-        Wave = 4,
-        Wheel = 8,
-        Gradient = 16,
-        Ambilight = 32,
-        LEDPreset = 64,
+        SolidColor = 1,
+        Breathing = 2,
+        Rainbow = 4,
+        Wave = 8,
+        Wheel = 16,
+        Gradient = 32,
+        Ambilight = 64,
+        LEDPreset = 128,
     }
 
     public enum LEDDirection
