@@ -358,14 +358,20 @@ namespace HandheldCompanion.Devices.Zotac
             data[5] = 173;          // COMMAND
             data[6] = 0;            // SETTING
             data[7] = LedNumSet;    // LedNumSet
+            
+            // Use official Spectra color packing
+            uint mainRGB = ToSpectraRGB(MainColor);
+            uint secondaryRGB = ToSpectraRGB(SecondaryColor);
 
             // Set all 10 LEDs to red (0xFF0000)
             for (int i = 0; i < 10; i++)
             {
-                int pos = 8 + (i * 3);
-                data[pos]       = LedNumSet == 0 ? MainColor.R : SecondaryColor.R;  // R
-                data[pos + 1]   = LedNumSet == 0 ? MainColor.G : SecondaryColor.G;  // G
-                data[pos + 2]   = LedNumSet == 0 ? MainColor.B : SecondaryColor.B;  // B
+                int pos = 10 + (i * 3);
+                uint rgb = (i < 5) ? mainRGB : secondaryRGB;
+
+                data[pos] = (byte)((rgb & 0xFF0000) >> 16);     // R
+                data[pos + 1] = (byte)((rgb & 0x00FF00) >> 8);  // G
+                data[pos + 2] = (byte)(rgb & 0x0000FF);         // B
             }
 
             // CRC over [5]..[62] (i.e., [4]..[61] in 64-byte logic)
@@ -374,6 +380,11 @@ namespace HandheldCompanion.Devices.Zotac
             data[64] = (byte)(crc & 0xFF);
 
             return data;
+        }
+
+        private static uint ToSpectraRGB(Color color)
+        {
+            return (uint)((color.R << 16) | (color.G << 8) | (color.B));
         }
 
         public static ushort CalcZotacCRC(byte[] data, int start, int end)
