@@ -346,7 +346,7 @@ namespace HandheldCompanion.Devices.Zotac
             return data;
         }
 
-        private byte[] SendLedRGB(byte LedNumSet, Color MainColor, Color SecondaryColor)
+        private byte[] SendLedRGB(byte LedNumSet, uint color)
         {
             byte[] data = new byte[65];
             data[0] = 0x00;   // Report ID
@@ -359,20 +359,15 @@ namespace HandheldCompanion.Devices.Zotac
             data[5] = 173;          // COMMAND
             data[6] = 0;            // SETTING
             data[7] = LedNumSet;    // LedNumSet
-            
-            // Use official Spectra color packing
-            uint mainRGB = ToSpectraRGB(MainColor);
-            uint secondaryRGB = ToSpectraRGB(SecondaryColor);
 
             // Set all 10 LEDs to red (0xFF0000)
             for (int i = 0; i < 10; i++)
             {
                 int pos = 10 + (i * 3);
-                uint rgb = (i < 5) ? mainRGB : secondaryRGB;
 
-                data[pos] = (byte)((rgb & 0xFF0000) >> 16);     // R
-                data[pos + 1] = (byte)((rgb & 0x00FF00) >> 8);  // G
-                data[pos + 2] = (byte)(rgb & 0x0000FF);         // B
+                data[pos] = (byte)((color & 0xFF0000) >> 16);     // R
+                data[pos + 1] = (byte)((color & 0x00FF00) >> 8);  // G
+                data[pos + 2] = (byte)(color & 0x0000FF);         // B
             }
 
             // CRC over [5]..[62] (i.e., [4]..[61] in 64-byte logic)
@@ -502,12 +497,15 @@ namespace HandheldCompanion.Devices.Zotac
                 if (!hidDevice.IsConnected)
                     return false;
 
-                hidDevice.Write(SendLedCmd(LEDSettings.Effect, speedValue));
+                hidDevice.Write(SendLedCmd(LEDSettings.Effect, (byte)lightEffect));
                 hidDevice.Write(SendLedCmd(LEDSettings.Speed, speedValue));
 
-                // send command twice ?
-                hidDevice.Write(SendLedRGB(0, MainColor, SecondaryColor));
-                hidDevice.Write(SendLedRGB(1, MainColor, SecondaryColor));
+                // Use official Spectra color packing
+                uint mainRGB = ToSpectraRGB(MainColor);
+                uint secondaryRGB = ToSpectraRGB(SecondaryColor);
+
+                hidDevice.Write(SendLedRGB(0, mainRGB));
+                hidDevice.Write(SendLedRGB(1, secondaryRGB));
 
                 int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
                 SetLedBrightness(LEDBrightness);

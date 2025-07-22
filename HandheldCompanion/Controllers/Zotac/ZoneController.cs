@@ -69,7 +69,7 @@ namespace HandheldCompanion.Controllers.Zotac
 
             // byte[0] = 0
             // byte[2] = 1 right clockwise | 2 right anticlockwise | 8 left clockwise | 16 left anticlockwise
-            ButtonWheel buttonWheel = (ButtonWheel)Data[2];
+            ButtonWheel buttonWheel = (ButtonWheel)Data[3];
             Inputs.ButtonState[ButtonFlags.B5] = buttonWheel.HasFlag(ButtonWheel.LeftAnti);
             Inputs.ButtonState[ButtonFlags.B6] = buttonWheel.HasFlag(ButtonWheel.LeftClock);
             Inputs.ButtonState[ButtonFlags.B7] = buttonWheel.HasFlag(ButtonWheel.RightAnti);
