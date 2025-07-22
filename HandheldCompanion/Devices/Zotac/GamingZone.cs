@@ -7,6 +7,7 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -56,6 +57,22 @@ namespace HandheldCompanion.Devices.Zotac
             this.cTDP = new double[] { 3, 28 };
             this.GfxClock = new double[] { 100, 2700 };
             this.CpuClock = 5100;
+
+            GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+            GyrometerAxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            };
+
+            AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+            AccelerometerAxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            };
 
             this.OEMChords.Add(new KeyboardChord("ZOTAC key",
                 [KeyCode.LControl, KeyCode.LWin, KeyCode.F17],
