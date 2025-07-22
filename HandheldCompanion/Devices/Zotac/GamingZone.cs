@@ -20,8 +20,6 @@ namespace HandheldCompanion.Devices.Zotac
         [return: MarshalAs(UnmanagedType.Bool)]
         protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
 
-        private bool IsReading = false;
-
         private const byte INPUT_HID_ID = 0x00;
 
         protected uint physicalInstalledRamGB = 16; // TODO: Detect dynamically if needed
@@ -93,12 +91,15 @@ namespace HandheldCompanion.Devices.Zotac
             Capabilities |= DeviceCapabilities.FanControl;
             Capabilities |= DeviceCapabilities.DynamicLighting;
             Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+            Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
             // dynamic lighting capacities
             DynamicLightingCapabilities |= LEDLevel.SolidColor;
             DynamicLightingCapabilities |= LEDLevel.Breathing;
             DynamicLightingCapabilities |= LEDLevel.Rainbow;
+            DynamicLightingCapabilities |= LEDLevel.Wave;
             DynamicLightingCapabilities |= LEDLevel.Wheel;
+            DynamicLightingCapabilities |= LEDLevel.Gradient;
 
             // get physical installed RAM
             ulong TotalMemoryInKilobytes = 0;
@@ -158,9 +159,6 @@ namespace HandheldCompanion.Devices.Zotac
                 device.MonitorDeviceEvents = false;
                 device.Removed -= Device_Removed;
                 try { device.Dispose(); } catch { }
-
-                // stop further reads
-                IsReading = false;
             }
         }
 
@@ -179,10 +177,6 @@ namespace HandheldCompanion.Devices.Zotac
                 // device.Write(RestoreProfileSet());
                 device.Write(RemapM1_CtrlWinF11());
                 device.Write(RemapM2_CtrlWinF12());
-
-                // fire‐and‐forget the read loop
-                IsReading = true;
-                _ = ReadInputLoopAsync(device);
             }
         }
 
@@ -302,6 +296,9 @@ namespace HandheldCompanion.Devices.Zotac
             Stars = 2,
             Fade = 3,
             Dance = 4,
+            Flash = 5,
+            Wink = 6,
+            Random = 7,
             Off = 240, // 0x000000F0
         }
 
@@ -359,9 +356,12 @@ namespace HandheldCompanion.Devices.Zotac
             for (int i = 0; i < 10; i++)
             {
                 int pos = 8 + (i * 3);
-                data[pos] = MainColor.R;        // R
-                data[pos + 1] = MainColor.G;    // G
-                data[pos + 2] = MainColor.B;    // B
+
+                // first five LEDs to use MainColor
+                // last five LEDs to use SecondaryColor (if any)
+                data[pos] = i < 5 ? MainColor.R : SecondaryColor.R;        // R
+                data[pos + 1] = i < 5 ? MainColor.G : SecondaryColor.G;    // G
+                data[pos + 2] = i < 5 ? MainColor.B : SecondaryColor.B;    // B
             }
 
             // CRC over [5]..[62] (i.e., [4]..[61] in 64-byte logic)
@@ -388,20 +388,6 @@ namespace HandheldCompanion.Devices.Zotac
             uint num4 = (uint)((uint)num3 >> 4);
             uint intermediate = (uint)(((num3 << 1) ^ (int)num4) << 4 ^ (int)num2);
             return (ushort)((((intermediate << 3) ^ num4) ^ ((uint)seed >> 8)) & 0xFFFF);
-        }
-
-        private async Task ReadInputLoopAsync(HidDevice device)
-        {
-            try
-            {
-                while (IsReading)
-                {
-                    HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
-                    Console.WriteLine("ReadInputLoopAsync: {0}", string.Join(",", report.Data));
-                    // do something
-                }
-            }
-            catch { }
         }
 
         public override bool IsReady()
@@ -443,8 +429,8 @@ namespace HandheldCompanion.Devices.Zotac
         public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed)
         {
             // Apply the color for the left and right LED
+            // todo: figure out who's who
             LightEffect lightEffect = LightEffect.Off;
-
             switch (level)
             {
                 default:
@@ -463,7 +449,18 @@ namespace HandheldCompanion.Devices.Zotac
                 case LEDLevel.Wheel:
                     lightEffect = LightEffect.Stars; // ??
                     break;
+                case LEDLevel.Gradient:
+                    lightEffect = LightEffect.Stars; // ??
+                    break;
             }
+
+            LightSpeed lightSpeed = LightSpeed.Slow;
+            if (speed <= 33)
+                lightSpeed = LightSpeed.Slow;
+            else if (speed > 33 && speed <= 66)
+                lightSpeed = LightSpeed.Normal;
+            else
+                lightSpeed = LightSpeed.Fast;
 
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice))
             {
@@ -471,8 +468,8 @@ namespace HandheldCompanion.Devices.Zotac
                     return false;
 
                 hidDevice.Write(SendLedCmd(LEDSettings.Effect, (byte)lightEffect));
-                hidDevice.Write(SendLedCmd(LEDSettings.Speed, (byte)LightSpeed.Normal));
                 hidDevice.Write(SendLedRGB(MainColor, SecondaryColor));
+                hidDevice.Write(SendLedCmd(LEDSettings.Speed, (byte)lightSpeed));
 
                 return true;
             }

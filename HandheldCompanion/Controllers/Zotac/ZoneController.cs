@@ -141,6 +141,9 @@ namespace HandheldCompanion.Controllers.Zotac
 
         private void Controller_OnControllerInputReceived(byte[] Data)
         {
+            // todo: filter noise
+            // check if an input lands too close to another in the opposite direction, or maybe one consider one input every second ?
+            Console.WriteLine("Wheel rotated: {0}", string.Join(",", Data));
             Buffer.BlockCopy(Data, 1, this.Data, 0, Data.Length - 1);
         }
 
