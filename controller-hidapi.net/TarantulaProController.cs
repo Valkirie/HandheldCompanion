@@ -99,14 +99,5 @@ namespace controller_hidapi.net
                 HidWrite(ButtonMode);
             }
         }
-
-        private void HidWrite(byte[] data)
-        {
-            try
-            {
-                _hidDevice.Write(data);
-            }
-            catch { }
-        }
     }
 }
