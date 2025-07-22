@@ -122,7 +122,7 @@ public abstract class IDevice
     public GamepadMotion GamepadMotion;
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
-    public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
+    public LEDLevel DynamicLightingCapabilities = LEDLevel.None;
     public List<LEDPreset> LEDPresets { get; protected set; } = [];
     public List<BatteryBypassPreset> BatteryBypassPresets { get; protected set; } = [];
 

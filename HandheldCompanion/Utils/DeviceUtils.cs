@@ -19,6 +19,7 @@ public class DeviceUtils
     [Flags]
     public enum LEDLevel
     {
+        None = 0,
         SolidColor = 1,
         Breathing = 2,
         Rainbow = 4,
