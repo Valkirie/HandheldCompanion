@@ -10,7 +10,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HandheldCompanion.Controllers;
+namespace HandheldCompanion.Controllers.Steam;
 
 public class NeptuneController : SteamController
 {
@@ -425,8 +425,8 @@ public class NeptuneController : SteamController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
-        this.FeedbackLargeMotor = LargeMotor;
-        this.FeedbackSmallMotor = SmallMotor;
+        FeedbackLargeMotor = LargeMotor;
+        FeedbackSmallMotor = SmallMotor;
     }
 
     private async void RumbleThreadLoop(object? obj)

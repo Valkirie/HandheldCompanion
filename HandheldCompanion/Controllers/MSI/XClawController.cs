@@ -1,6 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.MSI
 {
     public class XClawController : XInputController
     {

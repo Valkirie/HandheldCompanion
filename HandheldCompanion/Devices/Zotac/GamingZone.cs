@@ -76,10 +76,10 @@ namespace HandheldCompanion.Devices.Zotac
                 FanValueMax = 255
             };
 
-            // https://www.amd.com/en/products/apu/amd-ryzen-7-ECDetails.AddressStatusCommandPort40u
-            // https://www.amd.com/en/products/apu/amd-ryzen-7-8840u
-            this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 3, 28 };
+            // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
+            // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
+            this.nTDP = new double[] { 15, 15, 30 };
+            this.cTDP = new double[] { 8, 30 };
             this.GfxClock = new double[] { 100, 2700 };
             this.CpuClock = 5100;
 

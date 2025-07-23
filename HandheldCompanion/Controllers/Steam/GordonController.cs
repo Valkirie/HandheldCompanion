@@ -11,7 +11,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.Steam
 {
     public class GordonController : SteamController
     {
@@ -88,7 +88,7 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Gordon";
         }
 
-        public override bool IsReady => this.input is not null;
+        public override bool IsReady => input is not null;
 
         public override bool IsConnected()
         {

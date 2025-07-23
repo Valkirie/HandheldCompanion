@@ -11,7 +11,7 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
         this.ProductIllustration = "device_aya_kun";
         this.ProductModel = "AYANEO KUN";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         this.nTDP = new double[] { 15, 15, 20 };
         this.cTDP = new double[] { 3, 54 };
         this.GfxClock = new double[] { 100, 2700 };

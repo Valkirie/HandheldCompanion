@@ -3,7 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using System;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.GameSir
 {
     public class TarantulaProController : XInputController
     {

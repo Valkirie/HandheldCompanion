@@ -1,7 +1,7 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 
 using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers.Steam;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Localization;
 

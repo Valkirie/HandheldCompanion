@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers.GameSir;
 using HandheldCompanion.Managers;
 using System.Threading.Tasks;
 using System.Windows.Input;
