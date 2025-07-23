@@ -12,7 +12,7 @@ public class GPDWin4_2023_7840U : IDevice
         // device specific settings
         ProductIllustration = "device_gpd4";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 28 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };

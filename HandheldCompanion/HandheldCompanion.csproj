@@ -64,6 +64,7 @@
     <None Remove="Resources\device_minisforum_v3.png" />
     <None Remove="Resources\device_msi_claw8.png" />
     <None Remove="Resources\device_rog_ally_x.png" />
+    <None Remove="Resources\device_zotac_zone.png" />
     <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2.png" />
     <None Remove="Resources\device_aya_2021.png" />
@@ -166,6 +167,7 @@
     <Resource Include="Resources\DeviceImages\device_rog_ally.png" />
     <Resource Include="Resources\DeviceImages\device_rog_ally_x.png" />
     <Resource Include="Resources\DeviceImages\device_valve_jupiter.png" />
+    <Resource Include="Resources\DeviceImages\device_zotac_zone.png" />
     <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
     <Resource Include="Resources\MissingCover.png" />
@@ -192,9 +194,9 @@
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.27.0" />
     <PackageReference Include="IGDB" Version="6.1.0" />
     <PackageReference Include="iNKORE.UI.WPF.Emojis" Version="0.3.6.4" />
-    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.0" />
+    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1" />
     <PackageReference Include="Interop.IWshRuntimeLibrary" Version="1.0.1" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre426" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre436" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.1" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
@@ -208,14 +210,14 @@
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2" />
     <PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
     <PackageReference Include="SDL3-CS" Version="3.2.18" />
-    <PackageReference Include="Sentry" Version="5.11.2" />
+    <PackageReference Include="Sentry" Version="5.12.0" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.4" />
-    <PackageReference Include="System.Text.Json" Version="9.0.4" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.7" />
+    <PackageReference Include="System.Text.Json" Version="9.0.7" />
     <PackageReference Include="WindowsAPICodePack" Version="8.0.6" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />

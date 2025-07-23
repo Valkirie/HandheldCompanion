@@ -1987,6 +1987,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zone.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M1.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M2.
+        /// </summary>
+        public static string Enum_GamingZone_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_GamingZone_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated DualShock 4 controller.
         /// </summary>
         public static string Enum_HIDmode_DualShock4Controller {
@@ -4305,6 +4350,24 @@ namespace HandheldCompanion.Properties {
         public static string Hint_CoreIsolationCheckReadme {
             get {
                 return ResourceManager.GetString("Hint_CoreIsolationCheckReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZOTAC GAMING ONE Launcher and Services are active.
+        /// </summary>
+        public static string Hint_GamingZoneServices {
+            get {
+                return ResourceManager.GetString("Hint_GamingZoneServices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZOTAC GAMING ONE Launcher and Services are already active on your console. This may cause compatibility issues with the application..
+        /// </summary>
+        public static string Hint_GamingZoneServicesDesc {
+            get {
+                return ResourceManager.GetString("Hint_GamingZoneServicesDesc", resourceCulture);
             }
         }
         
@@ -7478,6 +7541,60 @@ namespace HandheldCompanion.Properties {
         public static string PowerProfileDefaultName {
             get {
                 return ResourceManager.GetString("PowerProfileDefaultName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        public static string PowerProfileGamingZoneBestPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBestPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 28W TDP.
+        /// </summary>
+        public static string PowerProfileGamingZoneBestPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBestPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quiet.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterBattery {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 8W TDP.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterBatteryDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterBatteryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balance.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15W TDP.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterPerformanceDesc", resourceCulture);
             }
         }
         

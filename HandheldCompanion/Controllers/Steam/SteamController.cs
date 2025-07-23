@@ -1,7 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using steam_hidapi.net.Hid;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.Steam
 {
     public abstract class SteamController : IController
     {

@@ -199,6 +199,43 @@ public class LegionGo : IDevice
         BatteryBypassMin = 80;
         BatteryBypassMax = 80;
 
+        // Legion Go - Quiet
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterBattery,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
+            OEMPowerMode = (int)LegionMode.Quiet,
+            Guid = BetterBatteryGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
+        });
+
+        // Legion Go - Balanced
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterPerformance, Properties.Resources.PowerProfileLegionGoBetterPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterPerformance,
+            OEMPowerMode = (int)LegionMode.Balanced,
+            Guid = BetterPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
+        });
+
+        // Legion Go - Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBestPerformance, Properties.Resources.PowerProfileLegionGoBestPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BestPerformance,
+            OEMPowerMode = (int)LegionMode.Performance,
+            Guid = BestPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
+        });
+
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.FanOverride;
@@ -213,8 +250,8 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
         DynamicLightingCapabilities |= LEDLevel.Wheel;
 
-        OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1 ));
-        OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2 ));
+        OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2));
     }
 
     public override bool IsReady()

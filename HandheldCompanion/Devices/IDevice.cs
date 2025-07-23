@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -121,7 +122,7 @@ public abstract class IDevice
     public GamepadMotion GamepadMotion;
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
-    public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
+    public LEDLevel DynamicLightingCapabilities = LEDLevel.None;
     public List<LEDPreset> LEDPresets { get; protected set; } = [];
     public List<BatteryBypassPreset> BatteryBypassPresets { get; protected set; } = [];
 
@@ -741,6 +742,7 @@ public abstract class IDevice
                     }
                 }
                 break;
+
             case "MICRO-STAR INTERNATIONAL CO., LTD.":
                 {
                     switch (ProductName)
@@ -754,6 +756,18 @@ public abstract class IDevice
                             break;
                         case "MS-1T8K": // Claw A8
                             device = new ClawBZ2EM();
+                            break;
+                    }
+                }
+                break;
+
+            case "PC PARTNER LIMITED":
+            case "ZOTAC":
+                {
+                    switch (ProductName)
+                    {
+                        case "G0A1W":
+                            device = new GamingZone();
                             break;
                     }
                 }
@@ -944,7 +958,7 @@ public abstract class IDevice
         }
     }
 
-    public virtual byte ECRamReadByte(ushort address, ECDetails details)
+    public virtual byte ECRamDirectReadByte(ushort address, ECDetails details)
     {
         if (!IsOpen)
             return 0;

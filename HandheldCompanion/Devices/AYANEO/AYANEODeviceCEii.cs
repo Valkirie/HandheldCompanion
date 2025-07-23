@@ -64,7 +64,7 @@ namespace HandheldCompanion.Devices.AYANEO
         public byte ECRamDirectRead(byte address, byte offset = 0xd1)
         {
             ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
-            return base.ECRamReadByte(address2, this.ECDetails);
+            return base.ECRamDirectReadByte(address2, this.ECDetails);
         }
 
         public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)

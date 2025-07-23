@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -56,7 +55,7 @@ namespace HandheldCompanion.Devices
 
             // https://www.amd.com/en/products/apu/amd-ryzen-z1
             // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
-            // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+            // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
             nTDP = new double[] { 15, 15, 20 };
             cTDP = new double[] { 5, 30 };
             GfxClock = new double[] { 100, 2700 };
@@ -77,43 +76,6 @@ namespace HandheldCompanion.Devices
                 { 'Y', 'Z' },
                 { 'Z', 'Y' }
             };
-
-            // Legion Go - Quiet
-            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
-            {
-                Default = true,
-                DeviceDefault = true,
-                OSPowerMode = OSPowerMode.BetterBattery,
-                CPUBoostLevel = CPUBoostLevel.Disabled,
-                OEMPowerMode = (int)LegionMode.Quiet,
-                Guid = BetterBatteryGuid,
-                TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
-            });
-
-            // Legion Go - Balanced
-            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterPerformance, Properties.Resources.PowerProfileLegionGoBetterPerformanceDesc)
-            {
-                Default = true,
-                DeviceDefault = true,
-                OSPowerMode = OSPowerMode.BetterPerformance,
-                OEMPowerMode = (int)LegionMode.Balanced,
-                Guid = BetterPerformanceGuid,
-                TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
-            });
-
-            // Legion Go - Performance
-            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBestPerformance, Properties.Resources.PowerProfileLegionGoBestPerformanceDesc)
-            {
-                Default = true,
-                DeviceDefault = true,
-                OSPowerMode = OSPowerMode.BestPerformance,
-                OEMPowerMode = (int)LegionMode.Performance,
-                Guid = BestPerformanceGuid,
-                TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
-            });
 
             // device specific layout
             DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = [new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 }];
@@ -363,6 +325,6 @@ namespace HandheldCompanion.Devices
             yield return RgbEnable(LeftJoyconIndex, enable);
             yield return RgbEnable(RightJoyconIndex, enable);
         }
-#endregion
+        #endregion
     }
 }

@@ -1,7 +1,11 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.Dummies;
+using HandheldCompanion.Controllers.GameSir;
 using HandheldCompanion.Controllers.Lenovo;
+using HandheldCompanion.Controllers.MSI;
 using HandheldCompanion.Controllers.SDL;
+using HandheldCompanion.Controllers.Steam;
+using HandheldCompanion.Controllers.Zotac;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -723,6 +727,18 @@ public static class ControllerManager
                             {
                                 case "0x1901":
                                     try { controller = new XClawController(details); } catch { }
+                                    break;
+                            }
+                        }
+                        break;
+
+                    // ZOTAC
+                    case "0x1EE9":
+                        {
+                            switch (details.GetProductID())
+                            {
+                                case "0x1590":
+                                    try { controller = new ZoneController(details); } catch { }
                                     break;
                             }
                         }

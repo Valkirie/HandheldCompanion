@@ -1,5 +1,6 @@
 ﻿using hidapi;
 using System;
+using System.Threading.Tasks;
 
 namespace controller_hidapi.net
 {
@@ -17,10 +18,19 @@ namespace controller_hidapi.net
         public event OnControllerInputReceivedEventHandler OnControllerInputReceived;
         public delegate void OnControllerInputReceivedEventHandler(byte[] Data);
 
-        public GenericController(ushort vid, ushort pid)
+        public GenericController(ushort vid, ushort pid, ushort inputBufferLen = 64, short mi = -1)
         {
             _vid = vid;
             _pid = pid;
+
+            _hidDevice = new HidDevice(_vid, _pid, inputBufferLen, mi)
+            {
+                OnInputReceived = input =>
+                {
+                    OnInputReceived(input);
+                    return Task.CompletedTask;
+                }
+            };
         }
 
         internal virtual void OnInputReceived(HidDeviceInputReceivedEventArgs e)

@@ -9,7 +9,7 @@ public class GPDWinMini_7840U : IDevice
 {
     public GPDWinMini_7840U()
     {
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 18 };
         cTDP = new double[] { 5, 18 };
         GfxClock = new double[] { 200, 2700 };

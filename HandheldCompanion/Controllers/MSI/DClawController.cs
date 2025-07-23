@@ -5,7 +5,7 @@ using HandheldCompanion.Utils;
 using SharpDX.DirectInput;
 using System.Threading;
 
-namespace HandheldCompanion.Controllers;
+namespace HandheldCompanion.Controllers.MSI;
 
 public class DClawController : DInputController
 {
@@ -117,10 +117,10 @@ public class DClawController : DInputController
             Inputs.ButtonState[ButtonFlags.B4] = state.Buttons[3]; // Y
 
             int pov = state.PointOfViewControllers[0];
-            Inputs.ButtonState[ButtonFlags.DPadUp] = (pov == 0 || pov == 4500 || pov == 31500);
-            Inputs.ButtonState[ButtonFlags.DPadRight] = (pov == 9000 || pov == 4500 || pov == 13500);
-            Inputs.ButtonState[ButtonFlags.DPadDown] = (pov == 18000 || pov == 13500 || pov == 22500);
-            Inputs.ButtonState[ButtonFlags.DPadLeft] = (pov == 27000 || pov == 31500 || pov == 22500);
+            Inputs.ButtonState[ButtonFlags.DPadUp] = pov == 0 || pov == 4500 || pov == 31500;
+            Inputs.ButtonState[ButtonFlags.DPadRight] = pov == 9000 || pov == 4500 || pov == 13500;
+            Inputs.ButtonState[ButtonFlags.DPadDown] = pov == 18000 || pov == 13500 || pov == 22500;
+            Inputs.ButtonState[ButtonFlags.DPadLeft] = pov == 27000 || pov == 31500 || pov == 22500;
 
             Inputs.ButtonState[ButtonFlags.L1] = state.Buttons[4];
             Inputs.ButtonState[ButtonFlags.R1] = state.Buttons[5];
@@ -164,8 +164,8 @@ public class DClawController : DInputController
 
         if (IDevice.GetCurrent().GetType() == typeof(ClawA1M))
         {
-            this.FeedbackLargeMotor = LargeMotor;
-            this.FeedbackSmallMotor = SmallMotor;
+            FeedbackLargeMotor = LargeMotor;
+            FeedbackSmallMotor = SmallMotor;
         }
         else
         {

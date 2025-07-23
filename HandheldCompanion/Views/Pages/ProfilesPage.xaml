@@ -1052,7 +1052,8 @@
                                 <ui:SettingsCard
                                     Click="PowerProfileOnBatteryMore_Click"
                                     Header="On battery"
-                                    IsClickEnabled="True">
+                                    IsClickEnabled="True"
+                                    Tag="Navigation">
                                     <ComboBox
                                         Name="PowerProfileOnBattery"
                                         DisplayMemberPath="Text"
@@ -1078,7 +1079,8 @@
                                 <ui:SettingsCard
                                     Click="PowerProfilePluggedMore_Click"
                                     Header="Plugged in"
-                                    IsClickEnabled="True">
+                                    IsClickEnabled="True"
+                                    Tag="Navigation">
                                     <ComboBox
                                         Name="PowerProfilePlugged"
                                         DisplayMemberPath="Text"

@@ -10,7 +10,7 @@ public class AYANEOSlide : AYANEO.AYANEODeviceCEii
         this.ProductIllustration = "device_aya_slide";
         this.ProductModel = "AYANEOSlide";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         this.nTDP = new double[] { 15, 15, 20 };
         this.cTDP = new double[] { 3, 28 };
         this.GfxClock = new double[] { 100, 2700 };
