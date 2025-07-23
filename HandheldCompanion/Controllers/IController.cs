@@ -95,6 +95,7 @@ namespace HandheldCompanion.Controllers
         public volatile bool IsDisposing = false;
 
         public virtual bool IsReady => true;
+        public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
 
         private bool _IsBusy;
         public bool IsBusy
@@ -136,15 +137,38 @@ namespace HandheldCompanion.Controllers
         {
             gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
             InitializeInputOutput();
+
+            // raise events
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+        }
+
+        protected virtual void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        { }
+
+        protected virtual void SettingsManager_Initialized()
+        {
+            QuerySettings();
         }
 
         ~IController()
         {
             Dispose(false);
         }
-
-        protected virtual void UpdateSettings()
-        { }
 
         protected virtual void InitializeInputOutput()
         { }
@@ -402,7 +426,6 @@ namespace HandheldCompanion.Controllers
             });
         }
 
-        public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
         public virtual void Plug()
         {
             SetVibrationStrength(ManagerFactory.settingsManager.GetUInt("VibrationStrength"));
@@ -814,6 +837,10 @@ namespace HandheldCompanion.Controllers
         protected virtual void Dispose(bool disposing)
         {
             if (IsDisposed) return;
+
+            // manage events
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
             if (disposing)
             {

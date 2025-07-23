@@ -729,7 +729,7 @@ public abstract class IDevice
                     switch (SystemModel)
                     {
                         case "83E1":
-                            device = new LegionGo();
+                            device = new LegionGoTablet();
                             break;
                         case "83L3": // Legion Go S Z2 Go
                             device = new LegionGoSZ2();
@@ -1101,6 +1101,15 @@ public abstract class IDevice
     public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
     {
         return GetHidDevices(vendorId, new int[] { deviceId }, minFeatures);
+    }
+
+    public static byte[] WithReportID(byte[] payload, byte reportID = 0x00, int reportLen = 64)
+    {
+        var buffer = new byte[1 + reportLen];
+        buffer[0] = reportID;
+        int len = Math.Min(payload.Length, reportLen);
+        Buffer.BlockCopy(payload, 0, buffer, 1, len);
+        return buffer;
     }
 
     public string GetButtonName(ButtonFlags button)
