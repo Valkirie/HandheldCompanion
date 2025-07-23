@@ -4,6 +4,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using System;
+using System.Timers;
 
 namespace HandheldCompanion.Controllers.Zotac
 {
@@ -11,6 +12,14 @@ namespace HandheldCompanion.Controllers.Zotac
     {
         private controller_hidapi.net.GenericController? Controller;
         private byte[] Data = new byte[64];
+
+        private ButtonWheel pendingLeft = ButtonWheel.None;
+        private Timer leftTimer = new Timer(100) { AutoReset = false };
+        private ButtonWheel acceptedLeft = ButtonWheel.None;
+
+        private ButtonWheel pendingRight = ButtonWheel.None;
+        private Timer rightTimer = new Timer(100) { AutoReset = false };
+        private ButtonWheel acceptedRight = ButtonWheel.None;
 
         [Flags]
         public enum ButtonWheel
@@ -67,13 +76,15 @@ namespace HandheldCompanion.Controllers.Zotac
 
             base.UpdateInputs(ticks, delta, false);
 
-            // byte[0] = 0
-            // byte[2] = 1 right clockwise | 2 right anticlockwise | 8 left clockwise | 16 left anticlockwise
-            ButtonWheel buttonWheel = (ButtonWheel)Data[3];
+            ButtonWheel buttonWheel = acceptedLeft | acceptedRight;
             Inputs.ButtonState[ButtonFlags.B5] = buttonWheel.HasFlag(ButtonWheel.LeftAnti);
             Inputs.ButtonState[ButtonFlags.B6] = buttonWheel.HasFlag(ButtonWheel.LeftClock);
             Inputs.ButtonState[ButtonFlags.B7] = buttonWheel.HasFlag(ButtonWheel.RightAnti);
             Inputs.ButtonState[ButtonFlags.B8] = buttonWheel.HasFlag(ButtonWheel.RightClock);
+            
+            // clear wheel reading
+            acceptedLeft = ButtonWheel.None;
+            acceptedRight = ButtonWheel.None;
 
             base.UpdateInputs(ticks, delta);
         }
@@ -89,6 +100,9 @@ namespace HandheldCompanion.Controllers.Zotac
                     {
                         Controller.OnControllerInputReceived += Controller_OnControllerInputReceived;
                         Controller.Open();
+
+                        leftTimer.Elapsed += AcceptPendingLeft;
+                        rightTimer.Elapsed += AcceptPendingRight;
                     }
                 }
                 catch (Exception ex)
@@ -108,6 +122,9 @@ namespace HandheldCompanion.Controllers.Zotac
                 {
                     Controller.OnControllerInputReceived -= Controller_OnControllerInputReceived;
                     Controller.Close();
+
+                    leftTimer.Elapsed -= AcceptPendingLeft;
+                    rightTimer.Elapsed -= AcceptPendingRight;
                 }
             }
         }
@@ -164,10 +181,59 @@ namespace HandheldCompanion.Controllers.Zotac
 
         private void Controller_OnControllerInputReceived(byte[] Data)
         {
-            // todo: filter noise
-            // check if an input lands too close to another in the opposite direction, or maybe one consider one input every second ?
-            Console.WriteLine("Wheel rotated: {0}", string.Join(",", Data));
+            // byte[0] = 0
+            // byte[1] = 0
+            // byte[2] = 1 right clockwise | 2 right anticlockwise | 8 left clockwise | 16 left anticlockwise
+            ButtonWheel wheelState = (ButtonWheel)Data[3];
+
+            ButtonWheel leftInput = wheelState & (ButtonWheel.LeftClock | ButtonWheel.LeftAnti);
+            if (leftInput != ButtonWheel.None)
+            {
+                pendingLeft = leftInput;
+                leftTimer.Stop();
+                leftTimer.Start();
+            }
+            else if (pendingLeft != ButtonWheel.None)
+            {
+                // Immediate commit on zero
+                leftTimer.Stop();
+                AcceptPendingLeft(null, null);
+            }
+
+            ButtonWheel rightInput = wheelState & (ButtonWheel.RightClock | ButtonWheel.RightAnti);
+            if (rightInput != ButtonWheel.None)
+            {
+                pendingRight = rightInput;
+                rightTimer.Stop();
+                rightTimer.Start();
+            }
+            else if (pendingRight != ButtonWheel.None)
+            {
+                // Immediate commit on zero
+                rightTimer.Stop();
+                AcceptPendingRight(null, null);
+            }
+
+            // copy buffer without reportID
             Buffer.BlockCopy(Data, 1, this.Data, 0, Data.Length - 1);
+        }
+
+        private void AcceptPendingLeft(object? sender, ElapsedEventArgs e)
+        {
+            if (pendingLeft != ButtonWheel.None)
+            {
+                acceptedLeft = pendingLeft;
+            }
+            pendingLeft = ButtonWheel.None;
+        }
+
+        private void AcceptPendingRight(object? sender, ElapsedEventArgs e)
+        {
+            if (pendingRight != ButtonWheel.None)
+            {
+                acceptedRight = pendingRight;
+            }
+            pendingRight = ButtonWheel.None;
         }
 
         public override string GetGlyph(ButtonFlags button)
