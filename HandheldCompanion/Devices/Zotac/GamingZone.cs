@@ -23,12 +23,37 @@ namespace HandheldCompanion.Devices.Zotac
 
         private const byte INPUT_HID_ID = 0x00;
 
-        protected uint physicalInstalledRamGB = 16; // TODO: Detect dynamically if needed
-        protected readonly Dictionary<uint, uint> defaultVRamSize = new Dictionary<uint, uint>
+        protected uint physicalInstalledRamGB = 16;
+
+        private static Dictionary<uint, uint> defaultVRamSize = new Dictionary<uint, uint>
         {
             { 16U, 4U }, // 16GB RAM => 4GB base VRAM
             { 32U, 6U },
             { 64U, 12U }
+        };
+
+        private static Dictionary<KeyCode, byte> BtnKeyboardMapPos = new()
+        {
+            {KeyCode.A,4},{KeyCode.B,5},{KeyCode.C,6},{KeyCode.D,7},{KeyCode.E,8},{KeyCode.F,9},{KeyCode.G,10},{KeyCode.H,11},
+            {KeyCode.I,12},{KeyCode.J,13},{KeyCode.K,14},{KeyCode.L,15},{KeyCode.M,16},{KeyCode.N,17},{KeyCode.O,18},{KeyCode.P,19},
+            {KeyCode.Q,20},{KeyCode.R,21},{KeyCode.S,22},{KeyCode.T,23},{KeyCode.U,24},{KeyCode.V,25},{KeyCode.W,26},{KeyCode.X,27},
+            {KeyCode.Y,28},{KeyCode.Z,29},
+            {KeyCode.D1,30},{KeyCode.D2,31},{KeyCode.D3,32},{KeyCode.D4,33},{KeyCode.D5,34},{KeyCode.D6,35},{KeyCode.D7,36},
+            {KeyCode.D8,37},{KeyCode.D9,38},{KeyCode.D0,39},
+            {KeyCode.Return,40},{KeyCode.Escape,41},{KeyCode.Backspace,42},{KeyCode.Tab,43},{KeyCode.Space,44},
+            {KeyCode.OemMinus,45},{KeyCode.Oemplus,46},{KeyCode.OemOpenBrackets,47},{KeyCode.OemCloseBrackets,48},
+            {KeyCode.OemPipe,49},{KeyCode.OemSemicolon,51},{KeyCode.OemQuotes,52},{KeyCode.Oemtilde,53},
+            {KeyCode.Oemcomma,54},{KeyCode.OemPeriod,55},{KeyCode.OemQuestion,56},
+            {KeyCode.CapsLock,57},
+            {KeyCode.F1,58},{KeyCode.F2,59},{KeyCode.F3,60},{KeyCode.F4,61},{KeyCode.F5,62},{KeyCode.F6,63},{KeyCode.F7,64},{KeyCode.F8,65},
+            {KeyCode.F9,66},{KeyCode.F10,67},{KeyCode.F11,68},{KeyCode.F12,69},
+            {KeyCode.PrintScreen,70},{KeyCode.Scroll,71},{KeyCode.Pause,72},{KeyCode.Insert,73},{KeyCode.Home,74},{KeyCode.PageUp,75},
+            {KeyCode.Delete,76},{KeyCode.End,77},{KeyCode.PageDown,78},
+            {KeyCode.Right,79},{KeyCode.Left,80},{KeyCode.Down,81},{KeyCode.Up,82},
+            {KeyCode.NumLock,83},{KeyCode.Divide,84},{KeyCode.Multiply,85},{KeyCode.Subtract,86},{KeyCode.Add,87},
+            {KeyCode.NumPad1,89},{KeyCode.NumPad2,90},{KeyCode.NumPad3,91},{KeyCode.NumPad4,92},{KeyCode.NumPad5,93},
+            {KeyCode.NumPad6,94},{KeyCode.NumPad7,95},{KeyCode.NumPad8,96},{KeyCode.NumPad9,97},{KeyCode.NumPad0,98},{KeyCode.Decimal,99},
+            {KeyCode.Apps,101}
         };
 
         public GamingZone()
@@ -111,10 +136,9 @@ namespace HandheldCompanion.Devices.Zotac
             Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
             // dynamic lighting capacities
+            DynamicLightingCapabilities |= LEDLevel.SolidColor;
             DynamicLightingCapabilities |= LEDLevel.Breathing;
             DynamicLightingCapabilities |= LEDLevel.Rainbow;
-            DynamicLightingCapabilities |= LEDLevel.Wave;
-            DynamicLightingCapabilities |= LEDLevel.Wheel;
             DynamicLightingCapabilities |= LEDLevel.Gradient;
             DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
@@ -215,11 +239,8 @@ namespace HandheldCompanion.Devices.Zotac
             data[3] = 0;       // sequence
             data[4] = 60;      // PAYLOAD_SIZE
 
-            data[5] = 241;     // COMMAND (Restore Profile Set)
+            data[5] = (byte)HIDCommand.RestoreProfileSet;
 
-            // The rest is zeroed by default
-
-            // CRC over [5]..[62] (payload bytes [4]..[61] in logical packet)
             ushort crc = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(crc >> 8);
             data[64] = (byte)(crc & 0xFF);
@@ -263,14 +284,14 @@ namespace HandheldCompanion.Devices.Zotac
             data[3] = 0;      // sequence
             data[4] = 60;     // PAYLOAD_SIZE
 
-            data[5] = 161;    // COMMAND (SetBtnMap)
-            data[6] = 1;      // SourceKey: M1
+            data[5] = (byte)HIDCommand.SetBtnMap;
+            data[6] = (byte)ButtonID.M1;
 
-            // Modifier: LeftCtrl (1) | LeftWinCMD (8) = 9
-            data[11] = 1 | 8;
+            // Modifier
+            data[11] = (byte)ModifierKeyID.LeftCtrl | (byte)ModifierKeyID.LeftWinCMD;
 
             // Keyboard: F11
-            data[13] = 68;   // BtnKeyboardMapPos[122]
+            data[13] = (byte)BtnKeyboardMapPos[KeyCode.F11];
 
             ushort CRC = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(CRC >> 8);
@@ -289,14 +310,14 @@ namespace HandheldCompanion.Devices.Zotac
             data[3] = 0;
             data[4] = 60;
 
-            data[5] = 161;
-            data[6] = 2;      // SourceKey: M2 (if that's your enum)
+            data[5] = (byte)HIDCommand.SetBtnMap;
+            data[6] = (byte)ButtonID.M2;
 
-            // Modifier: LeftCtrl (1) | LeftWinCMD (8) = 9
-            data[11] = 1 | 8;
+            // Modifier
+            data[11] = (byte)ModifierKeyID.LeftCtrl | (byte)ModifierKeyID.LeftWinCMD;
 
             // Keyboard: F12
-            data[13] = 69;   // BtnKeyboardMapPos[123]
+            data[13] = (byte)BtnKeyboardMapPos[KeyCode.F12];
 
             ushort CRC = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(CRC >> 8);
@@ -305,26 +326,69 @@ namespace HandheldCompanion.Devices.Zotac
             return data;
         }
 
+        private enum ButtonID
+        {
+            None = 0,
+            M1 = 1,
+            M2 = 2,
+            LTouchUp = 3,
+            LTouchDown = 4,
+            LTouchLeft = 5,
+            LTouchRight = 6,
+            RTouchUp = 7,
+            RTouchDown = 8,
+            RTouchLeft = 9,
+            RTouchRight = 10,
+            LB = 11,
+            RB = 12,
+            LTrigger = 13,
+            RTrigger = 14,
+            BtnA = 15,
+            BtnB = 16,
+            BtnX = 17,
+            BtnY = 18,
+            DpadUp = 19,
+            DpadDown = 20,
+            DpadLeft = 21,
+            DpadRight = 22,
+            LStickBtn = 23,
+            RStickBtn = 24,
+            MaxSourceBtn = 24
+        }
+
+        private enum ModifierKeyID
+        {
+            None = 0,
+            LeftCtrl = 1,
+            LeftShift = 2,
+            LeftAlt = 4,
+            LeftWinCMD = 8,
+            RightCtrl = 16,
+            RightShift = 32,
+            RightAlt = 64,
+            RightWinCMD = 128,
+        }
+
         private enum BrightnessID
         {
             Brightness_0 = 0,
-            Brightness_25 = 25, // 0x00000019
-            Brightness_50 = 50, // 0x00000032
-            Brightness_75 = 75, // 0x0000004B
-            Brightness_100 = 100, // 0x00000064
+            Brightness_25 = 25,     // 0x00000019
+            Brightness_50 = 50,     // 0x00000032
+            Brightness_75 = 75,     // 0x0000004B
+            Brightness_100 = 100,   // 0x00000064
         }
 
         private enum LightEffect
         {
-            Rainbow = 0,
-            Breathe = 1,
-            Stars = 2,
-            Fade = 3,
-            Dance = 4,
-            Flash = 5,
-            Wink = 6,
-            Random = 7,
-            Off = 240, // 0x000000F0
+            Rainbow = 0,    // HasSpeed
+            Breathe = 1,    // HasSpeed & HasColor
+            Stars = 2,      // HasSpeed & HasColor
+            Fade = 3,       // HasSpeed
+            Dance = 4,      // HasColor
+            Flash = 5,      // HasSpeed
+            Wink = 6,       // HasSpeed & HasColor
+            Random = 7,     // HasSpeed & HasColor
+            Off = 240,
         }
 
         private enum LightSpeed
@@ -336,10 +400,32 @@ namespace HandheldCompanion.Devices.Zotac
 
         private enum LEDSettings
         {
+            Spectra = 0,
             Speed = 1,
             Effect = 2,
             Brightness = 3,
             Color = 4,
+        }
+
+        private enum HIDCommand : byte
+        {
+            EnterISBMode = 188,
+            MotorTest = 189,
+            RestoreProfileSet = 241,
+            SaveConfigData = 251,
+            SetBtnMap = 161,
+            SetCursorSpeed = 163,
+            SetInvertStick = 167,
+            SetLed = 173, // includes SetLedBrightnessCMD, SetLightEffect, SetLightSpeed, SetSpectraColor, etc.
+            SetMFInfo = 182,
+            SetPresentProfile = 177,
+            SetProfileNum = 179,
+            SetStickDZ = 165,
+            SetStickSensitivity = 186,
+            SetTriggerDZ = 180,
+            SetVBStrength = 169,
+            SetButtonTurbo = 184,
+            SetTriggerLockInfo = 183 // for SetTriggerLockNumAndPresentLoc
         }
 
         private byte[] SendLedCmd(LEDSettings setting, byte value)
@@ -352,7 +438,7 @@ namespace HandheldCompanion.Devices.Zotac
             data[3] = 0;
             data[4] = 60;
 
-            data[5] = 173;
+            data[5] = (byte)HIDCommand.SetLed;
             data[6] = (byte)setting;
             data[7] = value;
 
@@ -373,11 +459,11 @@ namespace HandheldCompanion.Devices.Zotac
             data[3] = 0;
             data[4] = 60;
 
-            data[5] = 173;          // COMMAND
-            data[6] = 0;            // SETTING
-            data[7] = LedNumSet;    // LedNumSet
+            data[5] = (byte)HIDCommand.SetLed;
+            data[6] = (byte)LEDSettings.Spectra;
+            data[7] = LedNumSet;
 
-            // Set all 10 LEDs to red (0xFF0000)
+            // Set all 10 LEDs to red
             for (int i = 0; i < 10; i++)
             {
                 int pos = 10 + (i * 3);
@@ -387,7 +473,6 @@ namespace HandheldCompanion.Devices.Zotac
                 data[pos + 2] = (byte)(color & 0x0000FF);         // B
             }
 
-            // CRC over [5]..[62] (i.e., [4]..[61] in 64-byte logic)
             ushort crc = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(crc >> 8);
             data[64] = (byte)(crc & 0xFF);
@@ -481,14 +566,13 @@ namespace HandheldCompanion.Devices.Zotac
 
         public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed)
         {
-            // Apply the color for the left and right LED
-            // todo: figure out who's who
             LightEffect lightEffect = LightEffect.Off;
             switch (level)
             {
                 default:
                 case LEDLevel.SolidColor:
-                    lightEffect = LightEffect.Off; // ??
+                case LEDLevel.Ambilight:
+                    lightEffect = LightEffect.Dance; // confirmed by Vei
                     break;
                 case LEDLevel.Breathing:
                     lightEffect = LightEffect.Breathe;
@@ -496,14 +580,8 @@ namespace HandheldCompanion.Devices.Zotac
                 case LEDLevel.Rainbow:
                     lightEffect = LightEffect.Rainbow;
                     break;
-                case LEDLevel.Wave:
-                    lightEffect = LightEffect.Dance; // ??
-                    break;
-                case LEDLevel.Wheel:
-                    lightEffect = LightEffect.Stars; // ??
-                    break;
                 case LEDLevel.Gradient:
-                    lightEffect = LightEffect.Stars; // ??
+                    lightEffect = LightEffect.Stars;
                     break;
             }
 
@@ -549,7 +627,7 @@ namespace HandheldCompanion.Devices.Zotac
                 data[3] = 0;
                 data[4] = 60;
 
-                data[5] = 251; // HIDSaveConfigDataReportCMD
+                data[5] = (byte)HIDCommand.SaveConfigData;
 
                 return hidDevice.Write(data);
             }
