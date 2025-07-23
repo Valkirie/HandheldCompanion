@@ -78,43 +78,6 @@ namespace HandheldCompanion.Devices
                 { 'Z', 'Y' }
             };
 
-            // Legion Go - Quiet
-            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
-            {
-                Default = true,
-                DeviceDefault = true,
-                OSPowerMode = OSPowerMode.BetterBattery,
-                CPUBoostLevel = CPUBoostLevel.Disabled,
-                OEMPowerMode = (int)LegionMode.Quiet,
-                Guid = BetterBatteryGuid,
-                TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
-            });
-
-            // Legion Go - Balanced
-            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterPerformance, Properties.Resources.PowerProfileLegionGoBetterPerformanceDesc)
-            {
-                Default = true,
-                DeviceDefault = true,
-                OSPowerMode = OSPowerMode.BetterPerformance,
-                OEMPowerMode = (int)LegionMode.Balanced,
-                Guid = BetterPerformanceGuid,
-                TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
-            });
-
-            // Legion Go - Performance
-            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBestPerformance, Properties.Resources.PowerProfileLegionGoBestPerformanceDesc)
-            {
-                Default = true,
-                DeviceDefault = true,
-                OSPowerMode = OSPowerMode.BestPerformance,
-                OEMPowerMode = (int)LegionMode.Performance,
-                Guid = BestPerformanceGuid,
-                TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
-            });
-
             // device specific layout
             DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = [new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 }];
 

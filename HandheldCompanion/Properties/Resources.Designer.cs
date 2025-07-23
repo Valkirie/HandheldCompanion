@@ -7545,6 +7545,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        public static string PowerProfileGamingZoneBestPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBestPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 28W TDP.
+        /// </summary>
+        public static string PowerProfileGamingZoneBestPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBestPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quiet.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterBattery {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 8W TDP.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterBatteryDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterBatteryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balance.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15W TDP.
+        /// </summary>
+        public static string PowerProfileGamingZoneBetterPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileGamingZoneBetterPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Performance.
         /// </summary>
         public static string PowerProfileLegionGoBestPerformance {

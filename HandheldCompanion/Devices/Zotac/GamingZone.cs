@@ -129,6 +129,40 @@ namespace HandheldCompanion.Devices.Zotac
                 false, ButtonFlags.OEM5
             ));
 
+            // Quiet
+            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileGamingZoneBetterBattery, Properties.Resources.PowerProfileGamingZoneBetterBatteryDesc)
+            {
+                Default = true,
+                DeviceDefault = true,
+                OSPowerMode = OSPowerMode.BetterBattery,
+                CPUBoostLevel = CPUBoostLevel.Disabled,
+                Guid = BetterBatteryGuid,
+                TDPOverrideEnabled = true,
+                TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
+            });
+
+            // Balance
+            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileGamingZoneBetterPerformance, Properties.Resources.PowerProfileGamingZoneBetterPerformanceDesc)
+            {
+                Default = true,
+                DeviceDefault = true,
+                OSPowerMode = OSPowerMode.BetterPerformance,
+                Guid = BetterPerformanceGuid,
+                TDPOverrideEnabled = true,
+                TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
+            });
+
+            // High
+            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileGamingZoneBestPerformance, Properties.Resources.PowerProfileGamingZoneBestPerformanceDesc)
+            {
+                Default = true,
+                DeviceDefault = true,
+                OSPowerMode = OSPowerMode.BestPerformance,
+                Guid = BestPerformanceGuid,
+                TDPOverrideEnabled = true,
+                TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
+            });
+
             // device specific capacities
             Capabilities |= DeviceCapabilities.FanControl;
             Capabilities |= DeviceCapabilities.DynamicLighting;
