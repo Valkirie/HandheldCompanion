@@ -1,7 +1,5 @@
 ﻿using controller_hidapi.net.Util;
-using hidapi;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace controller_hidapi.net
 {

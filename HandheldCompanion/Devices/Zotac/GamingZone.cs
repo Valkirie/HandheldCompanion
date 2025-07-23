@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -548,7 +547,7 @@ namespace HandheldCompanion.Devices.Zotac
                 // mi_03
                 if (device.Capabilities.InputReportByteLength != 65 || device.Capabilities.OutputReportByteLength != 65)
                     continue;
-                
+
                 hidDevices[INPUT_HID_ID] = device;
                 return true;
             }
@@ -572,11 +571,11 @@ namespace HandheldCompanion.Devices.Zotac
                 return BrightnessID.Brightness_0;
             else if (brightness >= 25 && brightness < 50)
                 return BrightnessID.Brightness_25;
-            else if(brightness >= 50 && brightness < 75)
+            else if (brightness >= 50 && brightness < 75)
                 return BrightnessID.Brightness_50;
-            else if(brightness >= 75 && brightness < 100)
+            else if (brightness >= 75 && brightness < 100)
                 return BrightnessID.Brightness_75;
-            else if(brightness == 100)
+            else if (brightness == 100)
                 return BrightnessID.Brightness_100;
 
             return BrightnessID.Brightness_0;

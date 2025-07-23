@@ -250,8 +250,8 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
         DynamicLightingCapabilities |= LEDLevel.Wheel;
 
-        OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1 ));
-        OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2 ));
+        OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2));
     }
 
     public override bool IsReady()

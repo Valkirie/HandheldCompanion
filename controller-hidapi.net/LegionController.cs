@@ -1,7 +1,4 @@
-﻿using hidapi;
-using System.Threading.Tasks;
-
-namespace controller_hidapi.net
+﻿namespace controller_hidapi.net
 {
     public class LegionController : GenericController
     {

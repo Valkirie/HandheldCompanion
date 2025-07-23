@@ -735,7 +735,7 @@ public static class ControllerManager
                     // ZOTAC
                     case "0x1EE9":
                         {
-                            switch(details.GetProductID())
+                            switch (details.GetProductID())
                             {
                                 case "0x1590":
                                     try { controller = new ZoneController(details); } catch { }

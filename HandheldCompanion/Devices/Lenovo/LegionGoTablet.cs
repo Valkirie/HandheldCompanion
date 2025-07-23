@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -326,6 +325,6 @@ namespace HandheldCompanion.Devices
             yield return RgbEnable(LeftJoyconIndex, enable);
             yield return RgbEnable(RightJoyconIndex, enable);
         }
-#endregion
+        #endregion
     }
 }
