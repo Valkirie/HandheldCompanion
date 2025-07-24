@@ -6,216 +6,186 @@ using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Net.Cache;
-using System.Reflection;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using HandheldCompanion.Notifications;
+using System.Timers;
 
-namespace HandheldCompanion.Managers;
-
-public static class UpdateManager
+namespace HandheldCompanion.Managers
 {
-    public static event UpdatedEventHandler Updated;
-    public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
-
-    public enum UpdateStatus
+    public static class UpdateManager
     {
-        Initialized,
-        Updated,
-        Checking,
-        Changelog,
-        Ready,
-        Download,
-        Downloading,
-        Downloaded,
-        Failed
-    }
+        public static event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
 
-    private static readonly Assembly assembly;
-    private static readonly Version build;
-
-    private static DateTime lastCheck;
-    private static UpdateStatus updateStatus;
-    private static readonly Dictionary<string, UpdateFile> updateFiles = [];
-    private static string updateUrl;
-
-    private static readonly WebClient webClient;
-    private static readonly string InstallPath;
-
-    private static bool IsInitialized;
-
-    public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
-
-    static UpdateManager()
-    {
-        // check assembly
-        assembly = Assembly.GetExecutingAssembly();
-        build = assembly.GetName().Version;
-
-        InstallPath = Path.Combine(App.SettingsPath, "cache");
-
-        // initialize folder
-        if (!Directory.Exists(InstallPath))
-            Directory.CreateDirectory(InstallPath);
-
-        webClient = new WebClient
+        public enum UpdateStatus
         {
-            CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore)
-        };
-        ServicePointManager.Expect100Continue = true;
-        webClient.Headers.Add("user-agent", "request");
-
-        webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
-        webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
-        webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
-    }
-
-    public static void Start()
-    {
-        if (IsInitialized)
-            return;
-
-        DateTime dateTime = ManagerFactory.settingsManager.GetDateTime("UpdateLastChecked");
-
-        lastCheck = dateTime;
-
-        updateStatus = UpdateStatus.Initialized;
-        Updated?.Invoke(updateStatus, null, null);
-
-        // raise events
-        switch (ManagerFactory.settingsManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QuerySettings();
-                break;
+            Initialized,
+            Updated,
+            Checking,
+            Changelog,
+            Ready,
+            Download,
+            Downloading,
+            Downloaded,
+            Failed
         }
 
-        IsInitialized = true;
-        Initialized?.Invoke();
+        private static DateTime lastCheck;
+        private static UpdateStatus updateStatus;
+        private static readonly Dictionary<string, UpdateFile> updateFiles = new();
 
-        LogManager.LogInformation("{0} has started", "UpdateManager");
-    }
+        private static string updateUrl = "";
+        private static readonly HttpClient httpClient;
+        private static readonly string InstallPath;
 
-    private static void SettingsManager_Initialized()
-    {
-        QuerySettings();
-    }
+        private static Timer autoTimer = new(TimeSpan.FromMinutes(10)) { AutoReset = true };
 
-    private static void QuerySettings()
-    {
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        public static DateTime GetTime() => lastCheck;
 
-        // raise events
-        SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
-    }
+        private static bool IsInitialized;
 
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
 
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "UpdateManager");
-    }
-
-    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
-    {
-        switch (name)
+        static UpdateManager()
         {
-            case "UpdateUrl":
-                updateUrl = Convert.ToString(value);
-                break;
-        }
-    }
+            // prepare cache folder
+            InstallPath = Path.Combine(App.SettingsPath, "cache");
+            if (!Directory.Exists(InstallPath))
+                Directory.CreateDirectory(InstallPath);
 
-    private static int GetFileSize(Uri uriPath)
-    {
-        try
-        {
-            var webRequest = WebRequest.Create(uriPath);
-            webRequest.Method = "HEAD";
-
-            using (var webResponse = webRequest.GetResponse())
+            // configure HttpClient with GitHub headers (prevents 403 on reuse)
+            var handler = new HttpClientHandler
             {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            httpClient = new HttpClient(handler);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("HandheldCompanion/1.0");
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+
+            autoTimer.Elapsed += AutoTimer_Elapsed;
+        }
+
+        private static void AutoTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            _ = StartProcess(true);
+        }
+
+        public static void Start()
+        {
+            if (IsInitialized)
+                return;
+
+            lastCheck = ManagerFactory.settingsManager.GetDateTime("UpdateLastChecked");
+
+            autoTimer.Start();
+
+            updateStatus = UpdateStatus.Initialized;
+            Updated?.Invoke(updateStatus, null, null);
+
+            // raise events
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+
+            IsInitialized = true;
+            Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "UpdateManager");
+        }
+
+        public static void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            autoTimer.Stop();
+            autoTimer.Dispose();
+
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+
+            IsInitialized = false;
+            LogManager.LogInformation("{0} has stopped", "UpdateManager");
+        }
+
+        private static void SettingsManager_Initialized() => QuerySettings();
+
+        private static void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false);
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch(name)
+            {
+                case "UpdateUrl":
+                    updateUrl = Convert.ToString(value) ?? string.Empty;
+                    break;
+            }
+        }
+
+        private static int GetFileSize(Uri uriPath)
+        {
+            try
+            {
+                var webRequest = WebRequest.Create(uriPath);
+                webRequest.Method = "HEAD";
+
+                using var webResponse = webRequest.GetResponse();
                 var fileSize = webResponse.Headers.Get("Content-Length");
                 return Convert.ToInt32(fileSize);
             }
-        }
-        catch
-        {
-            return 0;
-        }
-    }
-
-    private static void WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
-    {
-        if (updateStatus != UpdateStatus.Downloading)
-            return;
-
-        var filename = (string)e.UserState;
-
-        if (!updateFiles.ContainsKey(filename))
-            return;
-
-        var update = updateFiles[filename];
-
-        updateStatus = UpdateStatus.Downloaded;
-        Updated?.Invoke(updateStatus, update, null);
-    }
-
-    private static void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-    {
-        if (updateStatus != UpdateStatus.Download && updateStatus != UpdateStatus.Downloading)
-            return;
-
-        var filename = (string)e.UserState;
-
-        if (updateFiles.TryGetValue(filename, out var file))
-        {
-            updateStatus = UpdateStatus.Downloading;
-            Updated?.Invoke(updateStatus, file, e.ProgressPercentage);
-        }
-    }
-
-    private static void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-    {
-        // something went wrong with the connection
-        if (e.Error is not null)
-        {
-            UpdateFile update = null;
-
-            if (e.UserState is not null)
+            catch
             {
-                var filename = (string)e.UserState;
-                if (updateFiles.TryGetValue(filename, out var file))
-                    update = file;
-
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    _ = new Dialog(MainWindow.GetCurrent())
-                    {
-                        Title = Resources.SettingsPage_UpdateWarning,
-                        Content = Resources.SettingsPage_UpdateFailedDownload,
-                        PrimaryButtonText = Resources.ProfilesPage_OK
-                    }.ShowAsync();
-                });
+                return 0;
             }
-            else
+        }
+
+        private static void UpdateTime()
+        {
+            lastCheck = DateTime.Now;
+            ManagerFactory.settingsManager.SetProperty("UpdateLastChecked", lastCheck);
+        }
+
+        public static async Task StartProcess(bool background)
+        {
+            if (!background)
             {
+                updateStatus = UpdateStatus.Checking;
+                Updated?.Invoke(updateStatus, null, null);
+            }
+
+            try
+            {
+                var resp = await httpClient.GetAsync($"{updateUrl}/releases/latest");
+                resp.EnsureSuccessStatusCode();
+                var contents = await resp.Content.ReadAsStringAsync();
+
+                // parse result
+                ParseLatest(contents);
+            }
+            catch (Exception)
+            {
+                if (background)
+                    return;
+
                 // UI thread
                 UIHelper.TryInvoke(() =>
                 {
@@ -226,143 +196,157 @@ public static class UpdateManager
                         PrimaryButtonText = Resources.ProfilesPage_OK
                     }.ShowAsync();
                 });
-            }
 
-            updateStatus = UpdateStatus.Failed;
-            Updated?.Invoke(updateStatus, update, e.Error);
-            return;
+                updateStatus = UpdateStatus.Failed;
+                Updated?.Invoke(updateStatus, null, null);
+            }
         }
 
-        switch (updateStatus)
+        public static async Task DownloadUpdateFile(UpdateFile update)
         {
-            case UpdateStatus.Checking:
-                ParseLatest(e.Result);
-                break;
-        }
-    }
-
-    public static void DownloadUpdateFile(UpdateFile update)
-    {
-        if (webClient.IsBusy)
-            return; // lazy
-
-        updateStatus = UpdateStatus.Download;
-        Updated?.Invoke(updateStatus, update, null);
-
-        // download release
-        var filename = Path.Combine(InstallPath, update.filename);
-        webClient.DownloadFileAsync(update.uri, filename, update.filename);
-    }
-
-    private static void ParseLatest(string contentsJson)
-    {
-        try
-        {
-            var latestRelease = JsonConvert.DeserializeObject<GitRelease>(contentsJson);
-
-            // get latest build version
-            var latestBuild = new Version(latestRelease.tag_name);
-
-            // update latest check time
-            UpdateTime();
-
-            // skip if user is already running latest build
-            if (latestBuild <= build)
-            {
-                updateStatus = UpdateStatus.Updated;
-                Updated?.Invoke(updateStatus, null, null);
+            if (updateStatus == UpdateStatus.Downloading)
                 return;
-            }
 
-            // send changelog
-            updateStatus = UpdateStatus.Changelog;
-            Updated?.Invoke(updateStatus, null, latestRelease.body);
+            updateStatus = UpdateStatus.Download;
+            Updated?.Invoke(updateStatus, update, null);
 
-            // skip if no assets are currently linked to the release
-            if (latestRelease.assets.Count == 0)
+            var destPath = Path.Combine(InstallPath, update.filename);
+            try
             {
-                updateStatus = UpdateStatus.Updated;
-                Updated?.Invoke(updateStatus, null, null);
-                return;
-            }
+                using var resp = await httpClient.GetAsync(update.uri, HttpCompletionOption.ResponseHeadersRead);
+                resp.EnsureSuccessStatusCode();
 
-            foreach (var asset in latestRelease.assets)
-            {
-                var uri = new Uri(asset.browser_download_url);
-                var update = new UpdateFile
+                long totalBytes = update.filesize > 0
+                    ? update.filesize
+                    : resp.Content.Headers.ContentLength ?? -1;
+
+                using var sourceStream = await resp.Content.ReadAsStreamAsync();
+                using var destStream = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                var buffer = new byte[81920];
+                long bytesReadSoFar = 0;
+                int read;
+                while ((read = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    idx = (short)asset.id,
-                    filename = asset.name,
-                    uri = uri,
-                    filesize = GetFileSize(uri),
-                    debug = asset.name.Contains("Debug", StringComparison.InvariantCultureIgnoreCase)
-                };
+                    await destStream.WriteAsync(buffer, 0, read);
+                    bytesReadSoFar += read;
 
-                // making sure there was no corruption
-                if (update.filesize == asset.size)
-                    updateFiles.Add(update.filename, update);
+                    if (totalBytes > 0)
+                    {
+                        int percent = (int)(bytesReadSoFar * 100L / totalBytes);
+                        updateStatus = UpdateStatus.Downloading;
+                        Updated?.Invoke(updateStatus, update, percent);
+                    }
+                }
+
+                updateStatus = UpdateStatus.Downloaded;
+                Updated?.Invoke(updateStatus, update, null);
             }
+            catch (Exception)
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    _ = new Dialog(MainWindow.GetCurrent())
+                    {
+                        Title = Resources.SettingsPage_UpdateWarning,
+                        Content = Resources.SettingsPage_UpdateFailedDownload,
+                        PrimaryButtonText = Resources.ProfilesPage_OK
+                    }.ShowAsync();
+                });
 
-            // skip if we failed to parse updates
-            if (updateFiles.Count == 0)
+                updateStatus = UpdateStatus.Failed;
+                Updated?.Invoke(updateStatus, update, null);
+            }
+        }
+
+        private static Notification UpdateAvailable = new("Update Manager", "An update is ready for download") { IsInternal = true, IsIndeterminate = true };
+        private static void ParseLatest(string contentsJson)
+        {
+            try
+            {
+                GitRelease latestRelease = JsonConvert.DeserializeObject<GitRelease>(contentsJson)!;
+                Version latestBuild = new Version(latestRelease.tag_name);
+
+                UpdateTime();
+
+                if (latestBuild <= MainWindow.CurrentVersion)
+                {
+                    updateStatus = UpdateStatus.Updated;
+                    Updated?.Invoke(updateStatus, null, null);
+                    return;
+                }
+
+                // update message
+                UpdateAvailable.Message = $"Version {latestBuild.ToString()} is ready for download";
+                
+                ManagerFactory.notificationManager.Add(UpdateAvailable);
+                ToastManager.SendToast(UpdateAvailable.Action, UpdateAvailable.Message);
+
+                // send changelog
+                updateStatus = UpdateStatus.Changelog;
+                Updated?.Invoke(updateStatus, null, latestRelease.body);
+
+                if (latestRelease.assets.Count == 0)
+                {
+                    updateStatus = UpdateStatus.Updated;
+                    Updated?.Invoke(updateStatus, null, null);
+                    return;
+                }
+
+                updateFiles.Clear();
+                foreach (var asset in latestRelease.assets)
+                {
+                    var uri = new Uri(asset.browser_download_url);
+                    var file = new UpdateFile
+                    {
+                        idx = (short)asset.id,
+                        filename = asset.name,
+                        uri = uri,
+                        filesize = GetFileSize(uri),
+                        debug = asset.name.Contains("Debug", StringComparison.InvariantCultureIgnoreCase)
+                    };
+
+                    if (file.filesize == asset.size)
+                        updateFiles[file.filename] = file;
+                }
+
+                if (updateFiles.Count == 0)
+                {
+                    updateStatus = UpdateStatus.Failed;
+                    Updated?.Invoke(updateStatus, null, null);
+                    return;
+                }
+
+                updateStatus = UpdateStatus.Ready;
+                Updated?.Invoke(updateStatus, null, updateFiles);
+            }
+            catch
             {
                 updateStatus = UpdateStatus.Failed;
                 Updated?.Invoke(updateStatus, null, null);
+            }
+        }
+
+        public static void InstallUpdate(UpdateFile updateFile)
+        {
+            var filename = Path.Combine(InstallPath, updateFile.filename);
+
+            if (!File.Exists(filename))
+            {
+                UIHelper.TryInvoke(() =>
+                {
+                    _ = new Dialog(MainWindow.GetCurrent())
+                    {
+                        Title = Resources.SettingsPage_UpdateWarning,
+                        Content = Resources.SettingsPage_UpdateFailedInstall,
+                        PrimaryButtonText = Resources.ProfilesPage_OK
+                    }.ShowAsync();
+                });
                 return;
             }
 
-            updateStatus = UpdateStatus.Ready;
-            Updated?.Invoke(updateStatus, null, updateFiles);
+            Process.Start(filename);
+            Process.GetCurrentProcess().Kill();
         }
-        catch
-        {
-            // failed to parse Json
-            updateStatus = UpdateStatus.Failed;
-            Updated?.Invoke(updateStatus, null, null);
-        }
-    }
-
-    public static DateTime GetTime()
-    {
-        return lastCheck;
-    }
-
-    private static void UpdateTime()
-    {
-        lastCheck = DateTime.Now;
-        ManagerFactory.settingsManager.SetProperty("UpdateLastChecked", lastCheck);
-    }
-
-    public static void StartProcess()
-    {
-        // Update UI
-        updateStatus = UpdateStatus.Checking;
-        Updated?.Invoke(updateStatus, null, null);
-
-        // download github
-        webClient.DownloadStringAsync(new Uri($"{updateUrl}/releases/latest"));
-    }
-
-    public static void InstallUpdate(UpdateFile updateFile)
-    {
-        var filename = Path.Combine(InstallPath, updateFile.filename);
-
-        if (!File.Exists(filename))
-        {
-            // UI thread
-            UIHelper.TryInvoke(() =>
-            {
-                _ = new Dialog(MainWindow.GetCurrent())
-                {
-                    Title = Resources.SettingsPage_UpdateWarning,
-                    Content = Resources.SettingsPage_UpdateFailedInstall,
-                    PrimaryButtonText = Resources.ProfilesPage_OK
-                }.ShowAsync();
-            });
-            return;
-        }
-
-        Process.Start(filename);
-        Process.GetCurrentProcess().Kill();
     }
 }

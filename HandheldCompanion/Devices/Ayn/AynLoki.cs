@@ -25,6 +25,7 @@ public class AynLoki : IDevice
         // Ayn Loki device generic settings
         ProductIllustration = "device_ayn_loki";
         ProductModel = "AynLoki";
+        UseOpenLib = true;
 
         GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>

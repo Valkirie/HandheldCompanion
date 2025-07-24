@@ -6,8 +6,8 @@ namespace HandheldCompanion.Notifications
     public class Notification
     {
         public Guid Guid { get; set; } = Guid.NewGuid();
-        public string Title { get; private set; }
-        public string Message { get; private set; }
+        public string Title { get; set; }
+        public string Message { get; set; }
         public string Action { get; private set; }
         public InfoBarSeverity Severity { get; private set; }
         public bool IsClosable { get; private set; }

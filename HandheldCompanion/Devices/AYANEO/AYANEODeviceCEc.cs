@@ -84,16 +84,24 @@ namespace HandheldCompanion.Devices.AYANEO
 
         public override bool Open()
         {
-            if (!base.Open()) return false;
+            bool success = base.Open();
+            if (!success)
+                return false;
+
             lock (this.updateLock)
             {
                 this.CEcControl_RgbHoldControl();
             }
 
+            return true;
+        }
+
+        public override void OpenEvents()
+        {
+            base.OpenEvents();
+
             // manage events
             PowerManager.RemainingChargePercentChanged += PowerManager_RemainingChargePercentChanged;
-
-            return true;
         }
 
         protected override void QuerySettings()

@@ -287,8 +287,11 @@ public partial class SettingsPage : Page
 
                 case UpdateStatus.Checking:
                     {
+                        CurrentUpdates.Children.Clear();
+
                         LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
 
+                        CurrentChangelog.Visibility = Visibility.Collapsed;
                         GridUpdateSymbol.Visibility = Visibility.Collapsed;
                         LabelUpdateDate.Visibility = Visibility.Collapsed;
                         ProgressBarUpdate.Visibility = Visibility.Visible;
@@ -327,7 +330,9 @@ public partial class SettingsPage : Page
                 case UpdateStatus.Changelog:
                     {
                         CurrentChangelog.Visibility = Visibility.Visible;
+                        LabelUpdateDate.Visibility = Visibility.Visible;
                         CurrentChangelog.AppendText((string)value);
+                        B_CheckUpdate.IsEnabled = true;
                     }
                     break;
 
@@ -349,9 +354,9 @@ public partial class SettingsPage : Page
                 case UpdateStatus.Downloaded:
                     {
                         updateFile.updateInstall.Visibility = Visibility.Visible;
-
                         updateFile.updateDownload.Visibility = Visibility.Collapsed;
                         updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                        B_CheckUpdate.IsEnabled = true;
                     }
                     break;
             }
@@ -362,7 +367,7 @@ public partial class SettingsPage : Page
     {
         new Thread(() =>
         {
-            UpdateManager.StartProcess();
+            UpdateManager.StartProcess(false);
         }).Start();
     }
 

@@ -28,8 +28,6 @@ public class AYANEOFlipDS : AYANEOFlipKB
             [KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM5
         ));
-
-        ControllerManager.InputsUpdated += ControllerManager_InputsUpdated;
     }
 
     public override void Initialize(bool FirstStart, bool NewUpdate)
@@ -54,9 +52,12 @@ public class AYANEOFlipDS : AYANEOFlipKB
         }
     }
 
-    public override bool Open()
+    public override void OpenEvents()
     {
-        return base.Open();
+        base.OpenEvents();
+
+        // manage events
+        ControllerManager.InputsUpdated += ControllerManager_InputsUpdated;
     }
 
     private ButtonState prevState = new();

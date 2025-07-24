@@ -58,7 +58,7 @@ public class ProcessManager : IManager
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
 
     private static ProcessEx currentProcess;
-    private IntPtr foregroundWindow;
+    private IntPtr currenthWnd;
 
     private AutomationEventHandler _windowOpenedHandler;
 
@@ -114,16 +114,16 @@ public class ProcessManager : IManager
         {
             case "QuickTools":
                 {
-                    Profile currentProfile = ManagerFactory.profileManager.GetProfileFromPath(currentProcess.Path, false);
-                    if (!currentProfile.SuspendOnQT || currentProfile.Default)
-                        return;
-
                     // we already have a suspended process
                     if (processHandle != IntPtr.Zero)
                         return;
 
                     if (currentProcess is not null)
                     {
+                        Profile currentProfile = ManagerFactory.profileManager.GetProfileFromPath(currentProcess.Path, false);
+                        if (!currentProfile.SuspendOnQT || currentProfile.Default)
+                            return;
+
                         bool success = SuspendProcess(currentProcess.Handle, currentProcess.ProcessId);
                         if (success)
                         {
@@ -189,35 +189,41 @@ public class ProcessManager : IManager
         base.Stop();
     }
 
+    private bool Settings_SuspendOnSleep => ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
+
     public override void Resume()
     {
-        bool SuspendOnSleep = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
-        if (!SuspendOnSleep)
-            return;
+        // reset known foreground window
+        currenthWnd = IntPtr.Zero;
 
-        foreach (ProcessEx processEx in Processes.Values)
+        if (Settings_SuspendOnSleep)
         {
-            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
-            if (!processEx.IsSuspended || !profile.SuspendOnSleep)
-                continue;
+            foreach (ProcessEx processEx in Processes.Values)
+            {
+                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
+                if (!processEx.IsSuspended || !profile.SuspendOnSleep)
+                    continue;
 
-            ResumeProcess(processEx, false);
+                ResumeProcess(processEx, false);
+            }
         }
     }
 
     public override void Suspend()
     {
-        bool SuspendOnSleep = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
-        if (!SuspendOnSleep)
-            return;
+        // reset known foreground window
+        currenthWnd = IntPtr.Zero;
 
-        foreach (ProcessEx processEx in Processes.Values)
+        if (Settings_SuspendOnSleep)
         {
-            Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
-            if (processEx.IsSuspended || !profile.SuspendOnSleep)
-                continue;
+            foreach (ProcessEx processEx in Processes.Values)
+            {
+                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
+                if (processEx.IsSuspended || !profile.SuspendOnSleep)
+                    continue;
 
-            SuspendProcess(processEx, false);
+                SuspendProcess(processEx, false);
+            }
         }
     }
 
@@ -328,7 +334,7 @@ public class ProcessManager : IManager
         IntPtr hWnd = GetforegroundWindow();
 
         // skip if this window is already in foreground
-        if (foregroundWindow == hWnd || hWnd == IntPtr.Zero)
+        if (currenthWnd == hWnd || hWnd == IntPtr.Zero)
             return;
 
         AutomationElement element = null;
@@ -402,7 +408,7 @@ public class ProcessManager : IManager
             ForegroundChanged?.Invoke(process, prevProcess, filter);
 
             // update current foreground window
-            foregroundWindow = hWnd;
+            currenthWnd = hWnd;
         }
         catch { }
     }

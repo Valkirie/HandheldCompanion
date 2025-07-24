@@ -88,11 +88,9 @@ public class MinisforumV3 : IDevice
         });
     }
 
-    public override bool Open()
+    public override void OpenEvents()
     {
-        var success = base.Open();
-        if (!success)
-            return false;
+        base.OpenEvents();
 
         // raise events
         switch (ManagerFactory.powerProfileManager.Status)
@@ -105,8 +103,6 @@ public class MinisforumV3 : IDevice
                 QueryPowerProfile();
                 break;
         }
-
-        return true;
     }
 
     public override void Close()

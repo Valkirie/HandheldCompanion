@@ -155,6 +155,7 @@ public abstract class IDevice
     protected FontFamily GlyphFontFamily = new("PromptFont");
     protected const string defaultGlyph = "\u2753";
 
+    protected bool UseOpenLib = false;
     public ECDetails ECDetails;
 
     public string ExternalSensorName = string.Empty;
@@ -175,6 +176,9 @@ public abstract class IDevice
     public bool MemoryMonitor = true;
     public bool BatteryMonitor = true;
 
+    protected bool DeviceOpen = false;
+    public virtual bool IsOpen => DeviceOpen;
+
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
@@ -191,8 +195,25 @@ public abstract class IDevice
 
     public virtual bool Open()
     {
-        if (openLibSys != null)
+        if (IsOpen)
             return true;
+
+        if (UseOpenLib)
+        {
+            bool success = OpenLibSys();
+            if (!success)
+                return false;
+        }
+
+        // set flag
+        DeviceOpen = true;
+
+        return DeviceOpen;
+    }
+
+    private bool OpenLibSys()
+    {
+        if (openLibSys != null) return true;
 
         try
         {
@@ -200,7 +221,7 @@ public abstract class IDevice
             openLibSys = new OpenLibSys();
 
             // Check support library sutatus
-            var status = openLibSys.GetStatus();
+            OlsStatus status = openLibSys.GetStatus();
             switch (status)
             {
                 case (uint)OlsStatus.NO_ERROR:
@@ -211,7 +232,7 @@ public abstract class IDevice
             }
 
             // Check WinRing0 status
-            var dllstatus = (OlsDllStatus)openLibSys.GetDllStatus();
+            OlsDllStatus dllstatus = (OlsDllStatus)openLibSys.GetDllStatus();
             switch (dllstatus)
             {
                 case (uint)OlsDllStatus.OLS_DLL_NO_ERROR:
@@ -228,6 +249,11 @@ public abstract class IDevice
             return false;
         }
 
+        return true;
+    }
+
+    public virtual void OpenEvents()
+    {
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -240,23 +266,39 @@ public abstract class IDevice
                 break;
         }
 
+        switch (ManagerFactory.deviceManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.deviceManager.Initialized += DeviceManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryDevices();
+                break;
+        }
+
         // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-        ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-        ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
         // raise events
         if (VirtualManager.IsInitialized)
         {
             VirtualManager_ControllerSelected(VirtualManager.HIDmode);
         }
+    }
 
-        if (ManagerFactory.deviceManager.IsRunning)
-        {
-            GenericDeviceUpdated(null, Guid.Empty);
-        }
+    private void QueryDevices()
+    {
+        // manage events
+        ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
-        return true;
+        GenericDeviceUpdated(null, Guid.Empty);
+    }
+
+    private void DeviceManager_Initialized()
+    {
+        QueryDevices();
     }
 
     protected virtual void QuerySettings()
@@ -275,13 +317,18 @@ public abstract class IDevice
 
     public virtual void Close()
     {
-        if (openLibSys is null)
-            return;
-
+        // disable fan control
         SetFanControl(false);
 
-        openLibSys.Dispose();
-        openLibSys = null;
+        // Close openLib
+        if (openLibSys is not null)
+        {
+            openLibSys.Dispose();
+            openLibSys = null;
+        }
+
+        // set flag
+        DeviceOpen = false;
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
@@ -305,8 +352,6 @@ public abstract class IDevice
     }
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(a => !a.silenced).SelectMany(a => a.state.Buttons).Distinct();
-
-    public virtual bool IsOpen => openLibSys is not null;
 
     public virtual bool IsSupported => true;
 
@@ -381,6 +426,9 @@ public abstract class IDevice
                             break;
                         case "AOKZOE A1 Pro":
                             device = new AOKZOEA1Pro();
+                            break;
+                        case "AOKZOE A1X":
+                            device = new AOKZOEA1X();
                             break;
                         case "AOKZOE A2 Pro":
                             device = new AOKZOEA2();
