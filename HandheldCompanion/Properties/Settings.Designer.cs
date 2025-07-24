@@ -1365,5 +1365,17 @@ namespace HandheldCompanion.Properties
                 this["ZotacGamingZoneVRAM"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LegionControllerSwap {
+            get {
+                return ((bool)(this["LegionControllerSwap"]));
+            }
+            set {
+                this["LegionControllerSwap"] = value;
+            }
+        }
     }
 }
