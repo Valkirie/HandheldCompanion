@@ -59,6 +59,19 @@
                     </ui:SettingsCard.HeaderIcon>
                 </ui:SettingsCard>
 
+                <ItemsControl
+                    ItemTemplate="{StaticResource HotkeyTemplate}"
+                    ItemsSource="{Binding HotkeysList, UpdateSourceTrigger=PropertyChanged}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <!--
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="5*" />
@@ -78,7 +91,6 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
 
-                    <!--  Right column: indices 1,3,5,...  -->
                     <ItemsControl
                         Grid.Column="1"
                         Margin="3,0,0,0"
@@ -93,6 +105,7 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
                 </Grid>
+                -->
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

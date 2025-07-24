@@ -185,6 +185,8 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public bool HasManufacturerPlatform => manufacturerWatcher is not null;
         #endregion
 
         public DevicePageViewModel()
@@ -212,11 +214,6 @@ namespace HandheldCompanion.ViewModels
                 // start watcher
                 manufacturerWatcher.StatusChanged += ManufacturerWatcher_StatusChanged;
                 manufacturerWatcher.Start();
-            }
-            else
-            {
-                // update flag
-                ManufacturerAppBusy = true;
             }
 
             // manage events

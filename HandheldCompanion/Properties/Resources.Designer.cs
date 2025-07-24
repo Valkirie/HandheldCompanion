@@ -628,6 +628,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Switch button layout.
+        /// </summary>
+        public static string ControllerPage_LegionGoControllerSwap {
+            get {
+                return ResourceManager.GetString("ControllerPage_LegionGoControllerSwap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rearrange button layout &quot;Legion L&quot; to &quot;View&quot; and &quot;Legion R&quot; to &quot;Menu&quot;.
+        /// </summary>
+        public static string ControllerPage_LegionGoControllerSwapDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_LegionGoControllerSwapDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Touchpad passthrough.
         /// </summary>
         public static string ControllerPage_LegionGoPassthrough {
@@ -1308,6 +1326,24 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_FullFanSpeedText {
             get {
                 return ResourceManager.GetString("DevicePage_FullFanSpeedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Additional VRAM Size.
+        /// </summary>
+        public static string DevicePage_GamingZone_VRAM {
+            get {
+                return ResourceManager.GetString("DevicePage_GamingZone_VRAM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure additional memory size to the integrated graphics.
+        /// </summary>
+        public static string DevicePage_GamingZone_VRAMDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_GamingZone_VRAMDesc", resourceCulture);
             }
         }
         

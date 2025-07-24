@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using SharpDX.XInput;
@@ -95,7 +94,7 @@ namespace HandheldCompanion.Controllers.Steam
             return Controller?.Reading == true && Controller?.IsDeviceValid == true;
         }
 
-        public override void UpdateInputs(long ticks, float delta)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             if (input is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
@@ -209,7 +208,7 @@ namespace HandheldCompanion.Controllers.Steam
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta);
         }
 
         private void Open()
@@ -275,8 +274,6 @@ namespace HandheldCompanion.Controllers.Steam
         {
             Open();
 
-            TimerManager.Tick += UpdateInputs;
-
             base.Plug();
         }
 
@@ -284,7 +281,6 @@ namespace HandheldCompanion.Controllers.Steam
         {
             Close();
 
-            TimerManager.Tick -= UpdateInputs;
             base.Unplug();
         }
 

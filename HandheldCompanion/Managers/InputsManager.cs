@@ -584,11 +584,14 @@ public static class InputsManager
         m_GlobalHook = null;
     }
 
-    private static void UpdateInputs(ControllerState controllerState)
+    private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
     {
         // prepare button state
         ButtonState.Overwrite(controllerState.ButtonState, buttonState);
         if (prevState.Equals(buttonState))
+            return;
+
+        if (!IsMapped)
             return;
 
         // half-press should be removed if full-press is also present

@@ -57,7 +57,7 @@ namespace HandheldCompanion.Controllers.Lenovo
         private byte[] data = new byte[64];
 
         #region TouchVariables
-        private bool IsPassthrough = false;
+        private bool ControllerPassthrough = false;
         private bool touchpadTouched = false;
         private DateTime touchStartTime;
         private DateTime lastTapTime = DateTime.MinValue;
@@ -135,7 +135,7 @@ namespace HandheldCompanion.Controllers.Lenovo
                     SetGyroIndex(Convert.ToInt32(value));
                     break;
                 case "LegionControllerPassthrough":
-                    IsPassthrough = Convert.ToBoolean(value);
+                    ControllerPassthrough = Convert.ToBoolean(value);
                     break;
             }
 
@@ -248,13 +248,13 @@ namespace HandheldCompanion.Controllers.Lenovo
             Buffer.BlockCopy(Data, 1, this.data, 0, Data.Length - 1);
         }
 
-        public override void UpdateInputs(long ticks, float delta, bool commit)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
             if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
-            base.UpdateInputs(ticks, delta, false);
+            base.Tick(ticks, delta, false);
 
             FrontEnum frontButton = (FrontEnum)data[FRONT_IDX];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
@@ -271,7 +271,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.B8] = data[24] == 255;   // Scroll down
 
             // handle touchpad if passthrough is off
-            if (!IsPassthrough)
+            if (!ControllerPassthrough)
             {
                 // Right Pad
                 ushort TouchpadX = (ushort)(data[25] << 8 | data[26]);
@@ -323,7 +323,7 @@ namespace HandheldCompanion.Controllers.Lenovo
                     gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
             }
 
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta, true);
         }
 
         public override string GetGlyph(ButtonFlags button)

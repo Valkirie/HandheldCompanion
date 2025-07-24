@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using SharpDX.DirectInput;
 using System.Threading;
@@ -58,7 +57,6 @@ public class DClawController : DInputController
             rumbleThread.Start();
         }
 
-        TimerManager.Tick += UpdateInputs;
         base.Plug();
     }
 
@@ -78,7 +76,6 @@ public class DClawController : DInputController
             }
         }
 
-        TimerManager.Tick -= UpdateInputs;
         base.Unplug();
     }
 
@@ -94,7 +91,7 @@ public class DClawController : DInputController
         }
     }
 
-    public override void UpdateInputs(long ticks, float delta)
+    public override void Tick(long ticks, float delta, bool commit)
     {
         // skip if controller isn't connected
         if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
@@ -156,7 +153,7 @@ public class DClawController : DInputController
                 AttachDetails(Details);
         }
 
-        base.UpdateInputs(ticks, delta);
+        base.Tick(ticks, delta);
     }
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)

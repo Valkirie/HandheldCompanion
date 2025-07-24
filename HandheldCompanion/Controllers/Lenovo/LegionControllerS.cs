@@ -162,13 +162,13 @@ namespace HandheldCompanion.Controllers.Lenovo
             Y2 = 2,
         }
 
-        public override void UpdateInputs(long ticks, float delta, bool commit)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
             if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
-            base.UpdateInputs(ticks, delta, false);
+            base.Tick(ticks, delta, false);
 
             // Front buttons (byte 0)
             FrontButtons frontButtons = (FrontButtons)data[0];
@@ -220,7 +220,7 @@ namespace HandheldCompanion.Controllers.Lenovo
                 }
             }
 
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta, true);
         }
     }
 }

@@ -24,6 +24,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +34,6 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
-using static JSL;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
 using Timer = System.Timers.Timer;
 
@@ -180,18 +180,27 @@ public static class ControllerManager
         if (!HasTargetController)
             return;
 
-        if (targetController.IsDummy())
+        // Debug.Assert(delta <= 0.020, $"Tick interval exceeded: expected <= {20}ms, got {delta * 1000.0f}ms");
+
+        // pull controller
+        targetController.Tick(ticks, delta);
+
+        ControllerState controllerState = targetController.Inputs;
+        if (controllerState is null)
             return;
 
-        ControllerState controllerState = targetController?.Inputs ?? new();
-        Dictionary<byte, GamepadMotion> gamepadMotions = targetController?.gamepadMotions ?? new();
-        byte gamepadIndex = targetController?.gamepadIndex ?? 0;
+        Dictionary<byte, GamepadMotion> gamepadMotions = targetController.gamepadMotions;
+        if (gamepadMotions is null)
+            return;
 
-        // raise event
-        InputsUpdated?.Invoke(controllerState);
+        // raise event, before layout mapping
+        InputsUpdated?.Invoke(controllerState, false);
 
         // get main motion
+        byte gamepadIndex = targetController.gamepadIndex;
         GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
+        if (gamepadMotion is null)
+            return;
 
         switch (sensorSelection)
         {
@@ -202,16 +211,13 @@ public static class ControllerManager
                 break;
         }
 
-        // compute motion
-        if (gamepadMotion is not null)
-        {
-            MotionManager.UpdateReport(controllerState, gamepadMotion);
-            MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta);
-        }
+        MotionManager.UpdateReport(controllerState, gamepadMotion);
+        // slow task, make it threaded
+        Task.Run(() => MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta));
 
         // compute layout
         controllerState = ManagerFactory.layoutManager.MapController(controllerState);
-        InputsUpdated2?.Invoke(controllerState);
+        InputsUpdated?.Invoke(controllerState, true);
 
         // controller is muted
         if (ControllerMuted)
@@ -221,8 +227,9 @@ public static class ControllerManager
         }
 
         DS4Touch.UpdateInputs(controllerState);
-        DSUServer.UpdateInputs(controllerState, gamepadMotions);
         VirtualManager.UpdateInputs(controllerState, gamepadMotion);
+        DSUServer.UpdateInputs(controllerState, gamepadMotions);
+        DSUServer.Tick(ticks, delta);
     }
 
     private static void pumpThreadLoop(object? obj)
@@ -854,12 +861,6 @@ public static class ControllerManager
 
         SDL.Quit();
 
-        // Flushing possible JoyShocks...
-        SafeJslDisconnectAndDisposeAll();
-
-        // halt controlelr manager and unplug on close
-        Suspend(true);
-
         // manage events
         TimerManager.Tick -= Tick;
         ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
@@ -871,7 +872,6 @@ public static class ControllerManager
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
         ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
-
         UIGamepad.GotFocus -= GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
@@ -880,6 +880,10 @@ public static class ControllerManager
         // manage device events
         IDevice.GetCurrent().KeyPressed -= CurrentDevice_KeyPressed;
         IDevice.GetCurrent().KeyReleased -= CurrentDevice_KeyReleased;
+
+        // halt controller manager and unplug on close
+        // todo: we might need to use lock (targetLock) within Tick event.
+        Suspend(true);
 
         // stop timer
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
@@ -1752,14 +1756,7 @@ public static class ControllerManager
     /// </summary>
     /// <param name="Inputs">The updated controller state.</param>
     public static event InputsUpdatedEventHandler InputsUpdated;
-    public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
-
-    /// <summary>
-    /// Controller state has changed, after layout manager
-    /// </summary>
-    /// <param name="Inputs">The updated controller state.</param>
-    public static event InputsUpdated2EventHandler InputsUpdated2;
-    public delegate void InputsUpdated2EventHandler(ControllerState Inputs);
+    public delegate void InputsUpdatedEventHandler(ControllerState Inputs, bool IsMapped);
 
     public static event StatusChangedEventHandler StatusChanged;
     public delegate void StatusChangedEventHandler(ControllerManagerStatus status, int attempts);

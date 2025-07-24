@@ -173,7 +173,6 @@ namespace HandheldCompanion.Devices.Zotac
             DynamicLightingCapabilities |= LEDLevel.Breathing;
             DynamicLightingCapabilities |= LEDLevel.Rainbow;
             DynamicLightingCapabilities |= LEDLevel.Gradient;
-            DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
             // get physical installed RAM
             ulong TotalMemoryInKilobytes = 0;
@@ -211,6 +210,27 @@ namespace HandheldCompanion.Devices.Zotac
             ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
             base.Close();
+        }
+
+        protected override void QuerySettings()
+        {
+            // raise events
+            SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false);
+
+            base.QuerySettings();
+        }
+
+        protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch (name)
+            {
+                case "ZotacGamingZoneVRAM":
+                    uint size = Convert.ToUInt32(value);
+                    SetVRamSize(size);
+                    break;
+            }
+
+            base.SettingsManager_SettingValueChanged(name, value, temporary);
         }
 
         private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)

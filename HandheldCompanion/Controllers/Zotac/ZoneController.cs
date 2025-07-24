@@ -59,13 +59,13 @@ namespace HandheldCompanion.Controllers.Zotac
             if (WasPlugged) Open();
         }
 
-        public override void UpdateInputs(long ticks, float delta, bool commit)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
             if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
-            base.UpdateInputs(ticks, delta, false);
+            base.Tick(ticks, delta, false);
 
             ButtonWheel buttonWheel = (ButtonWheel)this.Data[2];
             Inputs.ButtonState[ButtonFlags.B5] = buttonWheel.HasFlag(ButtonWheel.LeftAnti);
@@ -73,7 +73,7 @@ namespace HandheldCompanion.Controllers.Zotac
             Inputs.ButtonState[ButtonFlags.B7] = buttonWheel.HasFlag(ButtonWheel.RightAnti);
             Inputs.ButtonState[ButtonFlags.B8] = buttonWheel.HasFlag(ButtonWheel.RightClock);
 
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta, true);
         }
 
         private void Open()

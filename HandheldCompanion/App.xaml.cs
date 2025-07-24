@@ -25,7 +25,7 @@ namespace HandheldCompanion;
 /// </summary>
 public partial class App : Application
 {
-    public static bool IsMultiThreaded { get; } = false;
+    public static bool IsMultiThreaded { get; } = true;
     public static string InstallPath = string.Empty;
     public static string SettingsPath = string.Empty;
 

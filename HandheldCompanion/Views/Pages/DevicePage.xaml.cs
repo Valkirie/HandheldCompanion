@@ -3,6 +3,7 @@ using ColorPicker.Models;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -65,19 +66,24 @@ namespace HandheldCompanion.Views.Pages
 
                 // Show LegionGoPanel
                 LegionGoPanel.Visibility = Visibility.Visible;
+
+                if (device.GetType() == typeof(LegionGoTablet))
+                {
+                    LegionGoSensorSelection.Visibility = Visibility.Visible;
+                    LegionGoLeftController.Visibility = Visibility.Visible;
+                    LegionGoRightController.Visibility = Visibility.Visible;
+                }
             }
             else if (device is ClawA2VM || device is ClawA1M)
             {
                 // Show MSIClawPanel
                 MSIClawPanel.Visibility = Visibility.Visible;
             }
-
-            // Show DeviceSettingsPanel if either child panel is visible.
-            DeviceSettingsPanel.Visibility =
-                (LegionGoPanel.Visibility == Visibility.Visible || MSIClawPanel.Visibility == Visibility.Visible)
-                ? Visibility.Visible
-                : Visibility.Hidden;
-
+            else if (device is GamingZone)
+            {
+                ZotacGamingZonePanel.Visibility = Visibility.Visible;
+            }
+            
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
             SetControlEnabledAndVisible(LEDRainbow, LEDLevel.Rainbow);
@@ -219,6 +225,9 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LegionControllerPassthrough":
                         Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LegionControllerSwap":
+                        Toggle_ControllerSwap.IsOn = Convert.ToBoolean(value);
                         break;
                     case "LegionControllerGyroIndex":
                         ComboBox_GyroController.SelectedIndex = Convert.ToInt32(value);
@@ -606,6 +615,14 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
         }
 
+        private void Toggle_ControllerSwap_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("LegionControllerSwap", Toggle_ControllerSwap.IsOn);
+        }
+
         private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded)
@@ -724,5 +741,9 @@ namespace HandheldCompanion.Views.Pages
 
         #endregion
 
+        private void ComboBox_GamingZoneVRAM_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

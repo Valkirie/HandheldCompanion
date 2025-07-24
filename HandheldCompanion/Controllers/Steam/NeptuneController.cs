@@ -80,7 +80,7 @@ public class NeptuneController : SteamController
         return "Valve Software Steam Controller";
     }
 
-    public override void UpdateInputs(long ticks, float delta)
+    public override void Tick(long ticks, float delta, bool commit)
     {
         if (Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
@@ -234,7 +234,7 @@ public class NeptuneController : SteamController
         if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
             gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-        base.UpdateInputs(ticks, delta);
+        base.Tick(ticks, delta);
     }
 
     private Task HandleControllerInput(NeptuneControllerInputEventArgs input)
@@ -341,9 +341,6 @@ public class NeptuneController : SteamController
         };
         rumbleThread.Start();
 
-        // manage events
-        TimerManager.Tick += UpdateInputs;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -405,7 +402,6 @@ public class NeptuneController : SteamController
             return;
         }
 
-        TimerManager.Tick -= UpdateInputs;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 

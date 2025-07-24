@@ -113,7 +113,7 @@ namespace HandheldCompanion.Managers
             tooltipTimer = new Timer(2000) { AutoReset = false };
             tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
-            ControllerManager.InputsUpdated2 += InputsUpdated;
+            ControllerManager.InputsUpdated += InputsUpdated;
         }
 
         public void Loaded()
@@ -507,10 +507,14 @@ namespace HandheldCompanion.Managers
         // declare a DateTime variable to store the last time the button state changed
         private DateTime lastChangeTime;
 
-        private void InputsUpdated(ControllerState controllerState)
+        private void InputsUpdated(ControllerState controllerState, bool IsMapped)
         {
             // skip if page hasn't yet rendered
             if (!_rendered)
+                return;
+
+            // skip if inputs were remapped
+            if (IsMapped)
                 return;
 
             // skip if page doesn't have focus

@@ -90,9 +90,6 @@ namespace HandheldCompanion.Devices
                 foreach (byte[] cmd in ControllerFactoryReset())
                     device.Write(WithReportID(cmd));
 
-                // disable built-in swap
-                device.Write(WithReportID(ControllerLegionSwap(false)));
-
                 // load RGB profile
                 lightProfile.profile = 0x03;
                 device.Write(WithReportID(RgbLoadProfile((byte)lightProfile.profile)));
@@ -132,11 +129,19 @@ namespace HandheldCompanion.Devices
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             {
-                device.Write(WithReportID(new byte[] { 0x04, 0x08, (enabled ? (byte)0x00 : (byte)0x01) })); // touchpad
-                device.Write(WithReportID(new byte[] { 0x08, 0x03, (enabled ? (byte)0x00 : (byte)0x01) })); // touchpad vibration
+                device.Write(WithReportID([0x04, 0x08, (enabled ? (byte)0x00 : (byte)0x01)])); // touchpad
+                device.Write(WithReportID([0x08, 0x03, (enabled ? (byte)0x00 : (byte)0x01)])); // touchpad vibration
             }
 #endif
             base.SetPassthrough(enabled);
+        }
+
+        public override void SetControllerSwap(bool enabled)
+        {
+            if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+                device.Write(WithReportID([0x05, 0x06, 0x69, 0x04, 0x01, (byte)(enabled ? 0x02 : 0x01), 0x01]));
+
+            base.SetControllerSwap(enabled);
         }
 
         #region RGB

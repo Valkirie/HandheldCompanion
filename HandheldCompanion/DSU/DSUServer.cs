@@ -440,8 +440,6 @@ public static class DSUServer
         new Random().NextBytes(randomBuf);
         serverId = BitConverter.ToUInt32(randomBuf, 0);
 
-        TimerManager.Tick += Tick;
-
         IsInitialized = true;
 
         StartReceive();
@@ -468,8 +466,6 @@ public static class DSUServer
         }
 
         IsInitialized = false;
-
-        TimerManager.Tick -= Tick;
 
         LogManager.LogInformation("DSUServer has stopped");
         Stopped?.Invoke();

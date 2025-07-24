@@ -393,7 +393,7 @@ namespace HandheldCompanion.Controllers
             // update previous counter
             lastCounter = now;
 
-            base.UpdateInputs(TimerManager.GetTimestamp(), deltaMillis);
+            base.Tick(TimerManager.GetTimestamp(), deltaMillis);
         }
 
         public override void Unplug()

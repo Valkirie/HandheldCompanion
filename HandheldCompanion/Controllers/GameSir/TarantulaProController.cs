@@ -192,13 +192,13 @@ namespace HandheldCompanion.Controllers.GameSir
         private ButtonLayout CurrentLayout => (ButtonLayout)Data[EXTRABUTTON2_IDX];
         private ButtonLayout prevLayout = ButtonLayout.None;
 
-        public override void UpdateInputs(long ticks, float delta, bool commit)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
             if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
-            base.UpdateInputs(ticks, delta, false);
+            base.Tick(ticks, delta, false);
 
             // update layout
             if (CurrentLayout != prevLayout)
@@ -244,7 +244,7 @@ namespace HandheldCompanion.Controllers.GameSir
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta, true);
         }
 
         public override string GetGlyph(ButtonFlags button)

@@ -186,7 +186,7 @@ namespace HandheldCompanion.Controllers
             InitializeInputOutput();
         }
 
-        public virtual void UpdateInputs(long ticks, float delta)
+        public virtual void Tick(long ticks, float delta, bool commit = false)
         {
             if (IsBusy)
                 return;

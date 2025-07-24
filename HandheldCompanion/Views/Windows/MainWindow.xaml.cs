@@ -91,12 +91,17 @@ public partial class MainWindow : GamepadWindow
 
     public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
     public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
+    private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
         // initialize splash screen
         SplashScreen = new SplashScreen();
         DataContext = new MainWindowViewModel();
+
+#if !DEBUG
+        SplashScreen.Show();
+#endif
 
         // set theme
         var currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
@@ -111,9 +116,6 @@ public partial class MainWindow : GamepadWindow
         // get last version
         bool FirstStart = LastVersion == Version.Parse("0.0.0.0");
         bool NewUpdate = LastVersion != CurrentVersion;
-#if !DEBUG
-        if (NewUpdate) SplashScreen.Show();
-#endif
 
         // used by system manager, controller manager
         uiSettings = new UISettings();
@@ -497,7 +499,7 @@ public partial class MainWindow : GamepadWindow
         source.AddHook(WndProc); // Hook into the window's message loop
 
         // restore window state
-        WindowState = ManagerFactory.settingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState");
+        WindowState = StartMinimized ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState");
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
     }
 

@@ -3327,4 +3327,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="PowerProfileGamingZoneBetterPerformanceDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="ControllerPage_LegionGoControllerSwap" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_LegionGoControllerSwapDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_GamingZone_VRAM" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_GamingZone_VRAMDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>
