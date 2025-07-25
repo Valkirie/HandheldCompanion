@@ -700,6 +700,9 @@ namespace HandheldCompanion.Managers
                         
                         switch(errorType)
                         {
+                            case ErrorType.None:
+                                Notification_Failed.Message = "Unknown error.";
+                                break;
                             case ErrorType.NoResults:
                                 Notification_Failed.Message = "No artworks found.";
                                 break;
