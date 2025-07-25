@@ -352,13 +352,24 @@
                                         </EventTrigger>
                                     </Border.Triggers>
 
-                                    <Button
+                                    <ui:DropDownButton
                                         Name="b_Play"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Bottom"
-                                        Command="{Binding LaunchExecutable}"
-                                        Content="{l:Static resx:Resources.ProfilesPage_Play}"
-                                        Style="{DynamicResource AccentButtonStyle}" />
+                                        Content="Run">
+                                        <ui:DropDownButton.Flyout>
+                                            <ui:MenuFlyout Placement="Bottom">
+                                                <MenuItem
+                                                    Command="{Binding LaunchExecutable}"
+                                                    CommandParameter="False"
+                                                    Header="{l:Static resx:Resources.ProfilesPage_Run}" />
+                                                <MenuItem
+                                                    Command="{Binding LaunchExecutable}"
+                                                    CommandParameter="True"
+                                                    Header="{l:Static resx:Resources.ProfilesPage_RunAs}" />
+                                            </ui:MenuFlyout>
+                                        </ui:DropDownButton.Flyout>
+                                    </ui:DropDownButton>
                                 </Border>
                             </ikw:SimpleStackPanel>
 

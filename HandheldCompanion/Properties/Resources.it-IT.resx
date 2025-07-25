@@ -3337,4 +3337,10 @@
   <data name="DevicePage_GamingZone_VRAMDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="ProfilesPage_Run" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_RunAs" xml:space="preserve">
+    <value />
+  </data>
 </root>

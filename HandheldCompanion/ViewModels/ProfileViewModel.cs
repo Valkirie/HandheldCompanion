@@ -130,7 +130,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
-            StartProcessCommand = new DelegateCommand(async () =>
+            StartProcessCommand = new DelegateCommand<bool>(async runAsAdmin =>
             {
                 // localize me
                 Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
@@ -170,9 +170,11 @@ namespace HandheldCompanion.ViewModels
                     {
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
-                            FileName = Profile.Path,
+                            FileName = Profile.Executable,
+                            WorkingDirectory = Directory.GetParent(Profile.Path).FullName,
                             Arguments = Profile.Arguments,
-                            UseShellExecute = true
+                            UseShellExecute = true,
+                            Verb = runAsAdmin ? "runas" : string.Empty,
                         };
 
                         using (Process? process = Process.Start(psi))

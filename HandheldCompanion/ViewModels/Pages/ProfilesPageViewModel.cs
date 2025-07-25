@@ -344,11 +344,12 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
-            LaunchExecutable = new DelegateCommand(async () =>
+            LaunchExecutable = new DelegateCommand<object>(async param =>
             {
                 // dirty, fix me !
+                bool runAsAdmin = Convert.ToBoolean(param);
                 ProfileViewModel profileViewModel = new(ProfilesPage.selectedProfile, false);
-                profileViewModel.StartProcessCommand.Execute(null);
+                profileViewModel.StartProcessCommand.Execute(runAsAdmin);
             });
 
             DisplayLibrary = new DelegateCommand(async () =>

@@ -9039,6 +9039,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Run.
+        /// </summary>
+        public static string ProfilesPage_Run {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Run", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run as administrator.
+        /// </summary>
+        public static string ProfilesPage_RunAs {
+            get {
+                return ResourceManager.GetString("ProfilesPage_RunAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scaling mode.
         /// </summary>
         public static string ProfilesPage_ScalingMode {

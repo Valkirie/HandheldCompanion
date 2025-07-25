@@ -3339,4 +3339,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="DevicePage_GamingZone_VRAMDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="ProfilesPage_Run" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_RunAs" xml:space="preserve">
+    <value />
+  </data>
 </root>
