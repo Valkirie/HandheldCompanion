@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
@@ -102,6 +103,19 @@ namespace HandheldCompanion.Managers
                 mainWindow.LostFocus += (sender, e) => WindowLostFocus(sender, e, FocusSource.Focus);
                 mainWindow.Activated += (sender, e) => WindowGotFocus(sender, null, FocusSource.Activate);
                 mainWindow.Deactivated += (sender, e) => WindowLostFocus(sender, null, FocusSource.Activate);
+                mainWindow.StateChanged += (sender, e) =>
+                {
+                    switch (mainWindow.WindowState)
+                    {
+                        case WindowState.Normal:
+                        case WindowState.Maximized:
+                            WindowGotFocus(sender, null, FocusSource.Activate);
+                            break;
+                        case WindowState.Minimized:
+                            WindowLostFocus(sender, null, FocusSource.Activate);
+                            break;
+                    }
+                };
             }
 
             gamepadFrame = contentFrame;
@@ -182,6 +196,7 @@ namespace HandheldCompanion.Managers
             // raise event
             if (_focused[windowName])
             {
+                LogManager.LogDebug("GotFocus: {0}", windowName);
                 GotFocus?.Invoke(windowName);
 
                 foreach (string window in _focused.Keys)
@@ -227,6 +242,7 @@ namespace HandheldCompanion.Managers
             gamepadTimer.Stop();
 
             // raise event
+            LogManager.LogDebug("LostFocus: {0}", windowName);
             LostFocus?.Invoke(windowName);
 
             foreach (string window in _focused.Keys)
