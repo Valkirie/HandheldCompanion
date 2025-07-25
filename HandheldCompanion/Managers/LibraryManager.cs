@@ -37,6 +37,14 @@ namespace HandheldCompanion.Managers
             thumbnails = 4,
         }
 
+        [Flags]
+        public enum ErrorType
+        {
+            None = 0,
+            NoResults = 1,
+            Exception = 2,
+        }
+
         #region events
         public event EventHandler NetworkAvailabilityChanged;
 
@@ -230,11 +238,16 @@ namespace HandheldCompanion.Managers
             }
             catch (Exception ex)
             {
+                // update status
+                AddStatus(ManagerStatus.Failed, ErrorType.Exception, ex.Message);
                 LogManager.LogError(ex.Message);
             }
             finally
             {
                 // update status
+                if (entries.Count == 0)
+                    AddStatus(ManagerStatus.Failed, ErrorType.NoResults);
+
                 RemoveStatus(ManagerStatus.Busy);
             }
 
@@ -382,7 +395,8 @@ namespace HandheldCompanion.Managers
                     }
                     else
                     {
-                        // Log the error if needed
+                        // update status
+                        AddStatus(ManagerStatus.Failed, ErrorType.Exception, response.ReasonPhrase);
                         LogManager.LogError("Failed to download image: {0}", response.ReasonPhrase);
                     }
                 }
@@ -484,7 +498,8 @@ namespace HandheldCompanion.Managers
                     }
                     else
                     {
-                        // Log the error if needed
+                        // update status
+                        AddStatus(ManagerStatus.Failed, ErrorType.Exception, response.ReasonPhrase);
                         LogManager.LogError("Failed to download image: {0}", response.ReasonPhrase);
                     }
                 }
@@ -666,19 +681,55 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static Notification Notification_IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = false };
+        private static Notification Notification_Failed = new("Library Manager", "Unknown error.") { IsInternal = true, IsIndeterminate = true };
 
-        protected override void AddStatus(ManagerStatus status)
+        protected override void AddStatus(ManagerStatus status, params object[] args)
         {
+            // send internal notification(s)
             switch (status)
             {
                 case ManagerStatus.Busy:
-                    // send internal notification
                     ManagerFactory.notificationManager.Add(Notification_IsBusy);
+                    break;
+                case ManagerStatus.Failed:
+                    {
+                        ErrorType errorType = ErrorType.None;
+                        if (args.Length != 0 && args[0] is ErrorType argsError)
+                            errorType = argsError;
+                        
+                        switch(errorType)
+                        {
+                            case ErrorType.NoResults:
+                                Notification_Failed.Message = "No artworks found.";
+                                break;
+                            case ErrorType.Exception:
+                                {
+                                    if (args.Length != 0 && args[0] is string messageError)
+                                        Notification_Failed.Message = string.Format("Exception raised: {0}", messageError);
+                                    else
+                                        Notification_Failed.Message = "Unknown exception.";
+                                }
+                                break;
+                        }
+                        ManagerFactory.notificationManager.Add(Notification_Failed);
+                    }
                     break;
             }
 
             base.AddStatus(status);
+        }
+
+        protected override void RemoveStatus(ManagerStatus status, params object[] args)
+        {
+            switch(status)
+            {
+                case ManagerStatus.Busy:
+                    ManagerFactory.notificationManager.Discard(Notification_IsBusy);
+                    break;
+            }
+
+            base.RemoveStatus(status, args);
         }
 
         private static Notification Notification_ConnectivityDown = new("Library Manager", "Oops, we're offline! We will let you know when we are back.") { IsInternal = true, IsIndeterminate = true };
