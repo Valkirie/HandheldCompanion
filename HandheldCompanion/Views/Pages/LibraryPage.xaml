@@ -91,8 +91,8 @@
                             ItemsStretch="Uniform"
                             MaximumRowsOrColumns="8"
                             MinColumnSpacing="12"
-                            MinItemHeight="350"
-                            MinItemWidth="200"
+                            MinItemHeight="250"
+                            MinItemWidth="150"
                             MinRowSpacing="12"
                             Orientation="Horizontal" />
                     </ui:ItemsRepeater.Layout>
