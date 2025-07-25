@@ -4,7 +4,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using System;
-using System.Linq;
 using System.Windows;
 using WindowsInput.Events;
 
