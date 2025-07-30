@@ -378,7 +378,7 @@ namespace HandheldCompanion.ViewModels
                 ClearLibrary();
 
                 // get games
-                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, LibrarySearchField);
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid | LibraryFamily.IGDB, LibrarySearchField);
                 if (entries.Count() != 0)
                 {
                     // sort entries
@@ -453,7 +453,7 @@ namespace HandheldCompanion.ViewModels
             QueryLibrary();
         }
 
-        private void LibraryManager_NetworkAvailabilityChanged(object? sender, EventArgs e)
+        private void LibraryManager_NetworkAvailabilityChanged(bool status)
         {
             OnPropertyChanged(nameof(IsLibraryConnected));
         }

@@ -46,14 +46,15 @@ namespace HandheldCompanion.Managers
         }
 
         #region events
-        public event EventHandler NetworkAvailabilityChanged;
+        public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;
+        public delegate void NetworkAvailabilityChangedEventHandler(bool status);
 
         public delegate void ProfileStatusChangedEventHandler(Profile profile, ManagerStatus status);
         public event ProfileStatusChangedEventHandler ProfileStatusChanged;
         #endregion
 
         // Network
-        public bool IsConnected => CheckInternetConnection();
+        public bool IsConnected = false;
 
         // IGDB
         private IGDBClient IGDBClient;
@@ -130,109 +131,105 @@ namespace HandheldCompanion.Managers
                     // Join the first i words to form the search query.
                     string searchQuery = string.Join(" ", words.Take(i));
 
-                    switch (libraryFamily)
+                    // check IGDB
+                    if (libraryFamily.HasFlag(LibraryFamily.IGDB))
                     {
-                        case LibraryFamily.IGDB:
+                        if (!HasIGDBClient)
+                            return entries.Values;
+
+                        // Query IGDB using the search query.
+                        Game[] games = await IGDBClient.QueryAsync<Game>(IGDBClient.Endpoints.Games,
+                            query: $"fields id,name,summary,storyline,category,cover.image_id,cover.url,artworks.image_id,artworks.url,screenshots.image_id,screenshots.url,first_release_date; search \"{searchQuery}\";");
+
+                        await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
+                        {
+                            long gameId = (long)game.Id;
+
+                            IGDBEntry entry = new IGDBEntry(gameId, game.Name, game.FirstReleaseDate.Value.DateTime)
                             {
-                                if (!HasIGDBClient)
-                                    return entries.Values;
+                                Description = game.Summary,
+                                Storyline = game.Storyline,
+                                Cover = game.Cover.Value,
+                            };
 
-                                // Query IGDB using the search query.
-                                Game[] games = await IGDBClient.QueryAsync<Game>(IGDBClient.Endpoints.Games,
-                                    query: $"fields id,name,summary,storyline,category,cover.image_id,artworks.image_id,screenshots.image_id,first_release_date; search \"{searchQuery}\";");
+                            if (game.Artworks is not null)
+                                entry.Artworks.AddRange(game.Artworks.Values);
 
-                                await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
-                                {
-                                    long gameId = (long)game.Id;
-
-                                    IGDBEntry entry = new IGDBEntry(gameId, game.Name, game.FirstReleaseDate.Value.DateTime)
-                                    {
-                                        Description = game.Summary,
-                                        Storyline = game.Storyline,
-                                        Cover = game.Cover.Value,
-                                    };
-
-                                    if (game.Artworks is not null)
-                                        entry.Artworks.AddRange(game.Artworks.Values);
-
-                                    if (game.Screenshots is not null)
-                                    {
-                                        // cast screenshots
-                                        IEnumerable<Artwork> screenshots = game.Screenshots.Values.Select(screenshot => new Artwork
-                                        {
-                                            Id = screenshot.Id,
-                                            ImageId = screenshot.ImageId,
-                                            Url = screenshot.Url,
-                                            Width = screenshot.Width,
-                                            Height = screenshot.Height,
-                                            Checksum = screenshot.Checksum,
-                                            AlphaChannel = screenshot.AlphaChannel,
-                                            Animated = screenshot.Animated,
-                                            Game = screenshot.Game
-                                        });
-
-                                        // add to array
-                                        entry.Artworks.AddRange(screenshots);
-
-                                        // set default artwork
-                                        entry.Artwork = entry.Artworks.FirstOrDefault();
-                                    }
-
-                                    lock (entries)
-                                        entries[gameId] = entry;
-                                });
-                            }
-                            break;
-
-                        case LibraryFamily.SteamGrid:
+                            if (game.Screenshots is not null)
                             {
-                                if (!HasSteamGridDb)
-                                    return entries.Values;
-
-                                // Query IGDB using the search query.
-                                SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(name);
-
-                                await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
+                                // cast screenshots
+                                IEnumerable<Artwork> screenshots = game.Screenshots.Values.Select(screenshot => new Artwork
                                 {
-                                    long gameId = (long)game.Id;
-
-                                    SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
-                                        gameId: game.Id,
-                                        types: SteamGridDbTypes.Static,
-                                        styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
-                                        dimensions: SteamGridDbDimensions.W600H900,
-                                        formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
-
-                                    grids = grids.Where(game => !game.IsLocked).ToArray();
-                                    grids = grids.OrderByDescending(grid => grid.Upvotes).ToArray();
-
-                                    SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
-                                        gameId: game.Id,
-                                        types: SteamGridDbTypes.Static,
-                                        styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
-                                        dimensions: SteamGridDbDimensions.W1920H620,
-                                        formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
-
-                                    heroes = heroes.Where(game => !game.IsLocked).ToArray();
-                                    heroes = heroes.OrderByDescending(hero => hero.Upvotes).ToArray();
-
-                                    // Skip if no visuals are available
-                                    if (grids.Length == 0 && heroes.Length == 0)
-                                        return;
-
-                                    SteamGridEntry entry = new SteamGridEntry(gameId, game.Name, game.ReleaseDate)
-                                    {
-                                        Heroes = heroes,
-                                        Grids = grids,
-                                        Hero = heroes.FirstOrDefault(),
-                                        Grid = grids.FirstOrDefault(),
-                                    };
-
-                                    lock (entries)
-                                        entries[gameId] = entry;
+                                    Id = screenshot.Id,
+                                    ImageId = screenshot.ImageId,
+                                    Url = screenshot.Url,
+                                    Width = screenshot.Width,
+                                    Height = screenshot.Height,
+                                    Checksum = screenshot.Checksum,
+                                    AlphaChannel = screenshot.AlphaChannel,
+                                    Animated = screenshot.Animated,
+                                    Game = screenshot.Game
                                 });
+
+                                // add to array
+                                entry.Artworks.AddRange(screenshots);
+
+                                // set default artwork
+                                entry.Artwork = entry.Artworks.FirstOrDefault();
                             }
-                            break;
+
+                            lock (entries)
+                                entries[gameId] = entry;
+                        });
+                    }
+
+                    if (libraryFamily.HasFlag(LibraryFamily.SteamGrid))
+                    {
+                        if (!HasSteamGridDb)
+                            return entries.Values;
+
+                        // Query IGDB using the search query.
+                        SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(name);
+
+                        await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
+                        {
+                            long gameId = (long)game.Id;
+
+                            SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
+                                gameId: game.Id,
+                                types: SteamGridDbTypes.Static,
+                                styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
+                                dimensions: SteamGridDbDimensions.W600H900,
+                                formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
+
+                            grids = grids.Where(game => !game.IsLocked).ToArray();
+                            grids = grids.OrderByDescending(grid => grid.Upvotes).ToArray();
+
+                            SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
+                                gameId: game.Id,
+                                types: SteamGridDbTypes.Static,
+                                styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
+                                dimensions: SteamGridDbDimensions.W1920H620,
+                                formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
+
+                            heroes = heroes.Where(game => !game.IsLocked).ToArray();
+                            heroes = heroes.OrderByDescending(hero => hero.Upvotes).ToArray();
+
+                            // Skip if no visuals are available
+                            if (grids.Length == 0 && heroes.Length == 0)
+                                return;
+
+                            SteamGridEntry entry = new SteamGridEntry(gameId, game.Name, game.ReleaseDate)
+                            {
+                                Heroes = heroes,
+                                Grids = grids,
+                                Hero = heroes.FirstOrDefault(),
+                                Grid = grids.FirstOrDefault(),
+                            };
+
+                            lock (entries)
+                                entries[gameId] = entry;
+                        });
                     }
                 }
             }
@@ -421,19 +418,19 @@ namespace HandheldCompanion.Managers
             {
                 // download cover
                 if (entry.Cover != null)
-                    await DownloadGameArt(entry.Id, entry.Cover.ImageId, entry.Cover.Id.Value, LibraryType.cover | LibraryType.thumbnails, preview);
+                    await DownloadGameArt(entry.Id, entry.Cover, LibraryType.cover | LibraryType.thumbnails, preview);
                 // download artworks
                 foreach (Artwork artwork in entry.Artworks)
-                    await DownloadGameArt(entry.Id, artwork.ImageId, artwork.Id.Value, LibraryType.artwork | LibraryType.thumbnails, preview);
+                    await DownloadGameArt(entry.Id, artwork, LibraryType.artwork | LibraryType.thumbnails, preview);
             }
             else
             {
                 // download cover
                 if (entry.Cover != null)
-                    await DownloadGameArt(entry.Id, entry.Cover.ImageId, entry.Cover.Id.Value, LibraryType.cover, preview);
+                    await DownloadGameArt(entry.Id, entry.Cover, LibraryType.cover, preview);
                 // download artwork
                 if (entry.Artwork != null)
-                    await DownloadGameArt(entry.Id, entry.Artwork.ImageId, entry.Artwork.Id.Value, LibraryType.artwork, preview);
+                    await DownloadGameArt(entry.Id, entry.Artwork, LibraryType.artwork, preview);
             }
 
             return true;
@@ -444,17 +441,38 @@ namespace HandheldCompanion.Managers
             if (libraryType.HasFlag(LibraryType.artwork) && index < 0 || index >= entry.Artworks.Count)
                 return false;
 
+            /*
             return await DownloadGameArt(entry.Id,
                 libraryType.HasFlag(LibraryType.cover) ? entry.Cover.ImageId : entry.Artworks[index].ImageId,
                 libraryType.HasFlag(LibraryType.cover) ? entry.Cover.Id.Value : entry.Artworks[index].Id.Value,
                 libraryType, false);
+            */
+
+            return await DownloadGameArt(entry.Id,
+                libraryType.HasFlag(LibraryType.cover) ? entry.Cover : entry.Artworks[index],
+                libraryType, false);
         }
 
-        public async Task<bool> DownloadGameArt(long gameId, string imageName, long? imageId, LibraryType libraryType, bool preview)
+        /* long gameId, string imageName, long? imageId, LibraryType libraryType, bool preview */
+        public async Task<bool> DownloadGameArt(long gameId, IIdentifier identifier, LibraryType libraryType, bool preview)
         {
             // check connection
             if (!IsConnected)
                 return false;
+
+            string imageName = string.Empty;
+            long? imageId = null;
+
+            if (identifier is Cover cover)
+            {
+                imageName = cover.ImageId;
+                imageId = cover.Id;
+            }
+            else if (identifier is Artwork artwork)
+            {
+                imageName = artwork.ImageId;
+                imageId = artwork.Id;
+            }
 
             try
             {
@@ -470,8 +488,8 @@ namespace HandheldCompanion.Managers
                     return false;
 
                 string fileExtension = Path.GetExtension(imageUrl);
-                string filePath = GetGameArtPath(gameId, libraryType, (long)imageId, fileExtension);
-                string directoryPath = Directory.GetParent(filePath).FullName;
+                string filePath = GetGameArtPath(gameId, libraryType, imageId.HasValue ? imageId.Value : 0, fileExtension);
+                string directoryPath = Directory.GetParent(filePath)?.FullName ?? string.Empty;
 
                 // check if file exists firts
                 if (File.Exists(filePath))
@@ -541,6 +559,7 @@ namespace HandheldCompanion.Managers
 
             // manage events
             NetworkChange.NetworkAddressChanged += (sender, e) => NetworkChange_NetworkAddressChanged(false);
+            NetworkChange.NetworkAvailabilityChanged += (sender, e) => NetworkChange_NetworkAddressChanged(false);
 
             switch (ManagerFactory.profileManager.Status)
             {
@@ -660,6 +679,7 @@ namespace HandheldCompanion.Managers
 
             // manage events
             NetworkChange.NetworkAddressChanged -= (sender, e) => NetworkChange_NetworkAddressChanged(false);
+            NetworkChange.NetworkAvailabilityChanged -= (sender, e) => NetworkChange_NetworkAddressChanged(false);
 
             base.Stop();
         }
@@ -670,8 +690,7 @@ namespace HandheldCompanion.Managers
             {
                 using (Ping ping = new Ping())
                 {
-                    // Using Google's public DNS server as an example.
-                    PingReply reply = ping.Send("8.8.8.8", 3000); // Timeout in ms.
+                    PingReply reply = ping.Send("google.fr", 3000);
                     return reply.Status == IPStatus.Success;
                 }
             }
@@ -697,8 +716,8 @@ namespace HandheldCompanion.Managers
                         ErrorType errorType = ErrorType.None;
                         if (args.Length != 0 && args[0] is ErrorType argsError)
                             errorType = argsError;
-                        
-                        switch(errorType)
+
+                        switch (errorType)
                         {
                             case ErrorType.None:
                                 Notification_Failed.Message = "Unknown error.";
@@ -725,7 +744,7 @@ namespace HandheldCompanion.Managers
 
         protected override void RemoveStatus(ManagerStatus status, params object[] args)
         {
-            switch(status)
+            switch (status)
             {
                 case ManagerStatus.Busy:
                     ManagerFactory.notificationManager.Discard(Notification_IsBusy);
@@ -740,19 +759,17 @@ namespace HandheldCompanion.Managers
 
         private void NetworkChange_NetworkAddressChanged(bool startup)
         {
+            // wait a short time to allow network stabilization
             if (!startup)
-            {
-                // wait a short time to allow network stabilization
                 Thread.Sleep(4000);
 
-                // send internal notification
-                ManagerFactory.notificationManager.Add(IsConnected ? Notification_ConnectivityUp : Notification_ConnectivityDown);
-            }
-
             // check connection
-            CheckInternetConnection();
+            IsConnected = CheckInternetConnection();
+            NetworkAvailabilityChanged?.Invoke(IsConnected);
 
-            NetworkAvailabilityChanged?.Invoke(this, EventArgs.Empty);
+            // send internal notification
+            if (!startup)
+                ManagerFactory.notificationManager.Add(IsConnected ? Notification_ConnectivityUp : Notification_ConnectivityDown);
         }
     }
 }

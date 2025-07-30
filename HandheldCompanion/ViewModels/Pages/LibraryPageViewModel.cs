@@ -168,7 +168,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsLibraryConnected));
         }
 
-        private void LibraryManager_NetworkAvailabilityChanged(object? sender, EventArgs e)
+        private void LibraryManager_NetworkAvailabilityChanged(bool status)
         {
             OnPropertyChanged(nameof(IsLibraryConnected));
         }
@@ -298,6 +298,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
             ManagerFactory.libraryManager.ProfileStatusChanged -= LibraryManager_ProfileStatusChanged;
+            ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
 
             base.Dispose();
         }
