@@ -586,13 +586,16 @@ public static class InputsManager
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
     {
-        // prepare button state
-        ButtonState.Overwrite(controllerState.ButtonState, buttonState);
-        if (prevState.Equals(buttonState))
-            return;
-
         if (!IsMapped)
             return;
+
+        // prepare button state
+        ButtonState.Overwrite(controllerState.ButtonState, buttonState);
+        // update previous state
+        if (prevState.Equals(buttonState))
+            return;
+        else
+            ButtonState.Overwrite(buttonState, prevState);
 
         // half-press should be removed if full-press is also present
         RemoveHalfPressIfFullPress(ButtonFlags.L2Full, ButtonFlags.L2Soft);
@@ -662,9 +665,6 @@ public static class InputsManager
             bufferChord.ButtonState.Clear();
             successChord.ButtonState.Clear();
         }
-
-        // update previous state
-        ButtonState.Overwrite(buttonState, prevState);
     }
 
     private static void RemoveHalfPressIfFullPress(ButtonFlags fullPress, ButtonFlags halfPress)

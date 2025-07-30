@@ -174,6 +174,22 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has started", "ControllerManager");
     }
 
+    private static void RaiseInputsUpdated(ControllerState state, bool isMapped)
+    {
+        Delegate[]? handlers = InputsUpdated?.GetInvocationList();
+        if (handlers == null) return;
+
+        // Fire each handler in a separate task, no await (fire-and-forget)
+        foreach (InputsUpdatedEventHandler handler in handlers)
+        {
+            Task.Run(() =>
+            {
+                try { handler(state, isMapped); }
+                catch (Exception) { }                
+            });
+        }
+    }
+
     private static void Tick(long ticks, float delta)
     {
         if (!HasTargetController)
@@ -193,7 +209,7 @@ public static class ControllerManager
             return;
 
         // raise event, before layout mapping
-        InputsUpdated?.Invoke(controllerState, false);
+        RaiseInputsUpdated(controllerState, false);
 
         // get main motion
         byte gamepadIndex = targetController.gamepadIndex;
@@ -211,12 +227,11 @@ public static class ControllerManager
         }
 
         MotionManager.UpdateReport(controllerState, gamepadMotion);
-        // slow task, make it threaded
-        Task.Run(() => MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta));
+        MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta);
 
         // compute layout
         controllerState = ManagerFactory.layoutManager.MapController(controllerState);
-        InputsUpdated?.Invoke(controllerState, true);
+        RaiseInputsUpdated(controllerState, true);
 
         // controller is muted
         if (ControllerMuted)
