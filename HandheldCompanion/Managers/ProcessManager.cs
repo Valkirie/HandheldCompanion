@@ -473,12 +473,13 @@ public class ProcessManager : IManager
                     try
                     {
                         proc.EnableRaisingEvents = true;
+                        proc.Exited += ProcessHalted;
                     }
                     catch (Exception)
                     {
-                        // Access denied
+                        // Access denied, don't go further
+                        return false;
                     }
-                    proc.Exited += ProcessHalted;
 
                     // Check process path
                     string path = ProcessUtils.GetPathToApp(proc.Id);
