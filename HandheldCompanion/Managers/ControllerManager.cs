@@ -174,22 +174,6 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has started", "ControllerManager");
     }
 
-    private static void RaiseInputsUpdated(ControllerState state, bool isMapped)
-    {
-        Delegate[]? handlers = InputsUpdated?.GetInvocationList();
-        if (handlers == null) return;
-
-        // Fire each handler in a separate task, no await (fire-and-forget)
-        foreach (InputsUpdatedEventHandler handler in handlers)
-        {
-            Task.Run(() =>
-            {
-                try { handler(state, isMapped); }
-                catch (Exception) { }                
-            });
-        }
-    }
-
     private static void Tick(long ticks, float delta)
     {
         if (!HasTargetController)
@@ -209,7 +193,7 @@ public static class ControllerManager
             return;
 
         // raise event, before layout mapping
-        RaiseInputsUpdated(controllerState, false);
+        EventHelper.RaiseAsync(InputsUpdated, controllerState, false);
 
         // get main motion
         byte gamepadIndex = targetController.gamepadIndex;
@@ -231,7 +215,7 @@ public static class ControllerManager
 
         // compute layout
         controllerState = ManagerFactory.layoutManager.MapController(controllerState);
-        RaiseInputsUpdated(controllerState, true);
+        EventHelper.RaiseAsync(InputsUpdated, controllerState, true);
 
         // controller is muted
         if (ControllerMuted)
@@ -255,20 +239,11 @@ public static class ControllerManager
                 switch ((SDL.EventType)e.Type)
                 {
                     case SDL.EventType.GamepadAdded:
-                        LogManager.LogDebug($"Gamepad added: {e.GDevice.Which}");
                         SDL_GamepadAdded(e.GDevice.Which);
                         break;
 
                     case SDL.EventType.GamepadRemoved:
-                        LogManager.LogDebug($"Gamepad removed: {e.GDevice.Which}");
                         SDL_GamepadRemoved(e.GDevice.Which);
-                        break;
-
-                    case SDL.EventType.JoystickAxisMotion:
-                    case SDL.EventType.JoystickUpdateComplete:
-                    case SDL.EventType.JoystickButtonDown:
-                    case SDL.EventType.JoystickButtonUp:
-                    case SDL.EventType.JoystickHatMotion:
                         break;
 
                     default:
