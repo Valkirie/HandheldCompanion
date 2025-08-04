@@ -359,12 +359,18 @@ public static class ControllerManager
 
                 if (controller == null)
                 {
-                    LogManager.LogWarning("Unsupported controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                    LogManager.LogWarning("Unsupported SDL controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                     return;
                 }
 
                 while (!controller.IsReady && controller.IsConnected())
                     await Task.Delay(250).ConfigureAwait(false);
+
+                if (!controller.IsConnected())
+                {
+                    LogManager.LogWarning("SDL controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
+                    return;
+                }
 
                 // controller is ready
                 controller.IsBusy = false;
@@ -561,6 +567,12 @@ public static class ControllerManager
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
 
+            if (!controller.IsConnected())
+            {
+                LogManager.LogWarning("Generic controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
+                return;
+            }
+
             // controller is ready
             controller.IsBusy = false;
 
@@ -750,6 +762,12 @@ public static class ControllerManager
 
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
+
+            if (!controller.IsConnected())
+            {
+                LogManager.LogWarning("XInput controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
+                return;
+            }
 
             // controller is ready
             controller.IsBusy = false;
