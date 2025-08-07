@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace HandheldCompanion.Managers.OSDStrategy.Overlay;
+namespace HandheldCompanion.Managers.Overlay;
 
 public interface IOverlayStrategy
 {

@@ -1,6 +1,6 @@
 using HandheldCompanion.GraphicsProcessingUnit;
 
-namespace HandheldCompanion.Managers.OSDStrategy.Overlay;
+namespace HandheldCompanion.Managers.Overlay;
 
 public class ExtendedStrategy(GPU gpu): IOverlayStrategy
 {

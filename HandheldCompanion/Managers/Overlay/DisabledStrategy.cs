@@ -1,4 +1,4 @@
-namespace HandheldCompanion.Managers.OSDStrategy.Overlay;
+namespace HandheldCompanion.Managers.Overlay;
 
 public class DisabledStrategy: IOverlayStrategy
 {

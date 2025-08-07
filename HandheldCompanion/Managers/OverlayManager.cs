@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using HandheldCompanion.GraphicsProcessingUnit;
-using HandheldCompanion.Managers.OSDStrategy.Overlay;
-using Sentry.Protocol;
+using HandheldCompanion.Managers.Overlay;
 
-namespace HandheldCompanion.Managers.OSDStrategy;
+namespace HandheldCompanion.Managers;
 
 public class OverlayManager
 {
@@ -14,22 +13,19 @@ public class OverlayManager
 
     public OverlayManager()
     {
-        _configs = new Dictionary<int, IOverlayStrategy>();
-        if (_gpu is null)
+        _configs = new Dictionary<int, IOverlayStrategy>
         {
-            return;
-        }
-
-        _configs.Add(0, new DisabledStrategy());
-        _configs.Add(1, new MinimalStrategy(_gpu));
-        _configs.Add(2, new ExtendedStrategy(_gpu));
-        _configs.Add(3, new FullStrategy(_gpu));
-        _configs.Add(4, new CustomStrategy(_gpu));
+            { 0, new DisabledStrategy() },
+            { 1, new MinimalStrategy() },
+            { 2, new ExtendedStrategy(_gpu) },
+            { 3, new FullStrategy(_gpu) },
+            { 4, new CustomStrategy(_gpu) }
+        };
     }
 
     public string? GetConfig(int level)
     {
-        if (_gpu is null || _configs.Count == 0)
+        if (_configs.Count == 0)
         {
             return null;
         }

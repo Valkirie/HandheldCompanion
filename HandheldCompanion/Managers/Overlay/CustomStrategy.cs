@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using HandheldCompanion.GraphicsProcessingUnit;
 
-namespace HandheldCompanion.Managers.OSDStrategy.Overlay;
+namespace HandheldCompanion.Managers.Overlay;
 
 public class CustomStrategy(GPU gpu): IOverlayStrategy
 {
@@ -17,10 +17,10 @@ public class CustomStrategy(GPU gpu): IOverlayStrategy
             Content.Add(content);
         }
 
-        return Content.ToString();
+        return string.Join("\n", Content);;
     }
-    
-    
+
+
     public static string EntryContent(string name, GPU gpu)
     {
         OverlayRow row = new();

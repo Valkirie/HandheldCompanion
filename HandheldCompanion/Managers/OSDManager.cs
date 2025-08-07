@@ -5,7 +5,6 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using HandheldCompanion.Managers.OSDStrategy;
 
 namespace HandheldCompanion.Managers;
 
@@ -186,19 +185,25 @@ public static class OSDManager
         }
     }
 
-    public static string Draw(int processId)
+    private static string Draw(int processId)
     {
-        var OverlayManager = new OverlayManager();
+        OverlayManager overlayManager = new();
         Content = [];
-        var config = OverlayManager.GetConfig(OverlayLevel);
-        if (config is null)
+        try
         {
-            goto Exit;
+            var config = overlayManager.GetConfig(OverlayLevel);
+            if (config is null)
+            {
+                goto Exit;
+            }
+
+            Content.Add(Header + config);
+        }
+        catch (NotImplementedException)
+        {
         }
 
-        Content.Add(Header + config);
-
-    Exit:
+        Exit:
         return string.Join("\n", Content);
     }
 

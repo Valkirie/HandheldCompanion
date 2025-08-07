@@ -1,8 +1,8 @@
 using HandheldCompanion.GraphicsProcessingUnit;
 
-namespace HandheldCompanion.Managers.OSDStrategy.Overlay;
+namespace HandheldCompanion.Managers.Overlay;
 
-public class MinimalStrategy(GPU gpu): IOverlayStrategy
+public class MinimalStrategy: IOverlayStrategy
 {
     public string GetConfig()
     {
