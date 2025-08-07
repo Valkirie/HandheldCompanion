@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers.Overlay;
+using HandheldCompanion.Managers.Overlay.Strategy;
 
 namespace HandheldCompanion.Managers;
 
@@ -19,7 +20,7 @@ public class OverlayManager
             { 1, new MinimalStrategy() },
             { 2, new ExtendedStrategy(_gpu) },
             { 3, new FullStrategy(_gpu) },
-            { 4, new CustomStrategy(_gpu) }
+            { 4, new CustomStrategy() }
         };
     }
 

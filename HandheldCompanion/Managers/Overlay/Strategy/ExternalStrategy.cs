@@ -1,4 +1,4 @@
-namespace HandheldCompanion.Managers.Overlay;
+namespace HandheldCompanion.Managers.Overlay.Strategy;
 
 public class ExternalStrategy: IOverlayStrategy
 {

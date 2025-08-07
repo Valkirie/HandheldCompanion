@@ -1,6 +1,4 @@
-using HandheldCompanion.GraphicsProcessingUnit;
-
-namespace HandheldCompanion.Managers.Overlay;
+namespace HandheldCompanion.Managers.Overlay.Strategy;
 
 public class MinimalStrategy: IOverlayStrategy
 {
