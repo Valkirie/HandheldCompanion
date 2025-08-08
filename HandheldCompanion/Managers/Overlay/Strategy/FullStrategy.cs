@@ -23,7 +23,7 @@ public class FullStrategy: IOverlayStrategy
         row4.entries.Add(VRAMentry);
 
         OverlayEntry CPUentry = new("CPU", OverlayColors.CPU_COLOR, true);
-        WidgetFactory.CreateWidget("CPU", CPUentry, WidgetLevel.MINIMAL);
+        WidgetFactory.CreateWidget("CPU", CPUentry, WidgetLevel.FULL);
         row2.entries.Add(CPUentry);
 
         OverlayEntry RAMentry = new("RAM", OverlayColors.RAM_COLOR, true);
