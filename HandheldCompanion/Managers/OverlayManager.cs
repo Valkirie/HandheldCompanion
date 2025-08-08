@@ -10,20 +10,15 @@ public class OverlayManager
 {
     private readonly GPU? _gpu = GPUManager.GetCurrent();
 
-    private readonly Dictionary<int, IOverlayStrategy> _configs;
-
-    public OverlayManager()
+    private readonly Dictionary<int, IOverlayStrategy> _configs = new()
     {
-        _configs = new Dictionary<int, IOverlayStrategy>
-        {
-            { 0, new DisabledStrategy() },
-            { 1, new MinimalStrategy() },
-            { 2, new ExtendedStrategy(_gpu) },
-            { 3, new FullStrategy(_gpu) },
-            { 4, new CustomStrategy() },
-            { 5, new ExternalStrategy()}
-        };
-    }
+        { 0, new DisabledStrategy() },
+        { 1, new MinimalStrategy() },
+        { 2, new ExtendedStrategy() },
+        { 3, new FullStrategy() },
+        { 4, new CustomStrategy() },
+        { 5, new ExternalStrategy()}
+    };
 
     public string? GetConfig(int level)
     {

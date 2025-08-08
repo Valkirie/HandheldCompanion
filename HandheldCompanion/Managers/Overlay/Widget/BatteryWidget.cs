@@ -2,16 +2,17 @@ namespace HandheldCompanion.Managers.Overlay.Widget;
 
 public class BatteryWidget: IWidget
 {
-    public void Build(OverlayEntry entry)
+    public void Build(OverlayEntry entry, short? level = null)
     {
-        switch (OSDManager.OverlayBATTLevel)
+        var _level = level ?? OSDManager.OverlayBATTLevel;
+        switch (_level)
         {
-            case 2:
+            case WidgetLevel.FULL:
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryPower(), "W");
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
                 break;
-            case 1:
+            case WidgetLevel.MINIMAL:
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
                 break;

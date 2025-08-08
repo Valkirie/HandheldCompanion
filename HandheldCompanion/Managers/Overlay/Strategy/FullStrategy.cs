@@ -3,7 +3,7 @@ using HandheldCompanion.GraphicsProcessingUnit;
 namespace HandheldCompanion.Managers.Overlay.Strategy;
 
 
-public class FullStrategy(GPU gpu): IOverlayStrategy
+public class FullStrategy: IOverlayStrategy
 {
     public string? GetConfig()
     {
@@ -15,35 +15,28 @@ public class FullStrategy(GPU gpu): IOverlayStrategy
         OverlayRow row6 = new(); // FPS
 
         OverlayEntry GPUentry = new("GPU", OverlayColors.GPU_COLOR, true);
-        OSDManager.AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardwareMonitor.GetGPULoad(), "%");
-        OSDManager.AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardwareMonitor.GetGPUPower(), "W");
-        OSDManager.AddElementIfNotNull(GPUentry, gpu.HasTemperature() ? gpu.GetTemperature() : PlatformManager.LibreHardwareMonitor.GetGPUTemperature(), "C");
+        WidgetFactory.CreateWidget("GPU", GPUentry, WidgetLevel.FULL);
         row1.entries.Add(GPUentry);
 
         OverlayEntry VRAMentry = new("VRAM", OverlayColors.VRAM_COLOR, true);
-        OSDManager.AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), PlatformManager.LibreHardwareMonitor.GetGPUMemoryTotal(), "GB");
+        WidgetFactory.CreateWidget("VRAM", VRAMentry, WidgetLevel.FULL);
         row4.entries.Add(VRAMentry);
 
         OverlayEntry CPUentry = new("CPU", OverlayColors.CPU_COLOR, true);
-        OSDManager.AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-        OSDManager.AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
-        OSDManager.AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPUTemperature(), "C");
+        WidgetFactory.CreateWidget("CPU", CPUentry, WidgetLevel.MINIMAL);
         row2.entries.Add(CPUentry);
 
         OverlayEntry RAMentry = new("RAM", OverlayColors.RAM_COLOR, true);
-        OSDManager.AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), PlatformManager.LibreHardwareMonitor.GetMemoryTotal(), "GB");
+        WidgetFactory.CreateWidget("RAM", RAMentry, WidgetLevel.FULL);
         row3.entries.Add(RAMentry);
 
         OverlayEntry BATTentry = new("BATT", OverlayColors.BATT_COLOR, true);
-        OSDManager.AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
-        OSDManager.AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryPower(), "W");
-        OSDManager.AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
+        WidgetFactory.CreateWidget("BATT", BATTentry, WidgetLevel.FULL);
         row5.entries.Add(BATTentry);
 
-        OverlayEntry FPSentry = new("<APP>", OverlayColors.FPS_COLOR, true);
-        FPSentry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
-        FPSentry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
-        row6.entries.Add(FPSentry);
+        OverlayEntry fpsEntry = new("<APP>", OverlayColors.FPS_COLOR, true);
+        WidgetFactory.CreateWidget("FPS", fpsEntry, WidgetLevel.FULL);
+        row6.entries.Add(fpsEntry);
 
         return string.Join("\n",
             row1.ToString(),

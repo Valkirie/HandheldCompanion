@@ -4,7 +4,7 @@ using HandheldCompanion.Managers.Overlay.Widget;
 
 namespace HandheldCompanion.Managers.Overlay.Strategy;
 
-public class CustomStrategy: IOverlayStrategy
+public class CustomStrategy : IOverlayStrategy
 {
     public string? GetConfig()
     {
@@ -28,7 +28,11 @@ public class CustomStrategy: IOverlayStrategy
         WidgetFactory.CreateWidget(name, entry);
 
         // Skip empty rows
-        if (entry.elements.Count == 0) return "";
+        if (entry.elements.Count == 0)
+        {
+            return "";
+        }
+
         row.entries.Add(entry);
         return row.ToString();
     }

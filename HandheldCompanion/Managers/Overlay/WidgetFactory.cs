@@ -6,9 +6,8 @@ namespace HandheldCompanion.Managers.Overlay;
 
 public class WidgetFactory
 {
-    public static void CreateWidget(string name, OverlayEntry entry)
-    {
-        var widgets = new Dictionary<string, IWidget>
+    private static Dictionary<string, IWidget> Widgets =>
+        new()
         {
             {"TIME", new TimeWidget()},
             {"BATT", new BatteryWidget()},
@@ -19,11 +18,13 @@ public class WidgetFactory
             {"GPU", new GpuWidget()}
         };
 
-        if (!widgets.TryGetValue(name.ToUpper(), out var widget))
+    public static void CreateWidget(string name, OverlayEntry entry, short? level = null)
+    {
+        if (!Widgets.TryGetValue(name.ToUpper(), out var widget))
         {
             return;
         }
 
-        widget.Build(entry);
+        widget.Build(entry, level);
     }
 }

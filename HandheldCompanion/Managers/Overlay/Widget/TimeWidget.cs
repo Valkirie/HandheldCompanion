@@ -5,14 +5,15 @@ namespace HandheldCompanion.Managers.Overlay.Widget;
 
 public class TimeWidget: IWidget
 {
-    public void Build(OverlayEntry entry)
+    public void Build(OverlayEntry entry, short? level = null)
     {
-        switch (OSDManager.OverlayTimeLevel)
+        var _level = level ?? OSDManager.OverlayTimeLevel;
+        switch (_level)
         {
-            case 2:
+            case WidgetLevel.FULL:
                 entry.elements.Add(new OverlayEntryElement(DateTime.Now.ToString(CultureInfo.InvariantCulture), ""));
                 break;
-            case 1:
+            case WidgetLevel.MINIMAL:
                 entry.elements.Add(new OverlayEntryElement(DateTime.Now.ToString("t"), ""));
                 break;
         }
