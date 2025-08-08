@@ -20,7 +20,8 @@ public class OverlayManager
             { 1, new MinimalStrategy() },
             { 2, new ExtendedStrategy(_gpu) },
             { 3, new FullStrategy(_gpu) },
-            { 4, new CustomStrategy() }
+            { 4, new CustomStrategy() },
+            { 5, new ExternalStrategy()}
         };
     }
 

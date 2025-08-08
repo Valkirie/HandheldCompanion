@@ -17,7 +17,7 @@ public class CustomStrategy: IOverlayStrategy
             Content.Add(content);
         }
 
-        return string.Join("\n", Content);;
+        return string.Join("\n", Content);
     }
 
 

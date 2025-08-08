@@ -8,9 +8,9 @@ public class FullStrategy(GPU gpu): IOverlayStrategy
     public string? GetConfig()
     {
         OverlayRow row1 = new(); // GPU
-        OverlayRow row2 = new(); // VRAM  
-        OverlayRow row3 = new(); // CPU
-        OverlayRow row4 = new(); // RAM
+        OverlayRow row2 = new(); // CPU  
+        OverlayRow row3 = new(); // RAM
+        OverlayRow row4 = new(); // VRAM
         OverlayRow row5 = new(); // Battery
         OverlayRow row6 = new(); // FPS
 
