@@ -25,7 +25,7 @@ namespace HandheldCompanion;
 /// </summary>
 public partial class App : Application
 {
-    public static bool IsMultiThreaded { get; } = false;
+    public static bool IsMultiThreaded { get; } = true;
     public static string InstallPath = string.Empty;
     public static string SettingsPath = string.Empty;
 
@@ -54,13 +54,14 @@ public partial class App : Application
 
         InitializeComponent();
 
-#if DEBUG
-        AllocConsole();
-#endif
-
         // initialize path(s)
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;
         SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion");
+
+#if DEBUG
+        if (!ManagerFactory.settingsManager.GetBoolean("MuteConsole"))
+            AllocConsole();
+#endif
     }
 
     /// <summary>

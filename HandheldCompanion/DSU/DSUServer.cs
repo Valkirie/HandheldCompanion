@@ -435,11 +435,10 @@ public static class DSUServer
         }
         catch (Exception /*ex*/) { }
 
+        // get server Id
         var randomBuf = new byte[4];
         new Random().NextBytes(randomBuf);
         serverId = BitConverter.ToUInt32(randomBuf, 0);
-
-        TimerManager.Tick += Tick;
 
         IsInitialized = true;
 
@@ -468,8 +467,6 @@ public static class DSUServer
 
         IsInitialized = false;
 
-        TimerManager.Tick -= Tick;
-
         LogManager.LogInformation("DSUServer has stopped");
         Stopped?.Invoke();
 
@@ -479,9 +476,9 @@ public static class DSUServer
     private static ControllerState Inputs = new();
     private static Dictionary<byte, GamepadMotion> GamepadMotions = new();
 
-    public static void UpdateInputs(ControllerState inputs, Dictionary<byte, GamepadMotion> gamepadMotions)
+    public static void UpdateInputs(ControllerState controllerState, Dictionary<byte, GamepadMotion> gamepadMotions)
     {
-        Inputs = inputs;
+        Inputs = controllerState;
         GamepadMotions = gamepadMotions;
     }
 

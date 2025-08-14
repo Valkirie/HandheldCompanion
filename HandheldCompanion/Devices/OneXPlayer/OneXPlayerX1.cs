@@ -168,7 +168,7 @@ public class OneXPlayerX1 : IDevice
 
         // allow OneX button to pass key inputs
         ECRamDirectWrite(0x4EB, ECDetails, 0x40);
-        if (ECRamReadByte(0x4EB, ECDetails) == 0x40)
+        if (ECRamDirectReadByte(0x4EB, ECDetails) == 0x40)
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
         return true;
@@ -201,7 +201,7 @@ public class OneXPlayerX1 : IDevice
         }
 
         ECRamDirectWrite(0x4EB, ECDetails, 0x00);
-        if (ECRamReadByte(0x4EB, ECDetails) == 0x00)
+        if (ECRamDirectReadByte(0x4EB, ECDetails) == 0x00)
             LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
         base.Close();

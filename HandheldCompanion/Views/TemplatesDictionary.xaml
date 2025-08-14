@@ -1,12 +1,16 @@
-﻿<ResourceDictionary
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
+    xmlns:cmdHC="clr-namespace:HandheldCompanion.Commands.Functions.HC"
+    xmlns:cmdWIN="clr-namespace:HandheldCompanion.Commands.Functions.Windows"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels">
 
@@ -20,6 +24,365 @@
     <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
     <converters:IsNullConverter x:Key="IsNullConverter" />
     <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
+    <converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
+
+    <DataTemplate x:Key="HotkeyTemplate" DataType="{x:Type viewmodels:HotkeyViewModel}">
+        <DataTemplate.Resources>
+            <sys:Double x:Key="SettingsCardWrapThreshold">580</sys:Double>
+        </DataTemplate.Resources>
+
+        <ui:SettingsExpander
+            Name="HotkeyDefinition"
+            Description="{Binding Description, Mode=OneWay}"
+            Header="{Binding Name, Mode=OneWay}">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*" MinWidth="240" />
+                    <ColumnDefinition MinWidth="86" />
+                </Grid.ColumnDefinitions>
+
+                <ToggleButton
+                    Height="40"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding DefineButtonCommand}"
+                    IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
+                    <ToggleButton.Resources>
+                        <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExecuted}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    AutoReverse="True"
+                                                    RepeatBehavior="1x"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    From="1.0"
+                                                    To="0.0"
+                                                    Duration="0:0:0.125" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Resources>
+
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
+                        <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ButtonGlyphs.Count}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ui:FontIcon
+                                        FontFamily="PromptFont"
+                                        FontSize="24"
+                                        Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <ui:FontIcon.Style>
+                                            <Style TargetType="ui:FontIcon">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Null}">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Foreground" Value="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </Style>
+                                        </ui:FontIcon.Style>
+                                    </ui:FontIcon>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding KeyboardChord}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding KeyboardChord}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{Binding InputsChordType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ikw:SimpleStackPanel>
+                </ToggleButton>
+
+                <ikw:SimpleStackPanel
+                    Grid.Column="1"
+                    Margin="3,0,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="3">
+                    <Button VerticalAlignment="Stretch" Command="{Binding EraseButtonCommand}">
+                        <ui:FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xe75c;" />
+                    </Button>
+
+                    <ToggleButton
+                        VerticalAlignment="Stretch"
+                        Command="{Binding PinButtonCommand}"
+                        IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ui:FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}">
+                            <ui:FontIcon.Style>
+                                <Style TargetType="{x:Type ui:FontIcon}">
+                                    <Setter Property="Glyph" Value="&#xe718;" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPinned}" Value="True">
+                                            <Setter Property="Glyph" Value="&#xe77a;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ui:FontIcon.Style>
+                        </ui:FontIcon>
+                    </ToggleButton>
+                </ikw:SimpleStackPanel>
+            </Grid>
+
+            <ui:SettingsExpander.HeaderIcon>
+                <ui:FontIcon
+                    Width="16"
+                    FontFamily="{Binding FontFamily, Mode=OneWay}"
+                    Glyph="{Binding Glyph, Mode=OneWay}" />
+            </ui:SettingsExpander.HeaderIcon>
+
+            <ui:SettingsExpander.Items>
+                <!--  ICommand selector  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_CommandTypeDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_CommandType}"
+                    IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox SelectedIndex="{Binding CommandTypeIndex, Mode=TwoWay}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_None}" ToolTip="{l:Static resx:Resources.Hotkey_NoneDesc}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Function}" ToolTip="{l:Static resx:Resources.Hotkey_FunctionDesc}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Keystrokes}" ToolTip="{l:Static resx:Resources.Hotkey_KeystrokesDesc}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Executable}" ToolTip="{l:Static resx:Resources.Hotkey_ExecutableDesc}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Custom name (only if CanCustom)  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_CommandNameDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_CommandName}"
+                    Visibility="{Binding CanCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBox Width="290" Text="{Binding CustomName, Mode=TwoWay}" />
+                </ui:SettingsCard>
+
+                <!--  Function pick (only if CommandTypeIndex == 1)  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_FunctionToRunDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_FunctionToRun}"
+                    IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
+                    <ComboBox
+                        Width="290"
+                        ItemsSource="{Binding FunctionCollectionView}"
+                        SelectedIndex="{Binding FunctionIndex, Mode=TwoWay}">
+                        <ComboBox.Resources>
+                            <converters:SeparatorConverter x:Key="SeparatorConverter" />
+                        </ComboBox.Resources>
+                        <ComboBox.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ComboBox.GroupStyle>
+                        <ComboBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource {x:Type ComboBoxItem}}" TargetType="ComboBoxItem">
+                                <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ContentPresenter>
+                                    <ContentPresenter.Content>
+                                        <MultiBinding Converter="{StaticResource SeparatorConverter}">
+                                            <Binding Path="Text" />
+                                            <Binding Path="IsEnabled" />
+                                        </MultiBinding>
+                                    </ContentPresenter.Content>
+                                </ContentPresenter>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  QuickToolsCommands  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_QuickToolsPageDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_QuickToolsPage}"
+                    Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:QuickToolsCommands}}">
+                    <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.QuickHomePage_Title}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.QuickDevicePage_Title}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.QuickProfilesPage_Title}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.QuickApplicationsPage_Title}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  MainWindowCommands  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_MainWindowPageDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_MainWindowPage}"
+                    Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:MainWindowCommands}}">
+                    <ComboBox SelectedIndex="{Binding WindowPageIndex, Mode=TwoWay}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Current}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navController}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navLibrary}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navDevice}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navPerformance}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navProfiles}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navOverlay}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navHotkeys}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navAbout}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_navNotifications}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.MainWindow_Settings}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  OnScreenKeyboardLegacyCommands  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_KeyboardLegacyPosition}"
+                    Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdWIN:OnScreenKeyboardLegacyCommands}}">
+                    <ComboBox SelectedIndex="{Binding OnScreenKeyboardLegacyPosition, Mode=TwoWay}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionBottom}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_KeyboardLegacyPositionMaximize}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  CycleSubProfileCommands  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_CycleSubProfileDirectionDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_CycleSubProfileDirection}"
+                    Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:CycleSubProfileCommands}}">
+                    <ComboBox SelectedIndex="{Binding CyclingDirection, Mode=TwoWay}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfilePrev}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfileNext}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Keystrokes (CommandTypeIndex == 2)  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_OutputDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_Output}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <StackPanel Orientation="Horizontal">
+                        <ToggleButton
+                            Width="247"
+                            Height="31"
+                            Command="{Binding DefineOutputCommand}"
+                            IsChecked="{Binding IsListeningOutput, Mode=OneWay}">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{Binding KeyboardOutputChord}" />
+                        </ToggleButton>
+
+                        <Button
+                            Margin="3,0,0,0"
+                            VerticalAlignment="Stretch"
+                            Command="{Binding EraseOutputButtonCommand}">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" />
+                        </Button>
+                    </StackPanel>
+                </ui:SettingsCard>
+
+                <!--  Executable (CommandTypeIndex == 3)  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_ExecutableTargetDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_ExecutableTarget}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                    <TextBox
+                        Width="290"
+                        ui:ControlHelper.PlaceholderText="{l:Static resx:Resources.Hotkey_ExecutableTargetPlaceholder}"
+                        IsReadOnly="True"
+                        Text="{Binding ExecutablePath, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                <i:InvokeCommandAction Command="{Binding TextBoxClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </ui:SettingsCard>
+
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_ExecutableArgumentsDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_ExecutableArguments}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                    <TextBox Width="290" Text="{Binding ExecutableArguments, Mode=TwoWay}" />
+                </ui:SettingsCard>
+
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_WindowStyleDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_WindowStyle}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                    <ComboBox SelectedIndex="{Binding ExecutableWindowStyle, Mode=TwoWay}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Normal}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Hidden}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Minimized}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Maximized}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_RunAsAdministratorDesc}"
+                    Header="{l:Static resx:Resources.Hotkey_RunAsAdministrator}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                    <ui:ToggleSwitch HorizontalAlignment="Right" IsOn="{Binding ExecutableRunAs, Mode=TwoWay}" />
+                </ui:SettingsCard>
+
+                <!--  finally: Delete hotkey  -->
+                <ui:SettingsCard>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding DeleteHotkeyCommand}"
+                        Content="{l:Static resx:Resources.Hotkey_Delete}"
+                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource AccentButtonStyle}" />
+                </ui:SettingsCard>
+
+            </ui:SettingsExpander.Items>
+        </ui:SettingsExpander>
+    </DataTemplate>
 
     <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Button
@@ -186,7 +549,7 @@
                             VerticalAlignment="Center"
                             FontFamily="PromptFont"
                             FontSize="30"
-                            Glyph="&#x243C;" />
+                            Glyph="{Binding ControllerGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <ui:FontIcon Margin="6,0,0,0" VerticalAlignment="Center">
                             <ui:FontIcon.Style>
@@ -386,18 +749,6 @@
                                         </Border.Style>
                                     </Border>
                                 </ikw:SimpleStackPanel>
-
-                                <ui:ProgressBar
-                                    Width="138"
-                                    Margin="0,-9,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    IsIndeterminate="True"
-                                    Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <ui:ProgressBar.RenderTransform>
-                                        <ScaleTransform ScaleY="4.5" />
-                                    </ui:ProgressBar.RenderTransform>
-                                </ui:ProgressBar>
                             </Grid>
                         </ikw:SimpleStackPanel>
                     </DockPanel>
@@ -466,36 +817,45 @@
                     </ikw:SimpleStackPanel>
                 </Grid>
 
-                <TextBlock
-                    Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap"
+                <ikw:SimpleStackPanel
+                    Orientation="Vertical"
+                    Spacing="6"
                     Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <TextBlock.Style>
-                        <Style BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
-                            <!--  Default Text if none of the conditions are met  -->
-                            <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
+                    <TextBlock
+                        Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+                                <!--  Default Text if none of the conditions are met  -->
+                                <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
 
-                            <Style.Triggers>
-                                <!--  Trigger for USB  -->
-                                <DataTrigger Binding="{Binding Enumerator}" Value="USB">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
-                                </DataTrigger>
+                                <Style.Triggers>
+                                    <!--  Trigger for USB  -->
+                                    <DataTrigger Binding="{Binding Enumerator}" Value="USB">
+                                        <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
+                                    </DataTrigger>
 
-                                <!--  Trigger for BTHENUM  -->
-                                <DataTrigger Binding="{Binding Enumerator}" Value="BTHENUM">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
-                                </DataTrigger>
+                                    <!--  Trigger for BTHENUM  -->
+                                    <DataTrigger Binding="{Binding Enumerator}" Value="BTHENUM">
+                                        <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
+                                    </DataTrigger>
 
-                                <!--  Trigger for BTHLEDEVICE  -->
-                                <DataTrigger Binding="{Binding Enumerator}" Value="BTHLEDEVICE">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                                    <!--  Trigger for BTHLEDEVICE  -->
+                                    <DataTrigger Binding="{Binding Enumerator}" Value="BTHLEDEVICE">
+                                        <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <ui:ProgressBar
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        IsIndeterminate="True" />
+                </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
         </Border>
     </DataTemplate>
@@ -537,14 +897,14 @@
                                 Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="False" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="True" />
-                                <ComboBoxItem Content="Shift" IsEnabled="True" />
-                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox
@@ -716,7 +1076,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Hold to repeat" />
+                                            Text="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" />
 
                                         <ui:ToggleSwitch
                                             Grid.Column="1"
@@ -781,7 +1141,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Interruptable" />
+                                        Text="{x:Static resx:Resources.LayoutPage_Interruptable}" />
 
                                     <ui:ToggleSwitch
                                         Grid.Column="1"
@@ -805,7 +1165,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Press to toggle" />
+                                        Text="{x:Static resx:Resources.LayoutPage_PressToToggle}" />
 
                                     <ui:ToggleSwitch
                                         Grid.Column="1"
@@ -830,7 +1190,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Haptic feedback" />
+                                        Text="{x:Static resx:Resources.LayoutPage_HapticFeedback}" />
 
                                     <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                                         <ComboBox
@@ -889,7 +1249,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Input shift" />
+                                    Text="{x:Static resx:Resources.LayoutPage_InputShift}" />
 
                                 <ComboBox
                                     Grid.Column="1"
@@ -922,7 +1282,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Input type" />
+                                    Text="{x:Static resx:Resources.LayoutPage_InputType}" />
 
                                 <ComboBox
                                     Grid.Column="1"
@@ -1032,7 +1392,7 @@
                             SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="Disabled" IsEnabled="True" />
                             <ComboBoxItem Content="Button" IsEnabled="False" />
-                            <ComboBoxItem Content="Joystick" IsEnabled="True" />
+                            <ComboBoxItem Content="Axis" IsEnabled="True" />
                             <ComboBoxItem Content="Keyboard" IsEnabled="False" />
                             <ComboBoxItem Content="Mouse" IsEnabled="True" />
                             <ComboBoxItem Content="Trigger" IsEnabled="False" />
@@ -1669,7 +2029,7 @@
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
                                 <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="True" />
+                                <ComboBoxItem Content="Axis" IsEnabled="True" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="False" />
@@ -2337,7 +2697,7 @@
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled" IsEnabled="True" />
                                 <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Joystick" IsEnabled="False" />
+                                <ComboBoxItem Content="Axis" IsEnabled="False" />
                                 <ComboBoxItem Content="Keyboard" IsEnabled="True" />
                                 <ComboBoxItem Content="Mouse" IsEnabled="True" />
                                 <ComboBoxItem Content="Trigger" IsEnabled="True" />

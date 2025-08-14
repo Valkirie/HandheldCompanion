@@ -92,6 +92,7 @@ namespace HandheldCompanion.ViewModels
             {
                 foundHotkey.Hotkey = hotkey;
             }
+            OnPropertyChanged(nameof(HotkeysList));
         }
 
         private void HotkeysManager_Deleted(Hotkey hotkey)
@@ -102,6 +103,7 @@ namespace HandheldCompanion.ViewModels
                 HotkeysList.SafeRemove(foundHotkey);
                 foundHotkey.Dispose();
             }
+            OnPropertyChanged(nameof(HotkeysList));
         }
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)

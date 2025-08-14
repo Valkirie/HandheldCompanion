@@ -3,6 +3,7 @@ using ColorPicker.Models;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -45,39 +46,44 @@ namespace HandheldCompanion.Views.Pages
             LEDBrightness.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
             SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
-            if (device is LegionGo)
+            if (device is LegionGoTablet)
             {
                 // Left joycon settings
-                SliderLeftJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGo.LeftJoyconIndex) + 1;
-                SliderLeftAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGo.LeftJoyconIndex);
+                SliderLeftJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex) + 1;
+                SliderLeftAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
 
-                var leftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex);
+                var leftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
                 SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone + 1;
                 SliderLeftTriggerMargin.Value = leftTrigger.Margin + 1;
 
                 // Right joycon settings
-                SliderRightJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGo.RightJoyconIndex) + 1;
-                SliderRightAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGo.RightJoyconIndex);
+                SliderRightJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex) + 1;
+                SliderRightAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.RightJoyconIndex);
 
-                var rightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex);
+                var rightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
                 SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone + 1;
                 SliderRightTriggerMargin.Value = rightTrigger.Margin + 1;
 
                 // Show LegionGoPanel
                 LegionGoPanel.Visibility = Visibility.Visible;
+
+                if (device.GetType() == typeof(LegionGoTablet))
+                {
+                    LegionGoSensorSelection.Visibility = Visibility.Visible;
+                    LegionGoLeftController.Visibility = Visibility.Visible;
+                    LegionGoRightController.Visibility = Visibility.Visible;
+                }
             }
             else if (device is ClawA2VM || device is ClawA1M)
             {
                 // Show MSIClawPanel
                 MSIClawPanel.Visibility = Visibility.Visible;
             }
-
-            // Show DeviceSettingsPanel if either child panel is visible.
-            DeviceSettingsPanel.Visibility =
-                (LegionGoPanel.Visibility == Visibility.Visible || MSIClawPanel.Visibility == Visibility.Visible)
-                ? Visibility.Visible
-                : Visibility.Hidden;
-
+            else if (device is GamingZone)
+            {
+                ZotacGamingZonePanel.Visibility = Visibility.Visible;
+            }
+            
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
             SetControlEnabledAndVisible(LEDRainbow, LEDLevel.Rainbow);
@@ -219,6 +225,9 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LegionControllerPassthrough":
                         Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LegionControllerSwap":
+                        Toggle_ControllerSwap.IsOn = Convert.ToBoolean(value);
                         break;
                     case "LegionControllerGyroIndex":
                         ComboBox_GyroController.SelectedIndex = Convert.ToInt32(value);
@@ -606,6 +615,14 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
         }
 
+        private void Toggle_ControllerSwap_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("LegionControllerSwap", Toggle_ControllerSwap.IsOn);
+        }
+
         private void ComboBox_GyroController_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded)
@@ -623,7 +640,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetStickCustomDeadzone(LegionGo.LeftJoyconIndex, (int)value - 1);
+            SapientiaUsb.SetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex, (int)value - 1);
         }
 
         private void SliderLeftAutoSleepTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -635,7 +652,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetAutoSleepTime(LegionGo.LeftJoyconIndex, (int)value);
+            SapientiaUsb.SetAutoSleepTime(LegionGoTablet.LeftJoyconIndex, (int)value);
         }
 
         private void SliderLeftTriggerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -647,10 +664,10 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex);
+            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
             trigger.Deadzone = (int)value - 1;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex, trigger);
+            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex, trigger);
         }
 
         private void SliderLeftTriggerMargin_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -662,10 +679,10 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex);
+            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
             trigger.Margin = (int)value - 1;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGo.LeftJoyconIndex, trigger);
+            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex, trigger);
         }
 
         private void SliderRightJoystickDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -677,7 +694,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetStickCustomDeadzone(LegionGo.RightJoyconIndex, (int)value - 1);
+            SapientiaUsb.SetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex, (int)value - 1);
         }
 
         private void SliderRightAutoSleepTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -689,7 +706,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetAutoSleepTime(LegionGo.RightJoyconIndex, (int)value);
+            SapientiaUsb.SetAutoSleepTime(LegionGoTablet.RightJoyconIndex, (int)value);
         }
 
         private void SliderRightTriggerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -701,10 +718,10 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex);
+            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
             trigger.Deadzone = (int)value - 1;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex, trigger);
+            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, trigger);
         }
 
         private void SliderRightTriggerMargin_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -716,13 +733,17 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex);
+            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
             trigger.Margin = (int)value - 1;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGo.RightJoyconIndex, trigger);
+            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, trigger);
         }
 
         #endregion
 
+        private void ComboBox_GamingZoneVRAM_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

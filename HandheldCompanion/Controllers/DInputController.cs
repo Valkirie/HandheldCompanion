@@ -86,11 +86,6 @@ public class DInputController : IController
         return $"DInput Controller {UserIndex}";
     }
 
-    public override void UpdateInputs(long ticks, float delta)
-    {
-        base.UpdateInputs(ticks, delta);
-    }
-
     public override bool IsConnected()
     {
         if (joystick is null)

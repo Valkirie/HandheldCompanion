@@ -151,17 +151,20 @@ namespace HandheldCompanion.ViewModels
                 _process.WindowDetached -= Process_WindowDetached;
             }
 
-            // Dispose all ProcessWindows
+            // Take a snapshot of the children and clear the live collection
+            ProcessWindowViewModel[] windowsSnapshot;
             lock (_processWindowsSyncLock)
             {
-                foreach (ProcessWindowViewModel processWindow in ProcessWindows)
-                    processWindow.Dispose();
-                ProcessWindows.SafeClear();
+                windowsSnapshot = ProcessWindows.ToArray();
+                ProcessWindows.SafeClear();    // direct Clear, not SafeClear
             }
+
+            // Dispose each window from the snapshot (outside the lock)
+            foreach (ProcessWindowViewModel processWindow in windowsSnapshot)
+                processWindow.Dispose();
 
             // dispose commands
             KillProcessCommand = null;
-
             PageViewModel = null;
             _process = null;
 

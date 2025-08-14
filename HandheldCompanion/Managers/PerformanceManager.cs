@@ -80,7 +80,7 @@ public static class PerformanceManager
     private static bool autotdpWatchdogPendingStop;
 
     // powercfg
-    private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+    private static Guid currentPowerMode = Guid.Empty;
 
     // GPU limits
     private static double FallbackGfxClock;
@@ -367,8 +367,12 @@ public static class PerformanceManager
         }
     }
 
-    private static void PowerProfileManager_Discarded(PowerProfile profile)
+    private static void PowerProfileManager_Discarded(PowerProfile profile, bool swapped)
     {
+        // don't bother discarding settings, new one will be enforce shortly
+        if (swapped)
+            return;
+
         currentProfile = null;
 
         // restore default TDP
@@ -903,10 +907,8 @@ public static class PerformanceManager
 
     private static void RequestPowerMode(Guid guid)
     {
-        currentPowerMode = guid;
-
         if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
-            if (activeScheme == currentPowerMode)
+            if (activeScheme == guid)
                 return;
 
         LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
@@ -915,6 +917,8 @@ public static class PerformanceManager
             LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
         else
         {
+            currentPowerMode = guid;
+
             int idx = Array.IndexOf(PowerModes, currentPowerMode);
             if (idx != -1)
                 PowerModeChanged?.Invoke(idx);

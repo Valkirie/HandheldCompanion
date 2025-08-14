@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -94,6 +95,7 @@ namespace HandheldCompanion.ViewModels
         public double CPUCoreMaximum => MotherboardInfo.NumberOfCores;
 
         public bool SupportsSoftwareFanMode => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
+        public bool SupportsIntelEnduranceGaming => GPUManager.GetCurrent() is IntelGPU intelGPU && intelGPU.HasEnduranceGaming(out _, out _, out _);
 
         public bool SupportsAutoTDP
         {
@@ -383,6 +385,32 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool EnduranceGamingEnabled
+        {
+            get => SelectedPreset.IntelEnduranceGamingEnabled;
+            set
+            {
+                if (value != EnduranceGamingEnabled)
+                {
+                    SelectedPreset.IntelEnduranceGamingEnabled = value;
+                    OnPropertyChanged(nameof(EnduranceGamingEnabled));
+                }
+            }
+        }
+
+        public int IntelEnduranceGamingPreset
+        {
+            get => SelectedPreset.IntelEnduranceGamingPreset;
+            set
+            {
+                if (value != IntelEnduranceGamingPreset)
+                {
+                    SelectedPreset.IntelEnduranceGamingPreset = value;
+                    OnPropertyChanged(nameof(IntelEnduranceGamingPreset));
+                }
+            }
+        }
+
         public ICommand DeletePresetCommand { get; private set; }
 
         #endregion
@@ -513,7 +541,6 @@ namespace HandheldCompanion.ViewModels
             #region General Setup
 
             // manage events
-            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
 
@@ -548,6 +575,17 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case ManagerStatus.Initialized:
                     QueryMedia();
+                    break;
+            }
+
+            switch (ManagerFactory.gpuManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
                     break;
             }
 
@@ -730,6 +768,60 @@ namespace HandheldCompanion.ViewModels
             #endregion
         }
 
+        private void QueryGPU()
+        {
+            // manage events
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked += GpuManager_Unhooked;
+
+            GPU gpu = GPUManager.GetCurrent();
+            if (gpu is not null)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
+        }
+
+        private void GPUManager_Hooked(GPU GPU)
+        {
+            if (GPU is AMDGPU amdGPU)
+            {
+                // do something
+            }
+            else if (GPU is IntelGPU intelGPU)
+            {
+                intelGPU.EnduranceGamingState += IntelGPU_EnduranceGamingState;
+            }
+
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void GpuManager_Unhooked(GPU GPU)
+        {
+            if (GPU is AMDGPU amdGPU)
+            {
+                // do something
+            }
+            else if (GPU is IntelGPU intelGPU)
+            {
+                intelGPU.EnduranceGamingState -= IntelGPU_EnduranceGamingState;
+            }
+
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void IntelGPU_EnduranceGamingState(bool Supported, IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t Control, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t Mode)
+        {
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void UpdateGraphicsSettingsUI()
+        {
+            OnPropertyChanged(nameof(SupportsIntelEnduranceGaming));
+        }
+
         private void SettingsManager_Initialized()
         {
             QuerySettings();
@@ -752,6 +844,7 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryPowerProfile()
         {
+            // manage events
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
@@ -777,6 +870,9 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryMedia()
         {
+            // manage events
+            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+
             MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
         }
 
@@ -788,14 +884,17 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
             ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
-            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
-
+            ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked -= GpuManager_Unhooked;
+            ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
 
             if (IsMainPage)
             {

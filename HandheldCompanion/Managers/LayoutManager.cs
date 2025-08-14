@@ -463,7 +463,7 @@ public class LayoutManager : IManager
             outputState.AxisState.State = new();
 
             // dispose previous state to prevent memory leak
-            outputState.GyroState?.Dispose();
+            // outputState.GyroState?.Dispose();
             outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
 
             // we need to check for shifter(s) first
@@ -667,7 +667,7 @@ public class LayoutManager : IManager
                         case ActionType.Trigger:
                             {
                                 TriggerActions tAction = action as TriggerActions;
-                                tAction.Execute(InAxisY, (byte)InLayout.vector.Y, shiftSlot);
+                                tAction.Execute(InAxisY, InLayout.vector.Y, shiftSlot);
 
                                 // read output axis
                                 AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];

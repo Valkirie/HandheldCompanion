@@ -79,7 +79,7 @@ public class ROGAlly : IDevice
 
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 100, 2700 };
@@ -233,10 +233,9 @@ public class ROGAlly : IDevice
     {
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed -= Device_Removed;
-
             device.MonitorDeviceEvents = false;
-            try { device.Dispose(); } catch { }            
+            device.Removed -= Device_Removed;
+            try { device.Dispose(); } catch { }
         }
 
         // stop further reads
@@ -247,13 +246,12 @@ public class ROGAlly : IDevice
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            await WaitUntilReadyAndReattachAsync();
+            await WaitUntilReady();
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed += Device_Removed;
-
             device.MonitorDeviceEvents = true;
+            device.Removed += Device_Removed;
             device.OpenDevice();
 
             // fire‐and‐forget the read loop
@@ -566,7 +564,7 @@ public class ROGAlly : IDevice
         {
             if (!device.IsConnected)
                 return;
-            
+
             device.WriteFeatureData(modeGame, 64);
             device.WriteFeatureData(dPadUpDownDefault, 64);
             device.WriteFeatureData(dPadLeftRightDefault, 64);

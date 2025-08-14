@@ -6,6 +6,7 @@ using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace HandheldCompanion.Managers
         private object profileLock = new();
         private PowerProfile currentProfile;
 
-        public Dictionary<Guid, PowerProfile> profiles = [];
+        public ConcurrentDictionary<Guid, PowerProfile> profiles = [];
 
         public PowerProfileManager()
         {
@@ -230,8 +231,7 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // don't bother discarding settings, new one will be enforce shortly
-                if (!swapped)
-                    Discarded?.Invoke(powerProfile);
+                Discarded?.Invoke(powerProfile, swapped);
             }
         }
 
@@ -314,7 +314,7 @@ namespace HandheldCompanion.Managers
 
         public bool Contains(PowerProfile profile)
         {
-            return profiles.ContainsValue(profile);
+            return profiles.ContainsKey(profile.Guid);
         }
 
         public PowerProfile GetProfile(Guid guid)
@@ -375,7 +375,7 @@ namespace HandheldCompanion.Managers
 
             if (profiles.ContainsKey(profile.Guid))
             {
-                profiles.Remove(profile.Guid);
+                profiles.Remove(profile.Guid, out _);
 
                 lock (profileLock)
                 {
@@ -384,7 +384,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 // raise event
-                Discarded?.Invoke(profile);
+                Discarded?.Invoke(profile, false);
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
@@ -410,7 +410,7 @@ namespace HandheldCompanion.Managers
         public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
 
         public event DiscardedEventHandler Discarded;
-        public delegate void DiscardedEventHandler(PowerProfile profile);
+        public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
         #endregion
     }
 }

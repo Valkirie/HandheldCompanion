@@ -22,6 +22,33 @@ namespace HandheldCompanion.IGCL
             public IntPtr handle;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_endurance_gaming_caps_t
+        {
+            public ctl_property_info_enum_t EGControlCaps;
+            public ctl_property_info_enum_t EGModeCaps;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_endurance_gaming_t
+        {
+            public ctl_3d_endurance_gaming_control_t EGControl;
+            public ctl_3d_endurance_gaming_mode_t EGMode;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_endurance_gaming2_t
+        {
+            public ctl_3d_endurance_gaming_control_t EGControl;
+            public ctl_3d_endurance_gaming_mode_t EGMode;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool IsFPRequired;
+            public double TargetFPS;
+            public double RefreshRate;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public uint[] Reserved;
+        }
+
         public enum ctl_result_t
         {
             CTL_RESULT_SUCCESS = 0x00000000,                ///< success
@@ -324,6 +351,29 @@ namespace HandheldCompanion.IGCL
             public string reserved;           // [out] Reserved
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_property_info_enum_t
+        {
+            public UInt64 SupportedTypes;   // bitmask of supported enum values
+            public UInt32 DefaultType;      // default enum value
+        }
+
+        public enum ctl_3d_endurance_gaming_control_t : uint
+        {
+            OFF = 0,          // Off
+            ON = 1,          // On
+            AUTO = 2,          // Auto
+            MAX = 3
+        }
+
+        public enum ctl_3d_endurance_gaming_mode_t : uint
+        {
+            PERFORMANCE = 0,       // Performance (60 FPS)
+            BALANCED = 1,       // Balanced    (40 FPS)
+            BATTERY = 2,       // Battery     (30 FPS)
+            MAX = 3
+        }
+
         [DllImport("kernel32")]
         public static extern IntPtr LoadLibrary(string lpFileName);
 
@@ -348,6 +398,9 @@ namespace HandheldCompanion.IGCL
         private delegate ctl_result_t GetSharpnessSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ref ctl_sharpness_settings_t GetSharpness);
         private delegate ctl_result_t SetSharpnessSettingsDelegate(ctl_device_adapter_handle_t hDevice, uint idx, ctl_sharpness_settings_t SetSharpness);
         private delegate ctl_result_t GetTelemetryDataDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_telemetry_data TelemetryData);
+        private delegate ctl_result_t GetEnduranceGamingCapsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_endurance_gaming_caps_t caps);
+        private delegate ctl_result_t GetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_endurance_gaming_t settings);
+        private delegate ctl_result_t SetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ctl_endurance_gaming_t settings);
 
         // Define the function pointers
         private static InitializeIgclDelegate? InitializeIgcl;
@@ -364,6 +417,9 @@ namespace HandheldCompanion.IGCL
         private static GetSharpnessSettingsDelegate? GetSharpnessSettings;
         private static SetSharpnessSettingsDelegate? SetSharpnessSettings;
         private static GetTelemetryDataDelegate? GetTelemetryData;
+        private static GetEnduranceGamingCapsDelegate? GetEnduranceGamingCaps;
+        private static GetEnduranceGamingSettingsDelegate? GetEnduranceGamingSettings;
+        private static SetEnduranceGamingSettingsDelegate? SetEnduranceGamingSettings;
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         private static IntPtr pDll = IntPtr.Zero;
@@ -410,6 +466,9 @@ namespace HandheldCompanion.IGCL
                         GetSharpnessSettings = (GetSharpnessSettingsDelegate)GetDelegate("GetSharpnessSettings", typeof(GetSharpnessSettingsDelegate));
                         SetSharpnessSettings = (SetSharpnessSettingsDelegate)GetDelegate("SetSharpnessSettings", typeof(SetSharpnessSettingsDelegate));
                         GetTelemetryData = (GetTelemetryDataDelegate)GetDelegate("GetTelemetryData", typeof(GetTelemetryDataDelegate));
+                        GetEnduranceGamingCaps = (GetEnduranceGamingCapsDelegate)GetDelegate("GetEnduranceGamingCaps", typeof(GetEnduranceGamingCapsDelegate));
+                        GetEnduranceGamingSettings = (GetEnduranceGamingSettingsDelegate)GetDelegate("GetEnduranceGamingSettings", typeof(GetEnduranceGamingSettingsDelegate));
+                        SetEnduranceGamingSettings = (SetEnduranceGamingSettingsDelegate)GetDelegate("SetEnduranceGamingSettings", typeof(SetEnduranceGamingSettingsDelegate));
 
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
                     }
@@ -431,6 +490,9 @@ namespace HandheldCompanion.IGCL
                         GetSharpnessSettings = null;
                         SetSharpnessSettings = null;
                         GetTelemetryData = null;
+                        GetEnduranceGamingCaps = null;
+                        GetEnduranceGamingSettings = null;
+                        SetEnduranceGamingSettings = null;
                     }
                 }
             }
@@ -632,6 +694,34 @@ namespace HandheldCompanion.IGCL
                 return false;
 
             return GetSharpness.Enable == enable;
+        }
+
+        internal static ctl_endurance_gaming_caps_t GetEnduranceGamingCapacities(int deviceIdx)
+        {
+            ctl_endurance_gaming_caps_t caps = new();
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = GetEnduranceGamingCaps!(hDev, ref caps);
+            return caps;
+        }
+
+        internal static ctl_endurance_gaming_t GetEnduranceGaming(int deviceIdx)
+        {
+            ctl_endurance_gaming_t settings = new();
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = GetEnduranceGamingSettings!(hDev, ref settings);
+            return settings;
+        }
+
+        internal static bool SetEnduranceGaming(int deviceIdx, ctl_3d_endurance_gaming_control_t control, ctl_3d_endurance_gaming_mode_t mode)
+        {
+            ctl_endurance_gaming_t settings = new ctl_endurance_gaming_t
+            {
+                EGControl = control,
+                EGMode = mode
+            };
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = SetEnduranceGamingSettings!(hDev, settings);
+            return res == ctl_result_t.CTL_RESULT_SUCCESS;
         }
 
         internal static bool SetScalingMode(nint deviceIdx, uint displayIdx, int mode)

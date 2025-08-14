@@ -23,7 +23,7 @@ public class OneXPlayerOneXFly : IDevice
 
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 100, 2700 };
@@ -129,7 +129,7 @@ public class OneXPlayerOneXFly : IDevice
 
         ECRamDirectWrite(0x4F1, ECDetails, 0x40);
 
-        return (ECRamReadByte(0x4F1, ECDetails) == 0x40);
+        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
     }
 
     public override void Close()

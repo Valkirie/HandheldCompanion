@@ -392,10 +392,8 @@ public class ProfileManager : IManager
     {
         try
         {
-            var profile = GetProfileFromPath(processEx.Path, true);
-
-            // do not discard default profile
-            if (profile is null || profile.Default)
+            Profile profile = GetProfileFromPath(processEx.Path, true);
+            if (profile.Default)
                 return;
 
             bool isCurrent = profile.ErrorCode.HasFlag(ProfileErrorCode.Running);
@@ -421,9 +419,8 @@ public class ProfileManager : IManager
     {
         try
         {
-            var profile = GetProfileFromPath(processEx.Path, true);
-
-            if (profile is null || profile.Default)
+            Profile profile = GetProfileFromPath(processEx.Path, true);
+            if (profile.Default)
                 return;
 
             // update vars
@@ -449,7 +446,10 @@ public class ProfileManager : IManager
 
         try
         {
-            Profile profile = GetProfileFromPath(processEx.Path, false);
+            Profile? profile = GetProfileFromPath(processEx.Path, false);
+
+            if (profile is null)
+                return;
 
             // skip if current
             lock (profileLock)
@@ -475,7 +475,6 @@ public class ProfileManager : IManager
             if (backgroundEx is not null)
             {
                 Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
-
                 if (!backProfile.Guid.Equals(profile.Guid))
                     Discarded?.Invoke(backProfile, true, profile);
             }
@@ -529,9 +528,8 @@ public class ProfileManager : IManager
 
     public Profile GetDefault()
     {
-        if (HasDefault())
-            return profiles.Values.FirstOrDefault(a => a.Default);
-        return new Profile();
+        // Try to find the default profile; if none is found, fall back to a new Profile
+        return profiles.Values.FirstOrDefault(p => p.Default) ?? new Profile();
     }
 
     public Profile GetCurrent()

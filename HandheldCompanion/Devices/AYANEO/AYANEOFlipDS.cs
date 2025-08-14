@@ -61,16 +61,16 @@ public class AYANEOFlipDS : AYANEOFlipKB
     }
 
     private ButtonState prevState = new();
-    private void ControllerManager_InputsUpdated(ControllerState Inputs)
+    private void ControllerManager_InputsUpdated(ControllerState Inputs, bool IsMapped)
     {
         if (prevState.Equals(Inputs.ButtonState))
             return;
 
-        // update previous state
-        ButtonState.Overwrite(Inputs.ButtonState, prevState);
+        if (!IsMapped)
+            return;
 
         // if screen button is pressed, turn on bottom screen
-        if (Inputs.ButtonState.Buttons.Contains(ButtonFlags.OEM5))
+        if (Inputs.ButtonState[ButtonFlags.OEM5])
         {
             bool enabled = ManagerFactory.settingsManager.GetBoolean("AYANEOFlipScreenEnabled");
             ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenEnabled", !enabled);

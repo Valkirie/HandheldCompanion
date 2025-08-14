@@ -1,21 +1,9 @@
-﻿using hidapi;
-using System.Threading.Tasks;
-
-namespace controller_hidapi.net
+﻿namespace controller_hidapi.net
 {
     public class LegionController : GenericController
     {
-        public LegionController(ushort vid, ushort pid) : base(vid, pid)
-        {
-            _hidDevice = new HidDevice(_vid, _pid, 64)
-            {
-                OnInputReceived = input =>
-                {
-                    OnInputReceived(input);
-                    return Task.CompletedTask;
-                }
-            };
-        }
+        public LegionController(ushort vid, ushort pid, ushort inputBufferLen = 64, short mi = -1) : base(vid, pid, inputBufferLen, mi)
+        { }
 
         public byte GetStatus(int idx)
         {

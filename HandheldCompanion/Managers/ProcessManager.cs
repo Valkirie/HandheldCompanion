@@ -110,6 +110,10 @@ public class ProcessManager : IManager
 
     private async void GamepadFocusManager_GotFocus(string Name)
     {
+        // bail out if Name is null or empty
+        if (string.IsNullOrEmpty(Name))
+            return;
+
         switch (Name)
         {
             case "QuickTools":
