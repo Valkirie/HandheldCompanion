@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
@@ -56,6 +57,8 @@ namespace HandheldCompanion.ViewModels
         public DateTime DateModified => _Profile.DateModified;
         public DateTime LastUsed => _Profile.LastUsed;
 
+        public PlatformType PlatformType => _Profile.PlatformType;
+
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
         private bool _IsBusy;
@@ -89,6 +92,35 @@ namespace HandheldCompanion.ViewModels
                     }
                 }
                 return null;
+            }
+        }
+
+        public Image Platform
+        {
+            get
+            {
+                switch (PlatformType)
+                {
+                    default:
+                    case PlatformType.Windows:
+                        return null;
+                    case PlatformType.Steam:
+                        return PlatformManager.Steam.GetLogo();
+                    case PlatformType.Origin:
+                        return PlatformManager.Origin.GetLogo();
+                    case PlatformType.UbisoftConnect:
+                        return PlatformManager.UbisoftConnect.GetLogo();
+                    case PlatformType.GOG:
+                        return PlatformManager.GOGGalaxy.GetLogo();
+                    case PlatformType.BattleNet:
+                        return PlatformManager.BattleNet.GetLogo();
+                    case PlatformType.Epic:
+                        return PlatformManager.Epic.GetLogo();
+                    case PlatformType.RiotGames:
+                        return PlatformManager.RiotGames.GetLogo();
+                    case PlatformType.Rockstar:
+                        return PlatformManager.Rockstar.GetLogo();
+                }
             }
         }
 
@@ -170,8 +202,8 @@ namespace HandheldCompanion.ViewModels
                     {
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
-                            FileName = Profile.Executable,
-                            WorkingDirectory = Directory.GetParent(Profile.Path).FullName,
+                            FileName = !string.IsNullOrEmpty(profile.LaunchString) ? profile.LaunchString : Profile.Executable,
+                            WorkingDirectory = Directory.GetParent(Profile.Path)?.FullName ?? string.Empty,
                             Arguments = Profile.Arguments,
                             UseShellExecute = true,
                             Verb = runAsAdmin ? "runas" : string.Empty,
@@ -220,17 +252,26 @@ namespace HandheldCompanion.ViewModels
 
             Navigate = new DelegateCommand(async () =>
             {
+                var page = MainWindow.profilesPage;
+
+                // pick the profile to select in the main combobox
+                Profile target = Profile.IsSubProfile
+                    ? ManagerFactory.profileManager.GetProfileForSubProfile(Profile)
+                    : Profile;
+
+                // find a matching instance in the ComboBox (in case instances differ)
+                var match = page.cB_Profiles.Items
+                    .OfType<Profile>()
+                    .FirstOrDefault(p => p.Guid == target.Guid);
+
+                if (match is not null)
+                    page.cB_Profiles.SelectedItem = match;
+
+                // subprofile picker: select current subprofile or reset
                 if (Profile.IsSubProfile)
-                {
-                    Profile MasterProfile = ManagerFactory.profileManager.GetProfileForSubProfile(Profile);
-                    MainWindow.profilesPage.cB_Profiles.SelectedItem = MasterProfile;
-                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedItem = Profile;
-                }
+                    page.cb_SubProfilePicker.SelectedItem = Profile;
                 else
-                {
-                    MainWindow.profilesPage.cB_Profiles.SelectedItem = Profile;
-                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedIndex = 0;
-                }
+                    page.cb_SubProfilePicker.SelectedIndex = 0;
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });

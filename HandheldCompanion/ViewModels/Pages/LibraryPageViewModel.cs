@@ -1,11 +1,22 @@
-﻿using HandheldCompanion.Extensions;
+﻿using GameLib.Core;
+using GameLib.Plugin.BattleNet.Model;
+using GameLib.Plugin.Epic.Model;
+using GameLib.Plugin.Gog.Model;
+using GameLib.Plugin.Origin.Model;
+using GameLib.Plugin.Rockstar.Model;
+using GameLib.Plugin.Steam.Model;
+using GameLib.Plugin.Ubisoft.Model;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -56,6 +67,7 @@ namespace HandheldCompanion.ViewModels
 
         public ICommand ToggleSortCommand { get; }
         public ICommand RefreshMetadataCommand { get; }
+        public ICommand ScanLibraryCommand { get; }
 
         private Color _highlightColor = Colors.Red;
         public Color HighlightColor
@@ -86,6 +98,18 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
+
+        private Dictionary<Type, PlatformType> keyValuePairs = new Dictionary<Type, PlatformType>()
+        {
+            { typeof(BattleNetGame), PlatformType.BattleNet },
+            { typeof(EpicGame), PlatformType.Epic },
+            { typeof(GogGame), PlatformType.GOG },
+            { typeof(OriginGame), PlatformType.Origin },
+            { typeof(GameLib.Plugin.RiotGames.Model.Game), PlatformType.RiotGames },
+            { typeof(RockstarGame), PlatformType.Rockstar },
+            { typeof(SteamGame), PlatformType.Steam },
+            { typeof(UbisoftGame), PlatformType.UbisoftConnect },
+        };
 
         private LibraryPage LibraryPage;
         public LibraryPageViewModel(LibraryPage libraryPage)
@@ -121,6 +145,126 @@ namespace HandheldCompanion.ViewModels
                 {
                     case ContentDialogResult.Primary:
                         ManagerFactory.libraryManager.RefreshProfilesArts();
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            ScanLibraryCommand = new DelegateCommand<object>(async param =>
+            {
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Properties.Resources.LibraryScanTitle, param),
+                    Content = string.Format(Properties.Resources.LibraryScanContent, param),
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+                }.ShowAsync();
+
+                await dialogTask; // sync call
+
+                switch (dialogTask.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        {
+                            List<IGame> games = new();
+
+                            switch (param)
+                            {
+                                case "All":
+                                    games.AddRange(PlatformManager.GetGames());
+                                    break;
+                                case "BattleNet":
+                                    games.AddRange(PlatformManager.BattleNet.GetGames());
+                                    break;
+                                case "Epic":
+                                    games.AddRange(PlatformManager.Epic.GetGames());
+                                    break;
+                                case "GOG":
+                                    games.AddRange(PlatformManager.GOGGalaxy.GetGames());
+                                    break;
+                                case "Origin":
+                                    games.AddRange(PlatformManager.Origin.GetGames());
+                                    break;
+                                case "Riot":
+                                    games.AddRange(PlatformManager.RiotGames.GetGames());
+                                    break;
+                                case "Rockstar":
+                                    games.AddRange(PlatformManager.Rockstar.GetGames());
+                                    break;
+                                case "Steam":
+                                    games.AddRange(PlatformManager.Steam.GetGames());
+                                    break;
+                                case "Ubisoft":
+                                    games.AddRange(PlatformManager.UbisoftConnect.GetGames());
+                                    break;
+                            }
+
+                            foreach (IGame game in games)
+                            {
+                                // Skip Steamworks Shared for Steam games
+                                if (game is SteamGame && game.Id == "228980")
+                                    continue;
+
+                                Profile profile = null;
+                                bool isCreation;
+
+                                // Try to find an existing profile
+                                if (game is SteamGame steamGame)
+                                {
+                                    foreach (string executable in steamGame.Executables)
+                                    {
+                                        profile = ManagerFactory.profileManager.GetProfileFromPath(executable, true, true);
+                                        if (!profile.Default)
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    profile = ManagerFactory.profileManager.GetProfileFromPath(game.Executable, true, true);
+                                }
+
+                                // If profile is found and not default, update it. Otherwise, create a new one.
+                                if (profile != null && !profile.Default)
+                                {
+                                    isCreation = false;
+                                }
+                                else
+                                {
+                                    isCreation = true;
+                                    try
+                                    {
+                                        profile = new Profile(game.Executable);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        LogManager.LogError(ex.Message);
+                                    }
+                                }
+
+                                if (profile is null)
+                                    return;
+
+                                // Filter out unwanted executables
+                                IEnumerable<string> Executables = game.Executables.Where(exe =>
+                                exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
+
+                                if (string.IsNullOrEmpty(profile.Path) && Executables.Any())
+                                    profile.Path = Executables.First();
+
+                                // Set common profile properties
+                                profile.Name = game.Name;
+                                profile.PlatformType = keyValuePairs[game.GetType()];
+                                profile.LaunchString = game.LaunchString;
+                                profile.Executables = Executables.ToList();
+
+                                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.Background);
+                                ManagerFactory.libraryManager.RefreshProfileArts(profile);
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -227,6 +371,10 @@ namespace HandheldCompanion.ViewModels
                 case 2:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
+                    break;
+                case 3:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     break;
             }
 

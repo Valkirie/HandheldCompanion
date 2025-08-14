@@ -11,20 +11,15 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
-using IWshRuntimeLibrary;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Utils.XInputPlusUtils;
-using File = System.IO.File;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Timer = System.Timers.Timer;
@@ -68,17 +63,38 @@ public partial class ProfilesPage : Page
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
-        PlatformManager.RTSS.Updated += RTSS_Updated;
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        // raise events
+        switch (ManagerFactory.platformManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
+        }
 
         UpdateTimer = new Timer(UpdateInterval) { AutoReset = false };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription(string.Empty, ListSortDirection.Descending));
+    }
 
-        // force call
+    private void QueryPlatforms()
+    {
+        // manage events
+        PlatformManager.RTSS.Updated += RTSS_Updated;
+
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -293,111 +309,13 @@ public partial class ProfilesPage : Page
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
-        CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog();
-        openFileDialog.Filters.Add(new CommonFileDialogFilter("Executable", "*.exe"));
-        openFileDialog.Filters.Add(new CommonFileDialogFilter("Shortcuts", "*.lnk"));
-        openFileDialog.Filters.Add(new CommonFileDialogFilter("UWP manifest", "*AppxManifest.xml"));
-        openFileDialog.NavigateToShortcut = false;
-
-        if (openFileDialog.ShowDialog() != CommonFileDialogResult.Ok)
-            return;
-
         try
         {
-            string path = openFileDialog.FileName;
-            if (string.IsNullOrEmpty(path))
-                return;
-
-            string folder = Path.GetDirectoryName(path);
-            string file = Path.GetFileName(path);
-            string ext = Path.GetExtension(file);
-
+            string path = string.Empty;
             string arguments = string.Empty;
-            string name = file.Replace(ext, string.Empty);
+            string name = string.Empty;
 
-            if (ext.Equals(".lnk"))
-            {
-                WshShell wsh = new WshShell();
-                IWshShortcut link = (IWshShortcut)wsh.CreateShortcut(path);
-
-                // get real path
-                path = link.TargetPath;
-
-                // get arguments
-                arguments = link.Arguments;
-
-                folder = Path.GetDirectoryName(path);
-                file = Path.GetFileName(link.TargetPath);
-                ext = Path.GetExtension(file);
-            }
-
-            switch (ext)
-            {
-                default:
-                case ".exe":
-                    break;
-                case ".xml":
-                    try
-                    {
-                        XmlDocument doc = new XmlDocument();
-                        string UWPpath = string.Empty;
-                        string UWPfile = string.Empty;
-
-                        // check if MicrosoftGame.config exists
-                        string configPath = Path.Combine(folder, "MicrosoftGame.config");
-                        if (File.Exists(configPath))
-                        {
-                            doc.Load(configPath);
-
-                            XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
-                            foreach (XmlNode node in ExecutableList)
-                                foreach (XmlNode child in node.ChildNodes)
-                                    if (child.Name.Equals("Executable"))
-                                        if (child.Attributes is not null)
-                                            foreach (XmlAttribute attribute in child.Attributes)
-                                                switch (attribute.Name)
-                                                {
-                                                    case "Name":
-                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                        UWPfile = Path.GetFileName(path);
-                                                        break;
-                                                }
-                        }
-
-                        // either there was no config file, either we couldn't find an executable within it
-                        if (!File.Exists(UWPpath))
-                        {
-                            doc.Load(path);
-
-                            XmlNodeList Applications = doc.GetElementsByTagName("Applications");
-                            foreach (XmlNode node in Applications)
-                                foreach (XmlNode child in node.ChildNodes)
-                                    if (child.Name.Equals("Application"))
-                                        if (child.Attributes is not null)
-                                            foreach (XmlAttribute attribute in child.Attributes)
-                                                switch (attribute.Name)
-                                                {
-                                                    case "Executable":
-                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                        UWPfile = Path.GetFileName(path);
-                                                        break;
-                                                }
-                        }
-
-                        // we're good to go
-                        if (File.Exists(UWPpath))
-                        {
-                            path = UWPpath;
-                            file = UWPfile;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        LogManager.LogError(ex.Message, true);
-                    }
-
-                    break;
-            }
+            FileUtils.CommonFileDialog(out path, out arguments, out name);
 
             // create profile
             Profile profile = new Profile(path);
@@ -583,6 +501,7 @@ public partial class ProfilesPage : Page
                     tB_ProfileName.Text = selectedMainProfile.Name;
                     tB_ProfilePath.Text = selectedProfile.Path;
                     tB_ProfileArguments.Text = selectedProfile.Arguments;
+                    tB_ProfileLaunchString.Text = selectedProfile.LaunchString;
                     Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
                     // Global settings
@@ -836,7 +755,7 @@ public partial class ProfilesPage : Page
     }
 
     private LayoutTemplate selectedTemplate;
-    private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
+    public void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
         if (selectedTemplate is not null)
         {
@@ -1502,6 +1421,19 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.SuspendOnQT = Toggle_SuspendOnQuicktools.IsOn;
+        UpdateProfile();
+    }
+
+    private void tB_ProfileLaunchString_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.LaunchString = tB_ProfileLaunchString.Text;
         UpdateProfile();
     }
 }

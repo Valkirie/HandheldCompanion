@@ -6353,6 +6353,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This will scan {0} library and create profiles for each of your games. It may take several seconds to a few seconds. Do you want to proceed?.
+        /// </summary>
+        public static string LibraryScanContent {
+            get {
+                return ResourceManager.GetString("LibraryScanContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update {0} library ?.
+        /// </summary>
+        public static string LibraryScanTitle {
+            get {
+                return ResourceManager.GetString("LibraryScanTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string MainWindow_Back {
@@ -7527,6 +7545,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Setting PL1 equal to PL2 on Intel processors may reduce gaming performance..
+        /// </summary>
+        public static string PerformancePage_PL1PL2Warning {
+            get {
+                return ResourceManager.GetString("PerformancePage_PL1PL2Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string PerformangePage_Preset_Cancel {
@@ -8625,6 +8652,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inputs settings.
+        /// </summary>
+        public static string ProfilesPage_InputsSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_InputsSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invert horizontal axis.
         /// </summary>
         public static string ProfilesPage_InvertHorizontalAxis {
@@ -8787,6 +8823,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open layout page.
+        /// </summary>
+        public static string ProfilesPage_OpenLayoutPage {
+            get {
+                return ResourceManager.GetString("ProfilesPage_OpenLayoutPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open profile page.
+        /// </summary>
+        public static string ProfilesPage_OpenProfilePage {
+            get {
+                return ResourceManager.GetString("ProfilesPage_OpenProfilePage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display the profile in Quick start section from the Quicktools Applications page.
         /// </summary>
         public static string ProfilesPage_Pinned {
@@ -8864,6 +8918,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_ProfileDetails {
             get {
                 return ResourceManager.GetString("ProfilesPage_ProfileDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executables.
+        /// </summary>
+        public static string ProfilesPage_ProfileExecutables {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileExecutables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Launch string.
+        /// </summary>
+        public static string ProfilesPage_ProfileLaunchString {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileLaunchString", resourceCulture);
             }
         }
         
@@ -10778,11 +10850,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Slide animation.
+        /// </summary>
+        public static string SettingsPage_QuicktoolsSlideAnimation {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuicktoolsSlideAnimation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define quicktools slide animation behavior.
+        /// </summary>
+        public static string SettingsPage_QuicktoolsSlideAnimationDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuicktoolsSlideAnimationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Window location.
         /// </summary>
         public static string SettingsPage_QuickToolsWindowLocation {
             get {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom center.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationBottomCenter {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationBottomCenter", resourceCulture);
             }
         }
         

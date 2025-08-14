@@ -24,8 +24,8 @@
             <ikw:SimpleStackPanel Spacing="3">
                 <ui:SettingsExpander
                     d:IsExpanded="True"
-                    Description="Manage library metadata"
-                    Header="Metadata">
+                    Description="Manage library settings"
+                    Header="Library">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE7BC;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -42,6 +42,7 @@
                             <ComboBoxItem Content="Title" />
                             <ComboBoxItem Content="Recently added" />
                             <ComboBoxItem Content="Recently played" />
+                            <ComboBoxItem Content="Platform" />
                         </ComboBox>
                         <Button
                             Height="31"
@@ -72,6 +73,50 @@
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard Header="Download metadata">
                             <Button Command="{Binding RefreshMetadataCommand}" IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">Download</Button>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="Update game library">
+                            <ui:DropDownButton Content="Update">
+                                <ui:DropDownButton.Flyout>
+                                    <ui:MenuFlyout Placement="Bottom">
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="All"
+                                            Header="All" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="BattleNet"
+                                            Header="Battle.net" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Epic"
+                                            Header="Epic" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="GOG"
+                                            Header="GOG GALAXY" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Origin"
+                                            Header="Origin" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Riot"
+                                            Header="Riot Games" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Rockstar"
+                                            Header="Rockstar" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Steam"
+                                            Header="Steam" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Ubisoft"
+                                            Header="Ubisoft Connect" />
+                                    </ui:MenuFlyout>
+                                </ui:DropDownButton.Flyout>
+                            </ui:DropDownButton>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>

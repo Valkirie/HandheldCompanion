@@ -226,8 +226,10 @@ public class ProcessEx : IDisposable, ICloneable
 
     public ProcessFilter Filter { get; set; }
     public PlatformType Platform { get; set; }
-    public string Path { get; set; }
     public ImageSource ProcessIcon { get; private set; }
+
+    public string Path { get; set; } = string.Empty;
+    public Dictionary<string, string> AppProperties = new();
 
     public ConcurrentDictionary<int, ProcessWindow> ProcessWindows { get; private set; } = new();
 
@@ -267,6 +269,9 @@ public class ProcessEx : IDisposable, ICloneable
         {
             Icon? icon = Icon.ExtractAssociatedIcon(Path);
             ProcessIcon = icon?.ToImageSource();
+
+            // get details
+            AppProperties = ProcessUtils.GetAppProperties(path);
         }
     }
 

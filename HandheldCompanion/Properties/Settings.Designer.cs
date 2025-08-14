@@ -1377,5 +1377,29 @@ namespace HandheldCompanion.Properties
                 this["LegionControllerSwap"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PreloadPages {
+            get {
+                return ((bool)(this["PreloadPages"]));
+            }
+            set {
+                this["PreloadPages"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool QuickToolsSlideAnimation {
+            get {
+                return ((bool)(this["QuickToolsSlideAnimation"]));
+            }
+            set {
+                this["QuickToolsSlideAnimation"] = value;
+            }
+        }
     }
 }

@@ -227,6 +227,7 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationMaximized}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomLeft}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomRight}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomCenter}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -236,7 +237,7 @@
                     Description="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePathDesc}"
                     Header="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePath}">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
                     </ui:SettingsCard.HeaderIcon>
                     <ComboBox Name="cB_QuickToolsDevicePath" SelectionChanged="cB_QuickToolsDevicePath_SelectionChanged" />
                 </ui:SettingsCard>
@@ -259,7 +260,6 @@
 
                 <!--  Virtual keyboard  -->
                 <ui:SettingsCard
-                    d:Visibility="Visible"
                     Description="{l:Static resx:Resources.SettingsPage_VirtualKeyboardDesc}"
                     Header="{l:Static resx:Resources.SettingsPage_VirtualKeyboard}"
                     Visibility="Collapsed">
@@ -271,7 +271,6 @@
 
                 <!--  Virtual trackpad  -->
                 <ui:SettingsCard
-                    d:Visibility="Visible"
                     Description="{l:Static resx:Resources.SettingsPage_VirtualTrackpadDesc}"
                     Header="{l:Static resx:Resources.SettingsPage_VirtualTrackpad}"
                     Visibility="Collapsed">
@@ -281,11 +280,16 @@
                     <ui:ToggleSwitch Name="VirtualTrackpadToggle" Toggled="VirtualTrackpadToggle_Toggled" />
                 </ui:SettingsCard>
 
+                <!--  Slide Animation  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimationDesc}" Header="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimation}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE8B2;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="QuicktoolsSlideAnimationToggle" Toggled="QuicktoolsSlideAnimationToggle_Toggled" />
+                </ui:SettingsCard>
+
                 <!--  Quicktools autohide  -->
-                <ui:SettingsCard
-                    Description="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
-                    Header="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}"
-                    Visibility="Collapsed">
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}" Header="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED1A;" />
                     </ui:SettingsCard.HeaderIcon>

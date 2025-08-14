@@ -4,15 +4,14 @@ using LibreHardwareMonitor.Hardware;
 using System;
 using System.Timers;
 
-namespace HandheldCompanion.Platforms
+namespace HandheldCompanion.Platforms.Misc
 {
-    public class LibreHardwareMonitor : IPlatform
+    public class LibreHardware : IPlatform
     {
         private Computer computer;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
-        private object updateLock = new();
 
         // CPU
         private float? CPULoad;
@@ -41,7 +40,7 @@ namespace HandheldCompanion.Platforms
         private float? BatteryPower;
         private float? BatteryTimeSpan;
 
-        public LibreHardwareMonitor()
+        public LibreHardware()
         {
             Name = "LibreHardwareMonitor";
             IsInstalled = true;
@@ -162,17 +161,17 @@ namespace HandheldCompanion.Platforms
         }
 
         #region gpu updates
-        public float? GetGPULoad() => (computer?.IsGpuEnabled ?? false) ? GPULoad : null;
-        public float? GetGPUPower() => (computer?.IsGpuEnabled ?? false) ? GPUPower : null;
-        public float? GetGPUTemperature() => (computer?.IsGpuEnabled ?? false) ? GPUTemperature : null;
+        public float? GetGPULoad() => computer?.IsGpuEnabled ?? false ? GPULoad : null;
+        public float? GetGPUPower() => computer?.IsGpuEnabled ?? false ? GPUPower : null;
+        public float? GetGPUTemperature() => computer?.IsGpuEnabled ?? false ? GPUTemperature : null;
 
-        public float? GetGPUMemory() => (computer?.IsGpuEnabled ?? false) ? GPUMemory : null;
-        public float? GetGPUMemoryDedicated() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryDedicated : null;
-        public float? GetGPUMemoryShared() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryShared : null;
+        public float? GetGPUMemory() => computer?.IsGpuEnabled ?? false ? GPUMemory : null;
+        public float? GetGPUMemoryDedicated() => computer?.IsGpuEnabled ?? false ? GPUMemoryDedicated : null;
+        public float? GetGPUMemoryShared() => computer?.IsGpuEnabled ?? false ? GPUMemoryShared : null;
 
-        public float? GetGPUMemoryTotal() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryTotal : null;
-        public float? GetGPUMemoryDedicatedTotal() => (computer?.IsGpuEnabled ?? false) ? GPUMemoryDedicatedTotal : null;
-        public float? GetGPUMemorySharedTotal() => (computer?.IsGpuEnabled ?? false) ? GPUMemorySharedTotal : null;
+        public float? GetGPUMemoryTotal() => computer?.IsGpuEnabled ?? false ? GPUMemoryTotal : null;
+        public float? GetGPUMemoryDedicatedTotal() => computer?.IsGpuEnabled ?? false ? GPUMemoryDedicatedTotal : null;
+        public float? GetGPUMemorySharedTotal() => computer?.IsGpuEnabled ?? false ? GPUMemorySharedTotal : null;
 
         private void HandleGPU(IHardware gpu)
         {
@@ -283,9 +282,9 @@ namespace HandheldCompanion.Platforms
         #endregion
 
         #region cpu updates
-        public float? GetCPULoad() => (computer?.IsCpuEnabled ?? false) ? CPULoad : null;
-        public float? GetCPUPower() => (computer?.IsCpuEnabled ?? false) ? CPUPower : null;
-        public float? GetCPUTemperature() => (computer?.IsCpuEnabled ?? false) ? CPUTemperature : null;
+        public float? GetCPULoad() => computer?.IsCpuEnabled ?? false ? CPULoad : null;
+        public float? GetCPUPower() => computer?.IsCpuEnabled ?? false ? CPUPower : null;
+        public float? GetCPUTemperature() => computer?.IsCpuEnabled ?? false ? CPUTemperature : null;
 
         private void HandleCPU(IHardware cpu)
         {
@@ -325,7 +324,7 @@ namespace HandheldCompanion.Platforms
 
         private float HandleCPU_Clock(ISensor sensor, float currentHighest)
         {
-            if ((sensor.Name.StartsWith("CPU Core #") || sensor.Name.StartsWith("Core #")))
+            if (sensor.Name.StartsWith("CPU Core #") || sensor.Name.StartsWith("Core #"))
             {
                 var value = (float)sensor.Value;
                 if (value > currentHighest)
@@ -361,8 +360,8 @@ namespace HandheldCompanion.Platforms
         #endregion
 
         #region memory updates
-        public float? GetMemoryUsage() => (computer?.IsMemoryEnabled ?? false) ? MemoryUsage : null;
-        public float? GetMemoryAvailable() => (computer?.IsMemoryEnabled ?? false) ? MemoryAvailable : null;
+        public float? GetMemoryUsage() => computer?.IsMemoryEnabled ?? false ? MemoryUsage : null;
+        public float? GetMemoryAvailable() => computer?.IsMemoryEnabled ?? false ? MemoryAvailable : null;
         public float? GetMemoryTotal() => GetMemoryUsage() + GetMemoryAvailable();
 
         private void HandleMemory(IHardware cpu)
@@ -383,21 +382,21 @@ namespace HandheldCompanion.Platforms
         {
             if (sensor.Name == "Memory Used")
             {
-                MemoryUsage = ((float)sensor.Value);
+                MemoryUsage = (float)sensor.Value;
                 MemoryUsageChanged?.Invoke(MemoryUsage);
             }
             else if (sensor.Name == "Memory Available")
             {
-                MemoryAvailable = ((float)sensor.Value);
+                MemoryAvailable = (float)sensor.Value;
                 MemoryAvailableChanged?.Invoke(MemoryAvailable);
             }
         }
         #endregion
 
         #region battery updates
-        public float? GetBatteryLevel() => (computer?.IsBatteryEnabled ?? false) ? BatteryLevel : null;
-        public float? GetBatteryPower() => (computer?.IsBatteryEnabled ?? false) ? BatteryPower : null;
-        public float? GetBatteryTimeSpan() => (computer?.IsBatteryEnabled ?? false) ? BatteryTimeSpan : null;
+        public float? GetBatteryLevel() => computer?.IsBatteryEnabled ?? false ? BatteryLevel : null;
+        public float? GetBatteryPower() => computer?.IsBatteryEnabled ?? false ? BatteryPower : null;
+        public float? GetBatteryTimeSpan() => computer?.IsBatteryEnabled ?? false ? BatteryTimeSpan : null;
 
         private void HandleBattery(IHardware cpu)
         {
@@ -445,7 +444,7 @@ namespace HandheldCompanion.Platforms
         {
             if (sensor.Name == "Remaining Time (Estimated)")
             {
-                BatteryTimeSpan = ((float)sensor.Value) / 60;
+                BatteryTimeSpan = (float)sensor.Value / 60;
                 BatteryTimeSpanChanged?.Invoke(BatteryTimeSpan);
             }
         }

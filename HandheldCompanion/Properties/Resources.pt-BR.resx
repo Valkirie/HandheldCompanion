@@ -3828,4 +3828,37 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   <data name="ProfilesPage_RunAs" xml:space="preserve">
     <value />
   </data>
+  <data name="ProfilesPage_ProfileLaunchString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ProfileExecutables" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_InputsSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomCenter" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryScanTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryScanContent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_OpenProfilePage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_OpenLayoutPage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuicktoolsSlideAnimation" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuicktoolsSlideAnimationDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_PL1PL2Warning" xml:space="preserve">
+    <value />
+  </data>
 </root>

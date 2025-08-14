@@ -3,6 +3,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -295,6 +296,9 @@ namespace HandheldCompanion.ViewModels
         public ICommand DownloadLibrary { get; private set; }
         public ICommand LaunchExecutable { get; private set; }
 
+        public ICommand AddProfileExecutable { get; private set; }
+        public ICommand RemoveProfileExecutable { get; private set; }
+
         private ContentDialog contentDialog;
 
         public ProfilesPageViewModel(ProfilesPage profilesPage)
@@ -304,6 +308,12 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(_profilePickerItems, new object());
             BindingOperations.EnableCollectionSynchronization(LibraryPickers, new object());
+            BindingOperations.EnableCollectionSynchronization(ProfileExecutables, new object());
+
+            ProfileExecutables.CollectionChanged += (_, __) =>
+            {
+                OnPropertyChanged(nameof(HasProfileExecutables));
+            };
 
             ProfilePickerCollectionViewDC = new ListCollectionView(_profilePickerItems);
             ProfilePickerCollectionViewDC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
@@ -405,6 +415,25 @@ namespace HandheldCompanion.ViewModels
 
                 // update profile
                 ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.LibraryUpdate);
+            });
+
+            AddProfileExecutable = new DelegateCommand<object>(async param =>
+            {
+                string path = string.Empty;
+
+                FileUtils.CommonFileDialog(out path, out _, out _);
+
+                ProfilesPage.selectedProfile.Executables.Add(path);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ProfilesPage);
+            });
+
+            RemoveProfileExecutable = new DelegateCommand<object>(async param =>
+            {
+                if (ProfileExecutablesIdx >= 0 && ProfileExecutablesIdx < ProfileExecutables.Count)
+                {
+                    ProfilesPage.selectedProfile.Executables.RemoveAt(ProfileExecutablesIdx);
+                    ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ProfilesPage);
+                }
             });
         }
 
@@ -555,13 +584,33 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool HasProfileExecutables => ProfilesPage.selectedProfile?.Executables.Any() ?? false;
+        public ObservableCollection<string> ProfileExecutables { get; } = new();
+
+        private int _ProfileExecutablesIdx;
+        public int ProfileExecutablesIdx
+        {
+            get
+            {
+                return _ProfileExecutablesIdx;
+            }
+            set
+            {
+                if (value != _ProfileExecutablesIdx)
+                {
+                    _ProfileExecutablesIdx = value;
+                    OnPropertyChanged(nameof(ProfileExecutablesIdx));
+                }
+            }
+        }
+
         private ProcessEx selectedProcess;
         public bool HasWindows => ProfileWindows.Any();
 
         public void ProfileChanged(Profile selectedProfile)
         {
             // update library target profile
-            LibrarySearchField = ProfilesPage.selectedProfile.Name;
+            LibrarySearchField = selectedProfile.Name;
 
             // clear list
             ClearLibrary();
@@ -583,6 +632,18 @@ namespace HandheldCompanion.ViewModels
             }
 
             OnPropertyChanged(nameof(HasWindows));
+
+            ProfileExecutables.Clear();
+            if (selectedProfile.Executables != null)
+                foreach (var exe in selectedProfile.Executables)
+                    ProfileExecutables.Add(exe);
+
+            // keep SelectedIndex valid
+            var idx = selectedProfile.Executables.IndexOf(selectedProfile.Path);
+            if (ProfileExecutables.Count > 0 && idx == -1) idx = 0;
+            ProfileExecutablesIdx = (ProfileExecutables.Count == 0) ? -1 : Math.Min(idx, ProfileExecutables.Count - 1);
+
+            OnPropertyChanged(nameof(HasProfileExecutables));
         }
 
         private void SelectedProcess_WindowAttached(ProcessWindow processWindow)

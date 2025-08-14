@@ -145,11 +145,11 @@ namespace HandheldCompanion.Managers
                         {
                             long gameId = (long)game.Id;
 
-                            IGDBEntry entry = new IGDBEntry(gameId, game.Name, game.FirstReleaseDate.Value.DateTime)
+                            IGDBEntry entry = new IGDBEntry(gameId, game.Name, game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime : new())
                             {
                                 Description = game.Summary,
                                 Storyline = game.Storyline,
-                                Cover = game.Cover.Value,
+                                Cover = game.Cover?.Value ?? null,
                             };
 
                             if (game.Artworks is not null)

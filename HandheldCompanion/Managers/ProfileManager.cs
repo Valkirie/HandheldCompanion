@@ -184,16 +184,17 @@ public class ProfileManager : IManager
 
         // Get favorite sub-profile (unless asking for parent)
         if (!getParent)
-            profile = subProfiles.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) && p.IsFavoriteSubProfile);
+            profile = subProfiles.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(path) && p.IsFavoriteSubProfile);
 
         // If null, get profile by path
-        profile ??= profiles.Values.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+        profile ??= profiles.Values.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(path));
 
         // If null, get profile by executable name
+        // todo: improve me, maybe scroll through all string instead ?
         if (profile is null)
         {
             string exeName = Path.GetFileName(path);
-            profile = profiles.Values.FirstOrDefault(p => p.Executable.Equals(exeName, StringComparison.InvariantCultureIgnoreCase));
+            profile = profiles.Values.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(exeName));
         }
 
         // If null or disabled, return default
@@ -427,7 +428,7 @@ public class ProfileManager : IManager
             if (profile.LastUsed != processEx.Process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
             {
                 profile.LastUsed = processEx.Process.StartTime;
-                profile.Path = processEx.Path;
+                // profile.Path = processEx.Path;
 
                 // update profile
                 UpdateOrCreateProfile(profile);
@@ -464,7 +465,7 @@ public class ProfileManager : IManager
                 if (profile.LastUsed != processEx.Process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
                 {
                     profile.LastUsed = processEx.Process.StartTime;
-                    profile.Path = processEx.Path;
+                    // profile.Path = processEx.Path;
 
                     // update profile
                     UpdateOrCreateProfile(profile);
@@ -647,6 +648,11 @@ public class ProfileManager : IManager
                         outputraw = jObject.ToString();
                     }
                 }
+            }
+            else if (version <= Version.Parse("0.26.0.2"))
+            {
+                // get previous path, if any
+                string path = jObject.GetValue("Path")?.ToString() ?? string.Empty;
             }
 
             // parse profile
@@ -879,57 +885,45 @@ public class ProfileManager : IManager
 
     private void SanitizeProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
-        // Decide which profiles to run through the sanitizer
-        IEnumerable<Profile> profilesToSanitize;
-        if (source == UpdateSource.Serializer)
+        // Decide which profile to run through the sanitizer
+        Profile profileToSanitize = profile.IsSubProfile ? GetProfileForSubProfile(profile) : profile;
+
+        // Manage ErrorCode
+        profileToSanitize.ErrorCode = ProfileErrorCode.None;
+        if (profileToSanitize.Default)
         {
-            profilesToSanitize = [profile];
+            profileToSanitize.ErrorCode |= ProfileErrorCode.Default;
         }
         else
         {
-            // full parent+subprofile sweep
-            Profile parentProfile = profile.IsSubProfile ? GetProfileForSubProfile(profile) : profile;
-            profilesToSanitize = GetSubProfilesFromProfile(parentProfile, true);
-        }
-
-        foreach (Profile profileToSanitize in profilesToSanitize)
-        {
-            profileToSanitize.ErrorCode = ProfileErrorCode.None;
-
-            if (profileToSanitize.Default)
+            string? processpath = Path.GetDirectoryName(profileToSanitize.Path);
+            if (string.IsNullOrEmpty(processpath) || !Directory.Exists(processpath))
             {
-                profileToSanitize.ErrorCode |= ProfileErrorCode.Default;
+                profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPath;
             }
             else
             {
-                string? processpath = Path.GetDirectoryName(profileToSanitize.Path);
-                if (string.IsNullOrEmpty(processpath) || !Directory.Exists(processpath))
-                {
-                    profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPath;
-                }
-                else
-                {
-                    if (!File.Exists(profileToSanitize.Path))
-                        profileToSanitize.ErrorCode |= ProfileErrorCode.MissingExecutable;
+                if (!File.Exists(profileToSanitize.Path))
+                    profileToSanitize.ErrorCode |= ProfileErrorCode.MissingExecutable;
 
-                    if (!FileUtils.IsDirectoryWritable(processpath))
-                        profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
-                }
-
-                if (ProcessManager.GetProcesses(profile.Executable).Any())
-                    profile.ErrorCode |= ProfileErrorCode.Running;
+                if (!FileUtils.IsDirectoryWritable(processpath))
+                    profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
             }
 
-            // looks like profile power profile was deleted, restore balanced
-            for (int idx = 0; idx < 2; idx++)
-            {
-                Guid powerProfile = profileToSanitize.PowerProfiles[idx];
-                if (powerProfile == Guid.Empty)
-                    continue;
+            // todo: shouldn't we use path ?
+            if (ProcessManager.GetProcesses(profile.Executable).Any())
+                profile.ErrorCode |= ProfileErrorCode.Running;
+        }
 
-                if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
-                    profileToSanitize.PowerProfiles[idx] = Guid.Empty;
-            }
+        // check if profile power profile was deleted, if so, restore balanced
+        for (int idx = 0; idx < 2; idx++)
+        {
+            Guid powerProfile = profileToSanitize.PowerProfiles[idx];
+            if (powerProfile == Guid.Empty)
+                continue;
+
+            if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
+                profileToSanitize.PowerProfiles[idx] = Guid.Empty;
         }
     }
 

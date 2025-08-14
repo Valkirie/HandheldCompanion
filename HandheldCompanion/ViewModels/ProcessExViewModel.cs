@@ -51,6 +51,40 @@ namespace HandheldCompanion.ViewModels
         }
 
         public string Executable => Process.Executable;
+        public string Path => Process.Path;
+
+        public string ProductName
+        {
+            get
+            {
+                string FileDescription = Process.AppProperties.TryGetValue("FileDescription", out var property) ? property : string.Empty;
+                if (!string.IsNullOrEmpty(FileDescription))
+                    return FileDescription;
+
+                string pName = Process.Process.MainModule?.FileVersionInfo?.ProductName ?? string.Empty;
+                if (!string.IsNullOrEmpty(pName))
+                    return pName;
+
+                return Executable;
+            }
+        }
+
+        public string CompanyName
+        {
+            get
+            {
+                string Copyright = Process.AppProperties.TryGetValue("Copyright", out var property) ? property : string.Empty;
+                if (!string.IsNullOrEmpty(Copyright))
+                    return Copyright;
+
+                string cName = Process.Process.MainModule?.FileVersionInfo?.CompanyName ?? string.Empty;
+                if (!string.IsNullOrEmpty(cName))
+                    return cName;
+
+                return Path;
+            }
+        }
+
         public bool FullScreenOptimization => !Process.FullScreenOptimization;
         public bool HighDPIAware => !Process.HighDPIAware;
 

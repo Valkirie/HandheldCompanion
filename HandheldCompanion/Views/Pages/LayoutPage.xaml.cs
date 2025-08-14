@@ -189,7 +189,7 @@ public partial class LayoutPage : Page
         lock (updateLock)
         {
             // Invoke Layout Updated to trigger ViewModel updates
-            EventHelper.RaiseAsync(LayoutUpdated, currentTemplate.Layout);
+            LayoutUpdated?.Invoke(currentTemplate.Layout);
 
             // UI thread
             UIHelper.TryInvoke(() =>

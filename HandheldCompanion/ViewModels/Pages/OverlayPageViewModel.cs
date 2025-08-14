@@ -6,6 +6,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using LiveCharts;
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Media;
 using static HandheldCompanion.Misc.ProcessEx;
@@ -14,9 +15,9 @@ namespace HandheldCompanion.ViewModels
 {
     public class OverlayPageViewModel : BaseViewModel
     {
-        public bool IsRunningRTSS => PlatformManager.RTSS.IsInstalled;
-
-        public bool IsRunningLHM => PlatformManager.LibreHardwareMonitor.IsInstalled;
+        // Platform Manager
+        public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
+        public bool IsRunningLHM => ManagerFactory.platformManager.IsReady && PlatformManager.LibreHardware.IsInstalled;
 
         private int _onScreenDisplayLevel;
         public int OnScreenDisplayLevel
@@ -402,16 +403,6 @@ namespace HandheldCompanion.ViewModels
 
             CPUName = IDevice.GetCurrent().Processor;
 
-            // manage events
-            PlatformManager.RTSS.Updated += PlatformManager_RTSS_Updated;
-
-            if (IDevice.GetCurrent().CpuMonitor)
-            {
-                PlatformManager.LibreHardwareMonitor.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
-                PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
-                PlatformManager.LibreHardwareMonitor.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
-            }
-
             // raise events
             switch (ManagerFactory.processManager.Status)
             {
@@ -445,6 +436,39 @@ namespace HandheldCompanion.ViewModels
                     QuerySettings();
                     break;
             }
+
+            switch (ManagerFactory.platformManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPlatforms();
+                    break;
+            }
+        }
+
+        private void QueryPlatforms()
+        {
+            // manage events
+            PlatformManager.RTSS.Updated += RTSS_Updated;
+
+            if (IDevice.GetCurrent().CpuMonitor)
+            {
+                PlatformManager.LibreHardware.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
+                PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
+                PlatformManager.LibreHardware.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
+            }
+
+            RTSS_Updated(PlatformManager.RTSS.Status);
+
+            OnPropertyChanged(nameof(IsRunningLHM));
+        }
+
+        private void PlatformManager_Initialized()
+        {
+            QueryPlatforms();
         }
 
         private void SettingsManager_Initialized()
@@ -548,6 +572,9 @@ namespace HandheldCompanion.ViewModels
 
         private void FramerateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (!ManagerFactory.platformManager.IsReady)
+                return;
+
             if (PlatformManager.RTSS.HasHook())
             {
                 PlatformManager.RTSS.RefreshAppEntry();
@@ -575,7 +602,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void GPUManager_Hooked(GPU GPU)
+        private async void GPUManager_Hooked(GPU GPU)
         {
             // localize me
             GPUName = GPU is not null ? GPU.adapterInformation.Details.Description : "No GPU detected";
@@ -586,9 +613,13 @@ namespace HandheldCompanion.ViewModels
 
             if (IDevice.GetCurrent().GpuMonitor)
             {
-                if (!HasGPUPower) PlatformManager.LibreHardwareMonitor.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
-                if (!HasGPUTemperature) PlatformManager.LibreHardwareMonitor.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
-                if (!HasGPULoad) PlatformManager.LibreHardwareMonitor.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
+                // wait until Platform Manager (LibreHardware) is ready, not ideal ?
+                while (!ManagerFactory.platformManager.IsReady)
+                    await Task.Delay(250).ConfigureAwait(false);
+
+                if (!HasGPUPower) PlatformManager.LibreHardware.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
+                if (!HasGPUTemperature) PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
+                if (!HasGPULoad) PlatformManager.LibreHardware.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
             }
         }
 
@@ -660,7 +691,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
             ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
-            PlatformManager.RTSS.Updated -= PlatformManager_RTSS_Updated;
+            PlatformManager.RTSS.Updated -= RTSS_Updated;
             base.Dispose();
         }
 
@@ -694,10 +725,12 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(name); // setting names matches property name
         }
 
-        private void PlatformManager_RTSS_Updated(PlatformStatus status)
+        private void RTSS_Updated(PlatformStatus status)
         {
-            if (status == Platforms.PlatformStatus.Stalled)
+            if (status == PlatformStatus.Stalled)
                 OnScreenDisplayLevel = 0;
+
+            OnPropertyChanged(nameof(IsRunningRTSS));
         }
     }
 }

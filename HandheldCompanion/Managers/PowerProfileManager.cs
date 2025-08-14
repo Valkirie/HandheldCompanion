@@ -43,14 +43,11 @@ namespace HandheldCompanion.Managers
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
+            // we want the OEM power profiles to be always up-to-date
             foreach (PowerProfile devicePowerProfile in IDevice.GetCurrent().DevicePowerProfiles)
-            {
-                if (!profiles.ContainsKey(devicePowerProfile.Guid))
-                    UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
-            }
+                UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
 
             // manage events
-            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
             SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
@@ -78,7 +75,29 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
+            switch (ManagerFactory.platformManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPlatforms();
+                    break;
+            }
+
             base.Start();
+        }
+
+        private void QueryPlatforms()
+        {
+            // manage events
+            PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+        }
+
+        private void PlatformManager_Initialized()
+        {
+            QueryPlatforms();
         }
 
         private void QueryProfile()
@@ -114,7 +133,7 @@ namespace HandheldCompanion.Managers
             base.PrepareStop();
 
             // manage events
-            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;

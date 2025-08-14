@@ -12,11 +12,11 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
@@ -24,7 +24,6 @@ using System.Windows.Threading;
 using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Screen = WpfScreenHelper.Screen;
@@ -71,6 +70,27 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int GWL_STYLE = -16;
     private const int GWL_EXSTYLE = -20;
 
+    // animation state
+    private bool _isAnimating;
+    private double _targetTop;   // on-screen Y
+    private double _hiddenTop;   // off-screen Y (just below taskbar/work-area)
+
+    // high-FPS animation state (keep your existing ones if present)
+    private EventHandler _renderTick;
+    private bool _animActive;
+    private bool _animIsShowing;
+    private TimeSpan _animDuration;
+    private double _animFrom, _animTo;
+    private readonly Stopwatch _animWatch = new();
+    private Action? _animOnComplete;
+    private double _animSpeed = 1.0; // 1.0 = normal, 1.25 = slower, 0.85 = faster
+
+    // remember the last location mode so we know when to slide
+    private int _quickToolsLocation;
+
+    // animation master switch (default ON)
+    private bool _enableSlideAnimation => ManagerFactory.settingsManager.GetBoolean("QuickToolsSlideAnimation");
+
     // page vars
     private readonly Dictionary<string, Page> _pages = [];
 
@@ -103,8 +123,6 @@ public partial class OverlayQuickTools : GamepadWindow
         Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("QuickToolsWidth"));
         Height = (int)Math.Max(MinHeight, ManagerFactory.settingsManager.GetDouble("QuickToolsHeight"));
 
-        PreviewKeyDown += HandleEsc;
-
         clockUpdateTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(500)
@@ -118,6 +136,7 @@ public partial class OverlayQuickTools : GamepadWindow
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        ManagerFactory.processManager.RawForeground += ProcessManager_RawForeground;
 
         // raise events
         if (ControllerManager.HasTargetController)
@@ -125,6 +144,18 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
+    }
+
+    private void ProcessManager_RawForeground(nint hWnd)
+    {
+        if (hWnd != hwndSource.Handle && AutoHide)
+        {
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                SlideHide();
+            });
+        }
     }
 
     public void loadPages()
@@ -150,6 +181,12 @@ public partial class OverlayQuickTools : GamepadWindow
         int exStyle = WinAPI.GetWindowLong(hwndSource.Handle, GWL_EXSTYLE);
         WinAPI.SetWindowLong(hwndSource.Handle, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE);
         WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);
+
+        UpdateLocation();
+        if (_enableSlideAnimation && ShouldSlideFromBottom())
+            Top = _hiddenTop;   // start off-screen only when animating
+        else
+            Top = _targetTop;   // otherwise start at the resting Y
     }
 
     public void LoadPages_MVVM()
@@ -174,6 +211,7 @@ public partial class OverlayQuickTools : GamepadWindow
             switch (name)
             {
                 case "QuickToolsLocation":
+                    _quickToolsLocation = Convert.ToInt32(value);   // cache it
                     UpdateLocation();
                     break;
                 case "QuickToolsAutoHide":
@@ -201,7 +239,6 @@ public partial class OverlayQuickTools : GamepadWindow
         UpdateLocation();
     }
 
-    private const double _Margin = 12;
     private const double _MaxHeight = 960;
     private const double _MaxWidth = 960;
     private const WindowStyle _Style = WindowStyle.ToolWindow;
@@ -243,8 +280,8 @@ public partial class OverlayQuickTools : GamepadWindow
         {
             // Common settings across cases 0 and 1
             MaxWidth = (int)Math.Min(_MaxWidth, targetScreen.WpfBounds.Width);
-            Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("QuickToolsWidth"));
-            MaxHeight = Math.Min(targetScreen.WpfBounds.Height - _Margin * 2, _MaxHeight);
+            Width = 450; // (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("QuickToolsWidth"));
+            MaxHeight = Math.Min(targetScreen.WpfBounds.Height - (Margin.Top + Margin.Bottom), _MaxHeight);
             Height = MinHeight = MaxHeight;
             WindowStyle = _Style;
 
@@ -278,28 +315,38 @@ public partial class OverlayQuickTools : GamepadWindow
                 case 4: // BottomRight
                     this.SetWindowPosition(WindowPositions.BottomRight, targetScreen);
                     break;
+
+                case 5: // BottomCenter
+                    this.SetWindowPosition(WindowPositions.Bottom, targetScreen);
+                    Width = 640;
+                    break;
             }
 
             switch (QuickToolsLocation)
             {
                 case 0: // TopLeft
-                    Top += _Margin;
-                    Left += _Margin;
+                    Top += Margin.Top;
+                    Left += Margin.Left;
                     break;
 
-                case 1: // BottomRight
-                    Top += _Margin;
-                    Left -= _Margin;
+                case 1: // TopRight
+                    Top += Margin.Top;
+                    Left -= Margin.Right;
                     break;
 
                 case 3: // BottomLeft
-                    Top -= _Margin;
-                    Left += _Margin;
+                    Top -= Margin.Bottom;
+                    Left += Margin.Left;
                     break;
 
                 case 4: // BottomRight
-                    Top -= _Margin;
-                    Left -= _Margin;
+                    Top -= Margin.Bottom;
+                    Left -= Margin.Right;
+                    break;
+
+                case 5: // BottomCenter
+                    Top -= Margin.Bottom;
+                    Left = (targetScreen.WpfBounds.Width / 2) - (Width / 2);
                     break;
             }
 
@@ -307,6 +354,219 @@ public partial class OverlayQuickTools : GamepadWindow
             _Top = Top;
             _Left = Left;
         });
+
+        // WpfBounds "bottom" = Top + Height
+        double workTop = targetScreen.WpfBounds.Top;
+        double workHeight = targetScreen.WpfBounds.Height;
+        double workBottom = workTop + workHeight;
+
+        // when sliding, we want to end at _Top and start just below the work area (to avoid flicker)
+        _targetTop = _Top;
+        _hiddenTop = workBottom + 2;    // +2 so it’s truly off-screen
+    }
+
+    private bool ShouldSlideFromBottom() => _quickToolsLocation is 3 or 4 or 5;
+
+    private void StartHighFpsSlide(double from, double to, bool isShowing, int durationMs, Action? onCompleted = null)
+    {
+        if (_animActive) StopHighFpsSlide(); // cancel any previous anim
+
+        _animFrom = from;
+        _animTo = to;
+        _animIsShowing = isShowing;
+        _animDuration = TimeSpan.FromMilliseconds(durationMs * _animSpeed);
+        _animOnComplete = onCompleted;
+
+        _animActive = true;
+        _animWatch.Restart();
+
+        BeginAnimationBypassWmPaint(true); // keep HW path during anim
+
+        _renderTick ??= OnRenderTick;
+        CompositionTarget.Rendering += _renderTick;
+    }
+
+    private void StopHighFpsSlide()
+    {
+        if (!_animActive) return;
+
+        CompositionTarget.Rendering -= _renderTick;
+        _animActive = false;
+        _animWatch.Stop();
+
+        BeginAnimationBypassWmPaint(false);
+
+        // fire completion exactly once
+        var cb = _animOnComplete;
+        _animOnComplete = null;
+        cb?.Invoke();
+    }
+
+    private void OnRenderTick(object? sender, EventArgs e)
+    {
+        // progress 0..1 (time-based, not frame-based)
+        double p = Math.Clamp(_animWatch.Elapsed.TotalMilliseconds / _animDuration.TotalMilliseconds, 0.0, 1.0);
+
+        // Start-menu vibe: ease-out on show, ease-in on hide
+        p = _animIsShowing ? EaseOutExpo(p) : EaseInExpo(p);
+
+        double y = _animFrom + (_animTo - _animFrom) * p;
+        Top = Math.Round(y); // snap to device pixels
+
+        if (p >= 1.0)
+        {
+            Top = Math.Round(_animTo);  // ensure final
+            StopHighFpsSlide();         // <-- completion (may call Hide())
+        }
+    }
+
+    // Easing
+    private static double EaseOutExpo(double p) => (p >= 1.0) ? 1.0 : 1 - Math.Pow(2, -10 * p);
+    private static double EaseInExpo(double p) => (p <= 0.0) ? 0.0 : Math.Pow(2, 10 * (p - 1));
+
+    private void ShowInstant()
+    {
+        UpdateLocation();
+        Left = _Left;
+        Top = _targetTop;
+        try { Show(); } catch { }
+    }
+
+    private void HideInstant()
+    {
+        try { Hide(); } catch { }
+        // keep resting Y ready for next show
+        Top = _targetTop;
+    }
+
+    public void SlideShow()
+    {
+        if (!_enableSlideAnimation || !ShouldSlideFromBottom())
+        {
+            ShowInstant();
+            return;
+        }
+
+        if (_isAnimating || _animActive) return;
+
+        UpdateLocation();
+        Left = _Left;
+
+        if (!IsVisible) try { Show(); } catch { }
+
+        Top = _hiddenTop;
+        StartHighFpsSlide(_hiddenTop, _targetTop, isShowing: true, durationMs: 300);
+    }
+
+    public void SlideHide()
+    {
+        if (!_enableSlideAnimation || !ShouldSlideFromBottom())
+        {
+            HideInstant();
+            return;
+        }
+
+        if (_isAnimating || _animActive) return;
+
+        StartHighFpsSlide(Top, _hiddenTop, isShowing: false, durationMs: 220, onCompleted: () =>
+        {
+            try { Hide(); } catch { }
+            Top = _targetTop;
+        });
+    }
+
+    /*
+    private static readonly Duration ShowDuration = TimeSpan.FromMilliseconds(220);
+    private static readonly Duration HideDuration = TimeSpan.FromMilliseconds(180);
+
+    private void AnimateTop(double from, double to, bool isShowing, Action? onCompleted = null)
+    {
+        _isAnimating = true;
+
+        // Strong easing like Start menu
+        IEasingFunction ease =
+            isShowing
+            ? new ExponentialEase { EasingMode = EasingMode.EaseOut, Exponent = 6.0 } // snappy settle
+            : new ExponentialEase { EasingMode = EasingMode.EaseIn, Exponent = 5.0 }; // quick drop
+
+        var anim = new DoubleAnimation
+        {
+            From = from,
+            To = to,
+            Duration = isShowing ? ShowDuration : HideDuration,
+            EasingFunction = ease,
+            FillBehavior = FillBehavior.Stop
+        };
+
+        // Target 60fps (helps on some rigs)
+        Timeline.SetDesiredFrameRate(anim, 60);
+
+        anim.Completed += (_, __) =>
+        {
+            Top = Math.Round(to);   // snap to pixel to avoid subpixel shimmer
+            _isAnimating = false;
+            onCompleted?.Invoke();
+        };
+
+        BeginAnimation(Window.TopProperty, anim, HandoffBehavior.SnapshotAndReplace);
+    }
+
+    public void SlideShow()
+    {
+        if (_isAnimating) return;
+        UpdateLocation();
+        Left = _Left;
+
+        if (!IsVisible)
+            try { Show(); } catch { }
+
+        // start off-screen, then ease-out up
+        Top = _hiddenTop;
+        BeginAnimationBypassWmPaint(true);
+        AnimateTop(_hiddenTop, _targetTop, isShowing: true, onCompleted: () => BeginAnimationBypassWmPaint(false));
+    }
+
+    public void SlideHide()
+    {
+        if (_isAnimating) return;
+
+        BeginAnimationBypassWmPaint(true);
+        AnimateTop(Top, _hiddenTop, isShowing: false, onCompleted: () =>
+        {
+            try { Hide(); } catch { }
+            Top = _targetTop; // reset resting Y
+            BeginAnimationBypassWmPaint(false);
+        });
+    }
+
+    // stop any running animation; optionally snap to resting Y
+    private void StopAnyAnimation(bool snapToRest)
+    {
+        // if you kept the storyboard path, stop it here as well
+        if (_animActive)
+        {
+            CompositionTarget.Rendering -= _renderTick;
+            _animActive = false;
+            _animWatch.Stop();
+            BeginAnimationBypassWmPaint(false);
+            _animOnComplete = null;
+        }
+
+        if (snapToRest)
+        {
+            // If visible, ensure we're at the on-screen resting Y; if hidden, off-screen
+            Top = (IsVisible && Visibility == Visibility.Visible) ? _targetTop : _hiddenTop;
+        }
+    }
+    */
+
+    private bool _bypassWmPaintThrottle;
+
+    private void BeginAnimationBypassWmPaint(bool on)
+    {
+        _bypassWmPaintThrottle = on;
+        if (on)
+            RenderOptions.ProcessRenderMode = RenderMode.Default; // ensure HW path during anim
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)
@@ -412,6 +672,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
             case WM_PAINT:
                 {
+                    if (_bypassWmPaintThrottle)
+                        break; // ignore throttling logic while animating
+
                     DateTime drawTime = DateTime.Now;
 
                     double drawDiff = Math.Abs((prevDraw - drawTime).TotalMilliseconds);
@@ -458,12 +721,6 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
-    private void HandleEsc(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Escape)
-            ToggleVisibility();
-    }
-
     public void SetVisibility(Visibility visibility)
     {
         // UI thread
@@ -475,18 +732,19 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public void ToggleVisibility()
     {
-        // UI thread
         UIHelper.TryInvoke(() =>
         {
-            switch (Visibility)
+            bool canAnimate = _enableSlideAnimation && ShouldSlideFromBottom();
+
+            if (!IsVisible || Visibility != Visibility.Visible)
             {
-                case Visibility.Collapsed:
-                case Visibility.Hidden:
-                    try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
-                    break;
-                case Visibility.Visible:
-                    try { Hide(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
-                    break;
+                if (canAnimate) SlideShow();
+                else ShowInstant();
+            }
+            else
+            {
+                if (canAnimate) SlideHide();
+                else HideInstant();
             }
         });
     }
@@ -500,8 +758,19 @@ public partial class OverlayQuickTools : GamepadWindow
                 InvokeLostGamepadWindowFocus();
                 clockUpdateTimer.Stop();
                 break;
+
             case Visibility.Visible:
-                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                if (_enableSlideAnimation && ShouldSlideFromBottom())
+                {
+                    // make sure we’re not double‑starting an anim
+                    if (!_animActive) SlideShow();
+                }
+                else
+                {
+                    // legacy behavior (and keep non-bottom placements instant)
+                    WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                }
+
                 InvokeGotGamepadWindowFocus();
                 clockUpdateTimer.Start();
                 break;

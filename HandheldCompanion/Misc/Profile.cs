@@ -3,10 +3,12 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Libraries;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using WpfScreenHelper.Enum;
 using static HandheldCompanion.Utils.XInputPlusUtils;
@@ -69,7 +71,25 @@ public class ProcessWindowSettings
 public partial class Profile : ICloneable, IComparable
 {
     [JsonIgnore] public const int SensivityArraySize = 49; // x + 1 (hidden)
-    [JsonIgnore] public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
+
+    [JsonIgnore] private ProfileErrorCode _ErrorCode = ProfileErrorCode.None;
+    [JsonIgnore]
+    public ProfileErrorCode ErrorCode
+    {
+        get
+        {
+            if (IsSubProfile)
+                return ManagerFactory.profileManager.GetProfileFromPath(Path, true, true).ErrorCode;
+            else
+                return _ErrorCode;
+        }
+
+        set
+        {
+            if (value != _ErrorCode)
+                _ErrorCode = value;
+        }
+    }
 
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
@@ -85,10 +105,14 @@ public partial class Profile : ICloneable, IComparable
 
     // Library
     public LibraryEntry LibraryEntry { get; set; }
-
     public bool ShowInLibrary { get; set; } = true;
 
-    public string Executable { get; set; } = string.Empty;
+    // GameLib
+    public PlatformType PlatformType { get; set; } = PlatformType.Windows;
+    public string LaunchString { get; set; } = string.Empty;
+
+    public string Executable => System.IO.Path.GetFileName(Path);
+    public List<string> Executables { get; set; } = new();
 
     public bool Enabled { get; set; }
     public bool IsPinned { get; set; } = true;
@@ -168,17 +192,17 @@ public partial class Profile : ICloneable, IComparable
 
     public Profile(string path) : this()
     {
-        if (!string.IsNullOrEmpty(path))
+        if (File.Exists(path))
         {
-            Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(path);
-
-            string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-            // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
-            // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
-
-            Executable = System.IO.Path.GetFileName(path);
-            Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
+            // store path
             Path = path;
+
+            ProcessUtils.GetAppProperties(path, out string ProductName, out string Company);
+            Name = !string.IsNullOrEmpty(ProductName) ? ProductName : Executable;
+        }
+        else
+        {
+            throw new Exception("Can't create a profile with no path");
         }
 
         // initialize layout
@@ -254,13 +278,6 @@ public partial class Profile : ICloneable, IComparable
 
     public override string ToString()
     {
-        // if sub profile, return the following (mainprofile.name - subprofile.name)
-        if (IsSubProfile)
-        {
-            string mainProfileName = ManagerFactory.profileManager.GetProfileForSubProfile(this).Name;
-            return $"{mainProfileName} - {Name}";
-        }
-        else
-            return Name;
+        return Name;
     }
 }

@@ -1,13 +1,12 @@
 ﻿using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Shared;
 
-using PrecisionTiming;
-
 using RTSSSharedMemoryNET;
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace HandheldCompanion.Managers;
 
@@ -37,17 +36,17 @@ public static class OSDManager
     public static short OverlayVRAMLevel;
     public static short OverlayBATTLevel;
 
-    private static readonly PrecisionTimer RefreshTimer;
+    private static readonly Timer RefreshTimer;
     private static int RefreshInterval = 100;
 
     private static readonly ConcurrentDictionary<int, OSD> OnScreenDisplay = new();
     private static AppEntry OnScreenAppEntry;
-    private static List<string> Content;
+    private static List<string> Content = new();
 
     static OSDManager()
     {
-        RefreshTimer = new PrecisionTimer();
-        RefreshTimer.SetInterval(new Action(UpdateOSD), RefreshInterval, false, 0, TimerMode.Periodic, true);
+        RefreshTimer = new Timer(RefreshInterval) { AutoReset = true };
+        RefreshTimer.Elapsed += UpdateOSD;
     }
 
     public static void Start()
@@ -55,12 +54,8 @@ public static class OSDManager
         if (IsInitialized)
             return;
 
-        if (OverlayLevel != 0 && !RefreshTimer.IsRunning())
+        if (OverlayLevel != 0 && !RefreshTimer.Enabled)
             RefreshTimer.Start();
-
-        // manage events
-        PlatformManager.RTSS.Hooked += RTSS_Hooked;
-        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -74,17 +69,37 @@ public static class OSDManager
                 break;
         }
 
-        if (PlatformManager.IsInitialized)
+        switch (ManagerFactory.platformManager.Status)
         {
-            AppEntry appEntry = PlatformManager.RTSS.GetAppEntry();
-            if (appEntry is not null)
-                RTSS_Hooked(appEntry);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
         }
 
         IsInitialized = true;
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "OSDManager");
+    }
+
+    private static void QueryPlatforms()
+    {
+        // manage events
+        PlatformManager.RTSS.Hooked += RTSS_Hooked;
+        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
+
+        AppEntry appEntry = PlatformManager.RTSS.GetAppEntry();
+        if (appEntry is not null)
+            RTSS_Hooked(appEntry);
+    }
+
+    private static void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     private static void SettingsManager_Initialized()
@@ -170,7 +185,7 @@ public static class OSDManager
         catch { }
     }
 
-    private static void UpdateOSD()
+    private static void UpdateOSD(object? sender, ElapsedEventArgs e)
     {
         if (OverlayLevel == 0)
             return;
@@ -198,9 +213,15 @@ public static class OSDManager
 
     public static string Draw(int processId)
     {
-        Content = [];
+        // prepare content
+        Content.Clear();
+
         GPU gpu = GPUManager.GetCurrent();
         if (gpu is null)
+            goto Exit;
+
+        // we're not ready yet
+        if (!ManagerFactory.platformManager.IsReady)
             goto Exit;
 
         switch (OverlayLevel)
@@ -232,25 +253,25 @@ public static class OSDManager
                     row1.entries.Add(FPSentry);
 
                     OverlayEntry GPUentry = new("GPU", "8040");
-                    AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardwareMonitor.GetGPULoad(), "%");
-                    AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardwareMonitor.GetGPUPower(), "W");
+                    AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardware?.GetGPULoad(), "%");
+                    AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardware?.GetGPUPower(), "W");
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry VRAMentry = new("VRAM", "8000FF");
-                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "GB");
+                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardware?.GetGPUMemory(), "GB");
                     row1.entries.Add(VRAMentry);
 
                     OverlayEntry CPUentry = new("CPU", "80FF");
-                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
+                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardware?.GetCPULoad(), "%");
+                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardware?.GetCPUPower(), "W");
                     row1.entries.Add(CPUentry);
                     OverlayEntry RAMentry = new("RAM", "FF80C0");
-                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB");
+                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardware?.GetMemoryUsage(), "GB");
                     row1.entries.Add(RAMentry);
 
                     OverlayEntry BATTentry = new("BATT", "FF8000");
-                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
-                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
+                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardware?.GetBatteryLevel(), "%");
+                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardware?.GetBatteryTimeSpan(), "min");
                     row1.entries.Add(BATTentry);
 
                     // add header to row1
@@ -268,29 +289,29 @@ public static class OSDManager
                     OverlayRow row6 = new();
 
                     OverlayEntry GPUentry = new("GPU", "8040", true);
-                    AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardwareMonitor.GetGPULoad(), "%");
-                    AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardwareMonitor.GetGPUPower(), "W");
-                    AddElementIfNotNull(GPUentry, gpu.HasTemperature() ? gpu.GetTemperature() : PlatformManager.LibreHardwareMonitor.GetGPUTemperature(), "C");
+                    AddElementIfNotNull(GPUentry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardware?.GetGPULoad(), "%");
+                    AddElementIfNotNull(GPUentry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardware?.GetGPUPower(), "W");
+                    AddElementIfNotNull(GPUentry, gpu.HasTemperature() ? gpu.GetTemperature() : PlatformManager.LibreHardware?.GetGPUTemperature(), "C");
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry VRAMentry = new("VRAM", "8000FF", true);
-                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), PlatformManager.LibreHardwareMonitor.GetGPUMemoryTotal(), "GB");
+                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardware?.GetGPUMemory(), PlatformManager.LibreHardware?.GetGPUMemoryTotal(), "GB");
                     row4.entries.Add(VRAMentry);
 
                     OverlayEntry CPUentry = new("CPU", "80FF", true);
-                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
-                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.GetCPUTemperature(), "C");
+                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardware?.GetCPULoad(), "%");
+                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardware?.GetCPUPower(), "W");
+                    AddElementIfNotNull(CPUentry, PlatformManager.LibreHardware?.GetCPUTemperature(), "C");
                     row2.entries.Add(CPUentry);
 
                     OverlayEntry RAMentry = new("RAM", "FF80C0", true);
-                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), PlatformManager.LibreHardwareMonitor.GetMemoryTotal(), "GB");
+                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardware?.GetMemoryUsage(), PlatformManager.LibreHardware?.GetMemoryTotal(), "GB");
                     row3.entries.Add(RAMentry);
 
                     OverlayEntry BATTentry = new("BATT", "FF8000", true);
-                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
-                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryPower(), "W");
-                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
+                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardware?.GetBatteryLevel(), "%");
+                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardware?.GetBatteryPower(), "W");
+                    AddElementIfNotNull(BATTentry, PlatformManager.LibreHardware?.GetBatteryTimeSpan(), "min");
                     row5.entries.Add(BATTentry);
 
                     OverlayEntry FPSentry = new("<APP>", "FF0000", true);
@@ -368,13 +389,13 @@ public static class OSDManager
                 switch (OverlayCPULevel)
                 {
                     case 2:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPUTemperature(), "C");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetCPULoad(), "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetCPUPower(), "W");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetCPUTemperature(), "C");
                         break;
                     case 1:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetCPULoad(), "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetCPUPower(), "W");
                         break;
                 }
                 break;
@@ -383,7 +404,7 @@ public static class OSDManager
                 {
                     case 2:
                     case 1:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetMemoryUsage(), "GB");
                         break;
                 }
                 break;
@@ -391,13 +412,13 @@ public static class OSDManager
                 switch (OverlayGPULevel)
                 {
                     case 2:
-                        AddElementIfNotNull(entry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardwareMonitor.GetGPULoad(), "%");
-                        AddElementIfNotNull(entry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardwareMonitor.GetGPUPower(), "W");
-                        AddElementIfNotNull(entry, gpu.HasTemperature() ? gpu.GetTemperature() : PlatformManager.LibreHardwareMonitor.GetGPUTemperature(), "C");
+                        AddElementIfNotNull(entry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardware?.GetGPULoad(), "%");
+                        AddElementIfNotNull(entry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardware?.GetGPUPower(), "W");
+                        AddElementIfNotNull(entry, gpu.HasTemperature() ? gpu.GetTemperature() : PlatformManager.LibreHardware?.GetGPUTemperature(), "C");
                         break;
                     case 1:
-                        AddElementIfNotNull(entry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardwareMonitor.GetGPULoad(), "%");
-                        AddElementIfNotNull(entry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardwareMonitor.GetGPUPower(), "W");
+                        AddElementIfNotNull(entry, gpu.HasLoad() ? gpu.GetLoad() : PlatformManager.LibreHardware?.GetGPULoad(), "%");
+                        AddElementIfNotNull(entry, gpu.HasPower() ? gpu.GetPower() : PlatformManager.LibreHardware?.GetGPUPower(), "W");
                         break;
                 }
                 break;
@@ -405,10 +426,10 @@ public static class OSDManager
                 switch (OverlayVRAMLevel)
                 {
                     case 1:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), "GB");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetGPUMemory(), "GB");
                         break;
                     case 2:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetGPUMemory(), PlatformManager.LibreHardwareMonitor.GetGPUMemoryTotal(), "GB");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetGPUMemory(), PlatformManager.LibreHardware?.GetGPUMemoryTotal(), "GB");
                         break;
                 }
                 break;
@@ -416,13 +437,13 @@ public static class OSDManager
                 switch (OverlayBATTLevel)
                 {
                     case 2:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryPower(), "W");
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetBatteryLevel(), "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetBatteryPower(), "W");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetBatteryTimeSpan(), "min");
                         break;
                     case 1:
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
-                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan(), "min");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetBatteryLevel(), "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardware?.GetBatteryTimeSpan(), "min");
                         break;
                 }
                 break;
@@ -475,10 +496,10 @@ public static class OSDManager
                 {
                     RefreshInterval = Convert.ToInt32(value);
 
-                    if (RefreshTimer.IsRunning())
+                    if (RefreshTimer.Enabled)
                     {
                         RefreshTimer.Stop();
-                        RefreshTimer.SetPeriod(RefreshInterval);
+                        RefreshTimer.Interval = RefreshInterval;
                         RefreshTimer.Start();
                     }
                 }
@@ -511,7 +532,7 @@ public static class OSDManager
                         else
                         {
                             // Other modes need the refresh timer to update OSD
-                            if (!RefreshTimer.IsRunning())
+                            if (!RefreshTimer.Enabled)
                                 RefreshTimer.Start();
                         }
                     }

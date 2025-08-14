@@ -18,7 +18,7 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = new();
         public ObservableCollection<ProfileViewModel> PagedProfiles { get; } = new();
 
-        private const int PageSize = 6;
+        private const int PageSize = 8;
         public int TotalPages => (int)Math.Ceiling((double)Profiles.Count / PageSize);
 
         public ICommand RadioButtonCheckedCommand { get; }
@@ -113,10 +113,6 @@ namespace HandheldCompanion.ViewModels
 
             RadioButtonCheckedCommand = new RelayCommand(OnRadioButtonChecked);
 
-            // manage events
-            ManagerFactory.processManager.ProcessStarted += ProcessStarted;
-            ManagerFactory.processManager.ProcessStopped += ProcessStopped;
-
             // raise events
             switch (ManagerFactory.processManager.Status)
             {
@@ -139,6 +135,13 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryForeground()
         {
+            // manage events
+            ManagerFactory.processManager.ProcessStarted += ProcessStarted;
+            ManagerFactory.processManager.ProcessStopped += ProcessStopped;
+
+            foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(p => p.Filter != ProcessEx.ProcessFilter.HandheldCompanion))
+                ProcessStarted(processEx, true);
+
             OnPropertyChanged(nameof(IsReady));
         }
 

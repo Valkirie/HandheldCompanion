@@ -735,6 +735,8 @@ public static class ControllerManager
                             {
                                 case "0x1901":
                                     try { controller = new XClawController(details); } catch { }
+                                    // hacky: MSI will create an XInput controller for a few milliseconds, then delete it
+                                    await Task.Delay(2000).ConfigureAwait(false);
                                     break;
                             }
                         }

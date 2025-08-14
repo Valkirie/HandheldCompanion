@@ -14,7 +14,7 @@ using System.Timers;
 using static HandheldCompanion.Misc.ProcessEx;
 using Timer = System.Timers.Timer;
 
-namespace HandheldCompanion.Platforms;
+namespace HandheldCompanion.Platforms.Misc;
 
 public class RTSS : IPlatform
 {
@@ -34,12 +34,12 @@ public class RTSS : IPlatform
 
     public RTSS()
     {
+        Name = "RTSS";
         PlatformType = PlatformType.RTSS;
+        ExecutableName = "RTSS.exe";
+
         ExpectedVersion = new Version(7, 3, 4);
         Url = "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html";
-
-        Name = "RTSS";
-        ExecutableName = RunningName = "RTSS.exe";
 
         // store specific modules
         Modules =
@@ -391,16 +391,16 @@ public class RTSS : IPlatform
 
     public void UpdateSettings()
     {
-        PostMessage(WM_RTSS_UPDATESETTINGS, IntPtr.Zero, IntPtr.Zero);
+        PostMessage(WM_RTSS_UPDATESETTINGS, nint.Zero, nint.Zero);
     }
 
-    private void PostMessage(uint Msg, IntPtr wParam, IntPtr lParam)
+    private void PostMessage(uint Msg, nint wParam, nint lParam)
     {
         var hWnd = FindWindow(null, "RTSS");
-        if (hWnd == IntPtr.Zero)
+        if (hWnd == nint.Zero)
             hWnd = FindWindow(null, "RivaTuner Statistics Server");
 
-        if (hWnd != IntPtr.Zero)
+        if (hWnd != nint.Zero)
             PostMessage(hWnd, Msg, wParam, lParam);
     }
 
@@ -570,10 +570,10 @@ public class RTSS : IPlatform
 
     [return: MarshalAs(UnmanagedType.Bool)]
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    private static extern bool PostMessage(nint hWnd, uint Msg, nint wParam, nint lParam);
 
     [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+    private static extern nint FindWindow(string lpClassName, string lpWindowName);
 
     [DllImport("RTSSHooks64.dll")]
     public static extern uint SetFlags(uint dwAND, uint dwXOR);
@@ -588,10 +588,10 @@ public class RTSS : IPlatform
     public static extern void DeleteProfile(string profile = GLOBAL_PROFILE);
 
     [DllImport("RTSSHooks64.dll", CharSet = CharSet.Ansi)]
-    public static extern bool GetProfileProperty(string propertyName, IntPtr value, uint size);
+    public static extern bool GetProfileProperty(string propertyName, nint value, uint size);
 
     [DllImport("RTSSHooks64.dll", CharSet = CharSet.Ansi)]
-    public static extern bool SetProfileProperty(string propertyName, IntPtr value, uint size);
+    public static extern bool SetProfileProperty(string propertyName, nint value, uint size);
 
     [DllImport("RTSSHooks64.dll", CharSet = CharSet.Ansi)]
     public static extern void ResetProfile(string profile = GLOBAL_PROFILE);

@@ -59,26 +59,37 @@ public static class ProcessUtils
         return null;
     }
 
-    public static Dictionary<string, string> GetAppProperties(string filePath1)
+    public static Dictionary<string, string> GetAppProperties(string filePath)
     {
         Dictionary<string, string> AppProperties = [];
 
-        var shellFile = ShellObject.FromParsingName(filePath1);
-        foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public |
-                     BindingFlags.Instance))
+        try
         {
-            var shellProperty = property.GetValue(shellFile.Properties.System, null) as IShellProperty;
-            if (shellProperty?.ValueAsObject is null) continue;
-            if (AppProperties.ContainsKey(property.Name)) continue;
+            var shellFile = ShellObject.FromParsingName(filePath);
+            foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public |
+                         BindingFlags.Instance))
+            {
+                var shellProperty = property.GetValue(shellFile.Properties.System, null) as IShellProperty;
+                if (shellProperty?.ValueAsObject is null) continue;
+                if (AppProperties.ContainsKey(property.Name)) continue;
 
-            if (shellProperty.ValueAsObject is string[] shellPropertyValues && shellPropertyValues.Length > 0)
-                foreach (var shellPropertyValue in shellPropertyValues)
-                    AppProperties[property.Name] = shellPropertyValue;
-            else
-                AppProperties[property.Name] = shellProperty.ValueAsObject.ToString();
+                if (shellProperty.ValueAsObject is string[] shellPropertyValues && shellPropertyValues.Length > 0)
+                    foreach (var shellPropertyValue in shellPropertyValues)
+                        AppProperties[property.Name] = shellPropertyValue;
+                else
+                    AppProperties[property.Name] = shellProperty.ValueAsObject.ToString();
+            }
         }
+        catch { }
 
         return AppProperties;
+    }
+
+    public static void GetAppProperties(string filePath, out string ProductName, out string Company)
+    {
+        Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(filePath);
+        ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : string.Empty;
+        Company = AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : string.Empty;
     }
 
     public static string GetPathToApp(Process process, bool fast = true)

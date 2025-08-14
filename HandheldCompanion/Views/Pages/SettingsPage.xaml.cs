@@ -41,11 +41,30 @@ public partial class SettingsPage : Page
         ManagerFactory.multimediaManager.ScreenDisconnected += MultimediaManager_ScreenDisconnected;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
 
+        // raise events
+        switch (ManagerFactory.platformManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
+        }
+    }
+
+    private void QueryPlatforms()
+    {
+        // manage events
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
-        // force call
-        // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     private void MultimediaManager_ScreenConnected(DesktopScreen screen)
@@ -202,6 +221,9 @@ public partial class SettingsPage : Page
                     break;
                 case "QuickTrackpadVisibility":
                     VirtualTrackpadToggle.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "QuicktoolsSlideAnimation":
+                    QuicktoolsSlideAnimationToggle.IsOn = Convert.ToBoolean(value);
                     break;
                 case "GPUManagerMonitor":
                     Toggle_GPUMonitor.IsOn = Convert.ToBoolean(value);
@@ -575,6 +597,14 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", VirtualTrackpadToggle.IsOn);
+    }
+
+    private void QuicktoolsSlideAnimationToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("QuickToolsSlideAnimation", QuicktoolsSlideAnimationToggle.IsOn);
     }
 
     private void Toggle_GPUMonitor_Toggled(object sender, RoutedEventArgs e)

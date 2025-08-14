@@ -21,11 +21,31 @@ public partial class OverlayPage : Page
 
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        switch (ManagerFactory.platformManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
+        }
+    }
+
+    private void QueryPlatforms()
+    {
+        // manage events
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
-        // force call
-        // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     public OverlayPage(string Tag) : this()
