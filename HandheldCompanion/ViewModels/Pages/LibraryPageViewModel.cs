@@ -250,6 +250,7 @@ namespace HandheldCompanion.ViewModels
                                 exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
 
                                 if (string.IsNullOrEmpty(profile.Path) && Executables.Any())
