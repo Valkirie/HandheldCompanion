@@ -14,7 +14,10 @@ A touch optimized GUI to increase your handheld gaming computer experience. Feat
 - Gamepad remapping to mouse and keyboard, gamepad joystick and trigger deadzone adjustements.
 - PS Remote Play support with DS4 controller, including motion and touchpad.
 - 3D Controller overlay for stream recordings.
-- Hotkeys for various conveniences. 
+- Hotkeys for various conveniences.
+
+## Support & Early Access
+Handheld Companion is funded entirely by community support. [Through our Patreon](https://www.patreon.com/c/handheldcompanion), contributors in the Early Access tier receive exclusive builds at least two weeks before they are released publicly. This helps supporters enjoy the latest features sooner while directly contributing to the ongoing development of the project and the acquisition of new devices.
 
 ## Use cases
 A few examples of the most common use cases are:
@@ -33,7 +36,8 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - ASUS ROG Ally, ROG Ally X
 - ASUS ROG Z13
 - Lenovo Legion Go
-- MSI Claw A1M, MSI Claw A2VM
+- Legion Go S
+- MSI Claw A1M (1st Gen), MSI Claw A2VM (7/8 AI+), MSI Claw BZ2EM (A8)
 - AOKZOE A1 and A1 Pro
 - AOKZOE A2
 - Steam Deck (all models)
@@ -54,6 +58,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - GPD Win 4 (all models)
 - GPD Win Mini (all models)
 - Ayn Loki (all models)
+- ZOTAC Gaming Zone
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)
