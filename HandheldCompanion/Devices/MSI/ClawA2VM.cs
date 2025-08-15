@@ -26,7 +26,7 @@ public class ClawA2VM : ClawA1M
         {
             { BetterBatteryGuid,      new double[] { 8, 8, 9 } },
             { BetterPerformanceGuid,  new double[] { 17, 17, 18 } },
-            { BestPerformanceGuid,    new double[] { 30, 30, 37 } }
+            { BestPerformanceGuid,    new double[] { 30, 30, 31 } }
         };
 
         foreach (KeyValuePair<Guid, double[]> kvp in tdpOverrides)
