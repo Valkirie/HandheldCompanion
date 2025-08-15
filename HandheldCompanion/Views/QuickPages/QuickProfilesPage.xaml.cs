@@ -1032,7 +1032,7 @@ public partial class QuickProfilesPage : Page
         UpdateProfile();
     }
 
-    private void Button_OpenProfilePage_Click(object sender, RoutedEventArgs e)
+    private void UpdateMainWindowProfile()
     {
         var page = MainWindow.profilesPage;
 
@@ -1054,7 +1054,11 @@ public partial class QuickProfilesPage : Page
             page.cb_SubProfilePicker.SelectedItem = selectedProfile;
         else
             page.cb_SubProfilePicker.SelectedIndex = 0;
+    }
 
+    private void Button_OpenProfilePage_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateMainWindowProfile();
         MainWindow.NavView_Navigate(MainWindow.profilesPage);
 
         // show main window
@@ -1068,6 +1072,7 @@ public partial class QuickProfilesPage : Page
 
     private void Button_OpenProfileLayout_Click(object sender, RoutedEventArgs e)
     {
+        UpdateMainWindowProfile();
         MainWindow.profilesPage.ControllerSettingsButton_Click(sender, e);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
 
