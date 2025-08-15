@@ -1,7 +1,5 @@
 ﻿using controller_hidapi.net.Util;
-using hidapi;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace controller_hidapi.net
 {
@@ -26,23 +24,8 @@ namespace controller_hidapi.net
         //                                                                                 (nintendo: 0x02, xbox: 0x01)
         private byte[] ControllerLayout = new byte[] { 0x07, 0x07, 0x09, 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
 
-        public TarantulaProController(ushort vid, ushort pid) : base(vid, pid)
-        {
-            _hidDevice = new HidDevice(_vid, _pid, 64)
-            {
-                OnInputReceived = input =>
-                {
-                    OnInputReceived(input);
-                    return Task.CompletedTask;
-                }
-            };
-
-            /*
-            // LED ON
-            LEDMode[6] = 1;
-            hidDevice.Write(LEDMode);
-            */
-        }
+        public TarantulaProController(ushort vid, ushort pid, ushort inputBufferLen = 64, short mi = -1) : base(vid, pid, inputBufferLen, mi)
+        { }
 
         public void SetLightColor(byte R, byte G, byte B)
         {
@@ -98,15 +81,6 @@ namespace controller_hidapi.net
                 ButtonMode[10] = button;
                 HidWrite(ButtonMode);
             }
-        }
-
-        private void HidWrite(byte[] data)
-        {
-            try
-            {
-                _hidDevice.Write(data);
-            }
-            catch { }
         }
     }
 }

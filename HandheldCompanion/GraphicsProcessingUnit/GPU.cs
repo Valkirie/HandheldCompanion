@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
+using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -35,6 +36,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected const int UpdateInterval = 5000;
         protected Timer UpdateTimer;
+        protected bool GPUManagerMonitor => true; // ManagerFactory.settingsManager.GetBoolean("GPUManagerMonitor");
 
         protected const int TelemetryInterval = 1000;
         protected Timer TelemetryTimer;
@@ -60,6 +62,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected static HashSet<string> ProcessTargets = new HashSet<string>();
         private static readonly object processTargetsLock = new object();
+
+        public static string serviceName = string.Empty;
+        protected static ServiceController serviceController;
 
         public bool IsBusy
         {
@@ -163,8 +168,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // release halting flag
             halting = false;
 
-            if (UpdateTimer != null && !UpdateTimer.Enabled)
-                UpdateTimer.Start();
+            if (UpdateTimer != null && !UpdateTimer.Enabled && GPUManagerMonitor)
+                StartMonitor();
 
             if (TelemetryTimer != null && !TelemetryTimer.Enabled)
                 TelemetryTimer.Start();
@@ -176,13 +181,23 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             halting = true;
 
             if (UpdateTimer != null && UpdateTimer.Enabled)
-                UpdateTimer.Stop();
+                StopMonitor();
 
             if (TelemetryTimer != null && TelemetryTimer.Enabled)
                 TelemetryTimer.Stop();
 
             if (BusyTimer != null && BusyTimer.Enabled)
                 BusyTimer.Stop();
+        }
+
+        public virtual void StartMonitor()
+        {
+            UpdateTimer.Start();
+        }
+
+        public virtual void StopMonitor()
+        {
+            UpdateTimer.Stop();
         }
 
         /// <summary>
@@ -219,7 +234,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 Monitor.Exit(processTargetsLock);
             }
         }
-
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
         {
@@ -356,6 +370,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             return 0.0f;
         }
+
+        protected virtual void UpdateSettings()
+        { }
 
         public static bool HasIntelGPU()
         {

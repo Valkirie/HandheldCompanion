@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using SharpDX.XInput;
@@ -11,7 +10,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.Steam
 {
     public class GordonController : SteamController
     {
@@ -88,14 +87,14 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Gordon";
         }
 
-        public override bool IsReady => this.input is not null;
+        public override bool IsReady => input is not null;
 
         public override bool IsConnected()
         {
             return Controller?.Reading == true && Controller?.IsDeviceValid == true;
         }
 
-        public override void UpdateInputs(long ticks, float delta)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             if (input is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
@@ -192,14 +191,14 @@ namespace HandheldCompanion.Controllers
             }
 
             // Accelerometer has 16 bit resolution and a range of +/- 2g
-            float aX = (float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-            float aY = (float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-            float aZ = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            aX = (float)input.State.AxesState[GordonControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+            aY = (float)input.State.AxesState[GordonControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+            aZ = -(float)input.State.AxesState[GordonControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
             // Gyroscope has 16 bit resolution and a range of +/- 2000 dps
-            float gX = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
-            float gY = (float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
-            float gZ = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
+            gX = (float)input.State.AxesState[GordonControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
+            gY = (float)input.State.AxesState[GordonControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
+            gZ = (float)input.State.AxesState[GordonControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
             // store motion
             Inputs.GyroState.SetGyroscope(gX, gY, gZ);
@@ -209,7 +208,7 @@ namespace HandheldCompanion.Controllers
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta);
         }
 
         private void Open()
@@ -275,8 +274,6 @@ namespace HandheldCompanion.Controllers
         {
             Open();
 
-            TimerManager.Tick += UpdateInputs;
-
             base.Plug();
         }
 
@@ -284,7 +281,6 @@ namespace HandheldCompanion.Controllers
         {
             Close();
 
-            TimerManager.Tick -= UpdateInputs;
             base.Unplug();
         }
 

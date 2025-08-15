@@ -419,11 +419,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             base.Stop();
         }
 
-        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        protected override void UpdateSettings()
         {
-            if (halting)
-                return;
-
             if (Monitor.TryEnter(updateLock))
             {
                 try
@@ -540,6 +537,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     Monitor.Exit(updateLock);
                 }
             }
+        }
+
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            if (halting)
+                return;
+
+            UpdateSettings();
         }
 
         protected override void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)

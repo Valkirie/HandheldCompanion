@@ -82,6 +82,8 @@
             <converters:OrConverter x:Key="OrConverter" />
             <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
             <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
+            <converters:EvenIndexFilterConverter x:Key="EvenIndexFilterConverter" />
+            <converters:OddIndexFilterConverter x:Key="OddIndexFilterConverter" />
 
             <math:MathConverter x:Key="Math" />
 

@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
@@ -102,6 +103,19 @@ namespace HandheldCompanion.Managers
                 mainWindow.LostFocus += (sender, e) => WindowLostFocus(sender, e, FocusSource.Focus);
                 mainWindow.Activated += (sender, e) => WindowGotFocus(sender, null, FocusSource.Activate);
                 mainWindow.Deactivated += (sender, e) => WindowLostFocus(sender, null, FocusSource.Activate);
+                mainWindow.StateChanged += (sender, e) =>
+                {
+                    switch (mainWindow.WindowState)
+                    {
+                        case WindowState.Normal:
+                        case WindowState.Maximized:
+                            WindowGotFocus(sender, null, FocusSource.Activate);
+                            break;
+                        case WindowState.Minimized:
+                            WindowLostFocus(sender, null, FocusSource.Activate);
+                            break;
+                    }
+                };
             }
 
             gamepadFrame = contentFrame;
@@ -113,7 +127,7 @@ namespace HandheldCompanion.Managers
             tooltipTimer = new Timer(2000) { AutoReset = false };
             tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
-            ControllerManager.InputsUpdated2 += InputsUpdated;
+            ControllerManager.InputsUpdated += InputsUpdated;
         }
 
         public void Loaded()
@@ -182,6 +196,7 @@ namespace HandheldCompanion.Managers
             // raise event
             if (_focused[windowName])
             {
+                LogManager.LogDebug("GotFocus: {0}", windowName);
                 GotFocus?.Invoke(windowName);
 
                 foreach (string window in _focused.Keys)
@@ -227,6 +242,7 @@ namespace HandheldCompanion.Managers
             gamepadTimer.Stop();
 
             // raise event
+            LogManager.LogDebug("LostFocus: {0}", windowName);
             LostFocus?.Invoke(windowName);
 
             foreach (string window in _focused.Keys)
@@ -507,10 +523,14 @@ namespace HandheldCompanion.Managers
         // declare a DateTime variable to store the last time the button state changed
         private DateTime lastChangeTime;
 
-        private void InputsUpdated(ControllerState controllerState)
+        private void InputsUpdated(ControllerState controllerState, bool IsMapped)
         {
             // skip if page hasn't yet rendered
             if (!_rendered)
+                return;
+
+            // skip if inputs were remapped
+            if (IsMapped)
                 return;
 
             // skip if page doesn't have focus
@@ -907,27 +927,27 @@ namespace HandheldCompanion.Managers
                             direction = WPFUtils.Direction.Right;
                         }
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) /*|| controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickUp)*/ || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))
                     {
                         direction = WPFUtils.Direction.Up;
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickDown))
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown) /*|| controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickDown) */ || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickDown))
                     {
                         direction = WPFUtils.Direction.Down;
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickLeft))
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft) /*|| controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickLeft) */ || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickLeft))
                     {
                         direction = WPFUtils.Direction.Left;
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) /*|| controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickRight) */ || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
                     {
                         direction = WPFUtils.Direction.Right;
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickUp))
+                    else if (/*controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickUp) ||*/ controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickUp))
                     {
                         scrollViewer?.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 50);
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickDown))
+                    else if (/*controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickDown) ||*/ controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickDown))
                     {
                         scrollViewer?.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 50);
                     }

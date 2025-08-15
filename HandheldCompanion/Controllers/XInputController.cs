@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Media;
-using static HandheldCompanion.Managers.TimerManager;
 
 namespace HandheldCompanion.Controllers;
 
@@ -26,7 +26,6 @@ public class XInputController : IController
         if (details is null)
             throw new Exception("XInputController PnPDetails is null");
 
-        AttachController(details.XInputUserIndex);
         AttachDetails(details);
 
         // UI
@@ -39,6 +38,13 @@ public class XInputController : IController
         Capabilities |= ControllerCapabilities.Rumble;
     }
 
+    public override void AttachDetails(PnPDetails details)
+    {
+        AttachController(details.XInputUserIndex);
+
+        base.AttachDetails(details);
+    }
+
     ~XInputController()
     {
         Dispose();
@@ -48,8 +54,8 @@ public class XInputController : IController
     {
         Unplug();
 
-        // don't dispose our placeholders
-        if (isPlaceholder)
+        // don't dispose dummy controllers
+        if (IsDummy())
             return;
 
         Controller = null;
@@ -64,7 +70,7 @@ public class XInputController : IController
         return $"XInput Controller {(UserIndex)UserIndex}";
     }
 
-    public virtual void UpdateInputs(long ticks, float delta, bool commit)
+    public override void Tick(long ticks, float delta, bool commit)
     {
         if (Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
@@ -124,7 +130,7 @@ public class XInputController : IController
         }
 
         if (commit)
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta);
     }
 
     public override bool IsConnected()
@@ -149,30 +155,6 @@ public class XInputController : IController
             Controller.SetVibration(vibration);
         }
         catch { }
-    }
-
-    private TickEventHandler _tickHandler;
-    public override void Plug()
-    {
-        // Assign a handler to the delegate
-        _tickHandler = (ticks, delta) => UpdateInputs(ticks, delta, true);
-
-        // Subscribe to the event
-        Tick += _tickHandler;
-
-        base.Plug();
-    }
-
-    public override void Unplug()
-    {
-        if (_tickHandler != null)
-        {
-            // Unsubscribe from the event
-            Tick -= _tickHandler;
-            _tickHandler = null;
-        }
-
-        base.Unplug();
     }
 
     public static UserIndex TryGetUserIndex(PnPDetails details)
@@ -395,5 +377,18 @@ public class XInputController : IController
 
     [DllImport("xinput1_4.dll", EntryPoint = "#104")]
     protected static extern int XInputGetBaseBusInformation(int dwUserIndex, ref XInputBaseBusInformation pInfo);
+
+    // DWORD WINAPI OpenXInputGetDevicePath(
+    //   DWORD  dwUserIndex,
+    //   LPWSTR pDevicePath,
+    //   UINT*  pPathSize
+    // );
+    [DllImport("xinput1_4.dll", EntryPoint = "#109")]
+    public static extern uint XInputGetDevicePath(
+        uint dwUserIndex,
+        [Out, MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 2)]
+        StringBuilder      pDevicePath,
+        ref uint pPathSize
+    );
     #endregion
 }

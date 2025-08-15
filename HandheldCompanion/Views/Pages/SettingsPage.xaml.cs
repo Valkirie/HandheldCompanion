@@ -203,6 +203,9 @@ public partial class SettingsPage : Page
                 case "QuickTrackpadVisibility":
                     VirtualTrackpadToggle.IsOn = Convert.ToBoolean(value);
                     break;
+                case "GPUManagerMonitor":
+                    Toggle_GPUMonitor.IsOn = Convert.ToBoolean(value);
+                    break;
             }
         });
     }
@@ -572,5 +575,13 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", VirtualTrackpadToggle.IsOn);
+    }
+
+    private void Toggle_GPUMonitor_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("GPUManagerMonitor", Toggle_GPUMonitor.IsOn);
     }
 }

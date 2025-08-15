@@ -112,10 +112,10 @@ public class GPDWin4 : IDevice
             return false;
 
         // allow fan manipulation
-        var EC_Chip_ID1 = ECRamReadByte(0x2000, ECDetails);
+        var EC_Chip_ID1 = ECRamDirectReadByte(0x2000, ECDetails);
         if (EC_Chip_ID1 == 0x55)
         {
-            var EC_Chip_Ver = ECRamReadByte(0x1060, ECDetails);
+            var EC_Chip_Ver = ECRamDirectReadByte(0x1060, ECDetails);
             EC_Chip_Ver = (byte)(EC_Chip_Ver | 0x80);
 
             LogManager.LogInformation("Unlocked GPD WIN 4 ({0}) fan control", EC_Chip_Ver);

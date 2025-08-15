@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -70,6 +71,17 @@ public struct ECDetails
     public short FanValueMax;
 }
 
+public struct HidFilter
+{
+    public short UsagePage;
+    public short Usage;
+    public HidFilter(short usagePage, short usage)
+    {
+        UsagePage = usagePage;
+        Usage = usage;
+    }
+}
+
 public abstract class IDevice
 {
     public delegate void KeyPressedEventHandler(ButtonFlags button);
@@ -88,7 +100,8 @@ public abstract class IDevice
 
     protected int vendorId;
     protected int[] productIds;
-    protected Dictionary<byte, HidDevice> hidDevices = [];
+    protected Dictionary<int, HidDevice> hidDevices = [];
+    protected Dictionary<int, HidFilter> hidFilters = [];
 
     public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
     public SortedDictionary<char, char> AccelerometerAxisSwap = new()
@@ -109,7 +122,7 @@ public abstract class IDevice
     public GamepadMotion GamepadMotion;
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
-    public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
+    public LEDLevel DynamicLightingCapabilities = LEDLevel.None;
     public List<LEDPreset> LEDPresets { get; protected set; } = [];
     public List<BatteryBypassPreset> BatteryBypassPresets { get; protected set; } = [];
 
@@ -131,7 +144,7 @@ public abstract class IDevice
     public double[] GfxClock = { 100, 1800 };
     public uint CpuClock = 6000;
 
-    // device nominal TDP (slow, fast)
+    // device nominal TDP (slow, slow, fast)
     public double[] nTDP = { 15, 15, 20 };
 
     // device maximum operating temperature
@@ -168,7 +181,7 @@ public abstract class IDevice
     public short ResumeDelay = 2000;
 
     // key press delay to use for certain scenarios
-    public short KeyPressDelay = 20;
+    public short KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
 
     // LibreHardwareMonitor
     public bool CpuMonitor = true;
@@ -538,6 +551,9 @@ public abstract class IDevice
                                     break;
                             }
                             break;
+                        case "G1617-02":
+                            device = new GPDWinMini_HX370();
+                            break;
                         case "G1618-03":
                             device = new GPDWin3();
                             break;
@@ -710,26 +726,23 @@ public abstract class IDevice
 
             case "LENOVO":
                 {
-                    switch (ProductName)
+                    switch (SystemModel)
                     {
-                        case "LNVNB161216":
-                            device = new LegionGo();
+                        case "83E1":
+                            device = new LegionGoTablet();
                             break;
-
-                        // Weird...
-                        case "INVALID":
-                            {
-                                switch (SystemModel)
-                                {
-                                    case "83E1":
-                                        device = new LegionGo();
-                                        break;
-                                }
-                            }
+                        case "83L3": // Legion Go S Z2 Go
+                            device = new LegionGoSZ2();
+                            break;
+                        case "83N6": // Legion Go S Z1E
+                        case "83Q2":
+                        case "83Q3":
+                            device = new LegionGoSZ1();
                             break;
                     }
                 }
                 break;
+
             case "MICRO-STAR INTERNATIONAL CO., LTD.":
                 {
                     switch (ProductName)
@@ -740,6 +753,21 @@ public abstract class IDevice
                         case "MS-1T42": // Claw 7 AI+ A2VM
                         case "MS-1T52": // Claw 8 AI+ A2VM
                             device = new ClawA2VM();
+                            break;
+                        case "MS-1T8K": // Claw A8
+                            device = new ClawBZ2EM();
+                            break;
+                    }
+                }
+                break;
+
+            case "PC PARTNER LIMITED":
+            case "ZOTAC":
+                {
+                    switch (ProductName)
+                    {
+                        case "G0A1W":
+                            device = new GamingZone();
                             break;
                     }
                 }
@@ -786,7 +814,7 @@ public abstract class IDevice
         return true;
     }
 
-    protected async Task WaitUntilReadyAndReattachAsync()
+    protected async Task WaitUntilReady()
     {
         while (!IsReady())
             await Task.Delay(250).ConfigureAwait(false);
@@ -797,10 +825,10 @@ public abstract class IDevice
         switch (controllerMode)
         {
             case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180;
+                KeyPressDelay = (short)(TimerManager.GetPeriod() * 18);
                 break;
             default:
-                KeyPressDelay = 20;
+                KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
                 break;
         }
     }
@@ -930,7 +958,7 @@ public abstract class IDevice
         }
     }
 
-    public virtual byte ECRamReadByte(ushort address, ECDetails details)
+    public virtual byte ECRamDirectReadByte(ushort address, ECDetails details)
     {
         if (!IsOpen)
             return 0;
@@ -1073,6 +1101,15 @@ public abstract class IDevice
     public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
     {
         return GetHidDevices(vendorId, new int[] { deviceId }, minFeatures);
+    }
+
+    public static byte[] WithReportID(byte[] payload, byte reportID = 0x00, int reportLen = 64)
+    {
+        var buffer = new byte[1 + reportLen];
+        buffer[0] = reportID;
+        int len = Math.Min(payload.Length, reportLen);
+        Buffer.BlockCopy(payload, 0, buffer, 1, len);
+        return buffer;
     }
 
     public string GetButtonName(ButtonFlags button)

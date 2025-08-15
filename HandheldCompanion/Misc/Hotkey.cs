@@ -74,7 +74,7 @@ namespace HandheldCompanion
             if (Rumble && !IsBackground && !IsInternal)
                 ControllerManager.GetTarget()?.Rumble();
 
-            command?.Execute(command.OnKeyDown, command.OnKeyUp, IsBackground);
+            command?.Execute(command.OnKeyDown && onKeyDown, command.OnKeyUp && onKeyUp, IsBackground);
         }
 
         public void Dispose()

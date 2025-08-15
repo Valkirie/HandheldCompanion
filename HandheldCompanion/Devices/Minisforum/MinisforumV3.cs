@@ -30,8 +30,8 @@ public class MinisforumV3 : IDevice
         this.ProductIllustration = "device_minisforum_v3";
         this.ProductModel = "MINISFORUM V3";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-8840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
         this.nTDP = new double[] { 15, 15, 20 };
         this.cTDP = new double[] { 3, 28 };
         this.GfxClock = new double[] { 100, 2700 };

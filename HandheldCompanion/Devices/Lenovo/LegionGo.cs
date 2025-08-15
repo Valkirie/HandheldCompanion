@@ -1,4 +1,3 @@
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
@@ -9,9 +8,6 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Threading;
-using System.Windows.Media;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -59,8 +55,16 @@ public class LegionGo : IDevice
         GpuCurrentTemperature = 0x05050000
     }
 
+    public enum RgbMode : byte
+    {
+        Solid = 1,
+        Pulse = 2,
+        Dynamic = 3,
+        Spiral = 4,
+    }
+
     #region WMI
-    private bool GetFanFullSpeed()
+    protected bool GetFanFullSpeed()
     {
         try
         {
@@ -96,7 +100,7 @@ public class LegionGo : IDevice
         }
     }
 
-    private void SetFanTable(FanTable fanTable)
+    protected void SetFanTable(FanTable fanTable)
     {
         try
         {
@@ -111,7 +115,7 @@ public class LegionGo : IDevice
         }
     }
 
-    private int GetSmartFanMode()
+    protected int GetSmartFanMode()
     {
         try
         {
@@ -128,7 +132,7 @@ public class LegionGo : IDevice
         }
     }
 
-    private void SetSmartFanMode(int fanMode)
+    protected void SetSmartFanMode(int fanMode)
     {
         try
         {
@@ -182,65 +186,19 @@ public class LegionGo : IDevice
     }
     #endregion
 
-    public const int LeftJoyconIndex = 3;
-    public const int RightJoyconIndex = 4;
+    protected byte ClampByte(int v) => (byte)Math.Max(0, Math.Min(255, v));
+    protected byte[] ConvertHex(string hex) => Convert.FromHexString(hex);
 
-    private LightionProfile lightProfileL = new();
-    private LightionProfile lightProfileR = new();
+    // todo: find the right value, this is placeholder
+    protected const byte INPUT_HID_ID = 0x01;
+    protected bool ControllerPassThrough = false;
+    protected bool ControllerSwap = false;
 
     public LegionGo()
     {
-        // device specific settings
-        ProductIllustration = "device_legion_go";
-
-        // used to monitor OEM specific inputs
-        vendorId = 0x17EF;
-        productIds = [0x6182];
-
-        // fix for threshold overflow
-        GamepadMotion.SetCalibrationThreshold(124.0f, 2.0f);
-
-        // https://www.amd.com/en/products/apu/amd-ryzen-z1
-        // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
-        nTDP = new double[] { 15, 15, 20 };
-        cTDP = new double[] { 5, 30 };
-        GfxClock = new double[] { 100, 2700 };
-        CpuClock = 5100;
-
-        GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
-        };
-
-        AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
-        };
-
-        // device specific capacities
-        Capabilities |= DeviceCapabilities.FanControl;
-        Capabilities |= DeviceCapabilities.FanOverride;
-        Capabilities |= DeviceCapabilities.DynamicLighting;
-        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
-        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
-        Capabilities |= DeviceCapabilities.OEMCPU;
-
         // battery bypass settings
         BatteryBypassMin = 80;
         BatteryBypassMax = 80;
-
-        // dynamic lighting capacities
-        DynamicLightingCapabilities |= LEDLevel.SolidColor;
-        DynamicLightingCapabilities |= LEDLevel.Breathing;
-        DynamicLightingCapabilities |= LEDLevel.Rainbow;
-        DynamicLightingCapabilities |= LEDLevel.Wheel;
 
         // Legion Go - Quiet
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
@@ -279,25 +237,43 @@ public class LegionGo : IDevice
             TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
         });
 
-        OEMChords.Add(new KeyboardChord("LegionR",
-            [], [],
-            false, ButtonFlags.OEM1
-        ));
+        // device specific capacities
+        Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.FanOverride;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+        Capabilities |= DeviceCapabilities.BatteryChargeLimit;
+        Capabilities |= DeviceCapabilities.OEMCPU;
 
-        OEMChords.Add(new KeyboardChord("LegionL",
-            [], [],
-            false, ButtonFlags.OEM2
-        ));
+        // dynamic lighting capacities
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
+        DynamicLightingCapabilities |= LEDLevel.Breathing;
+        DynamicLightingCapabilities |= LEDLevel.Rainbow;
+        DynamicLightingCapabilities |= LEDLevel.Wheel;
 
-        // device specific layout
-        DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = [new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 }];
+        OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2));
+    }
 
-        DefaultLayout.ButtonLayout[ButtonFlags.RightPadClick] = [new MouseActions { MouseType = MouseActionsType.LeftButton, HapticMode = HapticMode.Down, HapticStrength = HapticStrength.Low }];
-        DefaultLayout.ButtonLayout[ButtonFlags.RightPadClickDown] = [new MouseActions { MouseType = MouseActionsType.RightButton, HapticMode = HapticMode.Down, HapticStrength = HapticStrength.High }];
-        DefaultLayout.ButtonLayout[ButtonFlags.B5] = [new ButtonActions { Button = ButtonFlags.R1 }];
-        DefaultLayout.ButtonLayout[ButtonFlags.B6] = [new MouseActions { MouseType = MouseActionsType.MiddleButton }];
-        DefaultLayout.ButtonLayout[ButtonFlags.B7] = [new MouseActions { MouseType = MouseActionsType.ScrollUp }];
-        DefaultLayout.ButtonLayout[ButtonFlags.B8] = [new MouseActions { MouseType = MouseActionsType.ScrollDown }];
+    public override bool IsReady()
+    {
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
+        foreach (HidDevice device in devices)
+        {
+            if (!device.IsConnected)
+                continue;
+
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
+                continue;
+
+            hidDevices[INPUT_HID_ID] = device;
+            return true;
+        }
+
+        return false;
     }
 
     public override void OpenEvents()
@@ -319,55 +295,33 @@ public class LegionGo : IDevice
                 QueryPowerProfile();
                 break;
         }
+
+        Device_Inserted();
     }
 
-    private object controllerLock = new();
-    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
+    public override void Close()
     {
-        if (Controller is LegionController legionController)
-        {
-            lock (controllerLock)
-            {
-                // unload SapientiaUsb
-                FreeSapientiaUsb();
-            }
-        }
-    }
+        // manage events
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
-    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
-    {
-        if (Controller is LegionController legionController)
-        {
-            lock (controllerLock)
-            {
-                // initialize SapientiaUsb
-                Init();
+        // close devices
+        foreach (HidDevice hidDevice in hidDevices.Values)
+            hidDevice.Dispose();
+        hidDevices.Clear();
 
-                // make sure both left and right gyros are enabled
-                SetLeftGyroStatus(1);
-                SetRightGyroStatus(1);
+        // Reset the fan speed to default before device shutdown/restart
+        SetFanFullSpeed(false);
 
-                // make sure both left and right gyros are reporting values
-                SetGyroModeStatus(2, 1, 1);
-                SetGyroModeStatus(2, 2, 2);
+        // restore default touchpad behavior
+        SetPassthrough(false);
 
-                // make sure both left and right gyros are reporting raw values
-                SetGyroSensorDataOnorOff(LeftJoyconIndex, 0x02);
-                SetGyroSensorDataOnorOff(RightJoyconIndex, 0x02);
+        // unload SapientiaUsb
+        FreeSapientiaUsb();
 
-                // disable QuickLightingEffect(s)
-                SetQuickLightingEffect(0, 1);
-                SetQuickLightingEffect(3, 1);
-                SetQuickLightingEffect(4, 1);
-                SetQuickLightingEffectEnable(0, false);
-                SetQuickLightingEffectEnable(3, false);
-                SetQuickLightingEffectEnable(4, false);
-
-                // get current light profile(s)
-                lightProfileL = GetCurrentLightProfile(3);
-                lightProfileR = GetCurrentLightProfile(4);
-            }
-        }
+        base.Close();
     }
 
     private void QueryPowerProfile()
@@ -387,6 +341,8 @@ public class LegionGo : IDevice
     {
         // raise events
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false);
+        SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false);
+        SettingsManager_SettingValueChanged("LegionControllerSwap", ManagerFactory.settingsManager.GetBoolean("LegionControllerSwap"), false);
 
         base.QuerySettings();
     }
@@ -398,40 +354,15 @@ public class LegionGo : IDevice
             case "BatteryChargeLimit":
                 SetBatteryChargeLimit(Convert.ToBoolean(value));
                 break;
+            case "LegionControllerPassthrough":
+                SetPassthrough(Convert.ToBoolean(value));
+                break;
+            case "LegionControllerSwap":
+                SetControllerSwap(Convert.ToBoolean(value));
+                break;
         }
 
         base.SettingsManager_SettingValueChanged(name, value, temporary);
-    }
-
-    public override void Close()
-    {
-        // Reset the fan speed to default before device shutdown/restart
-        SetFanFullSpeed(false);
-
-        // restore default touchpad behavior
-        SetTouchPadStatus(1);
-
-        // close devices
-        foreach (HidDevice hidDevice in hidDevices.Values)
-            hidDevice.Dispose();
-        hidDevices.Clear();
-
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-
-        base.Close();
-    }
-
-    public override bool IsReady()
-    {
-        // Wait until no LegionController is currently power cycling
-        IEnumerable<LegionController> legionControllers = ControllerManager.GetPhysicalControllers<LegionController>();
-        while (legionControllers.Any(controller => ControllerManager.PowerCyclers.ContainsKey(controller.GetContainerInstanceId())))
-            Thread.Sleep(1000);
-
-        return true;
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -454,79 +385,35 @@ public class LegionGo : IDevice
             SetSmartFanMode(profile.OEMPowerMode);
     }
 
-    public override bool SetLedBrightness(int brightness)
+    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
     {
-        lightProfileL.brightness = brightness;
-        lightProfileR.brightness = brightness;
-
-        SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
-        SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
-
-        return true;
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Inserted(true);
     }
 
-    public override bool SetLedStatus(bool status)
+    protected virtual void Device_Inserted(bool reScan = false)
     {
-        SetLightingEnable(0, status);
-
-        return true;
+        // initialize SapientiaUsb
+        Init();
     }
 
-    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
+    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
     {
-        // Speed is inverted for Legion Go
-        lightProfileL.speed = 100 - speed;
-        lightProfileR.speed = 100 - speed;
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Removed();
+    }
 
-        // 1 - solid color
-        // 2 - breathing
-        // 3 - rainbow
-        // 4 - spiral rainbow
-        switch (level)
+    protected virtual void Device_Removed()
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            case LEDLevel.Breathing:
-                {
-                    lightProfileL.effect = 2;
-                    lightProfileR.effect = 2;
-                    SetLightProfileColors(MainColor, MainColor);
-                }
-                break;
-            case LEDLevel.Rainbow:
-                {
-                    lightProfileL.effect = 3;
-                    lightProfileR.effect = 3;
-                }
-                break;
-            case LEDLevel.Wheel:
-                {
-                    lightProfileL.effect = 4;
-                    lightProfileR.effect = 4;
-                }
-                break;
-            default:
-                {
-                    lightProfileL.effect = 1;
-                    lightProfileR.effect = 1;
-                    SetLightProfileColors(MainColor, MainColor);
-                }
-                break;
+            device.MonitorDeviceEvents = false;
+            device.Removed -= Device_Removed;
+            try { device.Dispose(); } catch { }
         }
 
-        SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
-        SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
-
-        return true;
-    }
-
-    private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
-    {
-        lightProfileL.r = MainColor.R;
-        lightProfileL.g = MainColor.G;
-        lightProfileL.b = MainColor.B;
-
-        lightProfileR.r = SecondaryColor.R;
-        lightProfileR.g = SecondaryColor.G;
-        lightProfileR.b = SecondaryColor.B;
+        // unload SapientiaUsb
+        FreeSapientiaUsb();
     }
 
     public override void set_long_limit(int limit)
@@ -539,6 +426,16 @@ public class LegionGo : IDevice
     {
         SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, limit);
         SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, limit);
+    }
+
+    public virtual void SetControllerSwap(bool enabled)
+    {
+        ControllerSwap = enabled;
+    }
+
+    public virtual void SetPassthrough(bool enabled)
+    {
+        ControllerPassThrough = enabled;
     }
 
     public override string GetGlyph(ButtonFlags button)

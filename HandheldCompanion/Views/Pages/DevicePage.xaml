@@ -101,7 +101,10 @@
             <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="3">
 
                 <!--  OEM Frontend  -->
-                <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_ManufacturerApplicationDesc}" Header="{l:Static resx:Resources.DevicePage_ManufacturerApplication}">
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.DevicePage_ManufacturerApplicationDesc}"
+                    Header="{l:Static resx:Resources.DevicePage_ManufacturerApplication}"
+                    IsEnabled="{Binding HasManufacturerPlatform}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xF156;" />
                     </ui:SettingsCard.HeaderIcon>
@@ -118,6 +121,8 @@
                         </ToggleButton.Style>
                     </ToggleButton>
                 </ui:SettingsCard>
+
+                <ui:ProgressBar IsIndeterminate="True" Visibility="{Binding ManufacturerAppBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}" />
             </ikw:SimpleStackPanel>
 
             <!--  Battery options  -->
@@ -155,8 +160,6 @@
                         <Slider
                             x:Name="Slider_BatteryChargeLimitPercent"
                             Width="200"
-                            Margin="6,0,0,0"
-                            VerticalAlignment="Center"
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -179,12 +182,7 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE713;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ComboBox
-                        Name="CB_BatteryBypassCharging"
-                        Grid.Column="1"
-                        Margin="12,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
+                    <ComboBox Name="CB_BatteryBypassCharging" SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
                         <ComboBox.ItemTemplate>
                             <ItemContainerTemplate>
                                 <WrapPanel>
@@ -227,10 +225,7 @@
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE706;" />
                         </ui:SettingsCard.HeaderIcon>
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <Label
                                 VerticalAlignment="Center"
                                 Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}"
@@ -265,60 +260,56 @@
                         </ui:SettingsExpander.HeaderIcon>
                         <ComboBox
                             Name="LEDSettingsLevel"
-                            Grid.Column="1"
                             Width="220"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
                             SelectionChanged="LEDSettingsLevel_SelectionChanged">
 
                             <ComboBoxItem
                                 Name="LEDSolidColor"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
                                 IsEnabled="False"
-                                Tag="0"
+                                Tag="1"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDBreathing"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
                                 IsEnabled="False"
-                                Tag="1"
+                                Tag="2"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDRainbow"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
                                 IsEnabled="False"
-                                Tag="2"
+                                Tag="4"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDWave"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
                                 IsEnabled="False"
-                                Tag="4"
+                                Tag="8"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDWheel"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
                                 IsEnabled="False"
-                                Tag="8"
+                                Tag="16"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDGradient"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
                                 IsEnabled="False"
-                                Tag="16"
+                                Tag="32"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDAmbilight"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
                                 IsEnabled="False"
-                                Tag="32"
+                                Tag="64"
                                 Visibility="Collapsed" />
                             <ComboBoxItem
                                 Name="LEDPreset"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Presets}"
                                 IsEnabled="False"
-                                Tag="64"
+                                Tag="128"
                                 Visibility="Collapsed" />
                         </ComboBox>
                         <ui:SettingsExpander.Items>
@@ -386,7 +377,6 @@
                                     Width="32"
                                     Height="31"
                                     ColorChanged="MainColorPicker_ColorChanged"
-                                   
                                     Style="{StaticResource DefaultColorPickerStyle}" />
                             </ui:SettingsCard>
                             <!--  Use second color  -->
@@ -409,7 +399,6 @@
                                     Width="32"
                                     Height="31"
                                     ColorChanged="SecondColorPicker_ColorChanged"
-                                   
                                     Style="{StaticResource DefaultColorPickerStyle}" />
                             </ui:SettingsCard>
                             <!--  Vertical blackbar detection  -->
@@ -579,31 +568,25 @@
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
-            <!--  Device settings  -->
-            <TextBlock
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
-                Visibility="{Binding ElementName=DeviceSettingsPanel, Path=Visibility}" />
-            <ikw:SimpleStackPanel
-                Name="DeviceSettingsPanel"
-                d:Visibility="Visible"
-                Spacing="3"
-                Visibility="Collapsed">
+            <ikw:SimpleStackPanel Spacing="8">
+
+                <!--  Device settings  -->
+                <TextBlock
+                    d:Text="Device settings (MSI Claw)"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
+                    Visibility="{Binding ElementName=MSIClawPanel, Path=Visibility}" />
 
                 <!--  MSI Claw 8  -->
                 <ikw:SimpleStackPanel
                     Name="MSIClawPanel"
-                    d:Background="Red"
                     d:Visibility="Visible"
                     Spacing="3"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard Description="Select the desired controller mode" Header="Controller mode">
                         <ui:SettingsCard.HeaderIcon>
-                            <Image
-                                emoji:EmojiImage.DrawPadding="False"
-                                emoji:EmojiImage.Source="🎮"
-                                RenderOptions.BitmapScalingMode="HighQuality" />
+                            <ui:FontIcon Glyph="&#xE7FC;" />
                         </ui:SettingsCard.HeaderIcon>
 
                         <ComboBox SelectedIndex="{Binding ClawControllerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -618,26 +601,29 @@
                         Header="MSI OverBoost"
                         IsEnabled="{Binding HasOverBoost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <ui:SettingsCard.HeaderIcon>
-                            <Image
-                                emoji:EmojiImage.DrawPadding="False"
-                                emoji:EmojiImage.Source="🚀"
-                                RenderOptions.BitmapScalingMode="HighQuality" />
+                            <ui:FontIcon Glyph="&#xEC7A;" />
                         </ui:SettingsCard.HeaderIcon>
 
                         <ui:ToggleSwitch IsOn="{Binding ClawOverBoost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
 
+                <!--  Device settings  -->
+                <TextBlock
+                    d:Text="Device settings (Lenovo Legion Go)"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
+                    Visibility="{Binding ElementName=LegionGoPanel, Path=Visibility}" />
+
                 <!--  Lenovo Legion Go  -->
                 <ikw:SimpleStackPanel
                     Name="LegionGoPanel"
-                    d:Background="Blue"
                     d:Visibility="Visible"
                     Spacing="3"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard
-                        Name="TouchpadPassthrough"
+                        Name="LegionGoPassthrough"
                         Description="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
                         Header="{l:Static resx:Resources.ControllerPage_LegionGoPassthrough}">
                         <ui:SettingsCard.HeaderIcon>
@@ -647,28 +633,38 @@
                     </ui:SettingsCard>
 
                     <ui:SettingsCard
-                        Name="GyroController"
+                        Name="LegionGoControllerSwap"
+                        Description="{l:Static resx:Resources.ControllerPage_LegionGoControllerSwapDesc}"
+                        Header="{l:Static resx:Resources.ControllerPage_LegionGoControllerSwap}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xe772;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch Name="Toggle_ControllerSwap" Toggled="Toggle_ControllerSwap_Toggled" />
+                    </ui:SettingsCard>
+
+                    <ui:SettingsCard
+                        Name="LegionGoSensorSelection"
+                        d:Visibility="Visible"
                         Description="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
-                        Header="{l:Static resx:Resources.SettingsPage_SensorSelection}">
+                        Header="{l:Static resx:Resources.SettingsPage_SensorSelection}"
+                        Visibility="Collapsed">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE950;" />
                         </ui:SettingsCard.HeaderIcon>
-                        <ComboBox
-                            Name="ComboBox_GyroController"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectionChanged="ComboBox_GyroController_SelectionChanged">
+
+                        <ComboBox Name="ComboBox_GyroController" SelectionChanged="ComboBox_GyroController_SelectionChanged">
                             <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_Lenovo_LeftController}" />
                             <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_Lenovo_RightController}" />
                         </ComboBox>
                     </ui:SettingsCard>
 
                     <ui:SettingsExpander
+                        Name="LegionGoLeftController"
+                        d:Visibility="Visible"
                         Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
                         Expanded="Expander_Expanded"
-                        Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}">
+                        Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}"
+                        Visibility="Collapsed">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE7FC;" />
                         </ui:SettingsExpander.HeaderIcon>
@@ -767,9 +763,12 @@
 
                     <!--  Right Joycon  -->
                     <ui:SettingsExpander
+                        Name="LegionGoRightController"
+                        d:Visibility="Visible"
                         Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
                         Expanded="Expander_Expanded"
-                        Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}">
+                        Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}"
+                        Visibility="Collapsed">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE7FC;" />
                         </ui:SettingsExpander.HeaderIcon>
@@ -866,6 +865,36 @@
                         </ui:SettingsExpander.Items>
                     </ui:SettingsExpander>
                 </ikw:SimpleStackPanel>
+
+                <!--  Device settings  -->
+                <TextBlock
+                    d:Text="Device settings (Zotac Gaming Zone)"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
+                    Visibility="{Binding ElementName=LegionGoPanel, Path=Visibility}" />
+
+                <!--  Zotac Gaming Zone  -->
+                <ikw:SimpleStackPanel
+                    Name="ZotacGamingZonePanel"
+                    d:Visibility="Visible"
+                    Spacing="3"
+                    Visibility="Collapsed">
+
+                    <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_GamingZone_VRAMDesc}" Header="{l:Static resx:Resources.DevicePage_GamingZone_VRAM}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xe772;" />
+                        </ui:SettingsCard.HeaderIcon>
+
+                        <ComboBox Name="ComboBox_GamingZoneVRAM" SelectionChanged="ComboBox_GamingZoneVRAM_SelectionChanged">
+                            <ComboBoxItem Content="Default" />
+                            <ComboBoxItem Content="+1 GB" />
+                            <ComboBoxItem Content="+2 GB" />
+                            <ComboBoxItem Content="+3 GB" />
+                            <ComboBoxItem Content="+4 GB" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
+
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

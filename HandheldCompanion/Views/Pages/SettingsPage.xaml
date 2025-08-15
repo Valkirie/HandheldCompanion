@@ -196,7 +196,21 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
                     </ComboBox>
                 </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
 
+            <!--  Advanced options  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Advanced options" />
+            <ikw:SimpleStackPanel Spacing="3">
+                <!--  Toast notification  -->
+                <ui:SettingsCard
+                    Description="Monitor external changes to GPU settings and automatically restore preferred configuration"
+                    Header="GPU-Settings monitoring"
+                    IsEnabled="False">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.History}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_GPUMonitor" Toggled="Toggle_GPUMonitor_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->

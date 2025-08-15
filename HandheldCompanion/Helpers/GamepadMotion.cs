@@ -90,7 +90,7 @@ namespace HandheldCompanion.Helpers
             this.accelY = accelY;
             this.accelZ = accelZ;
 
-            if (deltaTimeSeconds != 0.0f)
+            if (deltaTimeSeconds >= 0.00001f)
                 this.deltaTime = deltaTimeSeconds;
 
             if (thresholdCalibration)

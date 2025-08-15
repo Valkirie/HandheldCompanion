@@ -54,10 +54,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -72,7 +69,7 @@
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 LargeChange="200"
-                                Maximum="1000"
+                                Maximum="2000"
                                 Minimum="100"
                                 SmallChange="100"
                                 TickFrequency="100"
@@ -568,10 +565,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -626,10 +620,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -685,10 +676,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
@@ -764,10 +752,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -912,10 +897,7 @@
                                         TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                   >
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
                                         Height="31"
                                         HorizontalAlignment="Right"
@@ -1062,10 +1044,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -1120,10 +1099,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"

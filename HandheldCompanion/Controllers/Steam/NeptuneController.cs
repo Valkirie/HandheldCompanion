@@ -10,7 +10,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HandheldCompanion.Controllers;
+namespace HandheldCompanion.Controllers.Steam;
 
 public class NeptuneController : SteamController
 {
@@ -80,7 +80,7 @@ public class NeptuneController : SteamController
         return "Valve Software Steam Controller";
     }
 
-    public override void UpdateInputs(long ticks, float delta)
+    public override void Tick(long ticks, float delta, bool commit)
     {
         if (Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
             return;
@@ -217,14 +217,14 @@ public class NeptuneController : SteamController
         }
 
         // Accelerometer has 16 bit resolution and a range of +/- 2g
-        float aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-        float aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-        float aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+        aX = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+        aY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+        aZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
 
         // Gyroscope has 16 bit resolution and a range of +/- 2000 dps
-        float gX = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
-        float gY = (float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
-        float gZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
+        gX = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;  // Roll
+        gY = (float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;   // Pitch
+        gZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;    // Yaw
 
         // store motion
         Inputs.GyroState.SetGyroscope(gX, gY, gZ);
@@ -234,7 +234,7 @@ public class NeptuneController : SteamController
         if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
             gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-        base.UpdateInputs(ticks, delta);
+        base.Tick(ticks, delta);
     }
 
     private Task HandleControllerInput(NeptuneControllerInputEventArgs input)
@@ -341,9 +341,6 @@ public class NeptuneController : SteamController
         };
         rumbleThread.Start();
 
-        // manage events
-        TimerManager.Tick += UpdateInputs;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -405,7 +402,6 @@ public class NeptuneController : SteamController
             return;
         }
 
-        TimerManager.Tick -= UpdateInputs;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
@@ -425,8 +421,8 @@ public class NeptuneController : SteamController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
-        this.FeedbackLargeMotor = LargeMotor;
-        this.FeedbackSmallMotor = SmallMotor;
+        FeedbackLargeMotor = LargeMotor;
+        FeedbackSmallMotor = SmallMotor;
     }
 
     private async void RumbleThreadLoop(object? obj)

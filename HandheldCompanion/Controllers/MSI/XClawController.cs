@@ -1,6 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.MSI
 {
     public class XClawController : XInputController
     {
@@ -19,8 +19,6 @@ namespace HandheldCompanion.Controllers
         { }
 
         public XClawController(PnPDetails details) : base(details)
-        {
-            AttachDetails(details);
-        }
+        { }
     }
 }

@@ -15,6 +15,8 @@ public static class Settings
 {
     public static readonly string ConfigurableTDPOverrideDown = "ConfigurableTDPOverrideDown";
     public static readonly string ConfigurableTDPOverrideUp = "ConfigurableTDPOverrideUp";
+
+    public static readonly string OnScreenDisplayRefreshRate = "OnScreenDisplayRefreshRate";
     public static readonly string OnScreenDisplayLevel = "OnScreenDisplayLevel";
     public static readonly string OnScreenDisplayTimeLevel = "OnScreenDisplayTimeLevel";
     public static readonly string OnScreenDisplayFPSLevel = "OnScreenDisplayFPSLevel";

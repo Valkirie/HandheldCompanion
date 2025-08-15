@@ -3,7 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using System;
 
-namespace HandheldCompanion.Controllers
+namespace HandheldCompanion.Controllers.GameSir
 {
     public class TarantulaProController : XInputController
     {
@@ -15,8 +15,6 @@ namespace HandheldCompanion.Controllers
         private controller_hidapi.net.TarantulaProController? Controller;
         private byte[] Data = new byte[64];
 
-        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
-        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
         private const byte EXTRABUTTON0_IDX = 11;
         private const byte EXTRABUTTON1_IDX = 12;
         private const byte EXTRABUTTON2_IDX = 13;
@@ -194,13 +192,13 @@ namespace HandheldCompanion.Controllers
         private ButtonLayout CurrentLayout => (ButtonLayout)Data[EXTRABUTTON2_IDX];
         private ButtonLayout prevLayout = ButtonLayout.None;
 
-        public override void UpdateInputs(long ticks, float delta, bool commit)
+        public override void Tick(long ticks, float delta, bool commit)
         {
             // skip if controller isn't connected
             if (!IsConnected() || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
                 return;
 
-            base.UpdateInputs(ticks, delta, false);
+            base.Tick(ticks, delta, false);
 
             // update layout
             if (CurrentLayout != prevLayout)
@@ -238,14 +236,15 @@ namespace HandheldCompanion.Controllers
             gZ = (short)(Data[22] << 8 | Data[23]) * -(2000.0f / short.MaxValue);
             gY = (short)(Data[24] << 8 | Data[25]) * (2000.0f / short.MaxValue);
 
+            // store motion
+            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
+            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
+
             // compute motion from controller
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-            Inputs.GyroState.SetGyroscope(gX, gY, gZ);
-            Inputs.GyroState.SetAccelerometer(aX, aY, aZ);
-
-            base.UpdateInputs(ticks, delta);
+            base.Tick(ticks, delta, true);
         }
 
         public override string GetGlyph(ButtonFlags button)
