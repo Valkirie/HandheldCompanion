@@ -382,13 +382,13 @@ public class ClawA1M : IDevice
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
             byte[] fanTable = new byte[7];
-            fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4];
-            fanTable[1] = (byte)profile.FanProfile.fanSpeeds[1];
-            fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2];
-            fanTable[3] = (byte)profile.FanProfile.fanSpeeds[4];
-            fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6];
-            fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8];
-            fanTable[6] = (byte)profile.FanProfile.fanSpeeds[10];
+            fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4]; // ?
+            fanTable[1] = (byte)profile.FanProfile.fanSpeeds[0]; // 0%
+            fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2]; // 20%
+            fanTable[3] = (byte)profile.FanProfile.fanSpeeds[5]; // 50%
+            fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6]; // 60%
+            fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8]; // 80%
+            fanTable[6] = (byte)profile.FanProfile.fanSpeeds[9]; // 90%
 
             // update fan table
             SetFanTable(fanTable);
@@ -902,7 +902,7 @@ public class ClawA1M : IDevice
          * iDataBlockIndex = 2; // GPU
          */
 
-        for (byte iDataBlockIndex = 1; iDataBlockIndex < 3; iDataBlockIndex++)
+        for (byte iDataBlockIndex = 1; iDataBlockIndex <= 2; iDataBlockIndex++)
         {
             // default: 49, 0, 40, 49, 58, 67, 75, 75
             byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
