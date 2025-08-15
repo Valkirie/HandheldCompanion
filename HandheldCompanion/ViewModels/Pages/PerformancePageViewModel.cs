@@ -203,7 +203,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private double RequiredPL2Delta
+        private bool _coerceGuard;
+        private double RequiredDelta
         {
             get
             {
@@ -224,19 +225,35 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                double[] tdpValues = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
-                return tdpValues[(int)PowerType.Slow];
+                double[] tdp = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
+                return tdp[(int)PowerType.Slow];
             }
             set
             {
-                if (value != PL1OverrideValue)
+                if (Math.Abs(value - PL1OverrideValue) < double.Epsilon) return;
+
+                double clamped = Math.Max(ConfigurableTDPOverrideDown,
+                                  Math.Min(value, ConfigurableTDPOverrideUp));
+
+                SelectedPreset.TDPOverrideValues[(int)PowerType.Slow] = clamped;
+                SelectedPreset.TDPOverrideValues[(int)PowerType.Stapm] = clamped;
+
+                // If PL1 crosses PL2, bump PL2 up to maintain PL2 >= PL1 + Δ
+                double minPl2 = clamped + RequiredDelta;
+
+                if (!_coerceGuard && PL2OverrideValue < minPl2)
                 {
-                    SelectedPreset.TDPOverrideValues[(int)PowerType.Slow] = value;
-                    SelectedPreset.TDPOverrideValues[(int)PowerType.Stapm] = value;
-                    OnPropertyChanged(nameof(PL1OverrideValue));
-                    OnPropertyChanged(nameof(PL2OverrideValue));
-                    OnPropertyChanged(nameof(HasWarning));
+                    try
+                    {
+                        _coerceGuard = true;
+                        SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] = Math.Min(ConfigurableTDPOverrideUp, minPl2);
+                        OnPropertyChanged(nameof(PL2OverrideValue));
+                    }
+                    finally { _coerceGuard = false; }
                 }
+
+                OnPropertyChanged(nameof(PL1OverrideValue));
+                OnPropertyChanged(nameof(HasWarning));
             }
         }
 
@@ -245,14 +262,19 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                double[] tdpValues = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
-                return Math.Min(ConfigurableTDPOverrideUp, Math.Max(PL1OverrideValue + RequiredPL2Delta, tdpValues[(int)PowerType.Fast]));
+                double[] tdp = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
+                return tdp[(int)PowerType.Fast];
             }
             set
             {
-                if (value != PL2OverrideValue)
+                if (Math.Abs(value - PL2OverrideValue) < double.Epsilon) return;
+
+                double minPl2 = PL1OverrideValue + RequiredDelta;
+                double clamped = Math.Max(minPl2, Math.Min(value, ConfigurableTDPOverrideUp));
+
+                if (SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] != clamped)
                 {
-                    SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] = value;
+                    SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] = clamped;
                     OnPropertyChanged(nameof(PL2OverrideValue));
                     OnPropertyChanged(nameof(HasWarning));
                 }
@@ -631,6 +653,7 @@ namespace HandheldCompanion.ViewModels
             nameof(SupportsGPUFreq),
             nameof(SupportsIntelEnduranceGaming),
             nameof(SupportsAutoTDP),
+            nameof(HasWarning),
             string.Empty,
         ];
 

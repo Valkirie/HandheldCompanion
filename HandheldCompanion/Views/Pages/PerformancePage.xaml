@@ -245,7 +245,7 @@
                                     IsSnapToTickEnabled="True"
                                     LargeChange="5"
                                     Maximum="{Binding ConfigurableTDPOverrideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Minimum="{Binding PL1OverrideValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Minimum="{Binding ConfigurableTDPOverrideDown, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     SmallChange="1"
                                     TickFrequency="1"
                                     TickPlacement="BottomRight"
