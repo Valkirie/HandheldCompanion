@@ -281,7 +281,6 @@
                                     <TextBlock
                                         Name="ProcessName"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
                                         Text="{Binding ProductName}" />
                                 </ui:SettingsExpander.Header>
