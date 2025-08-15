@@ -222,7 +222,7 @@ public partial class SettingsPage : Page
                 case "QuickTrackpadVisibility":
                     VirtualTrackpadToggle.IsOn = Convert.ToBoolean(value);
                     break;
-                case "QuicktoolsSlideAnimation":
+                case "QuickToolsSlideAnimation":
                     QuicktoolsSlideAnimationToggle.IsOn = Convert.ToBoolean(value);
                     break;
                 case "GPUManagerMonitor":

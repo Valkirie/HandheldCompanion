@@ -1056,6 +1056,7 @@ public partial class QuickProfilesPage : Page
             page.cb_SubProfilePicker.SelectedIndex = 0;
     }
 
+    private bool QuickToolsAutoHide => ManagerFactory.settingsManager.GetBoolean("QuickToolsAutoHide");
     private void Button_OpenProfilePage_Click(object sender, RoutedEventArgs e)
     {
         UpdateMainWindowProfile();
@@ -1066,7 +1067,7 @@ public partial class QuickProfilesPage : Page
             MainWindow.GetCurrent().ToggleState();
 
         // hide quicktools
-        if (OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible)
+        if (QuickToolsAutoHide && OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible)
             OverlayQuickTools.GetCurrent().ToggleVisibility();
     }
 
@@ -1081,7 +1082,7 @@ public partial class QuickProfilesPage : Page
             MainWindow.GetCurrent().ToggleState();
 
         // hide quicktools
-        if (OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible)
+        if (QuickToolsAutoHide && OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible)
             OverlayQuickTools.GetCurrent().ToggleVisibility();
     }
 

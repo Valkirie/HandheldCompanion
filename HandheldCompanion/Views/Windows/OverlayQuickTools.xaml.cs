@@ -85,11 +85,8 @@ public partial class OverlayQuickTools : GamepadWindow
     private Action? _animOnComplete;
     private double _animSpeed = 1.0; // 1.0 = normal, 1.25 = slower, 0.85 = faster
 
-    // remember the last location mode so we know when to slide
-    private int _quickToolsLocation;
-
-    // animation master switch (default ON)
-    private bool _enableSlideAnimation => ManagerFactory.settingsManager.GetBoolean("QuickToolsSlideAnimation");
+    private int QuickToolsLocation = 0;
+    private bool HasAnimation = false;
 
     // page vars
     private readonly Dictionary<string, Page> _pages = [];
@@ -134,9 +131,20 @@ public partial class OverlayQuickTools : GamepadWindow
         // manage events
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ManagerFactory.processManager.RawForeground += ProcessManager_RawForeground;
+
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
 
         // raise events
         if (ControllerManager.HasTargetController)
@@ -144,6 +152,23 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
+    }
+
+    protected virtual void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false);
+        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false);
+        SettingsManager_SettingValueChanged("QuickToolsDevicePath", ManagerFactory.settingsManager.GetString("QuickToolsDevicePath"), false);
+        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false);
+    }
+
+    protected virtual void SettingsManager_Initialized()
+    {
+        QuerySettings();
     }
 
     private void ProcessManager_RawForeground(nint hWnd)
@@ -183,7 +208,7 @@ public partial class OverlayQuickTools : GamepadWindow
         WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | WS_EX_NOACTIVATE);
 
         UpdateLocation();
-        if (_enableSlideAnimation && ShouldSlideFromBottom())
+        if (HasAnimation && ShouldSlideFromBottom())
             Top = _hiddenTop;   // start off-screen only when animating
         else
             Top = _targetTop;   // otherwise start at the resting Y
@@ -211,7 +236,6 @@ public partial class OverlayQuickTools : GamepadWindow
             switch (name)
             {
                 case "QuickToolsLocation":
-                    _quickToolsLocation = Convert.ToInt32(value);   // cache it
                     UpdateLocation();
                     break;
                 case "QuickToolsAutoHide":
@@ -219,6 +243,9 @@ public partial class OverlayQuickTools : GamepadWindow
                     break;
                 case "QuickToolsDevicePath":
                     UpdateLocation();
+                    break;
+                case "QuickToolsSlideAnimation":
+                    HasAnimation = Convert.ToBoolean(value);
                     break;
             }
         });
@@ -249,7 +276,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void UpdateLocation()
     {
         // pull quicktools settings
-        int QuickToolsLocation = ManagerFactory.settingsManager.GetInt("QuickToolsLocation");
+        QuickToolsLocation = ManagerFactory.settingsManager.GetInt("QuickToolsLocation");
         string DevicePath = ManagerFactory.settingsManager.GetString("QuickToolsDevicePath");
         string DeviceName = ManagerFactory.settingsManager.GetString("QuickToolsDeviceName");
 
@@ -365,7 +392,7 @@ public partial class OverlayQuickTools : GamepadWindow
         _hiddenTop = workBottom + 2;    // +2 so it’s truly off-screen
     }
 
-    private bool ShouldSlideFromBottom() => _quickToolsLocation is 3 or 4 or 5;
+    private bool ShouldSlideFromBottom() => QuickToolsLocation is 3 or 4 or 5;
 
     private void StartHighFpsSlide(double from, double to, bool isShowing, int durationMs, Action? onCompleted = null)
     {
@@ -441,7 +468,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public void SlideShow()
     {
-        if (!_enableSlideAnimation || !ShouldSlideFromBottom())
+        if (!HasAnimation || !ShouldSlideFromBottom())
         {
             ShowInstant();
             return;
@@ -460,7 +487,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public void SlideHide()
     {
-        if (!_enableSlideAnimation || !ShouldSlideFromBottom())
+        if (!HasAnimation || !ShouldSlideFromBottom())
         {
             HideInstant();
             return;
@@ -734,7 +761,7 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         UIHelper.TryInvoke(() =>
         {
-            bool canAnimate = _enableSlideAnimation && ShouldSlideFromBottom();
+            bool canAnimate = HasAnimation && ShouldSlideFromBottom();
 
             if (!IsVisible || Visibility != Visibility.Visible)
             {
@@ -760,7 +787,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 break;
 
             case Visibility.Visible:
-                if (_enableSlideAnimation && ShouldSlideFromBottom())
+                if (HasAnimation && ShouldSlideFromBottom())
                 {
                     // make sure we’re not double‑starting an anim
                     if (!_animActive) SlideShow();
