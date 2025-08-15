@@ -123,21 +123,8 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (SelectedPreset.DeviceDefault) return Resources.ProfilesPage_DefaultDeviceProfile;
-
-                if (PerformanceManager.GetProcessor() is IntelProcessor intelProcessor)
-                {
-                    switch (intelProcessor.MicroArch)
-                    {
-                        // Official specification for Lunar Lake states that PL2 should always be at least 1 W higher than PL1
-                        case IntelMicroArch.LunarLake:
-                            {
-                                bool PL1EqualsPL2 = SelectedPreset.TDPOverrideValues[(int)PowerType.Slow] == SelectedPreset.TDPOverrideValues[(int)PowerType.Fast];
-                                if (PL1EqualsPL2) return Resources.PerformancePage_PL1PL2Warning;
-                            }
-                            break;
-                    }
-                }
+                if (SelectedPreset.DeviceDefault)
+                    return Resources.ProfilesPage_DefaultDeviceProfile;
 
                 return string.Empty;
             }
@@ -211,7 +198,7 @@ namespace HandheldCompanion.ViewModels
                 if (PerformanceManager.GetProcessor() is IntelProcessor ip)
                 {
                     // Official specification for Lunar Lake states that PL2 should always be at least 1 W higher than PL1
-                    if (ip.MicroArch == IntelProcessor.IntelMicroArch.LunarLake)
+                    if (ip.MicroArch == IntelMicroArch.LunarLake)
                         return 1.0d;
                 }
 
@@ -253,7 +240,6 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 OnPropertyChanged(nameof(PL1OverrideValue));
-                OnPropertyChanged(nameof(HasWarning));
             }
         }
 
@@ -276,7 +262,6 @@ namespace HandheldCompanion.ViewModels
                 {
                     SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] = clamped;
                     OnPropertyChanged(nameof(PL2OverrideValue));
-                    OnPropertyChanged(nameof(HasWarning));
                 }
             }
         }
