@@ -217,6 +217,13 @@ namespace HandheldCompanion.ViewModels
             if (processEx is null)
                 return;
 
+            switch(processEx.Filter)
+            {
+                // prevent critical processes from being listed
+                case ProcessEx.ProcessFilter.Restricted:
+                    return;
+            }
+
             ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {
