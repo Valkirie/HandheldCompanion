@@ -43,9 +43,12 @@ namespace HandheldCompanion.Managers
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
-            // we want the OEM power profiles to be always up-to-date
-            foreach (PowerProfile devicePowerProfile in IDevice.GetCurrent().DevicePowerProfiles)
-                UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
+            foreach (PowerProfile profile in IDevice.GetCurrent().DevicePowerProfiles)
+            {
+                // we want the OEM power profiles to be always up-to-date
+                if (profile.DeviceDefault || (profile.Default && !profiles.ContainsKey(profile.Guid)))
+                    UpdateOrCreateProfile(profile, UpdateSource.Serializer);
+            }
 
             // manage events
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
