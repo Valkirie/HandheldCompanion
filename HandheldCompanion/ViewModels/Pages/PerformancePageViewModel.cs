@@ -203,6 +203,21 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private double RequiredPL2Delta
+        {
+            get
+            {
+                if (PerformanceManager.GetProcessor() is IntelProcessor ip)
+                {
+                    // Official specification for Lunar Lake states that PL2 should always be at least 1 W higher than PL1
+                    if (ip.MicroArch == IntelProcessor.IntelMicroArch.LunarLake)
+                        return 1.0d;
+                }
+
+                return 0.0d;
+            }
+        }
+
         // PL1 = Long/Sustained
         // On AMD also = STAPM ?
         public double PL1OverrideValue
@@ -219,6 +234,7 @@ namespace HandheldCompanion.ViewModels
                     SelectedPreset.TDPOverrideValues[(int)PowerType.Slow] = value;
                     SelectedPreset.TDPOverrideValues[(int)PowerType.Stapm] = value;
                     OnPropertyChanged(nameof(PL1OverrideValue));
+                    OnPropertyChanged(nameof(PL2OverrideValue));
                     OnPropertyChanged(nameof(HasWarning));
                 }
             }
@@ -230,7 +246,7 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 double[] tdpValues = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
-                return tdpValues[(int)PowerType.Fast];
+                return Math.Min(ConfigurableTDPOverrideUp, Math.Max(PL1OverrideValue + RequiredPL2Delta, tdpValues[(int)PowerType.Fast]));
             }
             set
             {
