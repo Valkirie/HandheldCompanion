@@ -792,11 +792,8 @@ public partial class OverlayQuickTools : GamepadWindow
                     // make sure we’re not double‑starting an anim
                     if (!_animActive) SlideShow();
                 }
-                else
-                {
-                    // legacy behavior (and keep non-bottom placements instant)
-                    WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
-                }
+
+                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
 
                 InvokeGotGamepadWindowFocus();
                 clockUpdateTimer.Start();
