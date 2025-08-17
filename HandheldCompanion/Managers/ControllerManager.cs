@@ -176,57 +176,68 @@ public static class ControllerManager
 
     private static void Tick(long ticks, float delta)
     {
-        if (!HasTargetController)
+        // Snapshot to avoid races after HasTargetController check
+        IController? tc = targetController;
+        if (!HasTargetController || tc is null)
             return;
 
-        // Debug.Assert(delta <= 0.020, $"Tick interval exceeded: expected <= {20}ms, got {delta * 1000.0f}ms");
-
         // pull controller
-        targetController.Tick(ticks, delta);
+        tc.Tick(ticks, delta);
 
-        ControllerState controllerState = targetController.Inputs;
+        // snapshot inputs; bail if not ready
+        ControllerState controllerState = tc.Inputs;
         if (controllerState is null)
             return;
 
-        Dictionary<byte, GamepadMotion> gamepadMotions = targetController.gamepadMotions;
-        if (gamepadMotions is null)
+        // snapshot motions; bail if not ready
+        Dictionary<byte, GamepadMotion>? motions = tc.gamepadMotions;
+        if (motions is null || motions.Count == 0)
             return;
 
         // raise event, before layout mapping
         EventHelper.RaiseAsync(InputsUpdated, controllerState, false);
 
-        // get main motion
-        byte gamepadIndex = targetController.gamepadIndex;
-        GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
-        if (gamepadMotion is null)
+        // get main motion safely
+        byte gamepadIndex = tc.gamepadIndex;
+        if (!motions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion) || gamepadMotion is null)
             return;
 
+        // sensor override
         switch (sensorSelection)
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
-                gamepadMotion = IDevice.GetCurrent().GamepadMotion;
-                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
-                break;
+                {
+                    IDevice dev = IDevice.GetCurrent();
+                    GamepadMotion? devMotion = dev?.GamepadMotion;
+                    if (devMotion is null)
+                        break; // keep existing gamepadMotion if device motion not ready
+
+                    gamepadMotion = devMotion;
+                    SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
+                    break;
+                }
         }
 
+        // Update motion consumers (null-safe)
         MotionManager.UpdateReport(controllerState, gamepadMotion);
-        MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta);
+        MainWindow.overlayModel?.UpdateReport(controllerState, gamepadMotion, delta);
 
-        // compute layout
-        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
-        EventHelper.RaiseAsync(InputsUpdated, controllerState, true);
+        // compute layout (null-safe mapping)
+        ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState) ?? controllerState;
+        EventHelper.RaiseAsync(InputsUpdated, mapped, true);
 
         // controller is muted
         if (ControllerMuted)
         {
-            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
-            controllerState = mutedState;
+            // keep only Special passthrough
+            mutedState.ButtonState[ButtonFlags.Special] = mapped.ButtonState[ButtonFlags.Special];
+            mapped = mutedState;
         }
 
-        DS4Touch.UpdateInputs(controllerState);
-        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
-        DSUServer.UpdateInputs(controllerState, gamepadMotions);
+        DS4Touch.UpdateInputs(mapped);
+        VirtualManager.UpdateInputs(mapped, gamepadMotion);
+        DSUServer.UpdateInputs(mapped, motions);
         DSUServer.Tick(ticks, delta);
     }
 
